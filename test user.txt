@@ -1,0 +1,4 @@
+test accounts:
+- client: +201000000000 / Password123!
+- worker: +201055555555 / Password123!
+- admin: +201099999999 / Password123!
