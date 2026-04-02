@@ -4,12 +4,15 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "outDir": "dist",
-    "rootDir": "src",
+    "rootDir": ".",
+    "verbatimModuleSyntax": false,
+    "allowSyntheticDefaultImports": true,
     "types": [
       "node"
     ]
   },
   "include": [
-    "src/**/*.ts"
+    "src/**/*.ts",
+    "api/**/*.ts"
   ]
 }
