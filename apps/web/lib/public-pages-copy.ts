@@ -5,129 +5,129 @@ export type PublicPageKey = "services" | "how-it-works" | "about" | "contact" | 
 export const publicPageCopy = {
   ar: {
     nav: {
-      home: "el ra2eseya",
-      services: "el 5adamat",
-      how: "ezay byesht8al",
-      about: "men na7no",
-      contact: "tawasol",
-      faq: "as2ela sha2e3a",
-      dashboards: "dashboards"
+      home: "الرئيسية",
+      services: "الخدمات",
+      how: "كيف يعمل",
+      about: "من نحن",
+      contact: "تواصل",
+      faq: "أسئلة شائعة",
+      dashboards: "الداشبوردات"
     },
     pages: {
       services: {
-        eyebrow: "el 5adamat",
-        title: "5adamat mobawaba b toroq wad7a",
-        description: "mn el kahraba llsabaka w el takyif, OSTA by3rd categories wad7a w matching asra3 ma3 3ommal mota2akdeen.",
+        eyebrow: "الخدمات",
+        title: "خدمات منظمة بطريقة واضحة",
+        description: "من الكهرباء والسباكة والتكييف، تقدم أُسطى فئات واضحة ومطابقة أسرع مع عمال موثقين ومتاحين.",
         sections: [
           {
-            title: "el categories el asaseya",
-            body: "kahraba, sabaka, negara, dehanat, takyif w agheza, alouminyum w la7am, w 5adamat 3ama b bianat wad7a w speed fi el reply."
+            title: "الفئات الأساسية",
+            body: "كهرباء، سباكة، نجارة، دهانات، تكييف وأجهزة، ألومنيوم ولحام، وخدمات عامة — كل ده في كتالوج واحد ببيانات واضحة وسرعة في الرد."
           },
           {
-            title: "pricing martyab",
-            body: "el request byb2a feeh estimate awaly, scope wad7, w tracking lel cost abl ma el sh8l yebda2."
+            title: "تسعير منظم وشفاف",
+            body: "كل طلب بيتضمن تقدير أولي ونطاق واضح وتتبع للتكلفة قبل بدء الشغل — من غير مفاجآت."
           },
           {
-            title: "guarantee w follow-up",
-            body: "ba3d el tanfeez t2dar ttba3 el da7man, t3ml complaint, aw t3eed el 7agz ma3 nafs el worker."
+            title: "ضمان ومتابعة",
+            body: "بعد التنفيذ تقدر تتابع الضمان، تفتح شكوى مدعومة بأدلة، أو تعيد الحجز مع نفس الفني."
           }
         ]
       },
       "how-it-works": {
-        eyebrow: "workflow",
-        title: "el request bymshi ezay mn awel click le 7d el tasleem",
-        description: "masar basit: tsif el moshkela, ytm matching ma3 worker monaseb, tetba3 status el sh8l, thott rating w da7man ba3d el tanfeez.",
+        eyebrow: "مسار العمل",
+        title: "الطلب بيمشي إزاي من أول كليك لحد التسليم",
+        description: "المسار بسيط: تصف المشكلة، يتم التطابق مع فني مناسب، تتابع حالة الشغل، وتضع تقييمك وضمانك بعد التنفيذ.",
         sections: [
           {
-            title: "1) describe",
-            body: "3onwan saree3, description, sowar aw notes, w level urgency 3ashan el worker yefham el talab mn awelha."
+            title: "١) الوصف",
+            body: "عنوان سريع، وصف للمشكلة، صور أو ملاحظات، ومستوى الاستعجال — عشان الفني يفهم الطلب من أوله."
           },
           {
-            title: "2) match",
-            body: "el manasa bt2addem workers hasab area, specialty, rating, w availability."
+            title: "٢) التطابق",
+            body: "المنصة بتقدم فنيين حسب المنطقة والتخصص والتقييم والتوافر — بدون تدوير ومستنيش."
           },
           {
-            title: "3) execute + review",
-            body: "live updates, protected payment, w review system مربoot b talab 7a2i2y mesh comments fake."
+            title: "٣) التنفيذ والتقييم",
+            body: "تحديثات مباشرة، دفع محمي، ونظام تقييم مرتبط بطلب حقيقي — مش تعليقات وهمية."
           }
         ]
       },
       about: {
-        eyebrow: "about OSTA",
-        title: "OSTA mabni 3ala el thi2a abl ay 7agz",
-        description: "el hadaf enna n2arrab ben as7ab el buyoot w ben 3ommal maharat mota2akdeen b tagroba wad7a zay ride apps, bas lel home services.",
+        eyebrow: "عن أُسطى",
+        title: "أُسطى مبني على الثقة قبل أي حجز",
+        description: "الهدف هو التقريب بين أصحاب البيوت والعمال الموثقين بتجربة واضحة، زي تطبيقات التنقل بس مصممة للخدمات المنزلية.",
         sections: [
           {
-            title: "why now",
-            body: "su2 el 5adamat el manzelya me7tag wosool asra3, pricing awda7, w 7emaya aktr lel client w lel worker."
+            title: "لماذا الآن",
+            body: "سوق الخدمات المنزلية يحتاج وصول أسرع، تسعير أوضح، وحماية أقوى للعميل والفني في نفس الوقت."
           },
           {
-            title: "trust system",
-            body: "identity checks, docs review, complaint path, secure wallet, w dashboards lel client, worker, w admin."
+            title: "نظام الثقة",
+            body: "فحص الهوية، مراجعة المستندات، مسار الشكاوى، محفظة آمنة، وداشبوردات للعميل والفني والإدارة."
           },
           {
-            title: "long-term vision",
-            body: "network kbira mn el workers, real-time operations, w ecosystem kamel lel training, tools, warranties, w growth."
+            title: "الرؤية على المدى البعيد",
+            body: "شبكة واسعة من العمال، عمليات لحظية، ونظام متكامل للتدريب والأدوات والضمانات والنمو المهني."
           }
         ]
       },
       contact: {
-        eyebrow: "tawasol",
-        title: "ezay towasal ma3 OSTA",
-        description: "support, partnerships, onboarding questions, aw business requests - kolaha mn channelat wad7a w organized.",
+        eyebrow: "تواصل معنا",
+        title: "كيف تتواصل مع أُسطى",
+        description: "دعم، شراكات، استفسارات عن الانضمام، أو طلبات الأعمال — كلها من خلال قنوات واضحة ومنظمة.",
         sections: [
           {
-            title: "support",
-            body: "support@osta.eg - +20 100 000 0000 - Cairo, Egypt."
+            title: "الدعم",
+            body: "support@osta.eg — ‎+20 100 000 0000 — القاهرة، مصر."
           },
           {
-            title: "for workers",
-            body: "estefsarat el tawthee2, onboarding, documents, aw support el earnings."
+            title: "للعمال",
+            body: "استفسارات التوثيق والانضمام والمستندات أو دعم الأرباح والحساب."
           },
           {
-            title: "for partners",
-            body: "real estate, facility management, w bulk service operations requests."
+            title: "للشركاء",
+            body: "أعمال العقارات وإدارة المنشآت وطلبات الخدمات بالجملة."
           }
         ]
       },
       faq: {
-        eyebrow: "faq",
-        title: "as2ela mohema abl ma tebda2",
-        description: "igabat 3ala verification, payments, dissatisfaction, worker registration, w el fees.",
+        eyebrow: "أسئلة شائعة",
+        title: "أسئلة مهمة قبل أن تبدأ",
+        description: "إجابات عن التوثيق والمدفوعات وحالات عدم الرضا وتسجيل الفني والرسوم.",
         sections: [
           {
-            title: "how verification works",
-            body: "el worker by3dy 3ala identity + docs + utility + review abl ma ytb2a available 3ala el manasa."
+            title: "كيف يعمل التوثيق",
+            body: "يمر الفني بفحص الهوية والمستندات وإثبات العنوان والمراجعة قبل أن يصبح متاحًا على المنصة."
           },
           {
-            title: "how payment is protected",
-            body: "el mabla8 byfdal protected l7ad ma ytbayan status el sh8l aw ytm 7al ay niza3."
+            title: "كيف يُحمى الدفع",
+            body: "يبقى المبلغ محميًا حتى يتضح حالة الشغل أو يُحل أي نزاع بشكل رسمي."
           },
           {
-            title: "if something goes wrong",
-            body: "fe complaints path, evidence support, w admin review 3ashan el rights teb2a ma7fouza."
+            title: "إذا حدث شيء خطأ",
+            body: "في مسار شكاوى مدعوم بالأدلة ومراجعة الإدارة لضمان حفظ حقوق الطرفين."
           }
         ]
       }
     },
     dashboards: {
-      eyebrow: "dashboard hub",
-      title: "ed5ol 3ala ay dashboard men makan wa7ed",
-      description: "3ashan matdawrsh 3ala el routes, 3amaltlak hub mobasher lel client, worker, w admin preview dashboards.",
+      eyebrow: "مركز الداشبوردات",
+      title: "ادخل على أي داشبورد من مكان واحد",
+      description: "عشان ماتدورش على الروابط، عملنالك هاب مباشر للعميل والفني وبريفيو الداشبورد الإداري.",
       cards: [
         {
-          title: "client dashboard",
-          body: "requests, wallet, favorites, warranties, w request creation flow.",
+          title: "داشبورد العميل",
+          body: "الطلبات والمحفظة والمفضلة والضمانات وإنشاء الطلبات الجديدة.",
           href: "/client"
         },
         {
-          title: "worker dashboard",
-          body: "incoming jobs, active work, earnings, w follow-up 3ala el performance.",
+          title: "داشبورد الفني",
+          body: "الوظائف الواردة والعمل الجاري والأرباح ومتابعة الأداء.",
           href: "/worker"
         },
         {
-          title: "admin dashboard",
-          body: "verification queue, finance pulse, operations alerts, w control views.",
+          title: "داشبورد الإدارة",
+          body: "قائمة التوثيق ونبض المالية وتنبيهات العمليات ولوحات التحكم.",
           href: "/admin"
         }
       ]
