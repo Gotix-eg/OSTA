@@ -1,6 +1,6 @@
-import { Mirza, Tajawal } from "next/font/google";
+import { Noto_Sans_Arabic, Tajawal } from "next/font/google";
 
-// Tajawal: premium Arabic body font - clean, modern, highly legible
+// Tajawal: clean modern Arabic body font
 export const sansFont = Tajawal({
   subsets: ["arabic", "latin"],
   variable: "--font-sans",
@@ -8,10 +8,10 @@ export const sansFont = Tajawal({
   weight: ["200", "300", "400", "500", "700", "800", "900"]
 });
 
-// Mirza: elegant Arabic calligraphic display font - perfect for headings
-export const serifFont = Mirza({
-  subsets: ["arabic", "latin"],
+// Noto Sans Arabic: premium display font for headings at weight 800
+export const serifFont = Noto_Sans_Arabic({
+  subsets: ["arabic"],
   variable: "--font-serif",
   display: "swap",
-  weight: ["400", "500", "600", "700"]
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"]
 });
