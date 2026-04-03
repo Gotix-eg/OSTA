@@ -1,18 +1,17 @@
-import { Fraunces, Readex_Pro } from "next/font/google";
+import { Mirza, Tajawal } from "next/font/google";
 
-// Readex Pro: excellent Arabic + Latin support, modern geometric feel
-export const sansFont = Readex_Pro({
-  subsets: ["latin", "arabic"],
+// Tajawal: premium Arabic body font - clean, modern, highly legible
+export const sansFont = Tajawal({
+  subsets: ["arabic", "latin"],
   variable: "--font-sans",
   display: "swap",
-  weight: ["300", "400", "500", "600", "700"]
+  weight: ["200", "300", "400", "500", "700", "800", "900"]
 });
 
-// Fraunces: ultra-premium optical serif — perfect for hero headlines
-export const serifFont = Fraunces({
-  subsets: ["latin"],
+// Mirza: elegant Arabic calligraphic display font - perfect for headings
+export const serifFont = Mirza({
+  subsets: ["arabic", "latin"],
   variable: "--font-serif",
   display: "swap",
-  weight: ["400", "500", "600", "700", "800"],
-  style: ["normal", "italic"]
+  weight: ["400", "500", "600", "700"]
 });
