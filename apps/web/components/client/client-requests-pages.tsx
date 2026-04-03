@@ -14,7 +14,7 @@ import {
   Wrench
 } from "lucide-react";
 
-import { serviceCategories } from "@osta/shared";
+import { serviceCategories } from "@/lib/shared";
 
 import {
   DashboardBlock,

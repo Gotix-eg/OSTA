@@ -1,4 +1,4 @@
-import { supportedLocales, type Locale } from "@osta/shared";
+import { supportedLocales, type Locale } from "@/lib/shared";
 
 export { supportedLocales };
 export type { Locale };

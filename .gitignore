@@ -9,3 +9,5 @@ coverage/
 apps/server/generated/
 apps/server/prisma/dev.db
 *.log
+
+.vercel

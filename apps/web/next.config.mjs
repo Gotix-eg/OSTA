@@ -1,7 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  distDir: process.env.NODE_ENV === "development" ? ".next-dev" : ".next",
-  transpilePackages: ["@osta/shared"]
+  distDir: process.env.NODE_ENV === "development" ? ".next-dev" : ".next"
 };
 
 export default nextConfig;

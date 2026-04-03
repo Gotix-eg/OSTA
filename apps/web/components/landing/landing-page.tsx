@@ -33,7 +33,7 @@ import {
   Zap
 } from "lucide-react";
 
-import { serviceCategories } from "@osta/shared";
+import { serviceCategories } from "@/lib/shared";
 
 import { LocaleSwitcher } from "@/components/shared/locale-switcher";
 import { landingCopy } from "@/lib/copy";
