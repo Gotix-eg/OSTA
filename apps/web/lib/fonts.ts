@@ -1,14 +1,18 @@
-import { Cormorant_Garamond, Readex_Pro } from "next/font/google";
+import { Fraunces, Readex_Pro } from "next/font/google";
 
+// Readex Pro: excellent Arabic + Latin support, modern geometric feel
 export const sansFont = Readex_Pro({
   subsets: ["latin", "arabic"],
   variable: "--font-sans",
-  display: "swap"
+  display: "swap",
+  weight: ["300", "400", "500", "600", "700"]
 });
 
-export const serifFont = Cormorant_Garamond({
+// Fraunces: ultra-premium optical serif — perfect for hero headlines
+export const serifFont = Fraunces({
   subsets: ["latin"],
   variable: "--font-serif",
   display: "swap",
-  weight: ["500", "600", "700"]
+  weight: ["400", "500", "600", "700", "800"],
+  style: ["normal", "italic"]
 });
