@@ -1,5 +1,11 @@
-import { Router } from "express";
+import { Router, Request, Response, NextFunction } from "express";
 import { ZodError } from "zod";
+
+const catchAsync = (fn: (req: Request, res: Response, next: NextFunction) => Promise<any>) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    Promise.resolve(fn(req, res, next)).catch(next);
+  };
+};
 
 import { authenticate } from "../../middleware/auth.middleware.js";
 import { ApiError } from "../../utils/ApiError.js";
@@ -29,7 +35,7 @@ function parseBody<T>(schema: { parse: (value: unknown) => T }, body: unknown): 
   }
 }
 
-router.post("/register/client", async (request, response) => {
+router.post("/register/client", catchAsync(async (request, response) => {
   const payload = parseBody(registerSchema, request.body);
   const result = await authService.register({
     role: "CLIENT",
@@ -49,9 +55,9 @@ router.post("/register/client", async (request, response) => {
   response.status(201).json(
     successResponse(result, "Account created")
   );
-});
+}));
 
-router.post("/register/worker", async (request, response) => {
+router.post("/register/worker", catchAsync(async (request, response) => {
   const payload = parseBody(registerSchema, request.body);
   const result = await authService.register({
     role: "WORKER",
@@ -71,9 +77,9 @@ router.post("/register/worker", async (request, response) => {
   response.status(201).json(
     successResponse(result, "Account created")
   );
-});
+}));
 
-router.post("/login", async (request, response) => {
+router.post("/login", catchAsync(async (request, response) => {
   const payload = parseBody(loginSchema, request.body);
   const result = await authService.login({
     phone: payload.phone,
@@ -89,9 +95,9 @@ router.post("/login", async (request, response) => {
   response.status(200).json(
     successResponse(result, "Logged in")
   );
-});
+}));
 
-router.post("/verify-otp", async (request, response) => {
+router.post("/verify-otp", catchAsync(async (request, response) => {
   const payload = parseBody(verifyOtpSchema, request.body);
   const result = await authService.verifyOtp(payload.phone);
 
@@ -102,9 +108,9 @@ router.post("/verify-otp", async (request, response) => {
   });
 
   response.status(200).json(successResponse(result, "OTP verified"));
-});
+}));
 
-router.post("/refresh-token", async (request, response) => {
+router.post("/refresh-token", catchAsync(async (request, response) => {
   const cookieRefreshToken = request.cookies?.osta_refresh_token;
   const payload = parseBody(refreshTokenSchema, {
     refreshToken: typeof cookieRefreshToken === "string" ? cookieRefreshToken : request.body?.refreshToken
@@ -118,7 +124,7 @@ router.post("/refresh-token", async (request, response) => {
   });
 
   response.status(200).json(successResponse(result, "Tokens refreshed"));
-});
+}));
 
 router.post("/forgot-password", (request, response) => {
   parseBody(forgotPasswordSchema, request.body);
@@ -130,13 +136,13 @@ router.post("/reset-password", (request, response) => {
   response.status(200).json(successResponse({ reset: true }, "Password reset successful"));
 });
 
-router.post("/logout", authenticate, async (request, response) => {
+router.post("/logout", authenticate, catchAsync(async (request, response) => {
   clearAuthCookies(response);
   response.status(200).json(successResponse(await authService.logout(request.auth!.sessionId), "Logged out"));
-});
+}));
 
-router.get("/me", authenticate, async (request, response) => {
+router.get("/me", authenticate, catchAsync(async (request, response) => {
   response.status(200).json(successResponse(await authService.me(request.auth!.userId), "Authenticated user"));
-});
+}));
 
 export const authRouter = router;
