@@ -8,8 +8,11 @@ export function notFoundHandler(_request: Request, _response: Response, next: Ne
 }
 
 export function errorHandler(error: unknown, _request: Request, response: Response, _next: NextFunction) {
-  if (error instanceof ApiError) {
-    response.status(error.statusCode).json(errorResponse(error.message, error.code));
+  console.error("[ErrorHandler]", error);
+
+  if (error instanceof ApiError || (error && typeof error === "object" && "statusCode" in error)) {
+    const apiError = error as ApiError;
+    response.status(apiError.statusCode || 400).json(errorResponse(apiError.message, apiError.code));
     return;
   }
 
