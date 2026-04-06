@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 
+import Image from "next/image";
 import Link from "next/link";
 
 import { AnimatePresence, motion } from "framer-motion";
@@ -44,25 +45,26 @@ import { cn } from "@/lib/utils";
 
 const areaOptions = ["Nasr City", "New Cairo", "Maadi", "6th of October", "Alexandria"];
 
-const serviceIconMap = {
-  electrical: Zap,
-  plumbing: Waves,
-  carpentry: Hammer,
-  painting: Paintbrush,
-  "ac-appliances": Snowflake,
-  "aluminum-welding": Wrench,
-  "general-services": ShieldCheck
-} as const;
+// Pastel backgrounds for image area (shown before image loads)
+const categoryBg: Record<string, string> = {
+  electrical:         "#FEF3C7",
+  plumbing:           "#DBEAFE",
+  carpentry:          "#FEF9EE",
+  painting:           "#FDF2F8",
+  "ac-appliances":    "#E0F2FE",
+  "aluminum-welding": "#F1F5F9",
+  "general-services": "#F0FDF4"
+};
 
-// Pastel palette for service category cards (profi.ru-style)
-const categoryPastels: Record<string, { bg: string; iconColor: string }> = {
-  electrical:        { bg: "#FEF3C7", iconColor: "#D97706" },
-  plumbing:          { bg: "#DBEAFE", iconColor: "#2563EB" },
-  carpentry:         { bg: "#FEF9EE", iconColor: "#92400E" },
-  painting:          { bg: "#FDF2F8", iconColor: "#9D174D" },
-  "ac-appliances":   { bg: "#E0F2FE", iconColor: "#0284C7" },
-  "aluminum-welding":{ bg: "#F1F5F9", iconColor: "#475569" },
-  "general-services":{ bg: "#F0FDF4", iconColor: "#15803D" }
+// Generated service photos
+const categoryImages: Record<string, string> = {
+  electrical:         "/services/electrical.png",
+  plumbing:           "/services/plumbing.png",
+  carpentry:          "/services/carpentry.png",
+  painting:           "/services/painting.png",
+  "ac-appliances":    "/services/ac-appliances.png",
+  "aluminum-welding": "/services/aluminum-welding.png",
+  "general-services": "/services/general-services.png"
 };
 
 function AnimatedCounter({ value, suffix, locale }: { value: number; suffix: string; locale: Locale }) {
@@ -330,25 +332,39 @@ export function LandingPage({ locale }: { locale: Locale }) {
             </Link>
           </div>
 
-          {/* Horizontal scroll strip – pastel cards */}
-          <div className="grid gap-4 md:grid-cols-3 xl:grid-cols-4">
+          {/* Photo cards – profi.ru style */}
+          <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
             {serviceCategories.map((category, index) => {
-              const Icon = serviceIconMap[category.slug as keyof typeof serviceIconMap];
-              const pastel = categoryPastels[category.slug] ?? { bg: "#F3F4F6", iconColor: "#374151" };
+              const bg = categoryBg[category.slug] ?? "#F3F4F6";
+              const img = categoryImages[category.slug];
 
               return (
-                <motion.article key={category.id}
-                  initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }}
-                  transition={{ duration: 0.45, delay: index * 0.04 }}
-                  className="group cursor-pointer rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
-                >
-                  <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl" style={{ background: pastel.bg }}>
-                    <Icon className="h-7 w-7" style={{ color: pastel.iconColor }} strokeWidth={1.5} />
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-900">{category.name[locale]}</h3>
-                  <p className="mt-1.5 text-sm text-gray-400">{category.services[0]?.name[locale]}</p>
-                  <p className="mt-3 text-xs text-gray-400">{category.workersAvailable}+ {isArabic ? "متاح" : "available"}</p>
-                </motion.article>
+                <Link key={category.id} href={`/${locale}/services/${category.slug}`}>
+                  <motion.article
+                    initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }}
+                    transition={{ duration: 0.45, delay: index * 0.04 }}
+                    className="group cursor-pointer overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                  >
+                    {/* Photo top – profi.ru style */}
+                    <div className="relative h-44 w-full overflow-hidden" style={{ background: bg }}>
+                      {img ? (
+                        <Image
+                          src={img}
+                          alt={category.name[locale]}
+                          fill
+                          className="object-cover transition duration-500 group-hover:scale-105"
+                          sizes="(max-width: 768px) 50vw, 25vw"
+                        />
+                      ) : null}
+                    </div>
+                    {/* Text below */}
+                    <div className="p-4">
+                      <h3 className="text-base font-semibold text-gray-900">{category.name[locale]}</h3>
+                      <p className="mt-1 text-sm text-gray-400">{category.services[0]?.name[locale]}</p>
+                      <p className="mt-2 text-xs text-gray-400">{category.workersAvailable}+ {isArabic ? "متاح" : "available"}</p>
+                    </div>
+                  </motion.article>
+                </Link>
               );
             })}
           </div>
