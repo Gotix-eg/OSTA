@@ -28,7 +28,8 @@ function parseBody<T>(schema: { parse: (value: unknown) => T }, body: unknown): 
     return schema.parse(body);
   } catch (error) {
     if (error instanceof ZodError) {
-      throw new ApiError(400, "Validation failed", error.flatten().fieldErrors.toString());
+      const firstError = Object.values(error.flatten().fieldErrors).flat()[0] as string | undefined;
+      throw new ApiError(400, firstError || "Validation failed");
     }
 
     throw error;
