@@ -8,13 +8,25 @@ import { errorHandler, notFoundHandler } from "./middleware/error.middleware.js"
 import { loggerMiddleware } from "./middleware/logger.middleware.js";
 import { apiRouter } from "./routes/index.js";
 
+const ALLOWED_ORIGINS = [
+  "http://localhost:3000",
+  "http://localhost:3001",
+  env.APP_URL,
+  "https://web-gold-nu-39.vercel.app",
+].filter(Boolean);
+
 export function createApp() {
   const app = express();
 
   app.use(helmet());
   app.use(
     cors({
-      origin: env.APP_URL,
+      origin: (origin, callback) => {
+        // allow requests with no origin (Postman, curl, server-to-server)
+        if (!origin) return callback(null, true);
+        if (ALLOWED_ORIGINS.includes(origin)) return callback(null, true);
+        callback(new Error(`CORS: origin ${origin} not allowed`));
+      },
       credentials: true
     })
   );
