@@ -15,6 +15,9 @@ const ALLOWED_ORIGINS = [
   "https://web-gold-nu-39.vercel.app",
 ].filter(Boolean);
 
+// Allow all Vercel preview deployments
+const VERCEL_PREVIEW_REGEX = /^https:\/\/.*\.vercel\.app$/;
+
 export function createApp() {
   const app = express();
 
