@@ -456,11 +456,8 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
                 label={isArabic ? "رقم الهاتف" : "Phone number"}
                 value={state.phone}
                 onChange={(phone) => setState({ ...state, phone })}
+                placeholder="+20 100 000 0000"
               />
-              <div className="space-y-2">
-                <span className="text-sm font-medium text-dark-700">{isArabic ? "رمز التحقق" : "Verification code"}</span>
-                <OtpBoxes value={state.otp} onChange={(otp) => setState({ ...state, otp })} />
-              </div>
             </>
           ) : null}
 
@@ -662,11 +659,8 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
                 label={isArabic ? "رقم الهاتف" : "Phone number"}
                 value={state.phone}
                 onChange={(phone) => setState({ ...state, phone })}
+                placeholder="+20 100 000 0000"
               />
-              <div className="space-y-2">
-                <span className="text-sm font-medium text-dark-700">{isArabic ? "رمز التحقق" : "Verification code"}</span>
-                <OtpBoxes value={state.otp} onChange={(otp) => setState({ ...state, otp })} />
-              </div>
             </>
           ) : null}
 
