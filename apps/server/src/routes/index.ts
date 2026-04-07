@@ -13,12 +13,25 @@ router.get("/health", (_request, response) => {
   response.status(200).json(successResponse({ status: "ok" }, "OSTA API is running"));
 });
 
-router.get("/debug-env", (_request, response) => {
-  const dbUrl = process.env.DATABASE_URL;
+import { prisma } from "../lib/prisma.js";
+
+router.get("/debug-env", async (_request, response) => {
+  const dbUrl = process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL;
+  let prismaOk = false;
+  let prismaError = null;
+  try {
+    const count = await prisma.user.count();
+    prismaOk = true;
+  } catch (e: any) {
+    prismaError = e.message || e.toString();
+  }
+
   response.status(200).json({
     DATABASE_URL: dbUrl ? `${dbUrl.substring(0, 30)}...` : "NOT SET",
     NODE_ENV: process.env.NODE_ENV,
     JWT_SECRET: process.env.JWT_SECRET ? "SET" : "NOT SET",
+    PRISMA_OK: prismaOk,
+    PRISMA_ERROR: prismaError
   });
 });
 
