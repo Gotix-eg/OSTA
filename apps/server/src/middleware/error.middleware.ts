@@ -12,6 +12,6 @@ export function errorHandler(error: unknown, _request: Request, response: Respon
     response.status(error.statusCode).json(errorResponse(error.message, error.code));
     return;
   }
-
+  console.error("Unhandled error:", error);
   response.status(500).json(errorResponse("Something went wrong", "INTERNAL_SERVER_ERROR"));
 }
