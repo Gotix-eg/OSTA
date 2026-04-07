@@ -13,6 +13,15 @@ router.get("/health", (_request, response) => {
   response.status(200).json(successResponse({ status: "ok" }, "OSTA API is running"));
 });
 
+router.get("/debug-env", (_request, response) => {
+  const dbUrl = process.env.DATABASE_URL;
+  response.status(200).json({
+    DATABASE_URL: dbUrl ? `${dbUrl.substring(0, 30)}...` : "NOT SET",
+    NODE_ENV: process.env.NODE_ENV,
+    JWT_SECRET: process.env.JWT_SECRET ? "SET" : "NOT SET",
+  });
+});
+
 router.use("/auth", authRouter);
 router.use("/clients", clientsRouter);
 router.use("/workers", workersRouter);
