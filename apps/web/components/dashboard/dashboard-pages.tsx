@@ -979,3 +979,47 @@ export function AdminDashboardHome({ locale, initialData }: { locale: Locale; in
     </div>
   );
 }
+
+export function VendorDashboardHome({ locale }: { locale: Locale }) {
+  const copy = dashboardCopy[locale].vendor;
+  
+  // Hardcoded for now until API is connected
+  const stats = [
+    { value: "0", note: locale === "ar" ? "هذا الشهر" : "this month", tone: "accent" as const, icon: Briefcase },
+    { value: "EGP 0", note: locale === "ar" ? "عن الشهر السابق" : "vs last month", tone: "sun" as const, icon: CircleDollarSign },
+    { value: "0", note: locale === "ar" ? "في الطريق" : "in transit", tone: "primary" as const, icon: Route },
+    { value: "EGP 0", note: locale === "ar" ? "رصيد متاح" : "available balance", tone: "dark" as const, icon: Wallet }
+  ];
+
+  return (
+    <div>
+      <SectionTitle
+        eyebrow={copy.role}
+        title={copy.title}
+        subtitle={copy.subtitle}
+        actionLabel={copy.action}
+        actionHref={`/${locale}/vendor/settings`}
+        tone="accent"
+      />
+
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        {copy.stats.map((label, index) => (
+           <MetricCard
+             key={label}
+             label={label}
+             value={stats[index]?.value ?? "-"}
+             note={stats[index]?.note ?? ""}
+             tone={stats[index]?.tone ?? "accent"}
+             icon={stats[index]?.icon ?? Sparkles}
+           />
+        ))}
+      </div>
+
+      <div className="mt-6">
+        <Surface title={copy.queueSection} eyebrow={locale === "ar" ? "طلبات حية" : "Live requests"}>
+           <EmptyNotice>{locale === "ar" ? "لا توجد طلبات قريبة الآن" : "No nearby requests right now"}</EmptyNotice>
+        </Surface>
+      </div>
+    </div>
+  );
+}

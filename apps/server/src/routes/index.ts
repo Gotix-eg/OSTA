@@ -35,10 +35,15 @@ router.get("/debug-env", async (_request, response) => {
   });
 });
 
+import { vendorRouter } from "../modules/vendors/vendor.routes.js";
+import { materialsRouter } from "../modules/materials/materials.routes.js";
+
 router.use("/auth", authRouter);
 router.use("/clients", clientsRouter);
 router.use("/workers", workersRouter);
 router.use("/admin", adminRouter);
 router.use("/services", servicesRouter);
+router.use("/vendors", vendorRouter);
+router.use("/materials", materialsRouter);
 
 export const apiRouter = router;

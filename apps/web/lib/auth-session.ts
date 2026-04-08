@@ -1,4 +1,4 @@
-export type AuthRole = "CLIENT" | "WORKER" | "ADMIN" | "SUPER_ADMIN";
+export type AuthRole = "CLIENT" | "WORKER" | "VENDOR" | "ADMIN" | "SUPER_ADMIN";
 
 type AuthSessionPayload = {
   accessToken: string;
@@ -43,6 +43,10 @@ export function getDashboardRoute(locale: string, role: AuthRole) {
 
   if (role === "WORKER") {
     return `/${locale}/worker`;
+  }
+
+  if (role === "VENDOR") {
+    return `/${locale}/vendor`;
   }
 
   return `/${locale}/admin`;

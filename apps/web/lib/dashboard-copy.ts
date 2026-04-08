@@ -27,6 +27,18 @@ export const dashboardCopy = {
       earningsSection: "مؤشر الأرباح",
       action: "تحديث التوفر"
     },
+    vendor: {
+      role: "لوحة المورد",
+      title: "أهلاً بك",
+      subtitle: "استقبل طلبات قطع الغيار، أرسل عروض أسعارك، وراقب مبيعاتك لحظة بلحظة.",
+      search: "ابحث في الطلبات أو البضائع",
+      nav: ["الرئيسية", "طلبات البضائع", "الطلبات الجارية", "المحفظة", "الإعدادات"],
+      stats: ["طلبات جديدة", "مبيعات الشهر", "طلبات قيد التوصيل", "رصيد المحفظة"],
+      queueSection: "طلبات قريبة تنتظر عروضك",
+      alertsSection: "عروض تم قبولها",
+      financeSection: "ملخص أرباح الشهر",
+      action: "تحديث المخزون"
+    },
     admin: {
       role: "لوحة المشرف",
       title: "نظرة شاملة على المنصة",
@@ -76,6 +88,18 @@ export const dashboardCopy = {
       scheduleSection: "Weekly plan",
       earningsSection: "Earnings pulse",
       action: "Update availability"
+    },
+    vendor: {
+      role: "Vendor Dashboard",
+      title: "Welcome back",
+      subtitle: "Receive material requests, send quotes, and monitor your sales.",
+      search: "Search requests or orders",
+      nav: ["Home", "Material Requests", "Active Orders", "Wallet", "Settings"],
+      stats: ["New requests", "Monthly sales", "Orders in transit", "Wallet balance"],
+      queueSection: "Nearby requests waiting for quotes",
+      alertsSection: "Accepted quotes",
+      financeSection: "Monthly revenue",
+      action: "Update inventory"
     },
     admin: {
       role: "Admin Dashboard",

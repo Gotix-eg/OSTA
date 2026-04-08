@@ -33,7 +33,7 @@ import { dashboardCopy } from "@/lib/dashboard-copy";
 import { stripLocalePrefix, type Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
 
-type DashboardRole = "client" | "worker" | "admin";
+type DashboardRole = "client" | "worker" | "vendor" | "admin";
 
 type NavItem = {
   href: string;
@@ -44,6 +44,7 @@ type NavItem = {
 const iconSets: Record<DashboardRole, Array<NavItem["icon"]>> = {
   client: [Home, Briefcase, FolderClock, Heart, Wallet, Settings],
   worker: [Home, FolderClock, Briefcase, CreditCard, BarChart3, Settings],
+  vendor: [Home, Bell, Briefcase, Wallet, Settings],
   admin: [Home, ShieldCheck, Users, FolderClock, CreditCard, Settings]
 };
 
@@ -59,6 +60,12 @@ const roleThemes: Record<DashboardRole, { tag: string; accent: string; orb: stri
     accent: "from-accent-500/25 via-accent-400/10 to-sun-300/20",
     orb: "bg-accent-500/20",
     ring: "text-accent-800"
+  },
+  vendor: {
+    tag: "Vendor hub",
+    accent: "from-emerald-500/25 via-emerald-400/10 to-teal-300/20",
+    orb: "bg-emerald-500/20",
+    ring: "text-emerald-800"
   },
   admin: {
     tag: "Admin control",
@@ -87,6 +94,7 @@ export function DashboardShell({
     const routes: Record<DashboardRole, string[]> = {
       client: ["/client", "/client/new-request", "/client/my-requests", "/client/favorites", "/client/wallet", "/client/settings"],
       worker: ["/worker", "/worker/requests/incoming", "/worker/requests/active", "/worker/earnings", "/worker/ratings", "/worker/settings"],
+      vendor: ["/vendor", "/vendor/requests", "/vendor/active-orders", "/vendor/wallet", "/vendor/settings"],
       admin: ["/admin", "/admin/workers/pending", "/admin/clients", "/admin/requests", "/admin/finance", "/admin/settings"]
     };
 

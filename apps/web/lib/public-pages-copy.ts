@@ -126,6 +126,11 @@ export const publicPageCopy = {
           href: "/worker"
         },
         {
+          title: "داشبورد المورد",
+          body: "طلبات قطع الغيار، وعروض البضائع وإدارة المبيعات.",
+          href: "/vendor"
+        },
+        {
           title: "داشبورد الإدارة",
           body: "قائمة التوثيق ونبض المالية وتنبيهات العمليات ولوحات التحكم.",
           href: "/admin"
@@ -254,6 +259,11 @@ export const publicPageCopy = {
           title: "Worker dashboard",
           body: "Incoming jobs, active work, earnings, and performance tracking.",
           href: "/worker"
+        },
+        {
+          title: "Vendor dashboard",
+          body: "Material requests, quotes, and active deliveries tracking.",
+          href: "/vendor"
         },
         {
           title: "Admin dashboard",

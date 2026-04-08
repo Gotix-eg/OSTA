@@ -60,6 +60,34 @@ type WorkerRegisterState = {
   acceptedTerms: boolean;
 };
 
+type VendorRegisterState = {
+  storeName: string;
+  phone: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  governorate: string;
+  city: string;
+  address: string;
+  commercialRecord: string;
+  taxCard: string;
+  acceptedTerms: boolean;
+};
+
+const vendorRegisterDefaults: VendorRegisterState = {
+  storeName: "",
+  phone: "+20",
+  email: "",
+  password: "",
+  confirmPassword: "",
+  governorate: "",
+  city: "",
+  address: "",
+  commercialRecord: "",
+  taxCard: "",
+  acceptedTerms: false
+};
+
 const clientRegisterDefaults: ClientRegisterState = {
   phone: "+20",
   otp: "",
@@ -362,18 +390,26 @@ export function LoginForm({ locale }: { locale: Locale }) {
           <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-dark-200" />
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-2">
+
+
+        <div className="grid gap-3 sm:grid-cols-3 mt-3">
           <Link
             href={`/${locale}/register/client`}
-            className="inline-flex h-12 items-center justify-center rounded-[1.2rem] border border-dark-200 bg-surface-soft px-4 text-sm font-semibold text-dark-900 transition hover:border-primary-300 hover:text-primary-700"
+            className="inline-flex h-12 items-center justify-center rounded-[1.2rem] border border-dark-200 bg-surface-soft px-2 text-sm font-semibold text-dark-900 transition hover:border-primary-300 hover:text-primary-700"
           >
-            {isArabic ? "تسجيل عميل" : "Register as Client"}
+            {isArabic ? "تسجيل عميل" : "Register Client"}
           </Link>
           <Link
             href={`/${locale}/register/worker`}
-            className="inline-flex h-12 items-center justify-center rounded-[1.2rem] border border-dark-200 bg-surface-soft px-4 text-sm font-semibold text-dark-900 transition hover:border-primary-300 hover:text-primary-700"
+            className="inline-flex h-12 items-center justify-center rounded-[1.2rem] border border-dark-200 bg-surface-soft px-2 text-sm font-semibold text-dark-900 transition hover:border-primary-300 hover:text-primary-700"
           >
-            {isArabic ? "تسجيل عامل" : "Register as Worker"}
+            {isArabic ? "تسجيل عامل" : "Register Worker"}
+          </Link>
+          <Link
+            href={`/${locale}/register/vendor`}
+            className="inline-flex h-12 items-center justify-center rounded-[1.2rem] border border-dark-200 bg-surface-soft px-2 text-sm font-semibold text-dark-900 transition hover:border-primary-300 hover:text-primary-700"
+          >
+            {isArabic ? "تسجيل مورد" : "Register Vendor"}
           </Link>
         </div>
       </div>
@@ -1051,6 +1087,198 @@ export function VerifyOtpForm({ locale }: { locale: Locale }) {
           {copy.success}
         </div>
       ) : null}
+    </div>
+  );
+}
+
+export function VendorRegisterForm({ locale }: { locale: Locale }) {
+  const copy = authCopy[locale];
+  const isArabic = locale === "ar";
+  const router = useRouter();
+  const { ready, state, setState } = usePersistentState("osta-vendor-register", vendorRegisterDefaults);
+  const [step, setStep] = useState(0);
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  async function handleRegister() {
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      const payload = await postApiData<
+        AuthSuccessResponse,
+        Omit<VendorRegisterState, "acceptedTerms">
+      >("/auth/register/vendor", {
+        storeName: state.storeName,
+        phone: state.phone,
+        email: state.email,
+        password: state.password,
+        confirmPassword: state.confirmPassword,
+        governorate: state.governorate,
+        city: state.city,
+        address: state.address,
+        commercialRecord: state.commercialRecord,
+        taxCard: state.taxCard
+      });
+
+      window.localStorage.removeItem("osta-vendor-register");
+      setSubmitted(true);
+      applyAuthSuccess(locale, payload, true, router);
+    } catch (registerError) {
+      setError(registerError instanceof Error ? registerError.message : isArabic ? "تعذر إنشاء الحساب" : "Unable to create account.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  if (!ready) {
+    return <div className="text-sm text-dark-500">{isArabic ? "جاري التحضير..." : "Preparing form..."}</div>;
+  }
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-3xl font-semibold text-dark-950">{copy.registerVendorTitle}</h2>
+        <p className="mt-3 text-body text-dark-500">
+          {isArabic
+            ? "استمر في إضافة بيانات متجرك ومعلومات الاتصال، سيتم حفظ الخطوات في حال فقدان الاتصال."
+            : "Continue adding your store details. Your progress is saved locally."}
+        </p>
+      </div>
+
+      <StepIndicator current={step} total={3} />
+
+      {submitted ? (
+        <div className="rounded-[1.6rem] border border-success/30 bg-success/10 p-6 text-start">
+          <ShieldCheck className="h-8 w-8 text-success" />
+          <h3 className="mt-4 text-2xl font-semibold text-dark-950">{isArabic ? "تم إرسال الطلب" : "Request sent"}</h3>
+          <p className="mt-3 text-dark-600">{copy.success}</p>
+        </div>
+      ) : (
+        <div className="space-y-5">
+          {step === 0 ? (
+            <>
+              <InputField
+                label={isArabic ? "رقم الهاتف" : "Phone number"}
+                value={state.phone}
+                onChange={(phone) => setState({ ...state, phone })}
+                placeholder="+20 100 000 0000"
+              />
+              <InputField
+                label={isArabic ? "اسم المتجر" : "Store Name"}
+                value={state.storeName}
+                onChange={(storeName) => setState({ ...state, storeName })}
+              />
+            </>
+          ) : null}
+
+          {step === 1 ? (
+            <>
+              <InputField
+                label={isArabic ? "البريد الإلكتروني" : "Email"}
+                value={state.email}
+                onChange={(email) => setState({ ...state, email })}
+                type="email"
+              />
+              <div className="grid gap-5 sm:grid-cols-2">
+                <InputField
+                  label={isArabic ? "كلمة المرور" : "Password"}
+                  value={state.password}
+                  onChange={(password) => setState({ ...state, password })}
+                  type="password"
+                />
+                <InputField
+                  label={isArabic ? "تأكيد كلمة المرور" : "Confirm password"}
+                  value={state.confirmPassword}
+                  onChange={(confirmPassword) => setState({ ...state, confirmPassword })}
+                  type="password"
+                />
+              </div>
+            </>
+          ) : null}
+
+          {step === 2 ? (
+            <>
+              <div className="grid gap-5 sm:grid-cols-2">
+                <InputField
+                  label={isArabic ? "رقم السجل التجاري" : "Commercial Record"}
+                  value={state.commercialRecord}
+                  onChange={(commercialRecord) => setState({ ...state, commercialRecord })}
+                />
+                <InputField
+                  label={isArabic ? "البطاقة الضريبية" : "Tax Card"}
+                  value={state.taxCard}
+                  onChange={(taxCard) => setState({ ...state, taxCard })}
+                />
+              </div>
+              <div className="grid gap-5 sm:grid-cols-2">
+                <InputField
+                  label={isArabic ? "المحافظة" : "Governorate"}
+                  value={state.governorate}
+                  onChange={(governorate) => setState({ ...state, governorate })}
+                />
+                <InputField
+                  label={isArabic ? "المدينة" : "City"}
+                  value={state.city}
+                  onChange={(city) => setState({ ...state, city })}
+                />
+              </div>
+              <InputField
+                label={isArabic ? "العنوان التفصيلي" : "Detailed address"}
+                value={state.address}
+                onChange={(address) => setState({ ...state, address })}
+                textarea
+                rows={3}
+              />
+
+              <label className="flex items-center gap-3 rounded-[1.2rem] border border-dark-200 bg-surface-soft px-4 py-3 text-sm text-dark-700">
+                <input
+                  type="checkbox"
+                  checked={state.acceptedTerms}
+                  onChange={(event) => setState({ ...state, acceptedTerms: event.target.checked })}
+                  className="h-4 w-4 rounded border-dark-300 text-primary-600"
+                />
+                <span>{copy.terms}</span>
+              </label>
+            </>
+          ) : null}
+
+          <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+            <button
+              type="button"
+              onClick={() => setStep((current) => Math.max(current - 1, 0))}
+              className="inline-flex h-11 items-center gap-2 rounded-full border border-dark-200 px-5 text-sm font-semibold text-dark-700 transition hover:border-dark-400"
+            >
+              {isArabic ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+              {isArabic ? "السابق" : "Back"}
+            </button>
+
+            {step < 2 ? (
+              <button
+                type="button"
+                onClick={() => setStep((current) => Math.min(current + 1, 2))}
+                className="inline-flex h-11 items-center gap-2 rounded-full bg-primary-600 px-5 text-sm font-semibold text-white transition hover:bg-primary-700"
+              >
+                {copy.submit}
+                {isArabic ? <ArrowLeft className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => void handleRegister()}
+                disabled={isSubmitting || !state.acceptedTerms}
+                className="inline-flex h-11 items-center gap-2 rounded-full bg-primary-600 px-5 text-sm font-semibold text-white transition hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {isSubmitting ? (isArabic ? "... جاري" : "Submitting...") : isArabic ? "تسجيل المورد" : "Register Vendor"}
+                {isArabic ? <ArrowLeft className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
+              </button>
+            )}
+          </div>
+
+          {error ? <div className="rounded-[1.4rem] border border-error/30 bg-error/10 px-4 py-3 text-sm text-error">{error}</div> : null}
+        </div>
+      )}
     </div>
   );
 }
