@@ -17,6 +17,7 @@ import {
   Heart,
   Home,
   LayoutDashboard,
+  LogOut,
   Megaphone,
   Menu,
   Search,
@@ -29,6 +30,8 @@ import {
   Wallet,
   X
 } from "lucide-react";
+
+import { clearAuthSession } from "@/lib/auth-session";
 
 import { LocaleSwitcher } from "@/components/shared/locale-switcher";
 import { dashboardCopy } from "@/lib/dashboard-copy";
@@ -289,7 +292,22 @@ function SidebarContent({
         </p>
       </div>
 
-      <Link href={`/${locale}/dashboards`} className="relative mt-auto inline-flex items-center justify-between rounded-[1.4rem] border border-white/10 bg-gradient-to-r from-white/10 to-white/5 px-4 py-4 text-sm font-semibold text-white transition hover:bg-white/10">
+      <button
+        type="button"
+        onClick={() => {
+          clearAuthSession();
+          window.location.assign(`/${locale}`);
+        }}
+        className="relative mt-auto inline-flex items-center justify-between rounded-[1.4rem] border border-white/10 bg-gradient-to-r from-error/20 to-error/10 px-4 py-4 text-sm font-semibold text-white transition hover:from-error/30 hover:to-error/20"
+      >
+        <span className="flex items-center gap-3">
+          <LogOut className="h-4 w-4" />
+          {locale === "ar" ? "تسجيل الخروج" : "Logout"}
+        </span>
+        <ArrowUpRight className="h-4 w-4" />
+      </button>
+
+      <Link href={`/${locale}/dashboards`} className="relative mt-4 inline-flex items-center justify-between rounded-[1.4rem] border border-white/10 bg-gradient-to-r from-white/10 to-white/5 px-4 py-4 text-sm font-semibold text-white transition hover:bg-white/10">
         <span className="flex items-center gap-3">
           <Command className="h-4 w-4" />
           {locale === "ar" ? "مركز اللوحات" : "Dashboard hub"}
