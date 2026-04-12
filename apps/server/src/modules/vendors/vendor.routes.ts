@@ -62,6 +62,12 @@ router.put("/profile", authenticate, requireRoles("VENDOR"), catchAsync(async (r
   response.json(successResponse(result, "تم تحديث بيانات المحل"));
 }));
 
+router.patch("/profile", authenticate, requireRoles("VENDOR"), catchAsync(async (request, response) => {
+  const payload = parseBody(updateVendorProfileSchema.partial(), request.body);
+  const result = await vendorService.updateProfile(request.auth!.userId, payload);
+  response.json(successResponse(result, "تم تحديث بيانات المحل"));
+}));
+
 // PUT /api/vendors/location - Update vendor location
 router.put("/location", authenticate, requireRoles("VENDOR"), catchAsync(async (request, response) => {
   const payload = parseBody(updateVendorLocationSchema, request.body);

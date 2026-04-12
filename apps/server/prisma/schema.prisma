@@ -771,6 +771,7 @@ model VendorProfile {
   userId                String                   @unique
   shopName              String
   shopNameAr            String?
+  category              String?
   shopDescription       String?
   shopImageUrl          String?
   taxCardUrl            String?

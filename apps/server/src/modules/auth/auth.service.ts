@@ -17,6 +17,7 @@ type RegisterInput = {
   address?: string;
   latitude?: number;
   longitude?: number;
+  category?: string;
 };
 
 type LoginInput = {
@@ -35,6 +36,7 @@ function toPublicUser(user: {
   status: string;
   clientProfile?: { totalRequests: number; walletBalance: number; isVip: boolean } | null;
   workerProfile?: { yearsOfExperience: number; rating: number; isAvailable: boolean } | null;
+  vendorProfile?: { shopName: string; category: string | null; latitude: number | null; longitude: number | null } | null;
 }) {
   return {
     id: user.id,
@@ -50,7 +52,9 @@ function toPublicUser(user: {
         ? user.clientProfile
         : user.role === "WORKER"
           ? user.workerProfile
-          : null
+          : user.role === "VENDOR"
+            ? user.vendorProfile
+            : null
   };
 }
 
@@ -131,7 +135,8 @@ export const authService = {
           input.role === "VENDOR"
             ? {
                 create: {
-                  storeName: input.firstName + " " + input.lastName
+                  shopName: input.firstName + " " + input.lastName,
+                  category: (input as any).category || ""
                 }
               }
             : undefined,
@@ -168,7 +173,8 @@ export const authService = {
       where: { phone: input.phone },
       include: {
         clientProfile: true,
-        workerProfile: true
+        workerProfile: true,
+        vendorProfile: true
       }
     });
 
@@ -200,7 +206,8 @@ export const authService = {
       where: { phone },
       include: {
         clientProfile: true,
-        workerProfile: true
+        workerProfile: true,
+        vendorProfile: true
       }
     });
 
@@ -254,7 +261,8 @@ export const authService = {
       where: { id: userId },
       include: {
         clientProfile: true,
-        workerProfile: true
+        workerProfile: true,
+        vendorProfile: true
       }
     });
 

@@ -4,12 +4,13 @@ import { NextResponse } from "next/server";
 const protectedSegments = {
   client: ["CLIENT"],
   worker: ["WORKER"],
+  vendor: ["VENDOR"],
   admin: ["ADMIN", "SUPER_ADMIN"]
 } as const;
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const match = pathname.match(/^\/(ar|en)\/(client|worker|admin)(?:\/.*)?$/);
+  const match = pathname.match(/^\/(ar|en)\/(client|worker|vendor|admin)(?:\/.*)?$/);
 
   if (!match) {
     return NextResponse.next();
@@ -38,6 +39,8 @@ export const config = {
     "/:locale/client/:path*",
     "/:locale/worker",
     "/:locale/worker/:path*",
+    "/:locale/vendor",
+    "/:locale/vendor/:path*",
     "/:locale/admin",
     "/:locale/admin/:path*"
   ]

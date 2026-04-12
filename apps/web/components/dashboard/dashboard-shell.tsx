@@ -1,7 +1,7 @@
 "use client";
 
 import type { ComponentType, ReactNode } from "react";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -30,6 +30,8 @@ import {
   Wallet,
   X
 } from "lucide-react";
+import { fetchApiData } from "@/lib/api";
+import { VendorOnboarding } from "./vendor-onboarding";
 
 import { clearAuthSession } from "@/lib/auth-session";
 
@@ -89,11 +91,33 @@ export function DashboardShell({
   role: DashboardRole;
   children: ReactNode;
 }) {
+  const isArabic = locale === "ar";
+  const [isComplete, setIsComplete] = useState<boolean | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
   const copy = dashboardCopy[locale][role];
   const shared = dashboardCopy[locale].shared;
   const theme = roleThemes[role];
+
+  useEffect(() => {
+    async function checkCompleteness() {
+      if (role !== "vendor") {
+        setIsComplete(true);
+        return;
+      }
+      
+      const user = await fetchApiData<any>("/auth/me", null);
+      if (user?.role === "VENDOR") {
+        const profile = user.profile;
+        if (!profile?.category || !profile?.latitude) {
+          setIsComplete(false);
+          return;
+        }
+      }
+      setIsComplete(true);
+    }
+    checkCompleteness();
+  }, [role]);
 
   const navItems = useMemo(() => {
     const routes: Record<DashboardRole, string[]> = {
@@ -189,7 +213,17 @@ export function DashboardShell({
             </div>
           </header>
 
-          <div className="section-shell flex-1 pb-6 pt-12 lg:pb-7 lg:pt-14">{children}</div>
+          <div className="section-shell flex-1 pb-6 pt-12 lg:pb-7 lg:pt-14">
+            {isComplete === null ? (
+              <div className="flex h-64 items-center justify-center">
+                <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-600 border-t-transparent" />
+              </div>
+            ) : isComplete === false ? (
+              <VendorOnboarding locale={locale} onComplete={() => setIsComplete(true)} />
+            ) : (
+              children
+            )}
+          </div>
         </div>
       </div>
     </div>

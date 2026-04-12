@@ -23,7 +23,7 @@ import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
 import { MapPicker } from "@/components/shared/map-picker";
 import { SelectField } from "@/components/shared/select-field";
-import { egyptianGovernorates, majorCities } from "@/lib/geo-data";
+import { egyptianGovernorates, majorCities, vendorCategories } from "@/lib/geo-data";
 
 type ClientRegisterState = {
   phone: string;
@@ -80,6 +80,7 @@ type VendorRegisterState = {
   address: string;
   commercialRecord: string;
   taxCard: string;
+  category: string;
   latitude: number;
   longitude: number;
   acceptedTerms: boolean;
@@ -96,6 +97,7 @@ const vendorRegisterDefaults: VendorRegisterState = {
   address: "",
   commercialRecord: "",
   taxCard: "",
+  category: "",
   latitude: 30.0444,
   longitude: 31.2357,
   acceptedTerms: false
@@ -1225,6 +1227,7 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
         address: state.address,
         commercialRecord: state.commercialRecord,
         taxCard: state.taxCard,
+        category: state.category,
         latitude: state.latitude,
         longitude: state.longitude
       });
@@ -1276,6 +1279,13 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
                 label={isArabic ? "اسم المتجر" : "Store Name"}
                 value={state.storeName}
                 onChange={(storeName) => setState({ ...state, storeName })}
+              />
+              <SelectField
+                label={isArabic ? "تصنيف المتجر" : "Store Category"}
+                value={state.category}
+                options={vendorCategories.map(c => ({ value: c.value, label: isArabic ? c.labelAr : c.labelEn }))}
+                onChange={(cat) => setState({ ...state, category: cat })}
+                placeholder={isArabic ? "اختر تصنيف المتجر" : "Select store category"}
               />
             </>
           ) : null}

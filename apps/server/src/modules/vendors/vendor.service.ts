@@ -33,6 +33,7 @@ export const vendorService = {
           create: {
             shopName: input.shopName,
             shopNameAr: input.shopNameAr,
+            category: input.category,
             governorate: input.governorate,
             city: input.city,
             area: input.area,

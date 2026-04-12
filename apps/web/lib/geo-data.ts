@@ -44,3 +44,12 @@ export const majorCities: Record<string, GeoOption[]> = {
     { value: "haram", labelEn: "Haram", labelAr: "الهرم" }
   ]
 };
+
+export const vendorCategories: GeoOption[] = [
+  { value: "electrical", labelEn: "Electrical Supplies", labelAr: "أدوات كهربائية" },
+  { value: "plumbing", labelEn: "Plumbing Supplies", labelAr: "أدوات سباكة" },
+  { value: "paints", labelEn: "Paints & Hardware", labelAr: "حدائد وبويات" },
+  { value: "construction", labelEn: "Construction Materials", labelAr: "مواد بناء" },
+  { value: "ac", labelEn: "AC & Heating Parts", labelAr: "قطع غيار تكييف" },
+  { value: "furniture", labelEn: "Furniture & Carpentry", labelAr: "أثاث ونجارة" }
+];

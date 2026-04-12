@@ -9,6 +9,7 @@ export const registerVendorSchema = z.object({
   confirmPassword: z.string().min(8),
   shopName: z.string().min(2, "اسم المحل يجب أن يكون حرفين على الأقل"),
   shopNameAr: z.string().optional(),
+  category: z.string().min(2, "التصنيف مطلوب"),
   governorate: z.string().min(2, "المحافظة مطلوبة"),
   city: z.string().min(2, "المدينة مطلوبة"),
   area: z.string().optional(),
@@ -23,6 +24,7 @@ export const registerVendorSchema = z.object({
 export const updateVendorProfileSchema = z.object({
   shopName: z.string().min(2).optional(),
   shopNameAr: z.string().optional(),
+  category: z.string().optional(),
   shopDescription: z.string().optional(),
   governorate: z.string().optional(),
   city: z.string().optional(),
