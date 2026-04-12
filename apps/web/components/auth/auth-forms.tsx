@@ -271,7 +271,7 @@ function OtpBoxes({ value, onChange }: { value: string; onChange: (value: string
   );
 }
 
-function applyAuthSuccess(locale: Locale, payload: AuthSuccessResponse, remember: boolean, router: ReturnType<typeof useRouter>) {
+function applyAuthSuccess(locale: Locale, payload: AuthSuccessResponse, remember: boolean) {
   saveAuthSession(
     {
       accessToken: payload.accessToken,
@@ -282,7 +282,8 @@ function applyAuthSuccess(locale: Locale, payload: AuthSuccessResponse, remember
     remember
   );
 
-  router.push(getDashboardRoute(locale, payload.user.role));
+  // Use window.location for a full refresh to ensure cookies are picked up by Middleware
+  window.location.assign(getDashboardRoute(locale, payload.user.role));
 }
 
 export function LoginForm({ locale }: { locale: Locale }) {
@@ -308,7 +309,7 @@ export function LoginForm({ locale }: { locale: Locale }) {
       });
 
       setSubmitted(true);
-      applyAuthSuccess(locale, payload, remember, router);
+      applyAuthSuccess(locale, payload, remember);
     } catch (loginError) {
       setError(loginError instanceof Error ? loginError.message : isArabic ? "تعذر تسجيل الدخول" : "Unable to sign in.");
     } finally {
@@ -453,7 +454,7 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
 
       window.localStorage.removeItem("osta-client-register");
       setSubmitted(true);
-      applyAuthSuccess(locale, payload, true, router);
+      applyAuthSuccess(locale, payload, true);
     } catch (registerError) {
       setError(registerError instanceof Error ? registerError.message : isArabic ? "تعذر إنشاء الحساب" : "Unable to create account.");
     } finally {
@@ -650,7 +651,7 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
 
       window.localStorage.removeItem("osta-worker-register");
       setSubmitted(true);
-      applyAuthSuccess(locale, payload, true, router);
+      applyAuthSuccess(locale, payload, true);
     } catch (registerError) {
       setError(registerError instanceof Error ? registerError.message : isArabic ? "تعذر إرسال الطلب" : "Unable to submit application.");
     } finally {
