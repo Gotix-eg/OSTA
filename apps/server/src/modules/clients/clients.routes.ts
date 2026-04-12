@@ -64,7 +64,10 @@ const createRequestSchema = z
             message: "Custom date and window are required"
           });
         }
-      })
+      }),
+    images: z.array(z.string()).optional(),
+    voiceNote: z.string().optional(),
+    videoUrl: z.string().optional()
   });
 
 type ClientRequestRecord = {
@@ -75,6 +78,9 @@ type ClientRequestRecord = {
   title: string;
   description: string;
   mediaNotes: string;
+  images?: string[];
+  voiceNote?: string;
+  videoUrl?: string;
   address: {
     mode: "saved" | "new";
     savedAddressId?: string;
@@ -330,6 +336,9 @@ router.post("/requests", (request, response) => {
     title: payload.title,
     description: payload.description,
     mediaNotes: payload.mediaNotes ?? "",
+    images: payload.images ?? [],
+    voiceNote: payload.voiceNote,
+    videoUrl: payload.videoUrl,
     address: payload.address,
     timing: payload.timing,
     status: "PENDING",

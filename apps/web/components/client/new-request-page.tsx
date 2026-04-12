@@ -58,6 +58,9 @@ type RequestDraft = {
   timing: "emergency" | "today" | "tomorrow" | "custom";
   customDate: string;
   customWindow: string;
+  images: string[];
+  voiceNote?: string;
+  videoUrl?: string;
 };
 
 const initialDraft: RequestDraft = {
@@ -74,7 +77,10 @@ const initialDraft: RequestDraft = {
   street: "شارع التسعين",
   timing: "today",
   customDate: "",
-  customWindow: ""
+  customWindow: "",
+  images: [],
+  voiceNote: undefined,
+  videoUrl: undefined
 };
 
 const savedAddresses = [
@@ -140,6 +146,15 @@ function formatTiming(locale: Locale, draft: RequestDraft) {
   if (draft.timing === "tomorrow") return locale === "ar" ? "غدًا" : "Tomorrow";
   return `${draft.customDate || "-"} ${draft.customWindow || ""}`.trim();
 }
+
+const fileToBase64 = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (error) => reject(error);
+  });
+};
 
 export function NewRequestPage({ locale }: { locale: Locale }) {
   const isArabic = locale === "ar";
@@ -211,7 +226,10 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
           type: draft.timing,
           customDate: draft.timing === "custom" ? draft.customDate : undefined,
           customWindow: draft.timing === "custom" ? draft.customWindow : undefined
-        }
+        },
+        images: draft.images,
+        voiceNote: draft.voiceNote,
+        videoUrl: draft.videoUrl
       });
 
       window.localStorage.removeItem(draftStorageKey);
@@ -367,20 +385,85 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
 
               <div className="grid gap-4">
                 {[
-                  { icon: ImagePlus, label: isArabic ? "حتى 5 صور" : "Up to 5 images", tone: "bg-surface-peach" },
-                  { icon: Mic, label: isArabic ? "ملاحظة صوتية" : "Voice note", tone: "bg-accent-50" },
-                  { icon: Video, label: isArabic ? "فيديو قصير" : "Short video", tone: "bg-surface-soft" }
+                  {
+                    id: "images",
+                    icon: ImagePlus,
+                    label: isArabic ? "حتى 5 صور" : "Up to 5 images",
+                    tone: "bg-surface-peach",
+                    accept: "image/*",
+                    multiple: true,
+                    value: draft.images.length ? (isArabic ? `${draft.images.length} صور مختارة` : `${draft.images.length} images selected`) : null
+                  },
+                  {
+                    id: "voice",
+                    icon: Mic,
+                    label: isArabic ? "ملاحظة صوتية" : "Voice note",
+                    tone: "bg-accent-50",
+                    accept: "audio/*",
+                    value: draft.voiceNote ? (isArabic ? "ملاحظة مسجلة" : "Note recorded") : null
+                  },
+                  {
+                    id: "video",
+                    icon: Video,
+                    label: isArabic ? "فيديو قصير" : "Short video",
+                    tone: "bg-surface-soft",
+                    accept: "video/*",
+                    value: draft.videoUrl ? (isArabic ? "فيديو جاهز" : "Video ready") : null
+                  }
                 ].map((item) => {
                   const Icon = item.icon;
 
                   return (
-                    <div key={item.label} className={cn("rounded-[1.5rem] border border-dark-200 p-5", item.tone)}>
-                      <div className="flex h-12 w-12 items-center justify-center rounded-[1rem] bg-white text-primary-700 shadow-soft">
-                        <Icon className="h-5 w-5" />
+                    <label
+                      key={item.label}
+                      className={cn(
+                        "relative cursor-pointer rounded-[1.5rem] border p-5 transition hover:border-primary-300",
+                        item.tone,
+                        item.value ? "border-primary-500 ring-1 ring-primary-500" : "border-dark-200"
+                      )}
+                    >
+                      <input
+                        type="file"
+                        className="hidden"
+                        accept={item.accept}
+                        multiple={item.multiple}
+                        onChange={async (e) => {
+                          const files = e.target.files;
+                          if (!files?.length) return;
+
+                          try {
+                            if (item.id === "images") {
+                              const newImages = await Promise.all(Array.from(files).slice(0, 5).map(fileToBase64));
+                              setDraft({ ...draft, images: newImages });
+                            } else if (item.id === "voice") {
+                              const voice = await fileToBase64(files[0]);
+                              setDraft({ ...draft, voiceNote: voice });
+                            } else if (item.id === "video") {
+                              const video = await fileToBase64(files[0]);
+                              setDraft({ ...draft, videoUrl: video });
+                            }
+                          } catch (err) {
+                            console.error("File processing error", err);
+                          }
+                        }}
+                      />
+                      <div className="flex items-center justify-between">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-[1rem] bg-white text-primary-700 shadow-soft">
+                          <Icon className="h-5 w-5" />
+                        </div>
+                        {item.value && (
+                          <div className="rounded-full bg-primary-600 px-3 py-1 text-[10px] font-bold text-white">
+                            {item.value}
+                          </div>
+                        )}
                       </div>
                       <p className="mt-4 text-lg font-semibold text-dark-950">{item.label}</p>
-                      <p className="mt-2 text-sm leading-7 text-dark-500">{isArabic ? "واجهة تمهيدية جاهزة للربط مع نظام رفع الملفات لاحقًا." : "Starter slot ready for real upload integration later."}</p>
-                    </div>
+                      <p className="mt-2 text-sm leading-7 text-dark-500">
+                        {item.value 
+                          ? (isArabic ? "تم اختيار الملف بنجاح" : "File selected successfully")
+                          : (isArabic ? "اضغط هنا لاختيار الملف من جهازك" : "Click here to select a file from your device")}
+                      </p>
+                    </label>
                   );
                 })}
               </div>
@@ -574,10 +657,12 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
               </SoftCard>
               <SoftCard className="bg-dark-800 text-white">
                 <p className="text-xs uppercase tracking-[0.22em] text-white/50">{isArabic ? "التوقيت" : "Timing"}</p>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  <SoftBadge label={formatTiming(locale, draft)} tone="accent" />
-                  <SoftBadge label={draft.addressMode === "saved" ? (isArabic ? "عنوان محفوظ" : "Saved address") : isArabic ? "عنوان جديد" : "New address"} tone="sun" />
-                </div>
+                 <div className="mt-3 flex flex-wrap gap-2">
+                   <SoftBadge label={formatTiming(locale, draft)} tone="accent" />
+                   <SoftBadge label={draft.addressMode === "saved" ? (isArabic ? "عنوان محفوظ" : "Saved address") : isArabic ? "عنوان جديد" : "New address"} tone="sun" />
+                   {draft.images.length > 0 && <SoftBadge label={isArabic ? `${draft.images.length} صور` : `${draft.images.length} images`} tone="primary" />}
+                   {(draft.voiceNote || draft.videoUrl) && <SoftBadge label={isArabic ? "وسائط متعددة" : "Multimedia"} tone="success" />}
+                 </div>
               </SoftCard>
             </div>
           </DashboardBlock>

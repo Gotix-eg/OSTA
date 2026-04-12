@@ -17,6 +17,7 @@ export function saveAuthSession(payload: AuthSessionPayload, remember = true) {
     const storage = remember ? window.localStorage : window.sessionStorage;
     storage.setItem("osta_user_role", payload.role);
     storage.setItem("osta_user_name", payload.firstName ?? "");
+    storage.setItem("osta_access_token", payload.accessToken);
 
     // 2. Set Cookies for Middleware (most important for redirects)
     const expiry = remember ? "; max-age=31536000" : ""; // 1 year or session
@@ -40,6 +41,7 @@ export function clearAuthSession() {
     try {
       storage.removeItem("osta_user_role");
       storage.removeItem("osta_user_name");
+      storage.removeItem("osta_access_token");
     } catch {}
   }
 

@@ -19,7 +19,8 @@ export async function fetchApiData<T>(path: string, fallback: T): Promise<T> {
       cache: "no-store",
       credentials: "include",
       headers: {
-        Accept: "application/json"
+        Accept: "application/json",
+        Authorization: typeof window !== "undefined" ? `Bearer ${window.localStorage.getItem("osta_access_token") || window.sessionStorage.getItem("osta_access_token") || ""}` : ""
       },
       signal: AbortSignal.timeout(2500)
     });
@@ -46,7 +47,8 @@ export async function postApiData<TResponse, TBody>(path: string, body: TBody) {
     credentials: "include",
     headers: {
       Accept: "application/json",
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
+      Authorization: typeof window !== "undefined" ? `Bearer ${window.localStorage.getItem("osta_access_token") || window.sessionStorage.getItem("osta_access_token") || ""}` : ""
     },
     body: JSON.stringify(body)
   });
@@ -66,7 +68,8 @@ export async function patchApiData<TResponse, TBody>(path: string, body?: TBody)
     credentials: "include",
     headers: {
       Accept: "application/json",
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
+      Authorization: typeof window !== "undefined" ? `Bearer ${window.localStorage.getItem("osta_access_token") || window.sessionStorage.getItem("osta_access_token") || ""}` : ""
     },
     body: body === undefined ? undefined : JSON.stringify(body)
   });
