@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { useLiveApiData } from "@/hooks/use-live-api-data";
 import type { Locale } from "@/lib/locales";
 
-type AdPlacement = "HOMEPAGE" | "WORKER_DASHBOARD" | "SEARCH_TOP";
+type AdPlacement = "HOMEPAGE" | "CLIENT_DASHBOARD" | "WORKER_DASHBOARD" | "VENDOR_DASHBOARD" | "SEARCH_TOP";
 
 interface AdCampaign {
   id: string;
