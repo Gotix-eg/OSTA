@@ -1023,3 +1023,305 @@ export function VendorDashboardHome({ locale }: { locale: Locale }) {
     </div>
   );
 }
+
+// ============================================================
+// Admin Ads Management Page
+// ============================================================
+
+type AdCampaign = {
+  id: string;
+  title: string;
+  type: "BANNER" | "SPONSORED_PROFILE";
+  placement: "HOMEPAGE" | "WORKER_DASHBOARD" | "SEARCH_TOP";
+  status: "PENDING" | "ACTIVE" | "PAUSED" | "FINISHED";
+  views: number;
+  clicks: number;
+  imageUrl: string | null;
+  targetUrl: string | null;
+  owner: { id: string; firstName: string; phone: string } | null;
+};
+
+const adStatusTone: Record<AdCampaign["status"], StatusTone> = {
+  PENDING: "amber",
+  ACTIVE: "green",
+  PAUSED: "blue",
+  FINISHED: "red"
+};
+
+const adStatusLabel: Record<AdCampaign["status"], { ar: string; en: string }> = {
+  PENDING: { ar: "بانتظار الموافقة", en: "Pending approval" },
+  ACTIVE: { ar: "نشط", en: "Active" },
+  PAUSED: { ar: "موقوف", en: "Paused" },
+  FINISHED: { ar: "منتهي", en: "Finished" }
+};
+
+const adPlacementLabel: Record<AdCampaign["placement"], { ar: string; en: string }> = {
+  HOMEPAGE: { ar: "الصفحة الرئيسية", en: "Homepage" },
+  WORKER_DASHBOARD: { ar: "لوحة العامل", en: "Worker Dashboard" },
+  SEARCH_TOP: { ar: "أعلى نتائج البحث", en: "Top of Search" }
+};
+
+export function AdminAdsPage({ locale }: { locale: Locale }) {
+  const isArabic = locale === "ar";
+  const ads = useLiveApiData<AdCampaign[]>("/ads", []);
+
+  const activeCount = ads.filter(a => a.status === "ACTIVE").length;
+  const pendingCount = ads.filter(a => a.status === "PENDING").length;
+  const totalViews = ads.reduce((s, a) => s + a.views, 0);
+  const totalClicks = ads.reduce((s, a) => s + a.clicks, 0);
+
+  async function updateStatus(id: string, status: AdCampaign["status"]) {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
+    await fetch(`${apiUrl}/api/ads/${id}/status`, {
+      method: "PUT",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status })
+    });
+    window.location.reload();
+  }
+
+  async function deleteAd(id: string) {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
+    await fetch(`${apiUrl}/api/ads/${id}`, {
+      method: "DELETE",
+      credentials: "include"
+    });
+    window.location.reload();
+  }
+
+  const stats = [
+    { value: String(ads.length), note: isArabic ? "إجمالي الحملات" : "Total campaigns", tone: "primary" as const, icon: Banknote },
+    { value: String(activeCount), note: isArabic ? "حملات نشطة الآن" : "Currently active", tone: "accent" as const, icon: CheckCircle2 },
+    { value: String(pendingCount), note: isArabic ? "تنتظر موافقتك" : "Awaiting your approval", tone: "sun" as const, icon: Clock3 },
+    { value: formatNumber(locale, totalViews), note: isArabic ? "مشاهدة إجمالية" : "Total impressions", tone: "dark" as const, icon: TrendingUp }
+  ];
+
+  return (
+    <div>
+      <SectionTitle
+        eyebrow={isArabic ? "لوحة المشرف" : "Admin Dashboard"}
+        title={isArabic ? "إدارة الإعلانات" : "Ads Manager"}
+        subtitle={isArabic ? "راجع وأدر جميع الحملات الإعلانية المقدمة من الشركات والتجار والصنايعية." : "Review and manage all advertising campaigns submitted by businesses, vendors, and workers."}
+        actionLabel={isArabic ? "نظرة شاملة" : "Overview"}
+        tone="sun"
+      />
+
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        {stats.map((s) => (
+          <MetricCard key={s.note} label={s.note} value={s.value} note="" tone={s.tone} icon={s.icon} />
+        ))}
+      </div>
+
+      <div className="mt-6">
+        <Surface title={isArabic ? "جميع الحملات الإعلانية" : "All Ad Campaigns"} eyebrow={isArabic ? "مراجعة ومراقبة" : "Review & Monitor"}>
+          {ads.length === 0 ? (
+            <EmptyNotice>{isArabic ? "لا توجد حملات إعلانية حتى الآن" : "No ad campaigns yet"}</EmptyNotice>
+          ) : (
+            <div className="space-y-4">
+              {ads.map((ad) => (
+                <div key={ad.id} className="rounded-[1.35rem] border border-dark-200/70 bg-surface-soft p-4">
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="font-semibold text-dark-950">{ad.title}</p>
+                        <StatusPill
+                          label={adStatusLabel[ad.status][locale]}
+                          tone={adStatusTone[ad.status]}
+                        />
+                      </div>
+                      <div className="mt-2 flex flex-wrap gap-3 text-xs text-dark-500">
+                        <span>{isArabic ? "المكان: " : "Placement: "}<strong className="text-dark-700">{adPlacementLabel[ad.placement][locale]}</strong></span>
+                        <span>{isArabic ? "النوع: " : "Type: "}<strong className="text-dark-700">{ad.type === "BANNER" ? (isArabic ? "بانر" : "Banner") : (isArabic ? "ممول" : "Sponsored")}</strong></span>
+                        <span>{isArabic ? "مشاهدات: " : "Views: "}<strong className="text-dark-700">{formatNumber(locale, ad.views)}</strong></span>
+                        <span>{isArabic ? "نقرات: " : "Clicks: "}<strong className="text-dark-700">{formatNumber(locale, ad.clicks)}</strong></span>
+                        {ad.owner && <span>{isArabic ? "المعلن: " : "Owner: "}<strong className="text-dark-700">{ad.owner.firstName}</strong></span>}
+                      </div>
+                    </div>
+                    <div className="flex shrink-0 flex-wrap gap-2">
+                      {ad.status === "PENDING" && (
+                        <button
+                          type="button"
+                          onClick={() => updateStatus(ad.id, "ACTIVE")}
+                          className="rounded-full bg-success/10 px-4 py-2 text-xs font-semibold text-success transition hover:bg-success/20"
+                        >
+                          {isArabic ? "تفعيل" : "Approve"}
+                        </button>
+                      )}
+                      {ad.status === "ACTIVE" && (
+                        <button
+                          type="button"
+                          onClick={() => updateStatus(ad.id, "PAUSED")}
+                          className="rounded-full bg-sun-400/15 px-4 py-2 text-xs font-semibold text-sun-900 transition hover:bg-sun-400/25"
+                        >
+                          {isArabic ? "إيقاف مؤقت" : "Pause"}
+                        </button>
+                      )}
+                      {ad.status === "PAUSED" && (
+                        <button
+                          type="button"
+                          onClick={() => updateStatus(ad.id, "ACTIVE")}
+                          className="rounded-full bg-accent-500/10 px-4 py-2 text-xs font-semibold text-accent-700 transition hover:bg-accent-500/20"
+                        >
+                          {isArabic ? "استئناف" : "Resume"}
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => deleteAd(ad.id)}
+                        className="rounded-full bg-error/10 px-4 py-2 text-xs font-semibold text-error transition hover:bg-error/20"
+                      >
+                        {isArabic ? "حذف" : "Delete"}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </Surface>
+      </div>
+
+      <div className="mt-6">
+        <Surface title={isArabic ? "خطة التسعير الإعلانية" : "Ad Pricing Guide"} eyebrow={isArabic ? "الأسعار المقترحة" : "Suggested rates"}>
+          <div className="grid gap-4 sm:grid-cols-3">
+            {[
+              {
+                label: isArabic ? "بانر الشركات" : "Corporate Banner",
+                price: isArabic ? "٣٠٠٠ – ٥٠٠٠ ج.م / شهر" : "EGP 3,000 – 5,000/mo",
+                note: isArabic ? "صفحة رئيسية، لوحة عميل" : "Homepage, Client Dashboard",
+                tone: "bg-primary-50"
+              },
+              {
+                label: isArabic ? "بانر الموردين" : "Vendor Banner",
+                price: isArabic ? "٣٠٠ – ٥٠٠ ج.م / أسبوع" : "EGP 300 – 500/week",
+                note: isArabic ? "لوحة الصنايعي (تستهدف المشترين)" : "Worker Dashboard (targets buyers)",
+                tone: "bg-accent-50"
+              },
+              {
+                label: isArabic ? "بروفايل صنايعي ممول" : "Sponsored Worker Profile",
+                price: isArabic ? "١٥٠ ج.م / أسبوع أو ٥ ج.م / نقرة" : "EGP 150/week or EGP 5/click",
+                note: isArabic ? "أعلى نتائج البحث بشارة 'ممول'" : "Top search results with 'Sponsored' badge",
+                tone: "bg-sun-50"
+              }
+            ].map((item) => (
+              <div key={item.label} className={cn("rounded-[1.35rem] p-4", item.tone)}>
+                <p className="text-sm font-semibold text-dark-900">{item.label}</p>
+                <p className="mt-2 text-xl font-bold text-dark-950">{item.price}</p>
+                <p className="mt-1 text-xs text-dark-500">{item.note}</p>
+              </div>
+            ))}
+          </div>
+        </Surface>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// Admin Pricing & Platform Settings Page
+// ============================================================
+
+type PlatformSetting = { id: string; key: string; value: string; type: string };
+
+const PRICING_KEYS = [
+  { key: "commission_rate_worker", labelAr: "نسبة عمولة الصنايعي (%)", labelEn: "Worker Commission Rate (%)", type: "number", defaultValue: "15" },
+  { key: "commission_rate_vendor", labelAr: "نسبة عمولة المورد (%)", labelEn: "Vendor Commission Rate (%)", type: "number", defaultValue: "10" },
+  { key: "service_fee_client", labelAr: "رسوم الخدمة على العميل (ج.م)", labelEn: "Client Service Fee (EGP)", type: "number", defaultValue: "15" },
+  { key: "emergency_multiplier", labelAr: "مضاعف الطلبات الطارئة", labelEn: "Emergency Request Multiplier", type: "number", defaultValue: "1.5" },
+  { key: "lead_cost_worker", labelAr: "تكلفة شراء الليد للصنايعي (ج.م)", labelEn: "Lead Purchase Cost for Worker (EGP)", type: "number", defaultValue: "10" },
+  { key: "banner_monthly_price", labelAr: "سعر البانر الشهري (ج.م)", labelEn: "Monthly Banner Price (EGP)", type: "number", defaultValue: "3000" },
+  { key: "vendor_banner_weekly_price", labelAr: "سعر بانر المورد الأسبوعي (ج.م)", labelEn: "Vendor Banner Weekly Price (EGP)", type: "number", defaultValue: "400" },
+  { key: "sponsored_worker_weekly_price", labelAr: "سعر الصنايعي الممول الأسبوعي (ج.م)", labelEn: "Sponsored Worker Weekly Price (EGP)", type: "number", defaultValue: "150" },
+  { key: "sponsored_worker_ppc_price", labelAr: "سعر النقرة للصنايعي الممول (ج.م)", labelEn: "Sponsored Worker PPC Price (EGP)", type: "number", defaultValue: "5" }
+];
+
+export function AdminPricingPage({ locale }: { locale: Locale }) {
+  const isArabic = locale === "ar";
+  const settings = useLiveApiData<PlatformSetting[]>("/settings", []);
+
+  const settingsMap = Object.fromEntries(settings.map(s => [s.key, s.value]));
+
+  async function handleSave(key: string, value: string) {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
+    await fetch(`${apiUrl}/api/settings`, {
+      method: "PUT",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ key, value })
+    });
+  }
+
+  return (
+    <div>
+      <SectionTitle
+        eyebrow={isArabic ? "لوحة المشرف" : "Admin Dashboard"}
+        title={isArabic ? "التسعير وإعدادات المنصة" : "Pricing & Platform Settings"}
+        subtitle={isArabic ? "تحكم في نسب العمولات، رسوم الخدمة، وأسعار الإعلانات من مكان واحد." : "Control commission rates, service fees, and ad prices — all from one place."}
+        actionLabel={isArabic ? "حفظ سيتم آلياً" : "Saves automatically"}
+        tone="primary"
+      />
+
+      <div className="mt-2">
+        <Surface title={isArabic ? "إعدادات التسعير الديناميكية" : "Dynamic Pricing Settings"} eyebrow={isArabic ? "تحكم مباشر" : "Live control"}>
+            <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+              {PRICING_KEYS.map((item) => {
+                const currentValue = settingsMap[item.key] ?? item.defaultValue;
+                return (
+                  <div key={item.key} className="dashboard-card-soft rounded-[1.35rem] p-4">
+                    <label htmlFor={item.key} className="block text-sm font-medium text-dark-700">
+                      {isArabic ? item.labelAr : item.labelEn}
+                    </label>
+                    <div className="mt-2 flex items-center gap-2">
+                      <input
+                        id={item.key}
+                        type="number"
+                        defaultValue={currentValue}
+                        step="0.5"
+                        min="0"
+                        className="h-11 w-full rounded-[1rem] border border-dark-200 bg-white px-4 text-sm font-semibold text-dark-900 shadow-soft outline-none transition focus:border-primary-400 focus:ring-2 focus:ring-primary-200"
+                        onBlur={(e) => {
+                          const val = e.target.value;
+                          if (val && val !== currentValue) {
+                            handleSave(item.key, val);
+                          }
+                        }}
+                      />
+                    </div>
+                    <p className="mt-1.5 text-xs text-dark-400">{isArabic ? "القيمة الحالية: " : "Current: "}<strong>{currentValue}</strong></p>
+                  </div>
+                );
+              })}
+            </div>
+        </Surface>
+      </div>
+
+      <div className="mt-6">
+        <Surface title={isArabic ? "كيف تعمل منظومة الأرباح؟" : "How the Revenue System Works"} eyebrow={isArabic ? "دليل الإيرادات" : "Revenue guide"}>
+          <div className="space-y-3">
+            {(isArabic ? [
+              "يُخصم commission_rate_worker تلقائياً من أتعاب الصنايعي عند الإفراج عن الدفعة من الـ Escrow.",
+              "يُضاف service_fee_client كرسوم ثابتة لكل فاتورة على الجانب العميل.",
+              "emergency_multiplier يُضرب في سعر الخدمة الأصلي عند اختيار العميل 'طارئ'.",
+              "lead_cost_worker يُخصم من محفظة الصنايعي عند تقديم عرض سعر على طلب العميل.",
+              "أسعار الإعلانات تُراجع وتُحدث يدوياً من الإدارة وتُعرض في صفحة 'إدارة الإعلانات'."
+            ] : [
+              "commission_rate_worker is automatically deducted from worker earnings when payment is released from Escrow.",
+              "service_fee_client is a fixed fee added to every client invoice.",
+              "emergency_multiplier is multiplied by the base service price when client selects 'Urgent'.",
+              "lead_cost_worker is deducted from the worker's wallet when they submit a quote on a client request.",
+              "Ad prices are manually reviewed and updated by admin and displayed on the 'Ads Manager' page."
+            ]).map((text, i) => (
+              <div key={i} className="dashboard-card-soft flex items-start gap-3 p-4">
+                <div className={cn("mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-semibold", i % 3 === 0 ? "bg-sun-400/18 text-sun-900" : i % 3 === 1 ? "bg-primary-500/12 text-primary-700" : "bg-accent-500/14 text-accent-800")}>
+                  {i + 1}
+                </div>
+                <p className="text-sm leading-7 text-dark-600">{text}</p>
+              </div>
+            ))}
+          </div>
+        </Surface>
+      </div>
+    </div>
+  );
+}

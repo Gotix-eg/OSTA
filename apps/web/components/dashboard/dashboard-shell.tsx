@@ -17,10 +17,12 @@ import {
   Heart,
   Home,
   LayoutDashboard,
+  Megaphone,
   Menu,
   Search,
   Settings,
   ShieldCheck,
+  SlidersHorizontal,
   Sparkles,
   UserCircle2,
   Users,
@@ -45,7 +47,7 @@ const iconSets: Record<DashboardRole, Array<NavItem["icon"]>> = {
   client: [Home, Briefcase, FolderClock, Heart, Wallet, Settings],
   worker: [Home, FolderClock, Briefcase, CreditCard, BarChart3, Settings],
   vendor: [Home, Bell, Briefcase, Wallet, Settings],
-  admin: [Home, ShieldCheck, Users, FolderClock, CreditCard, Settings]
+  admin: [Home, ShieldCheck, Users, FolderClock, CreditCard, Megaphone, SlidersHorizontal, Settings]
 };
 
 const roleThemes: Record<DashboardRole, { tag: string; accent: string; orb: string; ring: string }> = {
@@ -95,7 +97,7 @@ export function DashboardShell({
       client: ["/client", "/client/new-request", "/client/my-requests", "/client/favorites", "/client/wallet", "/client/settings"],
       worker: ["/worker", "/worker/requests/incoming", "/worker/requests/active", "/worker/earnings", "/worker/ratings", "/worker/settings"],
       vendor: ["/vendor", "/vendor/requests", "/vendor/active-orders", "/vendor/wallet", "/vendor/settings"],
-      admin: ["/admin", "/admin/workers/pending", "/admin/clients", "/admin/requests", "/admin/finance", "/admin/settings"]
+      admin: ["/admin", "/admin/workers/pending", "/admin/clients", "/admin/requests", "/admin/finance", "/admin/ads", "/admin/pricing", "/admin/settings"]
     };
 
     const roleRoutes = routes[role];

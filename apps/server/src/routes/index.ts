@@ -37,6 +37,8 @@ router.get("/debug-env", async (_request, response) => {
 
 import { vendorRouter } from "../modules/vendors/vendor.routes.js";
 import { materialsRouter } from "../modules/materials/materials.routes.js";
+import { adsRouter } from "../modules/ads/ads.routes.js";
+import { settingsRouter } from "../modules/settings/settings.routes.js";
 
 router.use("/auth", authRouter);
 router.use("/clients", clientsRouter);
@@ -45,5 +47,7 @@ router.use("/admin", adminRouter);
 router.use("/services", servicesRouter);
 router.use("/vendors", vendorRouter);
 router.use("/materials", materialsRouter);
+router.use("/ads", adsRouter);
+router.use("/settings", settingsRouter);
 
 export const apiRouter = router;

@@ -154,6 +154,24 @@ enum WarrantyStatus {
   VOID
 }
 
+enum AdType {
+  BANNER
+  SPONSORED_PROFILE
+}
+
+enum AdPlacement {
+  HOMEPAGE
+  WORKER_DASHBOARD
+  SEARCH_TOP
+}
+
+enum AdStatus {
+  PENDING
+  ACTIVE
+  PAUSED
+  FINISHED
+}
+
 model User {
   id                 String              @id @default(cuid())
   email              String?             @unique
@@ -186,6 +204,7 @@ model User {
   otpCodes           OtpCode[]
   walletTransactions WalletTransaction[]
   materialRequests   MaterialRequest[]
+  adCampaigns        AdCampaign[]
 
   @@index([phone])
   @@index([email])
@@ -856,4 +875,30 @@ model MaterialOrder {
   @@index([clientId])
   @@index([status])
   @@index([createdAt])
+}
+
+// =============================================
+// Ads Engine
+// =============================================
+
+model AdCampaign {
+  id          String      @id @default(cuid())
+  ownerId     String?     
+  type        AdType
+  placement   AdPlacement
+  title       String
+  imageUrl    String?     
+  targetUrl   String?
+  status      AdStatus    @default(PENDING)
+  views       Int         @default(0)
+  clicks      Int         @default(0)
+  startDate   DateTime?
+  endDate     DateTime?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  owner       User?       @relation(fields: [ownerId], references: [id])
+
+  @@index([status])
+  @@index([placement])
+  @@index([ownerId])
 }
