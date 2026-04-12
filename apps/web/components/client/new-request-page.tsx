@@ -339,7 +339,7 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
                   <input
                     value={draft.title}
                     onChange={(event) => setDraft({ ...draft, title: event.target.value })}
-                    className="h-12 w-full rounded-[1.2rem] border border-dark-200 bg-white px-4"
+                    className="h-12 w-full rounded-[1.2rem] border border-dark-200 bg-white px-4 text-dark-950 placeholder:text-dark-400"
                     placeholder={isArabic ? "مثال: عطل كهرباء مفاجئ في المطبخ" : "Example: sudden electrical issue in kitchen"}
                   />
                 </Field>
@@ -349,7 +349,7 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
                     rows={7}
                     value={draft.description}
                     onChange={(event) => setDraft({ ...draft, description: event.target.value })}
-                    className="w-full rounded-[1.2rem] border border-dark-200 bg-white px-4 py-3"
+                    className="w-full rounded-[1.2rem] border border-dark-200 bg-white px-4 py-3 text-dark-950 placeholder:text-dark-400"
                     placeholder={isArabic ? "اكتب تفاصيل المشكلة والأعراض الحالية وأي محاولة سابقة للحل" : "Detail the issue, current symptoms, and anything already tried"}
                   />
                 </Field>
@@ -359,7 +359,7 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
                     rows={4}
                     value={draft.mediaNotes}
                     onChange={(event) => setDraft({ ...draft, mediaNotes: event.target.value })}
-                    className="w-full rounded-[1.2rem] border border-dark-200 bg-white px-4 py-3"
+                    className="w-full rounded-[1.2rem] border border-dark-200 bg-white px-4 py-3 text-dark-950 placeholder:text-dark-400"
                     placeholder={isArabic ? "ما الذي تنوي إرفاقه؟" : "What are you planning to attach?"}
                   />
                 </Field>
@@ -432,16 +432,16 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
                 ) : (
                   <div className="grid gap-4 sm:grid-cols-2">
                     <Field label={isArabic ? "المحافظة" : "Governorate"}>
-                      <input value={draft.governorate} onChange={(event) => setDraft({ ...draft, governorate: event.target.value })} className="h-12 w-full rounded-[1.2rem] border border-dark-200 bg-white px-4" />
+                      <input value={draft.governorate} onChange={(event) => setDraft({ ...draft, governorate: event.target.value })} className="h-12 w-full rounded-[1.2rem] border border-dark-200 bg-white px-4 text-dark-950" />
                     </Field>
                     <Field label={isArabic ? "المدينة" : "City"}>
-                      <input value={draft.city} onChange={(event) => setDraft({ ...draft, city: event.target.value })} className="h-12 w-full rounded-[1.2rem] border border-dark-200 bg-white px-4" />
+                      <input value={draft.city} onChange={(event) => setDraft({ ...draft, city: event.target.value })} className="h-12 w-full rounded-[1.2rem] border border-dark-200 bg-white px-4 text-dark-950" />
                     </Field>
                     <Field label={isArabic ? "الحي" : "District"}>
-                      <input value={draft.district} onChange={(event) => setDraft({ ...draft, district: event.target.value })} className="h-12 w-full rounded-[1.2rem] border border-dark-200 bg-white px-4" />
+                      <input value={draft.district} onChange={(event) => setDraft({ ...draft, district: event.target.value })} className="h-12 w-full rounded-[1.2rem] border border-dark-200 bg-white px-4 text-dark-950" />
                     </Field>
                     <Field label={isArabic ? "الشارع" : "Street"}>
-                      <input value={draft.street} onChange={(event) => setDraft({ ...draft, street: event.target.value })} className="h-12 w-full rounded-[1.2rem] border border-dark-200 bg-white px-4" />
+                      <input value={draft.street} onChange={(event) => setDraft({ ...draft, street: event.target.value })} className="h-12 w-full rounded-[1.2rem] border border-dark-200 bg-white px-4 text-dark-950" />
                     </Field>
                   </div>
                 )}
@@ -496,10 +496,10 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
                 {draft.timing === "custom" ? (
                   <div className="grid gap-4 sm:grid-cols-2">
                     <Field label={isArabic ? "التاريخ" : "Date"}>
-                      <input type="date" value={draft.customDate} onChange={(event) => setDraft({ ...draft, customDate: event.target.value })} className="h-12 w-full rounded-[1.2rem] border border-dark-200 bg-white px-4" />
+                      <input type="date" value={draft.customDate} onChange={(event) => setDraft({ ...draft, customDate: event.target.value })} className="h-12 w-full rounded-[1.2rem] border border-dark-200 bg-white px-4 text-dark-950" />
                     </Field>
                     <Field label={isArabic ? "الفترة الزمنية" : "Time window"}>
-                      <input value={draft.customWindow} onChange={(event) => setDraft({ ...draft, customWindow: event.target.value })} className="h-12 w-full rounded-[1.2rem] border border-dark-200 bg-white px-4" placeholder="6pm - 8pm" />
+                      <input value={draft.customWindow} onChange={(event) => setDraft({ ...draft, customWindow: event.target.value })} className="h-12 w-full rounded-[1.2rem] border border-dark-200 bg-white px-4 text-dark-950" placeholder="6pm - 8pm" />
                     </Field>
                   </div>
                 ) : null}
@@ -564,16 +564,16 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
         <div className="space-y-6">
           <DashboardBlock title={isArabic ? "ملخص المسودة" : "Live draft summary"} eyebrow={isArabic ? "ما سيتم إرساله" : "what will be submitted"} dark>
             <div className="space-y-4">
-              <SoftCard className="bg-white/5 text-white">
-                <p className="text-xs uppercase tracking-[0.22em] text-white/45">{isArabic ? "الخدمة" : "Service"}</p>
+              <SoftCard className="bg-dark-800 text-white">
+                <p className="text-xs uppercase tracking-[0.22em] text-white/50">{isArabic ? "الخدمة" : "Service"}</p>
                 <p className="mt-3 text-lg font-semibold text-white">{selectedService?.name[locale] ?? (isArabic ? "لم تُختر بعد" : "Not chosen")}</p>
               </SoftCard>
-              <SoftCard className="bg-white/5 text-white">
-                <p className="text-xs uppercase tracking-[0.22em] text-white/45">{isArabic ? "العنوان" : "Headline"}</p>
-                <p className="mt-3 text-sm leading-7 text-white/80">{draft.title || (isArabic ? "بانتظار العنوان" : "Waiting for title")}</p>
+              <SoftCard className="bg-dark-800 text-white">
+                <p className="text-xs uppercase tracking-[0.22em] text-white/50">{isArabic ? "العنوان" : "Headline"}</p>
+                <p className="mt-3 text-sm leading-7 text-white/90">{draft.title || (isArabic ? "بانتظار العنوان" : "Waiting for title")}</p>
               </SoftCard>
-              <SoftCard className="bg-white/5 text-white">
-                <p className="text-xs uppercase tracking-[0.22em] text-white/45">{isArabic ? "التوقيت" : "Timing"}</p>
+              <SoftCard className="bg-dark-800 text-white">
+                <p className="text-xs uppercase tracking-[0.22em] text-white/50">{isArabic ? "التوقيت" : "Timing"}</p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   <SoftBadge label={formatTiming(locale, draft)} tone="accent" />
                   <SoftBadge label={draft.addressMode === "saved" ? (isArabic ? "عنوان محفوظ" : "Saved address") : isArabic ? "عنوان جديد" : "New address"} tone="sun" />

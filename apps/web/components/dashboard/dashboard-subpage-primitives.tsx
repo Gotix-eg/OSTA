@@ -89,7 +89,7 @@ export function DashboardBlock({
   className?: string;
 }) {
   return (
-    <section className={cn(dark ? "dashboard-card-dark" : "dashboard-card", "deco-frame relative overflow-hidden p-6", className)}>
+    <section className={cn(dark ? "dashboard-card-dark bg-dark-950" : "dashboard-card", "deco-frame relative overflow-hidden p-6", className)}>
       <div className={cn("absolute inset-0 opacity-60", dark ? "bg-[radial-gradient(circle_at_top_left,rgba(184,135,39,0.14),transparent_30%),radial-gradient(circle_at_bottom_right,rgba(46,140,137,0.14),transparent_28%)]" : "bg-[radial-gradient(circle_at_top_left,rgba(184,135,39,0.10),transparent_28%),radial-gradient(circle_at_bottom_right,rgba(46,140,137,0.08),transparent_26%)]") } />
       <div className="relative">
         <div className="mb-5 flex items-end justify-between gap-4">
@@ -135,7 +135,7 @@ export function MiniMetric({
 }
 
 export function SoftCard({ children, className }: { children: ReactNode; className?: string }) {
-  return <div className={cn("dashboard-card-soft relative overflow-hidden border border-dark-200/60 bg-white/82 p-4", className)}>{children}</div>;
+  return <div className={cn("dashboard-card-soft relative overflow-hidden border border-dark-200/60 p-4", !className?.includes("bg-") && "bg-white/82", className)}>{children}</div>;
 }
 
 export function SoftBadge({

@@ -186,7 +186,7 @@ export function DashboardShell({
             </div>
           </header>
 
-          <div className="section-shell flex-1 py-6 lg:py-7">{children}</div>
+          <div className="section-shell flex-1 pb-6 pt-12 lg:pb-7 lg:pt-14">{children}</div>
         </div>
       </div>
     </div>
