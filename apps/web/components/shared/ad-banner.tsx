@@ -44,7 +44,7 @@ export function AdBanner({ placement, locale, className }: AdBannerProps) {
   const currentAd = ads[currentIndex];
 
   const handleAdClick = async () => {
-    if (!currentAd.targetUrl) return;
+    if (!currentAd || !currentAd.targetUrl) return;
 
     // Record click asynchronously
     const apiUrl = process.env.NEXT_PUBLIC_OSTA_API_URL ?? "http://localhost:4000/api";
