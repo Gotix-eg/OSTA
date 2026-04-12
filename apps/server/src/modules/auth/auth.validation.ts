@@ -10,7 +10,12 @@ export const registerSchema = z
     phone: phoneSchema,
     email: z.string().email("البريد الإلكتروني غير صالح").optional(),
     password: passwordSchema,
-    confirmPassword: passwordSchema
+    confirmPassword: passwordSchema,
+    governorate: z.string().optional(),
+    city: z.string().optional(),
+    address: z.string().optional(),
+    latitude: z.number().optional(),
+    longitude: z.number().optional()
   })
   .refine((value) => value.password === value.confirmPassword, {
     message: "كلمة المرور غير متطابقة",

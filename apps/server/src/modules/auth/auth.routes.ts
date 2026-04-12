@@ -44,7 +44,12 @@ router.post("/register/client", catchAsync(async (request, response) => {
     lastName: payload.lastName,
     phone: payload.phone,
     email: payload.email,
-    password: payload.password
+    password: payload.password,
+    governorate: payload.governorate,
+    city: payload.city,
+    address: payload.address,
+    latitude: payload.latitude,
+    longitude: payload.longitude
   });
 
   setAuthCookies(response, {
@@ -66,7 +71,39 @@ router.post("/register/worker", catchAsync(async (request, response) => {
     lastName: payload.lastName,
     phone: payload.phone,
     email: payload.email,
-    password: payload.password
+    password: payload.password,
+    governorate: payload.governorate,
+    city: payload.city,
+    address: payload.address,
+    latitude: payload.latitude,
+    longitude: payload.longitude
+  });
+
+  setAuthCookies(response, {
+    accessToken: result.accessToken,
+    refreshToken: result.refreshToken,
+    role: result.user.role
+  });
+
+  response.status(201).json(
+    successResponse(result, "Account created")
+  );
+}));
+
+router.post("/register/vendor", catchAsync(async (request, response) => {
+  const payload = parseBody(registerSchema, request.body);
+  const result = await authService.register({
+    role: "VENDOR",
+    firstName: payload.firstName,
+    lastName: payload.lastName,
+    phone: payload.phone,
+    email: payload.email,
+    password: payload.password,
+    governorate: payload.governorate,
+    city: payload.city,
+    address: payload.address,
+    latitude: payload.latitude,
+    longitude: payload.longitude
   });
 
   setAuthCookies(response, {

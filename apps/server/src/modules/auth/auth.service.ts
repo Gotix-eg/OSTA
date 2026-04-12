@@ -6,12 +6,17 @@ import { hashPassword, verifyPassword } from "../../utils/password.js";
 import { signAccessToken, signRefreshToken, verifyRefreshToken } from "../../utils/tokens.js";
 
 type RegisterInput = {
-  role: "CLIENT" | "WORKER";
+  role: "CLIENT" | "WORKER" | "VENDOR";
   firstName: string;
   lastName: string;
   phone: string;
   email?: string;
   password: string;
+  governorate?: string;
+  city?: string;
+  address?: string;
+  latitude?: number;
+  longitude?: number;
 };
 
 type LoginInput = {
@@ -121,11 +126,32 @@ export const authService = {
             ? {
                 create: {}
               }
-            : undefined
+            : undefined,
+        vendorProfile:
+          input.role === "VENDOR"
+            ? {
+                create: {
+                  storeName: input.firstName + " " + input.lastName
+                }
+              }
+            : undefined,
+        addresses: (input.governorate || input.latitude) ? {
+          create: {
+            governorate: input.governorate || "",
+            city: input.city || "",
+            area: input.city || "",
+            street: input.address || "",
+            latitude: input.latitude,
+            longitude: input.longitude,
+            isDefault: true
+          }
+        } : undefined
       },
       include: {
         clientProfile: true,
-        workerProfile: true
+        workerProfile: true,
+        vendorProfile: true,
+        addresses: true
       }
     });
 
@@ -133,7 +159,7 @@ export const authService = {
 
     return {
       ...tokens,
-      user: toPublicUser(user)
+      user: toPublicUser(user as any)
     };
   },
 

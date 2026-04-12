@@ -21,6 +21,9 @@ import { getDashboardRoute, saveAuthSession, type AuthRole } from "@/lib/auth-se
 import { authCopy } from "@/lib/copy";
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
+import { MapPicker } from "@/components/shared/map-picker";
+import { SelectField } from "@/components/shared/select-field";
+import { egyptianGovernorates, majorCities } from "@/lib/geo-data";
 
 type ClientRegisterState = {
   phone: string;
@@ -33,6 +36,8 @@ type ClientRegisterState = {
   governorate: string;
   city: string;
   address: string;
+  latitude: number;
+  longitude: number;
   acceptedTerms: boolean;
 };
 
@@ -57,6 +62,10 @@ type WorkerRegisterState = {
   utilityBill: string;
   guarantorName: string;
   guarantorPhone: string;
+  governorate: string;
+  city: string;
+  latitude: number;
+  longitude: number;
   acceptedTerms: boolean;
 };
 
@@ -71,6 +80,8 @@ type VendorRegisterState = {
   address: string;
   commercialRecord: string;
   taxCard: string;
+  latitude: number;
+  longitude: number;
   acceptedTerms: boolean;
 };
 
@@ -85,6 +96,8 @@ const vendorRegisterDefaults: VendorRegisterState = {
   address: "",
   commercialRecord: "",
   taxCard: "",
+  latitude: 30.0444,
+  longitude: 31.2357,
   acceptedTerms: false
 };
 
@@ -99,6 +112,8 @@ const clientRegisterDefaults: ClientRegisterState = {
   governorate: "",
   city: "",
   address: "",
+  latitude: 30.0444,
+  longitude: 31.2357,
   acceptedTerms: false
 };
 
@@ -123,6 +138,10 @@ const workerRegisterDefaults: WorkerRegisterState = {
   utilityBill: "",
   guarantorName: "",
   guarantorPhone: "",
+  governorate: "",
+  city: "",
+  latitude: 30.0444,
+  longitude: 31.2357,
   acceptedTerms: false
 };
 
@@ -442,6 +461,11 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
           email: string;
           password: string;
           confirmPassword: string;
+          governorate?: string;
+          city?: string;
+          address?: string;
+          latitude?: number;
+          longitude?: number;
         }
       >("/auth/register/client", {
         firstName: state.firstName,
@@ -449,7 +473,12 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
         phone: state.phone,
         email: state.email,
         password: state.password,
-        confirmPassword: state.confirmPassword
+        confirmPassword: state.confirmPassword,
+        governorate: state.governorate,
+        city: state.city,
+        address: state.address,
+        latitude: state.latitude,
+        longitude: state.longitude
       });
 
       window.localStorage.removeItem("osta-client-register");
@@ -536,25 +565,52 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
           ) : null}
 
           {step === 2 ? (
-            <>
+            <div className="space-y-6">
               <div className="grid gap-5 sm:grid-cols-2">
-                <InputField
+                <SelectField
                   label={isArabic ? "المحافظة" : "Governorate"}
                   value={state.governorate}
-                  onChange={(governorate) => setState({ ...state, governorate })}
+                  options={egyptianGovernorates.map(g => ({ value: g.value, label: isArabic ? g.labelAr : g.labelEn }))}
+                  onChange={(gov) => setState({ ...state, governorate: gov, city: "" })}
+                  placeholder={isArabic ? "اختر المحافظة" : "Select governorate"}
                 />
-                <InputField
-                  label={isArabic ? "المدينة" : "City"}
+                <SelectField
+                  label={isArabic ? "المدينة / المنطقة" : "City / Area"}
                   value={state.city}
+                  disabled={!state.governorate}
+                  options={(majorCities[state.governorate] || []).map(c => ({ value: c.value, label: isArabic ? c.labelAr : c.labelEn }))}
                   onChange={(city) => setState({ ...state, city })}
+                  placeholder={isArabic ? "اختر المدينة" : "Select city"}
                 />
               </div>
+
+              <div className="space-y-3">
+                <span className="text-sm font-medium text-dark-700">{isArabic ? "تحديد الموقع على الخريطة" : "Pin location on map"}</span>
+                <MapPicker 
+                  lat={state.latitude} 
+                  lng={state.longitude} 
+                  isArabic={isArabic}
+                  onChange={(lat, lng, details) => {
+                    const newState = { ...state, latitude: lat, longitude: lng };
+                    if (details) {
+                      // Attempt to guess governorate from Nominatim if possible
+                      const govMatch = egyptianGovernorates.find(g => 
+                        details.state?.includes(g.labelEn) || details.city?.includes(g.labelEn) ||
+                        details.state?.includes(g.labelAr) || details.city?.includes(g.labelAr)
+                      );
+                      if (govMatch) newState.governorate = govMatch.value;
+                    }
+                    setState(newState);
+                  }}
+                />
+              </div>
+
               <InputField
-                label={isArabic ? "العنوان التفصيلي" : "Detailed address"}
+                label={isArabic ? "العنوان التفصيلي (رقم المبنى / الشقة)" : "Detailed address (Building / Flat)"}
                 value={state.address}
                 onChange={(address) => setState({ ...state, address })}
                 textarea
-                rows={3}
+                rows={2}
               />
 
               <label className="flex items-center gap-3 rounded-[1.2rem] border border-dark-200 bg-surface-soft px-4 py-3 text-sm text-dark-700">
@@ -566,7 +622,7 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
                 />
                 <span>{copy.terms}</span>
               </label>
-            </>
+            </div>
           ) : null}
 
           <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
@@ -639,6 +695,11 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
           email: string;
           password: string;
           confirmPassword: string;
+          governorate?: string;
+          city?: string;
+          address?: string;
+          latitude?: number;
+          longitude?: number;
         }
       >("/auth/register/worker", {
         firstName: state.firstName,
@@ -646,7 +707,12 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
         phone: state.phone,
         email: state.email,
         password: state.password,
-        confirmPassword: state.confirmPassword
+        confirmPassword: state.confirmPassword,
+        governorate: state.governorate,
+        city: state.city,
+        address: state.workAreas, // Use workAreas as base address
+        latitude: state.latitude,
+        longitude: state.longitude
       });
 
       window.localStorage.removeItem("osta-worker-register");
@@ -781,13 +847,51 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
               </div>
 
               <div className="grid gap-5 sm:grid-cols-2">
+                <SelectField
+                  label={isArabic ? "المحافظة الرئيسية" : "Main Governorate"}
+                  value={state.governorate}
+                  options={egyptianGovernorates.map(g => ({ value: g.value, label: isArabic ? g.labelAr : g.labelEn }))}
+                  onChange={(gov) => setState({ ...state, governorate: gov, city: "" })}
+                  placeholder={isArabic ? "اختر المحافظة" : "Select governorate"}
+                />
+                <SelectField
+                  label={isArabic ? "المدينة / المركز" : "City / District"}
+                  value={state.city}
+                  disabled={!state.governorate}
+                  options={(majorCities[state.governorate] || []).map(c => ({ value: c.value, label: isArabic ? c.labelAr : c.labelEn }))}
+                  onChange={(city) => setState({ ...state, city })}
+                  placeholder={isArabic ? "اختر المدينة" : "Select city"}
+                />
+              </div>
+
+              <div className="space-y-3">
+                <span className="text-sm font-medium text-dark-700">{isArabic ? "نقطة تمركز الخدمة (للبحث بقطر 10كم)" : "Service center point (for 10km radius search)"}</span>
+                <MapPicker 
+                  lat={state.latitude} 
+                  lng={state.longitude} 
+                  isArabic={isArabic}
+                  onChange={(lat, lng, details) => {
+                    const newState = { ...state, latitude: lat, longitude: lng };
+                    if (details) {
+                      const govMatch = egyptianGovernorates.find(g => 
+                        details.state?.includes(g.labelEn) || details.city?.includes(g.labelEn) ||
+                        details.state?.includes(g.labelAr) || details.city?.includes(g.labelAr)
+                      );
+                      if (govMatch) newState.governorate = govMatch.value;
+                    }
+                    setState(newState);
+                  }}
+                />
+              </div>
+
+              <div className="grid gap-5 sm:grid-cols-2">
                 <InputField
                   label={isArabic ? "سنوات الخبرة" : "Years of experience"}
                   value={state.experience}
                   onChange={(experience) => setState({ ...state, experience })}
                 />
                 <InputField
-                  label={isArabic ? "مناطق العمل" : "Work areas"}
+                  label={isArabic ? "مناطق العمل الإضافية" : "Additional work areas"}
                   value={state.workAreas}
                   onChange={(workAreas) => setState({ ...state, workAreas })}
                   placeholder={isArabic ? "القاهرة الجديدة، مدينة نصر" : "New Cairo, Nasr City"}
@@ -1120,7 +1224,9 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
         city: state.city,
         address: state.address,
         commercialRecord: state.commercialRecord,
-        taxCard: state.taxCard
+        taxCard: state.taxCard,
+        latitude: state.latitude,
+        longitude: state.longitude
       });
 
       window.localStorage.removeItem("osta-vendor-register");
@@ -1200,7 +1306,7 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
           ) : null}
 
           {step === 2 ? (
-            <>
+            <div className="space-y-6">
               <div className="grid gap-5 sm:grid-cols-2">
                 <InputField
                   label={isArabic ? "رقم السجل التجاري" : "Commercial Record"}
@@ -1213,24 +1319,51 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
                   onChange={(taxCard) => setState({ ...state, taxCard })}
                 />
               </div>
+
               <div className="grid gap-5 sm:grid-cols-2">
-                <InputField
+                <SelectField
                   label={isArabic ? "المحافظة" : "Governorate"}
                   value={state.governorate}
-                  onChange={(governorate) => setState({ ...state, governorate })}
+                  options={egyptianGovernorates.map(g => ({ value: g.value, label: isArabic ? g.labelAr : g.labelEn }))}
+                  onChange={(gov) => setState({ ...state, governorate: gov, city: "" })}
+                  placeholder={isArabic ? "اختر المحافظة" : "Select governorate"}
                 />
-                <InputField
-                  label={isArabic ? "المدينة" : "City"}
+                <SelectField
+                  label={isArabic ? "المدينة / المنطقة" : "City / Area"}
                   value={state.city}
+                  disabled={!state.governorate}
+                  options={(majorCities[state.governorate] || []).map(c => ({ value: c.value, label: isArabic ? c.labelAr : c.labelEn }))}
                   onChange={(city) => setState({ ...state, city })}
+                  placeholder={isArabic ? "اختر المدينة" : "Select city"}
                 />
               </div>
+
+              <div className="space-y-3">
+                <span className="text-sm font-medium text-dark-700">{isArabic ? "موقع المتجر على الخريطة" : "Store location on map"}</span>
+                <MapPicker 
+                  lat={state.latitude} 
+                  lng={state.longitude} 
+                  isArabic={isArabic}
+                  onChange={(lat, lng, details) => {
+                    const newState = { ...state, latitude: lat, longitude: lng };
+                    if (details) {
+                      const govMatch = egyptianGovernorates.find(g => 
+                        details.state?.includes(g.labelEn) || details.city?.includes(g.labelEn) ||
+                        details.state?.includes(g.labelAr) || details.city?.includes(g.labelAr)
+                      );
+                      if (govMatch) newState.governorate = govMatch.value;
+                    }
+                    setState(newState);
+                  }}
+                />
+              </div>
+
               <InputField
-                label={isArabic ? "العنوان التفصيلي" : "Detailed address"}
+                label={isArabic ? "العنوان التفصيلي للمتجر" : "Detailed store address"}
                 value={state.address}
                 onChange={(address) => setState({ ...state, address })}
                 textarea
-                rows={3}
+                rows={2}
               />
 
               <label className="flex items-center gap-3 rounded-[1.2rem] border border-dark-200 bg-surface-soft px-4 py-3 text-sm text-dark-700">
@@ -1242,7 +1375,7 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
                 />
                 <span>{copy.terms}</span>
               </label>
-            </>
+            </div>
           ) : null}
 
           <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
