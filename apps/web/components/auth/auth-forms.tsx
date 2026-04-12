@@ -1125,7 +1125,7 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
 
       window.localStorage.removeItem("osta-vendor-register");
       setSubmitted(true);
-      applyAuthSuccess(locale, payload, true, router);
+      applyAuthSuccess(locale, payload, true);
     } catch (registerError) {
       setError(registerError instanceof Error ? registerError.message : isArabic ? "تعذر إنشاء الحساب" : "Unable to create account.");
     } finally {
