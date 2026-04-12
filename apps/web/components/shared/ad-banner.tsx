@@ -39,12 +39,16 @@ export function AdBanner({ placement, locale, className }: AdBannerProps) {
     return () => clearInterval(timer);
   }, [ads.length]);
 
-  if (ads.length === 0) return null;
+  if (!ads || ads.length === 0) return null;
 
   const currentAd = ads[currentIndex];
 
+  // Radical safety check - ensure currentAd exists before proceeding to render or logic
+  if (!currentAd) return null;
+
   const handleAdClick = async () => {
-    if (!currentAd || !currentAd.targetUrl) return;
+    // Already guarded by the component-level check, but adding an extra one for logic safety
+    if (!currentAd.targetUrl) return;
 
     // Record click asynchronously
     const apiUrl = process.env.NEXT_PUBLIC_OSTA_API_URL ?? "http://localhost:4000/api";
