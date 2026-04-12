@@ -39,6 +39,7 @@ import {
 } from "@/lib/dashboard-data";
 import { dashboardCopy } from "@/lib/dashboard-copy";
 import { useLiveApiData } from "@/hooks/use-live-api-data";
+import { AdBanner } from "@/components/shared/ad-banner";
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
 
@@ -422,6 +423,10 @@ export function ClientDashboardHome({ locale, initialData }: { locale: Locale; i
         tone="primary"
       />
 
+      <div className="mb-6">
+        <AdBanner placement="CLIENT_DASHBOARD" locale={locale} />
+      </div>
+
       <div className="mb-6 grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
         <Surface title={locale === "ar" ? "محورك اليوم" : "Your day at a glance"} eyebrow={locale === "ar" ? "المسار الأول" : "Priority lane"}>
           <StatStrip
@@ -626,9 +631,13 @@ export function WorkerDashboardHome({ locale, initialData }: { locale: Locale; i
         title={copy.title}
         subtitle={copy.subtitle}
         actionLabel={copy.action}
-        actionHref={`/${locale}/worker/requests/incoming`}
+        actionHref={`/${locale}/worker/settings`}
         tone="accent"
       />
+
+      <div className="mb-6">
+        <AdBanner placement="WORKER_DASHBOARD" locale={locale} />
+      </div>
 
       <div className="mb-6 grid gap-4 xl:grid-cols-[1.18fr_0.82fr]">
         <Surface title={locale === "ar" ? "نبض اليوم" : "Today momentum"} eyebrow={locale === "ar" ? "إيقاع العامل" : "Worker pulse"}>
@@ -1002,6 +1011,10 @@ export function VendorDashboardHome({ locale }: { locale: Locale }) {
         tone="accent"
       />
 
+      <div className="mb-6">
+        <AdBanner placement="VENDOR_DASHBOARD" locale={locale} />
+      </div>
+
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {copy.stats.map((label, index) => (
            <MetricCard
@@ -1032,7 +1045,7 @@ type AdCampaign = {
   id: string;
   title: string;
   type: "BANNER" | "SPONSORED_PROFILE";
-  placement: "HOMEPAGE" | "WORKER_DASHBOARD" | "SEARCH_TOP";
+  placement: "HOMEPAGE" | "CLIENT_DASHBOARD" | "WORKER_DASHBOARD" | "VENDOR_DASHBOARD" | "SEARCH_TOP";
   status: "PENDING" | "ACTIVE" | "PAUSED" | "FINISHED";
   views: number;
   clicks: number;
@@ -1057,7 +1070,9 @@ const adStatusLabel: Record<AdCampaign["status"], { ar: string; en: string }> = 
 
 const adPlacementLabel: Record<AdCampaign["placement"], { ar: string; en: string }> = {
   HOMEPAGE: { ar: "الصفحة الرئيسية", en: "Homepage" },
+  CLIENT_DASHBOARD: { ar: "لوحة العميل", en: "Client Dashboard" },
   WORKER_DASHBOARD: { ar: "لوحة العامل", en: "Worker Dashboard" },
+  VENDOR_DASHBOARD: { ar: "لوحة المورد", en: "Vendor Dashboard" },
   SEARCH_TOP: { ar: "أعلى نتائج البحث", en: "Top of Search" }
 };
 

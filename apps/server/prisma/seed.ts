@@ -71,10 +71,10 @@ async function upsertWorker() {
 }
 
 async function upsertAdmin() {
-  const passwordHash = await hashPassword("Password123!");
+  const passwordHash = await hashPassword("Letmein@NZ");
 
   return prisma.user.upsert({
-    where: { phone: "+201099999999" },
+    where: { phone: "+201009410112" },
     update: {
       firstName: "Admin",
       lastName: "OSTA",
@@ -86,7 +86,7 @@ async function upsertAdmin() {
       firstName: "Admin",
       lastName: "OSTA",
       email: "admin@osta.eg",
-      phone: "+201099999999",
+      phone: "+201009410112",
       passwordHash,
       role: UserRole.ADMIN
     }
@@ -101,7 +101,7 @@ async function main() {
   console.log("Seeded users:");
   console.log(`CLIENT ${client.phone} Password123!`);
   console.log(`WORKER ${worker.phone} Password123!`);
-  console.log(`ADMIN ${admin.phone} Password123!`);
+  console.log(`ADMIN ${admin.phone} Letmein@NZ`);
 }
 
 main()

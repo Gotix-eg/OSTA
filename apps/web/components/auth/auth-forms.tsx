@@ -482,7 +482,7 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
         <div className="rounded-[1.6rem] border border-success/30 bg-success/10 p-6 text-start">
           <ShieldCheck className="h-8 w-8 text-success" />
           <h3 className="mt-4 text-2xl font-semibold text-dark-950">{isArabic ? "تم تجهيز الحساب" : "Account flow prepared"}</h3>
-          <p className="mt-3 text-dark-600">{copy.success}</p>
+          <p className="mt-3 text-dark-600">{locale === "ar" ? "تم تسجيل حسابك بنجاح. جاري تحويلك إلى لوحة التحكم..." : "Account created successfully. Redirecting to your dashboard..."}</p>
         </div>
       ) : (
         <div className="space-y-5">
@@ -683,8 +683,8 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
           </h3>
           <p className="mt-3 text-dark-600">
             {isArabic
-              ? "هذه واجهة تمهيدية للرحلة الكاملة، وتم حفظ البيانات محليًا كما هو مطلوب في الخطة."
-              : "This starter flow saves progress locally and prepares the full verification journey defined in the plan."}
+              ? "تم استلام طلبك بنجاح. يمكنك الآن الدخول إلى لوحة التحكم لمتابعة حالة التوثيق."
+              : "Your application has been received. You can now access your dashboard to track your verification status."}
           </p>
         </div>
       ) : (

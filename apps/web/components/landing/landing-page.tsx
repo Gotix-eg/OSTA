@@ -39,6 +39,7 @@ import {
 
 import { serviceCategories } from "@/lib/shared";
 import { LocaleSwitcher } from "@/components/shared/locale-switcher";
+import { AdBanner } from "@/components/shared/ad-banner";
 import { landingCopy } from "@/lib/copy";
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
@@ -391,6 +392,13 @@ export function LandingPage({ locale }: { locale: Locale }) {
           </div>
         </div>
       </motion.section>
+
+      {/* ── AD BANNER (HOMEPAGE) ── */}
+      <section className="bg-white py-4">
+        <div className="section-shell">
+          <AdBanner placement="HOMEPAGE" locale={locale} />
+        </div>
+      </section>
 
       {/* ── WHY OSTA ── */}
       <motion.section initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }} className="py-16 bg-white">

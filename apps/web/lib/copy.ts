@@ -201,7 +201,7 @@ export const authCopy = {
     otpTitle: "تأكيد رمز التحقق",
     terms: "أوافق على الشروط وسياسة الخصوصية",
     submit: "متابعة",
-    success: "تم الحفظ محليًا كتجربة واجهة تمهيدية.",
+    success: "تم تسجيل الدخول بنجاح! جاري تحويلك...",
     timerLabel: "إعادة الإرسال بعد",
     resend: "إعادة إرسال الرمز"
   },
@@ -216,7 +216,7 @@ export const authCopy = {
     otpTitle: "Verify your code",
     terms: "I agree to the terms and privacy policy",
     submit: "Continue",
-    success: "Saved locally as part of this frontend starter flow.",
+    success: "Signed in successfully! Redirecting...",
     timerLabel: "Resend available in",
     resend: "Resend code"
   }
