@@ -5,7 +5,7 @@ import { ApiError } from "../../utils/ApiError.js";
 import { hashPassword, verifyPassword } from "../../utils/password.js";
 import { signAccessToken, signRefreshToken, verifyRefreshToken } from "../../utils/tokens.js";
 
-type RegisterInput = {
+export type RegisterInput = {
   role: "CLIENT" | "WORKER" | "VENDOR";
   firstName: string;
   lastName: string;
@@ -18,6 +18,7 @@ type RegisterInput = {
   latitude?: number;
   longitude?: number;
   category?: string;
+  shopName?: string;
 };
 
 type LoginInput = {
@@ -135,8 +136,13 @@ export const authService = {
           input.role === "VENDOR"
             ? {
                 create: {
-                  shopName: input.firstName + " " + input.lastName,
-                  category: (input as any).category || ""
+                  shopName: input.shopName || (input.firstName + " " + input.lastName),
+                  category: input.category || "",
+                  governorate: input.governorate || "cairo",
+                  city: input.city || "new-cairo",
+                  address: input.address || "",
+                  latitude: input.latitude || 30.0444,
+                  longitude: input.longitude || 31.2357
                 }
               }
             : undefined,

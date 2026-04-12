@@ -50,7 +50,7 @@ router.get("/serve", catchAsync(async (request, response) => {
 
 // POST /api/ads/:id/click
 router.post("/:id/click", catchAsync(async (request, response) => {
-  await adsService.recordClick(request.params.id);
+  await adsService.recordClick(request.params.id as string);
   response.json(successResponse({ success: true }, "Click recorded"));
 }));
 
@@ -81,13 +81,13 @@ router.post("/", authenticate, requireRoles("ADMIN", "SUPER_ADMIN", "VENDOR", "W
 // PUT /api/ads/:id/status
 router.put("/:id/status", authenticate, requireRoles("ADMIN", "SUPER_ADMIN"), catchAsync(async (request, response) => {
   const payload = parseBody(updateAdStatusSchema, request.body);
-  const result = await adsService.updateCampaignStatus(request.params.id, payload.status);
+  const result = await adsService.updateCampaignStatus(request.params.id as string, payload.status);
   response.json(successResponse(result, "تم تحديث حالة الإعلان"));
 }));
 
 // DELETE /api/ads/:id
 router.delete("/:id", authenticate, requireRoles("ADMIN", "SUPER_ADMIN"), catchAsync(async (request, response) => {
-  await adsService.deleteCampaign(request.params.id);
+  await adsService.deleteCampaign(request.params.id as string);
   response.json(successResponse({ success: true }, "تم حذف الإعلان"));
 }));
 
