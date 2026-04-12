@@ -435,10 +435,10 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
                             if (item.id === "images") {
                               const newImages = await Promise.all(Array.from(files).slice(0, 5).map(fileToBase64));
                               setDraft({ ...draft, images: newImages });
-                            } else if (item.id === "voice") {
+                            } else if (item.id === "voice" && files[0]) {
                               const voice = await fileToBase64(files[0]);
                               setDraft({ ...draft, voiceNote: voice });
-                            } else if (item.id === "video") {
+                            } else if (item.id === "video" && files[0]) {
                               const video = await fileToBase64(files[0]);
                               setDraft({ ...draft, videoUrl: video });
                             }
