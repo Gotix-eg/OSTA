@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Package, Plus, Trash2, Edit3, Check, X, ShoppingBag, ImageOff } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Package, Plus, Trash2, Check, X, ShoppingBag, ImageOff, Upload, Loader2 } from "lucide-react";
 import { fetchApiData, postApiData, patchApiData } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
@@ -43,6 +43,126 @@ function formatPrice(price: number, locale: Locale) {
   return locale === "ar" ? `${n} ج.م` : `EGP ${n}`;
 }
 
+function ImageUploader({
+  locale,
+  value,
+  onChange,
+}: {
+  locale: Locale;
+  value: string;
+  onChange: (url: string) => void;
+}) {
+  const isArabic = locale === "ar";
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const [preview, setPreview] = useState<string>(value);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setUploadError(isArabic ? "يرجى اختيار صورة فقط" : "Please select an image file");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setUploadError(isArabic ? "الصورة يجب أن تكون أقل من 5MB" : "Image must be less than 5MB");
+      return;
+    }
+
+    // Show local preview immediately
+    const localUrl = URL.createObjectURL(file);
+    setPreview(localUrl);
+    setUploadError(null);
+    setUploading(true);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await fetch("/api/upload", { method: "POST", body: formData });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Upload failed");
+      onChange(data.url);
+      setPreview(data.url);
+    } catch (err) {
+      setUploadError(err instanceof Error ? err.message : isArabic ? "فشل رفع الصورة" : "Image upload failed");
+      setPreview("");
+      onChange("");
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  function handleRemove() {
+    setPreview("");
+    onChange("");
+    setUploadError(null);
+    if (inputRef.current) inputRef.current.value = "";
+  }
+
+  return (
+    <div className="space-y-1.5">
+      <span className="text-sm font-medium text-dark-700">
+        {isArabic ? "صورة المنتج - اختياري" : "Product Image - Optional"}
+      </span>
+
+      {preview ? (
+        <div className="relative overflow-hidden rounded-[1.2rem] border border-dark-200 bg-surface-soft">
+          <img src={preview} alt="preview" className="h-40 w-full object-cover" />
+          {uploading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-dark-950/50">
+              <Loader2 className="h-8 w-8 animate-spin text-white" />
+            </div>
+          )}
+          {!uploading && (
+            <button
+              type="button"
+              onClick={handleRemove}
+              className="absolute end-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-error shadow transition hover:bg-white"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={() => inputRef.current?.click()}
+          disabled={uploading}
+          className="flex w-full flex-col items-center justify-center gap-3 rounded-[1.2rem] border-2 border-dashed border-dark-200 bg-surface-soft py-8 text-dark-500 transition hover:border-primary-400 hover:text-primary-700 disabled:opacity-60"
+        >
+          {uploading ? (
+            <Loader2 className="h-8 w-8 animate-spin" />
+          ) : (
+            <Upload className="h-8 w-8" />
+          )}
+          <span className="text-sm font-medium">
+            {uploading
+              ? (isArabic ? "جاري رفع الصورة..." : "Uploading...")
+              : (isArabic ? "اضغط لرفع صورة المنتج" : "Click to upload product image")}
+          </span>
+          <span className="text-xs text-dark-400">
+            {isArabic ? "PNG، JPG، WEBP — حتى 5MB" : "PNG, JPG, WEBP — up to 5MB"}
+          </span>
+        </button>
+      )}
+
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={handleFileChange}
+      />
+
+      {uploadError && (
+        <p className="text-xs text-error">{uploadError}</p>
+      )}
+    </div>
+  );
+}
+
 function ProductCard({
   product,
   locale,
@@ -78,7 +198,6 @@ function ProductCard({
 
   return (
     <article className="group relative overflow-hidden rounded-[1.6rem] border border-dark-200/70 bg-white shadow-soft transition hover:-translate-y-1 hover:shadow-md">
-      {/* Product image */}
       <div className="relative h-44 w-full overflow-hidden bg-surface-soft">
         {product.imageUrl ? (
           <img src={product.imageUrl} alt={product.nameAr} className="h-full w-full object-cover transition group-hover:scale-105" />
@@ -87,15 +206,10 @@ function ProductCard({
             <ImageOff className="h-10 w-10" />
           </div>
         )}
-        {/* Stock badge */}
-        <span
-          className={cn(
-            "absolute end-3 top-3 rounded-full px-3 py-1 text-xs font-semibold",
-            product.inStock
-              ? "bg-success/90 text-white"
-              : "bg-error/90 text-white"
-          )}
-        >
+        <span className={cn(
+          "absolute end-3 top-3 rounded-full px-3 py-1 text-xs font-semibold",
+          product.inStock ? "bg-success/90 text-white" : "bg-error/90 text-white"
+        )}>
           {product.inStock ? (isArabic ? "متاح" : "In Stock") : (isArabic ? "نفذ" : "Out of Stock")}
         </span>
       </div>
@@ -166,7 +280,7 @@ function AddProductModal({
         nameEn: form.nameEn.trim() || undefined,
         description: form.description.trim() || undefined,
         price: priceNum,
-        imageUrl: form.imageUrl.trim() || undefined,
+        imageUrl: form.imageUrl || undefined,
         inStock: form.inStock,
         stockQty: form.stockQty ? parseInt(form.stockQty) : undefined,
       });
@@ -181,7 +295,8 @@ function AddProductModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-dark-950/60 p-4 backdrop-blur-sm sm:items-center">
-      <div className="w-full max-w-lg rounded-[2rem] bg-white shadow-xl">
+      <div className="w-full max-w-lg overflow-hidden rounded-[2rem] bg-white shadow-xl">
+        {/* Header */}
         <div className="border-b border-dark-100 p-6">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold text-dark-950">
@@ -193,81 +308,78 @@ function AddProductModal({
           </div>
         </div>
 
-        <div className="space-y-4 p-6">
-          {/* Name Arabic */}
-          <label className="block space-y-1.5">
-            <span className="text-sm font-medium text-dark-700">{isArabic ? "اسم المنتج (عربي) *" : "Product Name (Arabic) *"}</span>
-            <input
-              type="text"
-              value={form.nameAr}
-              onChange={e => setForm({ ...form, nameAr: e.target.value })}
-              placeholder={isArabic ? "مثال: زيت موتور 5L" : "e.g. Motor Oil 5L"}
-              className="h-11 w-full rounded-[1.1rem] border border-dark-200 bg-surface-soft px-4 text-sm text-dark-950 placeholder:text-dark-400 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200"
-            />
-          </label>
-
-          {/* Name English */}
-          <label className="block space-y-1.5">
-            <span className="text-sm font-medium text-dark-700">{isArabic ? "اسم المنتج (إنجليزي) - اختياري" : "Product Name (English) - Optional"}</span>
-            <input
-              type="text"
-              value={form.nameEn}
-              onChange={e => setForm({ ...form, nameEn: e.target.value })}
-              className="h-11 w-full rounded-[1.1rem] border border-dark-200 bg-surface-soft px-4 text-sm text-dark-950 placeholder:text-dark-400 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200"
-            />
-          </label>
-
-          {/* Price */}
-          <label className="block space-y-1.5">
-            <span className="text-sm font-medium text-dark-700">{isArabic ? "السعر (ج.م) *" : "Price (EGP) *"}</span>
-            <input
-              type="number"
-              min="0"
-              step="0.5"
-              value={form.price}
-              onChange={e => setForm({ ...form, price: e.target.value })}
-              placeholder="0"
-              className="h-11 w-full rounded-[1.1rem] border border-dark-200 bg-surface-soft px-4 text-sm text-dark-950 placeholder:text-dark-400 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200"
-            />
-          </label>
-
-          {/* Image URL */}
-          <label className="block space-y-1.5">
-            <span className="text-sm font-medium text-dark-700">{isArabic ? "رابط صورة المنتج - اختياري" : "Product Image URL - Optional"}</span>
-            <input
-              type="url"
+        <div className="max-h-[70vh] overflow-y-auto">
+          <div className="space-y-4 p-6">
+            {/* Image uploader */}
+            <ImageUploader
+              locale={locale}
               value={form.imageUrl}
-              onChange={e => setForm({ ...form, imageUrl: e.target.value })}
-              placeholder="https://..."
-              className="h-11 w-full rounded-[1.1rem] border border-dark-200 bg-surface-soft px-4 text-sm text-dark-950 placeholder:text-dark-400 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200"
+              onChange={url => setForm({ ...form, imageUrl: url })}
             />
-          </label>
 
-          {/* Description */}
-          <label className="block space-y-1.5">
-            <span className="text-sm font-medium text-dark-700">{isArabic ? "وصف المنتج - اختياري" : "Description - Optional"}</span>
-            <textarea
-              value={form.description}
-              onChange={e => setForm({ ...form, description: e.target.value })}
-              rows={2}
-              className="w-full rounded-[1.1rem] border border-dark-200 bg-surface-soft px-4 py-3 text-sm text-dark-950 placeholder:text-dark-400 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200"
-            />
-          </label>
+            {/* Name Arabic */}
+            <label className="block space-y-1.5">
+              <span className="text-sm font-medium text-dark-700">{isArabic ? "اسم المنتج (عربي) *" : "Product Name (Arabic) *"}</span>
+              <input
+                type="text"
+                value={form.nameAr}
+                onChange={e => setForm({ ...form, nameAr: e.target.value })}
+                placeholder={isArabic ? "مثال: زيت موتور 5L" : "e.g. Motor Oil 5L"}
+                className="h-11 w-full rounded-[1.1rem] border border-dark-200 bg-surface-soft px-4 text-sm text-dark-950 placeholder:text-dark-400 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200"
+              />
+            </label>
 
-          {/* In Stock toggle */}
-          <label className="flex items-center gap-3 rounded-[1.2rem] border border-dark-200 bg-surface-soft px-4 py-3">
-            <input
-              type="checkbox"
-              checked={form.inStock}
-              onChange={e => setForm({ ...form, inStock: e.target.checked })}
-              className="h-4 w-4 rounded border-dark-300 text-primary-600"
-            />
-            <span className="text-sm font-medium text-dark-700">{isArabic ? "متاح للبيع الآن" : "Available for sale now"}</span>
-          </label>
+            {/* Name English */}
+            <label className="block space-y-1.5">
+              <span className="text-sm font-medium text-dark-700">{isArabic ? "اسم المنتج (إنجليزي) - اختياري" : "Product Name (English) - Optional"}</span>
+              <input
+                type="text"
+                value={form.nameEn}
+                onChange={e => setForm({ ...form, nameEn: e.target.value })}
+                className="h-11 w-full rounded-[1.1rem] border border-dark-200 bg-surface-soft px-4 text-sm text-dark-950 placeholder:text-dark-400 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200"
+              />
+            </label>
 
-          {error && (
-            <div className="rounded-[1rem] border border-error/30 bg-error/10 px-4 py-3 text-sm text-error">{error}</div>
-          )}
+            {/* Price */}
+            <label className="block space-y-1.5">
+              <span className="text-sm font-medium text-dark-700">{isArabic ? "السعر (ج.م) *" : "Price (EGP) *"}</span>
+              <input
+                type="number"
+                min="0"
+                step="0.5"
+                value={form.price}
+                onChange={e => setForm({ ...form, price: e.target.value })}
+                placeholder="0"
+                className="h-11 w-full rounded-[1.1rem] border border-dark-200 bg-surface-soft px-4 text-sm text-dark-950 placeholder:text-dark-400 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200"
+              />
+            </label>
+
+            {/* Description */}
+            <label className="block space-y-1.5">
+              <span className="text-sm font-medium text-dark-700">{isArabic ? "وصف المنتج - اختياري" : "Description - Optional"}</span>
+              <textarea
+                value={form.description}
+                onChange={e => setForm({ ...form, description: e.target.value })}
+                rows={2}
+                className="w-full rounded-[1.1rem] border border-dark-200 bg-surface-soft px-4 py-3 text-sm text-dark-950 placeholder:text-dark-400 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200"
+              />
+            </label>
+
+            {/* In Stock toggle */}
+            <label className="flex items-center gap-3 rounded-[1.2rem] border border-dark-200 bg-surface-soft px-4 py-3">
+              <input
+                type="checkbox"
+                checked={form.inStock}
+                onChange={e => setForm({ ...form, inStock: e.target.checked })}
+                className="h-4 w-4 rounded border-dark-300 text-primary-600"
+              />
+              <span className="text-sm font-medium text-dark-700">{isArabic ? "متاح للبيع الآن" : "Available for sale now"}</span>
+            </label>
+
+            {error && (
+              <div className="rounded-[1rem] border border-error/30 bg-error/10 px-4 py-3 text-sm text-error">{error}</div>
+            )}
+          </div>
         </div>
 
         <div className="flex gap-3 border-t border-dark-100 p-6">
@@ -342,7 +454,7 @@ export function VendorInventoryPage({ locale }: { locale: Locale }) {
         </button>
       </div>
 
-      {/* Stats strip */}
+      {/* Stats */}
       <div className="mb-6 grid gap-3 sm:grid-cols-3">
         {[
           { label: isArabic ? "إجمالي المنتجات" : "Total Products", value: products.length },
