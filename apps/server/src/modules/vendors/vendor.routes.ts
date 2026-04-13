@@ -182,7 +182,6 @@ router.get("/stores", catchAsync(async (request, response) => {
   const { governorate, category } = request.query as { governorate?: string; category?: string };
   const stores = await prisma.vendorProfile.findMany({
     where: {
-      isOpen: true,
       ...(governorate ? { governorate } : {}),
       ...(category ? { category } : {}),
     },
@@ -199,11 +198,13 @@ router.get("/stores", catchAsync(async (request, response) => {
       ratingCount: true,
       totalOrders: true,
       isOpen: true,
+      latitude: true,
+      longitude: true,
       user: { select: { firstName: true, lastName: true } },
       _count: { select: { products: { where: { inStock: true } } } },
     },
-    orderBy: [{ rating: "desc" }, { totalOrders: "desc" }],
-    take: 80,
+    orderBy: [{ isOpen: "desc" }, { rating: "desc" }, { totalOrders: "desc" }],
+    take: 100,
   });
   response.json(successResponse(stores, "المتاجر المتاحة"));
 }));
