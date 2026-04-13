@@ -43,6 +43,33 @@ function formatPrice(price: number, locale: Locale) {
   return locale === "ar" ? `${n} ج.م` : `EGP ${n}`;
 }
 
+// Compress an image file in-browser using a canvas and return a base64 JPEG
+function compressImage(file: File, maxPx = 900, quality = 0.78): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("Failed to read file"));
+    reader.onload = (ev) => {
+      const img = new Image();
+      img.onerror = () => reject(new Error("Failed to load image"));
+      img.onload = () => {
+        let { width, height } = img;
+        if (width > maxPx || height > maxPx) {
+          if (width >= height) { height = Math.round((height * maxPx) / width); width = maxPx; }
+          else { width = Math.round((width * maxPx) / height); height = maxPx; }
+        }
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d")!;
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL("image/jpeg", quality));
+      };
+      img.src = ev.target!.result as string;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
 function ImageUploader({
   locale,
   value,
@@ -54,8 +81,7 @@ function ImageUploader({
 }) {
   const isArabic = locale === "ar";
   const inputRef = useRef<HTMLInputElement>(null);
-  const [uploading, setUploading] = useState(false);
-  const [preview, setPreview] = useState<string>(value);
+  const [processing, setProcessing] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -66,36 +92,24 @@ function ImageUploader({
       setUploadError(isArabic ? "يرجى اختيار صورة فقط" : "Please select an image file");
       return;
     }
-    if (file.size > 5 * 1024 * 1024) {
-      setUploadError(isArabic ? "الصورة يجب أن تكون أقل من 5MB" : "Image must be less than 5MB");
+    if (file.size > 15 * 1024 * 1024) {
+      setUploadError(isArabic ? "الصورة يجب أن تكون أقل من 15MB" : "Image must be less than 15MB");
       return;
     }
 
-    // Show local preview immediately
-    const localUrl = URL.createObjectURL(file);
-    setPreview(localUrl);
     setUploadError(null);
-    setUploading(true);
-
+    setProcessing(true);
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-      const res = await fetch("/api/upload", { method: "POST", body: formData });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Upload failed");
-      onChange(data.url);
-      setPreview(data.url);
-    } catch (err) {
-      setUploadError(err instanceof Error ? err.message : isArabic ? "فشل رفع الصورة" : "Image upload failed");
-      setPreview("");
-      onChange("");
+      const base64 = await compressImage(file);
+      onChange(base64);
+    } catch {
+      setUploadError(isArabic ? "فشل معالجة الصورة" : "Failed to process image");
     } finally {
-      setUploading(false);
+      setProcessing(false);
     }
   }
 
   function handleRemove() {
-    setPreview("");
     onChange("");
     setUploadError(null);
     if (inputRef.current) inputRef.current.value = "";
@@ -107,43 +121,36 @@ function ImageUploader({
         {isArabic ? "صورة المنتج - اختياري" : "Product Image - Optional"}
       </span>
 
-      {preview ? (
+      {value ? (
         <div className="relative overflow-hidden rounded-[1.2rem] border border-dark-200 bg-surface-soft">
-          <img src={preview} alt="preview" className="h-40 w-full object-cover" />
-          {uploading && (
-            <div className="absolute inset-0 flex items-center justify-center bg-dark-950/50">
-              <Loader2 className="h-8 w-8 animate-spin text-white" />
-            </div>
-          )}
-          {!uploading && (
-            <button
-              type="button"
-              onClick={handleRemove}
-              className="absolute end-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-error shadow transition hover:bg-white"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          )}
+          <img src={value} alt="preview" className="h-40 w-full object-cover" />
+          <button
+            type="button"
+            onClick={handleRemove}
+            className="absolute end-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-error shadow transition hover:bg-white"
+          >
+            <X className="h-4 w-4" />
+          </button>
         </div>
       ) : (
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
-          disabled={uploading}
+          disabled={processing}
           className="flex w-full flex-col items-center justify-center gap-3 rounded-[1.2rem] border-2 border-dashed border-dark-200 bg-surface-soft py-8 text-dark-500 transition hover:border-primary-400 hover:text-primary-700 disabled:opacity-60"
         >
-          {uploading ? (
+          {processing ? (
             <Loader2 className="h-8 w-8 animate-spin" />
           ) : (
             <Upload className="h-8 w-8" />
           )}
           <span className="text-sm font-medium">
-            {uploading
-              ? (isArabic ? "جاري رفع الصورة..." : "Uploading...")
+            {processing
+              ? (isArabic ? "جاري معالجة الصورة..." : "Processing...")
               : (isArabic ? "اضغط لرفع صورة المنتج" : "Click to upload product image")}
           </span>
           <span className="text-xs text-dark-400">
-            {isArabic ? "PNG، JPG، WEBP — حتى 5MB" : "PNG, JPG, WEBP — up to 5MB"}
+            {isArabic ? "PNG، JPG، WEBP — حتى 15MB" : "PNG, JPG, WEBP — up to 15MB"}
           </span>
         </button>
       )}
