@@ -71,6 +71,8 @@ type WorkerRegisterState = {
 
 type VendorRegisterState = {
   storeName: string;
+  firstName: string;
+  lastName: string;
   phone: string;
   email: string;
   password: string;
@@ -88,6 +90,8 @@ type VendorRegisterState = {
 
 const vendorRegisterDefaults: VendorRegisterState = {
   storeName: "",
+  firstName: "",
+  lastName: "",
   phone: "+20",
   email: "",
   password: "",
@@ -442,7 +446,6 @@ export function LoginForm({ locale }: { locale: Locale }) {
 export function ClientRegisterForm({ locale }: { locale: Locale }) {
   const copy = authCopy[locale];
   const isArabic = locale === "ar";
-  const router = useRouter();
   const { ready, state, setState } = usePersistentState("osta-client-register", clientRegisterDefaults);
   const [step, setStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
@@ -650,7 +653,7 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
               <button
                 type="button"
                 onClick={() => void handleRegister()}
-                disabled={isSubmitting}
+                disabled={isSubmitting || !state.acceptedTerms}
                 className="inline-flex h-11 items-center gap-2 rounded-full bg-primary-600 px-5 text-sm font-semibold text-white transition hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {isSubmitting ? (isArabic ? "... جاري" : "Creating...") : isArabic ? "إنشاء الحساب" : "Create account"}
@@ -669,7 +672,6 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
 export function WorkerRegisterForm({ locale }: { locale: Locale }) {
   const copy = authCopy[locale];
   const isArabic = locale === "ar";
-  const router = useRouter();
   const { ready, state, setState } = usePersistentState("osta-worker-register", workerRegisterDefaults);
   const [step, setStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
@@ -1017,7 +1019,7 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
               <button
                 type="button"
                 onClick={() => void handleWorkerRegister()}
-                disabled={isSubmitting}
+                disabled={isSubmitting || !state.acceptedTerms}
                 className="inline-flex h-11 items-center gap-2 rounded-full bg-primary-600 px-5 text-sm font-semibold text-white transition hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {isSubmitting ? (isArabic ? "... جاري" : "Submitting...") : isArabic ? "إرسال للمراجعة" : "Submit for review"}
@@ -1201,7 +1203,6 @@ export function VerifyOtpForm({ locale }: { locale: Locale }) {
 export function VendorRegisterForm({ locale }: { locale: Locale }) {
   const copy = authCopy[locale];
   const isArabic = locale === "ar";
-  const router = useRouter();
   const { ready, state, setState } = usePersistentState("osta-vendor-register", vendorRegisterDefaults);
   const [step, setStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
@@ -1218,6 +1219,8 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
         Omit<VendorRegisterState, "acceptedTerms">
       >("/auth/register/vendor", {
         storeName: state.storeName,
+        firstName: state.firstName,
+        lastName: state.lastName,
         phone: state.phone,
         email: state.email,
         password: state.password,
@@ -1292,6 +1295,18 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
 
           {step === 1 ? (
             <>
+              <div className="grid gap-5 sm:grid-cols-2">
+                <InputField
+                  label={isArabic ? "الاسم الأول" : "First name"}
+                  value={state.firstName}
+                  onChange={(firstName) => setState({ ...state, firstName })}
+                />
+                <InputField
+                  label={isArabic ? "اسم العائلة" : "Last name"}
+                  value={state.lastName}
+                  onChange={(lastName) => setState({ ...state, lastName })}
+                />
+              </div>
               <InputField
                 label={isArabic ? "البريد الإلكتروني" : "Email"}
                 value={state.email}
