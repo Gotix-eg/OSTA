@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   ArrowLeft, ArrowRight, ImageOff, Minus, Plus, ShoppingCart,
-  Star, MapPin, Store, Trash2, CheckCircle2
+  Star, MapPin, Store, Trash2, CheckCircle2, ChevronRight, ChevronLeft
 } from "lucide-react";
 import { fetchApiData, postApiData } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
