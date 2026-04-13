@@ -33,6 +33,9 @@ function parseBody<T>(schema: { parse: (value: unknown) => T }, body: unknown): 
   }
 }
 
+// Safely extract a string route param (fixes @types/express v5 string|string[] union)
+const p = (val: string | string[] | undefined): string => (Array.isArray(val) ? val[0] ?? "" : val ?? "");
+
 const router = Router();
 
 // =============================================
@@ -125,9 +128,10 @@ router.put("/products/:id", authenticate, requireRoles("VENDOR"), catchAsync(asy
   const payload = parseBody(productSchema.partial(), request.body);
   const vendor = await prisma.vendorProfile.findUnique({ where: { userId: request.auth!.userId } });
   if (!vendor) throw new ApiError(404, "الملف التجاري غير موجود");
-  const product = await prisma.vendorProduct.findUnique({ where: { id: request.params.id } });
+  const id = p(request.params["id"]);
+  const product = await prisma.vendorProduct.findUnique({ where: { id } });
   if (!product || product.vendorId !== vendor.id) throw new ApiError(403, "غير مصرح لك");
-  const updated = await prisma.vendorProduct.update({ where: { id: request.params.id }, data: payload });
+  const updated = await prisma.vendorProduct.update({ where: { id }, data: payload });
   response.json(successResponse(updated, "تم تحديث المنتج"));
 }));
 
@@ -135,9 +139,10 @@ router.put("/products/:id", authenticate, requireRoles("VENDOR"), catchAsync(asy
 router.delete("/products/:id", authenticate, requireRoles("VENDOR"), catchAsync(async (request, response) => {
   const vendor = await prisma.vendorProfile.findUnique({ where: { userId: request.auth!.userId } });
   if (!vendor) throw new ApiError(404, "الملف التجاري غير موجود");
-  const product = await prisma.vendorProduct.findUnique({ where: { id: request.params.id } });
+  const id = p(request.params["id"]);
+  const product = await prisma.vendorProduct.findUnique({ where: { id } });
   if (!product || product.vendorId !== vendor.id) throw new ApiError(403, "غير مصرح لك");
-  await prisma.vendorProduct.delete({ where: { id: request.params.id } });
+  await prisma.vendorProduct.delete({ where: { id } });
   response.json(successResponse({ deleted: true }, "تم حذف المنتج"));
 }));
 
@@ -161,9 +166,10 @@ router.get("/direct-orders", authenticate, requireRoles("VENDOR"), catchAsync(as
 router.put("/direct-orders/:id/status", authenticate, requireRoles("VENDOR"), catchAsync(async (request, response) => {
   const vendor = await prisma.vendorProfile.findUnique({ where: { userId: request.auth!.userId } });
   if (!vendor) throw new ApiError(404, "الملف التجاري غير موجود");
-  const order = await prisma.directOrder.findUnique({ where: { id: request.params.id } });
+  const id = p(request.params["id"]);
+  const order = await prisma.directOrder.findUnique({ where: { id } });
   if (!order || order.vendorId !== vendor.id) throw new ApiError(403, "غير مصرح لك");
-  const updated = await prisma.directOrder.update({ where: { id: request.params.id }, data: { status: request.body.status } });
+  const updated = await prisma.directOrder.update({ where: { id }, data: { status: request.body.status } });
   response.json(successResponse(updated, "تم تحديث حالة الطلب"));
 }));
 
@@ -204,8 +210,9 @@ router.get("/stores", catchAsync(async (request, response) => {
 
 // GET /api/vendors/stores/:vendorId/products — store detail + products
 router.get("/stores/:vendorId/products", catchAsync(async (request, response) => {
+  const vendorId = p(request.params["vendorId"]);
   const vendor = await prisma.vendorProfile.findUnique({
-    where: { id: request.params.vendorId },
+    where: { id: vendorId },
     select: {
       id: true, shopName: true, shopNameAr: true, category: true,
       shopDescription: true, shopImageUrl: true, governorate: true,
@@ -214,7 +221,7 @@ router.get("/stores/:vendorId/products", catchAsync(async (request, response) =>
   });
   if (!vendor) throw new ApiError(404, "المتجر غير موجود");
   const products = await prisma.vendorProduct.findMany({
-    where: { vendorId: request.params.vendorId, inStock: true },
+    where: { vendorId, inStock: true },
     orderBy: { createdAt: "desc" },
   });
   response.json(successResponse({ vendor, products }, "منتجات المتجر"));
@@ -222,6 +229,7 @@ router.get("/stores/:vendorId/products", catchAsync(async (request, response) =>
 
 // POST /api/vendors/stores/:vendorId/order — client places direct order
 router.post("/stores/:vendorId/order", authenticate, requireRoles("CLIENT", "WORKER"), catchAsync(async (request, response) => {
+  const vendorId = p(request.params["vendorId"]);
   const { items, deliveryNotes, paymentMethod } = request.body as {
     items: Array<{ productId: string; qty: number }>;
     deliveryNotes?: string;
@@ -229,7 +237,7 @@ router.post("/stores/:vendorId/order", authenticate, requireRoles("CLIENT", "WOR
   };
   if (!items || items.length === 0) throw new ApiError(400, "يجب اختيار منتج على الأقل");
 
-  const vendor = await prisma.vendorProfile.findUnique({ where: { id: request.params.vendorId } });
+  const vendor = await prisma.vendorProfile.findUnique({ where: { id: vendorId } });
   if (!vendor) throw new ApiError(404, "المتجر غير موجود");
   if (!vendor.isOpen) throw new ApiError(400, "المتجر مغلق حالياً");
 
