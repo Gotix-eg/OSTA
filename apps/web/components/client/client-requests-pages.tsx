@@ -80,6 +80,65 @@ function resolveAddress(locale: Locale, detail: ClientRequestDetailData) {
   return [detail.address.governorate, detail.address.city, detail.address.district, detail.address.street].filter(Boolean).join(", ");
 }
 
+export interface CustomRequestItem {
+  id: string;
+  message: string;
+  vendorReply: string | null;
+  status: "PENDING" | "REPLIED" | "REJECTED";
+  createdAt: string;
+  vendor: {
+    shopName: string;
+    shopNameAr?: string | null;
+    shopImageUrl?: string | null;
+  };
+}
+
+function ClientCustomRequestsBlock({ locale }: { locale: Locale }) {
+  const isArabic = locale === "ar";
+  const data = useLiveApiData<CustomRequestItem[]>("/vendors/my-custom-requests", []);
+
+  return (
+    <DashboardBlock title={isArabic ? "طلبات المتاجر الخاصة" : "Store Custom Requests"} eyebrow={isArabic ? "تواصل المتجر" : "Store communication"}>
+      {data.length === 0 ? (
+        <EmptyState>{isArabic ? "لا توجد أي طلبات أرسلتها لمتاجر" : "No store requests sent yet"}</EmptyState>
+      ) : (
+        <div className="grid gap-4">
+          {data.map((item) => (
+            <article key={item.id} className="dashboard-card-soft p-4 sm:p-5">
+              <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <h2 className="text-xl font-semibold text-dark-950">{isArabic && item.vendor.shopNameAr ? item.vendor.shopNameAr : item.vendor.shopName}</h2>
+                    <SoftBadge 
+                        label={item.status === "PENDING" ? (isArabic ? "قيد الانتظار" : "Pending") : item.status === "REPLIED" ? (isArabic ? "تم الرد" : "Replied") : (isArabic ? "مرفوض" : "Rejected")} 
+                        tone={item.status === "REPLIED" ? "success" : item.status === "PENDING" ? "sun" : "dark"} 
+                    />
+                  </div>
+                  <div className="mt-4 break-words rounded-lg border border-dark-100 bg-white p-3 text-sm text-dark-600">
+                    <span className="mb-1 block text-xs font-semibold uppercase tracking-wider text-dark-400">{isArabic ? "رسالتك:" : "Your Request:"}</span>
+                    {item.message}
+                  </div>
+                  
+                  {item.vendorReply && (
+                    <div className="mt-3 break-words rounded-lg border border-primary-100 bg-primary-50/50 p-3 text-sm text-primary-900 line-clamp-4 hover:line-clamp-none transition-all">
+                      <span className="mb-1 block text-xs font-semibold uppercase tracking-wider text-primary-600">{isArabic ? "رد المتجر:" : "Store Reply:"}</span>
+                      {item.vendorReply}
+                    </div>
+                  )}
+
+                  <div className="mt-3 text-xs text-dark-400">
+                      {formatDate(locale, item.createdAt)}
+                  </div>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+    </DashboardBlock>
+  );
+}
+
 export function ClientRequestsPage({ locale, initialData }: { locale: Locale; initialData: ClientRequestListItem[] }) {
   const isArabic = locale === "ar";
   const data = useLiveApiData("/clients/requests", initialData);
@@ -152,6 +211,10 @@ export function ClientRequestsPage({ locale, initialData }: { locale: Locale; in
           </div>
         )}
       </DashboardBlock>
+
+      <div className="mt-8">
+        <ClientCustomRequestsBlock locale={locale} />
+      </div>
     </div>
   );
 }
