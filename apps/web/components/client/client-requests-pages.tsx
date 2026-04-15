@@ -111,7 +111,7 @@ function ClientCustomRequestsBlock({ locale }: { locale: Locale }) {
                     <h2 className="text-xl font-semibold text-dark-950">{isArabic && item.vendor.shopNameAr ? item.vendor.shopNameAr : item.vendor.shopName}</h2>
                     <SoftBadge 
                         label={item.status === "PENDING" ? (isArabic ? "قيد الانتظار" : "Pending") : item.status === "REPLIED" ? (isArabic ? "تم الرد" : "Replied") : (isArabic ? "مرفوض" : "Rejected")} 
-                        tone={item.status === "REPLIED" ? "success" : item.status === "PENDING" ? "sun" : "dark"} 
+                        tone={item.status === "REPLIED" ? "success" : item.status === "PENDING" ? "sun" : "error"} 
                     />
                   </div>
                   <div className="mt-4 break-words rounded-lg border border-dark-100 bg-white p-3 text-sm text-dark-600">
