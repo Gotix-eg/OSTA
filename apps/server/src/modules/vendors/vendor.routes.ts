@@ -286,4 +286,84 @@ router.get("/my-orders", authenticate, requireRoles("CLIENT", "WORKER"), catchAs
   response.json(successResponse(orders, "طلباتك المباشرة"));
 }));
 
+// =============================================
+// Custom Requests (Client sends text to vendor)
+// =============================================
+
+// POST /api/vendors/stores/:vendorId/custom-request — client sends a custom request
+router.post("/stores/:vendorId/custom-request", authenticate, requireRoles("CLIENT", "WORKER"), catchAsync(async (request, response) => {
+  const vendorId = p(request.params["vendorId"]);
+  const { message, clientPhone } = request.body as { message: string; clientPhone?: string };
+
+  if (!message || message.trim().length < 5) {
+    throw new ApiError(400, "يرجى كتابة وصف واضح للطلب (5 حروف على الأقل)");
+  }
+
+  const vendor = await prisma.vendorProfile.findUnique({ where: { id: vendorId } });
+  if (!vendor) throw new ApiError(404, "المتجر غير موجود");
+
+  const user = await prisma.user.findUnique({ where: { id: request.auth!.userId } });
+  if (!user) throw new ApiError(404, "المستخدم غير موجود");
+
+  const customRequest = await prisma.customRequest.create({
+    data: {
+      vendorId,
+      clientId: request.auth!.userId,
+      clientName: `${user.firstName} ${user.lastName}`.trim(),
+      clientPhone: clientPhone || user.phone || undefined,
+      message: message.trim(),
+    },
+  });
+
+  response.status(201).json(successResponse(customRequest, "تم إرسال طلبك للمتجر بنجاح"));
+}));
+
+// GET /api/vendors/custom-requests — vendor sees incoming custom requests
+router.get("/custom-requests", authenticate, requireRoles("VENDOR"), catchAsync(async (request, response) => {
+  const vendor = await prisma.vendorProfile.findUnique({ where: { userId: request.auth!.userId } });
+  if (!vendor) throw new ApiError(404, "الملف التجاري غير موجود");
+
+  const requests = await prisma.customRequest.findMany({
+    where: { vendorId: vendor.id },
+    orderBy: { createdAt: "desc" },
+    take: 100,
+  });
+
+  response.json(successResponse(requests, "الطلبات المخصصة"));
+}));
+
+// PUT /api/vendors/custom-requests/:id/reply — vendor replies to a custom request
+router.patch("/custom-requests/:id/reply", authenticate, requireRoles("VENDOR"), catchAsync(async (request, response) => {
+  const vendor = await prisma.vendorProfile.findUnique({ where: { userId: request.auth!.userId } });
+  if (!vendor) throw new ApiError(404, "الملف التجاري غير موجود");
+
+  const id = p(request.params["id"]);
+  const cr = await prisma.customRequest.findUnique({ where: { id } });
+  if (!cr || cr.vendorId !== vendor.id) throw new ApiError(403, "غير مصرح لك");
+
+  const { reply } = request.body as { reply: string };
+  if (!reply || reply.trim().length < 2) throw new ApiError(400, "يرجى كتابة رد");
+
+  const updated = await prisma.customRequest.update({
+    where: { id },
+    data: { vendorReply: reply.trim(), status: "REPLIED" },
+  });
+
+  response.json(successResponse(updated, "تم إرسال الرد"));
+}));
+
+// GET /api/vendors/my-custom-requests — client sees their sent custom requests
+router.get("/my-custom-requests", authenticate, requireRoles("CLIENT", "WORKER"), catchAsync(async (request, response) => {
+  const requests = await prisma.customRequest.findMany({
+    where: { clientId: request.auth!.userId },
+    include: {
+      vendor: { select: { shopName: true, shopNameAr: true, shopImageUrl: true } },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  response.json(successResponse(requests, "طلباتك المخصصة"));
+}));
+
 export const vendorRouter = router;
+

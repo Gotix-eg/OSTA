@@ -799,6 +799,7 @@ model VendorProfile {
   materialOrders        MaterialOrder[]
   products              VendorProduct[]
   directOrders          DirectOrder[]
+  customRequests        CustomRequest[]
 
   @@index([verificationStatus])
   @@index([isOpen])
@@ -865,6 +866,32 @@ model DirectOrderItem {
   product   VendorProduct @relation(fields: [productId], references: [id])
 
   @@index([orderId])
+}
+
+enum CustomRequestStatus {
+  PENDING
+  SEEN
+  REPLIED
+  CLOSED
+}
+
+model CustomRequest {
+  id            String              @id @default(cuid())
+  vendorId      String
+  clientId      String
+  clientName    String
+  clientPhone   String?
+  message       String
+  vendorReply   String?
+  status        CustomRequestStatus @default(PENDING)
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+  vendor        VendorProfile       @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+  @@index([vendorId])
+  @@index([clientId])
+  @@index([status])
+  @@index([createdAt])
 }
 
 model MaterialRequest {

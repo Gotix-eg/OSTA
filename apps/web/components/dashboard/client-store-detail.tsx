@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   ArrowLeft, ArrowRight, ImageOff, Minus, Plus, ShoppingCart,
-  Star, MapPin, Store, Trash2, CheckCircle2, ChevronRight, ChevronLeft
+  Star, MapPin, Store, Trash2, CheckCircle2, ChevronRight, ChevronLeft,
+  MessageSquarePlus, Send, Loader2
 } from "lucide-react";
 import { fetchApiData, postApiData } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
@@ -402,8 +403,12 @@ export function ClientStoreDetailPage({ locale, vendorId }: { locale: Locale; ve
           )}
         </div>
 
-        {/* Cart sidebar */}
-        <div className="xl:sticky xl:top-6 xl:self-start">
+        {/* Sidebar */}
+        <div className="space-y-4 xl:sticky xl:top-6 xl:self-start">
+          {/* Custom Request Form */}
+          <CustomRequestForm locale={locale} vendorId={vendorId} />
+
+          {/* Cart */}
           {cart.length > 0 ? (
             <CartPanel
               cart={cart}
@@ -424,6 +429,136 @@ export function ClientStoreDetailPage({ locale, vendorId }: { locale: Locale; ve
           )}
         </div>
       </div>
+    </div>
+  );
+}
+
+// =============================================
+// Custom Request Form
+// =============================================
+
+function CustomRequestForm({ locale, vendorId }: { locale: Locale; vendorId: string }) {
+  const isArabic = locale === "ar";
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [phone, setPhone] = useState("");
+  const [sending, setSending] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleSend() {
+    if (message.trim().length < 5) {
+      setError(isArabic ? "يرجى كتابة 5 حروف على الأقل" : "Please write at least 5 characters");
+      return;
+    }
+    setSending(true);
+    setError(null);
+    try {
+      await postApiData(`/vendors/stores/${vendorId}/custom-request`, {
+        message,
+        clientPhone: phone || undefined,
+      });
+      setSuccess(true);
+      setMessage("");
+      setPhone("");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : isArabic ? "حدث خطأ" : "An error occurred");
+    } finally {
+      setSending(false);
+    }
+  }
+
+  if (success) {
+    return (
+      <div className="rounded-[1.6rem] border border-success/30 bg-success/10 p-5 text-center">
+        <CheckCircle2 className="mx-auto h-8 w-8 text-success" />
+        <p className="mt-3 font-semibold text-dark-950">
+          {isArabic ? "تم إرسال طلبك بنجاح!" : "Request sent successfully!"}
+        </p>
+        <p className="mt-1 text-sm text-dark-500">
+          {isArabic ? "المتجر هيتواصل معاك قريباً." : "The store will contact you soon."}
+        </p>
+        <button
+          type="button"
+          onClick={() => { setSuccess(false); setOpen(false); }}
+          className="mt-4 text-sm font-semibold text-primary-700 hover:underline"
+        >
+          {isArabic ? "حسناً" : "OK"}
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="rounded-[1.6rem] border border-dark-200/70 bg-white shadow-soft">
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="flex w-full items-center gap-3 p-5"
+      >
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-50 text-primary-700">
+          <MessageSquarePlus className="h-5 w-5" />
+        </div>
+        <div className="flex-1 text-start">
+          <p className="font-semibold text-dark-950">
+            {isArabic ? "اطلب من المتجر" : "Request from Store"}
+          </p>
+          <p className="text-xs text-dark-500">
+            {isArabic ? "اكتب طلبك وأبعته للمحل مباشرة" : "Write what you need and send it directly"}
+          </p>
+        </div>
+        <ChevronRight className={cn("h-5 w-5 text-dark-400 transition", open && "rotate-90")} />
+      </button>
+
+      {open && (
+        <div className="space-y-3 border-t border-dark-100 p-5">
+          <label className="block space-y-1.5">
+            <span className="text-sm font-medium text-dark-700">
+              {isArabic ? "وصف الطلب *" : "Request Description *"}
+            </span>
+            <textarea
+              value={message}
+              onChange={e => setMessage(e.target.value)}
+              rows={3}
+              placeholder={isArabic
+                ? "مثال: عاوز فلتر زيت لموتوسيكل هوندا 2020 + شمعات..."
+                : "e.g. I need an oil filter for Honda 2020 + spark plugs..."}
+              className="w-full rounded-[1.1rem] border border-dark-200 bg-surface-soft px-4 py-3 text-sm text-dark-950 placeholder:text-dark-400 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200"
+            />
+          </label>
+
+          <label className="block space-y-1.5">
+            <span className="text-sm font-medium text-dark-700">
+              {isArabic ? "رقم التلفون (اختياري)" : "Phone Number (Optional)"}
+            </span>
+            <input
+              type="tel"
+              value={phone}
+              onChange={e => setPhone(e.target.value)}
+              placeholder={isArabic ? "01xxxxxxxxx" : "01xxxxxxxxx"}
+              className="h-11 w-full rounded-[1.1rem] border border-dark-200 bg-surface-soft px-4 text-sm text-dark-950 placeholder:text-dark-400 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200"
+            />
+          </label>
+
+          {error && (
+            <div className="rounded-[1rem] border border-error/30 bg-error/10 px-4 py-3 text-sm text-error">{error}</div>
+          )}
+
+          <button
+            type="button"
+            onClick={handleSend}
+            disabled={sending}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary-600 py-3 text-sm font-semibold text-white transition hover:bg-primary-700 disabled:opacity-60"
+          >
+            {sending ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Send className="h-4 w-4" />
+            )}
+            {sending ? (isArabic ? "جاري الإرسال..." : "Sending...") : (isArabic ? "إرسال الطلب" : "Send Request")}
+          </button>
+        </div>
+      )}
     </div>
   );
 }
