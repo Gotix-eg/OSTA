@@ -41,6 +41,7 @@ import { LocaleSwitcher } from "@/components/shared/locale-switcher";
 import { dashboardCopy } from "@/lib/dashboard-copy";
 import { stripLocalePrefix, type Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
+import { NotificationsPopover } from "./notifications-popover";
 
 type DashboardRole = "client" | "worker" | "vendor" | "admin";
 
@@ -198,10 +199,7 @@ export function DashboardShell({
                   pathname={currentPath}
                   className="inline-flex rounded-full border border-dark-200/80 bg-white/85 px-4 py-2.5 text-sm font-semibold text-dark-700 shadow-soft"
                 />
-                <button className="relative inline-flex h-11 w-11 items-center justify-center rounded-full border border-dark-200/80 bg-white/85 shadow-soft">
-                  <Bell className="h-4 w-4" />
-                  <span className="absolute end-2 top-2 h-2.5 w-2.5 rounded-full bg-primary-600" />
-                </button>
+                <NotificationsPopover locale={locale} />
                 <div className="flex items-center gap-3 rounded-full border border-dark-200/80 bg-white/85 px-2 py-1.5 shadow-soft">
                   <div className={cn("flex h-9 w-9 items-center justify-center rounded-full", theme.orb, theme.ring)}>
                     <UserCircle2 className="h-5 w-5" />

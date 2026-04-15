@@ -39,6 +39,7 @@ import { vendorRouter } from "../modules/vendors/vendor.routes.js";
 import { materialsRouter } from "../modules/materials/materials.routes.js";
 import { adsRouter } from "../modules/ads/ads.routes.js";
 import { settingsRouter } from "../modules/settings/settings.routes.js";
+import { notificationsRouter } from "../modules/notifications/notifications.routes.js";
 
 router.use("/auth", authRouter);
 router.use("/clients", clientsRouter);
@@ -49,5 +50,6 @@ router.use("/vendors", vendorRouter);
 router.use("/materials", materialsRouter);
 router.use("/ads", adsRouter);
 router.use("/settings", settingsRouter);
+router.use("/notifications", notificationsRouter);
 
 export const apiRouter = router;

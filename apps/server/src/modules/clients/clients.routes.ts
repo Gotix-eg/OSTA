@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router, Request, Response } from "express";
 import { UserRole } from "@prisma/client";
 
 import { ZodError, z } from "zod";
@@ -6,6 +6,8 @@ import { ZodError, z } from "zod";
 import { authenticate, requireRoles } from "../../middleware/auth.middleware.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { successResponse } from "../../utils/ApiResponse.js";
+import { catchAsync } from "../../utils/catchAsync.js";
+import { prisma } from "../../lib/prisma.js";
 
 const router = Router();
 
@@ -295,59 +297,107 @@ router.get("/dashboard", (_request, response) => {
   );
 });
 
-router.get("/requests", (_request, response) => {
+router.get("/requests", catchAsync(async (request: Request, response: Response) => {
+  const profile = await prisma.clientProfile.findUnique({ where: { userId: request.auth!.userId } });
+  if (!profile) throw new ApiError(404, "Client profile not found");
+
+  const reqs = await prisma.serviceRequest.findMany({
+    where: { clientId: profile.id },
+    include: {
+      service: { select: { nameAr: true, nameEn: true } },
+      address: true,
+    },
+    orderBy: { createdAt: "desc" }
+  });
+
   response.status(200).json(
     successResponse(
-      clientRequestRecords.map((item) => ({
+      reqs.map((item: any) => ({
         id: item.id,
         requestNumber: item.requestNumber,
         title: item.title,
         serviceId: item.serviceId,
         status: item.status,
-        area: item.area,
+        area: item.address ? item.address.city : "Unknown",
         createdAt: item.createdAt
       })),
       "Client requests fetched"
     )
   );
-});
+}));
 
-router.get("/requests/:id", (request, response) => {
-  const record = clientRequestRecords.find((item) => item.id === request.params.id);
+router.get("/requests/:id", catchAsync(async (request: Request, response: Response) => {
+  const profile = await prisma.clientProfile.findUnique({ where: { userId: request.auth!.userId } });
+  if (!profile) throw new ApiError(404, "Client profile not found");
+  const { id } = request.params as { id: string };
+
+  const record = await prisma.serviceRequest.findUnique({
+    where: { id: id, clientId: profile.id },
+    include: { service: true, address: true }
+  });
 
   if (!record) {
-    response.status(404).json({ success: false, message: "Request not found", error: "NOT_FOUND" });
-    return;
+    throw new ApiError(404, "Request not found");
   }
 
   response.status(200).json(successResponse(record, "Client request fetched"));
-});
+}));
 
-router.post("/requests", (request, response) => {
+router.post("/requests", catchAsync(async (request: Request, response: Response) => {
   const payload = parseBody(createRequestSchema, request.body);
-  const nextNumber = clientRequestRecords.length + 104;
-  const createdAt = new Date().toISOString();
+  
+  const profile = await prisma.clientProfile.findUnique({ where: { userId: request.auth!.userId } });
+  if (!profile) throw new ApiError(404, "Client profile not found");
+  const clientId = profile.id;
 
-  const record: ClientRequestRecord = {
-    id: `req-${nextNumber}`,
-    requestNumber: `OSTA-${nextNumber}`,
-    categoryId: payload.categoryId,
-    serviceId: payload.serviceId,
-    title: payload.title,
-    description: payload.description,
-    mediaNotes: payload.mediaNotes ?? "",
-    images: payload.images ?? [],
-    voiceNote: payload.voiceNote,
-    videoUrl: payload.videoUrl,
-    address: payload.address,
-    timing: payload.timing,
-    status: "PENDING",
-    area: getRequestArea(payload.address),
-    createdAt,
-    updatedAt: createdAt
-  };
+  let addressId = payload.address.savedAddressId;
+  if (payload.address.mode === "new" || !addressId) {
+    const newAddress = await prisma.address.create({
+      data: {
+        userId: request.auth!.userId,
+        governorate: payload.address.governorate!,
+        city: payload.address.city!,
+        area: payload.address.city!,
+        street: payload.address.street!,
+        label: "New Address",
+      }
+    });
+    addressId = newAddress.id;
+  }
 
-  clientRequestRecords.unshift(record);
+  let preferredDate: Date | null = null;
+  if (payload.timing.type === "today") preferredDate = new Date();
+  if (payload.timing.type === "tomorrow") { preferredDate = new Date(); preferredDate.setDate(preferredDate.getDate() + 1); }
+  if (payload.timing.type === "custom" && payload.timing.customDate) {
+    preferredDate = new Date(payload.timing.customDate);
+  }
+
+  const record = await prisma.serviceRequest.create({
+    data: {
+      clientId,
+      serviceId: payload.serviceId,
+      addressId: addressId!,
+      title: payload.title,
+      description: payload.description,
+      images: payload.images ?? [],
+      voiceNote: payload.voiceNote,
+      videoUrl: payload.videoUrl,
+      preferredDate,
+      preferredTimeSlot: payload.timing.customWindow,
+      urgency: payload.timing.type === "emergency" ? "EMERGENCY" : "NORMAL",
+      status: "PENDING",
+    }
+  });
+
+  // System notification for the client
+  await prisma.notification.create({
+    data: {
+      userId: request.auth!.userId,
+      type: "SYSTEM",
+      title: "تم استلام الطلب",
+      body: `تم استلام طلب الصيانة الخاص بك (${record.requestNumber}) وجاري البحث عن فني مناسب.`,
+    }
+  });
 
   response.status(201).json(
     successResponse(
@@ -356,14 +406,13 @@ router.post("/requests", (request, response) => {
         requestNumber: record.requestNumber,
         title: record.title,
         status: record.status,
-        area: record.area,
         createdAt: record.createdAt,
         reviewEta: "Within 5 minutes"
       },
       "Client request created"
     )
   );
-});
+}));
 
 router.get("/favorites", (_request, response) => {
   response.status(200).json(

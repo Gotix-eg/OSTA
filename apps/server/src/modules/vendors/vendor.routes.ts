@@ -315,6 +315,17 @@ router.post("/stores/:vendorId/custom-request", authenticate, requireRoles("CLIE
     },
   });
 
+  // Create Notification for the Vendor
+  await prisma.notification.create({
+    data: {
+      userId: vendor.userId,
+      type: "CUSTOM_REQUEST_NEW",
+      title: "طلب مخصص جديد",
+      body: `لقد استلمت طلب جديد من ${customRequest.clientName}`,
+      data: { customRequestId: customRequest.id }
+    }
+  });
+
   response.status(201).json(successResponse(customRequest, "تم إرسال طلبك للمتجر بنجاح"));
 }));
 
@@ -347,6 +358,17 @@ router.patch("/custom-requests/:id/reply", authenticate, requireRoles("VENDOR"),
   const updated = await prisma.customRequest.update({
     where: { id },
     data: { vendorReply: reply.trim(), status: "REPLIED" },
+  });
+
+  // Create Notification for the Client
+  await prisma.notification.create({
+    data: {
+      userId: cr.clientId,
+      type: "CUSTOM_REQUEST_REPLY",
+      title: "رد من المتجر",
+      body: `قام متجر ${vendor.shopNameAr || vendor.shopName} بالرد على طلبك المخصص`,
+      data: { customRequestId: cr.id, vendorId: vendor.id }
+    }
   });
 
   response.json(successResponse(updated, "تم إرسال الرد"));
