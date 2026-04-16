@@ -15,7 +15,10 @@ type CustomReq = {
   clientPhone: string | null;
   message: string;
   vendorReply: string | null;
-  status: "PENDING" | "SEEN" | "REPLIED" | "CLOSED";
+  price: number | null;
+  deliveryMethod: "DELIVERY" | "PICKUP" | null;
+  paymentMethod: "VODAFONE_CASH" | "INSTAPAY" | "COD" | null;
+  status: "PENDING" | "SEEN" | "REPLIED" | "ACCEPTED" | "PREPARING" | "SHIPPED" | "COMPLETED" | "CLOSED" | "REJECTED";
   createdAt: string;
 };
 
@@ -23,14 +26,24 @@ const statusColors: Record<string, string> = {
   PENDING: "bg-sun-100 text-sun-700",
   SEEN: "bg-primary-50 text-primary-700",
   REPLIED: "bg-success/10 text-success",
+  ACCEPTED: "bg-primary-500 text-white",
+  PREPARING: "bg-accent-100 text-accent-700",
+  SHIPPED: "bg-blue-100 text-blue-700",
+  COMPLETED: "bg-success text-white",
   CLOSED: "bg-dark-100 text-dark-500",
+  REJECTED: "bg-error/10 text-error",
 };
 
 const statusLabels: Record<string, Record<string, string>> = {
   PENDING: { ar: "بانتظار الرد", en: "Pending" },
   SEEN: { ar: "تم القراءة", en: "Seen" },
   REPLIED: { ar: "تم الرد", en: "Replied" },
+  ACCEPTED: { ar: "تم قبول العرض", en: "Order Accepted" },
+  PREPARING: { ar: "جاري التحضير", en: "Preparing" },
+  SHIPPED: { ar: "تم الشحن", en: "Shipped" },
+  COMPLETED: { ar: "مكتمل", en: "Completed" },
   CLOSED: { ar: "مغلق", en: "Closed" },
+  REJECTED: { ar: "مرفوض", en: "Rejected" },
 };
 
 function timeAgo(dateStr: string, locale: Locale): string {
@@ -45,9 +58,10 @@ function timeAgo(dateStr: string, locale: Locale): string {
   return locale === "ar" ? `منذ ${diffD} يوم` : `${diffD}d ago`;
 }
 
-function RequestCard({ req, locale, onReply }: {
+function RequestCard({ req, locale, onReply, onStatusUpdate }: {
   req: CustomReq; locale: Locale;
   onReply: (id: string, reply: string) => Promise<void>;
+  onStatusUpdate: (id: string, status: string) => Promise<void>;
 }) {
   const isArabic = locale === "ar";
   const [expanded, setExpanded] = useState(false);
@@ -103,14 +117,16 @@ function RequestCard({ req, locale, onReply }: {
           )}
 
           {/* Vendor reply */}
-          {req.status === "REPLIED" && req.vendorReply ? (
+          {(req.status !== "PENDING" && req.status !== "SEEN") && req.vendorReply && (
             <div className="rounded-[1.2rem] border border-success/30 bg-success/5 p-4">
               <p className="text-xs font-semibold text-success mb-2">
                 {isArabic ? "ردك:" : "Your reply:"}
               </p>
               <p className="text-sm text-dark-900 whitespace-pre-line">{req.vendorReply}</p>
             </div>
-          ) : (
+          )}
+
+          {(req.status === "PENDING" || req.status === "SEEN") && (
             <div className="space-y-2">
               <label className="block space-y-1.5">
                 <span className="text-sm font-medium text-dark-700">
@@ -135,6 +151,48 @@ function RequestCard({ req, locale, onReply }: {
               </button>
             </div>
           )}
+
+          {/* New Lifecycle Actions */}
+          {req.status === "ACCEPTED" && (
+             <div className="rounded-[1.2rem] bg-primary-50 p-4 border border-primary-100">
+                <div className="flex justify-between items-center mb-4">
+                   <div>
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-primary-600">{isArabic ? "العميل وافق" : "Customer Accepted"}</p>
+                      <p className="text-xs text-dark-600 mt-1">
+                         {isArabic ? `طريقة الاستلام: ${req.deliveryMethod === "DELIVERY" ? "توصيل" : "استلام"}` : `Method: ${req.deliveryMethod}`}
+                         <br/>
+                         {isArabic ? `طريقة الدفع: ${req.paymentMethod}` : `Payment: ${req.paymentMethod}`}
+                      </p>
+                   </div>
+                   <button 
+                     onClick={() => onStatusUpdate(req.id, "PREPARING")}
+                     className="bg-primary-600 text-white px-4 py-2 rounded-full text-xs font-bold hover:bg-primary-700 shadow-sm"
+                   >
+                     {isArabic ? "بدء التحضير" : "Start Preparing"}
+                   </button>
+                </div>
+             </div>
+          )}
+
+          {req.status === "PREPARING" && (
+             <div className="flex gap-2">
+                <button 
+                  onClick={() => onStatusUpdate(req.id, "SHIPPED")}
+                  className="flex-1 bg-accent-600 text-white py-3 rounded-full text-xs font-bold hover:bg-accent-700"
+                >
+                  {isArabic ? "تم الشحن / في الطريق" : "Shipped / On the way"}
+                </button>
+             </div>
+          )}
+
+          {req.status === "SHIPPED" && (
+             <button 
+               onClick={() => onStatusUpdate(req.id, "COMPLETED")}
+               className="w-full bg-success text-white py-3 rounded-full text-xs font-bold hover:bg-success-700"
+             >
+               {isArabic ? "تم التوصيل والانتهاء" : "Delivered & Completed"}
+             </button>
+          )} 
         </div>
       )}
     </div>
@@ -157,6 +215,13 @@ export function VendorRequestsPage({ locale }: { locale: Locale }) {
     try {
       await patchApiData(`/vendors/custom-requests/${id}/reply`, { reply });
       setRequests(prev => prev.map(r => r.id === id ? { ...r, vendorReply: reply, status: "REPLIED" as const } : r));
+    } catch { /* ignore */ }
+  }
+
+  async function handleStatusUpdate(id: string, status: string) {
+    try {
+      await patchApiData(`/vendors/custom-requests/${id}/status`, { status });
+      setRequests(prev => prev.map(r => r.id === id ? { ...r, status: status as any } : r));
     } catch { /* ignore */ }
   }
 
@@ -202,6 +267,7 @@ export function VendorRequestsPage({ locale }: { locale: Locale }) {
               req={req}
               locale={locale}
               onReply={handleReply}
+              onStatusUpdate={handleStatusUpdate}
             />
           ))}
         </div>

@@ -874,21 +874,29 @@ enum CustomRequestStatus {
   PENDING
   SEEN
   REPLIED
+  ACCEPTED
+  PREPARING
+  SHIPPED
+  COMPLETED
   CLOSED
+  REJECTED
 }
 
 model CustomRequest {
-  id          String              @id @default(cuid())
-  vendorId    String
-  clientId    String
-  clientName  String
-  clientPhone String?
-  message     String
-  vendorReply String?
-  status      CustomRequestStatus @default(PENDING)
-  createdAt   DateTime            @default(now())
-  updatedAt   DateTime            @updatedAt
-  vendor      VendorProfile       @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  id             String              @id @default(cuid())
+  vendorId       String
+  clientId       String
+  clientName     String
+  clientPhone    String?
+  message        String
+  vendorReply    String?
+  price          Float?
+  deliveryMethod String?
+  paymentMethod  String?
+  status         CustomRequestStatus @default(PENDING)
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+  vendor         VendorProfile       @relation(fields: [vendorId], references: [id], onDelete: Cascade)
 
   @@index([vendorId])
   @@index([clientId])

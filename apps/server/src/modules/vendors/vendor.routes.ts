@@ -352,12 +352,16 @@ router.patch("/custom-requests/:id/reply", authenticate, requireRoles("VENDOR"),
   const cr = await prisma.customRequest.findUnique({ where: { id } });
   if (!cr || cr.vendorId !== vendor.id) throw new ApiError(403, "غير مصرح لك");
 
-  const { reply } = request.body as { reply: string };
+  const { reply, price } = request.body as { reply: string; price?: number };
   if (!reply || reply.trim().length < 2) throw new ApiError(400, "يرجى كتابة رد");
 
   const updated = await prisma.customRequest.update({
     where: { id },
-    data: { vendorReply: reply.trim(), status: "REPLIED" },
+    data: { 
+      vendorReply: reply.trim(), 
+      price: price ? Number(price) : null,
+      status: "REPLIED" 
+    },
   });
 
   // Create Notification for the Client
@@ -379,12 +383,96 @@ router.get("/my-custom-requests", authenticate, requireRoles("CLIENT", "WORKER")
   const requests = await prisma.customRequest.findMany({
     where: { clientId: request.auth!.userId },
     include: {
-      vendor: { select: { shopName: true, shopNameAr: true, shopImageUrl: true } },
+        vendor: { select: { id: true, shopName: true, shopNameAr: true, shopImageUrl: true, userId: true } }
     },
     orderBy: { createdAt: "desc" },
   });
 
   response.json(successResponse(requests, "طلباتك المخصصة"));
+}));
+
+// PATCH /api/vendors/custom-requests/:id/accept — client accepts the offer
+router.patch("/custom-requests/:id/accept", authenticate, requireRoles("CLIENT", "WORKER"), catchAsync(async (request, response) => {
+  const { id } = request.params;
+  const { deliveryMethod, paymentMethod } = request.body as { deliveryMethod: string; paymentMethod: string };
+
+  if (!deliveryMethod || !paymentMethod) {
+    throw new ApiError(400, "يرجى اختيار طريقة التوصيل والدفع");
+  }
+
+  const cr = await prisma.customRequest.findUnique({ 
+    where: { id },
+    include: { vendor: true }
+  });
+  
+  if (!cr || cr.clientId !== request.auth!.userId) throw new ApiError(404, "الطلب غير موجود");
+  if (cr.status !== "REPLIED") throw new ApiError(400, "لا يمكن قبول هذا الطلب في حالته الحالية");
+
+  const updated = await prisma.customRequest.update({
+    where: { id },
+    data: { 
+      deliveryMethod, 
+      paymentMethod, 
+      status: "ACCEPTED" 
+    },
+  });
+
+  // Notify Vendor
+  await prisma.notification.create({
+    data: {
+      userId: cr.vendor.userId,
+      type: "CUSTOM_REQUEST_ACCEPTED",
+      title: "تم قبول عرضك",
+      body: `قام العميل ${cr.clientName} بقبول عرضك ومتابعة الطلب`,
+      data: { customRequestId: cr.id }
+    }
+  });
+
+  response.json(successResponse(updated, "تم قبول الطلب بنجاح"));
+}));
+
+// PATCH /api/vendors/custom-requests/:id/status — vendor updates order status
+router.patch("/custom-requests/:id/status", authenticate, requireRoles("VENDOR"), catchAsync(async (request, response) => {
+  const { id } = request.params;
+  const { status } = request.body as { status: "PREPARING" | "SHIPPED" | "COMPLETED" | "REJECTED" | "CLOSED" };
+
+  const vendor = await prisma.vendorProfile.findUnique({ where: { userId: request.auth!.userId } });
+  if (!vendor) throw new ApiError(404, "الملف التجاري غير موجود");
+
+  const cr = await prisma.customRequest.findUnique({ where: { id } });
+  if (!cr || cr.vendorId !== vendor.id) throw new ApiError(404, "الطلب غير موجود");
+
+  const updated = await prisma.customRequest.update({
+    where: { id },
+    data: { status },
+  });
+
+  // Notify Client of status change
+  let statusTitle = "تحديث في طلبك";
+  let statusBody = `تم تحديث حالة طلبك إلى: ${status}`;
+
+  if (status === "PREPARING") {
+    statusTitle = "جاري تحضير طلبك";
+    statusBody = `بدأ متجر ${vendor.shopNameAr || vendor.shopName} في تحضير طلبك المخصص`;
+  } else if (status === "SHIPPED") {
+    statusTitle = "تم شحن طلبك";
+    statusBody = `طلبك المخصص في الطريق إليك الآن`;
+  } else if (status === "COMPLETED") {
+    statusTitle = "اكتمل الطلب";
+    statusBody = `نتمنى أن تكون قد استمتعت بتجربتك مع متجر ${vendor.shopNameAr || vendor.shopName}`;
+  }
+
+  await prisma.notification.create({
+    data: {
+      userId: cr.clientId,
+      type: "CUSTOM_REQUEST_STATUS_CHANGE",
+      title: statusTitle,
+      body: statusBody,
+      data: { customRequestId: cr.id }
+    }
+  });
+
+  response.json(successResponse(updated, "تم تحديث الحالة"));
 }));
 
 export const vendorRouter = router;
