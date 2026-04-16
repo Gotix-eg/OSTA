@@ -142,9 +142,113 @@ function ClientCustomRequestsBlock({ locale }: { locale: Locale }) {
   );
 }
 
+export interface DirectOrderListItem {
+  id: string;
+  orderNumber: string;
+  status: "PENDING" | "CONFIRMED" | "PREPARING" | "READY" | "IN_TRANSIT" | "DELIVERED" | "CANCELLED";
+  totalAmount: number;
+  deliveryNotes: string | null;
+  paymentMethod: string;
+  createdAt: string;
+  vendor: {
+    shopName: string;
+    shopNameAr?: string | null;
+    shopImageUrl?: string | null;
+  };
+  items: Array<{
+    id: string;
+    qty: number;
+    unitPrice: number;
+    product: {
+      nameAr: string;
+      nameEn?: string | null;
+    };
+  }>;
+}
+
+function ClientDirectOrdersBlock({ locale }: { locale: Locale }) {
+  const isArabic = locale === "ar";
+  const data = useLiveApiData<DirectOrderListItem[]>("/vendors/my-orders", []);
+
+  function formatPrice(price: number) {
+    const n = new Intl.NumberFormat(locale === "ar" ? "ar-EG" : "en-US", { maximumFractionDigits: 0 }).format(price);
+    return locale === "ar" ? `${n} ج.م` : `EGP ${n}`;
+  }
+
+  function getOrderStatus(status: DirectOrderListItem["status"]) {
+    switch (status) {
+      case "PENDING": return { label: isArabic ? "قيد التأكيد" : "Pending", tone: "sun" as const };
+      case "CONFIRMED": return { label: isArabic ? "مؤكد" : "Confirmed", tone: "primary" as const };
+      case "PREPARING": return { label: isArabic ? "جاري التجهيز" : "Preparing", tone: "accent" as const };
+      case "READY": return { label: isArabic ? "جاهز" : "Ready", tone: "accent" as const };
+      case "IN_TRANSIT": return { label: isArabic ? "في الطريق" : "In Transit", tone: "primary" as const };
+      case "DELIVERED": return { label: isArabic ? "تم التوصيل" : "Delivered", tone: "success" as const };
+      case "CANCELLED": return { label: isArabic ? "ملغي" : "Cancelled", tone: "error" as const };
+      default: return { label: status, tone: "dark" as const };
+    }
+  }
+
+  return (
+    <DashboardBlock title={isArabic ? "مشتريات المتاجر" : "Store Orders"} eyebrow={isArabic ? "توصيل مباشر" : "Direct delivery"}>
+      {data.length === 0 ? (
+        <EmptyState>{isArabic ? "لا توجد أي مشتريات من المتاجر" : "No store orders yet"}</EmptyState>
+      ) : (
+        <div className="grid gap-4">
+          {data.map((item) => {
+            const statusInfo = getOrderStatus(item.status);
+            return (
+              <article key={item.id} className="dashboard-card-soft p-4 sm:p-5">
+                <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <h2 className="text-xl font-semibold text-dark-950">{isArabic && item.vendor.shopNameAr ? item.vendor.shopNameAr : item.vendor.shopName}</h2>
+                      <SoftBadge label={statusInfo.label} tone={statusInfo.tone} />
+                    </div>
+                    
+                    <div className="mt-4">
+                      <SplitInfo
+                        items={[
+                          { label: isArabic ? "رقم الطلب" : "Order no", value: item.orderNumber },
+                          { label: isArabic ? "الإجمالي" : "Total", value: formatPrice(item.totalAmount) },
+                          { label: isArabic ? "طريقة الدفع" : "Payment", value: item.paymentMethod === "CASH_ON_DELIVERY" ? (isArabic ? "دفع عند الاستلام" : "Cash on Delivery") : item.paymentMethod },
+                          { label: isArabic ? "التاريخ" : "Date", value: formatDate(locale, item.createdAt) }
+                        ]}
+                      />
+                    </div>
+
+                    <div className="mt-4 rounded-lg border border-dark-100 bg-surface-soft p-3">
+                      <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-dark-400">
+                        {isArabic ? "المنتجات:" : "Products:"}
+                      </p>
+                      <ul className="space-y-1">
+                        {item.items.map((line) => (
+                          <li key={line.id} className="text-sm flex justify-between">
+                            <span className="text-dark-700">{line.qty} × {isArabic ? line.product.nameAr : (line.product.nameEn || line.product.nameAr)}</span>
+                            <span className="font-medium text-dark-950">{formatPrice(line.unitPrice * line.qty)}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {item.deliveryNotes && (
+                       <div className="mt-3 text-xs text-dark-500">
+                         <strong>{isArabic ? "ملاحظات:" : "Notes:"}</strong> {item.deliveryNotes}
+                       </div>
+                    )}
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      )}
+    </DashboardBlock>
+  );
+}
+
 export function ClientRequestsPage({ locale, initialData }: { locale: Locale; initialData: ClientRequestListItem[] }) {
   const isArabic = locale === "ar";
-  const [activeTab, setActiveTab] = useState<"services" | "custom_requests">("services");
+  const [activeTab, setActiveTab] = useState<"services" | "custom_requests" | "direct_orders">("services");
   
   const data = useLiveApiData("/clients/requests", initialData);
 
@@ -198,8 +302,19 @@ export function ClientRequestsPage({ locale, initialData }: { locale: Locale; in
               : "border border-dark-200 bg-white text-dark-600 hover:bg-dark-50"
           }`}
         >
-          <Store className="h-4 w-4" />
-          {isArabic ? "طلبات المتاجر (الخاصة)" : "Store Custom Requests"}
+          <MessageSquare className="h-4 w-4" />
+          {isArabic ? "طلبات المتاجر (تواصل)" : "Store Custom Requests"}
+        </button>
+        <button
+          onClick={() => setActiveTab("direct_orders")}
+          className={`flex-shrink-0 flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition ${
+            activeTab === "direct_orders" 
+              ? "bg-primary-600 text-white shadow-soft" 
+              : "border border-dark-200 bg-white text-dark-600 hover:bg-dark-50"
+          }`}
+        >
+          <ShoppingBag className="h-4 w-4" />
+          {isArabic ? "مشتريات المتاجر (توصيل)" : "Store Orders (Delivery)"}
         </button>
       </div>
 
@@ -246,6 +361,10 @@ export function ClientRequestsPage({ locale, initialData }: { locale: Locale; in
 
       {activeTab === "custom_requests" && (
         <ClientCustomRequestsBlock locale={locale} />
+      )}
+
+      {activeTab === "direct_orders" && (
+        <ClientDirectOrdersBlock locale={locale} />
       )}
     </div>
   );
