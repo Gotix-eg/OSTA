@@ -135,8 +135,8 @@ export function NotificationsPopover({ locale }: { locale: "ar" | "en" }) {
       {isOpen && (
         <div
           className={cn(
-            "absolute top-full z-50 mt-2 w-80 overflow-hidden rounded-2xl border border-dark-200 bg-white shadow-xl lg:w-96",
-            isArabic ? "left-0" : "right-0" // Align right or left depending on language flow
+            "absolute top-full z-[999] mt-2 w-80 overflow-hidden rounded-2xl border border-dark-200 bg-white shadow-xl lg:w-96",
+            "end-0" // Always align to the 'end' of the button (logical left in RTL, right in LTR)
           )}
         >
           <div className="flex items-center justify-between border-b border-dark-100 bg-dark-50/50 px-4 py-3">

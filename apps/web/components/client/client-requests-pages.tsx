@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 
 import {
@@ -124,9 +124,14 @@ function ClientCustomRequestsBlock({ locale }: { locale: Locale }) {
                   </div>
                   
                   {item.vendorReply && (
-                    <div className="mt-3 break-words rounded-lg border border-primary-100 bg-primary-50/50 p-3 text-sm text-primary-900 line-clamp-4 hover:line-clamp-none transition-all">
-                      <span className="mb-1 block text-xs font-semibold uppercase tracking-wider text-primary-600">{isArabic ? "رد المتجر:" : "Store Reply:"}</span>
-                      {item.vendorReply}
+                    <div className="mt-4 ring-2 ring-primary-500/20 break-words rounded-xl border border-primary-100 bg-primary-50/50 p-4 text-sm text-primary-950 shadow-sm">
+                      <div className="flex items-center gap-2 mb-2 text-primary-700">
+                        <MessageSquare className="h-4 w-4" />
+                        <span className="text-xs font-bold uppercase tracking-wider">{isArabic ? "رد المتجر:" : "Store Reply:"}</span>
+                      </div>
+                      <div className="whitespace-pre-line leading-relaxed font-medium">
+                        {item.vendorReply}
+                      </div>
                     </div>
                   )}
 
@@ -252,6 +257,17 @@ export function ClientRequestsPage({ locale, initialData }: { locale: Locale; in
   const [activeTab, setActiveTab] = useState<"services" | "custom_requests" | "direct_orders">("services");
   
   const data = useLiveApiData("/clients/requests", initialData);
+  const customRequests = useLiveApiData<CustomRequestItem[]>("/vendors/my-custom-requests", []);
+  const directOrders = useLiveApiData<DirectOrderListItem[]>("/vendors/my-orders", []);
+
+  // Set default tab based on where there is data
+  useEffect(() => {
+    if (data.length === 0 && customRequests.length > 0) {
+      setActiveTab("custom_requests");
+    } else if (data.length === 0 && customRequests.length === 0 && directOrders.length > 0) {
+      setActiveTab("direct_orders");
+    }
+  }, [data.length, customRequests.length, directOrders.length]);
 
   const counts = {
     total: data.length,
@@ -286,7 +302,7 @@ export function ClientRequestsPage({ locale, initialData }: { locale: Locale; in
       <div className="mb-6 flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
         <button
           onClick={() => setActiveTab("services")}
-          className={`flex-shrink-0 flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition ${
+          className={`relative flex-shrink-0 flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition ${
             activeTab === "services" 
               ? "bg-primary-600 text-white shadow-soft" 
               : "border border-dark-200 bg-white text-dark-600 hover:bg-dark-50"
@@ -294,10 +310,15 @@ export function ClientRequestsPage({ locale, initialData }: { locale: Locale; in
         >
           <Wrench className="h-4 w-4" />
           {isArabic ? "طلبات الصيانة" : "Service Requests"}
+          {data.length > 0 && (
+            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-sun-500 text-[10px] font-bold text-dark-950 ring-2 ring-white">
+              {data.length}
+            </span>
+          )}
         </button>
         <button
           onClick={() => setActiveTab("custom_requests")}
-          className={`flex-shrink-0 flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition ${
+          className={`relative flex-shrink-0 flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition ${
             activeTab === "custom_requests" 
               ? "bg-primary-600 text-white shadow-soft" 
               : "border border-dark-200 bg-white text-dark-600 hover:bg-dark-50"
@@ -305,10 +326,15 @@ export function ClientRequestsPage({ locale, initialData }: { locale: Locale; in
         >
           <MessageSquare className="h-4 w-4" />
           {isArabic ? "طلبات المتاجر (تواصل)" : "Store Custom Requests"}
+          {customRequests.length > 0 && (
+            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-sun-500 text-[10px] font-bold text-dark-950 ring-2 ring-white">
+              {customRequests.length}
+            </span>
+          )}
         </button>
         <button
           onClick={() => setActiveTab("direct_orders")}
-          className={`flex-shrink-0 flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition ${
+          className={`relative flex-shrink-0 flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition ${
             activeTab === "direct_orders" 
               ? "bg-primary-600 text-white shadow-soft" 
               : "border border-dark-200 bg-white text-dark-600 hover:bg-dark-50"
@@ -316,6 +342,11 @@ export function ClientRequestsPage({ locale, initialData }: { locale: Locale; in
         >
           <ShoppingBag className="h-4 w-4" />
           {isArabic ? "مشتريات المتاجر (توصيل)" : "Store Orders (Delivery)"}
+          {directOrders.length > 0 && (
+            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-sun-500 text-[10px] font-bold text-dark-950 ring-2 ring-white">
+              {directOrders.length}
+            </span>
+          )}
         </button>
       </div>
 
