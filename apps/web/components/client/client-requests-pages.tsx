@@ -113,52 +113,92 @@ function ClientCustomRequestsBlock({ locale }: { locale: Locale }) {
         <EmptyState>{isArabic ? "لا توجد أي طلبات أرسلتها لمتاجر" : "No store requests sent yet"}</EmptyState>
       ) : (
         <div className="grid gap-4">
-                    <div className="mt-3 text-xs text-dark-400">
-                        {formatDate(locale, item.createdAt)}
-                    </div>
+          {data.map((item) => (
+            <article key={item.id} className="dashboard-card-soft p-4 sm:p-5">
+              <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <h2 className="text-xl font-semibold text-dark-950">
+                      {isArabic && item.vendor.shopNameAr ? item.vendor.shopNameAr : item.vendor.shopName}
+                    </h2>
+                    <SoftBadge 
+                        label={
+                          item.status === "PENDING" ? (isArabic ? "قيد الانتظار" : "Pending") : 
+                          item.status === "REPLIED" ? (isArabic ? "تم الرد" : "Replied") : 
+                          item.status === "ACCEPTED" ? (isArabic ? "تم القبول" : "Accepted") :
+                          item.status === "PREPARING" ? (isArabic ? "جاري التحضير" : "Preparing") :
+                          item.status === "SHIPPED" ? (isArabic ? "تم الشحن" : "Shipped") :
+                          item.status === "COMPLETED" ? (isArabic ? "مكتمل" : "Completed") :
+                          (isArabic ? "مرفوض" : "Rejected")
+                        } 
+                        tone={
+                          item.status === "COMPLETED" || item.status === "REPLIED" || item.status === "ACCEPTED" ? "success" : 
+                          item.status === "PENDING" || item.status === "PREPARING" || item.status === "SHIPPED" ? "sun" : "error"
+                        } 
+                    />
                   </div>
-
-                  {item.status === "REPLIED" && (
-                     <div className="mt-4 xl:mt-0 xl:ps-6 xl:border-s xl:border-dark-100 flex flex-col justify-center">
-                        <button 
-                          onClick={() => setConfirmingItem(item)}
-                          className="inline-flex items-center justify-center gap-2 rounded-full bg-primary-600 px-6 py-3 text-sm font-bold text-white shadow-soft transition hover:bg-primary-700 active:scale-95"
-                        >
-                          <CheckCircle2 className="h-4 w-4" />
-                          {isArabic ? "الموافقة وتأكيد الطلب" : "Approve & Order"}
-                        </button>
-                        <p className="mt-2 text-center text-[10px] text-dark-400">
-                          {isArabic ? "سيتم إبلاغ المتجر بقرارك فوراً" : "Store will be notified instantly"}
-                        </p>
-                     </div>
-                  )}
-
-                  {(item.status === "ACCEPTED" || item.status === "PREPARING" || item.status === "SHIPPED" || item.status === "COMPLETED") && (
-                    <div className="mt-4 xl:mt-0 xl:ps-6 xl:border-s xl:border-dark-100 min-w-[200px]">
-                       <div className="rounded-xl border border-dark-100 bg-dark-50/50 p-3">
-                          <p className="text-[10px] font-bold uppercase tracking-wider text-dark-400 mb-2">
-                            {isArabic ? "تفاصيل التنفيذ" : "Execution details"}
-                          </p>
-                          <div className="space-y-2">
-                             <div className="flex justify-between text-xs">
-                                <span className="text-dark-500">{isArabic ? "التوصيل" : "Delivery"}</span>
-                                <span className="font-semibold text-dark-900">{item.deliveryMethod === "DELIVERY" ? (isArabic ? "توصيل" : "Delivery") : (isArabic ? "استلام" : "Pickup")}</span>
-                             </div>
-                             <div className="flex justify-between text-xs">
-                                <span className="text-dark-500">{isArabic ? "الدفع" : "Payment"}</span>
-                                <span className="font-semibold text-dark-900">
-                                   {item.paymentMethod === "VODAFONE_CASH" ? "Vodafone Cash" : 
-                                    item.paymentMethod === "INSTAPAY" ? "InstaPay" : (isArabic ? "كاش" : "COD")}
-                                </span>
-                             </div>
-                          </div>
-                       </div>
+                  <div className="mt-4 break-words rounded-lg border border-dark-100 bg-white p-3 text-sm text-dark-600">
+                    <span className="mb-1 block text-xs font-semibold uppercase tracking-wider text-dark-400">{isArabic ? "رسالتك:" : "Your Request:"}</span>
+                    {item.message}
+                  </div>
+                  
+                  {item.vendorReply && (
+                    <div className="mt-4 ring-2 ring-primary-500/20 break-words rounded-xl border border-primary-100 bg-primary-50/50 p-4 text-sm text-primary-950 shadow-sm">
+                      <div className="flex items-center gap-2 mb-2 text-primary-700">
+                        <MessageSquare className="h-4 w-4" />
+                        <span className="text-xs font-bold uppercase tracking-wider">{isArabic ? "رد المتجر:" : "Store Reply:"}</span>
+                      </div>
+                      <div className="whitespace-pre-line leading-relaxed font-medium">
+                        {item.vendorReply}
+                      </div>
                     </div>
                   )}
+
+                  <div className="mt-3 text-xs text-dark-400">
+                      {formatDate(locale, item.createdAt)}
+                  </div>
                 </div>
-              </article>
-            );
-          })}
+
+                {item.status === "REPLIED" && (
+                   <div className="mt-4 xl:mt-0 xl:ps-6 xl:border-s xl:border-dark-100 flex flex-col justify-center">
+                      <button 
+                        onClick={() => setConfirmingItem(item)}
+                        className="inline-flex items-center justify-center gap-2 rounded-full bg-primary-600 px-6 py-3 text-sm font-bold text-white shadow-soft transition hover:bg-primary-700 active:scale-95"
+                      >
+                        <CheckCircle2 className="h-4 w-4" />
+                        {isArabic ? "الموافقة وتأكيد الطلب" : "Approve & Order"}
+                      </button>
+                      <p className="mt-2 text-center text-[10px] text-dark-400">
+                        {isArabic ? "سيتم إبلاغ المتجر بقرارك فوراً" : "Store will be notified instantly"}
+                      </p>
+                   </div>
+                )}
+
+                {(item.status === "ACCEPTED" || item.status === "PREPARING" || item.status === "SHIPPED" || item.status === "COMPLETED") && (
+                  <div className="mt-4 xl:mt-0 xl:ps-6 xl:border-s xl:border-dark-100 min-w-[200px]">
+                     <div className="rounded-xl border border-dark-100 bg-dark-50/50 p-3">
+                        <p className="text-[10px] font-bold uppercase tracking-wider text-dark-400 mb-2">
+                          {isArabic ? "تفاصيل التنفيذ" : "Execution details"}
+                        </p>
+                        <div className="space-y-2">
+                           <div className="flex justify-between text-xs">
+                              <span className="text-dark-500">{isArabic ? "التوصيل" : "Delivery"}</span>
+                              <span className="font-semibold text-dark-900">{item.deliveryMethod === "DELIVERY" ? (isArabic ? "توصيل" : "Delivery") : (isArabic ? "استلام" : "Pickup")}</span>
+                           </div>
+                           <div className="flex justify-between text-xs">
+                              <span className="text-dark-500">{isArabic ? "الدفع" : "Payment"}</span>
+                              <span className="font-semibold text-dark-900">
+                                 {item.paymentMethod === "VODAFONE_CASH" ? "Vodafone Cash" : 
+                                  item.paymentMethod === "INSTAPAY" ? "InstaPay" : (isArabic ? "كاش" : "COD")}
+                              </span>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                )}
+              </div>
+            </article>
+          ))}
         </div>
       )}
 
