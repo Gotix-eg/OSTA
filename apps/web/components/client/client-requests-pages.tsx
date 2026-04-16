@@ -104,6 +104,7 @@ export interface CustomRequestItem {
 
 function ClientCustomRequestsBlock({ locale }: { locale: Locale }) {
   const isArabic = locale === "ar";
+  const [confirmingItem, setConfirmingItem] = useState<CustomRequestItem | null>(null);
   const data = useLiveApiData<CustomRequestItem[]>("/vendors/my-custom-requests", []);
 
   return (
