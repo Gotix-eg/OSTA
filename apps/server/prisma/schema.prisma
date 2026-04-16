@@ -352,14 +352,14 @@ model Address {
 }
 
 model ServiceRequest {
-  id                String               @id @default(cuid())
-  requestNumber     String               @unique @default(cuid())
+  id                String                 @id @default(cuid())
+  requestNumber     String                 @unique @default(cuid())
   clientId          String
   workerId          String?
   serviceId         String
   addressId         String
-  status            RequestStatus        @default(PENDING)
-  urgency           RequestUrgency       @default(NORMAL)
+  status            RequestStatus          @default(PENDING)
+  urgency           RequestUrgency         @default(NORMAL)
   title             String
   description       String
   images            String[]
@@ -379,12 +379,12 @@ model ServiceRequest {
   cancelledAt       DateTime?
   cancelReason      String?
   cancellationFee   Float?
-  createdAt         DateTime             @default(now())
-  updatedAt         DateTime             @updatedAt
-  client            ClientProfile        @relation(fields: [clientId], references: [id])
-  worker            WorkerProfile?       @relation("AssignedWorker", fields: [workerId], references: [id])
-  service           Service              @relation(fields: [serviceId], references: [id])
-  address           Address              @relation(fields: [addressId], references: [id])
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
+  client            ClientProfile          @relation(fields: [clientId], references: [id])
+  worker            WorkerProfile?         @relation("AssignedWorker", fields: [workerId], references: [id])
+  service           Service                @relation(fields: [serviceId], references: [id])
+  address           Address                @relation(fields: [addressId], references: [id])
   offers            RequestOffer[]
   payment           Payment?
   review            Review?
@@ -635,18 +635,18 @@ model FavoriteWorker {
 }
 
 model Message {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   senderId    String
   receiverId  String
   requestId   String?
   content     String
-  type        String   @default("text")
+  type        String    @default("text")
   attachments String[]
-  isRead      Boolean  @default(false)
+  isRead      Boolean   @default(false)
   readAt      DateTime?
-  createdAt   DateTime @default(now())
-  sender      User     @relation("SentMessages", fields: [senderId], references: [id])
-  receiver    User     @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  createdAt   DateTime  @default(now())
+  sender      User      @relation("SentMessages", fields: [senderId], references: [id])
+  receiver    User      @relation("ReceivedMessages", fields: [receiverId], references: [id])
 
   @@index([senderId, receiverId])
   @@index([requestId])
@@ -810,19 +810,19 @@ model VendorProfile {
 }
 
 model VendorProduct {
-  id           String        @id @default(cuid())
-  vendorId     String
-  nameAr       String
-  nameEn       String?
-  description  String?
-  price        Float
-  imageUrl     String?
-  inStock      Boolean       @default(true)
-  stockQty     Int?
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  vendor       VendorProfile @relation(fields: [vendorId], references: [id], onDelete: Cascade)
-  orderItems   DirectOrderItem[]
+  id          String            @id @default(cuid())
+  vendorId    String
+  nameAr      String
+  nameEn      String?
+  description String?
+  price       Float
+  imageUrl    String?
+  inStock     Boolean           @default(true)
+  stockQty    Int?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  vendor      VendorProfile     @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  orderItems  DirectOrderItem[]
 
   @@index([vendorId])
   @@index([inStock])
@@ -839,17 +839,17 @@ enum DirectOrderStatus {
 }
 
 model DirectOrder {
-  id            String            @id @default(cuid())
-  orderNumber   String            @unique @default(cuid())
+  id            String                @id @default(cuid())
+  orderNumber   String                @unique @default(cuid())
   vendorId      String
   clientId      String
-  status        DirectOrderStatus @default(PENDING)
+  status        DirectOrderStatus     @default(PENDING)
   totalAmount   Float
   deliveryNotes String?
   paymentMethod MaterialPaymentMethod @default(CASH_ON_DELIVERY)
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @updatedAt
-  vendor        VendorProfile     @relation(fields: [vendorId], references: [id])
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
+  vendor        VendorProfile         @relation(fields: [vendorId], references: [id])
   items         DirectOrderItem[]
 
   @@index([vendorId])
@@ -878,17 +878,17 @@ enum CustomRequestStatus {
 }
 
 model CustomRequest {
-  id            String              @id @default(cuid())
-  vendorId      String
-  clientId      String
-  clientName    String
-  clientPhone   String?
-  message       String
-  vendorReply   String?
-  status        CustomRequestStatus @default(PENDING)
-  createdAt     DateTime            @default(now())
-  updatedAt     DateTime            @updatedAt
-  vendor        VendorProfile       @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  id          String              @id @default(cuid())
+  vendorId    String
+  clientId    String
+  clientName  String
+  clientPhone String?
+  message     String
+  vendorReply String?
+  status      CustomRequestStatus @default(PENDING)
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  vendor      VendorProfile       @relation(fields: [vendorId], references: [id], onDelete: Cascade)
 
   @@index([vendorId])
   @@index([clientId])
@@ -897,25 +897,25 @@ model CustomRequest {
 }
 
 model MaterialRequest {
-  id              String                @id @default(cuid())
-  requestNumber   String                @unique @default(cuid())
-  requesterId     String
-  requesterRole   UserRole
-  clientId        String?
-  title           String
-  description     String
-  images          String[]
-  voiceNote       String?
-  latitude        Float?
-  longitude       Float?
-  deliveryMethod  DeliveryMethod        @default(VENDOR_DELIVERY)
-  status          MaterialRequestStatus @default(PENDING)
-  cancelReason    String?
-  createdAt       DateTime              @default(now())
-  updatedAt       DateTime              @updatedAt
-  requester       User                  @relation(fields: [requesterId], references: [id])
-  offers          MaterialOffer[]
-  order           MaterialOrder?
+  id             String                @id @default(cuid())
+  requestNumber  String                @unique @default(cuid())
+  requesterId    String
+  requesterRole  UserRole
+  clientId       String?
+  title          String
+  description    String
+  images         String[]
+  voiceNote      String?
+  latitude       Float?
+  longitude      Float?
+  deliveryMethod DeliveryMethod        @default(VENDOR_DELIVERY)
+  status         MaterialRequestStatus @default(PENDING)
+  cancelReason   String?
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+  requester      User                  @relation(fields: [requesterId], references: [id])
+  offers         MaterialOffer[]
+  order          MaterialOrder?
 
   @@index([requesterId])
   @@index([status])
@@ -924,19 +924,19 @@ model MaterialRequest {
 }
 
 model MaterialOffer {
-  id                    String               @id @default(cuid())
+  id                    String          @id @default(cuid())
   requestId             String
   vendorId              String
   price                 Float
-  deliveryFee           Float                @default(0)
+  deliveryFee           Float           @default(0)
   totalPrice            Float
   estimatedDeliveryTime Int?
   notes                 String?
-  isAccepted            Boolean              @default(false)
+  isAccepted            Boolean         @default(false)
   expiresAt             DateTime?
-  createdAt             DateTime             @default(now())
-  request               MaterialRequest      @relation(fields: [requestId], references: [id], onDelete: Cascade)
-  vendor                VendorProfile        @relation(fields: [vendorId], references: [id])
+  createdAt             DateTime        @default(now())
+  request               MaterialRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  vendor                VendorProfile   @relation(fields: [vendorId], references: [id])
   order                 MaterialOrder?
 
   @@unique([requestId, vendorId])
@@ -945,26 +945,26 @@ model MaterialOffer {
 }
 
 model MaterialOrder {
-  id              String                @id @default(cuid())
-  orderNumber     String                @unique @default(cuid())
-  requestId       String                @unique
-  offerId         String                @unique
-  vendorId        String
-  clientId        String
-  status          MaterialRequestStatus @default(ACCEPTED)
-  deliveryMethod  DeliveryMethod
-  paymentMethod   MaterialPaymentMethod @default(CASH_ON_DELIVERY)
-  totalAmount     Float
-  isPaid          Boolean               @default(false)
-  paidAt          DateTime?
-  deliveredAt     DateTime?
-  pickedUpAt      DateTime?
-  cancelReason    String?
-  createdAt       DateTime              @default(now())
-  updatedAt       DateTime              @updatedAt
-  request         MaterialRequest       @relation(fields: [requestId], references: [id])
-  offer           MaterialOffer         @relation(fields: [offerId], references: [id])
-  vendor          VendorProfile         @relation(fields: [vendorId], references: [id])
+  id             String                @id @default(cuid())
+  orderNumber    String                @unique @default(cuid())
+  requestId      String                @unique
+  offerId        String                @unique
+  vendorId       String
+  clientId       String
+  status         MaterialRequestStatus @default(ACCEPTED)
+  deliveryMethod DeliveryMethod
+  paymentMethod  MaterialPaymentMethod @default(CASH_ON_DELIVERY)
+  totalAmount    Float
+  isPaid         Boolean               @default(false)
+  paidAt         DateTime?
+  deliveredAt    DateTime?
+  pickedUpAt     DateTime?
+  cancelReason   String?
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+  request        MaterialRequest       @relation(fields: [requestId], references: [id])
+  offer          MaterialOffer         @relation(fields: [offerId], references: [id])
+  vendor         VendorProfile         @relation(fields: [vendorId], references: [id])
 
   @@index([vendorId])
   @@index([clientId])
@@ -977,21 +977,21 @@ model MaterialOrder {
 // =============================================
 
 model AdCampaign {
-  id          String      @id @default(cuid())
-  ownerId     String?     
-  type        AdType
-  placement   AdPlacement
-  title       String
-  imageUrl    String?     
-  targetUrl   String?
-  status      AdStatus    @default(PENDING)
-  views       Int         @default(0)
-  clicks      Int         @default(0)
-  startDate   DateTime?
-  endDate     DateTime?
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  owner       User?       @relation(fields: [ownerId], references: [id])
+  id        String      @id @default(cuid())
+  ownerId   String?
+  type      AdType
+  placement AdPlacement
+  title     String
+  imageUrl  String?
+  targetUrl String?
+  status    AdStatus    @default(PENDING)
+  views     Int         @default(0)
+  clicks    Int         @default(0)
+  startDate DateTime?
+  endDate   DateTime?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  owner     User?       @relation(fields: [ownerId], references: [id])
 
   @@index([status])
   @@index([placement])
