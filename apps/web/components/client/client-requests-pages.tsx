@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 
 import {
@@ -11,7 +12,9 @@ import {
   ShieldCheck,
   Sparkles,
   TimerReset,
-  Wrench
+  Wrench,
+  Store,
+  MessageSquare
 } from "lucide-react";
 
 import { serviceCategories } from "@/lib/shared";
@@ -141,6 +144,8 @@ function ClientCustomRequestsBlock({ locale }: { locale: Locale }) {
 
 export function ClientRequestsPage({ locale, initialData }: { locale: Locale; initialData: ClientRequestListItem[] }) {
   const isArabic = locale === "ar";
+  const [activeTab, setActiveTab] = useState<"services" | "custom_requests">("services");
+  
   const data = useLiveApiData("/clients/requests", initialData);
 
   const counts = {
@@ -172,49 +177,76 @@ export function ClientRequestsPage({ locale, initialData }: { locale: Locale; in
         <MiniMetric label={isArabic ? "مكتملة" : "Completed"} value={String(counts.completed)} note={isArabic ? "أغلقت بنجاح" : "closed successfully"} icon={CheckCircle2} tone="dark" />
       </div>
 
-      <DashboardBlock title={isArabic ? "تدفق الطلبات" : "Request stream"} eyebrow={isArabic ? "الطابور المباشر" : "live queue"}>
-        {data.length === 0 ? (
-          <EmptyState>{isArabic ? "لا توجد طلبات حاليًا" : "No requests yet"}</EmptyState>
-        ) : (
-          <div className="grid gap-4">
-            {data.map((item) => {
-              const status = getStatusMeta(locale, item.status);
-
-              return (
-                <article key={item.id} className="dashboard-card-soft p-4 sm:p-5">
-                  <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
-                    <div className="min-w-0 flex-1">
-                      <div className="flex flex-wrap items-center gap-3">
-                        <h2 className="text-2xl font-semibold text-dark-950">{item.title}</h2>
-                        <SoftBadge label={status.label} tone={status.tone} />
-                      </div>
-                      <div className="mt-4">
-                        <SplitInfo
-                          items={[
-                            { label: isArabic ? "رقم الطلب" : "Request no", value: item.requestNumber },
-                            { label: isArabic ? "الخدمة" : "Service", value: getServiceName(item.serviceId, locale) },
-                            { label: isArabic ? "المنطقة" : "Area", value: item.area },
-                            { label: isArabic ? "تاريخ الإنشاء" : "Created", value: formatDate(locale, item.createdAt) }
-                          ]}
-                        />
-                      </div>
-                    </div>
-
-                    <Link href={`/${locale}/client/request/${item.id}`} className="inline-flex items-center gap-2 rounded-full border border-dark-200 bg-white px-4 py-2.5 text-sm font-semibold text-dark-700 shadow-soft transition hover:border-primary-300 hover:text-primary-700">
-                      {isArabic ? "التفاصيل" : "Details"}
-                      <ChevronRight className="h-4 w-4" />
-                    </Link>
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-        )}
-      </DashboardBlock>
-
-      <div className="mt-8">
-        <ClientCustomRequestsBlock locale={locale} />
+      {/* Tabs Filter */}
+      <div className="mb-6 flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+        <button
+          onClick={() => setActiveTab("services")}
+          className={`flex-shrink-0 flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition ${
+            activeTab === "services" 
+              ? "bg-primary-600 text-white shadow-soft" 
+              : "border border-dark-200 bg-white text-dark-600 hover:bg-dark-50"
+          }`}
+        >
+          <Wrench className="h-4 w-4" />
+          {isArabic ? "طلبات الصيانة" : "Service Requests"}
+        </button>
+        <button
+          onClick={() => setActiveTab("custom_requests")}
+          className={`flex-shrink-0 flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition ${
+            activeTab === "custom_requests" 
+              ? "bg-primary-600 text-white shadow-soft" 
+              : "border border-dark-200 bg-white text-dark-600 hover:bg-dark-50"
+          }`}
+        >
+          <Store className="h-4 w-4" />
+          {isArabic ? "طلبات المتاجر (الخاصة)" : "Store Custom Requests"}
+        </button>
       </div>
+
+      {activeTab === "services" && (
+        <DashboardBlock title={isArabic ? "تدفق الطلبات" : "Request stream"} eyebrow={isArabic ? "الطابور المباشر" : "live queue"}>
+          {data.length === 0 ? (
+            <EmptyState>{isArabic ? "لا توجد طلبات حاليًا" : "No requests yet"}</EmptyState>
+          ) : (
+            <div className="grid gap-4">
+              {data.map((item) => {
+                const status = getStatusMeta(locale, item.status);
+                return (
+                  <article key={item.id} className="dashboard-card-soft p-4 sm:p-5">
+                    <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-3">
+                          <h2 className="text-2xl font-semibold text-dark-950">{item.title}</h2>
+                          <SoftBadge label={status.label} tone={status.tone} />
+                        </div>
+                        <div className="mt-4">
+                          <SplitInfo
+                            items={[
+                              { label: isArabic ? "رقم الطلب" : "Request no", value: item.requestNumber },
+                              { label: isArabic ? "الخدمة" : "Service", value: getServiceName(item.serviceId, locale) },
+                              { label: isArabic ? "المنطقة" : "Area", value: item.area },
+                              { label: isArabic ? "تاريخ الإنشاء" : "Created", value: formatDate(locale, item.createdAt) }
+                            ]}
+                          />
+                        </div>
+                      </div>
+
+                      <Link href={`/${locale}/client/request/${item.id}`} className="inline-flex items-center gap-2 rounded-full border border-dark-200 bg-white px-4 py-2.5 text-sm font-semibold text-dark-700 shadow-soft transition hover:border-primary-300 hover:text-primary-700">
+                        {isArabic ? "التفاصيل" : "Details"}
+                        <ChevronRight className="h-4 w-4" />
+                      </Link>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          )}
+        </DashboardBlock>
+      )}
+
+      {activeTab === "custom_requests" && (
+        <ClientCustomRequestsBlock locale={locale} />
+      )}
     </div>
   );
 }
