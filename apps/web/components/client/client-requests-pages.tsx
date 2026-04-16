@@ -14,7 +14,8 @@ import {
   TimerReset,
   Wrench,
   Store,
-  MessageSquare
+  MessageSquare,
+  ShoppingBag
 } from "lucide-react";
 
 import { serviceCategories } from "@/lib/shared";
