@@ -185,7 +185,7 @@ function ClientDirectOrdersBlock({ locale }: { locale: Locale }) {
       case "IN_TRANSIT": return { label: isArabic ? "في الطريق" : "In Transit", tone: "primary" as const };
       case "DELIVERED": return { label: isArabic ? "تم التوصيل" : "Delivered", tone: "success" as const };
       case "CANCELLED": return { label: isArabic ? "ملغي" : "Cancelled", tone: "error" as const };
-      default: return { label: status, tone: "dark" as const };
+      default: return { label: status, tone: undefined };
     }
   }
 
