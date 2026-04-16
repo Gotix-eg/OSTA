@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 import {
   CalendarDays,
@@ -254,7 +255,10 @@ function ClientDirectOrdersBlock({ locale }: { locale: Locale }) {
 
 export function ClientRequestsPage({ locale, initialData }: { locale: Locale; initialData: ClientRequestListItem[] }) {
   const isArabic = locale === "ar";
-  const [activeTab, setActiveTab] = useState<"services" | "custom_requests" | "direct_orders">("services");
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get("tab") as "services" | "custom_requests" | "direct_orders" | null;
+  
+  const [activeTab, setActiveTab] = useState<"services" | "custom_requests" | "direct_orders">(tabParam || "services");
   
   const data = useLiveApiData("/clients/requests", initialData);
   const customRequests = useLiveApiData<CustomRequestItem[]>("/vendors/my-custom-requests", []);

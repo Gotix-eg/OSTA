@@ -112,7 +112,7 @@ export function NotificationsPopover({ locale }: { locale: "ar" | "en" }) {
     // Fallback if no specific link logic exists
     if (currentRole === "vendor") return `/${locale}/vendor/requests`;
     if (currentRole === "client") {
-        if (n.data?.customRequestId) return `/${locale}/client/my-requests`;
+        if (n.data?.customRequestId) return `/${locale}/client/my-requests?tab=custom_requests`;
         return `/${locale}/client/requests`;
     }
     return "#";
