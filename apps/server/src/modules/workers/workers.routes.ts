@@ -5,6 +5,9 @@ import { z } from "zod";
 
 import { authenticate, requireRoles } from "../../middleware/auth.middleware.js";
 import { successResponse } from "../../utils/ApiResponse.js";
+import { prisma } from "../../lib/prisma.js";
+import { ApiError } from "../../utils/ApiError.js";
+import { catchAsync } from "../../utils/catchAsync.js";
 
 const router = Router();
 
@@ -194,7 +197,15 @@ function buildActiveSummary() {
   };
 }
 
-router.get("/dashboard", (_request, response) => {
+router.get("/dashboard", catchAsync(async (request, response) => {
+  const userId = request.auth!.userId;
+  const worker = await prisma.workerProfile.findUnique({
+    where: { userId },
+    include: { user: { select: { firstName: true } } }
+  });
+
+  if (!worker) throw new ApiError(404, "Worker profile not found");
+
   response.status(200).json(
     successResponse(
       {
@@ -205,8 +216,10 @@ router.get("/dashboard", (_request, response) => {
           enRouteCount: 2,
           monthlyEarnings: 11240,
           monthlyGrowth: 18,
-          rating: 4.9,
-          ratingCount: 312
+          rating: worker.rating,
+          ratingCount: worker.ratingCount,
+          orderQuota: worker.orderQuota,
+          trialExpiresAt: worker.trialExpiresAt
         },
         queue: [
           { id: "offer-1", service: "acMaintenance", area: "newCairo", budgetMin: 350, budgetMax: 450, freshness: "TODAY" },
@@ -235,7 +248,7 @@ router.get("/dashboard", (_request, response) => {
       "Worker dashboard fetched"
     )
   );
-});
+}));
 
 router.get("/requests/incoming", (_request, response) => {
   response.status(200).json(
@@ -261,42 +274,60 @@ router.get("/requests/active", (_request, response) => {
   );
 });
 
-router.patch("/requests/:id/accept", (request, response) => {
-  acceptRequestSchema.parse(request.body ?? {});
-  const index = incomingRequests.findIndex((item) => item.id === request.params.id);
+router.patch("/requests/:id/accept", catchAsync(async (request, response) => {
+  const userId = request.auth!.userId;
+  const requestId = request.params.id;
 
-  if (index === -1) {
-    response.status(404).json({ success: false, message: "Incoming request not found", error: "NOT_FOUND" });
-    return;
+  // 1. Get Worker Profile
+  const worker = await prisma.workerProfile.findUnique({
+    where: { userId },
+    include: { user: true }
+  });
+
+  if (!worker) throw new ApiError(404, "Worker profile not found");
+
+  // 2. Subscription Gatekeeper
+  const now = new Date();
+  
+  // Initialize trial if not set
+  if (!worker.trialExpiresAt) {
+    const trialDaysSetting = await prisma.platformSetting.findUnique({ where: { key: "worker_trial_days" } });
+    const trialDays = parseInt(trialDaysSetting?.value ?? "30");
+    const trialExpiresAt = new Date();
+    trialExpiresAt.setDate(trialExpiresAt.getDate() + trialDays);
+    
+    await prisma.workerProfile.update({
+      where: { id: worker.id },
+      data: { trialExpiresAt }
+    });
+    
+    // Refresh worker object for the check below
+    worker.trialExpiresAt = trialExpiresAt;
   }
 
-  const [item] = incomingRequests.splice(index, 1);
+  const inTrial = worker.trialExpiresAt && worker.trialExpiresAt > now;
+  const hasQuota = worker.orderQuota > 0;
 
-  if (!item) {
-    response.status(404).json({ success: false, message: "Incoming request not found", error: "NOT_FOUND" });
-    return;
+  if (!inTrial && !hasQuota) {
+    throw new ApiError(403, "عذراً، يجب تجديد الباقة لتتمكن من قبول طلبات جديدة.");
   }
 
-  activeRequests.unshift({
-    id: `active-${item.id}`,
-    service: item.service,
-    status: "EN_ROUTE",
-    clientName: "New Client",
-    area: item.area,
-    scheduledWindow: "Today 6:00 PM - 7:00 PM",
-    earnings: Math.round((item.budgetMin + item.budgetMax) / 2)
+  // 3. Update Request Status
+  const serviceRequest = await prisma.serviceRequest.update({
+    where: { id: requestId },
+    data: {
+      workerId: worker.id,
+      status: "WORKER_EN_ROUTE"
+    }
   });
 
   response.status(200).json(
     successResponse(
-      {
-        summary: buildIncomingSummary(),
-        requests: incomingRequests
-      },
+      serviceRequest,
       "Worker request accepted"
     )
   );
-});
+}));
 
 router.patch("/requests/:id/reject", (request, response) => {
   const index = incomingRequests.findIndex((item) => item.id === request.params.id);
@@ -340,26 +371,43 @@ router.patch("/requests/:id/start", (request, response) => {
   );
 });
 
-router.patch("/requests/:id/complete", (request, response) => {
-  const item = activeRequests.find((current) => current.id === request.params.id);
+router.patch("/requests/:id/complete", catchAsync(async (request, response) => {
+  const userId = request.auth!.userId;
+  const requestId = request.params.id;
 
-  if (!item) {
-    response.status(404).json({ success: false, message: "Active request not found", error: "NOT_FOUND" });
-    return;
+  const worker = await prisma.workerProfile.findUnique({ where: { userId } });
+  if (!worker) throw new ApiError(404, "Worker profile not found");
+
+  const serviceRequest = await prisma.serviceRequest.findUnique({
+    where: { id: requestId, workerId: worker.id }
+  });
+
+  if (!serviceRequest) throw new ApiError(404, "Request not found or not assigned to you");
+
+  // 1. Update request status
+  await prisma.serviceRequest.update({
+    where: { id: requestId },
+    data: { status: "COMPLETED" }
+  });
+
+  // 2. Deduct quota if trial is expired
+  const now = new Date();
+  const inTrial = worker.trialExpiresAt && worker.trialExpiresAt > now;
+
+  if (!inTrial && worker.orderQuota > 0) {
+    await prisma.workerProfile.update({
+      where: { id: worker.id },
+      data: { orderQuota: { decrement: 1 } }
+    });
   }
-
-  item.status = "WRAP_UP";
 
   response.status(200).json(
     successResponse(
-      {
-        summary: buildActiveSummary(),
-        requests: activeRequests
-      },
-      "Worker request moved to wrap up"
+      null,
+      "Worker request completed and quota updated"
     )
   );
-});
+}));
 
 router.get("/earnings/summary", (_request, response) => {
   response.status(200).json(

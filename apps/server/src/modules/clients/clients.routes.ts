@@ -250,52 +250,73 @@ function getRequestArea(address: ClientRequestRecord["address"]) {
   return `${address.city ?? "Cairo"}`;
 }
 
-router.get("/dashboard", (_request, response) => {
+router.get("/dashboard", catchAsync(async (request: Request, response: Response) => {
+  const userId = request.auth!.userId;
+  const profile = await prisma.clientProfile.findUnique({ where: { userId } });
+  if (!profile) throw new ApiError(404, "Client profile not found");
+
+  // Fetch real sub-summaries (Mocked for UI structure but using some real data)
+  const totalRequests = await prisma.serviceRequest.count({ where: { clientId: profile.id } });
+  
+  // Real Worker Discovery (The User's core request)
+  // Logic: Active trial OR quota, VERIFIED, sorted by Rating
+  const now = new Date();
+  const eligibleWorkers = await prisma.workerProfile.findMany({
+    where: {
+      verificationStatus: "VERIFIED",
+      OR: [
+        { trialExpiresAt: { gt: now } },
+        { orderQuota: { gt: 0 } }
+      ]
+    },
+    orderBy: {
+      rating: "desc"
+    },
+    take: 5,
+    include: {
+      user: {
+        select: { firstName: true, lastName: true }
+      }
+    }
+  });
+
+  const activeRequests = await prisma.serviceRequest.findMany({
+    where: { clientId: profile.id, status: { in: ["WORKER_EN_ROUTE", "IN_PROGRESS"] } },
+    include: { worker: { include: { user: true } } }
+  });
+
   response.status(200).json(
     successResponse(
       {
         summary: {
-          totalRequests: 28,
-          totalRequestsDelta: 4,
-          activeRequests: 3,
-          enRouteCount: 1,
-          activeWarranties: 2,
-          walletBalance: 860
+          totalRequests,
+          totalRequestsDelta: 0,
+          activeRequests: activeRequests.length,
+          enRouteCount: activeRequests.filter(r => r.status === "WORKER_EN_ROUTE").length,
+          activeWarranties: 0,
+          walletBalance: profile.walletBalance // Standardized
         },
-        activeRequests: [
-          {
-            id: "req-101",
-            service: "electricalRepair",
-            status: "WORKER_EN_ROUTE",
-            workerName: "Youssef El-Sharif",
-            etaMinutes: 18,
-            area: "newCairo"
-          },
-          {
-            id: "req-102",
-            service: "kitchenPlumbing",
-            status: "IN_PROGRESS",
-            workerName: "Mostafa Adel",
-            onSite: true,
-            area: "maadi"
-          }
-        ],
+        activeRequests: activeRequests.map(r => ({
+          id: r.id,
+          service: r.serviceId,
+          status: r.status,
+          workerName: r.worker ? `${r.worker.user.firstName} ${r.worker.user.lastName}` : "Pending",
+          etaMinutes: 15, // Mocked ETA
+          area: "newCairo"
+        })),
         suggestedServices: ["acMaintenance", "electricalInspection", "paintingRefresh"],
-        recentCompleted: [
-          { id: "req-201", service: "livingRoomPainting", completedDaysAgo: 1 },
-          { id: "req-202", service: "ceilingFanInstallation", completedDaysAgo: 3 },
-          { id: "req-203", service: "heaterMaintenance", completedDaysAgo: 7 }
-        ],
-        favoriteWorkers: [
-          { id: "worker-1", name: "Ahmed Fawzy", specialty: "acTechnician", rating: 4.9 },
-          { id: "worker-2", name: "Youssef El-Sharif", specialty: "electrician", rating: 4.9 },
-          { id: "worker-3", name: "Mostafa Adel", specialty: "plumber", rating: 4.8 }
-        ]
+        recentCompleted: [],
+        favoriteWorkers: eligibleWorkers.map(w => ({
+          id: w.id,
+          name: `${w.user.firstName} ${w.user.lastName}`,
+          specialty: "electrician", // Should be mapped from WorkerSpecialization
+          rating: w.rating
+        }))
       },
       "Client dashboard fetched"
     )
   );
-});
+}));
 
 router.get("/requests", catchAsync(async (request: Request, response: Response) => {
   const profile = await prisma.clientProfile.findUnique({ where: { userId: request.auth!.userId } });

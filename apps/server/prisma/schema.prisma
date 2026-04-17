@@ -254,6 +254,9 @@ model WorkerProfile {
   totalJobsCompleted    Int                      @default(0)
   totalEarnings         Float                    @default(0)
   walletBalance         Float                    @default(0)
+  orderQuota            Int                      @default(0)
+  trialExpiresAt        DateTime?
+  subscriptionExpiresAt DateTime?
   commissionRate        Float                    @default(15)
   isAvailable           Boolean                  @default(false)
   isOnline              Boolean                  @default(false)
@@ -264,9 +267,6 @@ model WorkerProfile {
   guarantorPhone        String?
   utilityBillUrl        String?
   subscriptionTier      String                   @default("free")
-  subscriptionExpiresAt DateTime?
-  monthlyRequestLimit   Int                      @default(5)
-  requestsThisMonth     Int                      @default(0)
   acceptanceRate        Float                    @default(100)
   avgResponseTime       Int                      @default(0)
   createdAt             DateTime                 @default(now())
@@ -795,6 +795,9 @@ model VendorProfile {
   totalOrders           Int                      @default(0)
   totalEarnings         Float                    @default(0)
   walletBalance         Float                    @default(0)
+  orderQuota            Int                      @default(0)
+  trialExpiresAt        DateTime?
+  subscriptionExpiresAt DateTime?
   isOpen                Boolean                  @default(false)
   createdAt             DateTime                 @default(now())
   updatedAt             DateTime                 @updatedAt

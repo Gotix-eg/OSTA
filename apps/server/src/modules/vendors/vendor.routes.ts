@@ -355,6 +355,28 @@ router.patch("/custom-requests/:id/reply", authenticate, requireRoles("VENDOR"),
   const { reply, price } = request.body as { reply: string; price?: number };
   if (!reply || reply.trim().length < 2) throw new ApiError(400, "يرجى كتابة رد");
 
+  // --- Subscription & Quota Logic ---
+  const now = new Date();
+  let currentVendor = vendor;
+
+  // 1. Initialize trial if not set
+  if (!vendor.trialExpiresAt && !vendor.subscriptionExpiresAt) {
+    currentVendor = await prisma.vendorProfile.update({
+      where: { id: vendor.id },
+      data: { trialExpiresAt: new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000) }
+    });
+  } else {
+    // 2. Check if Trial or Subscription is active, OR if Quota is available
+    const isTrialActive = currentVendor.trialExpiresAt && currentVendor.trialExpiresAt > now;
+    const isSubActive = currentVendor.subscriptionExpiresAt && currentVendor.subscriptionExpiresAt > now;
+    const hasQuota = currentVendor.orderQuota > 0;
+
+    if (!isTrialActive && !isSubActive && !hasQuota) {
+      throw new ApiError(403, "باقة الطلبات منتهية. يرجى التجديد للمتابعة.");
+    }
+  }
+  // ----------------------------------
+
   const updated = await prisma.customRequest.update({
     where: { id },
     data: { 
@@ -376,6 +398,23 @@ router.patch("/custom-requests/:id/reply", authenticate, requireRoles("VENDOR"),
   });
 
   response.json(successResponse(updated, "تم إرسال الرد"));
+}));
+
+// GET /api/vendors/quota-status — vendor checks their remaining orders/trial
+router.get("/quota-status", authenticate, requireRoles("VENDOR"), catchAsync(async (request, response) => {
+  const vendor = await prisma.vendorProfile.findUnique({
+    where: { userId: request.auth!.userId },
+    select: { 
+        orderQuota: true, 
+        trialExpiresAt: true, 
+        subscriptionExpiresAt: true,
+        totalOrders: true
+    }
+  });
+
+  if (!vendor) throw new ApiError(404, "متجر غير موجود");
+  
+  return response.json(successResponse(vendor, "حالة الاشتراك"));
 }));
 
 // GET /api/vendors/my-custom-requests — client sees their sent custom requests
@@ -471,6 +510,24 @@ router.patch("/custom-requests/:id/status", authenticate, requireRoles("VENDOR")
       data: { customRequestId: cr.id }
     }
   });
+
+  // If COMPLETED, update vendor earnings and handle quota
+  if (status === "COMPLETED") {
+    const now = new Date();
+    const isTrialActive = vendor.trialExpiresAt && vendor.trialExpiresAt > now;
+    const isSubActive = vendor.subscriptionExpiresAt && vendor.subscriptionExpiresAt > now;
+
+    await prisma.vendorProfile.update({
+      where: { id: vendor.id },
+      data: {
+        totalOrders: { increment: 1 },
+        totalEarnings: { increment: cr.price || 0 },
+        walletBalance: { increment: cr.price || 0 },
+        // Only deduct from quota if NOT in trial and NOT in a time-based subscription
+        orderQuota: (!isTrialActive && !isSubActive) ? { decrement: 1 } : undefined
+      }
+    });
+  }
 
   response.json(successResponse(updated, "تم تحديث الحالة"));
 }));

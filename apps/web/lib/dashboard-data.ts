@@ -68,6 +68,8 @@ export interface WorkerDashboardData {
     monthlyGrowth: number;
     rating: number;
     ratingCount: number;
+    orderQuota: number;
+    trialExpiresAt?: string;
   };
   queue: Array<{
     id: string;

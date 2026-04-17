@@ -30,6 +30,7 @@ import {
   UserCircle2,
   Users,
   Wallet,
+  Wrench,
   X
 } from "lucide-react";
 import { fetchApiData } from "@/lib/api";
@@ -55,7 +56,7 @@ const iconSets: Record<DashboardRole, Array<NavItem["icon"]>> = {
   client: [Home, Briefcase, FolderClock, Store, Heart, Wallet, Settings],
   worker: [Home, FolderClock, Briefcase, CreditCard, BarChart3, Settings],
   vendor: [Home, Bell, Briefcase, Package, Wallet, Settings],
-  admin: [Home, ShieldCheck, Users, FolderClock, CreditCard, Megaphone, SlidersHorizontal, Settings]
+  admin: [Home, ShieldCheck, Users, FolderClock, Store, Wrench, CreditCard, Megaphone, SlidersHorizontal, Settings]
 };
 
 const roleThemes: Record<DashboardRole, { tag: string; accent: string; orb: string; ring: string }> = {
@@ -127,7 +128,7 @@ export function DashboardShell({
       client: ["/client", "/client/new-request", "/client/my-requests", "/client/stores", "/client/favorites", "/client/wallet", "/client/settings"],
       worker: ["/worker", "/worker/requests/incoming", "/worker/requests/active", "/worker/earnings", "/worker/ratings", "/worker/settings"],
       vendor: ["/vendor", "/vendor/requests", "/vendor/active-orders", "/vendor/inventory", "/vendor/wallet", "/vendor/settings"],
-      admin: ["/admin", "/admin/workers/pending", "/admin/clients", "/admin/requests", "/admin/finance", "/admin/ads", "/admin/pricing", "/admin/settings"]
+      admin: ["/admin", "/admin/workers/pending", "/admin/clients", "/admin/requests", "/admin/vendors", "/admin/workers", "/admin/finance", "/admin/ads", "/admin/pricing", "/admin/settings"]
     };
 
     const roleRoutes = routes[role];

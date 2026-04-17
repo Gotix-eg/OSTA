@@ -5,6 +5,9 @@ import { z } from "zod";
 
 import { authenticate, requireRoles } from "../../middleware/auth.middleware.js";
 import { successResponse } from "../../utils/ApiResponse.js";
+import { prisma } from "../../lib/prisma.js";
+import { catchAsync } from "../../utils/catchAsync.js";
+import { ApiError } from "../../utils/ApiError.js";
 
 const router = Router();
 
@@ -266,5 +269,83 @@ router.get("/finance", (_request, response) => {
 router.get("/settings", (_request, response) => {
   response.status(200).json(successResponse(adminSettings, "Admin settings fetched"));
 });
+
+// --- REAL DATA VENDOR MANAGEMENT ---
+
+// GET /api/admin/vendors — List all vendors with subscription status
+router.get("/vendors", catchAsync(async (_request, response) => {
+  const vendors = await prisma.vendorProfile.findMany({
+    include: {
+      user: { select: { firstName: true, lastName: true, phone: true } }
+    },
+    orderBy: { createdAt: "desc" }
+  });
+  
+  response.json(successResponse(vendors, "Vendors fetched successfully"));
+}));
+
+// POST /api/admin/vendors/:id/quota — Add +10 orders to vendor quota
+router.post("/vendors/:id/quota", catchAsync(async (request, response) => {
+  const id = request.params.id as string;
+  
+  const updated = await prisma.vendorProfile.update({
+    where: { id },
+    data: { orderQuota: { increment: 10 } }
+  });
+  
+  response.json(successResponse(updated, "Quota updated successfully"));
+}));
+
+// POST /api/admin/vendors/:id/reset-trial — Reset trial to 30 days from now
+router.post("/vendors/:id/reset-trial", catchAsync(async (request, response) => {
+  const id = request.params.id as string;
+  const now = new Date();
+  
+  const updated = await prisma.vendorProfile.update({
+    where: { id },
+    data: { trialExpiresAt: new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000) }
+  });
+  
+  response.json(successResponse(updated, "Trial reset successfully"));
+}));
+
+// --- REAL DATA WORKER MANAGEMENT ---
+
+// GET /api/admin/workers — List all workers with subscription status
+router.get("/workers", catchAsync(async (_request, response) => {
+  const workers = await prisma.workerProfile.findMany({
+    include: {
+      user: { select: { firstName: true, lastName: true, phone: true } }
+    },
+    orderBy: { createdAt: "desc" }
+  });
+  
+  response.json(successResponse(workers, "Workers fetched successfully"));
+}));
+
+// POST /api/admin/workers/:id/quota — Add +10 orders to worker quota
+router.post("/workers/:id/quota", catchAsync(async (request, response) => {
+  const id = request.params.id as string;
+  
+  const updated = await prisma.workerProfile.update({
+    where: { id },
+    data: { orderQuota: { increment: 10 } }
+  });
+  
+  response.json(successResponse(updated, "Quota updated successfully"));
+}));
+
+// POST /api/admin/workers/:id/reset-trial — Reset trial to 30 days from now
+router.post("/workers/:id/reset-trial", catchAsync(async (request, response) => {
+  const id = request.params.id as string;
+  const now = new Date();
+  
+  const updated = await prisma.workerProfile.update({
+    where: { id },
+    data: { trialExpiresAt: new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000) }
+  });
+  
+  response.json(successResponse(updated, "Trial reset successfully"));
+}));
 
 export const adminRouter = router;

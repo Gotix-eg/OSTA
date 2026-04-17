@@ -22,6 +22,13 @@ type CustomReq = {
   createdAt: string;
 };
 
+type VendorStats = {
+  orderQuota: number;
+  trialExpiresAt: string | null;
+  subscriptionExpiresAt: string | null;
+  totalOrders: number;
+};
+
 const statusColors: Record<string, string> = {
   PENDING: "bg-sun-100 text-sun-700",
   SEEN: "bg-primary-50 text-primary-700",
@@ -202,11 +209,16 @@ function RequestCard({ req, locale, onReply, onStatusUpdate }: {
 export function VendorRequestsPage({ locale }: { locale: Locale }) {
   const isArabic = locale === "ar";
   const [requests, setRequests] = useState<CustomReq[]>([]);
+  const [stats, setStats] = useState<VendorStats | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchApiData<CustomReq[]>("/vendors/custom-requests", []).then(data => {
-      setRequests(data);
+    Promise.all([
+      fetchApiData<CustomReq[]>("/vendors/custom-requests", []),
+      fetchApiData<VendorStats | null>("/vendors/quota-status", null)
+    ]).then(([reqData, statsData]) => {
+      setRequests(reqData);
+      setStats(statsData);
       setLoading(false);
     });
   }, []);
@@ -215,7 +227,9 @@ export function VendorRequestsPage({ locale }: { locale: Locale }) {
     try {
       await patchApiData(`/vendors/custom-requests/${id}/reply`, { reply });
       setRequests(prev => prev.map(r => r.id === id ? { ...r, vendorReply: reply, status: "REPLIED" as const } : r));
-    } catch { /* ignore */ }
+    } catch (error: any) { 
+      alert(error.message || (isArabic ? "فشل إرسال الرد" : "Failed to send reply"));
+    }
   }
 
   async function handleStatusUpdate(id: string, status: string) {
@@ -241,6 +255,30 @@ export function VendorRequestsPage({ locale }: { locale: Locale }) {
             ? `${requests.length} طلب — ${pendingCount} بانتظار الرد`
             : `${requests.length} requests — ${pendingCount} pending`}
         </p>
+
+        {/* Subscription Status Card */}
+        {stats && (
+          <div className="mt-4 flex flex-wrap gap-3">
+             {stats.trialExpiresAt && new Date(stats.trialExpiresAt) > new Date() ? (
+               <div className="flex items-center gap-2 rounded-xl bg-primary-50 px-4 py-2 border border-primary-100">
+                 <div className="h-2 w-2 rounded-full bg-primary-500 animate-pulse" />
+                 <span className="text-sm font-semibold text-primary-700">
+                    {isArabic ? `الفترة التجريبية نشطة (تنتهي خلال ${Math.ceil((new Date(stats.trialExpiresAt).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))} يوم)` : `Trial Active (${Math.ceil((new Date(stats.trialExpiresAt).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))} days left)`}
+                 </span>
+               </div>
+             ) : (
+               <div className={cn(
+                 "flex items-center gap-2 rounded-xl px-4 py-2 border",
+                 stats.orderQuota > 0 ? "bg-success/10 border-success/30" : "bg-error/10 border-error/30"
+               )}>
+                  <Clock className={cn("h-4 w-4", stats.orderQuota > 0 ? "text-success" : "text-error")} />
+                  <span className={cn("text-sm font-semibold", stats.orderQuota > 0 ? "text-success" : "text-error")}>
+                    {isArabic ? `رصيد الأوردرات المتبقي: ${stats.orderQuota}` : `Remaining Orders: ${stats.orderQuota}`}
+                  </span>
+               </div>
+             )}
+          </div>
+        )}
       </div>
 
       {loading ? (

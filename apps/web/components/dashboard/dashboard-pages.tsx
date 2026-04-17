@@ -591,7 +591,23 @@ export function WorkerDashboardHome({ locale, initialData }: { locale: Locale; i
   const shared = dashboardCopy[locale].shared;
   const data = useLiveApiData("/workers/dashboard", initialData);
 
+  const isTrialActive = data.summary.trialExpiresAt && new Date(data.summary.trialExpiresAt) > new Date();
+  const trialDaysLeft = data.summary.trialExpiresAt ? Math.ceil((new Date(data.summary.trialExpiresAt).getTime() - new Date().getTime()) / (1000 * 3600 * 24)) : 0;
+
   const stats = [
+    {
+      value: isTrialActive 
+        ? (locale === "ar" ? `${formatNumber(locale, trialDaysLeft)} يوم` : `${trialDaysLeft}d Trial`)
+        : formatNumber(locale, data.summary.orderQuota),
+      label: isTrialActive 
+        ? (locale === "ar" ? "فترة تجريبية" : "Free Trial")
+        : (locale === "ar" ? "رصيد الأوردرات" : "Job Quota"),
+      note: isTrialActive 
+        ? (locale === "ar" ? "متبقي في التجربة المجانية" : "Remaining in free trial")
+        : (locale === "ar" ? "أوردرات متاحة للقبول" : "Orders available to accept"),
+      tone: isTrialActive ? "primary" : (data.summary.orderQuota > 0 ? "accent" : "red"),
+      icon: isTrialActive ? Sparkles : Banknote
+    },
     {
       value: formatNumber(locale, data.summary.incomingRequests),
       note: formatDelta(locale, data.summary.incomingDelta, "خلال الساعة", "in the last hour"),
@@ -1248,7 +1264,13 @@ const PRICING_KEYS = [
   { key: "banner_monthly_price", labelAr: "سعر البانر الشهري (ج.م)", labelEn: "Monthly Banner Price (EGP)", type: "number", defaultValue: "3000" },
   { key: "vendor_banner_weekly_price", labelAr: "سعر بانر المورد الأسبوعي (ج.م)", labelEn: "Vendor Banner Weekly Price (EGP)", type: "number", defaultValue: "400" },
   { key: "sponsored_worker_weekly_price", labelAr: "سعر الصنايعي الممول الأسبوعي (ج.م)", labelEn: "Sponsored Worker Weekly Price (EGP)", type: "number", defaultValue: "150" },
-  { key: "sponsored_worker_ppc_price", labelAr: "سعر النقرة للصنايعي الممول (ج.م)", labelEn: "Sponsored Worker PPC Price (EGP)", type: "number", defaultValue: "5" }
+  { key: "sponsored_worker_ppc_price", labelAr: "سعر النقرة للصنايعي الممول (ج.م)", labelEn: "Sponsored Worker PPC Price (EGP)", type: "number", defaultValue: "5" },
+  { key: "vendor_subscription_price", labelAr: "سعر باقة المتاجر (ج.م)", labelEn: "Vendor Package Price (EGP)", type: "number", defaultValue: "200" },
+  { key: "vendor_subscription_quota", labelAr: "عدد الأوردرات في الباقة", labelEn: "Orders in Vendor Package", type: "number", defaultValue: "10" },
+  { key: "vendor_trial_days", labelAr: "عدد أيام الفترة التجريبية للمورد", labelEn: "Vendor Trial Days", type: "number", defaultValue: "30" },
+  { key: "worker_subscription_price", labelAr: "سعر باقة الصنايعي (ج.م)", labelEn: "Worker Package Price (EGP)", type: "number", defaultValue: "200" },
+  { key: "worker_subscription_quota", labelAr: "عدد الأوردرات في باقة الصنايعي", labelEn: "Orders in Worker Package", type: "number", defaultValue: "10" },
+  { key: "worker_trial_days", labelAr: "عدد أيام الفترة التجريبية للصنايعي", labelEn: "Worker Trial Days", type: "number", defaultValue: "30" }
 ];
 
 export function AdminPricingPage({ locale }: { locale: Locale }) {
