@@ -291,7 +291,7 @@ router.patch("/requests/:id/accept", catchAsync(async (request, response) => {
   
   // Initialize trial if not set
   if (!worker.trialExpiresAt) {
-    const trialDaysSetting = await prisma.platformSetting.findUnique({ where: { key: "worker_trial_days" } });
+    const trialDaysSetting = await prisma.systemSetting.findUnique({ where: { key: "worker_trial_days" } });
     const trialDays = parseInt(trialDaysSetting?.value ?? "30");
     const trialExpiresAt = new Date();
     trialExpiresAt.setDate(trialExpiresAt.getDate() + trialDays);
@@ -314,7 +314,7 @@ router.patch("/requests/:id/accept", catchAsync(async (request, response) => {
 
   // 3. Update Request Status
   const serviceRequest = await prisma.serviceRequest.update({
-    where: { id: requestId },
+    where: { id: requestId as string },
     data: {
       workerId: worker.id,
       status: "WORKER_EN_ROUTE"
@@ -379,14 +379,14 @@ router.patch("/requests/:id/complete", catchAsync(async (request, response) => {
   if (!worker) throw new ApiError(404, "Worker profile not found");
 
   const serviceRequest = await prisma.serviceRequest.findUnique({
-    where: { id: requestId, workerId: worker.id }
+    where: { id: requestId as string, workerId: worker.id }
   });
 
   if (!serviceRequest) throw new ApiError(404, "Request not found or not assigned to you");
 
   // 1. Update request status
   await prisma.serviceRequest.update({
-    where: { id: requestId },
+    where: { id: requestId as string },
     data: { status: "COMPLETED" }
   });
 

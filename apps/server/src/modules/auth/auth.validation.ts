@@ -18,7 +18,10 @@ export const registerSchema = z
     longitude: z.number().optional(),
     category: z.string().optional(),
     shopName: z.string().optional(),
-    storeName: z.string().optional()
+    storeName: z.string().optional(),
+    nationalIdNumber: z.string().optional(),
+    nationalIdFront: z.string().optional(),
+    nationalIdBack: z.string().optional()
   })
   .refine((value) => value.password === value.confirmPassword, {
     message: "كلمة المرور غير متطابقة",

@@ -19,6 +19,9 @@ export type RegisterInput = {
   longitude?: number;
   category?: string;
   shopName?: string;
+  nationalIdNumber?: string;
+  nationalIdFront?: string;
+  nationalIdBack?: string;
 };
 
 type LoginInput = {
@@ -129,7 +132,11 @@ export const authService = {
         workerProfile:
           input.role === "WORKER"
             ? {
-                create: {}
+                create: {
+                  nationalIdNumber: input.nationalIdNumber,
+                  nationalIdFront: input.nationalIdFront,
+                  nationalIdBack: input.nationalIdBack
+                }
               }
             : undefined,
         vendorProfile:

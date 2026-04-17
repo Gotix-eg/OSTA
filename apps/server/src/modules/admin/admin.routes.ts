@@ -348,4 +348,18 @@ router.post("/workers/:id/reset-trial", catchAsync(async (request, response) => 
   response.json(successResponse(updated, "Trial reset successfully"));
 }));
 
+// POST /api/admin/workers/:id/verify — Mark worker as VERIFIED
+router.post("/workers/:id/verify", catchAsync(async (request, response) => {
+  const id = request.params.id as string;
+  
+  const updated = await prisma.workerProfile.update({
+    where: { id },
+    data: { 
+      verificationStatus: "VERIFIED"
+    }
+  });
+  
+  response.json(successResponse(updated, "Worker verified successfully"));
+}));
+
 export const adminRouter = router;

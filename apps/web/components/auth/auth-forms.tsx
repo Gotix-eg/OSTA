@@ -46,26 +46,11 @@ type WorkerRegisterState = {
   otp: string;
   firstName: string;
   lastName: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-  dob: string;
-  specializations: string[];
-  experience: string;
-  bio: string;
-  workAreas: string;
-  schedule: string;
-  tools: string;
+  nationalIdNumber: string;
   nationalIdFront: string;
   nationalIdBack: string;
-  selfieWithId: string;
-  utilityBill: string;
-  guarantorName: string;
-  guarantorPhone: string;
-  governorate: string;
-  city: string;
-  latitude: number;
-  longitude: number;
+  password: string;
+  confirmPassword: string;
   acceptedTerms: boolean;
 };
 
@@ -128,26 +113,11 @@ const workerRegisterDefaults: WorkerRegisterState = {
   otp: "",
   firstName: "",
   lastName: "",
-  email: "",
-  password: "",
-  confirmPassword: "",
-  dob: "",
-  specializations: [],
-  experience: "",
-  bio: "",
-  workAreas: "",
-  schedule: "",
-  tools: "",
+  nationalIdNumber: "",
   nationalIdFront: "",
   nationalIdBack: "",
-  selfieWithId: "",
-  utilityBill: "",
-  guarantorName: "",
-  guarantorPhone: "",
-  governorate: "",
-  city: "",
-  latitude: 30.0444,
-  longitude: 31.2357,
+  password: "",
+  confirmPassword: "",
   acceptedTerms: false
 };
 
@@ -677,13 +647,6 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const specializations = useMemo(
-    () =>
-      isArabic
-        ? ["كهرباء", "سباكة", "نجارة", "دهانات", "تكييف", "لحام"]
-        : ["Electrical", "Plumbing", "Carpentry", "Painting", "AC", "Welding"],
-    [isArabic]
-  );
 
   async function handleWorkerRegister() {
     setIsSubmitting(true);
@@ -696,27 +659,21 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
           firstName: string;
           lastName: string;
           phone: string;
-          email: string;
+          nationalIdNumber: string;
+          nationalIdFront: string;
+          nationalIdBack: string;
           password: string;
           confirmPassword: string;
-          governorate?: string;
-          city?: string;
-          address?: string;
-          latitude?: number;
-          longitude?: number;
         }
       >("/auth/register/worker", {
         firstName: state.firstName,
         lastName: state.lastName,
         phone: state.phone,
-        email: state.email,
+        nationalIdNumber: state.nationalIdNumber,
+        nationalIdFront: state.nationalIdFront,
+        nationalIdBack: state.nationalIdBack,
         password: state.password,
-        confirmPassword: state.confirmPassword,
-        governorate: state.governorate,
-        city: state.city,
-        address: state.workAreas, // Use workAreas as base address
-        latitude: state.latitude,
-        longitude: state.longitude
+        confirmPassword: state.confirmPassword
       });
 
       window.localStorage.removeItem("osta-worker-register");
@@ -744,7 +701,7 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
         </p>
       </div>
 
-      <StepIndicator current={step} total={5} />
+      <StepIndicator current={step} total={4} />
 
       {submitted ? (
         <div className="rounded-[1.6rem] border border-success/30 bg-success/10 p-6 text-start">
@@ -785,18 +742,28 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
                   onChange={(lastName) => setState({ ...state, lastName })}
                 />
               </div>
+              <InputField
+                label={isArabic ? "الرقم القومي (14 رقم)" : "National ID Number (14 digits)"}
+                value={state.nationalIdNumber}
+                onChange={(nationalIdNumber) => setState({ ...state, nationalIdNumber })}
+              />
+            </>
+          ) : null}
+
+          {step === 2 ? (
+            <>
               <div className="grid gap-5 sm:grid-cols-2">
                 <InputField
-                  label={isArabic ? "البريد الإلكتروني" : "Email"}
-                  value={state.email}
-                  onChange={(email) => setState({ ...state, email })}
-                  type="email"
+                  label={isArabic ? "صورة البطاقة - الوجه الأمامي" : "National ID front"}
+                  value={state.nationalIdFront}
+                  onChange={(nationalIdFront) => setState({ ...state, nationalIdFront })}
+                  placeholder={isArabic ? "اسم الملف أو الرابط" : "File name or URL"}
                 />
                 <InputField
-                  label={isArabic ? "تاريخ الميلاد" : "Date of birth"}
-                  value={state.dob}
-                  onChange={(dob) => setState({ ...state, dob })}
-                  type="date"
+                  label={isArabic ? "صورة البطاقة - الخلفية" : "National ID back"}
+                  value={state.nationalIdBack}
+                  onChange={(nationalIdBack) => setState({ ...state, nationalIdBack })}
+                  placeholder={isArabic ? "اسم الملف أو الرابط" : "File name or URL"}
                 />
               </div>
               <div className="grid gap-5 sm:grid-cols-2">
@@ -816,171 +783,14 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
             </>
           ) : null}
 
-          {step === 2 ? (
-            <>
-              <div className="space-y-3 text-start">
-                <span className="text-sm font-medium text-dark-700">{isArabic ? "التخصصات" : "Specializations"}</span>
-                <div className="flex flex-wrap gap-3">
-                  {specializations.map((item) => {
-                    const selected = state.specializations.includes(item);
-
-                    return (
-                      <button
-                        key={item}
-                        type="button"
-                        onClick={() =>
-                          setState({
-                            ...state,
-                            specializations: selected
-                              ? state.specializations.filter((current) => current !== item)
-                              : [...state.specializations, item]
-                          })
-                        }
-                        className={cn(
-                          "rounded-full border px-4 py-2 text-sm font-medium transition",
-                          selected
-                            ? "border-primary-600 bg-primary-600 text-white"
-                            : "border-dark-200 bg-surface-soft text-dark-700 hover:border-primary-300"
-                        )}
-                      >
-                        {item}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <div className="grid gap-5 sm:grid-cols-2">
-                <SelectField
-                  label={isArabic ? "المحافظة الرئيسية" : "Main Governorate"}
-                  value={state.governorate}
-                  options={egyptianGovernorates.map(g => ({ value: g.value, label: isArabic ? g.labelAr : g.labelEn }))}
-                  onChange={(gov) => setState({ ...state, governorate: gov, city: "" })}
-                  placeholder={isArabic ? "اختر المحافظة" : "Select governorate"}
-                />
-                <SelectField
-                  label={isArabic ? "المدينة / المركز" : "City / District"}
-                  value={state.city}
-                  disabled={!state.governorate}
-                  options={(majorCities[state.governorate] || []).map(c => ({ value: c.value, label: isArabic ? c.labelAr : c.labelEn }))}
-                  onChange={(city) => setState({ ...state, city })}
-                  placeholder={isArabic ? "اختر المدينة" : "Select city"}
-                />
-              </div>
-
-              <div className="space-y-3">
-                <span className="text-sm font-medium text-dark-700">{isArabic ? "نقطة تمركز الخدمة (للبحث بقطر 10كم)" : "Service center point (for 10km radius search)"}</span>
-                <MapPicker 
-                  lat={state.latitude} 
-                  lng={state.longitude} 
-                  isArabic={isArabic}
-                  onChange={(lat, lng, details) => {
-                    const newState = { ...state, latitude: lat, longitude: lng };
-                    if (details) {
-                      const govMatch = egyptianGovernorates.find(g => 
-                        details.state?.includes(g.labelEn) || details.city?.includes(g.labelEn) ||
-                        details.state?.includes(g.labelAr) || details.city?.includes(g.labelAr)
-                      );
-                      if (govMatch) newState.governorate = govMatch.value;
-                    }
-                    setState(newState);
-                  }}
-                />
-              </div>
-
-              <div className="grid gap-5 sm:grid-cols-2">
-                <InputField
-                  label={isArabic ? "سنوات الخبرة" : "Years of experience"}
-                  value={state.experience}
-                  onChange={(experience) => setState({ ...state, experience })}
-                />
-                <InputField
-                  label={isArabic ? "مناطق العمل الإضافية" : "Additional work areas"}
-                  value={state.workAreas}
-                  onChange={(workAreas) => setState({ ...state, workAreas })}
-                  placeholder={isArabic ? "القاهرة الجديدة، مدينة نصر" : "New Cairo, Nasr City"}
-                />
-              </div>
-              <InputField
-                label={isArabic ? "نبذة مهنية" : "Professional bio"}
-                value={state.bio}
-                onChange={(bio) => setState({ ...state, bio })}
-                textarea
-              />
-              <div className="grid gap-5 sm:grid-cols-2">
-                <InputField
-                  label={isArabic ? "جدول العمل" : "Work schedule"}
-                  value={state.schedule}
-                  onChange={(schedule) => setState({ ...state, schedule })}
-                  placeholder={isArabic ? "السبت - الخميس 10ص - 8م" : "Sat-Thu 10AM-8PM"}
-                />
-                <InputField
-                  label={isArabic ? "الأدوات المتاحة" : "Available tools"}
-                  value={state.tools}
-                  onChange={(tools) => setState({ ...state, tools })}
-                  placeholder={isArabic ? "مثقاب، عدة سباكة، سلم" : "Drill, plumbing kit, ladder"}
-                />
-              </div>
-            </>
-          ) : null}
-
           {step === 3 ? (
-            <>
-              <div className="grid gap-5 sm:grid-cols-2">
-                <InputField
-                  label={isArabic ? "صورة البطاقة - الوجه الأمامي" : "National ID front"}
-                  value={state.nationalIdFront}
-                  onChange={(nationalIdFront) => setState({ ...state, nationalIdFront })}
-                  placeholder={isArabic ? "اسم الملف أو الرابط" : "File name or URL"}
-                />
-                <InputField
-                  label={isArabic ? "صورة البطاقة - الخلفية" : "National ID back"}
-                  value={state.nationalIdBack}
-                  onChange={(nationalIdBack) => setState({ ...state, nationalIdBack })}
-                  placeholder={isArabic ? "اسم الملف أو الرابط" : "File name or URL"}
-                />
-              </div>
-              <div className="grid gap-5 sm:grid-cols-2">
-                <InputField
-                  label={isArabic ? "سيلفي مع البطاقة" : "Selfie with ID"}
-                  value={state.selfieWithId}
-                  onChange={(selfieWithId) => setState({ ...state, selfieWithId })}
-                  placeholder={isArabic ? "اسم الملف أو الرابط" : "File name or URL"}
-                />
-                <InputField
-                  label={isArabic ? "فاتورة مرافق" : "Utility bill"}
-                  value={state.utilityBill}
-                  onChange={(utilityBill) => setState({ ...state, utilityBill })}
-                  placeholder={isArabic ? "اسم الملف أو الرابط" : "File name or URL"}
-                />
-              </div>
-              <div className="grid gap-5 sm:grid-cols-2">
-                <InputField
-                  label={isArabic ? "اسم الضامن" : "Guarantor name"}
-                  value={state.guarantorName}
-                  onChange={(guarantorName) => setState({ ...state, guarantorName })}
-                />
-                <InputField
-                  label={isArabic ? "رقم هاتف الضامن" : "Guarantor phone"}
-                  value={state.guarantorPhone}
-                  onChange={(guarantorPhone) => setState({ ...state, guarantorPhone })}
-                />
-              </div>
-            </>
-          ) : null}
-
-          {step === 4 ? (
             <>
               <div className="rounded-[1.6rem] border border-dark-200 bg-surface-soft p-5 text-start text-sm text-dark-700">
                 <h3 className="text-lg font-semibold text-dark-950">{isArabic ? "مراجعة سريعة" : "Quick review"}</h3>
                 <div className="mt-4 grid gap-3 sm:grid-cols-2">
                   <p>{isArabic ? `الاسم: ${state.firstName} ${state.lastName}` : `Name: ${state.firstName} ${state.lastName}`}</p>
                   <p>{isArabic ? `الهاتف: ${state.phone}` : `Phone: ${state.phone}`}</p>
-                  <p>
-                    {isArabic ? "التخصصات: " : "Specializations: "}
-                    {state.specializations.join(" - ") || (isArabic ? "لم يتم التحديد" : "Not selected")}
-                  </p>
-                  <p>{isArabic ? `الخبرة: ${state.experience}` : `Experience: ${state.experience}`}</p>
+                  <p>{isArabic ? `رقم البطاقة: ${state.nationalIdNumber}` : `National ID: ${state.nationalIdNumber}`}</p>
                 </div>
               </div>
 
@@ -1006,10 +816,10 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
               {isArabic ? "السابق" : "Back"}
             </button>
 
-            {step < 4 ? (
+            {step < 3 ? (
               <button
                 type="button"
-                onClick={() => setStep((current) => Math.min(current + 1, 4))}
+                onClick={() => setStep((current) => Math.min(current + 1, 3))}
                 className="inline-flex h-11 items-center gap-2 rounded-full bg-primary-600 px-5 text-sm font-semibold text-white transition hover:bg-primary-700"
               >
                 {copy.submit}

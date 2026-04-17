@@ -76,7 +76,10 @@ router.post("/register/worker", catchAsync(async (request, response) => {
     city: payload.city,
     address: payload.address,
     latitude: payload.latitude,
-    longitude: payload.longitude
+    longitude: payload.longitude,
+    nationalIdNumber: payload.nationalIdNumber,
+    nationalIdFront: payload.nationalIdFront,
+    nationalIdBack: payload.nationalIdBack
   });
 
   setAuthCookies(response, {
