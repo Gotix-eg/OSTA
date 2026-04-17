@@ -21,7 +21,10 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-leaflet": "^4.2.1",
-    "tailwind-merge": "^3.0.2"
+    "tailwind-merge": "^3.0.2",
+    "@prisma/client": "^6.5.0",
+    "prisma": "^6.5.0",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@types/node": "^22.13.10",
