@@ -23,6 +23,7 @@ import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
 import { MapPicker } from "@/components/shared/map-picker";
 import { SelectField } from "@/components/shared/select-field";
+import { ImageUpload } from "@/components/shared/image-upload";
 import { egyptianGovernorates, majorCities, vendorCategories } from "@/lib/geo-data";
 
 type ClientRegisterState = {
@@ -753,17 +754,17 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
           {step === 2 ? (
             <>
               <div className="grid gap-5 sm:grid-cols-2">
-                <InputField
+                <ImageUpload
+                  isArabic={isArabic}
                   label={isArabic ? "صورة البطاقة - الوجه الأمامي" : "National ID front"}
                   value={state.nationalIdFront}
-                  onChange={(nationalIdFront) => setState({ ...state, nationalIdFront })}
-                  placeholder={isArabic ? "اسم الملف أو الرابط" : "File name or URL"}
+                  onChange={(url) => setState({ ...state, nationalIdFront: url })}
                 />
-                <InputField
+                <ImageUpload
+                  isArabic={isArabic}
                   label={isArabic ? "صورة البطاقة - الخلفية" : "National ID back"}
                   value={state.nationalIdBack}
-                  onChange={(nationalIdBack) => setState({ ...state, nationalIdBack })}
-                  placeholder={isArabic ? "اسم الملف أو الرابط" : "File name or URL"}
+                  onChange={(url) => setState({ ...state, nationalIdBack: url })}
                 />
               </div>
               <div className="grid gap-5 sm:grid-cols-2">
