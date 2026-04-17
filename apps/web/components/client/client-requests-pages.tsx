@@ -232,8 +232,8 @@ function OrderConfirmationModal({ item, locale, onClose, onSuccess }: { item: Cu
         paymentMethod
       });
       onSuccess();
-    } catch (error) {
-      alert(isArabic ? "فشل تأكيد الطلب" : "Failed to confirm order");
+    } catch (error: any) {
+      alert(error.message || (isArabic ? "فشل تأكيد الطلب" : "Failed to confirm order"));
     } finally {
       setIsSubmitting(false);
     }

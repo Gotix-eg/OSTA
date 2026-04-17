@@ -393,7 +393,7 @@ router.get("/my-custom-requests", authenticate, requireRoles("CLIENT", "WORKER")
 
 // PATCH /api/vendors/custom-requests/:id/accept — client accepts the offer
 router.patch("/custom-requests/:id/accept", authenticate, requireRoles("CLIENT", "WORKER"), catchAsync(async (request, response) => {
-  const { id } = request.params;
+  const id = request.params["id"] as string;
   const { deliveryMethod, paymentMethod } = request.body as { deliveryMethod: string; paymentMethod: string };
 
   if (!deliveryMethod || !paymentMethod) {
@@ -433,7 +433,7 @@ router.patch("/custom-requests/:id/accept", authenticate, requireRoles("CLIENT",
 
 // PATCH /api/vendors/custom-requests/:id/status — vendor updates order status
 router.patch("/custom-requests/:id/status", authenticate, requireRoles("VENDOR"), catchAsync(async (request, response) => {
-  const { id } = request.params;
+  const id = request.params["id"] as string;
   const { status } = request.body as { status: "PREPARING" | "SHIPPED" | "COMPLETED" | "REJECTED" | "CLOSED" };
 
   const vendor = await prisma.vendorProfile.findUnique({ where: { userId: request.auth!.userId } });
