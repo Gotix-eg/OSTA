@@ -605,7 +605,7 @@ export function WorkerDashboardHome({ locale, initialData }: { locale: Locale; i
       note: isTrialActive 
         ? (locale === "ar" ? "متبقي في التجربة المجانية" : "Remaining in free trial")
         : (locale === "ar" ? "أوردرات متاحة للقبول" : "Orders available to accept"),
-      tone: isTrialActive ? "primary" : (data.summary.orderQuota > 0 ? "accent" : "red"),
+      tone: (isTrialActive ? "primary" : (data.summary.orderQuota > 0 ? "accent" : "dark")) as CardTone,
       icon: isTrialActive ? Sparkles : Banknote
     },
     {
