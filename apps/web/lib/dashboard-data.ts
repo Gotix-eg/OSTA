@@ -180,7 +180,8 @@ const workerDashboardFallback: WorkerDashboardData = {
     monthlyEarnings: 11240,
     monthlyGrowth: 18,
     rating: 4.9,
-    ratingCount: 312
+    ratingCount: 312,
+    orderQuota: 0
   },
   queue: [
     { id: "offer-1", service: "acMaintenance", area: "newCairo", budgetMin: 350, budgetMax: 450, freshness: "TODAY" },
