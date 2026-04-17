@@ -108,7 +108,9 @@ router.post("/register/vendor", catchAsync(async (request, response) => {
     latitude: payload.latitude,
     longitude: payload.longitude,
     shopName: (payload as any).shopName || (payload as any).storeName,
-    category: (payload as any).category
+    category: (payload as any).category,
+    commercialRecord: payload.commercialRecord,
+    taxCard: payload.taxCard
   });
 
   setAuthCookies(response, {

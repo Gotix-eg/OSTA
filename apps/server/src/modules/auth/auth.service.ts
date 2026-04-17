@@ -22,6 +22,8 @@ export type RegisterInput = {
   nationalIdNumber?: string;
   nationalIdFront?: string;
   nationalIdBack?: string;
+  commercialRecord?: string;
+  taxCard?: string;
 };
 
 type LoginInput = {
@@ -149,7 +151,9 @@ export const authService = {
                   city: input.city || "new-cairo",
                   address: input.address || "",
                   latitude: input.latitude || 30.0444,
-                  longitude: input.longitude || 31.2357
+                  longitude: input.longitude || 31.2357,
+                  commercialRegisterUrl: input.commercialRecord,
+                  taxCardUrl: input.taxCard
                 }
               }
             : undefined,

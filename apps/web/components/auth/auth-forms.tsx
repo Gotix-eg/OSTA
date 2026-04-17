@@ -1144,15 +1144,17 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
           {step === 2 ? (
             <div className="space-y-6">
               <div className="grid gap-5 sm:grid-cols-2">
-                <InputField
-                  label={isArabic ? "رقم السجل التجاري" : "Commercial Record"}
+                <ImageUpload
+                  isArabic={isArabic}
+                  label={isArabic ? "صورة السجل التجاري" : "Commercial Record"}
                   value={state.commercialRecord}
-                  onChange={(commercialRecord) => setState({ ...state, commercialRecord })}
+                  onChange={(url) => setState({ ...state, commercialRecord: url })}
                 />
-                <InputField
-                  label={isArabic ? "البطاقة الضريبية" : "Tax Card"}
+                <ImageUpload
+                  isArabic={isArabic}
+                  label={isArabic ? "صورة البطاقة الضريبية" : "Tax Card"}
                   value={state.taxCard}
-                  onChange={(taxCard) => setState({ ...state, taxCard })}
+                  onChange={(url) => setState({ ...state, taxCard: url })}
                 />
               </div>
 

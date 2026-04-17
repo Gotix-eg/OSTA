@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Upload3 } from "lucide-react"; // Fallback to a valid upload/image icon later if Upload is not available
 
 export function ImageUpload({
   label,
