@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, RotateCcw, User, Phone, Search, Loader2, Wrench, Star } from "lucide-react";
+import { Plus, RotateCcw, User, Phone, Search, Loader2, Wrench, Star, ShieldCheck } from "lucide-react";
 import { fetchApiData, postApiData } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
@@ -56,6 +56,16 @@ export function AdminWorkersManagement({ locale }: { locale: Locale }) {
       const now = new Date();
       const newExpiry = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString();
       setWorkers(prev => prev.map(w => w.id === id ? { ...w, trialExpiresAt: newExpiry } : w));
+    } finally {
+      setActionId(null);
+    }
+  }
+
+  async function handleVerify(id: string) {
+    setActionId(id);
+    try {
+      await postApiData(`/admin/workers/${id}/verify`, {});
+      setWorkers(prev => prev.map(w => w.id === id ? { ...w, verificationStatus: "VERIFIED" } : w));
     } finally {
       setActionId(null);
     }
@@ -133,19 +143,31 @@ export function AdminWorkersManagement({ locale }: { locale: Locale }) {
                     )}
 
                     <div className="flex items-center gap-2 ml-2">
+                       {worker.verificationStatus !== "VERIFIED" && (
+                         <button 
+                           onClick={() => handleVerify(worker.id)}
+                           disabled={actionId === worker.id}
+                           className="flex items-center gap-2 px-3 py-1.5 bg-sun-500 text-white text-xs font-bold rounded-xl hover:bg-sun-600 transition disabled:opacity-50"
+                           title={isArabic ? "توثيق الحساب" : "Verify Account"}
+                         >
+                           {actionId === worker.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />}
+                           {isArabic ? "توثيق" : "Verify"}
+                         </button>
+                       )}
                        <button 
                          onClick={() => handleAddQuota(worker.id)}
                          disabled={actionId === worker.id}
-                         className="p-2 text-success hover:bg-success/10 rounded-lg transition disabled:opacity-50"
+                         className="flex items-center gap-1.5 p-2 text-success hover:bg-success/10 rounded-lg transition disabled:opacity-50"
                          title={isArabic ? "إضافة +10 أوردرات" : "Add +10 Orders"}
                        >
                          {actionId === worker.id ? <Loader2 className="h-5 w-5 animate-spin" /> : <Plus className="h-5 w-5" />}
+                         {worker.orderQuota === 0 && <span className="text-[10px] font-bold">{isArabic ? "+10 أوردرات" : "+10 orders"}</span>}
                        </button>
                        <button 
                          onClick={() => handleResetTrial(worker.id)}
                          disabled={actionId === worker.id}
                          className="p-2 text-primary-600 hover:bg-primary-50 rounded-lg transition disabled:opacity-50"
-                         title={isArabic ? "تجديد الفترة التجريبية" : "Reset Trial"}
+                         title={isArabic ? "تجديد الفترة التجريبية (30 يوم)" : "Reset Trial (30d)"}
                        >
                          <RotateCcw className="h-5 w-5" />
                        </button>
