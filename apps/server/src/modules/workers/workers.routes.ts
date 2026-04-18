@@ -64,21 +64,21 @@ const workerRatings = {
 
 const workerSettings = {
   profile: {
-    firstName: "Youssef",
-    lastName: "Mahmoud",
-    phone: "+201055555555",
-    email: "youssef.worker@osta.eg"
+    firstName: "",
+    lastName: "",
+    phone: "",
+    email: ""
   },
   workPreferences: {
-    isAvailable: true,
-    acceptsEmergency: true,
-    acceptsSameDay: true,
-    serviceAreas: ["New Cairo", "Nasr City", "Maadi"]
+    isAvailable: false,
+    acceptsEmergency: false,
+    acceptsSameDay: false,
+    serviceAreas: []
   },
   payout: {
-    method: "Bank transfer",
-    schedule: "Weekly",
-    bankLabel: "National Bank ending 2241"
+    method: "",
+    schedule: "",
+    bankLabel: ""
   }
 };
 
