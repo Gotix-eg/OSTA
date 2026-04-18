@@ -31,103 +31,54 @@ const verifyWorkerSchema = z.object({
   status: z.enum(["VERIFIED", "REJECTED"])
 });
 
-const pendingWorkers: PendingWorkerRecord[] = [
-  {
-    id: "worker-18",
-    name: "Mahmoud Saber",
-    specialty: "plumber",
-    area: "Nasr City",
-    experienceYears: 7,
-    rating: 4.8,
-    documentsReady: 5,
-    submittedAt: "2026-03-27",
-    status: "UNDER_REVIEW"
-  },
-  {
-    id: "worker-19",
-    name: "Ali Nader",
-    specialty: "electrician",
-    area: "New Cairo",
-    experienceYears: 6,
-    rating: 4.7,
-    documentsReady: 4,
-    submittedAt: "2026-03-27",
-    status: "DOCUMENTS_SUBMITTED"
-  },
-  {
-    id: "worker-20",
-    name: "Khaled Amin",
-    specialty: "acTechnician",
-    area: "Maadi",
-    experienceYears: 9,
-    rating: 4.9,
-    documentsReady: 3,
-    submittedAt: "2026-03-28",
-    status: "AWAITING_ID"
-  }
-];
+const pendingWorkers: PendingWorkerRecord[] = [];
 
 const adminClients = {
   summary: {
-    totalClients: 14200,
-    activeThisWeek: 3240,
-    vipClients: 186,
-    averageRating: 4.8
+    totalClients: 0,
+    activeThisWeek: 0,
+    vipClients: 0,
+    averageRating: 0
   },
-  clients: [
-    { id: "client-1", name: "Mariam Hassan", city: "New Cairo", requests: 28, walletBalance: 860, status: "VIP" },
-    { id: "client-2", name: "Karim Adel", city: "Maadi", requests: 11, walletBalance: 220, status: "Active" },
-    { id: "client-3", name: "Nour Emad", city: "Nasr City", requests: 17, walletBalance: 0, status: "Active" }
-  ]
+  clients: []
 };
 
 const adminRequests = {
   summary: {
-    active: 186,
-    completedToday: 88,
-    disputed: 12,
-    averageTicket: 410
+    active: 0,
+    completedToday: 0,
+    disputed: 0,
+    averageTicket: 0
   },
-  requests: [
-    { id: "req-101", title: "Urgent electrical repair", status: "WORKER_EN_ROUTE", city: "New Cairo", amount: 320 },
-    { id: "req-102", title: "Kitchen plumbing fix", status: "IN_PROGRESS", city: "Maadi", amount: 410 },
-    { id: "req-103", title: "AC maintenance", status: "PENDING", city: "Nasr City", amount: 450 }
-  ]
+  requests: []
 };
 
 const adminFinance = {
   summary: {
-    totalRevenue: 684000,
-    commissions: 102600,
-    escrowHeld: 274000,
-    releasedThisWeek: 84200
+    totalRevenue: 0,
+    commissions: 0,
+    escrowHeld: 0,
+    releasedThisWeek: 0
   },
-  streams: [
-    { label: "Commissions", value: 102600 },
-    { label: "Escrow held", value: 274000 },
-    { label: "Released", value: 84200 }
-  ],
-  payouts: [
-    { id: "pay-1", label: "Worker batch payout", status: "Scheduled", amount: 52000 },
-    { id: "pay-2", label: "Escrow release", status: "Processed", amount: 18400 }
-  ]
+  streams: [],
+  payouts: []
 };
 
 const adminSettings = {
   platform: {
-    supportEmail: "support@osta.eg",
-    emergencyHotline: "+20 100 000 0000",
+    supportEmail: "",
+    emergencyHotline: "",
     defaultLanguage: "ar"
   },
   operations: {
     autoAssignmentEnabled: false,
-    manualVerificationRequired: true,
-    payoutsSchedule: "Weekly"
+    manualVerificationRequired: false,
+    payoutsSchedule: ""
   },
   moderation: {
-    complaintEscalationHours: 24,
-    reviewVisibilityCheck: true,
-    workerRecheckCycleDays: 90
+    complaintEscalationHours: 0,
+    reviewVisibilityCheck: false,
+    workerRecheckCycleDays: 0
   }
 };
 
@@ -151,14 +102,14 @@ router.get("/dashboard", (_request, response) => {
     successResponse(
       {
         summary: {
-          totalRevenue: 684000,
-          revenueGrowth: 12,
-          pendingVerifications: 43,
-          highPriorityVerifications: 13,
-          openComplaints: 12,
-          underInvestigation: 4,
-          activeRequests: 186,
-          requestsDelta: 21
+          totalRevenue: 0,
+          revenueGrowth: 0,
+          pendingVerifications: 0,
+          highPriorityVerifications: 0,
+          openComplaints: 0,
+          underInvestigation: 0,
+          activeRequests: 0,
+          requestsDelta: 0
         },
         verificationQueue: [
           ...getVisiblePendingWorkers().map((item) => ({
@@ -169,22 +120,18 @@ router.get("/dashboard", (_request, response) => {
             submittedAt: item.submittedAt
           }))
         ],
-        alerts: [
-          "complaintsUnderInvestigation",
-          "escrowApprovalsNeedReview",
-          "workersReadyForActivation"
-        ],
+        alerts: [],
         financePulse: {
-          commissions: 68,
-          escrowHeld: 81,
-          releasedThisWeek: 52,
-          refundPressure: 14
+          commissions: 0,
+          escrowHeld: 0,
+          releasedThisWeek: 0,
+          refundPressure: 0
         },
         operationalMix: {
-          clientsCount: 14200,
-          workersCount: 5100,
-          walletFlow: 274000,
-          qualityScore: 96
+          clientsCount: 0,
+          workersCount: 0,
+          walletFlow: 0,
+          qualityScore: 0
         }
       },
       "Admin dashboard fetched"
@@ -197,9 +144,9 @@ router.get("/analytics", (_request, response) => {
     successResponse(
       {
         period: "month",
-        revenue: [540000, 590000, 684000],
-        completedRequests: [3800, 4210, 4980],
-        workerGrowth: [120, 150, 210]
+        revenue: [],
+        completedRequests: [],
+        workerGrowth: []
       },
       "Admin analytics fetched"
     )
@@ -244,10 +191,10 @@ router.get("/finance/revenue", (_request, response) => {
   response.status(200).json(
     successResponse(
       {
-        total: 684000,
-        commissions: 102600,
-        escrowHeld: 274000,
-        releasedThisWeek: 84200
+        total: 0,
+        commissions: 0,
+        escrowHeld: 0,
+        releasedThisWeek: 0
       },
       "Finance revenue fetched"
     )

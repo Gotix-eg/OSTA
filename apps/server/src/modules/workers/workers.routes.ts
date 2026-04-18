@@ -47,103 +47,19 @@ type ActiveRequestRecord = {
   earnings: number;
 };
 
-const incomingRequests: IncomingRequestRecord[] = [
-  {
-    id: "offer-1",
-    service: "acMaintenance",
-    urgency: "SAME_DAY",
-    area: "newCairo",
-    budgetMin: 350,
-    budgetMax: 450,
-    distanceKm: 2.4,
-    freshnessMinutes: 6
-  },
-  {
-    id: "offer-2",
-    service: "electricalInspection",
-    urgency: "NORMAL",
-    area: "nasrCity",
-    budgetMin: 250,
-    budgetMax: 320,
-    distanceKm: 4.1,
-    freshnessMinutes: 14
-  },
-  {
-    id: "offer-3",
-    service: "faucetInstallation",
-    urgency: "URGENT",
-    area: "maadi",
-    budgetMin: 220,
-    budgetMax: 280,
-    distanceKm: 3.2,
-    freshnessMinutes: 4
-  }
-];
+const incomingRequests: IncomingRequestRecord[] = [];
 
-const activeRequests: ActiveRequestRecord[] = [
-  {
-    id: "active-1",
-    service: "electricalRepair",
-    status: "EN_ROUTE",
-    clientName: "Mariam Hassan",
-    area: "newCairo",
-    scheduledWindow: "Today 2:00 PM - 3:00 PM",
-    earnings: 320
-  },
-  {
-    id: "active-2",
-    service: "kitchenPlumbing",
-    status: "ON_SITE",
-    clientName: "Karim Adel",
-    area: "maadi",
-    scheduledWindow: "Today 3:30 PM - 5:00 PM",
-    earnings: 410
-  },
-  {
-    id: "active-3",
-    service: "acMaintenance",
-    status: "WRAP_UP",
-    clientName: "Nour Emad",
-    area: "nasrCity",
-    scheduledWindow: "Today 5:30 PM - 6:30 PM",
-    earnings: 480
-  }
-];
+const activeRequests: ActiveRequestRecord[] = [];
 
 const workerRatings = {
   summary: {
-    overallRating: 4.9,
-    totalReviews: 312,
-    repeatClientsRate: 41,
-    fiveStars: 284
+    overallRating: 0,
+    totalReviews: 0,
+    repeatClientsRate: 0,
+    fiveStars: 0
   },
-  badges: ["Fast arrival", "Top-rated", "Trusted pro"],
-  reviews: [
-    {
-      id: "review-1",
-      clientName: "Sara Hassan",
-      rating: 5,
-      service: "AC maintenance",
-      comment: "Very clean execution and fast arrival.",
-      createdAt: "2026-03-26T16:00:00.000Z"
-    },
-    {
-      id: "review-2",
-      clientName: "Hany Mahmoud",
-      rating: 5,
-      service: "Electrical inspection",
-      comment: "Clear communication and fair pricing.",
-      createdAt: "2026-03-24T11:30:00.000Z"
-    },
-    {
-      id: "review-3",
-      clientName: "Mona Sherif",
-      rating: 4,
-      service: "Faucet installation",
-      comment: "Good work and finished within the expected window.",
-      createdAt: "2026-03-21T14:10:00.000Z"
-    }
-  ]
+  badges: [],
+  reviews: []
 };
 
 const workerSettings = {
@@ -210,39 +126,35 @@ router.get("/dashboard", catchAsync(async (request, response) => {
     successResponse(
       {
         summary: {
-          incomingRequests: 8,
-          incomingDelta: 2,
-          activeJobs: 4,
-          enRouteCount: 2,
-          monthlyEarnings: 11240,
-          monthlyGrowth: 18,
+          incomingRequests: 0,
+          incomingDelta: 0,
+          activeJobs: 0,
+          enRouteCount: 0,
+          monthlyEarnings: 0,
+          monthlyGrowth: 0,
           rating: worker.rating,
           ratingCount: worker.ratingCount,
           orderQuota: worker.orderQuota,
           trialExpiresAt: worker.trialExpiresAt
         },
-        queue: [
-          { id: "offer-1", service: "acMaintenance", area: "newCairo", budgetMin: 350, budgetMax: 450, freshness: "TODAY" },
-          { id: "offer-2", service: "electricalInspection", area: "nasrCity", budgetMin: 250, budgetMax: 320, freshness: "TODAY" },
-          { id: "offer-3", service: "faucetInstallation", area: "maadi", budgetMin: 220, budgetMax: 280, freshness: "TODAY" }
-        ],
+        queue: [],
         weeklyLoad: [
-          { day: "saturday", value: 90 },
-          { day: "sunday", value: 70, tone: "dark" },
-          { day: "monday", value: 82 },
-          { day: "tuesday", value: 64, tone: "dark" }
+          { day: "saturday", value: 0 },
+          { day: "sunday", value: 0, tone: "dark" },
+          { day: "monday", value: 0 },
+          { day: "tuesday", value: 0, tone: "dark" }
         ],
         earningsPulse: {
-          today: 46,
-          week: 78,
-          revenue: 88,
-          satisfaction: 96
+          today: 0,
+          week: 0,
+          revenue: 0,
+          satisfaction: 0
         },
         performance: {
-          responseMinutes: 5,
-          completionRate: 98,
-          acceptanceRate: 96,
-          repeatClients: 41
+          responseMinutes: 0,
+          completionRate: 0,
+          acceptanceRate: 0,
+          repeatClients: 0
         }
       },
       "Worker dashboard fetched"
@@ -413,27 +325,14 @@ router.get("/earnings/summary", (_request, response) => {
   response.status(200).json(
     successResponse(
       {
-        today: 1240,
-        week: 4280,
-        month: 11240,
-        pendingWithdrawal: 1800,
-        growth: 18,
-        chart: [
-          { label: "Week 1", amount: 2200 },
-          { label: "Week 2", amount: 2640 },
-          { label: "Week 3", amount: 2910 },
-          { label: "Week 4", amount: 3490 }
-        ],
-        payouts: [
-          { id: "payout-1", amount: 1800, status: "scheduled", date: "2026-03-31" },
-          { id: "payout-2", amount: 4200, status: "paid", date: "2026-03-21" }
-        ],
-        transactions: [
-          { id: "txn-1", label: "AC maintenance", type: "service", amount: 420 },
-          { id: "txn-2", label: "Electrical inspection", type: "service", amount: 310 },
-          { id: "txn-3", label: "Withdrawal", type: "withdrawal", amount: -1800 },
-          { id: "txn-4", label: "Bonus payout", type: "bonus", amount: 250 }
-        ]
+        today: 0,
+        week: 0,
+        month: 0,
+        pendingWithdrawal: 0,
+        growth: 0,
+        chart: [],
+        payouts: [],
+        transactions: []
       },
       "Worker earnings summary fetched"
     )
@@ -444,10 +343,10 @@ router.get("/stats", (_request, response) => {
   response.status(200).json(
     successResponse(
       {
-        responseTime: "5 mins",
-        completionRate: 98,
-        acceptanceRate: 96,
-        repeatClients: 41
+        responseTime: "0 mins",
+        completionRate: 0,
+        acceptanceRate: 0,
+        repeatClients: 0
       },
       "Worker stats fetched"
     )

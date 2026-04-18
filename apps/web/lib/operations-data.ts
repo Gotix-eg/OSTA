@@ -284,115 +284,62 @@ export interface AdminSettingsData {
 }
 
 const workerEarningsFallback: WorkerEarningsData = {
-  today: 1240,
-  week: 4280,
-  month: 11240,
-  pendingWithdrawal: 1800,
-  growth: 18,
-  chart: [
-    { label: "Week 1", amount: 2200 },
-    { label: "Week 2", amount: 2640 },
-    { label: "Week 3", amount: 2910 },
-    { label: "Week 4", amount: 3490 }
-  ],
-  payouts: [
-    { id: "payout-1", amount: 1800, status: "scheduled", date: "2026-03-31" },
-    { id: "payout-2", amount: 4200, status: "paid", date: "2026-03-21" }
-  ],
-  transactions: [
-    { id: "txn-1", label: "AC maintenance", type: "service", amount: 420 },
-    { id: "txn-2", label: "Electrical inspection", type: "service", amount: 310 },
-    { id: "txn-3", label: "Withdrawal", type: "withdrawal", amount: -1800 },
-    { id: "txn-4", label: "Bonus payout", type: "bonus", amount: 250 }
-  ]
+  today: 0,
+  week: 0,
+  month: 0,
+  pendingWithdrawal: 0,
+  growth: 0,
+  chart: [],
+  payouts: [],
+  transactions: []
 };
 
-const clientRequestsFallback: ClientRequestListItem[] = [
-  {
-    id: "req-101",
-    requestNumber: "OSTA-101",
-    title: "Urgent electrical repair",
-    serviceId: "electrical-emergency",
-    status: "WORKER_EN_ROUTE",
-    area: "New Cairo",
-    createdAt: "2026-03-28T09:20:00.000Z"
-  },
-  {
-    id: "req-102",
-    requestNumber: "OSTA-102",
-    title: "Kitchen plumbing fix",
-    serviceId: "plumbing-repair",
-    status: "IN_PROGRESS",
-    area: "Maadi",
-    createdAt: "2026-03-28T08:10:00.000Z"
-  },
-  {
-    id: "req-103",
-    requestNumber: "OSTA-103",
-    title: "Living room painting",
-    serviceId: "painting-finishes",
-    status: "COMPLETED",
-    area: "New Cairo",
-    createdAt: "2026-03-24T15:00:00.000Z"
-  }
-];
+const clientRequestsFallback: ClientRequestListItem[] = [];
 
 const clientRequestDetailFallback: ClientRequestDetailData = {
-  id: "req-101",
-  requestNumber: "OSTA-101",
+  id: "",
+  requestNumber: "",
   categoryId: "electrical",
   serviceId: "electrical-emergency",
-  title: "Urgent electrical repair",
-  description: "Main kitchen socket stopped working and the breaker trips every few minutes.",
-  mediaNotes: "3 images attached from the kitchen panel.",
+  title: "",
+  description: "",
+  mediaNotes: "",
   address: {
-    mode: "saved",
-    savedAddressId: "home-new-cairo"
+    mode: "new"
   },
   timing: {
-    type: "emergency"
+    type: "today"
   },
-  status: "WORKER_EN_ROUTE",
-  area: "New Cairo",
-  createdAt: "2026-03-28T09:20:00.000Z",
-  updatedAt: "2026-03-28T09:32:00.000Z"
+  status: "PENDING",
+  area: "",
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString()
 };
 
 const clientFavoritesFallback: ClientFavoritesData = {
   summary: {
-    totalFavorites: 3,
-    onlineNow: 1,
-    avgRating: 4.9
+    totalFavorites: 0,
+    onlineNow: 0,
+    avgRating: 0
   },
-  workers: [
-    { id: "worker-1", name: "Ahmed Fawzy", specialty: "AC Technician", rating: 4.9, completedJobs: 354, area: "New Cairo", availability: "Available tomorrow" },
-    { id: "worker-2", name: "Youssef El-Sharif", specialty: "Electrician", rating: 4.9, completedJobs: 312, area: "Nasr City", availability: "Online now" },
-    { id: "worker-3", name: "Mostafa Adel", specialty: "Plumber", rating: 4.8, completedJobs: 287, area: "Maadi", availability: "Today 7 PM" }
-  ]
+  workers: []
 };
 
 const clientWalletFallback: ClientWalletData = {
-  balance: 860,
+  balance: 0,
   currency: "EGP",
-  spendThisMonth: 2140,
-  pendingRefunds: 180,
-  paymentMethods: [
-    { id: "card-1", label: "Visa ending 1842", isDefault: true },
-    { id: "wallet-1", label: "Vodafone Cash", isDefault: false }
-  ],
-  recentTransactions: [
-    { id: "txn-1", type: "topup", amount: 500, label: "Wallet top-up", createdAt: "2026-03-27T18:30:00.000Z" },
-    { id: "txn-2", type: "payment", amount: -320, label: "Electrical repair payment", createdAt: "2026-03-27T19:10:00.000Z" },
-    { id: "txn-3", type: "refund", amount: 180, label: "Partial refund", createdAt: "2026-03-25T15:00:00.000Z" }
-  ]
+  spendThisMonth: 0,
+  pendingRefunds: 0,
+  paymentMethods: [],
+  recentTransactions: []
 };
 
 const clientSettingsFallback: ClientSettingsData = {
   profile: {
-    firstName: "Mariam",
-    lastName: "Hassan",
-    email: "mariam@osta.eg",
-    phone: "+201000000000"
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: ""
   },
   preferences: {
     language: "ar",
@@ -400,214 +347,99 @@ const clientSettingsFallback: ClientSettingsData = {
     notificationsByEmail: true,
     marketingUpdates: false
   },
-  addresses: [
-    { id: "home-new-cairo", label: "Home - New Cairo", isDefault: true },
-    { id: "villa-maadi", label: "Villa - Maadi", isDefault: false }
-  ]
+  addresses: []
 };
 
 const pendingWorkersFallback: PendingWorkersData = {
   summary: {
-    totalPending: 43,
-    highPriority: 13,
-    submittedToday: 8,
-    averageReviewHours: 29
+    totalPending: 0,
+    highPriority: 0,
+    submittedToday: 0,
+    averageReviewHours: 0
   },
-  workers: [
-    {
-      id: "worker-18",
-      name: "Mahmoud Saber",
-      specialty: "plumber",
-      area: "Nasr City",
-      experienceYears: 7,
-      rating: 4.8,
-      documentsReady: 5,
-      submittedAt: "2026-03-27",
-      status: "UNDER_REVIEW"
-    },
-    {
-      id: "worker-19",
-      name: "Ali Nader",
-      specialty: "electrician",
-      area: "New Cairo",
-      experienceYears: 6,
-      rating: 4.7,
-      documentsReady: 4,
-      submittedAt: "2026-03-27",
-      status: "DOCUMENTS_SUBMITTED"
-    },
-    {
-      id: "worker-20",
-      name: "Khaled Amin",
-      specialty: "acTechnician",
-      area: "Maadi",
-      experienceYears: 9,
-      rating: 4.9,
-      documentsReady: 3,
-      submittedAt: "2026-03-28",
-      status: "AWAITING_ID"
-    }
-  ]
+  workers: []
 };
 
 const workerIncomingRequestsFallback: WorkerIncomingRequestsData = {
   summary: {
-    availableNow: 8,
-    sameDay: 3,
-    emergency: 1,
-    averageBudget: 340
+    availableNow: 0,
+    sameDay: 0,
+    emergency: 0,
+    averageBudget: 0
   },
-  requests: [
-    {
-      id: "offer-1",
-      service: "acMaintenance",
-      urgency: "SAME_DAY",
-      area: "newCairo",
-      budgetMin: 350,
-      budgetMax: 450,
-      distanceKm: 2.4,
-      freshnessMinutes: 6
-    },
-    {
-      id: "offer-2",
-      service: "electricalInspection",
-      urgency: "NORMAL",
-      area: "nasrCity",
-      budgetMin: 250,
-      budgetMax: 320,
-      distanceKm: 4.1,
-      freshnessMinutes: 14
-    },
-    {
-      id: "offer-3",
-      service: "faucetInstallation",
-      urgency: "URGENT",
-      area: "maadi",
-      budgetMin: 220,
-      budgetMax: 280,
-      distanceKm: 3.2,
-      freshnessMinutes: 4
-    }
-  ]
+  requests: []
 };
 
 const workerActiveRequestsFallback: WorkerActiveRequestsData = {
   summary: {
-    activeJobs: 4,
-    enRoute: 2,
-    onSite: 1,
-    wrapUp: 1
+    activeJobs: 0,
+    enRoute: 0,
+    onSite: 0,
+    wrapUp: 0
   },
-  requests: [
-    {
-      id: "active-1",
-      service: "electricalRepair",
-      status: "EN_ROUTE",
-      clientName: "Mariam Hassan",
-      area: "newCairo",
-      scheduledWindow: "Today 2:00 PM - 3:00 PM",
-      earnings: 320
-    },
-    {
-      id: "active-2",
-      service: "kitchenPlumbing",
-      status: "ON_SITE",
-      clientName: "Karim Adel",
-      area: "maadi",
-      scheduledWindow: "Today 3:30 PM - 5:00 PM",
-      earnings: 410
-    },
-    {
-      id: "active-3",
-      service: "acMaintenance",
-      status: "WRAP_UP",
-      clientName: "Nour Emad",
-      area: "nasrCity",
-      scheduledWindow: "Today 5:30 PM - 6:30 PM",
-      earnings: 480
-    }
-  ]
+  requests: []
 };
 
 const workerRatingsFallback: WorkerRatingsData = {
   summary: {
-    overallRating: 4.9,
-    totalReviews: 312,
-    repeatClientsRate: 41,
-    fiveStars: 284
+    overallRating: 0,
+    totalReviews: 0,
+    repeatClientsRate: 0,
+    fiveStars: 0
   },
-  badges: ["Fast arrival", "Top-rated", "Trusted pro"],
-  reviews: [
-    { id: "review-1", clientName: "Sara Hassan", rating: 5, service: "AC maintenance", comment: "Very clean execution and fast arrival.", createdAt: "2026-03-26T16:00:00.000Z" },
-    { id: "review-2", clientName: "Hany Mahmoud", rating: 5, service: "Electrical inspection", comment: "Clear communication and fair pricing.", createdAt: "2026-03-24T11:30:00.000Z" },
-    { id: "review-3", clientName: "Mona Sherif", rating: 4, service: "Faucet installation", comment: "Good work and finished within the expected window.", createdAt: "2026-03-21T14:10:00.000Z" }
-  ]
+  badges: [],
+  reviews: []
 };
 
 const workerSettingsFallback: WorkerSettingsData = {
   profile: {
-    firstName: "Youssef",
-    lastName: "Mahmoud",
-    phone: "+201055555555",
-    email: "youssef.worker@osta.eg"
+    firstName: "",
+    lastName: "",
+    phone: "",
+    email: ""
   },
   workPreferences: {
-    isAvailable: true,
-    acceptsEmergency: true,
-    acceptsSameDay: true,
-    serviceAreas: ["New Cairo", "Nasr City", "Maadi"]
+    isAvailable: false,
+    acceptsEmergency: false,
+    acceptsSameDay: false,
+    serviceAreas: []
   },
   payout: {
-    method: "Bank transfer",
-    schedule: "Weekly",
-    bankLabel: "National Bank ending 2241"
+    method: "",
+    schedule: "",
+    bankLabel: ""
   }
 };
 
 const adminClientsFallback: AdminClientsData = {
   summary: {
-    totalClients: 14200,
-    activeThisWeek: 3240,
-    vipClients: 186,
-    averageRating: 4.8
+    totalClients: 0,
+    activeThisWeek: 0,
+    vipClients: 0,
+    averageRating: 0
   },
-  clients: [
-    { id: "client-1", name: "Mariam Hassan", city: "New Cairo", requests: 28, walletBalance: 860, status: "VIP" },
-    { id: "client-2", name: "Karim Adel", city: "Maadi", requests: 11, walletBalance: 220, status: "Active" },
-    { id: "client-3", name: "Nour Emad", city: "Nasr City", requests: 17, walletBalance: 0, status: "Active" }
-  ]
+  clients: []
 };
 
 const adminRequestsFallback: AdminRequestsData = {
   summary: {
-    active: 186,
-    completedToday: 88,
-    disputed: 12,
-    averageTicket: 410
+    active: 0,
+    completedToday: 0,
+    disputed: 0,
+    averageTicket: 0
   },
-  requests: [
-    { id: "req-101", title: "Urgent electrical repair", status: "WORKER_EN_ROUTE", city: "New Cairo", amount: 320 },
-    { id: "req-102", title: "Kitchen plumbing fix", status: "IN_PROGRESS", city: "Maadi", amount: 410 },
-    { id: "req-103", title: "AC maintenance", status: "PENDING", city: "Nasr City", amount: 450 }
-  ]
+  requests: []
 };
 
 const adminFinanceFallback: AdminFinanceData = {
   summary: {
-    totalRevenue: 684000,
-    commissions: 102600,
-    escrowHeld: 274000,
-    releasedThisWeek: 84200
+    totalRevenue: 0,
+    commissions: 0,
+    escrowHeld: 0,
+    releasedThisWeek: 0
   },
-  streams: [
-    { label: "Commissions", value: 102600 },
-    { label: "Escrow held", value: 274000 },
-    { label: "Released", value: 84200 }
-  ],
-  payouts: [
-    { id: "pay-1", label: "Worker batch payout", status: "Scheduled", amount: 52000 },
-    { id: "pay-2", label: "Escrow release", status: "Processed", amount: 18400 }
-  ]
+  streams: [],
+  payouts: []
 };
 
 const adminSettingsFallback: AdminSettingsData = {

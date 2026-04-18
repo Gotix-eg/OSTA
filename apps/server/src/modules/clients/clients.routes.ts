@@ -165,69 +165,31 @@ const clientRequestRecords: ClientRequestRecord[] = [
   }
 ];
 
-const favoriteWorkers = [
-  {
-    id: "worker-1",
-    name: "Ahmed Fawzy",
-    specialty: "AC Technician",
-    rating: 4.9,
-    completedJobs: 354,
-    area: "New Cairo",
-    availability: "Available tomorrow"
-  },
-  {
-    id: "worker-2",
-    name: "Youssef El-Sharif",
-    specialty: "Electrician",
-    rating: 4.9,
-    completedJobs: 312,
-    area: "Nasr City",
-    availability: "Online now"
-  },
-  {
-    id: "worker-3",
-    name: "Mostafa Adel",
-    specialty: "Plumber",
-    rating: 4.8,
-    completedJobs: 287,
-    area: "Maadi",
-    availability: "Today 7 PM"
-  }
-];
+const favoriteWorkers: any[] = [];
 
 const walletData = {
-  balance: 860,
+  balance: 0,
   currency: "EGP",
-  spendThisMonth: 2140,
-  pendingRefunds: 180,
-  paymentMethods: [
-    { id: "card-1", label: "Visa ending 1842", isDefault: true },
-    { id: "wallet-1", label: "Vodafone Cash", isDefault: false }
-  ],
-  recentTransactions: [
-    { id: "txn-1", type: "topup", amount: 500, label: "Wallet top-up", createdAt: "2026-03-27T18:30:00.000Z" },
-    { id: "txn-2", type: "payment", amount: -320, label: "Electrical repair payment", createdAt: "2026-03-27T19:10:00.000Z" },
-    { id: "txn-3", type: "refund", amount: 180, label: "Partial refund", createdAt: "2026-03-25T15:00:00.000Z" }
-  ]
+  spendThisMonth: 0,
+  pendingRefunds: 0,
+  paymentMethods: [],
+  recentTransactions: []
 };
 
 const clientSettings = {
   profile: {
-    firstName: "Mariam",
-    lastName: "Hassan",
-    email: "mariam@osta.eg",
-    phone: "+201000000000"
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: ""
   },
   preferences: {
     language: "ar",
-    notificationsBySms: true,
-    notificationsByEmail: true,
+    notificationsBySms: false,
+    notificationsByEmail: false,
     marketingUpdates: false
   },
-  addresses: [
-    { id: "home-new-cairo", label: "Home - New Cairo", isDefault: true },
-    { id: "villa-maadi", label: "Villa - Maadi", isDefault: false }
-  ]
+  addresses: []
 };
 
 function parseBody<T>(schema: { parse: (value: unknown) => T }, body: unknown): T {
@@ -440,9 +402,9 @@ router.get("/favorites", (_request, response) => {
     successResponse(
       {
         summary: {
-          totalFavorites: favoriteWorkers.length,
-          onlineNow: favoriteWorkers.filter((item) => item.availability === "Online now").length,
-          avgRating: 4.9
+          totalFavorites: 0,
+          onlineNow: 0,
+          avgRating: 0
         },
         workers: favoriteWorkers
       },
