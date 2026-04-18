@@ -4,7 +4,7 @@ export const dashboardCopy = {
   ar: {
     client: {
       role: "لوحة العميل",
-      title: "مرحبًا، مريم",
+      title: "مرحبًا بك",
       subtitle: "كل طلباتك ونشاطك ومحفظتك في مكان واحد مع تحديثات واضحة.",
       search: "ابحث في الطلبات أو الفنيين",
       nav: ["الرئيسية", "طلب جديد", "طلباتي", "المتاجر", "المفضلين", "المحفظة", "الإعدادات"],
@@ -17,7 +17,7 @@ export const dashboardCopy = {
     },
     worker: {
       role: "لوحة العامل",
-      title: "أهلاً يا يوسف",
+      title: "أهلاً بك",
       subtitle: "تابع الطلبات الجديدة، الأرباح، وتقييمات العملاء من شاشة واحدة.",
       search: "ابحث في الطلبات أو المناطق",
       nav: ["الرئيسية", "طلبات واردة", "نشطة", "الأرباح", "التقييمات", "الإعدادات"],
@@ -66,7 +66,7 @@ export const dashboardCopy = {
   en: {
     client: {
       role: "Client Dashboard",
-      title: "Welcome back, Mariam",
+      title: "Welcome back",
       subtitle: "Your requests, wallet, and worker activity live in one clear view.",
       search: "Search requests or workers",
       nav: ["Home", "New Request", "My Requests", "Stores", "Favorites", "Wallet", "Settings"],
@@ -79,7 +79,7 @@ export const dashboardCopy = {
     },
     worker: {
       role: "Worker Dashboard",
-      title: "Welcome, Youssef",
+      title: "Welcome",
       subtitle: "Track incoming work, earnings, ratings, and weekly performance in one place.",
       search: "Search jobs or areas",
       nav: ["Home", "Incoming", "Active", "Earnings", "Ratings", "Settings"],

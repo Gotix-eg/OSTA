@@ -458,8 +458,25 @@ router.get("/ratings", (_request, response) => {
   response.status(200).json(successResponse(workerRatings, "Worker ratings fetched"));
 });
 
-router.get("/settings", (_request, response) => {
-  response.status(200).json(successResponse(workerSettings, "Worker settings fetched"));
-});
+router.get("/settings", catchAsync(async (request, response) => {
+  const userId = request.auth!.userId;
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+
+  if (!user) throw new ApiError(404, "User not found");
+
+  const settings = {
+    ...workerSettings,
+    profile: {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      phone: user.phone,
+      email: user.email
+    }
+  };
+
+  response.status(200).json(successResponse(settings, "Worker settings fetched"));
+}));
 
 export const workersRouter = router;
