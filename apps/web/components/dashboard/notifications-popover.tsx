@@ -24,8 +24,7 @@ export function NotificationsPopover({ locale }: { locale: "ar" | "en" }) {
   const [isLoading, setIsLoading] = useState(true);
   const popoverRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
-
-  const currentRole = pathname.split("/")[2]; // Assuming standard is /[locale]/[role]/...
+  const currentRole = (pathname || "/").split("/")[2]; // Assuming standard is /[locale]/[role]/...
 
   const getRelativeTime = (date: string, locale: "ar" | "en") => {
     const rtf = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
