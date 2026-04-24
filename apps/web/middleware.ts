@@ -10,6 +10,16 @@ const protectedSegments = {
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // Handle legacy auth routes
+  const legacyAuthMatch = pathname.match(/^\/(ar|en)\/auth\/(login|register|forgot-password|verify-otp)$/);
+  if (legacyAuthMatch) {
+    const [, locale, target] = legacyAuthMatch;
+    // Map register to register/client by default
+    const newTarget = target === "register" ? "register/client" : target;
+    return NextResponse.redirect(new URL(`/${locale}/${newTarget}`, request.url));
+  }
+
   const match = pathname.match(/^\/(ar|en)\/(client|worker|vendor|admin)(?:\/.*)?$/);
 
   if (!match) {
@@ -35,13 +45,6 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/:locale/client",
-    "/:locale/client/:path*",
-    "/:locale/worker",
-    "/:locale/worker/:path*",
-    "/:locale/vendor",
-    "/:locale/vendor/:path*",
-    "/:locale/admin",
-    "/:locale/admin/:path*"
+    "/:locale/:path*"
   ]
 };

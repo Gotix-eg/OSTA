@@ -58,10 +58,10 @@ export function LandingPage({ locale }: { locale: Locale }) {
             <Link href={`/${locale}/vendors`} className="text-sm font-medium text-onyx-300 hover:text-gold-500 transition-colors">
               {isArabic ? "المتاجر" : "Marketplace"}
             </Link>
-            <Link href={`/${locale}/auth/login`} className="text-sm font-medium text-onyx-300 hover:text-gold-500 transition-colors">
+            <Link href={`/${locale}/login`} className="text-sm font-medium text-onyx-300 hover:text-gold-500 transition-colors">
               {isArabic ? "تسجيل دخول" : "Login"}
             </Link>
-            <Link href={`/${locale}/auth/register`} className="btn-gold shadow-gold/20">
+            <Link href={`/${locale}/register/client`} className="btn-gold shadow-gold/20">
               {isArabic ? "ابدأ الآن" : "Get Started"}
             </Link>
           </div>
@@ -102,10 +102,10 @@ export function LandingPage({ locale }: { locale: Locale }) {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center gap-4">
-              <Link href={`/${locale}/auth/register?role=worker`} className="w-full sm:w-auto btn-gold text-center py-4 px-8 text-lg">
+              <Link href={`/${locale}/register/worker`} className="w-full sm:w-auto btn-gold text-center py-4 px-8 text-lg">
                 {isArabic ? "انضم كصنايعي" : "Join as Pro"}
               </Link>
-              <Link href={`/${locale}/auth/register?role=vendor`} className="w-full sm:w-auto btn-onyx text-center py-4 px-8 text-lg border-gold-500/30 text-gold-500">
+              <Link href={`/${locale}/register/vendor`} className="w-full sm:w-auto btn-onyx text-center py-4 px-8 text-lg border-gold-500/30 text-gold-500">
                 {isArabic ? "انضم كمتجر" : "Join as Vendor"}
               </Link>
             </div>
@@ -239,10 +239,10 @@ export function LandingPage({ locale }: { locale: Locale }) {
             {isArabic ? "سجل الآن كعميل وابدأ في طلب خدماتك أو انضم كمحترف وضاعف دخلك." : "Register now as a client or join as a pro and multiply your income."}
           </p>
           <div className="flex flex-wrap justify-center gap-6">
-            <Link href={`/${locale}/auth/register`} className="btn-gold py-5 px-12 text-xl">
+            <Link href={`/${locale}/register/client`} className="btn-gold py-5 px-12 text-xl">
               {isArabic ? "سجل كعميل مجاناً" : "Join for Free"}
             </Link>
-            <Link href={`/${locale}/auth/register?role=worker`} className="btn-onyx py-5 px-12 text-xl border-gold-500/20 text-gold-500 hover:bg-gold-500/10">
+            <Link href={`/${locale}/register/worker`} className="btn-onyx py-5 px-12 text-xl border-gold-500/20 text-gold-500 hover:bg-gold-500/10">
               {isArabic ? "سجل كفني محترف" : "Join as a Pro"}
             </Link>
           </div>
