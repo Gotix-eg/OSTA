@@ -37,7 +37,7 @@ body {
   input,
   textarea,
   select {
-    @apply outline-none focus-visible:ring-2 focus-visible:ring-gold-500 focus-visible:ring-offset-2 focus-visible:ring-offset-ony-900;
+    @apply outline-none focus-visible:ring-2 focus-visible:ring-gold-500 focus-visible:ring-offset-2 focus-visible:ring-offset-onyx-900;
   }
 }
 

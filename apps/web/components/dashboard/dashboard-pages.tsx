@@ -346,3 +346,44 @@ export function AdminDashboardHome({ locale }: { locale: Locale }) {
     </div>
   );
 }
+
+export function AdminAdsPage({ locale }: { locale: Locale }) {
+  const isArabic = locale === "ar";
+  return (
+    <div className="animate-slideUp">
+      <SectionTitle
+        eyebrow={isArabic ? "الإعلانات والترويج" : "Ads & Promotions"}
+        title={isArabic ? "إدارة الحملات" : "Campaign Management"}
+        subtitle={isArabic ? "تحكم في البانرات الإعلانية والحملات الممولة للموردين والصنايعية." : "Control ad banners and sponsored campaigns for vendors and pros."}
+        actionLabel={isArabic ? "إنشاء حملة" : "Create Campaign"}
+      />
+      <EmptyNotice message={isArabic ? "لا توجد حملات إعلانية نشطة حالياً." : "No active ad campaigns at the moment."} />
+    </div>
+  );
+}
+
+export function AdminPricingPage({ locale }: { locale: Locale }) {
+  const isArabic = locale === "ar";
+  return (
+    <div className="animate-slideUp">
+      <SectionTitle
+        eyebrow={isArabic ? "التسعير والعمولات" : "Pricing & Commissions"}
+        title={isArabic ? "إعدادات الرسوم" : "Fee Settings"}
+        subtitle={isArabic ? "ضبط نسب العمولات، رسوم الخدمات، وميزانيات التشغيل." : "Adjust commission rates, service fees, and operational budgets."}
+        actionLabel={isArabic ? "حفظ التغييرات" : "Save Changes"}
+      />
+      <Surface title={isArabic ? "نسب العمولات الافتراضية" : "Default Commission Rates"}>
+         <div className="grid md:grid-cols-2 gap-6">
+            <div className="onyx-card p-6 border-gold-500/10">
+               <p className="text-onyx-400 text-sm mb-2">{isArabic ? "عمولة الصنايعية" : "Worker Commission"}</p>
+               <h4 className="text-2xl font-black text-white">15%</h4>
+            </div>
+            <div className="onyx-card p-6 border-gold-500/10">
+               <p className="text-onyx-400 text-sm mb-2">{isArabic ? "عمولة المتاجر" : "Vendor Commission"}</p>
+               <h4 className="text-2xl font-black text-white">10%</h4>
+            </div>
+         </div>
+      </Surface>
+    </div>
+  );
+}
