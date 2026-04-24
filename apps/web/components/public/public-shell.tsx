@@ -14,6 +14,7 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
   const links = [
     { href: `/${locale}`, label: copy.home },
     { href: `/${locale}/services`, label: copy.services },
+    { href: `/${locale}/vendors`, label: copy.vendors },
     { href: `/${locale}/how-it-works`, label: copy.how },
     { href: `/${locale}/about`, label: copy.about },
     { href: `/${locale}/contact`, label: copy.contact },

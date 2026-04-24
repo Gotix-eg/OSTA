@@ -295,18 +295,40 @@ router.post("/workers/:id/reset-trial", catchAsync(async (request, response) => 
   response.json(successResponse(updated, "Trial reset successfully"));
 }));
 
-// POST /api/admin/workers/:id/verify — Mark worker as VERIFIED
+// POST /api/admin/workers/:id/verify — Mark worker as VERIFIED and start 30-day trial
 router.post("/workers/:id/verify", catchAsync(async (request, response) => {
   const id = request.params.id as string;
+  const now = new Date();
+  const trialExpiresAt = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
   
   const updated = await prisma.workerProfile.update({
     where: { id },
     data: { 
-      verificationStatus: "VERIFIED"
+      verificationStatus: "VERIFIED",
+      verifiedAt: now,
+      trialExpiresAt
     }
   });
   
-  response.json(successResponse(updated, "Worker verified successfully"));
+  response.json(successResponse(updated, "Worker verified and 30-day trial started successfully"));
+}));
+
+// POST /api/admin/vendors/:id/verify — Mark vendor as VERIFIED and start 30-day trial
+router.post("/vendors/:id/verify", catchAsync(async (request, response) => {
+  const id = request.params.id as string;
+  const now = new Date();
+  const trialExpiresAt = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+  
+  const updated = await prisma.vendorProfile.update({
+    where: { id },
+    data: { 
+      verificationStatus: "VERIFIED",
+      verifiedAt: now,
+      trialExpiresAt
+    }
+  });
+  
+  response.json(successResponse(updated, "Vendor verified and 30-day trial started successfully"));
 }));
 
 export const adminRouter = router;

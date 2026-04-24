@@ -48,24 +48,30 @@ const areaOptions = ["Nasr City", "New Cairo", "Maadi", "6th of October", "Alexa
 
 // Pastel backgrounds for image area (shown before image loads)
 const categoryBg: Record<string, string> = {
-  electrical:         "#FEF3C7",
-  plumbing:           "#DBEAFE",
-  carpentry:          "#FEF9EE",
-  painting:           "#FDF2F8",
-  "ac-appliances":    "#E0F2FE",
-  "aluminum-welding": "#F1F5F9",
-  "general-services": "#F0FDF4"
+  carpentry:             "#FEF9EE",
+  plumbing:              "#DBEAFE",
+  electrical:            "#FEF3C7",
+  "ac-technician":       "#E0F2FE",
+  "home-appliances":     "#F1F5F9",
+  painting:              "#FDF2F8",
+  aluminum:              "#F1F5F9",
+  "computer-networks":   "#FEF3C7",
+  "computer-repair":     "#F3F4F6",
+  "camera-installation": "#F0FDF4"
 };
 
 // Generated service photos
 const categoryImages: Record<string, string> = {
-  electrical:         "/services/electrical.png",
-  plumbing:           "/services/plumbing.png",
-  carpentry:          "/services/carpentry.png",
-  painting:           "/services/painting.png",
-  "ac-appliances":    "/services/ac-appliances.png",
-  "aluminum-welding": "/services/aluminum-welding.png",
-  "general-services": "/services/general-services.png"
+  carpentry:             "/services/carpentry.png",
+  plumbing:              "/services/plumbing.png",
+  electrical:            "/services/electrical.png",
+  "ac-technician":       "/services/ac-appliances.png",
+  "home-appliances":     "/services/home-appliances.png",
+  painting:              "/services/painting.png",
+  aluminum:              "/services/aluminum-welding.png",
+  "computer-networks":   "/services/computer-networks.png",
+  "computer-repair":     "/services/computer-repair.png",
+  "camera-installation": "/services/camera-installation.png"
 };
 
 function AnimatedCounter({ value, suffix, locale }: { value: number; suffix: string; locale: Locale }) {
@@ -136,9 +142,10 @@ export function LandingPage({ locale }: { locale: Locale }) {
 
   const navItems = [
     { href: `/${locale}/services`,        label: copy.nav[0] },
-    { href: `/${locale}/how-it-works`,    label: copy.nav[1] },
-    { href: `/${locale}/register/worker`, label: copy.nav[2] },
-    { href: `/${locale}/contact`,         label: copy.nav[3] }
+    { href: `/${locale}/vendors`,         label: copy.nav[1] },
+    { href: `/${locale}/how-it-works`,    label: copy.nav[2] },
+    { href: `/${locale}/register/worker`, label: copy.nav[3] },
+    { href: `/${locale}/contact`,         label: copy.nav[4] }
   ];
 
   // profi.ru-style trust features
@@ -416,6 +423,60 @@ export function LandingPage({ locale }: { locale: Locale }) {
                 <h3 className="mt-5 text-lg font-semibold text-gray-900">{title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-gray-500">{description}</p>
               </article>
+            ))}
+          </div>
+        </div>
+      </motion.section>
+
+      {/* ── FEATURED STORES ── */}
+      <motion.section initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }} className="py-16 bg-gray-50/50">
+        <div className="section-shell">
+          <div className="mb-10 flex items-end justify-between">
+            <div>
+              <h2 className="text-3xl font-medium text-gray-900">{isArabic ? "متاجر قطع الغيار والمعدات" : "Parts & Equipment Stores"}</h2>
+              <p className="mt-2 text-gray-500">{isArabic ? "اشترِ لوازم السباكة، الكهرباء، والدهانات من أفضل الموردين القريبين منك." : "Buy plumbing, electrical, and painting supplies from top nearby vendors."}</p>
+            </div>
+            <Link href={`/${locale}/vendors`} className="hidden sm:inline-flex items-center gap-1 text-sm font-semibold text-primary-600 hover:text-primary-700">
+              {isArabic ? "تصفح كل المتاجر" : "Browse all stores"}
+              {isArabic ? <ArrowLeft className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
+            </Link>
+          </div>
+
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {[
+              { id: "s1", name: isArabic ? "بيت السباكة الحديث" : "Modern Plumbing House", cat: isArabic ? "مستلزمات سباكة" : "Plumbing Supplies", rating: 4.8, area: isArabic ? "مدينة نصر" : "Nasr City", img: "/vendors/v1.png" },
+              { id: "s2", name: isArabic ? "الإسراء للكهرباء" : "Al-Israa Electrical", cat: isArabic ? "أدوات كهربائية" : "Electrical Tools", rating: 4.9, area: isArabic ? "المعادي" : "Maadi", img: "/vendors/v2.png" },
+              { id: "s3", name: isArabic ? "عالم الدهانات" : "Paint World", cat: isArabic ? "دهانات ومواد بناء" : "Paints & Materials", rating: 4.7, area: isArabic ? "القاهرة الجديدة" : "New Cairo", img: "/vendors/v3.png" },
+              { id: "s4", name: isArabic ? "تكنو كول" : "Techno Cool", cat: isArabic ? "قطع غيار تكييف" : "AC Spare Parts", rating: 4.6, area: isArabic ? "6 أكتوبر" : "6th Oct", img: "/vendors/v4.png" }
+            ].map((store) => (
+              <Link key={store.id} href={`/${locale}/vendors/${store.id}`}>
+                <article className="group overflow-hidden rounded-3xl border border-gray-100 bg-white p-2 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+                  <div className="relative h-40 w-full overflow-hidden rounded-2xl bg-gray-100">
+                    <div className="absolute inset-0 flex items-center justify-center text-4xl font-bold text-gray-200">STORE</div>
+                    {/* Image placeholder */}
+                  </div>
+                  <div className="p-4">
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <h3 className="font-bold text-gray-900 group-hover:text-primary-600 transition">{store.name}</h3>
+                        <p className="mt-1 text-xs text-gray-500 font-medium">{store.cat}</p>
+                      </div>
+                      <div className="flex items-center gap-1 rounded-full bg-sun-50 px-2 py-0.5 text-xs font-bold text-sun-700">
+                        <Star className="h-3 w-3 fill-current" /> {store.rating}
+                      </div>
+                    </div>
+                    <div className="mt-4 flex items-center justify-between">
+                      <span className="flex items-center gap-1.5 text-xs text-gray-400">
+                        <MapPin className="h-3.5 w-3.5" /> {store.area}
+                      </span>
+                      <span className="text-xs font-bold text-gray-900 flex items-center gap-1">
+                        {isArabic ? "زيارة المتجر" : "Visit Store"}
+                        {isArabic ? <ArrowLeft className="h-3 w-3" /> : <ArrowRight className="h-3 w-3" />}
+                      </span>
+                    </div>
+                  </div>
+                </article>
+              </Link>
             ))}
           </div>
         </div>

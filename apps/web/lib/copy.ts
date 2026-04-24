@@ -4,7 +4,7 @@ export const landingCopy = {
   ar: {
     homeLabel: "الرئيسية",
     localeToggle: "EN",
-    nav: ["الخدمات", "كيف يعمل", "انضم كأُسطى", "تواصل معنا"],
+    nav: ["الخدمات", "المتاجر", "كيف يعمل", "انضم كعامل/تاجر", "تواصل معنا"],
     login: "دخول",
     getStarted: "ابدأ الآن",
     heroEyebrow: "منصة موثوقة للحرفيين المعتمدين في مصر",
@@ -97,7 +97,7 @@ export const landingCopy = {
   en: {
     homeLabel: "Home",
     localeToggle: "AR",
-    nav: ["Services", "How It Works", "Join as Worker", "Contact"],
+    nav: ["Services", "Vendors", "How It Works", "Join as Pro/Vendor", "Contact"],
     login: "Login",
     getStarted: "Get Started",
     heroEyebrow: "A trusted platform for verified skilled workers in Egypt",

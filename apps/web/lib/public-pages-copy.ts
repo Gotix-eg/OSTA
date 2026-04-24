@@ -7,6 +7,7 @@ export const publicPageCopy = {
     nav: {
       home: "الرئيسية",
       services: "الخدمات",
+      vendors: "المتاجر",
       how: "كيف يعمل",
       about: "من نحن",
       contact: "تواصل",
@@ -142,6 +143,7 @@ export const publicPageCopy = {
     nav: {
       home: "Home",
       services: "Services",
+      vendors: "Vendors",
       how: "How It Works",
       about: "About",
       contact: "Contact",

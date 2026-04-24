@@ -685,7 +685,7 @@ export function WorkerDashboardHome({ locale, initialData }: { locale: Locale; i
         {copy.stats.map((label, index) => (
           <MetricCard
             key={label}
-            label={label}
+            label={stats[index]?.label ?? label}
             value={stats[index]?.value ?? "-"}
             note={stats[index]?.note ?? ""}
             tone={stats[index]?.tone ?? "accent"}
@@ -1007,13 +1007,37 @@ export function AdminDashboardHome({ locale, initialData }: { locale: Locale; in
 
 export function VendorDashboardHome({ locale }: { locale: Locale }) {
   const copy = dashboardCopy[locale].vendor;
+  const isArabic = locale === "ar";
   
   // Hardcoded for now until API is connected
+  const trialExpiresAt = new Date();
+  trialExpiresAt.setDate(trialExpiresAt.getDate() + 25);
+  const isTrialActive = true; 
+  const trialDaysLeft = 25;
+
   const stats = [
-    { value: "0", note: locale === "ar" ? "هذا الشهر" : "this month", tone: "accent" as const, icon: Briefcase },
-    { value: "EGP 0", note: locale === "ar" ? "عن الشهر السابق" : "vs last month", tone: "sun" as const, icon: CircleDollarSign },
-    { value: "0", note: locale === "ar" ? "في الطريق" : "in transit", tone: "primary" as const, icon: Route },
-    { value: "EGP 0", note: locale === "ar" ? "رصيد متاح" : "available balance", tone: "dark" as const, icon: Wallet }
+    { 
+      value: isTrialActive 
+        ? (isArabic ? `${formatNumber(locale, trialDaysLeft)} يوم` : `${trialDaysLeft}d Trial`)
+        : "12", 
+      label: isTrialActive 
+        ? (isArabic ? "فترة تجريبية" : "Free Trial")
+        : (isArabic ? "طلبات جديدة" : "New requests"),
+      note: isTrialActive 
+        ? (isArabic ? "متبقي في التجربة المجانية" : "Remaining in free trial")
+        : (isArabic ? "طلب تسعير جديد" : "new quote requests"),
+      tone: "accent" as const, 
+      icon: isTrialActive ? Sparkles : Briefcase 
+    },
+    { value: formatCurrency(locale, 4500), note: isArabic ? "مبيعات الشهر" : "monthly sales", tone: "sun" as const, icon: CircleDollarSign },
+    { value: "3", note: isArabic ? "قيد التوصيل" : "in transit", tone: "primary" as const, icon: Route },
+    { value: formatCurrency(locale, 1200), note: isArabic ? "رصيد المحفظة" : "wallet balance", tone: "dark" as const, icon: Wallet }
+  ];
+
+  const recentRequests = [
+    { id: "req_1", client: "Ahmed Ali", items: isArabic ? "مواسير 3/4 بوصة، محابس" : "3/4 inch pipes, valves", area: isArabic ? "مدينة نصر" : "Nasr City", time: "2h ago" },
+    { id: "req_2", client: "Sara Hassan", items: isArabic ? "دهان بلاستيك مط، جوتن" : "Matte plastic paint, Jotun", area: isArabic ? "المعادي" : "Maadi", time: "5h ago" },
+    { id: "req_3", client: "Khaled Omar", items: isArabic ? "سلوك كهرباء 4 مم، لفة 100م" : "4mm electric wires, 100m roll", area: isArabic ? "6 أكتوبر" : "6th Oct", time: "1d ago" }
   ];
 
   return (
@@ -1023,7 +1047,7 @@ export function VendorDashboardHome({ locale }: { locale: Locale }) {
         title={copy.title}
         subtitle={copy.subtitle}
         actionLabel={copy.action}
-        actionHref={`/${locale}/vendor/settings`}
+        actionHref={`/${locale}/vendor/inventory`}
         tone="accent"
       />
 
@@ -1035,7 +1059,7 @@ export function VendorDashboardHome({ locale }: { locale: Locale }) {
         {copy.stats.map((label, index) => (
            <MetricCard
              key={label}
-             label={label}
+             label={stats[index]?.label ?? label}
              value={stats[index]?.value ?? "-"}
              note={stats[index]?.note ?? ""}
              tone={stats[index]?.tone ?? "accent"}
@@ -1044,9 +1068,60 @@ export function VendorDashboardHome({ locale }: { locale: Locale }) {
         ))}
       </div>
 
-      <div className="mt-6">
-        <Surface title={copy.queueSection} eyebrow={locale === "ar" ? "طلبات حية" : "Live requests"}>
-           <EmptyNotice>{locale === "ar" ? "لا توجد طلبات قريبة الآن" : "No nearby requests right now"}</EmptyNotice>
+      <div className="mt-6 grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+        <Surface title={copy.queueSection} eyebrow={isArabic ? "طلبات حية" : "Live requests"}>
+           {recentRequests.length === 0 ? (
+             <EmptyNotice>{isArabic ? "لا توجد طلبات قريبة الآن" : "No nearby requests right now"}</EmptyNotice>
+           ) : (
+             <div className="space-y-4">
+               {recentRequests.map((req) => (
+                 <article key={req.id} className="dashboard-card-soft p-5 group transition hover:border-primary-200">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex items-start gap-4">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-primary-600 shadow-soft">
+                          <Wrench className="h-6 w-6" />
+                        </div>
+                        <div>
+                          <p className="text-lg font-bold text-gray-900">{req.items}</p>
+                          <p className="mt-1 text-sm text-gray-500">{isArabic ? "العميل: " : "Client: "}{req.client}</p>
+                        </div>
+                      </div>
+                      <StatusPill label={isArabic ? "جديد" : "NEW"} tone="blue" />
+                    </div>
+                    
+                    <div className="mt-5 flex items-center justify-between border-t border-gray-50 pt-4">
+                      <div className="flex items-center gap-4 text-xs font-medium text-gray-400">
+                        <span className="flex items-center gap-1"><MapPin className="h-3 w-3" /> {req.area}</span>
+                        <span className="flex items-center gap-1"><Clock3 className="h-3 w-3" /> {req.time}</span>
+                      </div>
+                      <Link href={`/${locale}/vendor/requests/${req.id}`} className="text-sm font-bold text-primary-600 hover:underline">
+                        {isArabic ? "أرسل عرض سعر" : "Send Quote"}
+                      </Link>
+                    </div>
+                 </article>
+               ))}
+             </div>
+           )}
+        </Surface>
+
+        <Surface title={isArabic ? "ملخص العمليات" : "Operations summary"} eyebrow={isArabic ? "نظرة سريعة" : "Quick glance"} dark>
+           <ProgressBars
+             strong
+             items={[
+               { label: isArabic ? "طلبات تم شحنها" : "Shipped orders", value: 85 },
+               { label: isArabic ? "سرعة الرد على التسعير" : "Quote speed", value: 92, tone: "dark" },
+               { label: isArabic ? "رضا المشترين" : "Buyer satisfaction", value: 98 },
+               { label: isArabic ? "تغطية المخزون" : "Inventory health", value: 74, tone: "dark" }
+             ]}
+           />
+           <div className="mt-8 rounded-2xl bg-white/5 p-5 border border-white/10">
+              <p className="text-xs font-bold uppercase tracking-widest text-white/40">{isArabic ? "تنبيه المخزون" : "INVENTORY ALERT"}</p>
+              <p className="mt-3 text-sm text-white/80 leading-relaxed">
+                {isArabic 
+                  ? "يوجد 5 منتجات في مخزنك أوشكت على النفاذ. قم بتحديث الكميات لتجنب توقف الطلبات." 
+                  : "5 products in your inventory are running low. Update quantities to avoid losing orders."}
+              </p>
+           </div>
         </Surface>
       </div>
     </div>

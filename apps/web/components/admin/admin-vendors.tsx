@@ -64,6 +64,18 @@ export function AdminVendorsManagement({ locale }: { locale: Locale }) {
     }
   }
 
+  async function handleVerify(id: string) {
+    setActionId(id);
+    try {
+      await postApiData(`/admin/vendors/${id}/verify`, {});
+      const now = new Date();
+      const trialExpiresAt = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString();
+      setVendors(prev => prev.map(v => v.id === id ? { ...v, verificationStatus: "VERIFIED", trialExpiresAt } : v));
+    } finally {
+      setActionId(null);
+    }
+  }
+
   const filtered = vendors.filter(v => 
     v.shopName.toLowerCase().includes(search.toLowerCase()) || 
     (v.shopNameAr && v.shopNameAr.includes(search)) ||
@@ -132,8 +144,28 @@ export function AdminVendorsManagement({ locale }: { locale: Locale }) {
                         {isArabic ? `رصيد: ${vendor.orderQuota}` : `Quota: ${vendor.orderQuota}`}
                       </span>
                     )}
-
+ 
                     <div className="flex items-center gap-2 ml-2">
+                       {(vendor as any).verificationStatus !== "VERIFIED" && (
+                         <>
+                           <button 
+                             onClick={() => alert(isArabic ? "عرض السجل التجاري والبطاقة الضريبية..." : "Viewing Commercial Register & Tax Card...")}
+                             className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 text-gray-700 text-xs font-bold rounded-xl hover:bg-gray-200 transition"
+                           >
+                             <User className="h-4 w-4" />
+                             {isArabic ? "المستندات" : "Docs"}
+                           </button>
+                           <button 
+                             onClick={() => handleVerify(vendor.id)}
+                             disabled={actionId === vendor.id}
+                             className="flex items-center gap-2 px-3 py-1.5 bg-sun-500 text-white text-xs font-bold rounded-xl hover:bg-sun-600 transition disabled:opacity-50"
+                             title={isArabic ? "توثيق الحساب" : "Verify Store"}
+                           >
+                             {actionId === vendor.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
+                             {isArabic ? "توثيق" : "Verify"}
+                           </button>
+                         </>
+                       )}
                        <button 
                          onClick={() => handleAddQuota(vendor.id)}
                          disabled={actionId === vendor.id}
@@ -153,9 +185,17 @@ export function AdminVendorsManagement({ locale }: { locale: Locale }) {
                     </div>
                   </div>
                 </div>
-
+ 
                 <div className="mt-4 pt-4 border-t border-dark-50 flex justify-between items-center text-xs">
-                   <span className="text-dark-400">{isArabic ? "إجمالي الأوردرات المكتملة:" : "Total Completed Orders:"} <strong className="text-dark-900">{vendor.totalOrders}</strong></span>
+                   <div className="flex items-center gap-4">
+                     <span className="text-dark-400">{isArabic ? "إجمالي الأوردرات المكتملة:" : "Total Completed Orders:"} <strong className="text-dark-900">{vendor.totalOrders}</strong></span>
+                     <span className={cn(
+                        "px-2 py-0.5 rounded text-[10px] font-bold uppercase",
+                        (vendor as any).verificationStatus === "VERIFIED" ? "bg-success/10 text-success" : "bg-sun-400/10 text-sun-700"
+                     )}>
+                       {(vendor as any).verificationStatus || "PENDING"}
+                     </span>
+                   </div>
                 </div>
               </div>
             );

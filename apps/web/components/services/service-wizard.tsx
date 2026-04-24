@@ -4,57 +4,99 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, ArrowRight, CheckCircle2, ChevronRight, Users, ClipboardList, MessageSquare, Calendar, MapPin } from "lucide-react";
+import { 
+  ArrowLeft, 
+  ArrowRight, 
+  CheckCircle2, 
+  ChevronRight, 
+  Users, 
+  ClipboardList, 
+  Calendar, 
+  MapPin,
+  Sparkles,
+  ShieldCheck,
+  Zap,
+  Hammer,
+  Waves,
+  Snowflake,
+  Wrench,
+  Paintbrush,
+  Monitor,
+  Camera,
+  Network
+} from "lucide-react";
 import type { Locale } from "@/lib/locales";
 import type { ServiceCategory } from "@/lib/shared";
 import { cn } from "@/lib/utils";
+import { egyptianGovernorates } from "@/lib/geo-data";
 
 // ── Job type options per category ────────────────────────────────────────────
 
 const categoryOptions: Record<string, { ar: string; en: string }[]> = {
-  electrical: [
-    { ar: "مساعدة طارئة (انقطاع كهرباء / شورت)", en: "Emergency help (outage / short circuit)" },
-    { ar: "تركيب وتمديد كهرباء جديد", en: "New electrical installation & wiring" },
-    { ar: "إصلاح أعطال كهربائية", en: "Repair electrical faults" },
-    { ar: "فك وإزالة فقط (بدون تركيب)", en: "Removal only (no installation)" },
-    { ar: "أحتاج فني كهرباء بشكل دوري", en: "Need a regular electrician" },
+  carpentry: [
+    { ar: "تفصيل خزانة أو رف أو مطبخ", en: "Custom wardrobe, shelf, or kitchen" },
+    { ar: "إصلاح أبواب أو أثاث", en: "Repair doors or furniture" },
+    { ar: "تركيب أثاث جاهز (ايكيا وغيرها)", en: "Assemble ready-made furniture (IKEA etc)" },
+    { ar: "تغيير كوالين ومفصلات", en: "Change locks and hinges" },
+    { ar: "صيانة وترميم خشبي", en: "Wood restoration & maintenance" },
   ],
   plumbing: [
     { ar: "تسريب أو انسداد طارئ", en: "Emergency leak or blockage" },
     { ar: "تركيب حنفية أو دش أو سخان", en: "Install faucet, shower, or water heater" },
     { ar: "إصلاح مواسير أو ضغط مياه", en: "Repair pipes or water pressure" },
-    { ar: "صيانة دورية للسباكة", en: "Routine plumbing maintenance" },
-    { ar: "نقل تغذية أو توزيع مياه", en: "Relocate or redistribute water supply" },
+    { ar: "تأسيس سباكة حمام أو مطبخ", en: "New bathroom/kitchen plumbing setup" },
+    { ar: "صيانة فلاتر مياه", en: "Water filter maintenance" },
   ],
-  carpentry: [
-    { ar: "تفصيل خزانة أو رف أو مطبخ", en: "Custom wardrobe, shelf, or kitchen" },
-    { ar: "إصلاح أبواب أو أثاث", en: "Repair doors or furniture" },
-    { ar: "تركيب أثاث جاهز", en: "Assemble ready-made furniture" },
-    { ar: "صيانة وترميم خشبي", en: "Wood restoration & maintenance" },
+  electrical: [
+    { ar: "مساعدة طارئة (انقطاع كهرباء / قفلة)", en: "Emergency help (outage / short circuit)" },
+    { ar: "تركيب وتمديد كهرباء جديد", en: "New electrical installation & wiring" },
+    { ar: "تركيب نجف ووحدات إضاءة", en: "Install chandeliers & lighting units" },
+    { ar: "إصلاح برايز ومفاتيح", en: "Repair sockets and switches" },
+    { ar: "تأسيس لوحات كهرباء", en: "Main board installation" },
+  ],
+  "ac-technician": [
+    { ar: "صيانة وكشف أعطال تكييف", en: "AC diagnostics & maintenance" },
+    { ar: "تركيب تكييف جديد أو فك ونقل", en: "Install new AC or relocate" },
+    { ar: "تنظيف وغسيل تكييف", en: "AC deep cleaning" },
+    { ar: "شحن فريون", en: "Refrigerant/Freon refill" },
+  ],
+  "home-appliances": [
+    { ar: "إصلاح غسالة (أوتوماتيك / فوق أوتوماتيك)", en: "Repair washer (Auto / Top-load)" },
+    { ar: "إصلاح ثلاجة أو ديب فريزر", en: "Repair fridge or deep freezer" },
+    { ar: "إصلاح بوتاجاز أو فرن", en: "Repair stove or oven" },
+    { ar: "إصلاح سخان غاز أو كهرباء", en: "Repair gas or electric heater" },
+    { ar: "صيانة ميكروويف أو أجهزة صغيرة", en: "Microwave or small appliance repair" },
   ],
   painting: [
     { ar: "دهان داخلي شامل للشقة", en: "Full interior painting" },
     { ar: "دهان غرفة واحدة أو جزء منها", en: "Single room or partial paint" },
     { ar: "إصلاح تشققات أو رطوبة ودهان", en: "Crack & damp repair + repaint" },
-    { ar: "دهان خارجي أو واجهة", en: "Exterior or façade painting" },
+    { ar: "دهان أبواب وشبابيك", en: "Door and window painting" },
+    { ar: "تركيب ورق حائط", en: "Wallpaper installation" },
   ],
-  "ac-appliances": [
-    { ar: "صيانة وكشف أعطال تكييف", en: "AC diagnostics & maintenance" },
-    { ar: "تركيب تكييف جديد", en: "Install a new AC unit" },
-    { ar: "إصلاح جهاز منزلي (ثلاجة / غسالة / إلخ)", en: "Repair home appliance (fridge / washer / etc.)" },
-    { ar: "تنظيف وغسيل تكييف", en: "AC deep cleaning" },
-  ],
-  "aluminum-welding": [
-    { ar: "تركيب شبابيك ألومنيوم", en: "Install aluminum windows" },
-    { ar: "تركيب أبواب ألومنيوم أو حديد", en: "Install aluminum or iron doors" },
+  aluminum: [
+    { ar: "تركيب شبابيك ألوميتال", en: "Install aluminum windows" },
+    { ar: "تصميم وتركيب مطابخ ألوميتال", en: "Design & install aluminum kitchens" },
     { ar: "إصلاح وصيانة شبابيك أو أبواب", en: "Repair & maintain windows or doors" },
-    { ar: "أعمال لحام خفيفة", en: "Light welding work" },
+    { ar: "تغيير سلك شبابيك", en: "Change window screens/mesh" },
   ],
-  "general-services": [
-    { ar: "نقل وترحيل أثاث", en: "Furniture moving & relocation" },
-    { ar: "تركيب وتجميع", en: "Assembly & installation" },
-    { ar: "مهام منزلية متعددة", en: "General household chores" },
-    { ar: "صيانة خفيفة عامة", en: "Light general maintenance" },
+  "computer-networks": [
+    { ar: "تأسيس شبكة وايرلس (WiFi) منزلية", en: "Setup home WiFi network" },
+    { ar: "تركيب وتمديد كابلات إنترنت (Cat6)", en: "Install & route internet cables" },
+    { ar: "تقوية إشارة الواي فاي (Extenders)", en: "WiFi signal boosting" },
+    { ar: "تأسيس شبكات مكاتب وشركات", en: "Office/Business network setup" },
+  ],
+  "computer-repair": [
+    { ar: "صيانة سوفتوير (ويندوز / تعريفات)", en: "Software maintenance (Windows / Drivers)" },
+    { ar: "إصلاح أعطال هاردوير (شاشة / رامات)", en: "Hardware repair (Screen / RAM)" },
+    { ar: "تنظيف اللاب توب وتغيير المعجون", en: "Laptop cleaning & thermal paste" },
+    { ar: "استعادة بيانات مفقودة", en: "Data recovery" },
+  ],
+  "camera-installation": [
+    { ar: "تركيب نظام كاميرات مراقبة كامل", en: "Install full CCTV system" },
+    { ar: "إضافة كاميرات لنظام موجود", en: "Add cameras to existing system" },
+    { ar: "صيانة كاميرات أو جهاز التسجيل (DVR)", en: "Maintain cameras or DVR/NVR" },
+    { ar: "ربط الكاميرات بالموبايل", en: "Connect cameras to mobile app" },
   ],
 };
 
@@ -63,17 +105,6 @@ const whenOptions = [
   { ar: "خلال يوم أو يومين", en: "Within 1-2 days", icon: "📅" },
   { ar: "هذا الأسبوع", en: "This week", icon: "🗓️" },
   { ar: "وقت مناسب (مرن)", en: "Flexible timing", icon: "💬" },
-];
-
-const areaOptions = [
-  { ar: "القاهرة الجديدة", en: "New Cairo" },
-  { ar: "مدينة نصر", en: "Nasr City" },
-  { ar: "المعادي", en: "Maadi" },
-  { ar: "6 أكتوبر", en: "6th of October" },
-  { ar: "الإسكندرية", en: "Alexandria" },
-  { ar: "الزمالك", en: "Zamalek" },
-  { ar: "الشيخ زايد", en: "Sheikh Zayed" },
-  { ar: "التجمع الخامس", en: "New Cairo 5th Settlement" },
 ];
 
 type Step = "job-type" | "timing" | "location";
@@ -94,7 +125,7 @@ export function ServiceWizard({ locale, category }: { locale: Locale; category: 
 
   const options = categoryOptions[category.slug] ?? [];
 
-  const steps: { key: Step; label: { ar: string; en: string }; icon: typeof ClipboardList }[] = [
+  const steps: { key: Step; label: { ar: string; en: string }; icon: any }[] = [
     { key: "job-type", label: { ar: "نوع الشغل", en: "Job Type" }, icon: ClipboardList },
     { key: "timing",   label: { ar: "الموعد المناسب", en: "Preferred Time" }, icon: Calendar },
     { key: "location", label: { ar: "موقعك", en: "Your Area" }, icon: MapPin },
@@ -117,77 +148,106 @@ export function ServiceWizard({ locale, category }: { locale: Locale; category: 
   function handleBack() {
     if (step === "timing") setStep("job-type");
     else if (step === "location") setStep("timing");
-    else router.push(`/${locale}`);
+    else router.push(`/${locale}/services`);
   }
 
   return (
-    <div className="min-h-screen bg-[#F2F4F7]" dir={dir}>
+    <div className="min-h-screen bg-[#F8FAFC]" dir={dir}>
       
-      {/* ── Top Nav ── */}
-      <header className="sticky top-0 z-40 border-b border-gray-200 bg-white">
-        <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3 sm:px-6">
-          <Link href={`/${locale}`} className="flex items-center gap-2 text-gray-900">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gray-900 text-sm font-semibold text-white">O</div>
-            <span className="hidden text-lg font-semibold tracking-widest sm:block">OSTA</span>
-          </Link>
-          <ChevronRight className={cn("h-4 w-4 text-gray-400", isArabic && "rotate-180")} />
-          <span className="text-sm text-gray-600">{category.name[locale]}</span>
+      {/* ── Premium Gradient Header ── */}
+      <header className="sticky top-0 z-40 border-b border-gray-200/50 bg-white/80 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
+          <div className="flex items-center gap-4">
+            <Link href={`/${locale}`} className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gray-900 text-white shadow-lg ring-4 ring-gray-900/5">
+                <Sparkles className="h-5 w-5" />
+              </div>
+              <span className="text-xl font-bold tracking-tight text-gray-900 sm:block">OSTA</span>
+            </Link>
+            <div className="h-6 w-px bg-gray-200" />
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-gray-900">{category.name[locale]}</span>
+              <ShieldCheck className="h-4 w-4 text-primary-500" />
+            </div>
+          </div>
+          
+          <div className="hidden items-center gap-4 sm:flex">
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+              <div className="h-2 w-2 rounded-full bg-green-500" />
+              {isArabic ? "فنيون متاحون الآن" : "PROS ONLINE NOW"}
+            </div>
+          </div>
         </div>
       </header>
 
-      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-        <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
+      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:py-12">
+        <div className="grid gap-8 lg:grid-cols-[300px_1fr]">
 
           {/* ── Sidebar ── */}
-          <aside className="space-y-3">
+          <aside className="space-y-4">
             {/* Category title */}
-            <div className="rounded-2xl bg-white p-5 shadow-sm">
-              <h1 className="text-xl font-semibold text-gray-900">{category.name[locale]}</h1>
-              <p className="mt-1 text-sm text-gray-400">{category.description[locale]}</p>
+            <div className="relative overflow-hidden rounded-[2rem] bg-white p-6 shadow-xl shadow-gray-200/50 border border-gray-100">
+              <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-primary-50/50" />
+              <h1 className="relative text-2xl font-bold text-gray-900">{category.name[locale]}</h1>
+              <p className="relative mt-2 text-sm leading-relaxed text-gray-500">{category.description[locale]}</p>
             </div>
 
             {/* Progress steps */}
-            <div className="rounded-2xl bg-white p-5 shadow-sm">
-              <div className="space-y-1">
+            <div className="rounded-[2rem] bg-white p-6 shadow-xl shadow-gray-200/50 border border-gray-100">
+              <div className="space-y-2">
                 {steps.map((s, i) => {
                   const done = i < stepIndex;
                   const active = s.key === step;
                   const Icon = s.icon;
                   return (
                     <div key={s.key} className={cn(
-                      "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition",
-                      active && "bg-primary-50 text-primary-700 font-medium",
-                      done && "text-green-600",
-                      !active && !done && "text-gray-400"
+                      "group flex items-center gap-4 rounded-2xl px-4 py-3 text-sm transition-all duration-300",
+                      active && "bg-gray-900 text-white shadow-lg shadow-gray-900/20 font-medium scale-[1.02]",
+                      done && "text-green-600 bg-green-50/50",
+                      !active && !done && "text-gray-400 hover:bg-gray-50"
                     )}>
-                      {done
-                        ? <CheckCircle2 className="h-4 w-4 shrink-0 text-green-500" />
-                        : <Icon className="h-4 w-4 shrink-0" />
-                      }
+                      <div className={cn(
+                        "flex h-8 w-8 items-center justify-center rounded-xl transition-colors",
+                        active ? "bg-white/20" : done ? "bg-green-100" : "bg-gray-100"
+                      )}>
+                        {done
+                          ? <CheckCircle2 className="h-4 w-4 shrink-0" />
+                          : <Icon className="h-4 w-4 shrink-0" />
+                        }
+                      </div>
                       <span>{s.label[locale]}</span>
-                      {active && (
-                        <span className="ms-auto text-xs text-primary-500">{progress}%</span>
-                      )}
                     </div>
                   );
                 })}
               </div>
 
               {/* Progress bar */}
-              <div className="mt-4 h-1.5 rounded-full bg-gray-100">
-                <div className="h-full rounded-full bg-primary-500 transition-all duration-500" style={{ width: `${progress}%` }} />
+              <div className="mt-6 flex flex-col gap-2">
+                <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                  <span>{isArabic ? "التقدم" : "PROGRESS"}</span>
+                  <span>{progress}%</span>
+                </div>
+                <div className="h-2 rounded-full bg-gray-100">
+                  <motion.div 
+                    initial={{ width: 0 }}
+                    animate={{ width: `${progress}%` }}
+                    className="h-full rounded-full bg-gray-900" 
+                  />
+                </div>
               </div>
             </div>
 
-            {/* Specialists count */}
-            <div className="flex items-center gap-3 rounded-2xl bg-white p-5 shadow-sm">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-50">
-                <Users className="h-5 w-5 text-primary-600" />
+            {/* Trust Banner */}
+            <div className="rounded-[2rem] bg-gradient-to-br from-primary-600 to-primary-700 p-6 text-white shadow-xl shadow-primary-200">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/20">
+                  <Users className="h-5 w-5" />
+                </div>
+                <p className="text-xl font-bold">{category.workersAvailable.toLocaleString()}+</p>
               </div>
-              <div>
-                <p className="text-lg font-semibold text-gray-900">{category.workersAvailable.toLocaleString()}+</p>
-                <p className="text-xs text-gray-400">{isArabic ? "فني متاح في منطقتك" : "pros available near you"}</p>
-              </div>
+              <p className="mt-2 text-xs font-medium text-primary-100">
+                {isArabic ? "فني موثق وجاهز لخدمتك في منطقتك" : "Verified pros ready in your area"}
+              </p>
             </div>
           </aside>
 
@@ -195,19 +255,25 @@ export function ServiceWizard({ locale, category }: { locale: Locale; category: 
           <main>
             <AnimatePresence mode="wait">
               <motion.div key={step}
-                initial={{ opacity: 0, x: isArabic ? -20 : 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: isArabic ? 20 : -20 }}
-                transition={{ duration: 0.25 }}
-                className="rounded-2xl bg-white p-6 shadow-sm sm:p-8"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.4, ease: "circOut" }}
+                className="rounded-[2.5rem] bg-white p-8 shadow-2xl shadow-gray-200/40 border border-gray-100 sm:p-12"
               >
                 {/* Step: Job Type */}
                 {step === "job-type" && (
-                  <>
-                    <h2 className="mb-6 text-2xl font-semibold text-gray-900">
-                      {isArabic ? "إيه اللي تحتاجه بالظبط؟" : "What do you need help with?"}
-                    </h2>
-                    <div className="space-y-3">
+                  <div className="space-y-8">
+                    <div>
+                      <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+                        {isArabic ? "إيه اللي محتاجه بالظبط؟" : "What do you need help with?"}
+                      </h2>
+                      <p className="mt-3 text-lg text-gray-500">
+                        {isArabic ? "حدد نوع المهمة عشان نختار لك أنسب متخصص" : "Pick a task so we can find the right specialist"}
+                      </p>
+                    </div>
+                    
+                    <div className="grid gap-4 sm:grid-cols-1">
                       {options.map((opt) => {
                         const label = opt[locale];
                         const selected = state.jobType === label;
@@ -215,33 +281,39 @@ export function ServiceWizard({ locale, category }: { locale: Locale; category: 
                           <button key={label} type="button"
                             onClick={() => setState((s) => ({ ...s, jobType: label }))}
                             className={cn(
-                              "flex w-full items-center gap-3 rounded-xl border px-4 py-3.5 text-start text-sm transition",
+                              "group relative flex w-full items-center gap-4 rounded-3xl border-2 px-6 py-5 text-start transition-all duration-300",
                               selected
-                                ? "border-primary-400 bg-primary-50 text-primary-700 font-medium"
-                                : "border-gray-200 text-gray-700 hover:border-gray-300 hover:bg-gray-50"
+                                ? "border-gray-900 bg-gray-900 text-white shadow-xl shadow-gray-900/20"
+                                : "border-gray-100 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50/50"
                             )}
                           >
                             <div className={cn(
-                              "flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition",
-                              selected ? "border-primary-500 bg-primary-500" : "border-gray-300"
+                              "flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 transition-all",
+                              selected ? "border-white bg-white" : "border-gray-200 group-hover:border-gray-400"
                             )}>
-                              {selected && <div className="h-2 w-2 rounded-full bg-white" />}
+                              {selected && <div className="h-2.5 w-2.5 rounded-full bg-gray-900" />}
                             </div>
-                            {label}
+                            <span className="text-lg font-medium">{label}</span>
                           </button>
                         );
                       })}
                     </div>
-                  </>
+                  </div>
                 )}
 
                 {/* Step: Timing */}
                 {step === "timing" && (
-                  <>
-                    <h2 className="mb-6 text-2xl font-semibold text-gray-900">
-                      {isArabic ? "إمتى تحتاج الفني؟" : "When do you need the pro?"}
-                    </h2>
-                    <div className="space-y-3">
+                  <div className="space-y-8">
+                    <div>
+                      <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+                        {isArabic ? "إمتى تحتاج الفني؟" : "When do you need the pro?"}
+                      </h2>
+                      <p className="mt-3 text-lg text-gray-500">
+                        {isArabic ? "بنرتب المواعيد حسب رغبتك واستعجالك" : "We coordinate based on your schedule & urgency"}
+                      </p>
+                    </div>
+                    
+                    <div className="grid gap-4 sm:grid-cols-2">
                       {whenOptions.map((opt) => {
                         const label = opt[locale];
                         const selected = state.timing === label;
@@ -249,93 +321,114 @@ export function ServiceWizard({ locale, category }: { locale: Locale; category: 
                           <button key={label} type="button"
                             onClick={() => setState((s) => ({ ...s, timing: label }))}
                             className={cn(
-                              "flex w-full items-center gap-4 rounded-xl border px-4 py-3.5 text-start text-sm transition",
+                              "group relative flex flex-col items-center justify-center gap-4 rounded-[2rem] border-2 px-6 py-10 text-center transition-all duration-300",
                               selected
-                                ? "border-primary-400 bg-primary-50 text-primary-700 font-medium"
-                                : "border-gray-200 text-gray-700 hover:border-gray-300 hover:bg-gray-50"
+                                ? "border-gray-900 bg-gray-900 text-white shadow-xl shadow-gray-900/20 scale-[1.02]"
+                                : "border-gray-100 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50/50"
                             )}
                           >
-                            <span className="text-xl">{opt.icon}</span>
+                            <span className="text-5xl">{opt.icon}</span>
+                            <span className="text-lg font-bold">{label}</span>
                             <div className={cn(
-                              "flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition",
-                              selected ? "border-primary-500 bg-primary-500" : "border-gray-300"
+                              "absolute bottom-4 flex h-6 w-6 items-center justify-center rounded-full border-2 transition-all",
+                              selected ? "border-white bg-white" : "border-gray-200"
                             )}>
-                              {selected && <div className="h-2 w-2 rounded-full bg-white" />}
+                              {selected && <div className="h-2.5 w-2.5 rounded-full bg-gray-900" />}
                             </div>
-                            {label}
                           </button>
                         );
                       })}
                     </div>
-                  </>
+                  </div>
                 )}
 
                 {/* Step: Location */}
                 {step === "location" && (
-                  <>
-                    <h2 className="mb-2 text-2xl font-semibold text-gray-900">
-                      {isArabic ? "إنت فين بالظبط؟" : "Where are you located?"}
-                    </h2>
-                    <p className="mb-6 text-sm text-gray-400">
-                      {isArabic ? "هنوصل ليك أقرب فني في منطقتك" : "We'll match you with the nearest available pro"}
-                    </p>
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      {areaOptions.map((opt) => {
-                        const label = opt[locale];
-                        const selected = state.area === label;
+                  <div className="space-y-8">
+                    <div>
+                      <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+                        {isArabic ? "إنت فين بالظبط؟" : "Where are you located?"}
+                      </h2>
+                      <p className="mt-3 text-lg text-gray-500">
+                        {isArabic ? "هنوصل ليك أقرب فني في منطقتك لتوفير الوقت" : "Matching you with the nearest pro to save your time"}
+                      </p>
+                    </div>
+                    
+                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                      {egyptianGovernorates.map((gov) => {
+                        const label = isArabic ? gov.labelAr : gov.labelEn;
+                        const selected = state.area === gov.value;
                         return (
-                          <button key={label} type="button"
-                            onClick={() => setState((s) => ({ ...s, area: label }))}
+                          <button key={gov.value} type="button"
+                            onClick={() => setState((s) => ({ ...s, area: gov.value }))}
                             className={cn(
-                              "flex items-center gap-3 rounded-xl border px-4 py-3.5 text-sm transition",
+                              "group relative flex items-center gap-3 rounded-2xl border-2 px-5 py-4 text-sm transition-all duration-300",
                               selected
-                                ? "border-primary-400 bg-primary-50 text-primary-700 font-medium"
-                                : "border-gray-200 text-gray-700 hover:border-gray-300 hover:bg-gray-50"
+                                ? "border-gray-900 bg-gray-900 text-white shadow-xl"
+                                : "border-gray-100 bg-white text-gray-700 hover:border-gray-300"
                             )}
                           >
-                            <div className={cn(
-                              "flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition",
-                              selected ? "border-primary-500 bg-primary-500" : "border-gray-300"
-                            )}>
-                              {selected && <div className="h-2 w-2 rounded-full bg-white" />}
-                            </div>
-                            <MapPin className="h-4 w-4 shrink-0 text-gray-400" />
-                            {label}
+                            <MapPin className={cn("h-4 w-4 shrink-0", selected ? "text-white" : "text-gray-400")} />
+                            <span className="font-semibold">{label}</span>
                           </button>
                         );
                       })}
                     </div>
-                  </>
+                  </div>
                 )}
 
-                {/* Buttons */}
-                <div className={cn("mt-8 flex items-center gap-3", isArabic ? "flex-row-reverse justify-end" : "")}>
+                {/* Footer Controls */}
+                <div className="mt-12 flex flex-col-reverse gap-4 pt-10 border-t border-gray-100 sm:flex-row sm:items-center sm:justify-between">
                   <button type="button" onClick={handleBack}
-                    className="flex items-center gap-2 rounded-xl border border-gray-200 px-5 py-3 text-sm font-medium text-gray-700 transition hover:bg-gray-50">
-                    {isArabic ? <ArrowRight className="h-4 w-4" /> : <ArrowLeft className="h-4 w-4" />}
+                    className="inline-flex h-14 items-center justify-center gap-2 rounded-2xl border-2 border-gray-100 bg-white px-8 text-sm font-bold text-gray-700 transition-all hover:bg-gray-50 hover:border-gray-200">
+                    {isArabic ? <ArrowRight className="h-5 w-5" /> : <ArrowLeft className="h-5 w-5" />}
                     {isArabic ? "السابق" : "Back"}
                   </button>
-                  <button type="button" onClick={handleContinue} disabled={!canContinue}
-                    className={cn(
-                      "flex items-center gap-2 rounded-xl px-8 py-3 text-sm font-semibold text-white transition",
-                      canContinue
-                        ? "bg-primary-600 hover:bg-primary-700"
-                        : "bg-gray-200 text-gray-400 cursor-not-allowed"
-                    )}>
-                    {step === "location"
-                      ? (isArabic ? "ابحث عن فني 🎉" : "Find a Pro 🎉")
-                      : (isArabic ? "التالي" : "Continue")}
-                    {step !== "location" && (isArabic ? <ArrowLeft className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />)}
-                  </button>
+                  
+                  <div className="flex flex-1 flex-col gap-4 sm:flex-row sm:justify-end">
+                    <button type="button" onClick={handleContinue} disabled={!canContinue}
+                      className={cn(
+                        "inline-flex h-14 items-center justify-center gap-3 rounded-2xl px-12 text-base font-bold text-white shadow-2xl transition-all duration-300",
+                        canContinue
+                          ? "bg-primary-600 shadow-primary-200 hover:bg-primary-700 hover:-translate-y-1"
+                          : "bg-gray-200 text-gray-400 cursor-not-allowed shadow-none"
+                      )}>
+                      {step === "location"
+                        ? (isArabic ? "ابحث عن فني 🎉" : "Find a Pro 🎉")
+                        : (isArabic ? "التالي" : "Continue")}
+                      {step !== "location" && (isArabic ? <ArrowLeft className="h-5 w-5" /> : <ArrowRight className="h-5 w-5" />)}
+                    </button>
+                  </div>
                 </div>
 
-                {/* Summary of selections */}
-                {(state.jobType || state.timing) && (
-                  <div className="mt-6 rounded-xl bg-gray-50 p-4 text-sm">
-                    <p className="font-medium text-gray-700 mb-2">{isArabic ? "اختياراتك حتى الآن:" : "Your selections so far:"}</p>
-                    <div className="space-y-1 text-gray-500">
-                      {state.jobType && <p>✓ {state.jobType}</p>}
-                      {state.timing && <p>✓ {state.timing}</p>}
+                {/* Status Bar */}
+                {(state.jobType || state.timing || state.area) && (
+                  <div className="mt-10 rounded-3xl bg-gray-50 p-6">
+                    <div className="flex items-center gap-2 mb-4">
+                      <div className="h-2 w-2 rounded-full bg-primary-500 animate-pulse" />
+                      <span className="text-xs font-bold uppercase tracking-[0.2em] text-gray-400">
+                        {isArabic ? "ملخص طلبك" : "YOUR REQUEST SUMMARY"}
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-3">
+                      {state.jobType && (
+                        <div className="flex items-center gap-2 rounded-xl bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm border border-gray-100">
+                          <CheckCircle2 className="h-4 w-4 text-green-500" />
+                          {state.jobType}
+                        </div>
+                      )}
+                      {state.timing && (
+                        <div className="flex items-center gap-2 rounded-xl bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm border border-gray-100">
+                          <CheckCircle2 className="h-4 w-4 text-green-500" />
+                          {state.timing}
+                        </div>
+                      )}
+                      {state.area && (
+                        <div className="flex items-center gap-2 rounded-xl bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm border border-gray-100">
+                          <CheckCircle2 className="h-4 w-4 text-green-500" />
+                          {egyptianGovernorates.find(g => g.value === state.area)?.[isArabic ? "labelAr" : "labelEn"]}
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}

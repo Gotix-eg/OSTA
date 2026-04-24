@@ -65,7 +65,9 @@ export function AdminWorkersManagement({ locale }: { locale: Locale }) {
     setActionId(id);
     try {
       await postApiData(`/admin/workers/${id}/verify`, {});
-      setWorkers(prev => prev.map(w => w.id === id ? { ...w, verificationStatus: "VERIFIED" } : w));
+      const now = new Date();
+      const trialExpiresAt = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString();
+      setWorkers(prev => prev.map(w => w.id === id ? { ...w, verificationStatus: "VERIFIED", trialExpiresAt } : w));
     } finally {
       setActionId(null);
     }
@@ -144,15 +146,24 @@ export function AdminWorkersManagement({ locale }: { locale: Locale }) {
 
                     <div className="flex items-center gap-2 ml-2">
                        {worker.verificationStatus !== "VERIFIED" && (
-                         <button 
-                           onClick={() => handleVerify(worker.id)}
-                           disabled={actionId === worker.id}
-                           className="flex items-center gap-2 px-3 py-1.5 bg-sun-500 text-white text-xs font-bold rounded-xl hover:bg-sun-600 transition disabled:opacity-50"
-                           title={isArabic ? "توثيق الحساب" : "Verify Account"}
-                         >
-                           {actionId === worker.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />}
-                           {isArabic ? "توثيق" : "Verify"}
-                         </button>
+                         <>
+                           <button 
+                             onClick={() => alert(isArabic ? "عرض صورة البطاقة..." : "Viewing ID Card...")}
+                             className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 text-gray-700 text-xs font-bold rounded-xl hover:bg-gray-200 transition"
+                           >
+                             <User className="h-4 w-4" />
+                             {isArabic ? "عرض البطاقة" : "View ID"}
+                           </button>
+                           <button 
+                             onClick={() => handleVerify(worker.id)}
+                             disabled={actionId === worker.id}
+                             className="flex items-center gap-2 px-3 py-1.5 bg-sun-500 text-white text-xs font-bold rounded-xl hover:bg-sun-600 transition disabled:opacity-50"
+                             title={isArabic ? "توثيق الحساب" : "Verify Account"}
+                           >
+                             {actionId === worker.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />}
+                             {isArabic ? "توثيق" : "Verify"}
+                           </button>
+                         </>
                        )}
                        <button 
                          onClick={() => handleAddQuota(worker.id)}
