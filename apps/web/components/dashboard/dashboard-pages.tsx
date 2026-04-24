@@ -5,7 +5,7 @@ import Link from "next/link";
 import {
   ArrowUpRight, Banknote, Briefcase, CalendarClock, CheckCircle2,
   CircleDollarSign, Clock3, MapPin, Route, ShieldAlert, ShieldCheck,
-  Sparkles, Star, TrendingUp, Users, Wallet, Wrench, Zap
+  Sparkles, Star, Store, TrendingUp, Users, Wallet, Wrench, Zap
 } from "lucide-react";
 
 import { useLiveApiData } from "@/hooks/use-live-api-data";
