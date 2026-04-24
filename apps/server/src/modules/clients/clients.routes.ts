@@ -99,98 +99,10 @@ type ClientRequestRecord = {
   status: z.infer<typeof requestStatusSchema>;
   area: string;
   createdAt: string;
-  updatedAt: string;
-};
+   updatedAt: string;
+ };
 
-const clientRequestRecords: ClientRequestRecord[] = [
-  {
-    id: "req-101",
-    requestNumber: "OSTA-101",
-    categoryId: "electrical",
-    serviceId: "electrical-emergency",
-    title: "Urgent electrical repair",
-    description: "Main kitchen socket stopped working and the breaker trips every few minutes.",
-    mediaNotes: "3 images attached from the kitchen panel.",
-    address: {
-      mode: "saved",
-      savedAddressId: "home-new-cairo"
-    },
-    timing: {
-      type: "emergency"
-    },
-    status: "WORKER_EN_ROUTE",
-    area: "New Cairo",
-    createdAt: "2026-03-28T09:20:00.000Z",
-    updatedAt: "2026-03-28T09:32:00.000Z"
-  },
-  {
-    id: "req-102",
-    requestNumber: "OSTA-102",
-    categoryId: "plumbing",
-    serviceId: "plumbing-repair",
-    title: "Kitchen plumbing fix",
-    description: "There is a leak under the kitchen sink and the cabinet base is getting wet.",
-    mediaNotes: "Short voice note added with leak sound.",
-    address: {
-      mode: "saved",
-      savedAddressId: "villa-maadi"
-    },
-    timing: {
-      type: "today"
-    },
-    status: "IN_PROGRESS",
-    area: "Maadi",
-    createdAt: "2026-03-28T08:10:00.000Z",
-    updatedAt: "2026-03-28T10:05:00.000Z"
-  },
-  {
-    id: "req-103",
-    requestNumber: "OSTA-103",
-    categoryId: "painting",
-    serviceId: "painting-finishes",
-    title: "Living room painting",
-    description: "Need a quick repaint for one wall with minor finishing touchups.",
-    mediaNotes: "Color reference was shared.",
-    address: {
-      mode: "saved",
-      savedAddressId: "home-new-cairo"
-    },
-    timing: {
-      type: "tomorrow"
-    },
-    status: "COMPLETED",
-    area: "New Cairo",
-    createdAt: "2026-03-24T15:00:00.000Z",
-    updatedAt: "2026-03-25T18:00:00.000Z"
-  }
-];
-
-const favoriteWorkers: any[] = [];
-
-const walletData = {
-  balance: 0,
-  currency: "EGP",
-  spendThisMonth: 0,
-  pendingRefunds: 0,
-  paymentMethods: [],
-  recentTransactions: []
-};
-
-const clientSettings = {
-  profile: {
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: ""
-  },
-  preferences: {
-    language: "ar",
-    notificationsBySms: false,
-    notificationsByEmail: false,
-    marketingUpdates: false
-  },
-  addresses: []
-};
+ // All data endpoints now query the database directly
 
 function parseBody<T>(schema: { parse: (value: unknown) => T }, body: unknown): T {
   try {
@@ -397,35 +309,134 @@ router.post("/requests", catchAsync(async (request: Request, response: Response)
   );
 }));
 
-router.get("/favorites", (_request, response) => {
+router.get("/favorites", catchAsync(async (request: Request, response: Response) => {
+  const userId = request.auth!.userId;
+  const profile = await prisma.clientProfile.findUnique({ where: { userId } });
+  if (!profile) throw new ApiError(404, "Client profile not found");
+
+  const favorites = await prisma.favoriteWorker.findMany({
+    where: { clientId: profile.id },
+    include: {
+      worker: {
+        include: {
+          user: { select: { firstName: true, lastName: true } },
+          specializations: { include: { service: true } }
+        }
+      }
+    }
+  });
+
   response.status(200).json(
     successResponse(
       {
         summary: {
-          totalFavorites: 0,
-          onlineNow: 0,
-          avgRating: 0
+          totalFavorites: favorites.length,
+          onlineNow: favorites.filter(f => f.worker.isOnline).length,
+          avgRating: favorites.length > 0 ? favorites.reduce((sum, f) => sum + (f.worker.rating || 0), 0) / favorites.length : 0
         },
-        workers: favoriteWorkers
+        workers: favorites.map(f => ({
+          id: f.worker.id,
+          name: `${f.worker.user.firstName} ${f.worker.user.lastName}`,
+          specialty: f.worker.specializations[0]?.service.nameEn || "general",
+          rating: f.worker.rating,
+          completedJobs: f.worker.totalJobsCompleted,
+          area: f.worker.workAreas[0]?.area || "Unknown",
+          availability: f.worker.isAvailable ? "available" : "busy"
+        }))
       },
       "Favorite workers fetched"
     )
   );
-});
+}));
 
-router.get("/wallet", (_request, response) => {
+router.get("/wallet", catchAsync(async (request: Request, response: Response) => {
+  const userId = request.auth!.userId;
+  const profile = await prisma.clientProfile.findUnique({ where: { userId } });
+  if (!profile) throw new ApiError(404, "Client profile not found");
+
+  // Get recent transactions (last 10)
+  const transactions = await prisma.walletTransaction.findMany({
+    where: { userId },
+    orderBy: { createdAt: "desc" },
+    take: 10
+  });
+
+  // Calculate monthly spend (sum of payments/expenses this month)
+  const startOfMonth = new Date();
+  startOfMonth.setDate(1);
+  startOfMonth.setHours(0, 0, 0, 0);
+
+  const monthlySpend = await prisma.walletTransaction.aggregate({
+    where: {
+      userId,
+      createdAt: { gte: startOfMonth },
+      type: { in: ["payment", "order"] } // Adjust based on your transaction types
+    },
+    _sum: { amount: true }
+  });
+
+  const pendingRefunds = await prisma.walletTransaction.aggregate({
+    where: {
+      userId,
+      type: "refund"
+    },
+    _sum: { amount: true }
+  });
+
   response.status(200).json(
     successResponse(
       {
-        ...walletData
+        balance: profile.walletBalance,
+        currency: "EGP",
+        spendThisMonth: monthlySpend._sum.amount || 0,
+        pendingRefunds: pendingRefunds._sum.amount || 0,
+        paymentMethods: [], // TODO: fetch from payment_methods table if exists
+        recentTransactions: transactions.map(t => ({
+          id: t.id,
+          type: t.type as "topup" | "payment" | "refund",
+          amount: t.amount,
+          label: t.description || t.type,
+          createdAt: t.createdAt.toISOString()
+        }))
       },
       "Wallet fetched"
     )
   );
-});
+}));
 
-router.get("/settings", (_request, response) => {
-  response.status(200).json(successResponse(clientSettings, "Client settings fetched"));
-});
+router.get("/settings", catchAsync(async (request: Request, response: Response) => {
+  const userId = request.auth!.userId;
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { firstName: true, lastName: true, email: true, phone: true, preferredLanguage: true }
+  });
+  if (!user) throw new ApiError(404, "User not found");
+
+  const addresses = await prisma.address.findMany({
+    where: { userId },
+    select: { id: true, label: true, isDefault: true, governorate: true, city: true, area: true, street: true }
+  });
+
+  response.status(200).json(
+    successResponse(
+      {
+        profile: {
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email || "",
+          phone: user.phone
+        },
+        preferences: {
+          language: user.preferredLanguage || "ar",
+          notificationsBySms: false, // TODO: add to user/client profile if needed
+          notificationsByEmail: false,
+          marketingUpdates: false
+        },
+        addresses
+      },
+      "Client settings fetched"
+    )
+  );
+}));
 
 export const clientsRouter = router;
