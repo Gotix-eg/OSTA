@@ -117,6 +117,22 @@ export const authService = {
 
     const passwordHash = await hashPassword(input.password);
 
+    // For clients: ensure address fields are properly mapped
+    // The frontend sends governorate, city, district (as area), street
+    const addressData = (input.governorate || input.latitude)
+      ? {
+          create: {
+            governorate: input.governorate || "",
+            city: input.city || "",
+            area: (input as any).district || input.city || "", // Use district if provided, fallback to city
+            street: input.address || "",
+            latitude: input.latitude,
+            longitude: input.longitude,
+            isDefault: true
+          }
+        }
+      : undefined;
+
     const user = await prisma.user.create({
       data: {
         firstName: input.firstName,
@@ -128,7 +144,11 @@ export const authService = {
         clientProfile:
           input.role === "CLIENT"
             ? {
-                create: {}
+                create: {
+                  totalRequests: 0,
+                  walletBalance: 0,
+                  isVip: false
+                }
               }
             : undefined,
         workerProfile:
@@ -137,7 +157,17 @@ export const authService = {
                 create: {
                   nationalIdNumber: input.nationalIdNumber,
                   nationalIdFront: input.nationalIdFront,
-                  nationalIdBack: input.nationalIdBack
+                  nationalIdBack: input.nationalIdBack,
+                  yearsOfExperience: 0,
+                  rating: 0,
+                  ratingCount: 0,
+                  isAvailable: false,
+                  totalJobsCompleted: 0,
+                  totalEarnings: 0,
+                  walletBalance: 0,
+                  orderQuota: 0,
+                  subscriptionTier: "free",
+                  verificationStatus: "PENDING"
                 }
               }
             : undefined,
@@ -153,21 +183,19 @@ export const authService = {
                   latitude: input.latitude || 30.0444,
                   longitude: input.longitude || 31.2357,
                   commercialRegisterUrl: input.commercialRecord,
-                  taxCardUrl: input.taxCard
+                  taxCardUrl: input.taxCard,
+                  rating: 0,
+                  ratingCount: 0,
+                  totalOrders: 0,
+                  totalEarnings: 0,
+                  walletBalance: 0,
+                  orderQuota: 0,
+                  isOpen: false,
+                  verificationStatus: "PENDING"
                 }
               }
             : undefined,
-        addresses: (input.governorate || input.latitude) ? {
-          create: {
-            governorate: input.governorate || "",
-            city: input.city || "",
-            area: input.city || "",
-            street: input.address || "",
-            latitude: input.latitude,
-            longitude: input.longitude,
-            isDefault: true
-          }
-        } : undefined
+        addresses: addressData
       },
       include: {
         clientProfile: true,
