@@ -1,0 +1,29 @@
+[
+  {
+    "id": "cmod0o9q70004vazwsqptrrjk",
+    "email": "admin@osta.eg",
+    "phone": "+201009410112",
+    "passwordHash": "00564d5f2949d8946a55e480b53ba619:a4b1e8e73407cd8e23a1a6ea4947f8899f883607d8fd13006d4aa9a027a34aa91e8ea9bc363e10885b81fcb5810ee735551de65df1809dfd33254604c9fc3c8c",
+    "role": "ADMIN",
+    "status": "ACTIVE",
+    "firstName": "Admin",
+    "lastName": "OSTA",
+    "avatarUrl": null,
+    "emailVerified": false,
+    "phoneVerified": true,
+    "preferredLanguage": "ar",
+    "lastLoginAt": null,
+    "createdAt": "2026-04-24T14:39:38.815Z",
+    "updatedAt": "2026-04-24T14:39:38.815Z",
+    "clientProfile": null,
+    "workerProfile": null,
+    "vendorProfile": null,
+    "addresses": [],
+    "sessions": [],
+    "otpCodes": [],
+    "notifications": [],
+    "walletTransactions": [],
+    "sentMessages": [],
+    "receivedMessages": []
+  }
+]
