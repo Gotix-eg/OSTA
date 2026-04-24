@@ -194,28 +194,40 @@ export function ClientSettingsPage({ locale, initialData }: { locale: Locale; in
 
       <div className="grid gap-6 xl:grid-cols-[1fr_1fr]">
         <DashboardBlock title={isArabic ? "الملف الشخصي" : "Profile"} eyebrow={isArabic ? "بيانات الهوية" : "identity data"}>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <label className="space-y-2"><span className="text-sm text-dark-500">{isArabic ? "الاسم الأول" : "First name"}</span><input value={data.profile.firstName} onChange={(event) => setData({ ...data, profile: { ...data.profile, firstName: event.target.value } })} className="h-12 w-full rounded-[1rem] border border-dark-200 bg-white px-4" /></label>
-            <label className="space-y-2"><span className="text-sm text-dark-500">{isArabic ? "اسم العائلة" : "Last name"}</span><input value={data.profile.lastName} onChange={(event) => setData({ ...data, profile: { ...data.profile, lastName: event.target.value } })} className="h-12 w-full rounded-[1rem] border border-dark-200 bg-white px-4" /></label>
-            <label className="space-y-2"><span className="text-sm text-dark-500">{isArabic ? "البريد الإلكتروني" : "Email"}</span><input value={data.profile.email} onChange={(event) => setData({ ...data, profile: { ...data.profile, email: event.target.value } })} className="h-12 w-full rounded-[1rem] border border-dark-200 bg-white px-4" /></label>
-            <label className="space-y-2"><span className="text-sm text-dark-500">{isArabic ? "رقم الهاتف" : "Phone"}</span><input value={data.profile.phone} onChange={(event) => setData({ ...data, profile: { ...data.profile, phone: event.target.value } })} className="h-12 w-full rounded-[1rem] border border-dark-200 bg-white px-4" /></label>
+          <div className="grid gap-6 sm:grid-cols-2">
+            <label className="space-y-3">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-onyx-500">{isArabic ? "الاسم الأول" : "First name"}</span>
+              <input value={data.profile.firstName} onChange={(event) => setData({ ...data, profile: { ...data.profile, firstName: event.target.value } })} className="h-14 w-full rounded-2xl border border-white/5 bg-white/5 px-5 text-white focus:border-gold-500/30 focus:bg-white/10" />
+            </label>
+            <label className="space-y-3">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-onyx-500">{isArabic ? "اسم العائلة" : "Last name"}</span>
+              <input value={data.profile.lastName} onChange={(event) => setData({ ...data, profile: { ...data.profile, lastName: event.target.value } })} className="h-14 w-full rounded-2xl border border-white/5 bg-white/5 px-5 text-white focus:border-gold-500/30 focus:bg-white/10" />
+            </label>
+            <label className="space-y-3">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-onyx-500">{isArabic ? "البريد الإلكتروني" : "Email"}</span>
+              <input value={data.profile.email} onChange={(event) => setData({ ...data, profile: { ...data.profile, email: event.target.value } })} className="h-14 w-full rounded-2xl border border-white/5 bg-white/5 px-5 text-white focus:border-gold-500/30 focus:bg-white/10" />
+            </label>
+            <label className="space-y-3">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-onyx-500">{isArabic ? "رقم الهاتف" : "Phone"}</span>
+              <input value={data.profile.phone} onChange={(event) => setData({ ...data, profile: { ...data.profile, phone: event.target.value } })} className="h-14 w-full rounded-2xl border border-white/5 bg-white/5 px-5 text-white focus:border-gold-500/30 focus:bg-white/10" />
+            </label>
           </div>
         </DashboardBlock>
 
         <DashboardBlock title={isArabic ? "التفضيلات" : "Preferences"} eyebrow={isArabic ? "إعدادات الإشعارات" : "signal controls"}>
-          <div className="grid gap-4">
+          <div className="grid gap-3">
             {[
               { key: "notificationsBySms", label: isArabic ? "إشعارات الرسائل" : "SMS notifications" },
               { key: "notificationsByEmail", label: isArabic ? "إشعارات البريد" : "Email notifications" },
               { key: "marketingUpdates", label: isArabic ? "العروض التسويقية" : "Marketing updates" }
             ].map((item) => (
-              <label key={item.key} className="dashboard-card-soft flex items-center justify-between gap-4 p-4">
-                <span className="font-medium text-dark-950">{item.label}</span>
+              <label key={item.key} className="flex cursor-pointer items-center justify-between gap-4 rounded-2xl border border-white/5 bg-white/5 p-5 transition-all hover:bg-white/10">
+                <span className="text-sm font-bold text-white/80">{item.label}</span>
                 <input
                   type="checkbox"
                   checked={data.preferences[item.key as keyof typeof data.preferences] as boolean}
                   onChange={(event) => setData({ ...data, preferences: { ...data.preferences, [item.key]: event.target.checked } })}
-                  className="h-4 w-4"
+                  className="h-5 w-5 rounded-lg border-white/20 bg-white/5 text-gold-500 focus:ring-gold-500/50"
                 />
               </label>
             ))}

@@ -55,33 +55,33 @@ export function VendorOnboarding({ locale, onComplete }: OnboardingProps) {
   }
 
   return (
-    <div className="flex min-h-[60vh] items-center justify-center p-4">
-      <div className="dashboard-card w-full max-w-2xl overflow-hidden bg-white shadow-2xl">
-        <div className="relative h-2 bg-dark-100">
+    <div className="flex min-h-[70vh] items-center justify-center p-6">
+      <div className="glass-card w-full max-w-2xl overflow-hidden p-0 shadow-onyx">
+        <div className="relative h-1.5 bg-white/5">
           <div 
-            className="absolute inset-y-0 left-0 bg-primary-600 transition-all duration-500" 
+            className="absolute inset-y-0 left-0 bg-gold-500 shadow-glow transition-all duration-700 ease-out-expo" 
             style={{ width: `${((step + 1) / 2) * 100}%` }}
           />
         </div>
 
-        <div className="p-8 lg:p-12">
+        <div className="p-10 lg:p-16">
           {step === 0 ? (
-            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-700">
               <div className="text-center">
-                <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-primary-50 text-primary-600">
-                  <ShoppingBag className="h-10 w-10" />
+                <div className="mx-auto mb-8 flex h-24 w-24 items-center justify-center rounded-[2rem] bg-gold-500/10 text-gold-500 shadow-glow">
+                  <ShoppingBag className="h-12 w-12" />
                 </div>
-                <h2 className="text-3xl font-bold text-dark-950">
+                <h2 className="font-serif text-4xl text-white">
                   {isArabic ? "لنبدأ بتصنيف متجرك" : "Let's classify your shop"}
                 </h2>
-                <p className="mt-3 text-lg text-dark-500">
+                <p className="mt-5 text-lg leading-relaxed text-onyx-400">
                   {isArabic 
                     ? "اختر التخصص الذي تبرع فيه لنتمكن من توجيه الطلبات الصحيحة إليك." 
                     : "Select the specialty you excel in so we can direct the right requests to you."}
                 </p>
               </div>
 
-              <div className="grid gap-4">
+              <div className="grid gap-6">
                 <SelectField
                   label={isArabic ? "تصنيف المتجر" : "Store Category"}
                   value={data.category}
@@ -94,30 +94,30 @@ export function VendorOnboarding({ locale, onComplete }: OnboardingProps) {
               <button
                 onClick={() => data.category && setStep(1)}
                 disabled={!data.category}
-                className="group flex w-full items-center justify-center gap-3 rounded-full bg-dark-950 py-4 text-lg font-bold text-white transition hover:bg-dark-800 disabled:opacity-50"
+                className="btn-gold group w-full flex items-center justify-center gap-3 text-lg"
               >
                 {isArabic ? "التالي: تحديد الموقع" : "Next: Set Location"}
-                <ArrowRight className={cn("h-5 w-5 transition-transform group-hover:translate-x-1", isArabic && "rotate-180 group-hover:-translate-x-1")} />
+                <ArrowRight className={cn("h-5 w-5 transition-transform duration-500 group-hover:translate-x-1", isArabic && "rotate-180 group-hover:-translate-x-1")} />
               </button>
             </div>
           ) : (
-            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-700">
                 <div className="text-center">
-                  <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600">
-                    <MapPin className="h-10 w-10" />
+                  <div className="mx-auto mb-8 flex h-24 w-24 items-center justify-center rounded-[2rem] bg-accent-500/10 text-accent-400 shadow-2xl shadow-accent-500/10">
+                    <MapPin className="h-12 w-12" />
                   </div>
-                  <h2 className="text-3xl font-bold text-dark-950">
+                  <h2 className="font-serif text-4xl text-white">
                     {isArabic ? "أين يقع متجرك؟" : "Where is your shop located?"}
                   </h2>
-                  <p className="mt-3 text-lg text-dark-500">
+                  <p className="mt-5 text-lg leading-relaxed text-onyx-400">
                     {isArabic 
                       ? "هذا الموقع سيتم استخدامه لربطك بالعملاء والفنيين القريبين منك." 
                       : "This location will be used to connect you with nearby clients and technicians."}
                   </p>
                 </div>
 
-                <div className="space-y-6">
-                  <div className="h-[300px] overflow-hidden rounded-2xl border-2 border-dark-100 shadow-inner">
+                <div className="space-y-8">
+                  <div className="h-[350px] overflow-hidden rounded-[2.5rem] border border-white/5 shadow-2xl">
                     <MapPicker 
                       lat={data.latitude}
                       lng={data.longitude}
@@ -137,23 +137,23 @@ export function VendorOnboarding({ locale, onComplete }: OnboardingProps) {
                   </div>
 
                   {error && (
-                    <div className="flex items-center gap-3 rounded-xl border border-error/20 bg-error/10 p-4 text-error">
-                      <ShieldAlert className="h-5 w-5" />
-                      <p className="font-semibold">{error}</p>
+                    <div className="flex items-center gap-4 rounded-2xl border border-error/20 bg-error/5 p-5 text-error">
+                      <ShieldAlert className="h-6 w-6" />
+                      <p className="font-bold">{error}</p>
                     </div>
                   )}
 
                   <div className="flex gap-4">
                     <button
                       onClick={() => setStep(0)}
-                      className="flex-1 rounded-full border-2 border-dark-200 py-4 font-bold text-dark-700 transition hover:bg-dark-50"
+                      className="btn-ghost flex-1"
                     >
                       {isArabic ? "السابق" : "Back"}
                     </button>
                     <button
                       onClick={handleSubmit}
                       disabled={isSubmitting}
-                      className="flex-[2] rounded-full bg-primary-600 py-4 text-lg font-bold text-white transition hover:bg-primary-700 disabled:opacity-50"
+                      className="btn-gold flex-[2] text-lg"
                     >
                       {isSubmitting 
                         ? (isArabic ? "...جاري الحفظ" : "Saving...") 

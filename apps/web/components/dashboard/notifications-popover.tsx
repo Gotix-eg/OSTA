@@ -121,11 +121,11 @@ export function NotificationsPopover({ locale }: { locale: "ar" | "en" }) {
     <div className="relative inline-block" ref={popoverRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative flex h-11 w-11 items-center justify-center rounded-full border border-dark-200/80 bg-white/85 shadow-soft transition hover:bg-dark-50"
+        className="relative flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-white/5 shadow-xl transition-all duration-500 hover:bg-white/10"
       >
-        <Bell className="h-5 w-5 text-dark-600" />
+        <Bell className="h-5 w-5 text-white/70 group-hover:text-white" />
         {unreadCount > 0 && (
-          <span className="absolute end-2 top-2 z-10 flex h-3 w-3 items-center justify-center rounded-full bg-primary-600 text-[10px] font-bold text-white ring-2 ring-white">
+          <span className="absolute end-1.5 top-1.5 z-10 flex h-4 w-4 items-center justify-center rounded-full bg-gold-500 text-[10px] font-bold text-onyx-950 ring-2 ring-onyx-950">
             {unreadCount > 9 ? "9+" : unreadCount}
           </span>
         )}
@@ -134,36 +134,36 @@ export function NotificationsPopover({ locale }: { locale: "ar" | "en" }) {
       {isOpen && (
         <div
           className={cn(
-            "absolute top-full z-[999] mt-2 w-80 overflow-hidden rounded-2xl border border-dark-200 bg-white shadow-xl lg:w-96",
-            "end-0" // Always align to the 'end' of the button (logical left in RTL, right in LTR)
+            "absolute top-full z-[999] mt-4 w-80 overflow-hidden glass-card p-0 lg:w-96",
+            "end-0"
           )}
         >
-          <div className="flex items-center justify-between border-b border-dark-100 bg-dark-50/50 px-4 py-3">
-            <h3 className="font-semibold text-dark-800">
+          <div className="flex items-center justify-between border-b border-white/5 bg-white/5 px-5 py-4">
+            <h3 className="text-sm font-bold uppercase tracking-widest text-white/90">
               {isArabic ? "الإشعارات" : "Notifications"}
             </h3>
             {unreadCount > 0 && (
               <button
                 onClick={markAllAsRead}
-                className="text-xs font-medium text-primary-600 hover:text-primary-700 hover:underline"
+                className="text-[10px] font-bold uppercase tracking-widest text-gold-500 hover:text-accent-gold"
               >
                 {isArabic ? "تحديد الكل كمقروء" : "Mark all as read"}
               </button>
             )}
           </div>
 
-          <div className="max-h-80 overflow-y-auto">
+          <div className="max-h-96 overflow-y-auto">
             {isLoading && notifications.length === 0 ? (
-              <div className="flex h-32 items-center justify-center">
-                <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary-500 border-t-transparent" />
+              <div className="flex h-40 items-center justify-center">
+                <div className="h-8 w-8 animate-spin rounded-full border-2 border-gold-500 border-t-transparent" />
               </div>
             ) : notifications.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-8 text-center text-dark-500">
-                <Bell className="mb-2 h-10 w-10 opacity-20" />
-                <p className="text-sm">{isArabic ? "لا توجد إشعارات حالياً" : "No notifications yet"}</p>
+              <div className="flex flex-col items-center justify-center py-12 text-center text-onyx-500">
+                <Bell className="mb-4 h-12 w-12 opacity-10" />
+                <p className="text-xs font-medium">{isArabic ? "لا توجد إشعارات حالياً" : "No notifications yet"}</p>
               </div>
             ) : (
-              <div className="flex flex-col divide-y divide-dark-100">
+              <div className="flex flex-col divide-y divide-white/5">
                 {notifications.map((n) => (
                   <Link
                     key={n.id}
@@ -173,24 +173,24 @@ export function NotificationsPopover({ locale }: { locale: "ar" | "en" }) {
                         setIsOpen(false);
                     }}
                     className={cn(
-                      "group relative flex items-start px-4 py-3 transition hover:bg-dark-50",
-                      !n.isRead ? "bg-primary-50/40" : ""
+                      "group relative flex items-start px-5 py-4 transition-all duration-500 hover:bg-white/5",
+                      !n.isRead ? "bg-gold-500/5" : ""
                     )}
                   >
                     {!n.isRead && (
-                      <span className="absolute top-4 h-2 w-2 rounded-full bg-primary-600" style={{ [isArabic ? "right" : "left"]: "10px" }} />
+                      <span className="absolute top-6 h-2 w-2 rounded-full bg-gold-500 shadow-glow" style={{ [isArabic ? "right" : "left"]: "12px" }} />
                     )}
                     
-                    <div className={cn("min-w-0 flex-1", !n.isRead ? (isArabic ? "pr-4" : "pl-4") : "")}>
-                      <div className="flex justify-between items-start mb-1">
-                          <p className={cn("text-sm font-semibold text-dark-900 group-hover:text-primary-600 transition", !n.isRead ? "text-primary-800" : "")}>
+                    <div className={cn("min-w-0 flex-1", !n.isRead ? (isArabic ? "pr-5" : "pl-5") : "")}>
+                      <div className="flex justify-between items-start mb-2">
+                          <p className={cn("text-sm font-bold text-white/90 group-hover:text-gold-500 transition-colors", !n.isRead ? "text-white" : "text-white/60")}>
                             {n.title}
                           </p>
-                          <span className="text-[10px] text-dark-400 whitespace-nowrap pt-0.5 mr-2">
+                          <span className="text-[10px] font-medium text-onyx-500 whitespace-nowrap pt-0.5 ms-3">
                              {getRelativeTime(n.createdAt, locale)}
                           </span>
                       </div>
-                      <p className="line-clamp-2 text-xs text-dark-500">
+                      <p className="line-clamp-2 text-xs leading-relaxed text-onyx-400">
                         {n.body}
                       </p>
                     </div>
