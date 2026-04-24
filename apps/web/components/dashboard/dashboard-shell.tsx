@@ -141,7 +141,7 @@ export function DashboardShell({
     }));
   }, [copy.nav, locale, role]);
 
-  const currentPath = stripLocalePrefix(pathname);
+  const currentPath = stripLocalePrefix(pathname || "/");
 
   return (
     <div className="dashboard-shell-bg min-h-screen text-dark-950">
