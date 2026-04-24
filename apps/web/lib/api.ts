@@ -7,9 +7,10 @@ interface ApiEnvelope<T> {
 
 function getApiBaseUrl() {
   if (typeof window !== "undefined") {
-    // In browser, if no URL is set, use relative path to same host
+    // In browser, use the public API URL or a relative proxy path
     return process.env.NEXT_PUBLIC_OSTA_API_URL ?? "/api";
   }
+  // On server, prioritize the internal API URL, then the public one
   return process.env.OSTA_API_URL ?? process.env.NEXT_PUBLIC_OSTA_API_URL ?? "http://localhost:4000/api";
 }
 
@@ -19,14 +20,26 @@ export function resolveApiBaseUrl() {
 
 export async function fetchApiData<T>(path: string, fallback: T): Promise<T> {
   try {
+    const headers: Record<string, string> = {
+      Accept: "application/json"
+    };
+
+    if (typeof window !== "undefined") {
+      const token = window.localStorage.getItem("osta_access_token") || window.sessionStorage.getItem("osta_access_token");
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+    } else {
+      // Server side: get token from cookies
+      const { cookies } = await import("next/headers");
+      const cookieStore = await cookies();
+      const token = cookieStore.get("osta_access_token")?.value;
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+    }
+
     const response = await fetch(`${getApiBaseUrl()}${path}`, {
       cache: "no-store",
       credentials: "include",
-      headers: {
-        Accept: "application/json",
-        Authorization: typeof window !== "undefined" ? `Bearer ${window.localStorage.getItem("osta_access_token") || window.sessionStorage.getItem("osta_access_token") || ""}` : ""
-      },
-      signal: AbortSignal.timeout(2500)
+      headers,
+      signal: AbortSignal.timeout(3500)
     });
 
     if (!response.ok) {

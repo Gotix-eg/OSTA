@@ -160,10 +160,7 @@ export function ClientSettingsPage({ locale, initialData }: { locale: Locale; in
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    // Only update if we have real data (firstName is not empty)
-    if (liveData.profile.firstName) {
-      setData(liveData);
-    }
+    setData(liveData);
   }, [liveData]);
 
   function handleSave() {

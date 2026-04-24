@@ -2,13 +2,11 @@
 
 import { useEffect, useState } from "react";
 
+import { resolveApiBaseUrl } from "@/lib/api";
+
 interface ApiEnvelope<T> {
   success: boolean;
   data?: T;
-}
-
-function getPublicApiBaseUrl() {
-  return process.env.NEXT_PUBLIC_OSTA_API_URL ?? "http://localhost:4000/api";
 }
 
 export function useLiveApiData<T>(path: string, initialData: T) {
@@ -21,7 +19,7 @@ export function useLiveApiData<T>(path: string, initialData: T) {
       try {
         const token = window.localStorage.getItem("osta_access_token") || window.sessionStorage.getItem("osta_access_token") || "";
         
-        const response = await fetch(`${getPublicApiBaseUrl()}${path}`, {
+        const response = await fetch(`${resolveApiBaseUrl()}${path}`, {
           credentials: "include",
           headers: {
             "Accept": "application/json",
