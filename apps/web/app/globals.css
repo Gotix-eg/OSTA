@@ -44,7 +44,11 @@ body {
   p { @apply text-onyx-300; }
   
   a, button, input, textarea, select {
-    @apply outline-none transition-all duration-300 focus-visible:ring-2 focus-visible:ring-gold-500/50;
+    @apply outline-none transition-all duration-300;
+  }
+
+  a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+    box-shadow: 0 0 0 2px oklch(75% 0.15 85 / 0.5);
   }
 }
 
