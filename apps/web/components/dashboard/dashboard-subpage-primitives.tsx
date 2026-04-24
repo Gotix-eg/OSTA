@@ -45,7 +45,7 @@ export function SubpageHero({
 
       <div className="relative grid gap-10 xl:grid-cols-[1.618fr_1fr] xl:items-end">
         <div>
-          <div className="inline-flex rounded-full border border-white/10 bg-white/5 px-5 py-2 text-[10px] font-bold uppercase tracking-[0.3em] text-gold-500/90">
+          <div className="text-eyebrow">
             {eyebrow}
           </div>
           <h1 className="mt-6 max-w-4xl text-balance font-serif text-5xl leading-[1.1] sm:text-6xl xl:text-[4rem] text-white">
@@ -58,7 +58,7 @@ export function SubpageHero({
         </div>
 
         <div className="glass-card p-6 lg:p-8">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/30">OSTA | SIGNATURE</p>
+          <p className="text-caption text-white/30 uppercase">OSTA | SIGNATURE</p>
           <p className="mt-4 text-lg font-medium leading-relaxed text-white/90">
             Crafting premium experiences through meticulous detail and cinematic precision.
           </p>
@@ -97,7 +97,7 @@ export function DashboardBlock({
       <div className="relative">
         <div className="mb-8 flex items-end justify-between gap-4">
           <div>
-            {eyebrow ? <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-gold-500/70">{eyebrow}</p> : null}
+            {eyebrow ? <p className="text-eyebrow">{eyebrow}</p> : null}
             <h2 className="mt-3 font-serif text-3xl leading-tight text-white">{title}</h2>
           </div>
         </div>
@@ -125,9 +125,9 @@ export function MiniMetric({
       <div className={cn("absolute inset-0 bg-gradient-to-br opacity-30", toneClasses[tone])} />
       <div className="relative flex items-start justify-between gap-4">
         <div className="min-w-0">
-          <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">{label}</p>
+          <p className="text-eyebrow opacity-60">{label}</p>
           <p className="mt-5 font-serif text-4xl leading-none text-white">{value}</p>
-          {note ? <p className="mt-5 max-w-xs text-sm leading-relaxed text-onyx-400">{note}</p> : null}
+          {note ? <p className="mt-5 max-w-xs text-metadata">{note}</p> : null}
         </div>
         <div className={cn("flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl shadow-xl transition-transform duration-500 group-hover:scale-110", iconTones[tone])}>
           <Icon className="h-5 w-5" />
@@ -161,7 +161,7 @@ export function SoftBadge({
   } as const;
 
   return (
-    <span className={cn("rounded-full px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest", classes[tone])}>
+    <span className={cn("rounded-full px-4 py-1.5 text-eyebrow mb-0", classes[tone])}>
       {label}
     </span>
   );
@@ -172,8 +172,8 @@ export function SplitInfo({ items }: { items: Array<{ label: string; value: stri
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {items.map((item) => (
         <div key={item.label} className="rounded-2xl border border-white/5 bg-white/[0.02] p-5">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-white/30">{item.label}</p>
-          <p className="mt-3 text-xl font-bold leading-none text-white">{item.value}</p>
+          <p className="text-eyebrow opacity-40 mb-3">{item.label}</p>
+          <p className="text-xl font-bold leading-none text-white">{item.value}</p>
         </div>
       ))}
     </div>

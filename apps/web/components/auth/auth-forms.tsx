@@ -315,11 +315,11 @@ export function LoginForm({ locale }: { locale: Locale }) {
   return (
     <div className="space-y-8 animate-fadeIn">
       <div>
-        <span className="inline-flex rounded-full bg-gold-500/10 px-4 py-2 text-[10px] font-black uppercase tracking-[0.4em] text-gold-500 mb-6 border border-gold-500/20">
+        <span className="text-eyebrow mb-6">
           {copy.intro}
         </span>
-        <h2 className="text-4xl font-black text-white tracking-tight mb-4">{copy.loginTitle}</h2>
-        <p className="text-onyx-400 leading-relaxed text-lg">{copy.loginBody}</p>
+        <h2 className="text-4xl font-black text-white tracking-tight mb-4 font-display">{copy.loginTitle}</h2>
+        <p className="text-onyx-400 leading-relaxed text-lg text-pretty">{copy.loginBody}</p>
       </div>
 
       <div className="grid gap-6">
@@ -446,8 +446,8 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
   return (
     <div className="space-y-8 animate-fadeIn">
       <div>
-        <h2 className="text-4xl font-black text-white tracking-tight mb-4">{copy.registerClientTitle}</h2>
-        <p className="text-onyx-400 leading-relaxed">
+        <h2 className="text-4xl font-black text-white tracking-tight mb-4 font-display">{copy.registerClientTitle}</h2>
+        <p className="text-onyx-400 leading-relaxed text-pretty">
           {isArabic 
             ? "انضم إلى مجتمع أُسطى واحصل على أفضل الفنيين لخدماتك المنزلية بكل سهولة." 
             : "Join the OSTA community and get the best technicians for your home services with ease."}
@@ -579,8 +579,8 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
   return (
     <div className="space-y-8 animate-fadeIn">
       <div>
-        <h2 className="text-4xl font-black text-white tracking-tight mb-4">{copy.registerWorkerTitle}</h2>
-        <p className="text-onyx-400 leading-relaxed">
+        <h2 className="text-4xl font-black text-white tracking-tight mb-4 font-display">{copy.registerWorkerTitle}</h2>
+        <p className="text-onyx-400 leading-relaxed text-pretty">
           {isArabic 
             ? "انضم إلى فريق النخبة من الفنيين في أُسطى وابدأ في استقبال الطلبات المربحة فوراً." 
             : "Join the elite team of technicians at OSTA and start receiving profitable requests immediately."}
@@ -698,8 +698,8 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
   return (
     <div className="space-y-8 animate-fadeIn">
       <div>
-        <h2 className="text-4xl font-black text-white tracking-tight mb-4">{copy.registerVendorTitle}</h2>
-        <p className="text-onyx-400 leading-relaxed">
+        <h2 className="text-4xl font-black text-white tracking-tight mb-4 font-display">{copy.registerVendorTitle}</h2>
+        <p className="text-onyx-400 leading-relaxed text-pretty">
           {isArabic 
             ? "حوّل متجرك إلى وجهة رقمية لبيع الخامات وقطع الغيار لأفضل الفنيين في مصر." 
             : "Turn your store into a digital destination for selling materials and spare parts to Egypt's best technicians."}

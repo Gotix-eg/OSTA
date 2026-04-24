@@ -193,19 +193,19 @@ export function ClientSettingsPage({ locale, initialData }: { locale: Locale; in
         <DashboardBlock title={isArabic ? "الملف الشخصي" : "Profile"} eyebrow={isArabic ? "بيانات الهوية" : "identity data"}>
           <div className="grid gap-6 sm:grid-cols-2">
             <label className="space-y-3">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-onyx-500">{isArabic ? "الاسم الأول" : "First name"}</span>
+              <span className="text-caption">{isArabic ? "الاسم الأول" : "First name"}</span>
               <input value={data.profile.firstName} onChange={(event) => setData({ ...data, profile: { ...data.profile, firstName: event.target.value } })} className="h-14 w-full rounded-2xl border border-white/5 bg-white/5 px-5 text-white focus:border-gold-500/30 focus:bg-white/10" />
             </label>
             <label className="space-y-3">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-onyx-500">{isArabic ? "اسم العائلة" : "Last name"}</span>
+              <span className="text-caption">{isArabic ? "اسم العائلة" : "Last name"}</span>
               <input value={data.profile.lastName} onChange={(event) => setData({ ...data, profile: { ...data.profile, lastName: event.target.value } })} className="h-14 w-full rounded-2xl border border-white/5 bg-white/5 px-5 text-white focus:border-gold-500/30 focus:bg-white/10" />
             </label>
             <label className="space-y-3">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-onyx-500">{isArabic ? "البريد الإلكتروني" : "Email"}</span>
+              <span className="text-caption">{isArabic ? "البريد الإلكتروني" : "Email"}</span>
               <input value={data.profile.email} onChange={(event) => setData({ ...data, profile: { ...data.profile, email: event.target.value } })} className="h-14 w-full rounded-2xl border border-white/5 bg-white/5 px-5 text-white focus:border-gold-500/30 focus:bg-white/10" />
             </label>
             <label className="space-y-3">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-onyx-500">{isArabic ? "رقم الهاتف" : "Phone"}</span>
+              <span className="text-caption">{isArabic ? "رقم الهاتف" : "Phone"}</span>
               <input value={data.profile.phone} onChange={(event) => setData({ ...data, profile: { ...data.profile, phone: event.target.value } })} className="h-14 w-full rounded-2xl border border-white/5 bg-white/5 px-5 text-white focus:border-gold-500/30 focus:bg-white/10" />
             </label>
           </div>

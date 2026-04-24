@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
-import { serifFont, sansFont } from "@/lib/fonts";
+import { serifFont, sansFont, displayFont } from "@/lib/fonts";
 
 import "./globals.css";
 
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="ar" suppressHydrationWarning className={`${sansFont.variable} ${serifFont.variable}`}>
+    <html lang="ar" suppressHydrationWarning className={`${sansFont.variable} ${serifFont.variable} ${displayFont.variable}`}>
       <body>{children}</body>
     </html>
   );
