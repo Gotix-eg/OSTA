@@ -26,7 +26,7 @@ export function authenticate(request: Request, _response: Response, next: NextFu
   try {
     const payload = verifyAccessToken(token);
 
-    request.auth = {
+    (request as any).auth = {
       userId: payload.sub,
       sessionId: payload.sessionId,
       role: payload.role as UserRole
@@ -40,12 +40,12 @@ export function authenticate(request: Request, _response: Response, next: NextFu
 
 export function requireRoles(...roles: UserRole[]) {
   return (request: Request, _response: Response, next: NextFunction) => {
-    if (!request.auth) {
+    if (!(request as any).auth) {
       next(new ApiError(401, "Authentication required", "UNAUTHORIZED"));
       return;
     }
 
-    if (!roles.includes(request.auth.role)) {
+    if (!roles.includes((request as any).auth.role)) {
       next(new ApiError(403, "You do not have access to this resource", "FORBIDDEN"));
       return;
     }
