@@ -6,6 +6,10 @@ interface ApiEnvelope<T> {
 }
 
 function getApiBaseUrl() {
+  if (typeof window !== "undefined") {
+    // In browser, if no URL is set, use relative path to same host
+    return process.env.NEXT_PUBLIC_OSTA_API_URL ?? "/api";
+  }
   return process.env.OSTA_API_URL ?? process.env.NEXT_PUBLIC_OSTA_API_URL ?? "http://localhost:4000/api";
 }
 
