@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import { PublicContentPage } from "@/components/public/public-pages";
+import { ServicesListing } from "@/components/public/services-listing";
 import { PublicShell } from "@/components/public/public-shell";
 import { isLocale } from "@/lib/locales";
 
@@ -11,7 +11,7 @@ export default async function ServicesPage({ params }: { params: Promise<{ local
 
   return (
     <PublicShell locale={locale} pathname="/services">
-      <PublicContentPage locale={locale} pageKey="services" />
+      <ServicesListing locale={locale} />
     </PublicShell>
   );
 }

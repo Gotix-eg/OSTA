@@ -1,0 +1,116 @@
+"use client";
+
+import Link from "next/link";
+import { 
+  Hammer, Droplets, Zap, Wind, Settings, 
+  PaintBucket, Layout, Network, Monitor, Camera,
+  ArrowRight, ArrowLeft, Search, Sparkles
+} from "lucide-react";
+import { useLiveApiData } from "@/hooks/use-live-api-data";
+import type { Locale } from "@/lib/locales";
+
+interface ServiceCategory {
+  id: string;
+  nameAr: string;
+  nameEn: string;
+  slug: string;
+  icon: string;
+}
+
+const iconMap: Record<string, any> = {
+  hammer: Hammer,
+  droplets: Droplets,
+  zap: Zap,
+  wind: Wind,
+  settings: Settings,
+  "paint-bucket": PaintBucket,
+  layout: Layout,
+  network: Network,
+  monitor: Monitor,
+  camera: Camera
+};
+
+export function ServicesListing({ locale }: { locale: Locale }) {
+  const isArabic = locale === "ar";
+  const categories = useLiveApiData<ServiceCategory[]>("/services/categories", []);
+
+  return (
+    <div className="animate-fadeIn space-y-12 pb-20">
+      {/* ── Search & Header ── */}
+      <section className="text-center space-y-6">
+        <span className="inline-flex rounded-full bg-gold-500/10 px-4 py-2 text-[10px] font-black uppercase tracking-[0.4em] text-gold-500 border border-gold-500/20">
+          {isArabic ? "سوق الخدمات الفاخر" : "Premium Service Marketplace"}
+        </span>
+        <h1 className="text-4xl sm:text-6xl font-black text-white tracking-tight">
+          {isArabic ? "ماذا يمكننا أن نفعل لك؟" : "What can we do for you?"}
+        </h1>
+        <p className="text-onyx-400 text-lg max-w-2xl mx-auto">
+          {isArabic 
+            ? "اختر من بين نخبة الحرفيين والفنيين المتخصصين في كافة المجالات المنزلية والتقنية." 
+            : "Choose from an elite group of specialized craftsmen and technicians in all home and technical fields."}
+        </p>
+
+        <div className="max-w-2xl mx-auto relative group">
+           <div className="absolute inset-0 bg-gold-500/10 blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity" />
+           <input 
+              type="text" 
+              placeholder={isArabic ? "ابحث عن خدمة (نجار، سباك، صيانة كاميرات...)" : "Search for a service (Carpentry, Plumbing...)"}
+              className="w-full h-16 rounded-2xl border border-onyx-700 bg-onyx-800/80 px-14 text-white focus:border-gold-500/50 outline-none transition-all relative z-10"
+           />
+           <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-6 w-6 text-onyx-500 z-20 group-focus-within:text-gold-500 transition-colors" />
+        </div>
+      </section>
+
+      {/* ── Grid ── */}
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {categories.length === 0 ? (
+          // Fallback placeholders if API is empty
+          Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="onyx-card h-48 animate-pulse border-onyx-800 bg-onyx-800/20" />
+          ))
+        ) : (
+          categories.map((cat) => {
+            const Icon = iconMap[cat.icon] || Settings;
+            return (
+              <Link 
+                key={cat.id} 
+                href={`/${locale}/services/${cat.slug}`}
+                className="onyx-card p-8 group hover:-translate-y-2 hover:border-gold-500/30 transition-all duration-500 overflow-hidden"
+              >
+                <div className="absolute -right-4 -bottom-4 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity duration-500">
+                  <Icon className="h-32 w-32" />
+                </div>
+                
+                <div className="h-14 w-14 rounded-2xl bg-onyx-900 border border-onyx-700 flex items-center justify-center text-gold-500 mb-6 group-hover:bg-gold-500 group-hover:text-onyx-950 group-hover:shadow-gold/20 group-hover:shadow-xl transition-all duration-500">
+                  <Icon className="h-6 w-6" />
+                </div>
+
+                <h3 className="text-xl font-black text-white mb-2 group-hover:text-gold-500 transition-colors">
+                  {isArabic ? cat.nameAr : cat.nameEn}
+                </h3>
+                
+                <div className="flex items-center gap-2 text-xs font-black text-onyx-500 group-hover:text-gold-500 transition-colors">
+                  {isArabic ? "استكشف الخدمات" : "Explore Services"}
+                  {isArabic ? <ArrowLeft className="h-3 w-3" /> : <ArrowRight className="h-3 w-3" />}
+                </div>
+              </Link>
+            );
+          })
+        )}
+      </div>
+
+      {/* ── Banner ── */}
+      <section className="onyx-card border-gold-500/20 bg-gradient-to-br from-onyx-800 to-onyx-900 p-10 sm:p-16 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden">
+         <div className="absolute top-0 left-0 p-8 opacity-20"><Sparkles className="h-12 w-12 text-gold-500" /></div>
+         <div className="space-y-4 text-center md:text-start relative z-10">
+            <h2 className="text-3xl font-black text-white">{isArabic ? "هل أنت حرفي متميز؟" : "Are you a master technician?"}</h2>
+            <p className="text-onyx-400 max-w-md">{isArabic ? "انضم إلى أُسطى وابدأ في بناء مستقبلك المهني مع أفضل العملاء في مصر." : "Join OSTA and start building your career with the best clients in Egypt."}</p>
+         </div>
+         <Link href={`/${locale}/register/worker`} className="btn-gold px-10 h-14 flex items-center gap-3 relative z-10">
+            {isArabic ? "سجل الآن كأُسطى" : "Register as OSTA Master"}
+            {isArabic ? <ArrowLeft className="h-5 w-5" /> : <ArrowRight className="h-5 w-5" />}
+         </Link>
+      </section>
+    </div>
+  );
+}

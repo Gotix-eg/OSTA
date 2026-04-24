@@ -13,7 +13,8 @@ import {
   ChevronRight,
   Eye,
   EyeOff,
-  ShieldCheck
+  ShieldCheck,
+  ArrowUpRight
 } from "lucide-react";
 
 import { postApiData } from "@/lib/api";
@@ -162,7 +163,7 @@ function usePersistentState<T>(key: string, initialValue: T) {
 
 function StepIndicator({ current, total }: { current: number; total: number }) {
   return (
-    <div className="mb-8 flex items-center gap-3">
+    <div className="mb-10 flex items-center gap-3">
       {Array.from({ length: total }).map((_, index) => {
         const active = index <= current;
 
@@ -170,7 +171,7 @@ function StepIndicator({ current, total }: { current: number; total: number }) {
           <div key={index} className="flex flex-1 items-center gap-3">
             <div
               className={cn(
-                "flex h-10 w-10 items-center justify-center rounded-full border text-sm font-semibold transition duration-500",
+                "flex h-10 w-10 items-center justify-center rounded-full border text-sm font-black transition duration-500",
                 active
                   ? "border-gold-500 bg-gold-500 text-onyx-950 shadow-gold/20 shadow-lg"
                   : "border-onyx-700 bg-onyx-800 text-onyx-500"
@@ -278,14 +279,12 @@ function applyAuthSuccess(locale: Locale, payload: AuthSuccessResponse, remember
     remember
   );
 
-  // Use window.location for a full refresh to ensure cookies are picked up by Middleware
   window.location.assign(getDashboardRoute(locale, payload.user.role));
 }
 
 export function LoginForm({ locale }: { locale: Locale }) {
   const copy = authCopy[locale];
   const isArabic = locale === "ar";
-  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [phone, setPhone] = useState("+20");
   const [password, setPassword] = useState("");
@@ -314,16 +313,16 @@ export function LoginForm({ locale }: { locale: Locale }) {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 animate-fadeIn">
       <div>
-        <span className="inline-flex rounded-full bg-gold-500/10 px-4 py-2 text-xs font-black uppercase tracking-[0.3em] text-gold-500 mb-4">
+        <span className="inline-flex rounded-full bg-gold-500/10 px-4 py-2 text-[10px] font-black uppercase tracking-[0.4em] text-gold-500 mb-6 border border-gold-500/20">
           {copy.intro}
         </span>
-        <h2 className="text-3xl font-black text-white tracking-tight">{copy.loginTitle}</h2>
-        <p className="mt-4 text-onyx-400 leading-relaxed">{copy.loginBody}</p>
+        <h2 className="text-4xl font-black text-white tracking-tight mb-4">{copy.loginTitle}</h2>
+        <p className="text-onyx-400 leading-relaxed text-lg">{copy.loginBody}</p>
       </div>
 
-      <div className="grid gap-5">
+      <div className="grid gap-6">
         <InputField
           label={isArabic ? "رقم الهاتف" : "Phone number"}
           value={phone}
@@ -332,35 +331,39 @@ export function LoginForm({ locale }: { locale: Locale }) {
         />
 
         <label className="block space-y-2 text-start">
-          <span className="text-sm font-medium text-dark-700">{isArabic ? "كلمة المرور" : "Password"}</span>
+          <span className="text-sm font-bold text-onyx-300 tracking-wide">{isArabic ? "كلمة المرور" : "Password"}</span>
           <div className="relative">
             <input
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={(event) => setPassword(event.target.value)}
-              className="h-12 w-full rounded-[1.2rem] border border-dark-200 bg-white px-4 pe-12 text-body text-dark-950 transition focus:border-primary-400 focus:ring-2 focus:ring-primary-500/30"
+              className="h-14 w-full rounded-2xl border border-onyx-700 bg-onyx-800/50 px-5 pe-12 text-white transition-all placeholder:text-onyx-600 focus:border-gold-500/50 focus:ring-4 focus:ring-gold-500/10 outline-none"
             />
             <button
               type="button"
               onClick={() => setShowPassword((current) => !current)}
-              className="absolute inset-y-0 end-3 flex items-center text-dark-500 transition hover:text-dark-950"
+              className="absolute inset-y-0 end-4 flex items-center text-onyx-500 transition hover:text-gold-500"
             >
-              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
             </button>
           </div>
         </label>
 
-        <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-dark-500">
-          <label className="flex items-center gap-3">
-            <input
-              type="checkbox"
-              checked={remember}
-              onChange={(event) => setRemember(event.target.checked)}
-              className="h-4 w-4 rounded border-dark-300 text-primary-600"
-            />
-            <span>{isArabic ? "تذكرني" : "Remember me"}</span>
+        <div className="flex flex-wrap items-center justify-between gap-4 text-sm font-medium">
+          <label className="flex items-center gap-3 cursor-pointer group">
+            <div className="relative flex h-5 w-5 items-center justify-center">
+               <input
+                  type="checkbox"
+                  checked={remember}
+                  onChange={(event) => setRemember(event.target.checked)}
+                  className="peer h-full w-full opacity-0 absolute cursor-pointer"
+               />
+               <div className="h-full w-full rounded border border-onyx-700 bg-onyx-800 transition peer-checked:border-gold-500 peer-checked:bg-gold-500" />
+               <Check className="pointer-events-none absolute h-3.5 w-3.5 text-onyx-950 opacity-0 transition peer-checked:opacity-100" />
+            </div>
+            <span className="text-onyx-300 group-hover:text-onyx-100 transition">{isArabic ? "تذكرني" : "Remember me"}</span>
           </label>
-          <Link href={`/${locale}/forgot-password`} className="font-medium text-primary-700 hover:text-primary-800">
+          <Link href={`/${locale}/forgot-password`} className="text-gold-500 hover:text-gold-400 transition-colors">
             {isArabic ? "نسيت كلمة المرور؟" : "Forgot password?"}
           </Link>
         </div>
@@ -374,40 +377,37 @@ export function LoginForm({ locale }: { locale: Locale }) {
           {isSubmitting ? (isArabic ? "... جاري" : "Signing in...") : isArabic ? "تسجيل الدخول" : "Sign in"}
         </button>
 
-        {submitted ? (
-          <div className="rounded-[1.4rem] border border-success/30 bg-success/10 px-4 py-3 text-sm text-success">
+        {submitted && (
+          <div className="onyx-card p-4 border-success/20 bg-success/5 text-success text-center font-bold">
             {copy.success}
           </div>
-        ) : null}
+        )}
 
-        {error ? <div className="rounded-[1.4rem] border border-error/30 bg-error/10 px-4 py-3 text-sm text-error">{error}</div> : null}
+        {error && (
+          <div className="onyx-card p-4 border-red-500/20 bg-red-500/5 text-red-500 text-center font-bold">
+            {error}
+          </div>
+        )}
 
-        <div className="relative py-2 text-center text-sm text-dark-400">
-          <span className="relative z-10 bg-white px-3">{isArabic ? "أو" : "or"}</span>
-          <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-dark-200" />
+        <div className="relative py-4">
+          <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-onyx-800" /></div>
+          <div className="relative flex justify-center text-xs uppercase tracking-widest"><span className="bg-onyx-900 px-4 text-onyx-600 font-black">{isArabic ? "أو" : "or"}</span></div>
         </div>
 
-
-
-        <div className="grid gap-3 sm:grid-cols-3 mt-3">
-          <Link
-            href={`/${locale}/register/client`}
-            className="inline-flex h-12 items-center justify-center rounded-[1.2rem] border border-dark-200 bg-surface-soft px-2 text-sm font-semibold text-dark-900 transition hover:border-primary-300 hover:text-primary-700"
-          >
-            {isArabic ? "تسجيل عميل" : "Register Client"}
-          </Link>
-          <Link
-            href={`/${locale}/register/worker`}
-            className="inline-flex h-12 items-center justify-center rounded-[1.2rem] border border-dark-200 bg-surface-soft px-2 text-sm font-semibold text-dark-900 transition hover:border-primary-300 hover:text-primary-700"
-          >
-            {isArabic ? "تسجيل عامل" : "Register Worker"}
-          </Link>
-          <Link
-            href={`/${locale}/register/vendor`}
-            className="inline-flex h-12 items-center justify-center rounded-[1.2rem] border border-dark-200 bg-surface-soft px-2 text-sm font-semibold text-dark-900 transition hover:border-primary-300 hover:text-primary-700"
-          >
-            {isArabic ? "تسجيل مورد" : "Register Vendor"}
-          </Link>
+        <div className="grid gap-4 sm:grid-cols-3">
+          {[
+            { labelAr: "تسجيل عميل", labelEn: "Register Client", href: "client" },
+            { labelAr: "تسجيل عامل", labelEn: "Register Worker", href: "worker" },
+            { labelAr: "تسجيل مورد", labelEn: "Register Vendor", href: "vendor" }
+          ].map((btn) => (
+            <Link
+               key={btn.href}
+               href={`/${locale}/register/${btn.href}`}
+               className="btn-onyx h-12 flex items-center justify-center text-xs px-2"
+            >
+               {isArabic ? btn.labelAr : btn.labelEn}
+            </Link>
+          ))}
         </div>
       </div>
     </div>
@@ -428,121 +428,68 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
     setError(null);
 
     try {
-      const payload = await postApiData<
-        AuthSuccessResponse,
-        {
-          firstName: string;
-          lastName: string;
-          phone: string;
-          email: string;
-          password: string;
-          confirmPassword: string;
-          governorate?: string;
-          city?: string;
-          address?: string;
-          latitude?: number;
-          longitude?: number;
-        }
-      >("/auth/register/client", {
-        firstName: state.firstName,
-        lastName: state.lastName,
-        phone: state.phone,
-        email: state.email,
-        password: state.password,
-        confirmPassword: state.confirmPassword,
-        governorate: state.governorate,
-        city: state.city,
-        address: state.address,
-        latitude: state.latitude,
-        longitude: state.longitude
+      const payload = await postApiData<AuthSuccessResponse, any>("/auth/register/client", {
+        ...state
       });
-
       window.localStorage.removeItem("osta-client-register");
       setSubmitted(true);
       applyAuthSuccess(locale, payload, true);
-    } catch (registerError) {
-      setError(registerError instanceof Error ? registerError.message : isArabic ? "تعذر إنشاء الحساب" : "Unable to create account.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : isArabic ? "تعذر إنشاء الحساب" : "Unable to create account.");
     } finally {
       setIsSubmitting(false);
     }
   }
 
-  if (!ready) {
-    return <div className="text-sm text-dark-500">{isArabic ? "جاري التحضير..." : "Preparing form..."}</div>;
-  }
+  if (!ready) return <div className="text-onyx-600 font-bold">{isArabic ? "جاري التحضير..." : "Preparing..."}</div>;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 animate-fadeIn">
       <div>
-        <h2 className="text-3xl font-semibold text-dark-950">{copy.registerClientTitle}</h2>
-        <p className="mt-3 text-body text-dark-500">
-          {isArabic
-            ? "تجربة تسجيل متعددة الخطوات مع حفظ تلقائي حتى لا تضيع البيانات عند التحديث."
-            : "A multi-step registration flow with local persistence so progress stays saved on refresh."}
+        <h2 className="text-4xl font-black text-white tracking-tight mb-4">{copy.registerClientTitle}</h2>
+        <p className="text-onyx-400 leading-relaxed">
+          {isArabic 
+            ? "انضم إلى مجتمع أُسطى واحصل على أفضل الفنيين لخدماتك المنزلية بكل سهولة." 
+            : "Join the OSTA community and get the best technicians for your home services with ease."}
         </p>
       </div>
 
       <StepIndicator current={step} total={3} />
 
       {submitted ? (
-        <div className="rounded-[1.6rem] border border-success/30 bg-success/10 p-6 text-start">
-          <ShieldCheck className="h-8 w-8 text-success" />
-          <h3 className="mt-4 text-2xl font-semibold text-dark-950">{isArabic ? "تم تجهيز الحساب" : "Account flow prepared"}</h3>
-          <p className="mt-3 text-dark-600">{locale === "ar" ? "تم تسجيل حسابك بنجاح. جاري تحويلك إلى لوحة التحكم..." : "Account created successfully. Redirecting to your dashboard..."}</p>
+        <div className="onyx-card p-10 text-center border-success/30 bg-success/5 space-y-4">
+          <ShieldCheck className="h-16 w-16 text-success mx-auto" />
+          <h3 className="text-2xl font-black text-white">{isArabic ? "تم إنشاء الحساب!" : "Account Created!"}</h3>
+          <p className="text-onyx-400">{isArabic ? "جاري تحويلك إلى لوحة التحكم..." : "Redirecting to dashboard..."}</p>
         </div>
       ) : (
-        <div className="space-y-5">
-          {step === 0 ? (
-            <>
-              <InputField
-                label={isArabic ? "رقم الهاتف" : "Phone number"}
-                value={state.phone}
-                onChange={(phone) => setState({ ...state, phone })}
-                placeholder="+20 100 000 0000"
-              />
-            </>
-          ) : null}
+        <div className="space-y-6">
+          {step === 0 && (
+            <InputField
+              label={isArabic ? "رقم الهاتف" : "Phone number"}
+              value={state.phone}
+              onChange={(phone) => setState({ ...state, phone })}
+              placeholder="+20 100 000 0000"
+            />
+          )}
 
-          {step === 1 ? (
+          {step === 1 && (
             <>
-              <div className="grid gap-5 sm:grid-cols-2">
-                <InputField
-                  label={isArabic ? "الاسم الأول" : "First name"}
-                  value={state.firstName}
-                  onChange={(firstName) => setState({ ...state, firstName })}
-                />
-                <InputField
-                  label={isArabic ? "اسم العائلة" : "Last name"}
-                  value={state.lastName}
-                  onChange={(lastName) => setState({ ...state, lastName })}
-                />
+              <div className="grid gap-6 sm:grid-cols-2">
+                <InputField label={isArabic ? "الاسم الأول" : "First name"} value={state.firstName} onChange={(firstName) => setState({ ...state, firstName })} />
+                <InputField label={isArabic ? "اسم العائلة" : "Last name"} value={state.lastName} onChange={(lastName) => setState({ ...state, lastName })} />
               </div>
-              <InputField
-                label={isArabic ? "البريد الإلكتروني" : "Email"}
-                value={state.email}
-                onChange={(email) => setState({ ...state, email })}
-                type="email"
-              />
-              <div className="grid gap-5 sm:grid-cols-2">
-                <InputField
-                  label={isArabic ? "كلمة المرور" : "Password"}
-                  value={state.password}
-                  onChange={(password) => setState({ ...state, password })}
-                  type="password"
-                />
-                <InputField
-                  label={isArabic ? "تأكيد كلمة المرور" : "Confirm password"}
-                  value={state.confirmPassword}
-                  onChange={(confirmPassword) => setState({ ...state, confirmPassword })}
-                  type="password"
-                />
+              <InputField label={isArabic ? "البريد الإلكتروني" : "Email"} value={state.email} onChange={(email) => setState({ ...state, email })} type="email" />
+              <div className="grid gap-6 sm:grid-cols-2">
+                <InputField label={isArabic ? "كلمة المرور" : "Password"} value={state.password} onChange={(password) => setState({ ...state, password })} type="password" />
+                <InputField label={isArabic ? "تأكيد كلمة المرور" : "Confirm password"} value={state.confirmPassword} onChange={(confirmPassword) => setState({ ...state, confirmPassword })} type="password" />
               </div>
             </>
-          ) : null}
+          )}
 
-          {step === 2 ? (
+          {step === 2 && (
             <div className="space-y-6">
-              <div className="grid gap-5 sm:grid-cols-2">
+              <div className="grid gap-6 sm:grid-cols-2">
                 <SelectField
                   label={isArabic ? "المحافظة" : "Governorate"}
                   value={state.governorate}
@@ -561,79 +508,42 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
               </div>
 
               <div className="space-y-3">
-                <span className="text-sm font-medium text-dark-700">{isArabic ? "تحديد الموقع على الخريطة" : "Pin location on map"}</span>
-                <MapPicker 
-                  lat={state.latitude} 
-                  lng={state.longitude} 
-                  isArabic={isArabic}
-                  onChange={(lat, lng, details) => {
-                    const newState = { ...state, latitude: lat, longitude: lng };
-                    if (details) {
-                      // Attempt to guess governorate from Nominatim if possible
-                      const govMatch = egyptianGovernorates.find(g => 
-                        details.state?.includes(g.labelEn) || details.city?.includes(g.labelEn) ||
-                        details.state?.includes(g.labelAr) || details.city?.includes(g.labelAr)
-                      );
-                      if (govMatch) newState.governorate = govMatch.value;
-                    }
-                    setState(newState);
-                  }}
-                />
+                <span className="text-sm font-bold text-onyx-300 tracking-wide">{isArabic ? "تحديد الموقع على الخريطة" : "Pin location on map"}</span>
+                <div className="rounded-2xl overflow-hidden border border-onyx-700 h-64 gold-border-glow">
+                  <MapPicker lat={state.latitude} lng={state.longitude} isArabic={isArabic} onChange={(lat, lng) => setState({ ...state, latitude: lat, longitude: lng })} />
+                </div>
               </div>
 
-              <InputField
-                label={isArabic ? "العنوان التفصيلي (رقم المبنى / الشقة)" : "Detailed address (Building / Flat)"}
-                value={state.address}
-                onChange={(address) => setState({ ...state, address })}
-                textarea
-                rows={2}
-              />
+              <InputField label={isArabic ? "العنوان التفصيلي" : "Detailed address"} value={state.address} onChange={(address) => setState({ ...state, address })} textarea rows={2} />
 
-              <label className="flex items-center gap-3 rounded-[1.2rem] border border-dark-200 bg-surface-soft px-4 py-3 text-sm text-dark-700">
-                <input
-                  type="checkbox"
-                  checked={state.acceptedTerms}
-                  onChange={(event) => setState({ ...state, acceptedTerms: event.target.checked })}
-                  className="h-4 w-4 rounded border-dark-300 text-primary-600"
-                />
-                <span>{copy.terms}</span>
+              <label className="flex items-center gap-3 cursor-pointer group onyx-card p-4 border-onyx-700 bg-onyx-800/30">
+                <div className="relative flex h-5 w-5 items-center justify-center">
+                   <input type="checkbox" checked={state.acceptedTerms} onChange={(e) => setState({ ...state, acceptedTerms: e.target.checked })} className="peer h-full w-full opacity-0 absolute cursor-pointer" />
+                   <div className="h-full w-full rounded border border-onyx-700 bg-onyx-800 transition peer-checked:border-gold-500 peer-checked:bg-gold-500" />
+                   <Check className="pointer-events-none absolute h-3.5 w-3.5 text-onyx-950 opacity-0 transition peer-checked:opacity-100" />
+                </div>
+                <span className="text-sm text-onyx-400 group-hover:text-onyx-200 transition">{copy.terms}</span>
               </label>
             </div>
-          ) : null}
+          )}
 
-          <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-            <button
-              type="button"
-              onClick={() => setStep((current) => Math.max(current - 1, 0))}
-              className="inline-flex h-11 items-center gap-2 rounded-full border border-dark-200 px-5 text-sm font-semibold text-dark-700 transition hover:border-dark-400"
-            >
+          <div className="flex items-center justify-between gap-4 pt-4">
+            <button type="button" onClick={() => setStep(s => Math.max(0, s - 1))} className="btn-onyx h-12 flex items-center gap-2">
               {isArabic ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
               {isArabic ? "السابق" : "Back"}
             </button>
-
-            {step < 2 ? (
-              <button
-                type="button"
-                onClick={() => setStep((current) => Math.min(current + 1, 2))}
-                className="inline-flex h-11 items-center gap-2 rounded-full bg-primary-600 px-5 text-sm font-semibold text-white transition hover:bg-primary-700"
-              >
-                {copy.submit}
-                {isArabic ? <ArrowLeft className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={() => void handleRegister()}
-                disabled={isSubmitting || !state.acceptedTerms}
-                className="inline-flex h-11 items-center gap-2 rounded-full bg-primary-600 px-5 text-sm font-semibold text-white transition hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {isSubmitting ? (isArabic ? "... جاري" : "Creating...") : isArabic ? "إنشاء الحساب" : "Create account"}
-                {isArabic ? <ArrowLeft className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
-              </button>
-            )}
+            <button 
+               type="button" 
+               onClick={step === 2 ? handleRegister : () => setStep(s => s + 1)} 
+               disabled={isSubmitting || (step === 2 && !state.acceptedTerms)}
+               className="btn-gold h-12 px-8 flex items-center gap-2"
+            >
+              {isSubmitting ? (isArabic ? "جاري..." : "Processing...") : step === 2 ? (isArabic ? "إنشاء الحساب" : "Create Account") : (isArabic ? "التالي" : "Next")}
+              {isArabic ? <ArrowLeft className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
+            </button>
           </div>
 
-          {error ? <div className="rounded-[1.4rem] border border-error/30 bg-error/10 px-4 py-3 text-sm text-error">{error}</div> : null}
+          {error && <div className="onyx-card p-4 border-red-500/20 bg-red-500/5 text-red-500 text-center font-bold text-sm">{error}</div>}
         </div>
       )}
     </div>
@@ -649,364 +559,112 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  async function handleWorkerRegister() {
+  async function handleRegister() {
     setIsSubmitting(true);
     setError(null);
-
     try {
-      const payload = await postApiData<
-        AuthSuccessResponse,
-        {
-          firstName: string;
-          lastName: string;
-          phone: string;
-          nationalIdNumber: string;
-          nationalIdFront: string;
-          nationalIdBack: string;
-          password: string;
-          confirmPassword: string;
-        }
-      >("/auth/register/worker", {
-        firstName: state.firstName,
-        lastName: state.lastName,
-        phone: state.phone,
-        nationalIdNumber: state.nationalIdNumber,
-        nationalIdFront: state.nationalIdFront,
-        nationalIdBack: state.nationalIdBack,
-        password: state.password,
-        confirmPassword: state.confirmPassword
-      });
-
+      const payload = await postApiData<AuthSuccessResponse, any>("/auth/register/worker", { ...state });
       window.localStorage.removeItem("osta-worker-register");
       setSubmitted(true);
       applyAuthSuccess(locale, payload, true);
-    } catch (registerError) {
-      setError(registerError instanceof Error ? registerError.message : isArabic ? "تعذر إرسال الطلب" : "Unable to submit application.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : isArabic ? "تعذر إرسال الطلب" : "Unable to submit.");
     } finally {
       setIsSubmitting(false);
     }
   }
 
-  if (!ready) {
-    return <div className="text-sm text-dark-500">{isArabic ? "جاري التحضير..." : "Preparing form..."}</div>;
-  }
+  if (!ready) return <div className="text-onyx-600 font-bold">{isArabic ? "جاري التحضير..." : "Preparing..."}</div>;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 animate-fadeIn">
       <div>
-        <h2 className="text-3xl font-semibold text-dark-950">{copy.registerWorkerTitle}</h2>
-        <p className="mt-3 text-body text-dark-500">
-          {isArabic
-            ? "مسار من 5 خطوات يشمل البيانات المهنية والمستندات مع حفظ تلقائي للتقدم."
-            : "A 5-step worker onboarding flow covering profile, professional setup, and verification docs."}
+        <h2 className="text-4xl font-black text-white tracking-tight mb-4">{copy.registerWorkerTitle}</h2>
+        <p className="text-onyx-400 leading-relaxed">
+          {isArabic 
+            ? "انضم إلى فريق النخبة من الفنيين في أُسطى وابدأ في استقبال الطلبات المربحة فوراً." 
+            : "Join the elite team of technicians at OSTA and start receiving profitable requests immediately."}
         </p>
       </div>
 
       <StepIndicator current={step} total={4} />
 
       {submitted ? (
-        <div className="rounded-[1.6rem] border border-success/30 bg-success/10 p-6 text-start">
-          <ShieldCheck className="h-8 w-8 text-success" />
-          <h3 className="mt-4 text-2xl font-semibold text-dark-950">
-            {isArabic ? "طلبك جاهز للمراجعة" : "Application prepared for review"}
-          </h3>
-          <p className="mt-3 text-dark-600">
-            {isArabic
-              ? "تم استلام طلبك بنجاح. يمكنك الآن الدخول إلى لوحة التحكم لمتابعة حالة التوثيق."
-              : "Your application has been received. You can now access your dashboard to track your verification status."}
-          </p>
+        <div className="onyx-card p-10 text-center border-success/30 bg-success/5 space-y-4">
+          <ShieldCheck className="h-16 w-16 text-success mx-auto" />
+          <h3 className="text-2xl font-black text-white">{isArabic ? "تم إرسال الطلب!" : "Application Sent!"}</h3>
+          <p className="text-onyx-400">{isArabic ? "جاري مراجعة بياناتك من قبل الإدارة..." : "Your data is being reviewed by the admin..."}</p>
         </div>
       ) : (
-        <div className="space-y-5">
-          {step === 0 ? (
-            <>
-              <InputField
-                label={isArabic ? "رقم الهاتف" : "Phone number"}
-                value={state.phone}
-                onChange={(phone) => setState({ ...state, phone })}
-                placeholder="+20 100 000 0000"
-              />
-            </>
-          ) : null}
+        <div className="space-y-6">
+          {step === 0 && (
+             <InputField label={isArabic ? "رقم الهاتف" : "Phone number"} value={state.phone} onChange={(phone) => setState({ ...state, phone })} placeholder="+20 100 000 0000" />
+          )}
 
-          {step === 1 ? (
+          {step === 1 && (
             <>
-              <div className="grid gap-5 sm:grid-cols-2">
-                <InputField
-                  label={isArabic ? "الاسم الأول" : "First name"}
-                  value={state.firstName}
-                  onChange={(firstName) => setState({ ...state, firstName })}
-                />
-                <InputField
-                  label={isArabic ? "اسم العائلة" : "Last name"}
-                  value={state.lastName}
-                  onChange={(lastName) => setState({ ...state, lastName })}
-                />
+              <div className="grid gap-6 sm:grid-cols-2">
+                <InputField label={isArabic ? "الاسم الأول" : "First name"} value={state.firstName} onChange={(firstName) => setState({ ...state, firstName })} />
+                <InputField label={isArabic ? "اسم العائلة" : "Last name"} value={state.lastName} onChange={(lastName) => setState({ ...state, lastName })} />
               </div>
-              <InputField
-                label={isArabic ? "الرقم القومي (14 رقم)" : "National ID Number (14 digits)"}
-                value={state.nationalIdNumber}
-                onChange={(nationalIdNumber) => setState({ ...state, nationalIdNumber })}
-              />
+              <InputField label={isArabic ? "الرقم القومي (14 رقم)" : "National ID (14 digits)"} value={state.nationalIdNumber} onChange={(n) => setState({ ...state, nationalIdNumber: n })} />
             </>
-          ) : null}
+          )}
 
-          {step === 2 ? (
-            <>
-              <div className="grid gap-5 sm:grid-cols-2">
-                <ImageUpload
-                  isArabic={isArabic}
-                  label={isArabic ? "صورة البطاقة - الوجه الأمامي" : "National ID front"}
-                  value={state.nationalIdFront}
-                  onChange={(url) => setState({ ...state, nationalIdFront: url })}
-                />
-                <ImageUpload
-                  isArabic={isArabic}
-                  label={isArabic ? "صورة البطاقة - الخلفية" : "National ID back"}
-                  value={state.nationalIdBack}
-                  onChange={(url) => setState({ ...state, nationalIdBack: url })}
-                />
+          {step === 2 && (
+            <div className="grid gap-8">
+              <div className="grid gap-6 sm:grid-cols-2">
+                <ImageUpload isArabic={isArabic} label={isArabic ? "صورة البطاقة (أمام)" : "ID Front"} value={state.nationalIdFront} onChange={(url) => setState({ ...state, nationalIdFront: url })} />
+                <ImageUpload isArabic={isArabic} label={isArabic ? "صورة البطاقة (خلف)" : "ID Back"} value={state.nationalIdBack} onChange={(url) => setState({ ...state, nationalIdBack: url })} />
               </div>
-              <div className="grid gap-5 sm:grid-cols-2">
-                <InputField
-                  label={isArabic ? "كلمة المرور" : "Password"}
-                  value={state.password}
-                  onChange={(password) => setState({ ...state, password })}
-                  type="password"
-                />
-                <InputField
-                  label={isArabic ? "تأكيد كلمة المرور" : "Confirm password"}
-                  value={state.confirmPassword}
-                  onChange={(confirmPassword) => setState({ ...state, confirmPassword })}
-                  type="password"
-                />
+              <div className="grid gap-6 sm:grid-cols-2">
+                <InputField label={isArabic ? "كلمة المرور" : "Password"} value={state.password} onChange={(p) => setState({ ...state, password: p })} type="password" />
+                <InputField label={isArabic ? "تأكيد كلمة المرور" : "Confirm password"} value={state.confirmPassword} onChange={(cp) => setState({ ...state, confirmPassword: cp })} type="password" />
               </div>
-            </>
-          ) : null}
+            </div>
+          )}
 
-          {step === 3 ? (
-            <>
-              <div className="rounded-[1.6rem] border border-dark-200 bg-surface-soft p-5 text-start text-sm text-dark-700">
-                <h3 className="text-lg font-semibold text-dark-950">{isArabic ? "مراجعة سريعة" : "Quick review"}</h3>
-                <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                  <p>{isArabic ? `الاسم: ${state.firstName} ${state.lastName}` : `Name: ${state.firstName} ${state.lastName}`}</p>
-                  <p>{isArabic ? `الهاتف: ${state.phone}` : `Phone: ${state.phone}`}</p>
-                  <p>{isArabic ? `رقم البطاقة: ${state.nationalIdNumber}` : `National ID: ${state.nationalIdNumber}`}</p>
+          {step === 3 && (
+            <div className="space-y-8">
+              <div className="onyx-card p-6 border-gold-500/10 space-y-4">
+                <h3 className="font-black text-lg text-gold-500">{isArabic ? "مراجعة الطلب" : "Review Application"}</h3>
+                <div className="grid gap-3 text-sm">
+                   <div className="flex justify-between border-b border-onyx-800 pb-2"><span className="text-onyx-500">{isArabic ? "الاسم الكامل" : "Full Name"}</span><span className="text-white font-bold">{state.firstName} {state.lastName}</span></div>
+                   <div className="flex justify-between border-b border-onyx-800 pb-2"><span className="text-onyx-500">{isArabic ? "رقم الهاتف" : "Phone"}</span><span className="text-white font-bold">{state.phone}</span></div>
+                   <div className="flex justify-between border-b border-onyx-800 pb-2"><span className="text-onyx-500">{isArabic ? "الرقم القومي" : "National ID"}</span><span className="text-white font-bold">{state.nationalIdNumber}</span></div>
                 </div>
               </div>
 
-              <label className="flex items-center gap-3 rounded-[1.2rem] border border-dark-200 bg-surface-soft px-4 py-3 text-sm text-dark-700">
-                <input
-                  type="checkbox"
-                  checked={state.acceptedTerms}
-                  onChange={(event) => setState({ ...state, acceptedTerms: event.target.checked })}
-                  className="h-4 w-4 rounded border-dark-300 text-primary-600"
-                />
-                <span>{copy.terms}</span>
+              <label className="flex items-center gap-3 cursor-pointer group onyx-card p-4 border-onyx-700 bg-onyx-800/30">
+                <div className="relative flex h-5 w-5 items-center justify-center">
+                   <input type="checkbox" checked={state.acceptedTerms} onChange={(e) => setState({ ...state, acceptedTerms: e.target.checked })} className="peer h-full w-full opacity-0 absolute cursor-pointer" />
+                   <div className="h-full w-full rounded border border-onyx-700 bg-onyx-800 transition peer-checked:border-gold-500 peer-checked:bg-gold-500" />
+                   <Check className="pointer-events-none absolute h-3.5 w-3.5 text-onyx-950 opacity-0 transition peer-checked:opacity-100" />
+                </div>
+                <span className="text-sm text-onyx-400 group-hover:text-onyx-200 transition">{copy.terms}</span>
               </label>
-            </>
-          ) : null}
+            </div>
+          )}
 
-          <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-            <button
-              type="button"
-              onClick={() => setStep((current) => Math.max(current - 1, 0))}
-              className="inline-flex h-11 items-center gap-2 rounded-full border border-dark-200 px-5 text-sm font-semibold text-dark-700 transition hover:border-dark-400"
-            >
+          <div className="flex items-center justify-between gap-4 pt-4">
+            <button type="button" onClick={() => setStep(s => Math.max(0, s - 1))} className="btn-onyx h-12 flex items-center gap-2">
               {isArabic ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
               {isArabic ? "السابق" : "Back"}
             </button>
-
-            {step < 3 ? (
-              <button
-                type="button"
-                onClick={() => setStep((current) => Math.min(current + 1, 3))}
-                className="inline-flex h-11 items-center gap-2 rounded-full bg-primary-600 px-5 text-sm font-semibold text-white transition hover:bg-primary-700"
-              >
-                {copy.submit}
-                {isArabic ? <ArrowLeft className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={() => void handleWorkerRegister()}
-                disabled={isSubmitting || !state.acceptedTerms}
-                className="inline-flex h-11 items-center gap-2 rounded-full bg-primary-600 px-5 text-sm font-semibold text-white transition hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {isSubmitting ? (isArabic ? "... جاري" : "Submitting...") : isArabic ? "إرسال للمراجعة" : "Submit for review"}
-                {isArabic ? <ArrowLeft className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
-              </button>
-            )}
+            <button 
+               type="button" 
+               onClick={step === 3 ? handleRegister : () => setStep(s => s + 1)} 
+               disabled={isSubmitting || (step === 3 && !state.acceptedTerms)}
+               className="btn-gold h-12 px-8 flex items-center gap-2"
+            >
+              {isSubmitting ? (isArabic ? "جاري..." : "Processing...") : step === 3 ? (isArabic ? "إرسال للمراجعة" : "Submit Review") : (isArabic ? "التالي" : "Next")}
+              {isArabic ? <ArrowLeft className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
+            </button>
           </div>
 
-          {error ? <div className="rounded-[1.4rem] border border-error/30 bg-error/10 px-4 py-3 text-sm text-error">{error}</div> : null}
+          {error && <div className="onyx-card p-4 border-red-500/20 bg-red-500/5 text-red-500 text-center font-bold text-sm">{error}</div>}
         </div>
       )}
-    </div>
-  );
-}
-
-export function ForgotPasswordForm({ locale }: { locale: Locale }) {
-  const copy = authCopy[locale];
-  const isArabic = locale === "ar";
-  const [step, setStep] = useState(0);
-  const [phone, setPhone] = useState("+20");
-  const [otp, setOtp] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [done, setDone] = useState(false);
-
-  if (done) {
-    return (
-      <div className="rounded-[1.6rem] border border-success/30 bg-success/10 p-6 text-start">
-        <ShieldCheck className="h-8 w-8 text-success" />
-        <h2 className="mt-4 text-2xl font-semibold text-dark-950">
-          {isArabic ? "تم تحديث كلمة المرور" : "Password flow completed"}
-        </h2>
-        <p className="mt-3 text-dark-600">{copy.success}</p>
-      </div>
-    );
-  }
-
-  return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-3xl font-semibold text-dark-950">{copy.forgotPasswordTitle}</h2>
-        <p className="mt-3 text-body text-dark-500">
-          {isArabic
-            ? "أدخل رقم الهاتف، استقبل الرمز، ثم اختر كلمة مرور جديدة."
-            : "Enter your phone number, verify the code, and choose a new password."}
-        </p>
-      </div>
-
-      <StepIndicator current={step} total={3} />
-
-      {step === 0 ? (
-        <InputField
-          label={isArabic ? "رقم الهاتف" : "Phone number"}
-          value={phone}
-          onChange={setPhone}
-          placeholder="+20 100 000 0000"
-        />
-      ) : null}
-
-      {step === 1 ? (
-        <div className="space-y-2">
-          <span className="text-sm font-medium text-dark-700">{isArabic ? "رمز التحقق" : "Verification code"}</span>
-          <OtpBoxes value={otp} onChange={setOtp} />
-        </div>
-      ) : null}
-
-      {step === 2 ? (
-        <div className="grid gap-5 sm:grid-cols-2">
-          <InputField
-            label={isArabic ? "كلمة المرور الجديدة" : "New password"}
-            value={password}
-            onChange={setPassword}
-            type="password"
-          />
-          <InputField
-            label={isArabic ? "تأكيد كلمة المرور" : "Confirm password"}
-            value={confirmPassword}
-            onChange={setConfirmPassword}
-            type="password"
-          />
-        </div>
-      ) : null}
-
-      <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-        <button
-          type="button"
-          onClick={() => setStep((current) => Math.max(current - 1, 0))}
-          className="inline-flex h-11 items-center gap-2 rounded-full border border-dark-200 px-5 text-sm font-semibold text-dark-700 transition hover:border-dark-400"
-        >
-          {isArabic ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-          {isArabic ? "السابق" : "Back"}
-        </button>
-
-        {step < 2 ? (
-          <button
-            type="button"
-            onClick={() => setStep((current) => Math.min(current + 1, 2))}
-            className="inline-flex h-11 items-center gap-2 rounded-full bg-primary-600 px-5 text-sm font-semibold text-white transition hover:bg-primary-700"
-          >
-            {copy.submit}
-            {isArabic ? <ArrowLeft className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
-          </button>
-        ) : (
-          <button
-            type="button"
-            onClick={() => setDone(true)}
-            className="inline-flex h-11 items-center gap-2 rounded-full bg-primary-600 px-5 text-sm font-semibold text-white transition hover:bg-primary-700"
-          >
-            {isArabic ? "تحديث كلمة المرور" : "Update password"}
-            {isArabic ? <ArrowLeft className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
-          </button>
-        )}
-      </div>
-    </div>
-  );
-}
-
-export function VerifyOtpForm({ locale }: { locale: Locale }) {
-  const copy = authCopy[locale];
-  const isArabic = locale === "ar";
-  const [otp, setOtp] = useState("");
-  const [seconds, setSeconds] = useState(60);
-  const [done, setDone] = useState(false);
-
-  useEffect(() => {
-    if (seconds === 0) {
-      return;
-    }
-
-    const timer = window.setTimeout(() => setSeconds((current) => current - 1), 1000);
-    return () => window.clearTimeout(timer);
-  }, [seconds]);
-
-  useEffect(() => {
-    if (otp.length === 6) {
-      const timer = window.setTimeout(() => setDone(true), 300);
-      return () => window.clearTimeout(timer);
-    }
-  }, [otp]);
-
-  return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-3xl font-semibold text-dark-950">{copy.otpTitle}</h2>
-        <p className="mt-3 text-body text-dark-500">
-          {isArabic
-            ? "أدخل الرمز المكوّن من 6 أرقام. سيتم التحقق تلقائيًا بعد اكتماله."
-            : "Enter the 6-digit code. Verification will trigger automatically once complete."}
-        </p>
-      </div>
-
-      <OtpBoxes value={otp} onChange={setOtp} />
-
-      <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-dark-500">
-        <p>
-          {copy.timerLabel} <span className="font-semibold text-dark-900">{seconds}s</span>
-        </p>
-        <button
-          type="button"
-          disabled={seconds > 0}
-          onClick={() => {
-            setSeconds(60);
-            setOtp("");
-            setDone(false);
-          }}
-          className="font-semibold text-primary-700 disabled:cursor-not-allowed disabled:text-dark-300"
-        >
-          {copy.resend}
-        </button>
-      </div>
-
-      {done ? (
-        <div className="rounded-[1.4rem] border border-success/30 bg-success/10 px-4 py-3 text-sm text-success">
-          {copy.success}
-        </div>
-      ) : null}
     </div>
   );
 }
@@ -1023,142 +681,77 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
   async function handleRegister() {
     setIsSubmitting(true);
     setError(null);
-
     try {
-      const payload = await postApiData<
-        AuthSuccessResponse,
-        Omit<VendorRegisterState, "acceptedTerms">
-      >("/auth/register/vendor", {
-        storeName: state.storeName,
-        firstName: state.firstName,
-        lastName: state.lastName,
-        phone: state.phone,
-        email: state.email,
-        password: state.password,
-        confirmPassword: state.confirmPassword,
-        governorate: state.governorate,
-        city: state.city,
-        address: state.address,
-        commercialRecord: state.commercialRecord,
-        taxCard: state.taxCard,
-        category: state.category,
-        latitude: state.latitude,
-        longitude: state.longitude
-      });
-
+      const payload = await postApiData<AuthSuccessResponse, any>("/auth/register/vendor", { ...state });
       window.localStorage.removeItem("osta-vendor-register");
       setSubmitted(true);
       applyAuthSuccess(locale, payload, true);
-    } catch (registerError) {
-      setError(registerError instanceof Error ? registerError.message : isArabic ? "تعذر إنشاء الحساب" : "Unable to create account.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : isArabic ? "تعذر إنشاء الحساب" : "Unable to create account.");
     } finally {
       setIsSubmitting(false);
     }
   }
 
-  if (!ready) {
-    return <div className="text-sm text-dark-500">{isArabic ? "جاري التحضير..." : "Preparing form..."}</div>;
-  }
+  if (!ready) return <div className="text-onyx-600 font-bold">{isArabic ? "جاري التحضير..." : "Preparing..."}</div>;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 animate-fadeIn">
       <div>
-        <h2 className="text-3xl font-semibold text-dark-950">{copy.registerVendorTitle}</h2>
-        <p className="mt-3 text-body text-dark-500">
-          {isArabic
-            ? "استمر في إضافة بيانات متجرك ومعلومات الاتصال، سيتم حفظ الخطوات في حال فقدان الاتصال."
-            : "Continue adding your store details. Your progress is saved locally."}
+        <h2 className="text-4xl font-black text-white tracking-tight mb-4">{copy.registerVendorTitle}</h2>
+        <p className="text-onyx-400 leading-relaxed">
+          {isArabic 
+            ? "حوّل متجرك إلى وجهة رقمية لبيع الخامات وقطع الغيار لأفضل الفنيين في مصر." 
+            : "Turn your store into a digital destination for selling materials and spare parts to Egypt's best technicians."}
         </p>
       </div>
 
       <StepIndicator current={step} total={3} />
 
       {submitted ? (
-        <div className="rounded-[1.6rem] border border-success/30 bg-success/10 p-6 text-start">
-          <ShieldCheck className="h-8 w-8 text-success" />
-          <h3 className="mt-4 text-2xl font-semibold text-dark-950">{isArabic ? "تم إرسال الطلب" : "Request sent"}</h3>
-          <p className="mt-3 text-dark-600">{copy.success}</p>
+        <div className="onyx-card p-10 text-center border-success/30 bg-success/5 space-y-4">
+          <ShieldCheck className="h-16 w-16 text-success mx-auto" />
+          <h3 className="text-2xl font-black text-white">{isArabic ? "تم إرسال الطلب!" : "Account Created!"}</h3>
+          <p className="text-onyx-400">{isArabic ? "جاري تحويلك إلى لوحة التحكم..." : "Redirecting to dashboard..."}</p>
         </div>
       ) : (
-        <div className="space-y-5">
-          {step === 0 ? (
-            <>
-              <InputField
-                label={isArabic ? "رقم الهاتف" : "Phone number"}
-                value={state.phone}
-                onChange={(phone) => setState({ ...state, phone })}
-                placeholder="+20 100 000 0000"
-              />
-              <InputField
-                label={isArabic ? "اسم المتجر" : "Store Name"}
-                value={state.storeName}
-                onChange={(storeName) => setState({ ...state, storeName })}
-              />
-              <SelectField
-                label={isArabic ? "تصنيف المتجر" : "Store Category"}
-                value={state.category}
-                options={vendorCategories.map(c => ({ value: c.value, label: isArabic ? c.labelAr : c.labelEn }))}
-                onChange={(cat) => setState({ ...state, category: cat })}
-                placeholder={isArabic ? "اختر تصنيف المتجر" : "Select store category"}
-              />
-            </>
-          ) : null}
+        <div className="space-y-6">
+          {step === 0 && (
+             <>
+                <InputField label={isArabic ? "رقم الهاتف" : "Phone number"} value={state.phone} onChange={(phone) => setState({ ...state, phone })} placeholder="+20 100 000 0000" />
+                <InputField label={isArabic ? "اسم المتجر" : "Store Name"} value={state.storeName} onChange={(n) => setState({ ...state, storeName: n })} />
+                <SelectField
+                   label={isArabic ? "تصنيف المتجر" : "Store Category"}
+                   value={state.category}
+                   options={vendorCategories.map(c => ({ value: c.value, label: isArabic ? c.labelAr : c.labelEn }))}
+                   onChange={(cat) => setState({ ...state, category: cat })}
+                   placeholder={isArabic ? "اختر تصنيف المتجر" : "Select store category"}
+                />
+             </>
+          )}
 
-          {step === 1 ? (
+          {step === 1 && (
             <>
-              <div className="grid gap-5 sm:grid-cols-2">
-                <InputField
-                  label={isArabic ? "الاسم الأول" : "First name"}
-                  value={state.firstName}
-                  onChange={(firstName) => setState({ ...state, firstName })}
-                />
-                <InputField
-                  label={isArabic ? "اسم العائلة" : "Last name"}
-                  value={state.lastName}
-                  onChange={(lastName) => setState({ ...state, lastName })}
-                />
+              <div className="grid gap-6 sm:grid-cols-2">
+                <InputField label={isArabic ? "الاسم الأول" : "First name"} value={state.firstName} onChange={(firstName) => setState({ ...state, firstName })} />
+                <InputField label={isArabic ? "اسم العائلة" : "Last name"} value={state.lastName} onChange={(lastName) => setState({ ...state, lastName })} />
               </div>
-              <InputField
-                label={isArabic ? "البريد الإلكتروني" : "Email"}
-                value={state.email}
-                onChange={(email) => setState({ ...state, email })}
-                type="email"
-              />
-              <div className="grid gap-5 sm:grid-cols-2">
-                <InputField
-                  label={isArabic ? "كلمة المرور" : "Password"}
-                  value={state.password}
-                  onChange={(password) => setState({ ...state, password })}
-                  type="password"
-                />
-                <InputField
-                  label={isArabic ? "تأكيد كلمة المرور" : "Confirm password"}
-                  value={state.confirmPassword}
-                  onChange={(confirmPassword) => setState({ ...state, confirmPassword })}
-                  type="password"
-                />
+              <InputField label={isArabic ? "البريد الإلكتروني" : "Email"} value={state.email} onChange={(email) => setState({ ...state, email })} type="email" />
+              <div className="grid gap-6 sm:grid-cols-2">
+                <InputField label={isArabic ? "كلمة المرور" : "Password"} value={state.password} onChange={(password) => setState({ ...state, password })} type="password" />
+                <InputField label={isArabic ? "تأكيد كلمة المرور" : "Confirm password"} value={state.confirmPassword} onChange={(confirmPassword) => setState({ ...state, confirmPassword })} type="password" />
               </div>
             </>
-          ) : null}
+          )}
 
-          {step === 2 ? (
+          {step === 2 && (
             <div className="space-y-6">
-              <div className="grid gap-5 sm:grid-cols-2">
-                <ImageUpload
-                  isArabic={isArabic}
-                  label={isArabic ? "صورة السجل التجاري" : "Commercial Record"}
-                  value={state.commercialRecord}
-                  onChange={(url) => setState({ ...state, commercialRecord: url })}
-                />
-                <ImageUpload
-                  isArabic={isArabic}
-                  label={isArabic ? "صورة البطاقة الضريبية" : "Tax Card"}
-                  value={state.taxCard}
-                  onChange={(url) => setState({ ...state, taxCard: url })}
-                />
+              <div className="grid gap-6 sm:grid-cols-2">
+                <ImageUpload isArabic={isArabic} label={isArabic ? "السجل التجاري" : "Commercial Record"} value={state.commercialRecord} onChange={(url) => setState({ ...state, commercialRecord: url })} />
+                <ImageUpload isArabic={isArabic} label={isArabic ? "البطاقة الضريبية" : "Tax Card"} value={state.taxCard} onChange={(url) => setState({ ...state, taxCard: url })} />
               </div>
 
-              <div className="grid gap-5 sm:grid-cols-2">
+              <div className="grid gap-6 sm:grid-cols-2">
                 <SelectField
                   label={isArabic ? "المحافظة" : "Governorate"}
                   value={state.governorate}
@@ -1177,80 +770,146 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
               </div>
 
               <div className="space-y-3">
-                <span className="text-sm font-medium text-dark-700">{isArabic ? "موقع المتجر على الخريطة" : "Store location on map"}</span>
-                <MapPicker 
-                  lat={state.latitude} 
-                  lng={state.longitude} 
-                  isArabic={isArabic}
-                  onChange={(lat, lng, details) => {
-                    const newState = { ...state, latitude: lat, longitude: lng };
-                    if (details) {
-                      const govMatch = egyptianGovernorates.find(g => 
-                        details.state?.includes(g.labelEn) || details.city?.includes(g.labelEn) ||
-                        details.state?.includes(g.labelAr) || details.city?.includes(g.labelAr)
-                      );
-                      if (govMatch) newState.governorate = govMatch.value;
-                    }
-                    setState(newState);
-                  }}
-                />
+                <span className="text-sm font-bold text-onyx-300 tracking-wide">{isArabic ? "تحديد الموقع على الخريطة" : "Store Location"}</span>
+                <div className="rounded-2xl overflow-hidden border border-onyx-700 h-64 gold-border-glow">
+                  <MapPicker lat={state.latitude} lng={state.longitude} isArabic={isArabic} onChange={(lat, lng) => setState({ ...state, latitude: lat, longitude: lng })} />
+                </div>
               </div>
 
-              <InputField
-                label={isArabic ? "العنوان التفصيلي للمتجر" : "Detailed store address"}
-                value={state.address}
-                onChange={(address) => setState({ ...state, address })}
-                textarea
-                rows={2}
-              />
+              <InputField label={isArabic ? "العنوان التفصيلي" : "Detailed address"} value={state.address} onChange={(address) => setState({ ...state, address })} textarea rows={2} />
 
-              <label className="flex items-center gap-3 rounded-[1.2rem] border border-dark-200 bg-surface-soft px-4 py-3 text-sm text-dark-700">
-                <input
-                  type="checkbox"
-                  checked={state.acceptedTerms}
-                  onChange={(event) => setState({ ...state, acceptedTerms: event.target.checked })}
-                  className="h-4 w-4 rounded border-dark-300 text-primary-600"
-                />
-                <span>{copy.terms}</span>
+              <label className="flex items-center gap-3 cursor-pointer group onyx-card p-4 border-onyx-700 bg-onyx-800/30">
+                <div className="relative flex h-5 w-5 items-center justify-center">
+                   <input type="checkbox" checked={state.acceptedTerms} onChange={(e) => setState({ ...state, acceptedTerms: e.target.checked })} className="peer h-full w-full opacity-0 absolute cursor-pointer" />
+                   <div className="h-full w-full rounded border border-onyx-700 bg-onyx-800 transition peer-checked:border-gold-500 peer-checked:bg-gold-500" />
+                   <Check className="pointer-events-none absolute h-3.5 w-3.5 text-onyx-950 opacity-0 transition peer-checked:opacity-100" />
+                </div>
+                <span className="text-sm text-onyx-400 group-hover:text-onyx-200 transition">{copy.terms}</span>
               </label>
             </div>
-          ) : null}
+          )}
 
-          <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-            <button
-              type="button"
-              onClick={() => setStep((current) => Math.max(current - 1, 0))}
-              className="inline-flex h-11 items-center gap-2 rounded-full border border-dark-200 px-5 text-sm font-semibold text-dark-700 transition hover:border-dark-400"
-            >
+          <div className="flex items-center justify-between gap-4 pt-4">
+            <button type="button" onClick={() => setStep(s => Math.max(0, s - 1))} className="btn-onyx h-12 flex items-center gap-2">
               {isArabic ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
               {isArabic ? "السابق" : "Back"}
             </button>
-
-            {step < 2 ? (
-              <button
-                type="button"
-                onClick={() => setStep((current) => Math.min(current + 1, 2))}
-                className="inline-flex h-11 items-center gap-2 rounded-full bg-primary-600 px-5 text-sm font-semibold text-white transition hover:bg-primary-700"
-              >
-                {copy.submit}
-                {isArabic ? <ArrowLeft className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={() => void handleRegister()}
-                disabled={isSubmitting || !state.acceptedTerms}
-                className="inline-flex h-11 items-center gap-2 rounded-full bg-primary-600 px-5 text-sm font-semibold text-white transition hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {isSubmitting ? (isArabic ? "... جاري" : "Submitting...") : isArabic ? "تسجيل المورد" : "Register Vendor"}
-                {isArabic ? <ArrowLeft className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
-              </button>
-            )}
+            <button 
+               type="button" 
+               onClick={step === 2 ? handleRegister : () => setStep(s => s + 1)} 
+               disabled={isSubmitting || (step === 2 && !state.acceptedTerms)}
+               className="btn-gold h-12 px-8 flex items-center gap-2"
+            >
+              {isSubmitting ? (isArabic ? "جاري..." : "Processing...") : step === 2 ? (isArabic ? "إنشاء الحساب" : "Create Account") : (isArabic ? "التالي" : "Next")}
+              {isArabic ? <ArrowLeft className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
+            </button>
           </div>
 
-          {error ? <div className="rounded-[1.4rem] border border-error/30 bg-error/10 px-4 py-3 text-sm text-error">{error}</div> : null}
+          {error && <div className="onyx-card p-4 border-red-500/20 bg-red-500/5 text-red-500 text-center font-bold text-sm">{error}</div>}
         </div>
       )}
+    </div>
+  );
+}
+
+export function ForgotPasswordForm({ locale }: { locale: Locale }) {
+  const copy = authCopy[locale];
+  const isArabic = locale === "ar";
+  const [step, setStep] = useState(0);
+  const [phone, setPhone] = useState("+20");
+  const [otp, setOtp] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [done, setDone] = useState(false);
+
+  if (done) return (
+    <div className="onyx-card p-10 text-center border-success/30 bg-success/5 space-y-4">
+      <ShieldCheck className="h-16 w-16 text-success mx-auto" />
+      <h3 className="text-2xl font-black text-white">{isArabic ? "تم تحديث كلمة المرور!" : "Password Updated!"}</h3>
+      <p className="text-onyx-400">{copy.success}</p>
+    </div>
+  );
+
+  return (
+    <div className="space-y-8 animate-fadeIn">
+      <div>
+        <h2 className="text-4xl font-black text-white tracking-tight mb-4">{copy.forgotPasswordTitle}</h2>
+        <p className="text-onyx-400 leading-relaxed">{isArabic ? "أدخل رقم هاتفك لاستعادة الوصول إلى حسابك." : "Enter your phone number to regain access to your account."}</p>
+      </div>
+
+      <StepIndicator current={step} total={3} />
+
+      <div className="space-y-6">
+        {step === 0 && <InputField label={isArabic ? "رقم الهاتف" : "Phone number"} value={phone} onChange={setPhone} placeholder="+20 100 000 0000" />}
+        {step === 1 && (
+           <div className="space-y-4">
+              <span className="text-sm font-bold text-onyx-300 tracking-wide">{isArabic ? "رمز التحقق" : "Verification Code"}</span>
+              <OtpBoxes value={otp} onChange={setOtp} />
+           </div>
+        )}
+        {step === 2 && (
+          <div className="grid gap-6 sm:grid-cols-2">
+            <InputField label={isArabic ? "كلمة المرور الجديدة" : "New password"} value={password} onChange={setPassword} type="password" />
+            <InputField label={isArabic ? "تأكيد كلمة المرور" : "Confirm password"} value={confirmPassword} onChange={setConfirmPassword} type="password" />
+          </div>
+        )}
+
+        <div className="flex items-center justify-between gap-4 pt-4">
+          <button type="button" onClick={() => setStep(s => Math.max(0, s - 1))} className="btn-onyx h-12 flex items-center gap-2">
+            {isArabic ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+            {isArabic ? "السابق" : "Back"}
+          </button>
+          <button 
+             type="button" 
+             onClick={step === 2 ? () => setDone(true) : () => setStep(s => s + 1)} 
+             className="btn-gold h-12 px-8 flex items-center gap-2"
+          >
+            {step === 2 ? (isArabic ? "تحديث" : "Update") : (isArabic ? "التالي" : "Next")}
+            {isArabic ? <ArrowLeft className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function VerifyOtpForm({ locale }: { locale: Locale }) {
+  const copy = authCopy[locale];
+  const isArabic = locale === "ar";
+  const [otp, setOtp] = useState("");
+  const [seconds, setSeconds] = useState(60);
+  const [done, setDone] = useState(false);
+
+  useEffect(() => {
+    if (seconds > 0) {
+      const timer = setTimeout(() => setSeconds(s => s - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [seconds]);
+
+  useEffect(() => {
+    if (otp.length === 6) setDone(true);
+  }, [otp]);
+
+  return (
+    <div className="space-y-8 animate-fadeIn">
+      <div>
+        <h2 className="text-4xl font-black text-white tracking-tight mb-4">{copy.otpTitle}</h2>
+        <p className="text-onyx-400 leading-relaxed">{isArabic ? "لقد أرسلنا رمزاً مكوّناً من 6 أرقام إلى هاتفك." : "We've sent a 6-digit code to your phone."}</p>
+      </div>
+
+      <div className="space-y-8">
+         <OtpBoxes value={otp} onChange={setOtp} />
+         
+         <div className="flex items-center justify-between text-sm">
+            <p className="text-onyx-500">{copy.timerLabel} <span className="text-gold-500 font-black">{seconds}s</span></p>
+            <button disabled={seconds > 0} onClick={() => setSeconds(60)} className="text-gold-500 font-bold hover:text-gold-400 disabled:text-onyx-700 transition">
+               {copy.resend}
+            </button>
+         </div>
+
+         {done && <div className="onyx-card p-4 border-success/30 bg-success/5 text-success text-center font-bold">{copy.success}</div>}
+      </div>
     </div>
   );
 }
