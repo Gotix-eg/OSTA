@@ -425,7 +425,7 @@ function ClientDirectOrdersBlock({ locale }: { locale: Locale }) {
 export function ClientRequestsPage({ locale, initialData }: { locale: Locale; initialData: ClientRequestListItem[] }) {
   const isArabic = locale === "ar";
   const searchParams = useSearchParams();
-  const tabParam = searchParams.get("tab") as "services" | "custom_requests" | "direct_orders" | null;
+  const tabParam = searchParams?.get("tab") as "services" | "custom_requests" | "direct_orders" | null;
   
   const [activeTab, setActiveTab] = useState<"services" | "custom_requests" | "direct_orders">(tabParam || "services");
   
