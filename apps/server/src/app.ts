@@ -25,10 +25,10 @@ export function createApp() {
   app.use(
     cors({
       origin: (origin, callback) => {
-        // allow requests with no origin (Postman, curl, server-to-server)
-        if (!origin) return callback(null, true);
-        if (ALLOWED_ORIGINS.includes(origin)) return callback(null, true);
-        if (VERCEL_PREVIEW_REGEX.test(origin)) return callback(null, true);
+        // allow requests with no origin or from the same domain
+        if (!origin || ALLOWED_ORIGINS.includes(origin) || VERCEL_PREVIEW_REGEX.test(origin)) {
+          return callback(null, true);
+        }
         callback(new Error(`CORS: origin ${origin} not allowed`));
       },
       credentials: true
