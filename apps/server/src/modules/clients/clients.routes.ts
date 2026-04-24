@@ -320,7 +320,8 @@ router.get("/favorites", catchAsync(async (request: Request, response: Response)
       worker: {
         include: {
           user: { select: { firstName: true, lastName: true } },
-          specializations: { include: { service: true } }
+          specializations: { include: { service: true } },
+          workAreas: true
         }
       }
     }
