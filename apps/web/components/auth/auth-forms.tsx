@@ -170,16 +170,16 @@ function StepIndicator({ current, total }: { current: number; total: number }) {
           <div key={index} className="flex flex-1 items-center gap-3">
             <div
               className={cn(
-                "flex h-10 w-10 items-center justify-center rounded-full border text-sm font-semibold transition",
+                "flex h-10 w-10 items-center justify-center rounded-full border text-sm font-semibold transition duration-500",
                 active
-                  ? "border-primary-600 bg-primary-600 text-white"
-                  : "border-dark-200 bg-surface-soft text-dark-400"
+                  ? "border-gold-500 bg-gold-500 text-onyx-950 shadow-gold/20 shadow-lg"
+                  : "border-onyx-700 bg-onyx-800 text-onyx-500"
               )}
             >
               {active && index < current ? <Check className="h-4 w-4" /> : index + 1}
             </div>
             {index < total - 1 ? (
-              <div className={cn("h-px flex-1", active ? "bg-primary-300" : "bg-dark-200")} />
+              <div className={cn("h-0.5 flex-1 rounded-full", active ? "bg-gold-500/50" : "bg-onyx-800")} />
             ) : null}
           </div>
         );
@@ -207,14 +207,14 @@ function InputField({
 }) {
   return (
     <label className="block space-y-2 text-start">
-      <span className="text-sm font-medium text-dark-700">{label}</span>
+      <span className="text-sm font-bold text-onyx-300 tracking-wide">{label}</span>
       {textarea ? (
         <textarea
           value={value}
           rows={rows}
           onChange={(event) => onChange(event.target.value)}
           placeholder={placeholder}
-          className="min-h-28 w-full rounded-[1.2rem] border border-dark-200 bg-white px-4 py-3 text-body text-dark-950 transition placeholder:text-dark-400 focus:border-primary-400 focus:ring-2 focus:ring-primary-500/30"
+          className="min-h-28 w-full rounded-2xl border border-onyx-700 bg-onyx-800/50 px-5 py-4 text-white transition-all placeholder:text-onyx-600 focus:border-gold-500/50 focus:ring-4 focus:ring-gold-500/10 outline-none"
         />
       ) : (
         <input
@@ -222,7 +222,7 @@ function InputField({
           value={value}
           onChange={(event) => onChange(event.target.value)}
           placeholder={placeholder}
-          className="h-12 w-full rounded-[1.2rem] border border-dark-200 bg-white px-4 text-body text-dark-950 transition placeholder:text-dark-400 focus:border-primary-400 focus:ring-2 focus:ring-primary-500/30"
+          className="h-14 w-full rounded-2xl border border-onyx-700 bg-onyx-800/50 px-5 text-white transition-all placeholder:text-onyx-600 focus:border-gold-500/50 focus:ring-4 focus:ring-gold-500/10 outline-none"
         />
       )}
     </label>
@@ -260,7 +260,7 @@ function OtpBoxes({ value, onChange }: { value: string; onChange: (value: string
               refs.current[index - 1]?.focus();
             }
           }}
-          className="h-14 w-12 rounded-[1.1rem] border border-dark-200 bg-white text-center text-xl font-semibold text-dark-950 transition focus:border-primary-400 focus:ring-2 focus:ring-primary-500/30 sm:w-14"
+          className="h-16 w-12 rounded-2xl border border-onyx-700 bg-onyx-800 text-center text-2xl font-black text-gold-500 transition-all focus:border-gold-500 focus:ring-4 focus:ring-gold-500/10 outline-none sm:w-16"
         />
       ))}
     </div>
@@ -316,11 +316,11 @@ export function LoginForm({ locale }: { locale: Locale }) {
   return (
     <div className="space-y-6">
       <div>
-        <span className="inline-flex rounded-full bg-primary-50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-primary-700">
+        <span className="inline-flex rounded-full bg-gold-500/10 px-4 py-2 text-xs font-black uppercase tracking-[0.3em] text-gold-500 mb-4">
           {copy.intro}
         </span>
-        <h2 className="mt-4 text-3xl font-semibold text-dark-950">{copy.loginTitle}</h2>
-        <p className="mt-3 text-body text-dark-500">{copy.loginBody}</p>
+        <h2 className="text-3xl font-black text-white tracking-tight">{copy.loginTitle}</h2>
+        <p className="mt-4 text-onyx-400 leading-relaxed">{copy.loginBody}</p>
       </div>
 
       <div className="grid gap-5">
@@ -369,7 +369,7 @@ export function LoginForm({ locale }: { locale: Locale }) {
           type="button"
           onClick={() => void handleLogin()}
           disabled={isSubmitting}
-          className="inline-flex h-12 items-center justify-center rounded-[1.2rem] bg-primary-600 px-6 text-sm font-semibold text-white transition hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-60"
+          className="btn-gold h-14 text-lg"
         >
           {isSubmitting ? (isArabic ? "... جاري" : "Signing in...") : isArabic ? "تسجيل الدخول" : "Sign in"}
         </button>

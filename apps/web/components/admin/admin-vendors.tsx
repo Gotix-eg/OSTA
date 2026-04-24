@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, RotateCcw, User, Phone, Search, Loader2, Store } from "lucide-react";
+import { Search, Loader2, Store, Phone, User, ShieldCheck, RotateCcw } from "lucide-react";
 import { fetchApiData, postApiData } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
@@ -12,8 +12,7 @@ type Vendor = {
   shopNameAr: string | null;
   orderQuota: number;
   trialExpiresAt: string | null;
-  subscriptionExpiresAt: string | null;
-  totalOrders: number;
+  verificationStatus: string;
   user: {
     firstName: string;
     lastName: string;
@@ -29,10 +28,7 @@ export function AdminVendorsManagement({ locale }: { locale: Locale }) {
   const [actionId, setActionId] = useState<string | null>(null);
 
   useEffect(() => {
-    console.log("AdminVendorsManagement: Fetching vendors...");
     fetchApiData<{ data: Vendor[] }>("/admin/vendors", { data: [] }).then(res => {
-      console.log("AdminVendorsManagement: Received data:", res);
-      // Ensure we extract data if it's wrapped in an envelope or just an array
       const vendorList = Array.isArray(res) ? res : (res as any).data || [];
       setVendors(vendorList);
       setLoading(false);
@@ -41,28 +37,6 @@ export function AdminVendorsManagement({ locale }: { locale: Locale }) {
       setLoading(false);
     });
   }, []);
-
-  async function handleAddQuota(id: string) {
-    setActionId(id);
-    try {
-      await postApiData(`/admin/vendors/${id}/quota`, {});
-      setVendors(prev => prev.map(v => v.id === id ? { ...v, orderQuota: v.orderQuota + 10 } : v));
-    } finally {
-      setActionId(null);
-    }
-  }
-
-  async function handleResetTrial(id: string) {
-    setActionId(id);
-    try {
-      await postApiData(`/admin/vendors/${id}/reset-trial`, {});
-      const now = new Date();
-      const newExpiry = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString();
-      setVendors(prev => prev.map(v => v.id === id ? { ...v, trialExpiresAt: newExpiry } : v));
-    } finally {
-      setActionId(null);
-    }
-  }
 
   async function handleVerify(id: string) {
     setActionId(id);
@@ -83,19 +57,23 @@ export function AdminVendorsManagement({ locale }: { locale: Locale }) {
   );
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="space-y-8 animate-slideUp">
+      <div className="onyx-card p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 border-gold-500/10">
         <div>
-          <h1 className="text-2xl font-bold text-dark-950">{isArabic ? "إدارة المتاجر" : "Vendor Management"}</h1>
-          <p className="text-sm text-dark-500">{isArabic ? `إجمالي المتاجر: ${vendors.length}` : `Total Vendors: ${vendors.length}`}</p>
+          <h1 className="text-3xl font-black text-white mb-2 tracking-tight">
+            {isArabic ? "إدارة المتاجر" : "Vendor Management"}
+          </h1>
+          <p className="text-onyx-400 text-sm font-medium">
+            {isArabic ? `إجمالي المتاجر: ${vendors.length}` : `Total Vendors: ${vendors.length}`}
+          </p>
         </div>
         
-        <div className="relative w-full sm:w-72">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-dark-400" />
+        <div className="relative w-full md:w-96">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-onyx-500" />
           <input 
             type="text" 
-            placeholder={isArabic ? "بحث بالاسم أو الرقم..." : "Search by name or phone..."}
-            className="w-full pl-10 pr-4 py-2 rounded-xl border border-dark-200 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 text-sm"
+            placeholder={isArabic ? "بحث باسم المتجر أو المالك..." : "Search by store or owner..."}
+            className="w-full bg-onyx-900/50 border border-onyx-700 rounded-2xl pl-12 pr-6 py-4 text-white focus:border-gold-500/50 focus:ring-4 focus:ring-gold-500/5 transition-all outline-none"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -103,106 +81,70 @@ export function AdminVendorsManagement({ locale }: { locale: Locale }) {
       </div>
 
       {loading ? (
-        <div className="flex justify-center py-20">
-          <Loader2 className="h-8 w-8 animate-spin text-primary-600" />
+        <div className="flex justify-center py-32">
+          <Loader2 className="h-10 w-10 animate-spin text-gold-500" />
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-4">
+        <div className="grid gap-6">
           {filtered.map(vendor => {
             const isTrialActive = vendor.trialExpiresAt && new Date(vendor.trialExpiresAt) > new Date();
             const trialDaysLeft = vendor.trialExpiresAt ? Math.ceil((new Date(vendor.trialExpiresAt).getTime() - new Date().getTime()) / (1000 * 3600 * 24)) : 0;
 
             return (
-              <div key={vendor.id} className="bg-white rounded-2xl border border-dark-100 p-5 shadow-sm hover:shadow-md transition">
-                <div className="flex flex-wrap items-start justify-between gap-4">
-                  <div className="flex items-center gap-4">
-                    <div className="h-12 w-12 rounded-xl bg-primary-50 flex items-center justify-center text-primary-600">
-                      <Store className="h-6 w-6" />
+              <div key={vendor.id} className="onyx-card p-6 group hover:border-gold-500/30 transition-all duration-500">
+                <div className="flex flex-wrap items-center justify-between gap-6">
+                  <div className="flex items-center gap-6">
+                    <div className="h-16 w-16 rounded-2xl bg-onyx-800 flex items-center justify-center text-gold-500 group-hover:scale-110 transition-transform duration-500">
+                      <Store className="h-8 w-8" />
                     </div>
                     <div>
-                      <h3 className="font-bold text-dark-950">{isArabic ? (vendor.shopNameAr || vendor.shopName) : vendor.shopName}</h3>
-                      <div className="flex items-center gap-2 text-xs text-dark-500 mt-1">
-                        <User className="h-3 w-3" />
-                        <span>{vendor.user.firstName} {vendor.user.lastName}</span>
-                        <span className="mx-1">•</span>
-                        <Phone className="h-3 w-3" />
-                        <span>{vendor.user.phone}</span>
+                      <h3 className="text-xl font-bold text-white group-hover:text-gold-500 transition-colors">
+                        {isArabic ? (vendor.shopNameAr || vendor.shopName) : vendor.shopName}
+                      </h3>
+                      <div className="flex items-center gap-4 text-onyx-400 mt-2 text-sm">
+                        <span className="flex items-center gap-1.5"><User className="h-3.5 w-3.5" /> {vendor.user.firstName}</span>
+                        <span className="flex items-center gap-1.5"><Phone className="h-3.5 w-3.5" /> {vendor.user.phone}</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-2">
+                  <div className="flex items-center gap-4">
                     {isTrialActive ? (
-                      <span className="px-3 py-1 bg-blue-50 text-blue-700 text-xs font-bold rounded-full border border-blue-100">
+                      <div className="px-4 py-2 bg-gold-500/10 text-gold-500 text-xs font-black uppercase tracking-widest rounded-xl border border-gold-500/20">
                         {isArabic ? `${trialDaysLeft} يوم تجربة` : `${trialDaysLeft}d Trial`}
-                      </span>
+                      </div>
                     ) : (
-                      <span className={cn(
-                        "px-3 py-1 text-xs font-bold rounded-full border",
-                        vendor.orderQuota > 0 ? "bg-success/10 text-success border-success/20" : "bg-error/10 text-error border-error/20"
+                      <div className={cn(
+                        "px-4 py-2 text-xs font-black uppercase tracking-widest rounded-xl border",
+                        vendor.orderQuota > 0 ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" : "bg-red-500/10 text-red-500 border-red-500/20"
                       )}>
                         {isArabic ? `رصيد: ${vendor.orderQuota}` : `Quota: ${vendor.orderQuota}`}
-                      </span>
+                      </div>
                     )}
- 
-                    <div className="flex items-center gap-2 ml-2">
-                       {(vendor as any).verificationStatus !== "VERIFIED" && (
-                         <>
-                           <button 
-                             onClick={() => alert(isArabic ? "عرض السجل التجاري والبطاقة الضريبية..." : "Viewing Commercial Register & Tax Card...")}
-                             className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 text-gray-700 text-xs font-bold rounded-xl hover:bg-gray-200 transition"
-                           >
-                             <User className="h-4 w-4" />
-                             {isArabic ? "المستندات" : "Docs"}
-                           </button>
-                           <button 
-                             onClick={() => handleVerify(vendor.id)}
-                             disabled={actionId === vendor.id}
-                             className="flex items-center gap-2 px-3 py-1.5 bg-sun-500 text-white text-xs font-bold rounded-xl hover:bg-sun-600 transition disabled:opacity-50"
-                             title={isArabic ? "توثيق الحساب" : "Verify Store"}
-                           >
-                             {actionId === vendor.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
-                             {isArabic ? "توثيق" : "Verify"}
-                           </button>
-                         </>
+
+                    <div className="flex items-center gap-3">
+                       {vendor.verificationStatus !== "VERIFIED" && (
+                         <button 
+                           onClick={() => handleVerify(vendor.id)}
+                           disabled={actionId === vendor.id}
+                           className="btn-gold py-2 px-6 text-sm"
+                         >
+                           {actionId === vendor.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4 mr-2" />}
+                           {isArabic ? "توثيق المتجر" : "Verify Store"}
+                         </button>
                        )}
-                       <button 
-                         onClick={() => handleAddQuota(vendor.id)}
-                         disabled={actionId === vendor.id}
-                         className="p-2 text-success hover:bg-success/10 rounded-lg transition disabled:opacity-50"
-                         title={isArabic ? "إضافة +10 أوردرات" : "Add +10 Orders"}
-                       >
-                         {actionId === vendor.id ? <Loader2 className="h-5 w-5 animate-spin" /> : <Plus className="h-5 w-5" />}
-                       </button>
-                       <button 
-                         onClick={() => handleResetTrial(vendor.id)}
-                         disabled={actionId === vendor.id}
-                         className="p-2 text-primary-600 hover:bg-primary-50 rounded-lg transition disabled:opacity-50"
-                         title={isArabic ? "تجديد الفترة التجريبية" : "Reset Trial"}
-                       >
-                         <RotateCcw className="h-5 w-5" />
+                       <button className="btn-onyx p-3 border-onyx-700">
+                          <RotateCcw className="h-5 w-5 text-onyx-400" />
                        </button>
                     </div>
                   </div>
-                </div>
- 
-                <div className="mt-4 pt-4 border-t border-dark-50 flex justify-between items-center text-xs">
-                   <div className="flex items-center gap-4">
-                     <span className="text-dark-400">{isArabic ? "إجمالي الأوردرات المكتملة:" : "Total Completed Orders:"} <strong className="text-dark-900">{vendor.totalOrders}</strong></span>
-                     <span className={cn(
-                        "px-2 py-0.5 rounded text-[10px] font-bold uppercase",
-                        (vendor as any).verificationStatus === "VERIFIED" ? "bg-success/10 text-success" : "bg-sun-400/10 text-sun-700"
-                     )}>
-                       {(vendor as any).verificationStatus || "PENDING"}
-                     </span>
-                   </div>
                 </div>
               </div>
             );
           })}
 
           {filtered.length === 0 && (
-            <div className="text-center py-20 text-dark-500">
+            <div className="onyx-card p-20 text-center text-onyx-500 font-medium border-dashed border-onyx-700">
                {isArabic ? "لا توجد نتائج بحث" : "No vendors found"}
             </div>
           )}
