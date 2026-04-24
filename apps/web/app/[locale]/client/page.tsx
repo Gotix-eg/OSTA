@@ -2,7 +2,6 @@ import { notFound } from "next/navigation";
 
 import { ClientDashboardHome } from "@/components/dashboard/dashboard-pages";
 import { DashboardShell } from "@/components/dashboard/dashboard-shell";
-import { getClientDashboardData } from "@/lib/dashboard-data";
 import { isLocale } from "@/lib/locales";
 
 export const dynamic = "force-dynamic";
@@ -14,11 +13,9 @@ export default async function ClientDashboardPage({ params }: { params: Promise<
     notFound();
   }
 
-  const data = await getClientDashboardData();
-
   return (
     <DashboardShell locale={locale} role="client">
-      <ClientDashboardHome locale={locale} initialData={data} />
+      <ClientDashboardHome locale={locale} />
     </DashboardShell>
   );
 }
