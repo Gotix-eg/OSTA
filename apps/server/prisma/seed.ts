@@ -18,47 +18,37 @@ const CORE_CATEGORIES = [
 ];
 
 async function main() {
-  console.log("🧹 Starting Clean State Seed...");
+  console.log("🔄 Starting Production-Safe Sync...");
 
-  // 1. Wipe everything to ensure no mock data survives
-  // Ordered to avoid foreign key constraints
-  const tablenames = [
-    "MaterialOffer", "MaterialRequest", "WalletTransaction", "Notification",
-    "Message", "Review", "Warranty", "Complaint", "Invoice", "RequestStatusHistory",
-    "RequestOffer", "ServiceRequest", "WorkerSpecialization", "WorkerArea",
-    "WorkSchedule", "PortfolioItem", "WorkerBadge", "WorkerTool", "BankAccount",
-    "FavoriteWorker", "Address", "OtpCode", "Session", "ClientProfile",
-    "WorkerProfile", "VendorProfile", "User", "Service", "ServiceCategory",
-    "SystemSetting"
+  // 1. Seed System Settings (Idempotent)
+  console.log("⚙️ Syncing System Settings...");
+  const settings = [
+    { key: "platform_commission_rate", value: "15", type: "number" },
+    { key: "worker_trial_days", value: "30", type: "number" },
+    { key: "vendor_trial_days", value: "30", type: "number" },
+    { key: "initial_order_quota", value: "10", type: "number" },
+    { key: "min_withdrawal_amount", value: "500", type: "number" },
   ];
 
-  for (const tablename of tablenames) {
-    try {
-      await (prisma as any)[tablename.charAt(0).toLowerCase() + tablename.slice(1)].deleteMany();
-    } catch (e) {
-      // Some tables might not exist or be named differently in the schema proxy
-    }
+  for (const setting of settings) {
+    await prisma.systemSetting.upsert({
+      where: { key: setting.key },
+      update: {},
+      create: setting,
+    });
   }
 
-  console.log("✅ Database Wiped.");
-
-  // 2. Seed System Settings
-  console.log("⚙️ Seeding System Settings...");
-  await prisma.systemSetting.createMany({
-    data: [
-      { key: "platform_commission_rate", value: "15", type: "number" },
-      { key: "worker_trial_days", value: "30", type: "number" },
-      { key: "vendor_trial_days", value: "30", type: "number" },
-      { key: "initial_order_quota", value: "10", type: "number" },
-      { key: "min_withdrawal_amount", value: "500", type: "number" },
-    ]
-  });
-
-  // 3. Seed Categories & Initial Services
-  console.log("🏗️ Seeding Core Categories & Services...");
+  // 2. Seed Categories & Initial Services (Idempotent)
+  console.log("🏗️ Syncing Core Categories & Services...");
   for (const cat of CORE_CATEGORIES) {
-    const category = await prisma.serviceCategory.create({
-      data: {
+    const category = await prisma.serviceCategory.upsert({
+      where: { slug: cat.slug },
+      update: {
+        nameAr: cat.nameAr,
+        nameEn: cat.nameEn,
+        icon: cat.icon,
+      },
+      create: {
         nameAr: cat.nameAr,
         nameEn: cat.nameEn,
         slug: cat.slug,
@@ -67,41 +57,49 @@ async function main() {
       }
     });
 
-    // Create a default generic service for each category
-    await prisma.service.create({
-      data: {
+    // Create a default generic service for each category if it doesn't exist
+    const serviceSlug = `${cat.slug}-general`;
+    await prisma.service.upsert({
+      where: { slug: serviceSlug },
+      update: {},
+      create: {
         categoryId: category.id,
         nameAr: `خدمة ${cat.nameAr} شاملة`,
         nameEn: `General ${cat.nameEn} Service`,
-        slug: `${cat.slug}-general`,
+        slug: serviceSlug,
         isActive: true,
         warrantyDays: 30,
       }
     });
   }
 
-  // 4. Seed Super Admin
-  console.log("👤 Seeding Super Admin...");
-  const adminPassword = await hashPassword("Letmein@OSTA2026");
-  await prisma.user.create({
-    data: {
-      phone: "+201009410112",
-      email: "admin@osta.eg",
-      passwordHash: adminPassword,
-      firstName: "Admin",
-      lastName: "OSTA",
-      role: UserRole.SUPER_ADMIN,
-      status: UserStatus.ACTIVE,
-      phoneVerified: true,
-    }
+  // 3. Seed Super Admin (Idempotent)
+  console.log("👤 Syncing Super Admin...");
+  const adminEmail = "admin@osta.eg";
+  const existingAdmin = await prisma.user.findUnique({
+    where: { email: adminEmail }
   });
 
-  console.log("🚀 Seed Completed Successfully.");
-  console.log("-----------------------------------");
-  console.log("SUPER ADMIN ACCESS:");
-  console.log("Phone: +201009410112");
-  console.log("Pass: Letmein@OSTA2026");
-  console.log("-----------------------------------");
+  if (!existingAdmin) {
+    const adminPassword = await hashPassword("Letmein@OSTA2026");
+    await prisma.user.create({
+      data: {
+        phone: "+201009410112",
+        email: adminEmail,
+        passwordHash: adminPassword,
+        firstName: "Admin",
+        lastName: "OSTA",
+        role: UserRole.SUPER_ADMIN,
+        status: UserStatus.ACTIVE,
+        phoneVerified: true,
+      }
+    });
+    console.log("✅ Super Admin Created.");
+  } else {
+    console.log("ℹ️ Super Admin already exists.");
+  }
+
+  console.log("🚀 Sync Completed Successfully.");
 }
 
 main()
