@@ -384,7 +384,7 @@ function ClientDirectOrdersBlock({ locale }: { locale: Locale }) {
                     <div className="mt-4">
                       <SplitInfo
                         items={[
-                          { label: isArabic ? "التكلفة" : "Total", value: formatPrice(item.totalPrice) },
+                          { label: isArabic ? "التكلفة" : "Total", value: formatPrice(item.totalAmount) },
                           { label: isArabic ? "المنتجات" : "Items", value: item.items.length.toString() }
                         ]}
                       />
