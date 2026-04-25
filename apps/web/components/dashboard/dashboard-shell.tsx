@@ -165,8 +165,8 @@ export function DashboardShell({
         ) : null}
 
         <div className="flex min-w-0 flex-1 flex-col px-3 pb-4 pt-3 sm:px-4 lg:px-0 lg:py-4 lg:pe-4">
-          <header className="dashboard-card sticky top-4 z-30 mx-4 overflow-hidden rounded-[2rem] border border-white/5 bg-onyx-800/50/[0.02] backdrop-blur-2xl">
-            <div className={cn("absolute inset-0 bg-gradient-to-r opacity-50", theme.accent)} />
+          <header className="dashboard-card sticky top-4 z-30 mx-4 rounded-[2rem] border border-white/5 bg-onyx-800/50/[0.02] backdrop-blur-2xl">
+            <div className={cn("absolute inset-0 rounded-[2rem] overflow-hidden bg-gradient-to-r opacity-50", theme.accent)} />
             <div className="relative section-shell flex h-20 items-center gap-4 lg:h-24">
               <button
                 type="button"
