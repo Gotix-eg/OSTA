@@ -83,7 +83,7 @@ export function WorkerEarningsPage({ locale, initialData }: { locale: Locale; in
         <DashboardBlock title={isArabic ? "payout lane" : "Payout lane"} eyebrow={isArabic ? "cash movement" : "cash movement"} dark>
           <div className="space-y-4">
             {data.payouts.map((item) => (
-              <div key={item.id} className="rounded-[1.35rem] border border-white/10 bg-onyx-800/50/5 p-4">
+              <div key={item.id} className="rounded-[1.35rem] border border-white/10 bg-white/5 p-4">
                 <div className="flex items-center justify-between gap-3">
                   <div>
                     <p className="text-lg font-semibold text-white">{formatCurrency(locale, item.amount)}</p>

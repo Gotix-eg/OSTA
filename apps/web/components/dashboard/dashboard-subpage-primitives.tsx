@@ -19,7 +19,7 @@ const iconTones: Record<Tone, string> = {
   primary: "bg-gold-500 text-onyx-950",
   accent: "bg-accent-500 text-white",
   sun: "bg-warning text-onyx-950",
-  dark: "bg-onyx-800/50/10 text-white"
+  dark: "bg-white/10 text-white"
 };
 
 export function SubpageHero({

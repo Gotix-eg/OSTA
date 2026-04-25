@@ -208,7 +208,7 @@ export function ServiceWizard({ locale, category }: { locale: Locale; category: 
                     )}>
                       <div className={cn(
                         "flex h-8 w-8 items-center justify-center rounded-xl transition-colors",
-                        active ? "bg-onyx-800/50/20" : done ? "bg-green-100" : "bg-gray-100"
+                        active ? "bg-white/20" : done ? "bg-green-100" : "bg-gray-100"
                       )}>
                         {done
                           ? <CheckCircle2 className="h-4 w-4 shrink-0" />
@@ -240,7 +240,7 @@ export function ServiceWizard({ locale, category }: { locale: Locale; category: 
             {/* Trust Banner */}
             <div className="rounded-[2rem] bg-gradient-to-br from-primary-600 to-primary-700 p-6 text-white shadow-xl shadow-primary-200">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-onyx-800/50/20">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/20">
                   <Users className="h-5 w-5" />
                 </div>
                 <p className="text-xl font-bold">{category.workersAvailable.toLocaleString()}+</p>

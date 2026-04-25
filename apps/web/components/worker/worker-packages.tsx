@@ -56,14 +56,14 @@ export function WorkerPackages({ locale }: { locale: Locale }) {
           <p className="mt-2 text-gray-400 max-w-lg">{isArabic ? "رصيدك الحالي من الأوردرات التي يمكنك استقبالها. اشحن رصيدك عبر اختيار باقة من الأسفل." : "Your current order quota. Top up your balance by selecting a package below."}</p>
           
           <div className="mt-8 flex flex-wrap gap-6">
-            <div className="bg-onyx-800/50/10 rounded-2xl p-5 border border-white/10 backdrop-blur-sm min-w-[160px]">
+            <div className="bg-white/10 rounded-2xl p-5 border border-white/10 backdrop-blur-sm min-w-[160px]">
               <p className="text-sm font-medium text-gray-400">{isArabic ? "الرصيد المتاح" : "Available Quota"}</p>
               <div className="mt-2 flex items-baseline gap-2">
                 <span className="text-4xl font-black">{currentQuota}</span>
                 <span className="text-sm text-gray-400">{isArabic ? "أوردر" : "orders"}</span>
               </div>
             </div>
-            <div className="bg-onyx-800/50/5 rounded-2xl p-5 border border-white/5 min-w-[160px]">
+            <div className="bg-white/5 rounded-2xl p-5 border border-white/5 min-w-[160px]">
               <p className="text-sm font-medium text-gray-400">{isArabic ? "إجمالي المنفذ" : "Total Completed"}</p>
               <div className="mt-2 flex items-baseline gap-2">
                 <span className="text-4xl font-bold">{totalOrdersUsed}</span>

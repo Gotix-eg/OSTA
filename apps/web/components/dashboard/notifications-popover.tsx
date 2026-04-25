@@ -121,7 +121,7 @@ export function NotificationsPopover({ locale }: { locale: "ar" | "en" }) {
     <div className="relative inline-block" ref={popoverRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-onyx-800/50/5 shadow-xl transition-all duration-500 hover:bg-onyx-800/50/10"
+        className="relative flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-white/5 shadow-xl transition-all duration-500 hover:bg-white/10"
       >
         <Bell className="h-5 w-5 text-white/70 group-hover:text-white" />
         {unreadCount > 0 && (
@@ -138,7 +138,7 @@ export function NotificationsPopover({ locale }: { locale: "ar" | "en" }) {
             "end-0"
           )}
         >
-          <div className="flex items-center justify-between border-b border-white/5 bg-onyx-800/50/5 px-5 py-4">
+          <div className="flex items-center justify-between border-b border-white/5 bg-white/5 px-5 py-4">
             <h3 className="text-sm font-bold uppercase tracking-widest text-white/90">
               {isArabic ? "الإشعارات" : "Notifications"}
             </h3>
@@ -173,7 +173,7 @@ export function NotificationsPopover({ locale }: { locale: "ar" | "en" }) {
                         setIsOpen(false);
                     }}
                     className={cn(
-                      "group relative flex items-start px-5 py-4 transition-all duration-500 hover:bg-onyx-800/50/5",
+                      "group relative flex items-start px-5 py-4 transition-all duration-500 hover:bg-white/5",
                       !n.isRead ? "bg-gold-500/5" : ""
                     )}
                   >

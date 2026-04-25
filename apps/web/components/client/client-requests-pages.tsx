@@ -137,7 +137,7 @@ function ClientCustomRequestsBlock({ locale }: { locale: Locale }) {
                         } 
                     />
                   </div>
-                  <div className="mt-4 break-words rounded-lg border border-white/5 bg-onyx-800/50/5 p-3 text-sm text-onyx-300">
+                  <div className="mt-4 break-words rounded-lg border border-white/5 bg-white/5 p-3 text-sm text-onyx-300">
                     <span className="mb-1 block text-eyebrow text-gold-500/70">{isArabic ? "رسالتك:" : "Your Request:"}</span>
                     {item.message}
                   </div>
@@ -265,7 +265,7 @@ function OrderConfirmationModal({ item, locale, onClose, onSuccess }: { item: Cu
                   key={m.id}
                   onClick={() => setDeliveryMethod(m.id as any)}
                   className={`flex flex-col items-center gap-3 rounded-2xl border-2 p-4 transition-all ${
-                    deliveryMethod === m.id ? "border-gold-500 bg-gold-500/10 text-gold-400" : "border-white/5 bg-onyx-800/50/5 text-onyx-400 hover:border-white/10"
+                    deliveryMethod === m.id ? "border-gold-500 bg-gold-500/10 text-gold-400" : "border-white/5 bg-white/5 text-onyx-400 hover:border-white/10"
                   }`}
                 >
                   <m.icon className="h-5 w-5" />
@@ -290,7 +290,7 @@ function OrderConfirmationModal({ item, locale, onClose, onSuccess }: { item: Cu
                   key={m.id}
                   onClick={() => setPaymentMethod(m.id as any)}
                   className={`flex w-full items-center justify-between rounded-xl border-2 px-4 py-3 transition-all ${
-                    paymentMethod === m.id ? "border-gold-500 bg-gold-500/10 text-gold-400" : "border-white/5 bg-onyx-800/50/5 text-onyx-400 hover:border-white/10"
+                    paymentMethod === m.id ? "border-gold-500 bg-gold-500/10 text-gold-400" : "border-white/5 bg-white/5 text-onyx-400 hover:border-white/10"
                   }`}
                 >
                    <span className="text-sm font-bold">{m.label}</span>
@@ -302,7 +302,7 @@ function OrderConfirmationModal({ item, locale, onClose, onSuccess }: { item: Cu
         </div>
 
         <div className="mt-8 flex gap-3">
-          <button onClick={onClose} className="flex-1 rounded-full border border-white/10 py-4 text-sm font-bold text-onyx-400 hover:bg-onyx-800/50/5">
+          <button onClick={onClose} className="flex-1 rounded-full border border-white/10 py-4 text-sm font-bold text-onyx-400 hover:bg-white/5">
              {isArabic ? "إلغاء" : "Cancel"}
           </button>
           <button 
@@ -476,7 +476,7 @@ export function ClientRequestsPage({ locale, initialData }: { locale: Locale; in
           className={`relative flex-shrink-0 flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition ${
             activeTab === "services" 
               ? "bg-gold-500 text-onyx-950 shadow-gold" 
-              : "border border-white/10 bg-onyx-800/50/5 text-onyx-400 hover:bg-onyx-800/50/10"
+              : "border border-white/10 bg-white/5 text-onyx-400 hover:bg-white/10"
           }`}
         >
           <Wrench className="h-4 w-4" />
@@ -492,7 +492,7 @@ export function ClientRequestsPage({ locale, initialData }: { locale: Locale; in
           className={`relative flex-shrink-0 flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition ${
             activeTab === "custom_requests" 
               ? "bg-gold-500 text-onyx-950 shadow-gold" 
-              : "border border-white/10 bg-onyx-800/50/5 text-onyx-400 hover:bg-onyx-800/50/10"
+              : "border border-white/10 bg-white/5 text-onyx-400 hover:bg-white/10"
           }`}
         >
           <MessageSquare className="h-4 w-4" />
@@ -508,7 +508,7 @@ export function ClientRequestsPage({ locale, initialData }: { locale: Locale; in
           className={`relative flex-shrink-0 flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition ${
             activeTab === "direct_orders" 
               ? "bg-gold-500 text-onyx-950 shadow-gold" 
-              : "border border-white/10 bg-onyx-800/50/5 text-onyx-400 hover:bg-onyx-800/50/10"
+              : "border border-white/10 bg-white/5 text-onyx-400 hover:bg-white/10"
           }`}
         >
           <ShoppingBag className="h-4 w-4" />

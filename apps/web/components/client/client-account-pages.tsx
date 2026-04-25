@@ -194,19 +194,19 @@ export function ClientSettingsPage({ locale, initialData }: { locale: Locale; in
           <div className="grid gap-6 sm:grid-cols-2">
             <label className="space-y-3">
               <span className="text-caption">{isArabic ? "الاسم الأول" : "First name"}</span>
-              <input value={data.profile.firstName} onChange={(event) => setData({ ...data, profile: { ...data.profile, firstName: event.target.value } })} className="h-14 w-full rounded-2xl border border-white/5 bg-onyx-800/50/5 px-5 text-white focus:border-gold-500/30 focus:bg-onyx-800/50/10" />
+              <input value={data.profile.firstName} onChange={(event) => setData({ ...data, profile: { ...data.profile, firstName: event.target.value } })} className="h-14 w-full rounded-2xl border border-white/5 bg-white/5 px-5 text-white focus:border-gold-500/30 focus:bg-white/10" />
             </label>
             <label className="space-y-3">
               <span className="text-caption">{isArabic ? "اسم العائلة" : "Last name"}</span>
-              <input value={data.profile.lastName} onChange={(event) => setData({ ...data, profile: { ...data.profile, lastName: event.target.value } })} className="h-14 w-full rounded-2xl border border-white/5 bg-onyx-800/50/5 px-5 text-white focus:border-gold-500/30 focus:bg-onyx-800/50/10" />
+              <input value={data.profile.lastName} onChange={(event) => setData({ ...data, profile: { ...data.profile, lastName: event.target.value } })} className="h-14 w-full rounded-2xl border border-white/5 bg-white/5 px-5 text-white focus:border-gold-500/30 focus:bg-white/10" />
             </label>
             <label className="space-y-3">
               <span className="text-caption">{isArabic ? "البريد الإلكتروني" : "Email"}</span>
-              <input value={data.profile.email} onChange={(event) => setData({ ...data, profile: { ...data.profile, email: event.target.value } })} className="h-14 w-full rounded-2xl border border-white/5 bg-onyx-800/50/5 px-5 text-white focus:border-gold-500/30 focus:bg-onyx-800/50/10" />
+              <input value={data.profile.email} onChange={(event) => setData({ ...data, profile: { ...data.profile, email: event.target.value } })} className="h-14 w-full rounded-2xl border border-white/5 bg-white/5 px-5 text-white focus:border-gold-500/30 focus:bg-white/10" />
             </label>
             <label className="space-y-3">
               <span className="text-caption">{isArabic ? "رقم الهاتف" : "Phone"}</span>
-              <input value={data.profile.phone} onChange={(event) => setData({ ...data, profile: { ...data.profile, phone: event.target.value } })} className="h-14 w-full rounded-2xl border border-white/5 bg-onyx-800/50/5 px-5 text-white focus:border-gold-500/30 focus:bg-onyx-800/50/10" />
+              <input value={data.profile.phone} onChange={(event) => setData({ ...data, profile: { ...data.profile, phone: event.target.value } })} className="h-14 w-full rounded-2xl border border-white/5 bg-white/5 px-5 text-white focus:border-gold-500/30 focus:bg-white/10" />
             </label>
           </div>
         </DashboardBlock>
@@ -218,13 +218,13 @@ export function ClientSettingsPage({ locale, initialData }: { locale: Locale; in
               { key: "notificationsByEmail", label: isArabic ? "إشعارات البريد" : "Email notifications" },
               { key: "marketingUpdates", label: isArabic ? "العروض التسويقية" : "Marketing updates" }
             ].map((item) => (
-              <label key={item.key} className="flex cursor-pointer items-center justify-between gap-4 rounded-2xl border border-white/5 bg-onyx-800/50/5 p-5 transition-all hover:bg-onyx-800/50/10">
+              <label key={item.key} className="flex cursor-pointer items-center justify-between gap-4 rounded-2xl border border-white/5 bg-white/5 p-5 transition-all hover:bg-white/10">
                 <span className="text-sm font-bold text-white/80">{item.label}</span>
                 <input
                   type="checkbox"
                   checked={data.preferences[item.key as keyof typeof data.preferences] as boolean}
                   onChange={(event) => setData({ ...data, preferences: { ...data.preferences, [item.key]: event.target.checked } })}
-                  className="h-5 w-5 rounded-lg border-white/20 bg-onyx-800/50/5 text-gold-500 focus:ring-gold-500/50"
+                  className="h-5 w-5 rounded-lg border-white/20 bg-white/5 text-gold-500 focus:ring-gold-500/50"
                 />
               </label>
             ))}

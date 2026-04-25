@@ -47,7 +47,7 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
                 { icon: Lock, label: isArabic ? "بيانات محمية" : "Data Safety" },
                 { icon: Headphones, label: isArabic ? "دعم مستمر" : "24/7 Support" }
               ].map((item, i) => (
-                <div key={i} className="onyx-card p-4 border-white/5 bg-onyx-800/50/5">
+                <div key={i} className="onyx-card p-4 border-white/5 bg-white/5">
                    <item.icon className="h-6 w-6 text-gold-500 mb-3" />
                    <p className="text-sm font-bold text-white">{item.label}</p>
                 </div>

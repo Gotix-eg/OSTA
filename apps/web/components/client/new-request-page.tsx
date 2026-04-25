@@ -129,7 +129,7 @@ function ProgressRail({ labels, current }: { labels: string[]; current: number }
       {labels.map((label, index) => (
         <div key={label} className={cn("rounded-[1.3rem] border p-4 transition", index === current ? "border-dark-950 bg-dark-950 text-white shadow-soft" : index < current ? "border-primary-300 bg-primary-50 text-white" : "border-onyx-700 bg-onyx-800/50 text-onyx-400")}>
           <div className="flex items-center gap-3">
-            <div className={cn("flex h-9 w-9 items-center justify-center rounded-full text-sm font-semibold", index === current ? "bg-onyx-800/50/10 text-white" : index < current ? "bg-primary-600 text-white" : "bg-onyx-800/50 text-onyx-400")}>
+            <div className={cn("flex h-9 w-9 items-center justify-center rounded-full text-sm font-semibold", index === current ? "bg-white/10 text-white" : index < current ? "bg-primary-600 text-white" : "bg-onyx-800/50 text-onyx-400")}>
               {index + 1}
             </div>
             <span className="font-medium">{label}</span>
@@ -568,7 +568,7 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
                         draft.timing === item.key ? "border-dark-950 bg-dark-950 text-white shadow-soft" : `border-onyx-700 ${item.tone}`
                       )}
                     >
-                      <div className={cn("flex h-11 w-11 items-center justify-center rounded-[1rem] shadow-soft", draft.timing === item.key ? "bg-onyx-800/50/10 text-white" : "bg-onyx-800/50 text-primary-700")}>
+                      <div className={cn("flex h-11 w-11 items-center justify-center rounded-[1rem] shadow-soft", draft.timing === item.key ? "bg-white/10 text-white" : "bg-onyx-800/50 text-primary-700")}>
                         <Icon className="h-5 w-5" />
                       </div>
                       <span className="font-medium">{item.label}</span>
