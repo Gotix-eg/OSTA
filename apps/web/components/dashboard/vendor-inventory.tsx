@@ -117,17 +117,17 @@ function ImageUploader({
 
   return (
     <div className="space-y-1.5">
-      <span className="text-sm font-medium text-dark-700">
+      <span className="text-sm font-medium text-onyx-200">
         {isArabic ? "صورة المنتج - اختياري" : "Product Image - Optional"}
       </span>
 
       {value ? (
-        <div className="relative overflow-hidden rounded-[1.2rem] border border-dark-200 bg-surface-soft">
+        <div className="relative overflow-hidden rounded-[1.2rem] border border-onyx-700 bg-onyx-800/50">
           <img src={value} alt="preview" className="h-40 w-full object-cover" />
           <button
             type="button"
             onClick={handleRemove}
-            className="absolute end-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-error shadow transition hover:bg-white"
+            className="absolute end-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-onyx-800/50/90 text-error shadow transition hover:bg-onyx-800/50"
           >
             <X className="h-4 w-4" />
           </button>
@@ -137,7 +137,7 @@ function ImageUploader({
           type="button"
           onClick={() => inputRef.current?.click()}
           disabled={processing}
-          className="flex w-full flex-col items-center justify-center gap-3 rounded-[1.2rem] border-2 border-dashed border-dark-200 bg-surface-soft py-8 text-dark-500 transition hover:border-primary-400 hover:text-primary-700 disabled:opacity-60"
+          className="flex w-full flex-col items-center justify-center gap-3 rounded-[1.2rem] border-2 border-dashed border-onyx-700 bg-onyx-800/50 py-8 text-onyx-400 transition hover:border-primary-400 hover:text-primary-700 disabled:opacity-60"
         >
           {processing ? (
             <Loader2 className="h-8 w-8 animate-spin" />
@@ -149,7 +149,7 @@ function ImageUploader({
               ? (isArabic ? "جاري معالجة الصورة..." : "Processing...")
               : (isArabic ? "اضغط لرفع صورة المنتج" : "Click to upload product image")}
           </span>
-          <span className="text-xs text-dark-400">
+          <span className="text-xs text-onyx-500">
             {isArabic ? "PNG، JPG، WEBP — حتى 15MB" : "PNG, JPG, WEBP — up to 15MB"}
           </span>
         </button>
@@ -204,12 +204,12 @@ function ProductCard({
   }
 
   return (
-    <article className="group relative overflow-hidden rounded-[1.6rem] border border-dark-200/70 bg-white shadow-soft transition hover:-translate-y-1 hover:shadow-md">
-      <div className="relative h-44 w-full overflow-hidden bg-surface-soft">
+    <article className="group relative overflow-hidden rounded-[1.6rem] border border-onyx-700/70 bg-onyx-800/50 shadow-soft transition hover:-translate-y-1 hover:shadow-md">
+      <div className="relative h-44 w-full overflow-hidden bg-onyx-800/50">
         {product.imageUrl ? (
           <img src={product.imageUrl} alt={product.nameAr} className="h-full w-full object-cover transition group-hover:scale-105" />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-dark-300">
+          <div className="flex h-full w-full items-center justify-center text-onyx-600">
             <ImageOff className="h-10 w-10" />
           </div>
         )}
@@ -222,10 +222,10 @@ function ProductCard({
       </div>
 
       <div className="p-4">
-        <p className="text-lg font-semibold text-dark-950">{product.nameAr}</p>
-        {product.nameEn && <p className="text-sm text-dark-400">{product.nameEn}</p>}
+        <p className="text-lg font-semibold text-white">{product.nameAr}</p>
+        {product.nameEn && <p className="text-sm text-onyx-500">{product.nameEn}</p>}
         {product.description && (
-          <p className="mt-1 line-clamp-2 text-sm text-dark-500">{product.description}</p>
+          <p className="mt-1 line-clamp-2 text-sm text-onyx-400">{product.description}</p>
         )}
         <p className="mt-3 text-2xl font-bold text-primary-700">{formatPrice(product.price, locale)}</p>
 
@@ -302,14 +302,14 @@ function AddProductModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-dark-950/60 p-4 backdrop-blur-sm sm:items-center">
-      <div className="w-full max-w-lg overflow-hidden rounded-[2rem] bg-white shadow-xl">
+      <div className="w-full max-w-lg overflow-hidden rounded-[2rem] bg-onyx-800/50 shadow-xl">
         {/* Header */}
         <div className="border-b border-dark-100 p-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-dark-950">
+            <h2 className="text-xl font-semibold text-white">
               {isArabic ? "إضافة منتج جديد" : "Add New Product"}
             </h2>
-            <button type="button" onClick={onClose} className="flex h-9 w-9 items-center justify-center rounded-full bg-surface-soft text-dark-500 hover:text-dark-950">
+            <button type="button" onClick={onClose} className="flex h-9 w-9 items-center justify-center rounded-full bg-onyx-800/50 text-onyx-400 hover:text-white">
               <X className="h-5 w-5" />
             </button>
           </div>
@@ -326,30 +326,30 @@ function AddProductModal({
 
             {/* Name Arabic */}
             <label className="block space-y-1.5">
-              <span className="text-sm font-medium text-dark-700">{isArabic ? "اسم المنتج (عربي) *" : "Product Name (Arabic) *"}</span>
+              <span className="text-sm font-medium text-onyx-200">{isArabic ? "اسم المنتج (عربي) *" : "Product Name (Arabic) *"}</span>
               <input
                 type="text"
                 value={form.nameAr}
                 onChange={e => setForm({ ...form, nameAr: e.target.value })}
                 placeholder={isArabic ? "مثال: زيت موتور 5L" : "e.g. Motor Oil 5L"}
-                className="h-11 w-full rounded-[1.1rem] border border-dark-200 bg-surface-soft px-4 text-sm text-dark-950 placeholder:text-dark-400 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200"
+                className="h-11 w-full rounded-[1.1rem] border border-onyx-700 bg-onyx-800/50 px-4 text-sm text-white placeholder:text-onyx-500 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200"
               />
             </label>
 
             {/* Name English */}
             <label className="block space-y-1.5">
-              <span className="text-sm font-medium text-dark-700">{isArabic ? "اسم المنتج (إنجليزي) - اختياري" : "Product Name (English) - Optional"}</span>
+              <span className="text-sm font-medium text-onyx-200">{isArabic ? "اسم المنتج (إنجليزي) - اختياري" : "Product Name (English) - Optional"}</span>
               <input
                 type="text"
                 value={form.nameEn}
                 onChange={e => setForm({ ...form, nameEn: e.target.value })}
-                className="h-11 w-full rounded-[1.1rem] border border-dark-200 bg-surface-soft px-4 text-sm text-dark-950 placeholder:text-dark-400 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200"
+                className="h-11 w-full rounded-[1.1rem] border border-onyx-700 bg-onyx-800/50 px-4 text-sm text-white placeholder:text-onyx-500 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200"
               />
             </label>
 
             {/* Price */}
             <label className="block space-y-1.5">
-              <span className="text-sm font-medium text-dark-700">{isArabic ? "السعر (ج.م) *" : "Price (EGP) *"}</span>
+              <span className="text-sm font-medium text-onyx-200">{isArabic ? "السعر (ج.م) *" : "Price (EGP) *"}</span>
               <input
                 type="number"
                 min="0"
@@ -357,30 +357,30 @@ function AddProductModal({
                 value={form.price}
                 onChange={e => setForm({ ...form, price: e.target.value })}
                 placeholder="0"
-                className="h-11 w-full rounded-[1.1rem] border border-dark-200 bg-surface-soft px-4 text-sm text-dark-950 placeholder:text-dark-400 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200"
+                className="h-11 w-full rounded-[1.1rem] border border-onyx-700 bg-onyx-800/50 px-4 text-sm text-white placeholder:text-onyx-500 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200"
               />
             </label>
 
             {/* Description */}
             <label className="block space-y-1.5">
-              <span className="text-sm font-medium text-dark-700">{isArabic ? "وصف المنتج - اختياري" : "Description - Optional"}</span>
+              <span className="text-sm font-medium text-onyx-200">{isArabic ? "وصف المنتج - اختياري" : "Description - Optional"}</span>
               <textarea
                 value={form.description}
                 onChange={e => setForm({ ...form, description: e.target.value })}
                 rows={2}
-                className="w-full rounded-[1.1rem] border border-dark-200 bg-surface-soft px-4 py-3 text-sm text-dark-950 placeholder:text-dark-400 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200"
+                className="w-full rounded-[1.1rem] border border-onyx-700 bg-onyx-800/50 px-4 py-3 text-sm text-white placeholder:text-onyx-500 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200"
               />
             </label>
 
             {/* In Stock toggle */}
-            <label className="flex items-center gap-3 rounded-[1.2rem] border border-dark-200 bg-surface-soft px-4 py-3">
+            <label className="flex items-center gap-3 rounded-[1.2rem] border border-onyx-700 bg-onyx-800/50 px-4 py-3">
               <input
                 type="checkbox"
                 checked={form.inStock}
                 onChange={e => setForm({ ...form, inStock: e.target.checked })}
                 className="h-4 w-4 rounded border-dark-300 text-primary-600"
               />
-              <span className="text-sm font-medium text-dark-700">{isArabic ? "متاح للبيع الآن" : "Available for sale now"}</span>
+              <span className="text-sm font-medium text-onyx-200">{isArabic ? "متاح للبيع الآن" : "Available for sale now"}</span>
             </label>
 
             {error && (
@@ -390,7 +390,7 @@ function AddProductModal({
         </div>
 
         <div className="flex gap-3 border-t border-dark-100 p-6">
-          <button type="button" onClick={onClose} className="flex-1 rounded-full border border-dark-200 py-3 text-sm font-semibold text-dark-700 transition hover:border-dark-400">
+          <button type="button" onClick={onClose} className="flex-1 rounded-full border border-onyx-700 py-3 text-sm font-semibold text-onyx-200 transition hover:border-dark-400">
             {isArabic ? "إلغاء" : "Cancel"}
           </button>
           <button
@@ -442,10 +442,10 @@ export function VendorInventoryPage({ locale }: { locale: Locale }) {
           <p className="text-xs font-semibold uppercase tracking-[0.28em] text-primary-700">
             {isArabic ? "إدارة المخزون" : "Inventory Management"}
           </p>
-          <h1 className="mt-2 text-3xl font-semibold text-dark-950">
+          <h1 className="mt-2 text-3xl font-semibold text-white">
             {isArabic ? "منتجات متجرك" : "Your Products"}
           </h1>
-          <p className="mt-2 text-dark-500">
+          <p className="mt-2 text-onyx-400">
             {isArabic
               ? `${products.length} منتج — ${inStockCount} متاح للبيع`
               : `${products.length} products — ${inStockCount} in stock`}
@@ -468,9 +468,9 @@ export function VendorInventoryPage({ locale }: { locale: Locale }) {
           { label: isArabic ? "متاح للبيع" : "In Stock", value: inStockCount },
           { label: isArabic ? "نفذ من المخزون" : "Out of Stock", value: products.length - inStockCount },
         ].map(item => (
-          <div key={item.label} className="rounded-[1.4rem] border border-dark-200/70 bg-white p-4 shadow-soft">
-            <p className="text-xs uppercase tracking-[0.22em] text-dark-400">{item.label}</p>
-            <p className="mt-2 text-3xl font-semibold text-dark-950">{item.value}</p>
+          <div key={item.label} className="rounded-[1.4rem] border border-onyx-700/70 bg-onyx-800/50 p-4 shadow-soft">
+            <p className="text-xs uppercase tracking-[0.22em] text-onyx-500">{item.label}</p>
+            <p className="mt-2 text-3xl font-semibold text-white">{item.value}</p>
           </div>
         ))}
       </div>
@@ -479,16 +479,16 @@ export function VendorInventoryPage({ locale }: { locale: Locale }) {
       {loading ? (
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {[1, 2, 3].map(i => (
-            <div key={i} className="h-64 animate-pulse rounded-[1.6rem] bg-surface-soft" />
+            <div key={i} className="h-64 animate-pulse rounded-[1.6rem] bg-onyx-800/50" />
           ))}
         </div>
       ) : products.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-[2rem] border border-dashed border-dark-200 bg-surface-soft py-20 text-center">
-          <ShoppingBag className="h-12 w-12 text-dark-300" />
-          <p className="mt-4 text-lg font-semibold text-dark-700">
+        <div className="flex flex-col items-center justify-center rounded-[2rem] border border-dashed border-onyx-700 bg-onyx-800/50 py-20 text-center">
+          <ShoppingBag className="h-12 w-12 text-onyx-600" />
+          <p className="mt-4 text-lg font-semibold text-onyx-200">
             {isArabic ? "لا توجد منتجات بعد" : "No products yet"}
           </p>
-          <p className="mt-2 text-sm text-dark-500">
+          <p className="mt-2 text-sm text-onyx-400">
             {isArabic ? "ابدأ بإضافة منتجاتك وأسعارها" : "Start by adding your products and prices"}
           </p>
           <button

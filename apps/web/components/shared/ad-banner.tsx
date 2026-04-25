@@ -102,13 +102,13 @@ export function AdBanner({ placement, locale, className }: AdBannerProps) {
                 {isArabic ? "ممول" : "Sponsored"}
               </span>
               {ads.length > 1 && (
-                <span className="text-[10px] text-dark-400">
+                <span className="text-[10px] text-onyx-500">
                   {currentIndex + 1} / {ads.length}
                 </span>
               )}
             </div>
             
-            <h3 className="mt-3 text-xl font-bold text-dark-950 line-clamp-2 md:text-2xl">
+            <h3 className="mt-3 text-xl font-bold text-white line-clamp-2 md:text-2xl">
               {currentAd.title}
             </h3>
             

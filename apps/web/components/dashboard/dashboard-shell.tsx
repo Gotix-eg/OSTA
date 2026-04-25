@@ -144,7 +144,7 @@ export function DashboardShell({
   const currentPath = stripLocalePrefix(pathname || "/");
 
   return (
-    <div className="dashboard-shell-bg min-h-screen text-dark-950">
+    <div className="dashboard-shell-bg min-h-screen text-white">
       <div className="pointer-events-none absolute inset-0 dashboard-grid-overlay opacity-50" />
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[22rem] bg-dashboardGlow opacity-90" />
 
@@ -165,23 +165,23 @@ export function DashboardShell({
         ) : null}
 
         <div className="flex min-w-0 flex-1 flex-col px-3 pb-4 pt-3 sm:px-4 lg:px-0 lg:py-4 lg:pe-4">
-          <header className="dashboard-card sticky top-4 z-30 mx-4 overflow-hidden rounded-[2rem] border border-white/5 bg-white/[0.02] backdrop-blur-2xl">
+          <header className="dashboard-card sticky top-4 z-30 mx-4 overflow-hidden rounded-[2rem] border border-white/5 bg-onyx-800/50/[0.02] backdrop-blur-2xl">
             <div className={cn("absolute inset-0 bg-gradient-to-r opacity-50", theme.accent)} />
             <div className="relative section-shell flex h-20 items-center gap-4 lg:h-24">
               <button
                 type="button"
                 onClick={() => setMobileOpen(true)}
-                className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white lg:hidden"
+                className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-onyx-800/50/5 text-white lg:hidden"
               >
                 <Menu className="h-5 w-5" />
               </button>
 
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-4">
-                  <div className="hidden h-12 w-12 items-center justify-center rounded-2xl bg-white text-dark-950 shadow-xl sm:flex">
+                  <div className="hidden h-12 w-12 items-center justify-center rounded-2xl bg-onyx-800/50 text-white shadow-xl sm:flex">
                     <LayoutDashboard className="h-5 w-5" />
                   </div>
-                  <div className="min-w-0 flex-1 rounded-full border border-white/5 bg-white/5 px-5 py-3 text-sm text-onyx-300 shadow-inner">
+                  <div className="min-w-0 flex-1 rounded-full border border-white/5 bg-onyx-800/50/5 px-5 py-3 text-sm text-onyx-300 shadow-inner">
                     <div className="flex items-center gap-3">
                       <Search className="h-4 w-4 text-onyx-500" />
                       <span className="truncate opacity-60">{copy.search}</span>
@@ -191,17 +191,17 @@ export function DashboardShell({
               </div>
 
               <div className="hidden items-center gap-4 xl:flex">
-                <Link href={`/${locale}/dashboards`} className="inline-flex h-12 items-center gap-3 rounded-full border border-white/5 bg-white/5 px-6 text-[10px] font-bold uppercase tracking-widest text-white shadow-xl transition-all duration-500 hover:bg-white/10">
+                <Link href={`/${locale}/dashboards`} className="inline-flex h-12 items-center gap-3 rounded-full border border-white/5 bg-onyx-800/50/5 px-6 text-[10px] font-bold uppercase tracking-widest text-white shadow-xl transition-all duration-500 hover:bg-onyx-800/50/10">
                   <Command className="h-4 w-4" />
                   {isArabic ? "مركز اللوحات" : "Dashboard hub"}
                 </Link>
                 <LocaleSwitcher
                   locale={locale}
                   pathname={currentPath}
-                  className="inline-flex h-12 items-center justify-center rounded-full border border-white/5 bg-white/5 px-5 text-[10px] font-bold uppercase tracking-widest text-white shadow-xl transition-all duration-500 hover:bg-white/10"
+                  className="inline-flex h-12 items-center justify-center rounded-full border border-white/5 bg-onyx-800/50/5 px-5 text-[10px] font-bold uppercase tracking-widest text-white shadow-xl transition-all duration-500 hover:bg-onyx-800/50/10"
                 />
                 <NotificationsPopover locale={locale} />
-                <div className="flex items-center gap-3 rounded-full border border-white/5 bg-white/5 p-1.5 pe-5 shadow-xl">
+                <div className="flex items-center gap-3 rounded-full border border-white/5 bg-onyx-800/50/5 p-1.5 pe-5 shadow-xl">
                   <div className={cn("flex h-10 w-10 items-center justify-center rounded-full shadow-inner", theme.orb, theme.ring)}>
                     <UserCircle2 className="h-5 w-5" />
                   </div>
@@ -249,11 +249,11 @@ function SidebarContent({
   return (
     <div className="dashboard-card-dark relative flex h-full flex-col overflow-hidden px-4 py-4">
       <div className={cn("absolute -right-12 top-8 h-36 w-36 rounded-full blur-3xl", theme.orb)} />
-      <div className="absolute -left-14 bottom-12 h-44 w-44 rounded-full bg-white/5 blur-3xl" />
+      <div className="absolute -left-14 bottom-12 h-44 w-44 rounded-full bg-onyx-800/50/5 blur-3xl" />
 
-      <div className="relative rounded-[2rem] border border-white/5 bg-white/5 p-5 backdrop-blur-xl">
+      <div className="relative rounded-[2rem] border border-white/5 bg-onyx-800/50/5 p-5 backdrop-blur-xl">
         <div className="flex items-center gap-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-dark-950 shadow-xl">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-onyx-800/50 text-white shadow-xl">
             <Sparkles className="h-5 w-5" />
           </div>
           <div>
@@ -261,7 +261,7 @@ function SidebarContent({
             <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.2em] text-gold-500/80">{roleLabel}</p>
           </div>
         </div>
-        <div className="mt-6 flex items-center justify-between rounded-2xl border border-white/5 bg-white/5 px-4 py-3 text-xs">
+        <div className="mt-6 flex items-center justify-between rounded-2xl border border-white/5 bg-onyx-800/50/5 px-4 py-3 text-xs">
           <div>
             <p className="opacity-40">{locale === "ar" ? "الوضع" : "Mode"}</p>
             <p className="mt-1 font-bold text-white/90">{theme.tag}</p>
@@ -287,11 +287,11 @@ function SidebarContent({
                 "group flex items-center justify-between rounded-2xl border px-4 py-3.5 text-sm font-medium transition-all duration-500",
                 active
                   ? "border-gold-500/20 bg-gold-500 text-onyx-950 shadow-gold"
-                  : "border-transparent bg-transparent text-white/60 hover:bg-white/5 hover:text-white"
+                  : "border-transparent bg-transparent text-white/60 hover:bg-onyx-800/50/5 hover:text-white"
               )}
             >
               <span className="flex items-center gap-3">
-                <span className={cn("flex h-9 w-9 items-center justify-center rounded-xl transition-all duration-500", active ? "bg-onyx-950/10" : "bg-white/5 group-hover:bg-white/10") }>
+                <span className={cn("flex h-9 w-9 items-center justify-center rounded-xl transition-all duration-500", active ? "bg-onyx-950/10" : "bg-onyx-800/50/5 group-hover:bg-onyx-800/50/10") }>
                   <Icon className="h-4 w-4" />
                 </span>
                 {item.label}
@@ -302,7 +302,7 @@ function SidebarContent({
         })}
       </nav>
 
-      <div className="relative mt-8 rounded-[2rem] border border-white/5 bg-white/5 p-6">
+      <div className="relative mt-8 rounded-[2rem] border border-white/5 bg-onyx-800/50/5 p-6">
         <div className="mb-5 flex items-center justify-between">
           <div>
             <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">{locale === "ar" ? "صحة المنصة" : "Platform health"}</p>
@@ -342,7 +342,7 @@ function SidebarContent({
         <ArrowUpRight className="h-4 w-4 opacity-50" />
       </button>
 
-      <Link href={`/${locale}/dashboards`} className="group relative mt-4 inline-flex items-center justify-between rounded-2xl border border-white/5 bg-white/5 px-5 py-4 text-sm font-bold text-white transition-all duration-500 hover:bg-white/10">
+      <Link href={`/${locale}/dashboards`} className="group relative mt-4 inline-flex items-center justify-between rounded-2xl border border-white/5 bg-onyx-800/50/5 px-5 py-4 text-sm font-bold text-white transition-all duration-500 hover:bg-onyx-800/50/10">
         <span className="flex items-center gap-3">
           <Command className="h-4 w-4" />
           {locale === "ar" ? "مركز اللوحات" : "Dashboard hub"}

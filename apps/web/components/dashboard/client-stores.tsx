@@ -62,7 +62,7 @@ function StoreCard({
   return (
     <Link
       href={href}
-      className="group relative overflow-hidden rounded-[1.8rem] border border-dark-200/70 bg-white shadow-soft transition hover:-translate-y-1 hover:shadow-md"
+      className="group relative overflow-hidden rounded-[1.8rem] border border-onyx-700/70 bg-onyx-800/50 shadow-soft transition hover:-translate-y-1 hover:shadow-md"
     >
       {/* Banner */}
       <div className="relative h-40 w-full overflow-hidden bg-gradient-to-br from-primary-50 to-surface-peach">
@@ -82,7 +82,7 @@ function StoreCard({
         </span>
         {/* Distance badge */}
         {store._distanceKm !== undefined && (
-          <span className="absolute start-3 top-3 flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-xs font-semibold text-primary-700 shadow">
+          <span className="absolute start-3 top-3 flex items-center gap-1 rounded-full bg-onyx-800/50/90 px-2.5 py-1 text-xs font-semibold text-primary-700 shadow">
             <Navigation className="h-3 w-3" />
             {formatDistance(store._distanceKm, locale)}
           </span>
@@ -92,18 +92,18 @@ function StoreCard({
       <div className="p-5">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
-            <h2 className="truncate text-lg font-semibold text-dark-950">{name}</h2>
+            <h2 className="truncate text-lg font-semibold text-white">{name}</h2>
             {store.category && (
               <p className="mt-0.5 text-sm text-primary-700 font-medium">{store.category}</p>
             )}
           </div>
-          <div className="flex shrink-0 items-center gap-1 text-sm font-semibold text-dark-700">
+          <div className="flex shrink-0 items-center gap-1 text-sm font-semibold text-onyx-200">
             <Star className="h-4 w-4 fill-sun-400 text-sun-400" />
             {store.rating > 0 ? store.rating.toFixed(1) : "—"}
           </div>
         </div>
 
-        <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-dark-500">
+        <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-onyx-400">
           <span className="flex items-center gap-1">
             <MapPin className="h-3.5 w-3.5" />
             {store.city || store.governorate}
@@ -115,7 +115,7 @@ function StoreCard({
         </div>
 
         {store.shopDescription && (
-          <p className="mt-3 line-clamp-2 text-sm text-dark-500">{store.shopDescription}</p>
+          <p className="mt-3 line-clamp-2 text-sm text-onyx-400">{store.shopDescription}</p>
         )}
 
         <div className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-primary-700">
@@ -204,10 +204,10 @@ export function ClientStoresPage({ locale }: { locale: Locale }) {
           <p className="text-xs font-semibold uppercase tracking-[0.28em] text-primary-700">
             {isArabic ? "استعرض المتاجر" : "Browse Stores"}
           </p>
-          <h1 className="mt-2 text-3xl font-semibold text-dark-950">
+          <h1 className="mt-2 text-3xl font-semibold text-white">
             {isArabic ? "متاجر قطع الغيار" : "Parts Vendor Stores"}
           </h1>
-          <p className="mt-2 text-dark-500">
+          <p className="mt-2 text-onyx-400">
             {isArabic
               ? "اختر متجرًا، استعرض المنتجات، واطلب مباشرة."
               : "Pick a store, browse products, and order directly."}
@@ -250,13 +250,13 @@ export function ClientStoresPage({ locale }: { locale: Locale }) {
 
       {/* Search bar */}
       <div className="mb-6 relative">
-        <Search className="absolute start-4 top-1/2 h-4 w-4 -translate-y-1/2 text-dark-400" />
+        <Search className="absolute start-4 top-1/2 h-4 w-4 -translate-y-1/2 text-onyx-500" />
         <input
           type="text"
           value={search}
           onChange={e => setSearch(e.target.value)}
           placeholder={isArabic ? "ابحث باسم المتجر أو التصنيف أو المنطقة..." : "Search by store name, category or area..."}
-          className="h-12 w-full rounded-[1.3rem] border border-dark-200 bg-white ps-11 pe-4 text-sm text-dark-950 shadow-soft placeholder:text-dark-400 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200"
+          className="h-12 w-full rounded-[1.3rem] border border-onyx-700 bg-onyx-800/50 ps-11 pe-4 text-sm text-white shadow-soft placeholder:text-onyx-500 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200"
         />
       </div>
 
@@ -264,13 +264,13 @@ export function ClientStoresPage({ locale }: { locale: Locale }) {
       {loading ? (
         <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {[1, 2, 3, 4, 5, 6].map(i => (
-            <div key={i} className="h-72 animate-pulse rounded-[1.8rem] bg-surface-soft" />
+            <div key={i} className="h-72 animate-pulse rounded-[1.8rem] bg-onyx-800/50" />
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-[2rem] border border-dashed border-dark-200 bg-surface-soft py-20 text-center">
-          <Store className="h-12 w-12 text-dark-300" />
-          <p className="mt-4 text-lg font-semibold text-dark-700">
+        <div className="flex flex-col items-center justify-center rounded-[2rem] border border-dashed border-onyx-700 bg-onyx-800/50 py-20 text-center">
+          <Store className="h-12 w-12 text-onyx-600" />
+          <p className="mt-4 text-lg font-semibold text-onyx-200">
             {stores.length === 0
               ? (isArabic ? "لا توجد متاجر بعد" : "No stores yet")
               : (isArabic ? "لا توجد نتائج للبحث" : "No results found")}

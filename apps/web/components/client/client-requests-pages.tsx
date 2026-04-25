@@ -114,11 +114,11 @@ function ClientCustomRequestsBlock({ locale }: { locale: Locale }) {
       ) : (
         <div className="grid gap-4">
           {data.map((item) => (
-            <article key={item.id} className="dashboard-card-soft p-4 sm:p-5">
+            <article key={item.id} className="onyx-card p-4 sm:p-5">
               <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-3">
-                    <h2 className="text-xl font-semibold text-dark-950">
+                    <h2 className="text-xl font-semibold text-white">
                       {isArabic && item.vendor.shopNameAr ? item.vendor.shopNameAr : item.vendor.shopName}
                     </h2>
                     <SoftBadge 
@@ -137,8 +137,8 @@ function ClientCustomRequestsBlock({ locale }: { locale: Locale }) {
                         } 
                     />
                   </div>
-                  <div className="mt-4 break-words rounded-lg border border-dark-100 bg-white p-3 text-sm text-dark-600">
-                    <span className="mb-1 block text-xs font-semibold uppercase tracking-wider text-dark-400">{isArabic ? "رسالتك:" : "Your Request:"}</span>
+                  <div className="mt-4 break-words rounded-lg border border-white/5 bg-onyx-800/50/5 p-3 text-sm text-onyx-300">
+                    <span className="mb-1 block text-eyebrow text-gold-500/70">{isArabic ? "رسالتك:" : "Your Request:"}</span>
                     {item.message}
                   </div>
                   
@@ -154,7 +154,7 @@ function ClientCustomRequestsBlock({ locale }: { locale: Locale }) {
                     </div>
                   )}
 
-                  <div className="mt-3 text-xs text-dark-400">
+                  <div className="mt-3 text-xs text-onyx-500">
                       {formatDate(locale, item.createdAt)}
                   </div>
                 </div>
@@ -168,7 +168,7 @@ function ClientCustomRequestsBlock({ locale }: { locale: Locale }) {
                         <CheckCircle2 className="h-4 w-4" />
                         {isArabic ? "الموافقة وتأكيد الطلب" : "Approve & Order"}
                       </button>
-                      <p className="mt-2 text-center text-[10px] text-dark-400">
+                      <p className="mt-2 text-center text-[10px] text-onyx-500">
                         {isArabic ? "سيتم إبلاغ المتجر بقرارك فوراً" : "Store will be notified instantly"}
                       </p>
                    </div>
@@ -176,18 +176,18 @@ function ClientCustomRequestsBlock({ locale }: { locale: Locale }) {
 
                 {(item.status === "ACCEPTED" || item.status === "PREPARING" || item.status === "SHIPPED" || item.status === "COMPLETED") && (
                   <div className="mt-4 xl:mt-0 xl:ps-6 xl:border-s xl:border-dark-100 min-w-[200px]">
-                     <div className="rounded-xl border border-dark-100 bg-dark-50/50 p-3">
-                        <p className="text-[10px] font-bold uppercase tracking-wider text-dark-400 mb-2">
+                     <div className="rounded-xl border border-white/5 bg-onyx-800/50/[0.03] p-3">
+                        <p className="text-eyebrow text-onyx-500 mb-2">
                           {isArabic ? "تفاصيل التنفيذ" : "Execution details"}
                         </p>
                         <div className="space-y-2">
                            <div className="flex justify-between text-xs">
-                              <span className="text-dark-500">{isArabic ? "التوصيل" : "Delivery"}</span>
-                              <span className="font-semibold text-dark-900">{item.deliveryMethod === "DELIVERY" ? (isArabic ? "توصيل" : "Delivery") : (isArabic ? "استلام" : "Pickup")}</span>
+                              <span className="text-onyx-400">{isArabic ? "التوصيل" : "Delivery"}</span>
+                              <span className="font-semibold text-white">{item.deliveryMethod === "DELIVERY" ? (isArabic ? "توصيل" : "Delivery") : (isArabic ? "استلام" : "Pickup")}</span>
                            </div>
                            <div className="flex justify-between text-xs">
-                              <span className="text-dark-500">{isArabic ? "الدفع" : "Payment"}</span>
-                              <span className="font-semibold text-dark-900">
+                              <span className="text-onyx-400">{isArabic ? "الدفع" : "Payment"}</span>
+                              <span className="font-semibold text-white">
                                  {item.paymentMethod === "VODAFONE_CASH" ? "Vodafone Cash" : 
                                   item.paymentMethod === "INSTAPAY" ? "InstaPay" : (isArabic ? "كاش" : "COD")}
                               </span>
@@ -241,19 +241,19 @@ function OrderConfirmationModal({ item, locale, onClose, onSuccess }: { item: Cu
 
   return (
     <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-dark-950/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-lg overflow-hidden rounded-[2.5rem] border border-white/20 bg-white p-6 shadow-2xl sm:p-8">
-        <h2 className="text-2xl font-bold text-dark-950">
+      <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={onClose} />
+      <div className="relative w-full max-w-lg overflow-hidden rounded-[2.5rem] border border-white/10 bg-onyx-950 p-6 shadow-2xl sm:p-8">
+        <h2 className="text-2xl font-bold text-white font-display">
           {isArabic ? "تأكيد الطلب المخصص" : "Confirm Custom Order"}
         </h2>
-        <p className="mt-2 text-sm text-dark-500">
+        <p className="mt-2 text-sm text-onyx-400">
           {isArabic ? "اختر وسيلة الاستلام والدفع المناسبة لك لمتابعة الطلب مع المتجر." : "Choose your preferred delivery and payment methods to proceed with the store."}
         </p>
 
         <div className="mt-8 space-y-6">
           {/* Delivery Method */}
           <div>
-            <label className="text-xs font-bold uppercase tracking-widest text-dark-400">
+            <label className="text-eyebrow text-gold-500/80 mb-3">
               {isArabic ? "وسيلة الاستلام" : "Delivery Method"}
             </label>
             <div className="mt-3 grid grid-cols-2 gap-3">
@@ -265,7 +265,7 @@ function OrderConfirmationModal({ item, locale, onClose, onSuccess }: { item: Cu
                   key={m.id}
                   onClick={() => setDeliveryMethod(m.id as any)}
                   className={`flex flex-col items-center gap-3 rounded-2xl border-2 p-4 transition-all ${
-                    deliveryMethod === m.id ? "border-primary-600 bg-primary-50 text-primary-900" : "border-dark-100 bg-white text-dark-600 hover:border-dark-200"
+                    deliveryMethod === m.id ? "border-gold-500 bg-gold-500/10 text-gold-400" : "border-white/5 bg-onyx-800/50/5 text-onyx-400 hover:border-white/10"
                   }`}
                 >
                   <m.icon className="h-5 w-5" />
@@ -277,7 +277,7 @@ function OrderConfirmationModal({ item, locale, onClose, onSuccess }: { item: Cu
 
           {/* Payment Method */}
           <div>
-            <label className="text-xs font-bold uppercase tracking-widest text-dark-400">
+            <label className="text-eyebrow text-gold-500/80 mb-3">
               {isArabic ? "وسيلة الدفع" : "Payment Method"}
             </label>
             <div className="mt-3 space-y-2">
@@ -290,11 +290,11 @@ function OrderConfirmationModal({ item, locale, onClose, onSuccess }: { item: Cu
                   key={m.id}
                   onClick={() => setPaymentMethod(m.id as any)}
                   className={`flex w-full items-center justify-between rounded-xl border-2 px-4 py-3 transition-all ${
-                    paymentMethod === m.id ? "border-primary-600 bg-primary-50 text-primary-900" : "border-dark-100 bg-white text-dark-600 hover:border-dark-200"
+                    paymentMethod === m.id ? "border-gold-500 bg-gold-500/10 text-gold-400" : "border-white/5 bg-onyx-800/50/5 text-onyx-400 hover:border-white/10"
                   }`}
                 >
                    <span className="text-sm font-bold">{m.label}</span>
-                   <div className={`h-4 w-4 rounded-full border-2 ${paymentMethod === m.id ? "border-primary-600 bg-primary-600" : "border-dark-200"}`} />
+                   <div className={`h-4 w-4 rounded-full border-2 ${paymentMethod === m.id ? "border-gold-500 bg-gold-500" : "border-onyx-700"}`} />
                 </button>
               ))}
             </div>
@@ -302,13 +302,13 @@ function OrderConfirmationModal({ item, locale, onClose, onSuccess }: { item: Cu
         </div>
 
         <div className="mt-8 flex gap-3">
-          <button onClick={onClose} className="flex-1 rounded-full border border-dark-200 py-4 text-sm font-bold text-dark-600 hover:bg-dark-50">
+          <button onClick={onClose} className="flex-1 rounded-full border border-white/10 py-4 text-sm font-bold text-onyx-400 hover:bg-onyx-800/50/5">
              {isArabic ? "إلغاء" : "Cancel"}
           </button>
           <button 
             disabled={isSubmitting}
             onClick={handleSubmit} 
-            className="flex-1 rounded-full bg-dark-950 py-4 text-sm font-bold text-white shadow-lg transition hover:bg-dark-800 disabled:opacity-50"
+            className="flex-1 rounded-full bg-gold-500 py-4 text-sm font-extrabold text-onyx-950 shadow-gold transition hover:bg-gold-400 active:scale-95 disabled:opacity-50"
           >
              {isSubmitting ? (isArabic ? "جاري..." : "Loading...") : (isArabic ? "تأكيد الطلب" : "Confirm Order")}
           </button>
@@ -373,41 +373,45 @@ function ClientDirectOrdersBlock({ locale }: { locale: Locale }) {
           {data.map((item) => {
             const statusInfo = getOrderStatus(item.status);
             return (
-              <article key={item.id} className="dashboard-card-soft p-4 sm:p-5">
+              <article key={item.id} className="onyx-card p-4 sm:p-5">
                 <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-3">
-                      <h2 className="text-xl font-semibold text-dark-950">{isArabic && item.vendor.shopNameAr ? item.vendor.shopNameAr : item.vendor.shopName}</h2>
+                      <h2 className="text-xl font-semibold text-white">{isArabic && item.vendor.shopNameAr ? item.vendor.shopNameAr : item.vendor.shopName}</h2>
                       <SoftBadge label={statusInfo.label} tone={statusInfo.tone} />
                     </div>
                     
                     <div className="mt-4">
                       <SplitInfo
                         items={[
-                          { label: isArabic ? "رقم الطلب" : "Order no", value: item.orderNumber },
-                          { label: isArabic ? "الإجمالي" : "Total", value: formatPrice(item.totalAmount) },
-                          { label: isArabic ? "طريقة الدفع" : "Payment", value: item.paymentMethod === "CASH_ON_DELIVERY" ? (isArabic ? "دفع عند الاستلام" : "Cash on Delivery") : item.paymentMethod },
-                          { label: isArabic ? "التاريخ" : "Date", value: formatDate(locale, item.createdAt) }
-                        ]}
-                      />
-                    </div>
-
-                    <div className="mt-4 rounded-lg border border-dark-100 bg-surface-soft p-3">
-                      <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-dark-400">
+                                            <div className="mt-4 rounded-lg border border-white/5 bg-onyx-800/50/5 p-3">
+                      <p className="text-eyebrow text-onyx-500 mb-2">
                         {isArabic ? "المنتجات:" : "Products:"}
                       </p>
                       <ul className="space-y-1">
                         {item.items.map((line) => (
                           <li key={line.id} className="text-sm flex justify-between">
-                            <span className="text-dark-700">{line.qty} × {isArabic ? line.product.nameAr : (line.product.nameEn || line.product.nameAr)}</span>
-                            <span className="font-medium text-dark-950">{formatPrice(line.unitPrice * line.qty)}</span>
+                            <span className="text-onyx-400">{line.qty} × {isArabic ? line.product.nameAr : (line.product.nameEn || line.product.nameAr)}</span>
+                            <span className="font-medium text-white">{formatPrice(line.unitPrice * line.qty)}</span>
                           </li>
                         ))}
                       </ul>
                     </div>
 
                     {item.deliveryNotes && (
-                       <div className="mt-3 text-xs text-dark-500">
+                       <div className="mt-3 text-xs text-onyx-500">
+                         <strong>{isArabic ? "ملاحظات:" : "Notes:"}</strong> {item.deliveryNotes}
+                       </div>
+                    )}
+pan className="text-onyx-200">{line.qty} × {isArabic ? line.product.nameAr : (line.product.nameEn || line.product.nameAr)}</span>
+                            <span className="font-medium text-white">{formatPrice(line.unitPrice * line.qty)}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {item.deliveryNotes && (
+                       <div className="mt-3 text-xs text-onyx-400">
                          <strong>{isArabic ? "ملاحظات:" : "Notes:"}</strong> {item.deliveryNotes}
                        </div>
                     )}
@@ -477,14 +481,14 @@ export function ClientRequestsPage({ locale, initialData }: { locale: Locale; in
           onClick={() => setActiveTab("services")}
           className={`relative flex-shrink-0 flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition ${
             activeTab === "services" 
-              ? "bg-primary-600 text-white shadow-soft" 
-              : "border border-dark-200 bg-white text-dark-600 hover:bg-dark-50"
+              ? "bg-gold-500 text-onyx-950 shadow-gold" 
+              : "border border-white/10 bg-onyx-800/50/5 text-onyx-400 hover:bg-onyx-800/50/10"
           }`}
         >
           <Wrench className="h-4 w-4" />
           {isArabic ? "طلبات الصيانة" : "Service Requests"}
           {data.length > 0 && (
-            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-sun-500 text-[10px] font-bold text-dark-950 ring-2 ring-white">
+            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-sun-500 text-[10px] font-bold text-white ring-2 ring-onyx-900">
               {data.length}
             </span>
           )}
@@ -493,14 +497,14 @@ export function ClientRequestsPage({ locale, initialData }: { locale: Locale; in
           onClick={() => setActiveTab("custom_requests")}
           className={`relative flex-shrink-0 flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition ${
             activeTab === "custom_requests" 
-              ? "bg-primary-600 text-white shadow-soft" 
-              : "border border-dark-200 bg-white text-dark-600 hover:bg-dark-50"
+              ? "bg-gold-500 text-onyx-950 shadow-gold" 
+              : "border border-white/10 bg-onyx-800/50/5 text-onyx-400 hover:bg-onyx-800/50/10"
           }`}
         >
           <MessageSquare className="h-4 w-4" />
           {isArabic ? "طلبات المتاجر (تواصل)" : "Store Custom Requests"}
           {customRequests.length > 0 && (
-            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-sun-500 text-[10px] font-bold text-dark-950 ring-2 ring-white">
+            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-sun-500 text-[10px] font-bold text-white ring-2 ring-onyx-900">
               {customRequests.length}
             </span>
           )}
@@ -509,14 +513,14 @@ export function ClientRequestsPage({ locale, initialData }: { locale: Locale; in
           onClick={() => setActiveTab("direct_orders")}
           className={`relative flex-shrink-0 flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition ${
             activeTab === "direct_orders" 
-              ? "bg-primary-600 text-white shadow-soft" 
-              : "border border-dark-200 bg-white text-dark-600 hover:bg-dark-50"
+              ? "bg-gold-500 text-onyx-950 shadow-gold" 
+              : "border border-white/10 bg-onyx-800/50/5 text-onyx-400 hover:bg-onyx-800/50/10"
           }`}
         >
           <ShoppingBag className="h-4 w-4" />
           {isArabic ? "مشتريات المتاجر (توصيل)" : "Store Orders (Delivery)"}
           {directOrders.length > 0 && (
-            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-sun-500 text-[10px] font-bold text-dark-950 ring-2 ring-white">
+            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-sun-500 text-[10px] font-bold text-white ring-2 ring-onyx-900">
               {directOrders.length}
             </span>
           )}
@@ -532,11 +536,11 @@ export function ClientRequestsPage({ locale, initialData }: { locale: Locale; in
               {data.map((item) => {
                 const status = getStatusMeta(locale, item.status);
                 return (
-                  <article key={item.id} className="dashboard-card-soft p-4 sm:p-5">
+                  <article key={item.id} className="onyx-card p-4 sm:p-5">
                     <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-3">
-                          <h2 className="text-2xl font-semibold text-dark-950">{item.title}</h2>
+                          <h2 className="text-2xl font-semibold text-white">{item.title}</h2>
                           <SoftBadge label={status.label} tone={status.tone} />
                         </div>
                         <div className="mt-4">
@@ -551,7 +555,7 @@ export function ClientRequestsPage({ locale, initialData }: { locale: Locale; in
                         </div>
                       </div>
 
-                      <Link href={`/${locale}/client/request/${item.id}`} className="inline-flex items-center gap-2 rounded-full border border-dark-200 bg-white px-4 py-2.5 text-sm font-semibold text-dark-700 shadow-soft transition hover:border-primary-300 hover:text-primary-700">
+                      <Link href={`/${locale}/client/request/${item.id}`} className="inline-flex items-center gap-2 rounded-full border border-onyx-700 bg-onyx-800/50 px-4 py-2.5 text-sm font-semibold text-onyx-200 shadow-soft transition hover:border-primary-300 hover:text-primary-700">
                         {isArabic ? "التفاصيل" : "Details"}
                         <ChevronRight className="h-4 w-4" />
                       </Link>
@@ -602,16 +606,16 @@ export function ClientRequestDetailPage({ locale, requestId, initialData }: { lo
         <DashboardBlock title={isArabic ? "سياق الطلب" : "Request context"} eyebrow={isArabic ? "تفاصيل المشكلة" : "issue profile"}>
           <div className="grid gap-4">
             <SoftCard>
-              <p className="text-xs uppercase tracking-[0.22em] text-dark-400">{isArabic ? "الخدمة" : "Service"}</p>
-              <p className="mt-3 text-lg font-semibold text-dark-950">{getServiceName(data.serviceId, locale)}</p>
+              <p className="text-xs uppercase tracking-[0.22em] text-onyx-500">{isArabic ? "الخدمة" : "Service"}</p>
+              <p className="mt-3 text-lg font-semibold text-white">{getServiceName(data.serviceId, locale)}</p>
             </SoftCard>
             <SoftCard>
-              <p className="text-xs uppercase tracking-[0.22em] text-dark-400">{isArabic ? "الوصف" : "Description"}</p>
-              <p className="mt-3 text-sm leading-7 text-dark-600">{data.description}</p>
+              <p className="text-xs uppercase tracking-[0.22em] text-onyx-500">{isArabic ? "الوصف" : "Description"}</p>
+              <p className="mt-3 text-sm leading-7 text-onyx-300">{data.description}</p>
             </SoftCard>
             <SoftCard>
-              <p className="text-xs uppercase tracking-[0.22em] text-dark-400">{isArabic ? "ملاحظات الوسائط" : "Media notes"}</p>
-              <p className="mt-3 text-sm leading-7 text-dark-600">{data.mediaNotes || (isArabic ? "لا توجد ملاحظات" : "No notes added")}</p>
+              <p className="text-xs uppercase tracking-[0.22em] text-onyx-500">{isArabic ? "ملاحظات الوسائط" : "Media notes"}</p>
+              <p className="mt-3 text-sm leading-7 text-onyx-300">{data.mediaNotes || (isArabic ? "لا توجد ملاحظات" : "No notes added")}</p>
             </SoftCard>
           </div>
         </DashboardBlock>
@@ -619,12 +623,12 @@ export function ClientRequestDetailPage({ locale, requestId, initialData }: { lo
         <DashboardBlock title={isArabic ? "العنوان والخط الزمني" : "Delivery + timeline"} eyebrow={isArabic ? "تفاصيل الوصول" : "address rail"}>
           <div className="grid gap-4">
             <SoftCard>
-              <p className="text-xs uppercase tracking-[0.22em] text-dark-400">{isArabic ? "الموقع" : "Location"}</p>
-              <p className="mt-3 text-sm font-semibold text-dark-950">{resolveAddress(locale, data)}</p>
+              <p className="text-xs uppercase tracking-[0.22em] text-onyx-500">{isArabic ? "الموقع" : "Location"}</p>
+              <p className="mt-3 text-sm font-semibold text-white">{resolveAddress(locale, data)}</p>
             </SoftCard>
             <SoftCard>
-              <p className="text-xs uppercase tracking-[0.22em] text-dark-400">{isArabic ? "التوقيت المطلوب" : "Requested timing"}</p>
-              <p className="mt-3 text-sm font-semibold text-dark-950">{formatTiming(locale, data.timing)}</p>
+              <p className="text-xs uppercase tracking-[0.22em] text-onyx-500">{isArabic ? "التوقيت المطلوب" : "Requested timing"}</p>
+              <p className="mt-3 text-sm font-semibold text-white">{formatTiming(locale, data.timing)}</p>
             </SoftCard>
             <SplitInfo
               items={[

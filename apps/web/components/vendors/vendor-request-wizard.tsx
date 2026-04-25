@@ -56,7 +56,7 @@ export function VendorRequestWizard({ locale, vendorId }: { locale: Locale; vend
           {isArabic ? "إلغاء الطلب" : "Cancel Request"}
         </Link>
 
-        <div className="overflow-hidden rounded-3xl bg-white shadow-sm border border-gray-100">
+        <div className="overflow-hidden rounded-3xl bg-onyx-800/50 shadow-sm border border-gray-100">
           <div className="border-b border-gray-100 bg-gray-50 p-6 sm:p-8">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary-100 text-primary-600">
               <FileText className="h-6 w-6" />
@@ -76,7 +76,7 @@ export function VendorRequestWizard({ locale, vendorId }: { locale: Locale; vend
                   onChange={e => setDetails(e.target.value)}
                   placeholder={isArabic ? "مثال: محتاج 5 علب دهان بلاستيك مط لون أبيض من جوتن..." : "Example: I need 5 buckets of matte white plastic paint..."}
                   rows={6}
-                  className="w-full rounded-2xl border border-gray-200 bg-white p-4 text-gray-900 focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20"
+                  className="w-full rounded-2xl border border-gray-200 bg-onyx-800/50 p-4 text-gray-900 focus:border-primary-400 focus:ring-2 focus:ring-primary-500/20"
                 />
               </div>
             )}
@@ -94,7 +94,7 @@ export function VendorRequestWizard({ locale, vendorId }: { locale: Locale; vend
                         onClick={() => setDeliveryMethod(opt.id)}
                         className={cn(
                           "flex items-center gap-3 rounded-xl border p-4 text-start transition",
-                          deliveryMethod === opt.id ? "border-primary-500 bg-primary-50 text-primary-700" : "border-gray-200 bg-white hover:border-gray-300"
+                          deliveryMethod === opt.id ? "border-primary-500 bg-primary-50 text-primary-700" : "border-gray-200 bg-onyx-800/50 hover:border-gray-300"
                         )}
                       >
                         <PackageOpen className={cn("h-5 w-5", deliveryMethod === opt.id ? "text-primary-600" : "text-gray-400")} />
@@ -115,7 +115,7 @@ export function VendorRequestWizard({ locale, vendorId }: { locale: Locale; vend
                         onClick={() => setPaymentMethod(opt.id)}
                         className={cn(
                           "rounded-xl border p-4 text-center transition",
-                          paymentMethod === opt.id ? "border-primary-500 bg-primary-50 text-primary-700" : "border-gray-200 bg-white hover:border-gray-300"
+                          paymentMethod === opt.id ? "border-primary-500 bg-primary-50 text-primary-700" : "border-gray-200 bg-onyx-800/50 hover:border-gray-300"
                         )}
                       >
                         <span className="font-medium">{isArabic ? opt.arLabel : opt.label}</span>

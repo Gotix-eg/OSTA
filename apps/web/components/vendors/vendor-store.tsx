@@ -45,7 +45,7 @@ export function VendorStore({ locale, vendorId }: { locale: Locale; vendorId: st
         </Link>
 
         {/* Store Header */}
-        <div className="overflow-hidden rounded-3xl bg-white shadow-sm border border-gray-100">
+        <div className="overflow-hidden rounded-3xl bg-onyx-800/50 shadow-sm border border-gray-100">
           <div className="relative h-48 w-full sm:h-64">
             <Image src={MOCK_STORE.image} alt={MOCK_STORE.name[locale]} fill className="object-cover brightness-75" />
             <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent" />
@@ -69,7 +69,7 @@ export function VendorStore({ locale, vendorId }: { locale: Locale; vendorId: st
           </div>
 
           {/* Store Info Bar */}
-          <div className="flex flex-wrap divide-x divide-gray-100 rtl:divide-x-reverse border-b border-gray-100 bg-white">
+          <div className="flex flex-wrap divide-x divide-gray-100 rtl:divide-x-reverse border-b border-gray-100 bg-onyx-800/50">
             <div className="flex items-center gap-3 p-5 sm:flex-1">
               <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
               <div>
@@ -123,7 +123,7 @@ export function VendorStore({ locale, vendorId }: { locale: Locale; vendorId: st
             {activeTab === "products" && (
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {MOCK_STORE.products.map(product => (
-                  <div key={product.id} className="group overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition hover:shadow-md">
+                  <div key={product.id} className="group overflow-hidden rounded-2xl border border-gray-100 bg-onyx-800/50 shadow-sm transition hover:shadow-md">
                     <div className="relative h-48 w-full bg-gray-50">
                       <Image src={product.image} alt={product.name[locale]} fill className="object-cover p-4 transition duration-500 group-hover:scale-105" />
                     </div>
@@ -140,14 +140,14 @@ export function VendorStore({ locale, vendorId }: { locale: Locale; vendorId: st
             )}
 
             {activeTab === "about" && (
-              <div className="rounded-3xl border border-gray-100 bg-white p-8 shadow-sm">
+              <div className="rounded-3xl border border-gray-100 bg-onyx-800/50 p-8 shadow-sm">
                 <h3 className="text-xl font-semibold text-gray-900">{isArabic ? "نبذة عن المتجر" : "About Store"}</h3>
                 <p className="mt-4 leading-loose text-gray-600">{MOCK_STORE.about[locale]}</p>
               </div>
             )}
 
             {activeTab === "reviews" && (
-              <div className="rounded-3xl border border-gray-100 bg-white p-8 shadow-sm text-center">
+              <div className="rounded-3xl border border-gray-100 bg-onyx-800/50 p-8 shadow-sm text-center">
                 <Star className="mx-auto h-12 w-12 text-gray-300" />
                 <p className="mt-4 font-medium text-gray-900">{isArabic ? "سيتم عرض التقييمات قريباً" : "Reviews will be displayed soon"}</p>
               </div>

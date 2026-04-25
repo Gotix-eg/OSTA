@@ -19,7 +19,7 @@ const iconTones: Record<Tone, string> = {
   primary: "bg-gold-500 text-onyx-950",
   accent: "bg-accent-500 text-white",
   sun: "bg-warning text-onyx-950",
-  dark: "bg-white/10 text-white"
+  dark: "bg-onyx-800/50/10 text-white"
 };
 
 export function SubpageHero({
@@ -139,7 +139,7 @@ export function MiniMetric({
 
 export function SoftCard({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <div className={cn("rounded-[2rem] border border-white/5 bg-white/[0.02] p-6 transition-all duration-500 hover:bg-white/[0.04]", className)}>
+    <div className={cn("rounded-[2rem] border border-white/5 bg-onyx-800/50/[0.02] p-6 transition-all duration-500 hover:bg-onyx-800/50/[0.04]", className)}>
       {children}
     </div>
   );
@@ -171,7 +171,7 @@ export function SplitInfo({ items }: { items: Array<{ label: string; value: stri
   return (
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {items.map((item) => (
-        <div key={item.label} className="rounded-2xl border border-white/5 bg-white/[0.02] p-5">
+        <div key={item.label} className="rounded-2xl border border-white/5 bg-onyx-800/50/[0.02] p-5">
           <p className="text-eyebrow opacity-40 mb-3">{item.label}</p>
           <p className="text-xl font-bold leading-none text-white">{item.value}</p>
         </div>
@@ -182,7 +182,7 @@ export function SplitInfo({ items }: { items: Array<{ label: string; value: stri
 
 export function EmptyState({ children }: { children: ReactNode }) {
   return (
-    <div className="rounded-[2rem] border border-dashed border-white/10 bg-white/[0.02] p-8 text-center text-sm leading-relaxed text-onyx-500">
+    <div className="rounded-[2rem] border border-dashed border-white/10 bg-onyx-800/50/[0.02] p-8 text-center text-sm leading-relaxed text-onyx-500">
       {children}
     </div>
   );

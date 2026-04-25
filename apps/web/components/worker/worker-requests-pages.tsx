@@ -121,17 +121,17 @@ export function WorkerIncomingRequestsPage({ locale, initialData }: { locale: Lo
       </div>
 
       <DashboardBlock title={isArabic ? "مسار الطلبات الواردة" : "Incoming lane"} eyebrow={isArabic ? "طابور القرار" : "decision queue"}>
-        {feedback ? <div className="mb-4 rounded-[1.2rem] border border-dark-200 bg-white px-4 py-3 text-sm text-dark-600">{feedback}</div> : null}
+        {feedback ? <div className="mb-4 rounded-[1.2rem] border border-onyx-700 bg-onyx-800/50 px-4 py-3 text-sm text-onyx-300">{feedback}</div> : null}
         {data.requests.length === 0 ? (
           <EmptyState>{isArabic ? "الطابور فارغ حاليًا" : "The queue is empty right now"}</EmptyState>
         ) : (
           <div className="grid gap-4">
             {data.requests.map((item, index) => (
-              <article key={item.id} className={index % 2 === 0 ? "dashboard-card-soft p-4 sm:p-5" : "dashboard-card-soft bg-accent-50 p-4 sm:p-5"}>
+              <article key={item.id} className={index % 2 === 0 ? "onyx-card p-4 sm:p-5" : "onyx-card bg-onyx-800/80 p-4 sm:p-5"}>
                 <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-3">
-                      <h2 className="text-2xl font-semibold text-dark-950">{serviceLabels[item.service][locale]}</h2>
+                      <h2 className="text-2xl font-semibold text-white">{serviceLabels[item.service][locale]}</h2>
                       <SoftBadge label={urgencyLabel(locale, item.urgency)} tone={item.urgency === "URGENT" ? "error" : item.urgency === "SAME_DAY" ? "sun" : "accent"} />
                     </div>
                     <div className="mt-4">
@@ -151,7 +151,7 @@ export function WorkerIncomingRequestsPage({ locale, initialData }: { locale: Lo
                       type="button"
                       onClick={() => void handleIncomingAction(item.id, "reject")}
                       disabled={busyId === item.id}
-                      className="rounded-full border border-dark-200 bg-white px-4 py-2.5 text-sm font-semibold text-dark-700 shadow-soft disabled:opacity-60"
+                      className="rounded-full border border-onyx-700 bg-onyx-800/50 px-4 py-2.5 text-sm font-semibold text-onyx-200 shadow-soft disabled:opacity-60"
                     >
                       {isArabic ? "رفض" : "Reject"}
                     </button>
@@ -224,17 +224,17 @@ export function WorkerActiveRequestsPage({ locale, initialData }: { locale: Loca
       </div>
 
       <DashboardBlock title={isArabic ? "بطاقات التنفيذ" : "Job deck"} eyebrow={isArabic ? "تنفيذ ميداني" : "field execution"}>
-        {feedback ? <div className="mb-4 rounded-[1.2rem] border border-dark-200 bg-white px-4 py-3 text-sm text-dark-600">{feedback}</div> : null}
+        {feedback ? <div className="mb-4 rounded-[1.2rem] border border-onyx-700 bg-onyx-800/50 px-4 py-3 text-sm text-onyx-300">{feedback}</div> : null}
         {data.requests.length === 0 ? (
           <EmptyState>{isArabic ? "لا توجد طلبات نشطة حاليًا" : "No active jobs right now"}</EmptyState>
         ) : (
           <div className="grid gap-4">
             {data.requests.map((item, index) => (
-              <article key={item.id} className={index % 2 === 0 ? "dashboard-card-soft p-4 sm:p-5" : "dashboard-card-soft bg-surface-peach p-4 sm:p-5"}>
+              <article key={item.id} className={index % 2 === 0 ? "onyx-card p-4 sm:p-5" : "onyx-card bg-onyx-800/80 p-4 sm:p-5"}>
                 <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-3">
-                      <h2 className="text-2xl font-semibold text-dark-950">{serviceLabels[item.service][locale]}</h2>
+                      <h2 className="text-2xl font-semibold text-white">{serviceLabels[item.service][locale]}</h2>
                       <SoftBadge label={activeStatusLabel(locale, item.status)} tone={item.status === "WRAP_UP" ? "success" : item.status === "ON_SITE" ? "sun" : "accent"} />
                     </div>
                     <div className="mt-4">
@@ -255,7 +255,7 @@ export function WorkerActiveRequestsPage({ locale, initialData }: { locale: Loca
                         type="button"
                         onClick={() => void handleActiveAction(item.id, "start")}
                         disabled={busyId === item.id}
-                        className="inline-flex items-center gap-2 rounded-full border border-dark-200 bg-white px-4 py-2.5 text-sm font-semibold text-dark-700 shadow-soft disabled:opacity-60"
+                        className="inline-flex items-center gap-2 rounded-full border border-onyx-700 bg-onyx-800/50 px-4 py-2.5 text-sm font-semibold text-onyx-200 shadow-soft disabled:opacity-60"
                       >
                         {busyId === item.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Clock3 className="h-4 w-4" />}
                         {isArabic ? "بدء" : "Start"}

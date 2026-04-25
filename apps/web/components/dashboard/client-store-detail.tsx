@@ -59,22 +59,22 @@ function ProductCard({
   const name = isArabic ? product.nameAr : (product.nameEn || product.nameAr);
 
   return (
-    <article className="overflow-hidden rounded-[1.6rem] border border-dark-200/70 bg-white shadow-soft transition hover:-translate-y-0.5">
+    <article className="overflow-hidden rounded-[1.6rem] border border-onyx-700/70 bg-onyx-800/50 shadow-soft transition hover:-translate-y-0.5">
       {/* Image */}
-      <div className="relative h-44 w-full overflow-hidden bg-surface-soft">
+      <div className="relative h-44 w-full overflow-hidden bg-onyx-800/50">
         {product.imageUrl ? (
           <img src={product.imageUrl} alt={name} className="h-full w-full object-cover" />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-dark-300">
+          <div className="flex h-full w-full items-center justify-center text-onyx-600">
             <ImageOff className="h-10 w-10" />
           </div>
         )}
       </div>
 
       <div className="p-4">
-        <p className="font-semibold text-dark-950 leading-snug">{name}</p>
+        <p className="font-semibold text-white leading-snug">{name}</p>
         {product.description && (
-          <p className="mt-1 line-clamp-2 text-xs text-dark-500">{product.description}</p>
+          <p className="mt-1 line-clamp-2 text-xs text-onyx-400">{product.description}</p>
         )}
         <p className="mt-3 text-xl font-bold text-primary-700">{formatPrice(product.price, locale)}</p>
 
@@ -91,11 +91,11 @@ function ProductCard({
             </button>
           ) : (
             <div className="flex items-center justify-between rounded-full border border-primary-200 bg-primary-50 px-2 py-1">
-              <button type="button" onClick={onRemove} className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-primary-700 shadow-soft transition hover:bg-primary-100">
+              <button type="button" onClick={onRemove} className="flex h-8 w-8 items-center justify-center rounded-full bg-onyx-800/50 text-primary-700 shadow-soft transition hover:bg-primary-100">
                 <Minus className="h-4 w-4" />
               </button>
               <span className="text-lg font-bold text-primary-700">{cartQty}</span>
-              <button type="button" onClick={onAdd} className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-primary-700 shadow-soft transition hover:bg-primary-100">
+              <button type="button" onClick={onAdd} className="flex h-8 w-8 items-center justify-center rounded-full bg-onyx-800/50 text-primary-700 shadow-soft transition hover:bg-primary-100">
                 <Plus className="h-4 w-4" />
               </button>
             </div>
@@ -154,10 +154,10 @@ function CartPanel({
     return (
       <div className="rounded-[1.6rem] border border-success/30 bg-success/10 p-6 text-center">
         <CheckCircle2 className="mx-auto h-10 w-10 text-success" />
-        <h3 className="mt-4 text-xl font-semibold text-dark-950">
+        <h3 className="mt-4 text-xl font-semibold text-white">
           {isArabic ? "تم إرسال طلبك!" : "Order Placed!"}
         </h3>
-        <p className="mt-2 text-sm text-dark-600">
+        <p className="mt-2 text-sm text-onyx-300">
           {isArabic
             ? "سيتواصل معك المتجر قريباً لتأكيد الطلب."
             : "The store will contact you soon to confirm your order."}
@@ -167,10 +167,10 @@ function CartPanel({
   }
 
   return (
-    <div className="rounded-[1.8rem] border border-dark-200/70 bg-white shadow-soft">
+    <div className="rounded-[1.8rem] border border-onyx-700/70 bg-onyx-800/50 shadow-soft">
       <div className="border-b border-dark-100 p-5">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-dark-950 flex items-center gap-2">
+          <h3 className="text-lg font-semibold text-white flex items-center gap-2">
             <ShoppingCart className="h-5 w-5 text-primary-600" />
             {isArabic ? "سلة المشتريات" : "Your Cart"}
           </h3>
@@ -184,15 +184,15 @@ function CartPanel({
         {cart.map(item => (
           <div key={item.product.id} className="flex items-center gap-3 py-3">
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-semibold text-dark-950 truncate">{isArabic ? item.product.nameAr : (item.product.nameEn || item.product.nameAr)}</p>
-              <p className="text-xs text-dark-500">{formatPrice(item.product.price, locale)} × {item.qty}</p>
+              <p className="text-sm font-semibold text-white truncate">{isArabic ? item.product.nameAr : (item.product.nameEn || item.product.nameAr)}</p>
+              <p className="text-xs text-onyx-400">{formatPrice(item.product.price, locale)} × {item.qty}</p>
             </div>
             <div className="flex items-center gap-2 shrink-0">
-              <button type="button" onClick={() => onChangeQty(item.product.id, -1)} className="flex h-7 w-7 items-center justify-center rounded-full border border-dark-200 text-dark-600 hover:bg-surface-soft">
+              <button type="button" onClick={() => onChangeQty(item.product.id, -1)} className="flex h-7 w-7 items-center justify-center rounded-full border border-onyx-700 text-onyx-300 hover:bg-onyx-800/50">
                 <Minus className="h-3 w-3" />
               </button>
               <span className="w-5 text-center text-sm font-semibold">{item.qty}</span>
-              <button type="button" onClick={() => onChangeQty(item.product.id, 1)} className="flex h-7 w-7 items-center justify-center rounded-full border border-dark-200 text-dark-600 hover:bg-surface-soft">
+              <button type="button" onClick={() => onChangeQty(item.product.id, 1)} className="flex h-7 w-7 items-center justify-center rounded-full border border-onyx-700 text-onyx-300 hover:bg-onyx-800/50">
                 <Plus className="h-3 w-3" />
               </button>
               <button type="button" onClick={() => onRemoveItem(item.product.id)} className="flex h-7 w-7 items-center justify-center rounded-full text-error hover:bg-error/10">
@@ -205,14 +205,14 @@ function CartPanel({
 
       <div className="space-y-4 p-5">
         {/* Total */}
-        <div className="flex items-center justify-between rounded-[1.2rem] bg-surface-soft px-4 py-3">
-          <span className="font-semibold text-dark-700">{isArabic ? "الإجمالي" : "Total"}</span>
+        <div className="flex items-center justify-between rounded-[1.2rem] bg-onyx-800/50 px-4 py-3">
+          <span className="font-semibold text-onyx-200">{isArabic ? "الإجمالي" : "Total"}</span>
           <span className="text-xl font-bold text-primary-700">{formatPrice(total, locale)}</span>
         </div>
 
         {/* Payment method */}
         <div className="space-y-2">
-          <p className="text-sm font-medium text-dark-700">{isArabic ? "طريقة الدفع" : "Payment Method"}</p>
+          <p className="text-sm font-medium text-onyx-200">{isArabic ? "طريقة الدفع" : "Payment Method"}</p>
           <div className="grid grid-cols-2 gap-2">
             {(["CASH_ON_DELIVERY", "INSTAPAY"] as const).map(method => (
               <button
@@ -223,7 +223,7 @@ function CartPanel({
                   "rounded-[1rem] border px-3 py-2 text-sm font-medium transition",
                   paymentMethod === method
                     ? "border-primary-400 bg-primary-50 text-primary-700"
-                    : "border-dark-200 bg-white text-dark-600 hover:border-dark-400"
+                    : "border-onyx-700 bg-onyx-800/50 text-onyx-300 hover:border-dark-400"
                 )}
               >
                 {method === "CASH_ON_DELIVERY"
@@ -236,13 +236,13 @@ function CartPanel({
 
         {/* Notes */}
         <label className="block space-y-1.5">
-          <span className="text-sm font-medium text-dark-700">{isArabic ? "ملاحظات التوصيل (اختياري)" : "Delivery Notes (Optional)"}</span>
+          <span className="text-sm font-medium text-onyx-200">{isArabic ? "ملاحظات التوصيل (اختياري)" : "Delivery Notes (Optional)"}</span>
           <textarea
             value={notes}
             onChange={e => setNotes(e.target.value)}
             rows={2}
             placeholder={isArabic ? "العنوان، الطابق، أي تعليمات..." : "Address, floor, any instructions..."}
-            className="w-full rounded-[1.1rem] border border-dark-200 bg-surface-soft px-4 py-3 text-sm text-dark-950 placeholder:text-dark-400 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200"
+            className="w-full rounded-[1.1rem] border border-onyx-700 bg-onyx-800/50 px-4 py-3 text-sm text-white placeholder:text-onyx-500 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200"
           />
         </label>
 
@@ -319,9 +319,9 @@ export function ClientStoreDetailPage({ locale, vendorId }: { locale: Locale; ve
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="h-40 animate-pulse rounded-[1.8rem] bg-surface-soft" />
+        <div className="h-40 animate-pulse rounded-[1.8rem] bg-onyx-800/50" />
         <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-          {[1, 2, 3, 4].map(i => <div key={i} className="h-64 animate-pulse rounded-[1.6rem] bg-surface-soft" />)}
+          {[1, 2, 3, 4].map(i => <div key={i} className="h-64 animate-pulse rounded-[1.6rem] bg-onyx-800/50" />)}
         </div>
       </div>
     );
@@ -332,7 +332,7 @@ export function ClientStoreDetailPage({ locale, vendorId }: { locale: Locale; ve
       {/* Back link */}
       <Link
         href={`/${locale}/client/stores`}
-        className="mb-6 inline-flex items-center gap-2 text-sm text-dark-500 hover:text-dark-950"
+        className="mb-6 inline-flex items-center gap-2 text-sm text-onyx-400 hover:text-white"
       >
         {isArabic ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
         {isArabic ? "العودة للمتاجر" : "Back to Stores"}
@@ -340,7 +340,7 @@ export function ClientStoreDetailPage({ locale, vendorId }: { locale: Locale; ve
 
       {/* Store header */}
       {vendor && (
-        <div className="mb-6 overflow-hidden rounded-[1.8rem] border border-dark-200/70 bg-white shadow-soft">
+        <div className="mb-6 overflow-hidden rounded-[1.8rem] border border-onyx-700/70 bg-onyx-800/50 shadow-soft">
           <div className="relative h-40 overflow-hidden bg-gradient-to-br from-primary-50 to-surface-peach">
             {vendor.shopImageUrl
               ? <img src={vendor.shopImageUrl} alt={shopName} className="h-full w-full object-cover" />
@@ -353,14 +353,14 @@ export function ClientStoreDetailPage({ locale, vendorId }: { locale: Locale; ve
           <div className="p-5">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
-                <h1 className="text-2xl font-semibold text-dark-950">{shopName}</h1>
+                <h1 className="text-2xl font-semibold text-white">{shopName}</h1>
                 {vendor.category && <p className="mt-1 text-sm font-medium text-primary-700">{vendor.category}</p>}
-                {vendor.shopDescription && <p className="mt-2 text-sm text-dark-500">{vendor.shopDescription}</p>}
+                {vendor.shopDescription && <p className="mt-2 text-sm text-onyx-400">{vendor.shopDescription}</p>}
               </div>
-              <div className="flex items-center gap-4 text-sm text-dark-500">
+              <div className="flex items-center gap-4 text-sm text-onyx-400">
                 <span className="flex items-center gap-1">
                   <Star className="h-4 w-4 fill-sun-400 text-sun-400" />
-                  <strong className="text-dark-900">{vendor.rating > 0 ? vendor.rating.toFixed(1) : "—"}</strong>
+                  <strong className="text-white/90">{vendor.rating > 0 ? vendor.rating.toFixed(1) : "—"}</strong>
                   {vendor.ratingCount > 0 && <span>({vendor.ratingCount})</span>}
                 </span>
                 <span className="flex items-center gap-1">
@@ -376,14 +376,14 @@ export function ClientStoreDetailPage({ locale, vendorId }: { locale: Locale; ve
       <div className="grid gap-6 xl:grid-cols-[1fr_340px]">
         {/* Products */}
         <div>
-          <h2 className="mb-4 text-xl font-semibold text-dark-950">
+          <h2 className="mb-4 text-xl font-semibold text-white">
             {isArabic ? `المنتجات (${products.length})` : `Products (${products.length})`}
           </h2>
 
           {products.length === 0 ? (
-            <div className="flex flex-col items-center justify-center rounded-[2rem] border border-dashed border-dark-200 bg-surface-soft py-16 text-center">
-              <Store className="h-10 w-10 text-dark-300" />
-              <p className="mt-3 text-dark-500">
+            <div className="flex flex-col items-center justify-center rounded-[2rem] border border-dashed border-onyx-700 bg-onyx-800/50 py-16 text-center">
+              <Store className="h-10 w-10 text-onyx-600" />
+              <p className="mt-3 text-onyx-400">
                 {isArabic ? "لا توجد منتجات متاحة في هذا المتجر حالياً" : "No products available in this store yet"}
               </p>
             </div>
@@ -420,9 +420,9 @@ export function ClientStoreDetailPage({ locale, vendorId }: { locale: Locale; ve
               onChangeQty={changeQty}
             />
           ) : (
-            <div className="flex flex-col items-center justify-center rounded-[1.8rem] border border-dashed border-dark-200 bg-surface-soft p-8 text-center">
-              <ShoppingCart className="h-10 w-10 text-dark-300" />
-              <p className="mt-3 text-sm text-dark-500">
+            <div className="flex flex-col items-center justify-center rounded-[1.8rem] border border-dashed border-onyx-700 bg-onyx-800/50 p-8 text-center">
+              <ShoppingCart className="h-10 w-10 text-onyx-600" />
+              <p className="mt-3 text-sm text-onyx-400">
                 {isArabic ? "السلة فارغة — اضغط على المنتج لإضافته" : "Cart is empty — tap a product to add it"}
               </p>
             </div>
@@ -472,10 +472,10 @@ function CustomRequestForm({ locale, vendorId }: { locale: Locale; vendorId: str
     return (
       <div className="rounded-[1.6rem] border border-success/30 bg-success/10 p-5 text-center">
         <CheckCircle2 className="mx-auto h-8 w-8 text-success" />
-        <p className="mt-3 font-semibold text-dark-950">
+        <p className="mt-3 font-semibold text-white">
           {isArabic ? "تم إرسال طلبك بنجاح!" : "Request sent successfully!"}
         </p>
-        <p className="mt-1 text-sm text-dark-500">
+        <p className="mt-1 text-sm text-onyx-400">
           {isArabic ? "المتجر هيتواصل معاك قريباً." : "The store will contact you soon."}
         </p>
         <button
@@ -490,7 +490,7 @@ function CustomRequestForm({ locale, vendorId }: { locale: Locale; vendorId: str
   }
 
   return (
-    <div className="rounded-[1.6rem] border border-dark-200/70 bg-white shadow-soft">
+    <div className="rounded-[1.6rem] border border-onyx-700/70 bg-onyx-800/50 shadow-soft">
       <button
         type="button"
         onClick={() => setOpen(!open)}
@@ -500,20 +500,20 @@ function CustomRequestForm({ locale, vendorId }: { locale: Locale; vendorId: str
           <MessageSquarePlus className="h-5 w-5" />
         </div>
         <div className="flex-1 text-start">
-          <p className="font-semibold text-dark-950">
+          <p className="font-semibold text-white">
             {isArabic ? "اطلب من المتجر" : "Request from Store"}
           </p>
-          <p className="text-xs text-dark-500">
+          <p className="text-xs text-onyx-400">
             {isArabic ? "اكتب طلبك وأبعته للمحل مباشرة" : "Write what you need and send it directly"}
           </p>
         </div>
-        <ChevronRight className={cn("h-5 w-5 text-dark-400 transition", open && "rotate-90")} />
+        <ChevronRight className={cn("h-5 w-5 text-onyx-500 transition", open && "rotate-90")} />
       </button>
 
       {open && (
         <div className="space-y-3 border-t border-dark-100 p-5">
           <label className="block space-y-1.5">
-            <span className="text-sm font-medium text-dark-700">
+            <span className="text-sm font-medium text-onyx-200">
               {isArabic ? "وصف الطلب *" : "Request Description *"}
             </span>
             <textarea
@@ -523,12 +523,12 @@ function CustomRequestForm({ locale, vendorId }: { locale: Locale; vendorId: str
               placeholder={isArabic
                 ? "مثال: عاوز فلتر زيت لموتوسيكل هوندا 2020 + شمعات..."
                 : "e.g. I need an oil filter for Honda 2020 + spark plugs..."}
-              className="w-full rounded-[1.1rem] border border-dark-200 bg-surface-soft px-4 py-3 text-sm text-dark-950 placeholder:text-dark-400 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200"
+              className="w-full rounded-[1.1rem] border border-onyx-700 bg-onyx-800/50 px-4 py-3 text-sm text-white placeholder:text-onyx-500 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200"
             />
           </label>
 
           <label className="block space-y-1.5">
-            <span className="text-sm font-medium text-dark-700">
+            <span className="text-sm font-medium text-onyx-200">
               {isArabic ? "رقم التلفون (اختياري)" : "Phone Number (Optional)"}
             </span>
             <input
@@ -536,7 +536,7 @@ function CustomRequestForm({ locale, vendorId }: { locale: Locale; vendorId: str
               value={phone}
               onChange={e => setPhone(e.target.value)}
               placeholder={isArabic ? "01xxxxxxxxx" : "01xxxxxxxxx"}
-              className="h-11 w-full rounded-[1.1rem] border border-dark-200 bg-surface-soft px-4 text-sm text-dark-950 placeholder:text-dark-400 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200"
+              className="h-11 w-full rounded-[1.1rem] border border-onyx-700 bg-onyx-800/50 px-4 text-sm text-white placeholder:text-onyx-500 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200"
             />
           </label>
 

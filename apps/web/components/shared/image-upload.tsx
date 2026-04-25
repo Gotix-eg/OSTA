@@ -52,10 +52,10 @@ export function ImageUpload({
 
   return (
     <div className="space-y-2 text-start">
-      <span className="text-sm font-medium text-dark-700">{label}</span>
+      <span className="text-sm font-medium text-onyx-200">{label}</span>
       <div 
         onClick={() => fileInputRef.current?.click()}
-        className="relative flex h-32 cursor-pointer flex-col items-center justify-center gap-2 rounded-[1.2rem] border-2 border-dashed border-dark-200 bg-surface-soft text-dark-500 transition hover:border-primary-400 hover:bg-primary-50"
+        className="relative flex h-32 cursor-pointer flex-col items-center justify-center gap-2 rounded-[1.2rem] border-2 border-dashed border-onyx-700 bg-onyx-800/50 text-onyx-400 transition hover:border-primary-400 hover:bg-primary-50"
       >
         {isUploading ? (
           <span className="text-sm font-medium text-primary-600">

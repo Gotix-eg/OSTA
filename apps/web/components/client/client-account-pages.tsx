@@ -63,11 +63,11 @@ export function ClientFavoritesPage({ locale, initialData }: { locale: Locale; i
         ) : (
           <div className="grid gap-4 xl:grid-cols-2">
             {data.workers.map((worker, index) => (
-              <article key={worker.id} className={index % 2 === 0 ? "dashboard-card-soft p-5" : "dashboard-card-soft bg-surface-peach p-5"}>
+              <article key={worker.id} className={index % 2 === 0 ? "onyx-card p-5" : "onyx-card bg-onyx-800/80 p-5"}>
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <h2 className="text-2xl font-semibold text-dark-950">{worker.name}</h2>
-                    <p className="mt-2 text-body text-dark-500">{worker.specialty}</p>
+                    <h2 className="text-2xl font-semibold text-white">{worker.name}</h2>
+                    <p className="mt-2 text-body text-onyx-400">{worker.specialty}</p>
                   </div>
                   <SoftBadge label={isArabic ? (worker.availability === "Online now" ? "متصل الآن" : worker.availability === "Available tomorrow" ? "متاح غدًا" : "اليوم 7 مساءً") : worker.availability} tone={worker.availability === "Online now" ? "accent" : "sun"} />
                 </div>
@@ -120,8 +120,8 @@ export function ClientWalletPage({ locale, initialData }: { locale: Locale; init
               <SoftCard key={method.id}>
                 <div className="flex items-center justify-between gap-3">
                   <div>
-                    <p className="text-lg font-semibold text-dark-950">{method.label}</p>
-                    <p className="mt-1 text-sm text-dark-500">{isArabic ? "مصدر الدفع" : "payment source"}</p>
+                    <p className="text-lg font-semibold text-white">{method.label}</p>
+                    <p className="mt-1 text-sm text-onyx-400">{isArabic ? "مصدر الدفع" : "payment source"}</p>
                   </div>
                   {method.isDefault ? <SoftBadge label={isArabic ? "افتراضي" : "Default"} tone="accent" /> : null}
                 </div>
@@ -133,15 +133,15 @@ export function ClientWalletPage({ locale, initialData }: { locale: Locale; init
         <DashboardBlock title={isArabic ? "آخر المعاملات" : "Recent transactions"} eyebrow={isArabic ? "حركة المال" : "money stream"}>
           <div className="grid gap-4">
             {data.recentTransactions.map((item, index) => (
-              <div key={item.id} className={index % 2 === 0 ? "dashboard-card-soft p-4" : "dashboard-card-soft bg-accent-50 p-4"}>
+              <div key={item.id} className={index % 2 === 0 ? "onyx-card p-4" : "onyx-card bg-onyx-800/80 p-4"}>
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
-                    <p className="font-semibold text-dark-950">{item.label}</p>
-                    <p className="mt-1 text-sm text-dark-500">{formatDate(locale, item.createdAt)}</p>
+                    <p className="font-semibold text-white">{item.label}</p>
+                    <p className="mt-1 text-sm text-onyx-400">{formatDate(locale, item.createdAt)}</p>
                   </div>
                   <div className="text-end">
-                    <p className={item.amount < 0 ? "text-lg font-semibold text-error" : "text-lg font-semibold text-dark-950"}>{formatCurrency(locale, item.amount)}</p>
-                    <p className="mt-1 text-xs uppercase tracking-[0.18em] text-dark-400">{item.type}</p>
+                    <p className={item.amount < 0 ? "text-lg font-semibold text-error" : "text-lg font-semibold text-white"}>{formatCurrency(locale, item.amount)}</p>
+                    <p className="mt-1 text-xs uppercase tracking-[0.18em] text-onyx-500">{item.type}</p>
                   </div>
                 </div>
               </div>
@@ -194,19 +194,19 @@ export function ClientSettingsPage({ locale, initialData }: { locale: Locale; in
           <div className="grid gap-6 sm:grid-cols-2">
             <label className="space-y-3">
               <span className="text-caption">{isArabic ? "الاسم الأول" : "First name"}</span>
-              <input value={data.profile.firstName} onChange={(event) => setData({ ...data, profile: { ...data.profile, firstName: event.target.value } })} className="h-14 w-full rounded-2xl border border-white/5 bg-white/5 px-5 text-white focus:border-gold-500/30 focus:bg-white/10" />
+              <input value={data.profile.firstName} onChange={(event) => setData({ ...data, profile: { ...data.profile, firstName: event.target.value } })} className="h-14 w-full rounded-2xl border border-white/5 bg-onyx-800/50/5 px-5 text-white focus:border-gold-500/30 focus:bg-onyx-800/50/10" />
             </label>
             <label className="space-y-3">
               <span className="text-caption">{isArabic ? "اسم العائلة" : "Last name"}</span>
-              <input value={data.profile.lastName} onChange={(event) => setData({ ...data, profile: { ...data.profile, lastName: event.target.value } })} className="h-14 w-full rounded-2xl border border-white/5 bg-white/5 px-5 text-white focus:border-gold-500/30 focus:bg-white/10" />
+              <input value={data.profile.lastName} onChange={(event) => setData({ ...data, profile: { ...data.profile, lastName: event.target.value } })} className="h-14 w-full rounded-2xl border border-white/5 bg-onyx-800/50/5 px-5 text-white focus:border-gold-500/30 focus:bg-onyx-800/50/10" />
             </label>
             <label className="space-y-3">
               <span className="text-caption">{isArabic ? "البريد الإلكتروني" : "Email"}</span>
-              <input value={data.profile.email} onChange={(event) => setData({ ...data, profile: { ...data.profile, email: event.target.value } })} className="h-14 w-full rounded-2xl border border-white/5 bg-white/5 px-5 text-white focus:border-gold-500/30 focus:bg-white/10" />
+              <input value={data.profile.email} onChange={(event) => setData({ ...data, profile: { ...data.profile, email: event.target.value } })} className="h-14 w-full rounded-2xl border border-white/5 bg-onyx-800/50/5 px-5 text-white focus:border-gold-500/30 focus:bg-onyx-800/50/10" />
             </label>
             <label className="space-y-3">
               <span className="text-caption">{isArabic ? "رقم الهاتف" : "Phone"}</span>
-              <input value={data.profile.phone} onChange={(event) => setData({ ...data, profile: { ...data.profile, phone: event.target.value } })} className="h-14 w-full rounded-2xl border border-white/5 bg-white/5 px-5 text-white focus:border-gold-500/30 focus:bg-white/10" />
+              <input value={data.profile.phone} onChange={(event) => setData({ ...data, profile: { ...data.profile, phone: event.target.value } })} className="h-14 w-full rounded-2xl border border-white/5 bg-onyx-800/50/5 px-5 text-white focus:border-gold-500/30 focus:bg-onyx-800/50/10" />
             </label>
           </div>
         </DashboardBlock>
@@ -218,13 +218,13 @@ export function ClientSettingsPage({ locale, initialData }: { locale: Locale; in
               { key: "notificationsByEmail", label: isArabic ? "إشعارات البريد" : "Email notifications" },
               { key: "marketingUpdates", label: isArabic ? "العروض التسويقية" : "Marketing updates" }
             ].map((item) => (
-              <label key={item.key} className="flex cursor-pointer items-center justify-between gap-4 rounded-2xl border border-white/5 bg-white/5 p-5 transition-all hover:bg-white/10">
+              <label key={item.key} className="flex cursor-pointer items-center justify-between gap-4 rounded-2xl border border-white/5 bg-onyx-800/50/5 p-5 transition-all hover:bg-onyx-800/50/10">
                 <span className="text-sm font-bold text-white/80">{item.label}</span>
                 <input
                   type="checkbox"
                   checked={data.preferences[item.key as keyof typeof data.preferences] as boolean}
                   onChange={(event) => setData({ ...data, preferences: { ...data.preferences, [item.key]: event.target.checked } })}
-                  className="h-5 w-5 rounded-lg border-white/20 bg-white/5 text-gold-500 focus:ring-gold-500/50"
+                  className="h-5 w-5 rounded-lg border-white/20 bg-onyx-800/50/5 text-gold-500 focus:ring-gold-500/50"
                 />
               </label>
             ))}

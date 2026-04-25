@@ -103,7 +103,7 @@ export function MapPicker({ lat, lng, onChange, isArabic }: MapPickerProps) {
           onChange={(e) => setSearchQuery(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSearch()}
           placeholder={isArabic ? "ابحث عن مكان..." : "Search for a place..."}
-          className="h-12 w-full rounded-[1.2rem] border border-dark-200 bg-white pl-12 pr-4 text-sm shadow-soft focus:border-primary-400 focus:ring-2 focus:ring-primary-500/30"
+          className="h-12 w-full rounded-[1.2rem] border border-onyx-700 bg-onyx-800/50 pl-12 pr-4 text-sm shadow-soft focus:border-primary-400 focus:ring-2 focus:ring-primary-500/30"
         />
         <button
           onClick={(e) => {
@@ -111,17 +111,17 @@ export function MapPicker({ lat, lng, onChange, isArabic }: MapPickerProps) {
             void handleSearch();
           }}
           disabled={isSearching}
-          className="absolute left-4 top-1/2 -translate-y-1/2 text-dark-400 hover:text-primary-600"
+          className="absolute left-4 top-1/2 -translate-y-1/2 text-onyx-500 hover:text-primary-600"
         >
           <Search className="h-5 w-5" />
         </button>
       </div>
 
-      <div className="overflow-hidden rounded-[1.8rem] border border-dark-200 shadow-panel">
+      <div className="overflow-hidden rounded-[1.8rem] border border-onyx-700 shadow-panel">
         <MapInternal lat={lat} lng={lng} onSelect={reverseGeocode} />
       </div>
       
-      <p className="text-center text-xs text-dark-400">
+      <p className="text-center text-xs text-onyx-500">
         {isArabic ? "اضغط على الخريطة لتحديد موقعك أو ابحث في الأعلى" : "Click the map to set your location or search above"}
       </p>
     </div>

@@ -104,7 +104,7 @@ export function PendingWorkersPage({ locale, initialData }: { locale: Locale; in
                 "rounded-full px-4 py-2 text-sm font-medium transition",
                 activeFilter === status
                   ? "bg-dark-950 text-white shadow-soft"
-                  : "border border-dark-200 bg-white text-dark-600 hover:border-primary-300 hover:text-primary-700"
+                  : "border border-onyx-700 bg-onyx-800/50 text-onyx-300 hover:border-primary-300 hover:text-primary-700"
               )}
             >
               {status === "ALL"
@@ -118,23 +118,23 @@ export function PendingWorkersPage({ locale, initialData }: { locale: Locale; in
       </DashboardBlock>
 
       <DashboardBlock title={isArabic ? "verification queue" : "Verification queue"} eyebrow={isArabic ? "decision deck" : "decision deck"} className="mt-6">
-        {feedback ? <div className="mb-4 rounded-[1.2rem] border border-dark-200 bg-white px-4 py-3 text-sm text-dark-600">{feedback}</div> : null}
+        {feedback ? <div className="mb-4 rounded-[1.2rem] border border-onyx-700 bg-onyx-800/50 px-4 py-3 text-sm text-onyx-300">{feedback}</div> : null}
         {filteredWorkers.length === 0 ? (
           <EmptyState>{isArabic ? "mafeesh workers fe el filter da" : "No workers in this filter"}</EmptyState>
         ) : (
           <div className="grid gap-4">
             {filteredWorkers.map((worker, index) => (
-              <article key={worker.id} className={index % 2 === 0 ? "dashboard-card-soft p-5" : "dashboard-card-soft bg-surface-peach p-5"}>
+              <article key={worker.id} className={index % 2 === 0 ? "onyx-card p-5" : "onyx-card bg-onyx-800/80 p-5"}>
                 <div className="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-3">
-                      <h2 className="text-2xl font-semibold text-dark-950">{worker.name}</h2>
+                      <h2 className="text-2xl font-semibold text-white">{worker.name}</h2>
                       <SoftBadge
                         label={statusLabels[worker.status][locale]}
                         tone={worker.status === "AWAITING_ID" ? "error" : worker.status === "UNDER_REVIEW" ? "sun" : "accent"}
                       />
                     </div>
-                    <p className="mt-2 text-body text-dark-500">{specialtyLabels[worker.specialty][locale]} - {worker.area}</p>
+                    <p className="mt-2 text-body text-onyx-400">{specialtyLabels[worker.specialty][locale]} - {worker.area}</p>
                     <div className="mt-4">
                       <SplitInfo
                         items={[
@@ -145,7 +145,7 @@ export function PendingWorkersPage({ locale, initialData }: { locale: Locale; in
                         ]}
                       />
                     </div>
-                    <div className="mt-4 flex flex-wrap gap-3 text-sm text-dark-500">
+                    <div className="mt-4 flex flex-wrap gap-3 text-sm text-onyx-400">
                       <span className="inline-flex items-center gap-2"><ShieldCheck className="h-4 w-4" /> {isArabic ? "identity + docs lane" : "identity + docs lane"}</span>
                       <span className="inline-flex items-center gap-2"><Star className="h-4 w-4 text-sun-500" /> {formatNumber(locale, worker.rating)}</span>
                     </div>
@@ -156,7 +156,7 @@ export function PendingWorkersPage({ locale, initialData }: { locale: Locale; in
                       type="button"
                       onClick={() => void handleDecision(worker.id, "REJECTED")}
                       disabled={busyId === worker.id}
-                      className="inline-flex items-center gap-2 rounded-full border border-dark-200 bg-white px-4 py-2.5 text-sm font-semibold text-dark-700 shadow-soft disabled:opacity-60"
+                      className="inline-flex items-center gap-2 rounded-full border border-onyx-700 bg-onyx-800/50 px-4 py-2.5 text-sm font-semibold text-onyx-200 shadow-soft disabled:opacity-60"
                     >
                       {busyId === worker.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <XCircle className="h-4 w-4" />}
                       {isArabic ? "refd" : "Reject"}

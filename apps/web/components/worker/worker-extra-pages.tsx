@@ -66,16 +66,16 @@ export function WorkerRatingsPage({ locale, initialData }: { locale: Locale; ini
           ) : (
             <div className="grid gap-4">
               {data.reviews.map((review, index) => (
-                <div key={review.id} className={index % 2 === 0 ? "dashboard-card-soft p-4" : "dashboard-card-soft bg-accent-50 p-4"}>
+                <div key={review.id} className={index % 2 === 0 ? "onyx-card p-4" : "onyx-card bg-onyx-800/80 p-4"}>
                   <div className="flex items-center justify-between gap-3">
                     <div>
-                      <p className="text-lg font-semibold text-dark-950">{review.clientName}</p>
-                      <p className="mt-1 text-sm text-dark-500">{review.service}</p>
+                      <p className="text-lg font-semibold text-white">{review.clientName}</p>
+                      <p className="mt-1 text-sm text-onyx-400">{review.service}</p>
                     </div>
                     <SoftBadge label={isArabic ? `${review.rating} نجوم` : `${review.rating} stars`} tone={review.rating === 5 ? "success" : "sun"} />
                   </div>
-                  <p className="mt-4 text-sm leading-7 text-dark-600">{review.comment}</p>
-                  <p className="mt-3 text-xs uppercase tracking-[0.18em] text-dark-400">{formatDate(locale, review.createdAt)}</p>
+                  <p className="mt-4 text-sm leading-7 text-onyx-300">{review.comment}</p>
+                  <p className="mt-3 text-xs uppercase tracking-[0.18em] text-onyx-500">{formatDate(locale, review.createdAt)}</p>
                 </div>
               ))}
             </div>
@@ -125,10 +125,10 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
       <div className="grid gap-6 xl:grid-cols-[1fr_1fr]">
         <DashboardBlock title={isArabic ? "الملف الشخصي" : "Profile"} eyebrow={isArabic ? "بيانات العامل" : "worker identity"}>
           <div className="grid gap-4 sm:grid-cols-2">
-            <label className="space-y-2"><span className="text-sm text-dark-500">{isArabic ? "الاسم الأول" : "First name"}</span><input value={data.profile.firstName} onChange={(event) => setData({ ...data, profile: { ...data.profile, firstName: event.target.value } })} className="h-12 w-full rounded-[1rem] border border-dark-200 bg-white px-4" /></label>
-            <label className="space-y-2"><span className="text-sm text-dark-500">{isArabic ? "اسم العائلة" : "Last name"}</span><input value={data.profile.lastName} onChange={(event) => setData({ ...data, profile: { ...data.profile, lastName: event.target.value } })} className="h-12 w-full rounded-[1rem] border border-dark-200 bg-white px-4" /></label>
-            <label className="space-y-2"><span className="text-sm text-dark-500">{isArabic ? "البريد الإلكتروني" : "Email"}</span><input value={data.profile.email} onChange={(event) => setData({ ...data, profile: { ...data.profile, email: event.target.value } })} className="h-12 w-full rounded-[1rem] border border-dark-200 bg-white px-4" /></label>
-            <label className="space-y-2"><span className="text-sm text-dark-500">{isArabic ? "رقم الهاتف" : "Phone"}</span><input value={data.profile.phone} onChange={(event) => setData({ ...data, profile: { ...data.profile, phone: event.target.value } })} className="h-12 w-full rounded-[1rem] border border-dark-200 bg-white px-4" /></label>
+            <label className="space-y-2"><span className="text-sm text-onyx-400">{isArabic ? "الاسم الأول" : "First name"}</span><input value={data.profile.firstName} onChange={(event) => setData({ ...data, profile: { ...data.profile, firstName: event.target.value } })} className="h-12 w-full rounded-[1rem] border border-onyx-700 bg-onyx-800/50 px-4" /></label>
+            <label className="space-y-2"><span className="text-sm text-onyx-400">{isArabic ? "اسم العائلة" : "Last name"}</span><input value={data.profile.lastName} onChange={(event) => setData({ ...data, profile: { ...data.profile, lastName: event.target.value } })} className="h-12 w-full rounded-[1rem] border border-onyx-700 bg-onyx-800/50 px-4" /></label>
+            <label className="space-y-2"><span className="text-sm text-onyx-400">{isArabic ? "البريد الإلكتروني" : "Email"}</span><input value={data.profile.email} onChange={(event) => setData({ ...data, profile: { ...data.profile, email: event.target.value } })} className="h-12 w-full rounded-[1rem] border border-onyx-700 bg-onyx-800/50 px-4" /></label>
+            <label className="space-y-2"><span className="text-sm text-onyx-400">{isArabic ? "رقم الهاتف" : "Phone"}</span><input value={data.profile.phone} onChange={(event) => setData({ ...data, profile: { ...data.profile, phone: event.target.value } })} className="h-12 w-full rounded-[1rem] border border-onyx-700 bg-onyx-800/50 px-4" /></label>
           </div>
         </DashboardBlock>
 
@@ -139,8 +139,8 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
               { key: "acceptsEmergency", label: isArabic ? "يقبل الطوارئ" : "Accept emergency" },
               { key: "acceptsSameDay", label: isArabic ? "يقبل نفس اليوم" : "Accept same-day" }
             ].map((item) => (
-              <label key={item.key} className="dashboard-card-soft flex items-center justify-between gap-4 p-4">
-                <span className="font-medium text-dark-950">{item.label}</span>
+              <label key={item.key} className="onyx-card flex items-center justify-between gap-4 p-4">
+                <span className="font-medium text-white">{item.label}</span>
                 <input
                   type="checkbox"
                   checked={data.workPreferences[item.key as keyof typeof data.workPreferences] as boolean}
@@ -150,7 +150,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
               </label>
             ))}
             <SoftCard>
-              <p className="text-xs uppercase tracking-[0.22em] text-dark-400">{isArabic ? "المناطق" : "Areas"}</p>
+              <p className="text-xs uppercase tracking-[0.22em] text-onyx-500">{isArabic ? "المناطق" : "Areas"}</p>
               <div className="mt-3 flex flex-wrap gap-2">
                 {data.workPreferences.serviceAreas.map((area) => (
                   <SoftBadge key={area} label={area} tone="accent" />

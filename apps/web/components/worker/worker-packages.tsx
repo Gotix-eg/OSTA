@@ -31,7 +31,7 @@ export function WorkerPackages({ locale }: { locale: Locale }) {
 
   if (success) {
     return (
-      <div className="rounded-3xl bg-white p-8 border border-gray-100 text-center shadow-sm">
+      <div className="rounded-3xl bg-onyx-800/50 p-8 border border-gray-100 text-center shadow-sm">
         <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-success/10">
           <ShieldCheck className="h-10 w-10 text-success" />
         </div>
@@ -56,14 +56,14 @@ export function WorkerPackages({ locale }: { locale: Locale }) {
           <p className="mt-2 text-gray-400 max-w-lg">{isArabic ? "رصيدك الحالي من الأوردرات التي يمكنك استقبالها. اشحن رصيدك عبر اختيار باقة من الأسفل." : "Your current order quota. Top up your balance by selecting a package below."}</p>
           
           <div className="mt-8 flex flex-wrap gap-6">
-            <div className="bg-white/10 rounded-2xl p-5 border border-white/10 backdrop-blur-sm min-w-[160px]">
+            <div className="bg-onyx-800/50/10 rounded-2xl p-5 border border-white/10 backdrop-blur-sm min-w-[160px]">
               <p className="text-sm font-medium text-gray-400">{isArabic ? "الرصيد المتاح" : "Available Quota"}</p>
               <div className="mt-2 flex items-baseline gap-2">
                 <span className="text-4xl font-black">{currentQuota}</span>
                 <span className="text-sm text-gray-400">{isArabic ? "أوردر" : "orders"}</span>
               </div>
             </div>
-            <div className="bg-white/5 rounded-2xl p-5 border border-white/5 min-w-[160px]">
+            <div className="bg-onyx-800/50/5 rounded-2xl p-5 border border-white/5 min-w-[160px]">
               <p className="text-sm font-medium text-gray-400">{isArabic ? "إجمالي المنفذ" : "Total Completed"}</p>
               <div className="mt-2 flex items-baseline gap-2">
                 <span className="text-4xl font-bold">{totalOrdersUsed}</span>
@@ -84,7 +84,7 @@ export function WorkerPackages({ locale }: { locale: Locale }) {
               onClick={() => setSelectedPkg(pkg.id)}
               className={cn(
                 "relative text-start rounded-3xl border-2 p-6 transition-all duration-200 overflow-hidden",
-                selectedPkg === pkg.id ? "border-primary-600 bg-primary-50/50 shadow-md scale-[1.02]" : "border-gray-100 bg-white hover:border-primary-200"
+                selectedPkg === pkg.id ? "border-primary-600 bg-primary-50/50 shadow-md scale-[1.02]" : "border-gray-100 bg-onyx-800/50 hover:border-primary-200"
               )}
             >
               {pkg.popular && (
@@ -114,7 +114,7 @@ export function WorkerPackages({ locale }: { locale: Locale }) {
 
       {/* Checkout Section */}
       {selectedPkg && (
-        <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-6">
+        <div className="rounded-3xl border border-gray-200 bg-onyx-800/50 p-6 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-4">
             <div className="h-12 w-12 rounded-full bg-gray-100 flex items-center justify-center text-gray-600">
               <CreditCard className="h-6 w-6" />

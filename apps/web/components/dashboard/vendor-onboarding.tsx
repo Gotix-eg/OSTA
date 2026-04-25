@@ -57,7 +57,7 @@ export function VendorOnboarding({ locale, onComplete }: OnboardingProps) {
   return (
     <div className="flex min-h-[70vh] items-center justify-center p-6">
       <div className="glass-card w-full max-w-2xl overflow-hidden p-0 shadow-onyx">
-        <div className="relative h-1.5 bg-white/5">
+        <div className="relative h-1.5 bg-onyx-800/50/5">
           <div 
             className="absolute inset-y-0 left-0 bg-gold-500 shadow-glow transition-all duration-700 ease-out-expo" 
             style={{ width: `${((step + 1) / 2) * 100}%` }}

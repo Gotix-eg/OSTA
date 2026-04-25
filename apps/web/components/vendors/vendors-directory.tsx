@@ -94,7 +94,7 @@ export function VendorsDirectory({ locale }: { locale: Locale }) {
         </div>
 
         {/* Search & Filter Bar */}
-        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between rounded-2xl bg-white p-4 shadow-sm border border-gray-100">
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between rounded-2xl bg-onyx-800/50 p-4 shadow-sm border border-gray-100">
           <div className="relative flex-1">
             <Search className="absolute start-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
             <input
@@ -133,7 +133,7 @@ export function VendorsDirectory({ locale }: { locale: Locale }) {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
-                className="group relative flex flex-col overflow-hidden rounded-2xl bg-white border border-gray-100 shadow-sm transition hover:shadow-md hover:border-primary-100"
+                className="group relative flex flex-col overflow-hidden rounded-2xl bg-onyx-800/50 border border-gray-100 shadow-sm transition hover:shadow-md hover:border-primary-100"
               >
                 {/* Image Area */}
                 <div className="relative h-48 w-full bg-gray-100 overflow-hidden">
@@ -143,7 +143,7 @@ export function VendorsDirectory({ locale }: { locale: Locale }) {
                     fill 
                     className="object-cover transition duration-500 group-hover:scale-105"
                   />
-                  <div className="absolute top-3 end-3 rounded-full bg-white/90 backdrop-blur-sm px-3 py-1 text-xs font-semibold text-gray-900 shadow-sm flex items-center gap-1">
+                  <div className="absolute top-3 end-3 rounded-full bg-onyx-800/50/90 backdrop-blur-sm px-3 py-1 text-xs font-semibold text-gray-900 shadow-sm flex items-center gap-1">
                     <MapPin className="h-3 w-3 text-primary-600" />
                     {vendor.distance}
                   </div>

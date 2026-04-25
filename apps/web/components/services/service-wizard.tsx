@@ -155,7 +155,7 @@ export function ServiceWizard({ locale, category }: { locale: Locale; category: 
     <div className="min-h-screen bg-[#F8FAFC]" dir={dir}>
       
       {/* ── Premium Gradient Header ── */}
-      <header className="sticky top-0 z-40 border-b border-gray-200/50 bg-white/80 backdrop-blur-xl">
+      <header className="sticky top-0 z-40 border-b border-gray-200/50 bg-onyx-800/50/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
           <div className="flex items-center gap-4">
             <Link href={`/${locale}`} className="flex items-center gap-3">
@@ -186,14 +186,14 @@ export function ServiceWizard({ locale, category }: { locale: Locale; category: 
           {/* ── Sidebar ── */}
           <aside className="space-y-4">
             {/* Category title */}
-            <div className="relative overflow-hidden rounded-[2rem] bg-white p-6 shadow-xl shadow-gray-200/50 border border-gray-100">
+            <div className="relative overflow-hidden rounded-[2rem] bg-onyx-800/50 p-6 shadow-xl shadow-gray-200/50 border border-gray-100">
               <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-primary-50/50" />
               <h1 className="relative text-2xl font-bold text-gray-900">{category.name[locale]}</h1>
               <p className="relative mt-2 text-sm leading-relaxed text-gray-500">{category.description[locale]}</p>
             </div>
 
             {/* Progress steps */}
-            <div className="rounded-[2rem] bg-white p-6 shadow-xl shadow-gray-200/50 border border-gray-100">
+            <div className="rounded-[2rem] bg-onyx-800/50 p-6 shadow-xl shadow-gray-200/50 border border-gray-100">
               <div className="space-y-2">
                 {steps.map((s, i) => {
                   const done = i < stepIndex;
@@ -208,7 +208,7 @@ export function ServiceWizard({ locale, category }: { locale: Locale; category: 
                     )}>
                       <div className={cn(
                         "flex h-8 w-8 items-center justify-center rounded-xl transition-colors",
-                        active ? "bg-white/20" : done ? "bg-green-100" : "bg-gray-100"
+                        active ? "bg-onyx-800/50/20" : done ? "bg-green-100" : "bg-gray-100"
                       )}>
                         {done
                           ? <CheckCircle2 className="h-4 w-4 shrink-0" />
@@ -240,7 +240,7 @@ export function ServiceWizard({ locale, category }: { locale: Locale; category: 
             {/* Trust Banner */}
             <div className="rounded-[2rem] bg-gradient-to-br from-primary-600 to-primary-700 p-6 text-white shadow-xl shadow-primary-200">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/20">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-onyx-800/50/20">
                   <Users className="h-5 w-5" />
                 </div>
                 <p className="text-xl font-bold">{category.workersAvailable.toLocaleString()}+</p>
@@ -259,7 +259,7 @@ export function ServiceWizard({ locale, category }: { locale: Locale; category: 
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.4, ease: "circOut" }}
-                className="rounded-[2.5rem] bg-white p-8 shadow-2xl shadow-gray-200/40 border border-gray-100 sm:p-12"
+                className="rounded-[2.5rem] bg-onyx-800/50 p-8 shadow-2xl shadow-gray-200/40 border border-gray-100 sm:p-12"
               >
                 {/* Step: Job Type */}
                 {step === "job-type" && (
@@ -284,12 +284,12 @@ export function ServiceWizard({ locale, category }: { locale: Locale; category: 
                               "group relative flex w-full items-center gap-4 rounded-3xl border-2 px-6 py-5 text-start transition-all duration-300",
                               selected
                                 ? "border-gray-900 bg-gray-900 text-white shadow-xl shadow-gray-900/20"
-                                : "border-gray-100 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50/50"
+                                : "border-gray-100 bg-onyx-800/50 text-gray-700 hover:border-gray-300 hover:bg-gray-50/50"
                             )}
                           >
                             <div className={cn(
                               "flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 transition-all",
-                              selected ? "border-white bg-white" : "border-gray-200 group-hover:border-gray-400"
+                              selected ? "border-white bg-onyx-800/50" : "border-gray-200 group-hover:border-gray-400"
                             )}>
                               {selected && <div className="h-2.5 w-2.5 rounded-full bg-gray-900" />}
                             </div>
@@ -324,14 +324,14 @@ export function ServiceWizard({ locale, category }: { locale: Locale; category: 
                               "group relative flex flex-col items-center justify-center gap-4 rounded-[2rem] border-2 px-6 py-10 text-center transition-all duration-300",
                               selected
                                 ? "border-gray-900 bg-gray-900 text-white shadow-xl shadow-gray-900/20 scale-[1.02]"
-                                : "border-gray-100 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50/50"
+                                : "border-gray-100 bg-onyx-800/50 text-gray-700 hover:border-gray-300 hover:bg-gray-50/50"
                             )}
                           >
                             <span className="text-5xl">{opt.icon}</span>
                             <span className="text-lg font-bold">{label}</span>
                             <div className={cn(
                               "absolute bottom-4 flex h-6 w-6 items-center justify-center rounded-full border-2 transition-all",
-                              selected ? "border-white bg-white" : "border-gray-200"
+                              selected ? "border-white bg-onyx-800/50" : "border-gray-200"
                             )}>
                               {selected && <div className="h-2.5 w-2.5 rounded-full bg-gray-900" />}
                             </div>
@@ -365,7 +365,7 @@ export function ServiceWizard({ locale, category }: { locale: Locale; category: 
                               "group relative flex items-center gap-3 rounded-2xl border-2 px-5 py-4 text-sm transition-all duration-300",
                               selected
                                 ? "border-gray-900 bg-gray-900 text-white shadow-xl"
-                                : "border-gray-100 bg-white text-gray-700 hover:border-gray-300"
+                                : "border-gray-100 bg-onyx-800/50 text-gray-700 hover:border-gray-300"
                             )}
                           >
                             <MapPin className={cn("h-4 w-4 shrink-0", selected ? "text-white" : "text-gray-400")} />
@@ -380,7 +380,7 @@ export function ServiceWizard({ locale, category }: { locale: Locale; category: 
                 {/* Footer Controls */}
                 <div className="mt-12 flex flex-col-reverse gap-4 pt-10 border-t border-gray-100 sm:flex-row sm:items-center sm:justify-between">
                   <button type="button" onClick={handleBack}
-                    className="inline-flex h-14 items-center justify-center gap-2 rounded-2xl border-2 border-gray-100 bg-white px-8 text-sm font-bold text-gray-700 transition-all hover:bg-gray-50 hover:border-gray-200">
+                    className="inline-flex h-14 items-center justify-center gap-2 rounded-2xl border-2 border-gray-100 bg-onyx-800/50 px-8 text-sm font-bold text-gray-700 transition-all hover:bg-gray-50 hover:border-gray-200">
                     {isArabic ? <ArrowRight className="h-5 w-5" /> : <ArrowLeft className="h-5 w-5" />}
                     {isArabic ? "السابق" : "Back"}
                   </button>
@@ -412,19 +412,19 @@ export function ServiceWizard({ locale, category }: { locale: Locale; category: 
                     </div>
                     <div className="flex flex-wrap gap-3">
                       {state.jobType && (
-                        <div className="flex items-center gap-2 rounded-xl bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm border border-gray-100">
+                        <div className="flex items-center gap-2 rounded-xl bg-onyx-800/50 px-4 py-2 text-sm font-medium text-gray-700 shadow-sm border border-gray-100">
                           <CheckCircle2 className="h-4 w-4 text-green-500" />
                           {state.jobType}
                         </div>
                       )}
                       {state.timing && (
-                        <div className="flex items-center gap-2 rounded-xl bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm border border-gray-100">
+                        <div className="flex items-center gap-2 rounded-xl bg-onyx-800/50 px-4 py-2 text-sm font-medium text-gray-700 shadow-sm border border-gray-100">
                           <CheckCircle2 className="h-4 w-4 text-green-500" />
                           {state.timing}
                         </div>
                       )}
                       {state.area && (
-                        <div className="flex items-center gap-2 rounded-xl bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm border border-gray-100">
+                        <div className="flex items-center gap-2 rounded-xl bg-onyx-800/50 px-4 py-2 text-sm font-medium text-gray-700 shadow-sm border border-gray-100">
                           <CheckCircle2 className="h-4 w-4 text-green-500" />
                           {egyptianGovernorates.find(g => g.value === state.area)?.[isArabic ? "labelAr" : "labelEn"]}
                         </div>
