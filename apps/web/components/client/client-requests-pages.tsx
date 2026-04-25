@@ -384,37 +384,31 @@ function ClientDirectOrdersBlock({ locale }: { locale: Locale }) {
                     <div className="mt-4">
                       <SplitInfo
                         items={[
-                                            <div className="mt-4 rounded-lg border border-white/5 bg-onyx-800/50/5 p-3">
-                      <p className="text-eyebrow text-onyx-500 mb-2">
-                        {isArabic ? "المنتجات:" : "Products:"}
-                      </p>
-                      <ul className="space-y-1">
-                        {item.items.map((line) => (
-                          <li key={line.id} className="text-sm flex justify-between">
-                            <span className="text-onyx-400">{line.qty} × {isArabic ? line.product.nameAr : (line.product.nameEn || line.product.nameAr)}</span>
-                            <span className="font-medium text-white">{formatPrice(line.unitPrice * line.qty)}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                          { label: isArabic ? "التكلفة" : "Total", value: formatPrice(item.totalPrice) },
+                          { label: isArabic ? "المنتجات" : "Items", value: item.items.length.toString() }
+                        ]}
+                      />
+                      
+                      <div className="mt-4 rounded-xl border border-onyx-700 bg-onyx-800/50 p-3">
+                        <p className="text-eyebrow text-onyx-500 mb-2">
+                          {isArabic ? "المنتجات:" : "Products:"}
+                        </p>
+                        <ul className="space-y-1">
+                          {item.items.map((line) => (
+                            <li key={line.id} className="text-sm flex justify-between">
+                              <span className="text-onyx-400">{line.qty} × {isArabic ? line.product.nameAr : (line.product.nameEn || line.product.nameAr)}</span>
+                              <span className="font-medium text-white">{formatPrice(line.unitPrice * line.qty)}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
 
-                    {item.deliveryNotes && (
-                       <div className="mt-3 text-xs text-onyx-500">
-                         <strong>{isArabic ? "ملاحظات:" : "Notes:"}</strong> {item.deliveryNotes}
-                       </div>
-                    )}
-pan className="text-onyx-200">{line.qty} × {isArabic ? line.product.nameAr : (line.product.nameEn || line.product.nameAr)}</span>
-                            <span className="font-medium text-white">{formatPrice(line.unitPrice * line.qty)}</span>
-                          </li>
-                        ))}
-                      </ul>
+                      {item.deliveryNotes && (
+                         <div className="mt-3 text-xs text-onyx-500">
+                           <strong>{isArabic ? "ملاحظات:" : "Notes:"}</strong> {item.deliveryNotes}
+                         </div>
+                      )}
                     </div>
-
-                    {item.deliveryNotes && (
-                       <div className="mt-3 text-xs text-onyx-400">
-                         <strong>{isArabic ? "ملاحظات:" : "Notes:"}</strong> {item.deliveryNotes}
-                       </div>
-                    )}
                   </div>
                 </div>
               </article>
