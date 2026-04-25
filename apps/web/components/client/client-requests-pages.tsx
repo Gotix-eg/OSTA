@@ -189,7 +189,7 @@ function ClientCustomRequestsBlock({ locale }: { locale: Locale }) {
                               <span className="text-onyx-400">{isArabic ? "الدفع" : "Payment"}</span>
                               <span className="font-semibold text-white">
                                  {item.paymentMethod === "VODAFONE_CASH" ? "Vodafone Cash" : 
-                                  item.paymentMethod === "INSTAPAY" ? "InstaPay" : (isArabic ? "كاش" : "COD")}
+                                  item.paymentMethod === "INSTAPAY" ? "InstaPay" : (isArabic ? "الدفع عند الاستلام" : "Cash on Delivery")}
                               </span>
                            </div>
                         </div>
