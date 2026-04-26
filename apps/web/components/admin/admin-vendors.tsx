@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Search, Loader2, Store, Phone, User, ShieldCheck, RotateCcw } from "lucide-react";
+import { Search, Loader2, Store, Phone, User, ShieldCheck, RotateCcw, Plus } from "lucide-react";
 import { fetchApiData, postApiData } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
