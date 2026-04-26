@@ -105,8 +105,8 @@ router.get("/dashboard", catchAsync(async (_request, response) => {
     activeRequests,
     verificationQueue
   ] = await Promise.all([
-    prisma.order.aggregate({
-      _sum: { platformCommission: true },
+    prisma.serviceRequest.aggregate({
+      _sum: { estimatedPrice: true }, // Using estimatedPrice as a proxy for revenue if needed, or totalAmount
       where: { status: "COMPLETED" }
     }),
     prisma.workerProfile.count({
@@ -115,8 +115,8 @@ router.get("/dashboard", catchAsync(async (_request, response) => {
     prisma.complaint.count({
       where: { status: "OPEN" }
     }),
-    prisma.order.count({
-      where: { status: { in: ["PENDING", "ACCEPTED", "IN_PROGRESS"] } }
+    prisma.serviceRequest.count({
+      where: { status: { in: ["PENDING", "ACCEPTED", "WORKER_EN_ROUTE", "IN_PROGRESS"] } }
     }),
     prisma.workerProfile.findMany({
       where: { verificationStatus: { in: ["UNDER_REVIEW", "DOCUMENTS_SUBMITTED", "AWAITING_ID"] } },
@@ -132,7 +132,7 @@ router.get("/dashboard", catchAsync(async (_request, response) => {
     successResponse(
       {
         summary: {
-          totalRevenue: revenue._sum.platformCommission || 0,
+          totalRevenue: revenue._sum.estimatedPrice || 0,
           revenueGrowth: 12, // Mock growth for now
           pendingVerifications,
           highPriorityVerifications: pendingVerifications,
@@ -151,7 +151,7 @@ router.get("/dashboard", catchAsync(async (_request, response) => {
         })),
         alerts: openComplaints > 0 ? ["complaintsUnderInvestigation"] : [],
         financePulse: {
-          commissions: revenue._sum.platformCommission || 0,
+          commissions: (revenue._sum.estimatedPrice || 0) * 0.15,
           escrowHeld: 0,
           releasedThisWeek: 0,
           refundPressure: 0
