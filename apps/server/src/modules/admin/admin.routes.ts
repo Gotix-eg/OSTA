@@ -110,7 +110,7 @@ router.get("/dashboard", catchAsync(async (_request, response) => {
       where: { status: "COMPLETED" }
     }),
     prisma.workerProfile.count({
-      where: { verificationStatus: { in: ["UNDER_REVIEW", "DOCUMENTS_SUBMITTED", "AWAITING_ID"] } }
+      where: { verificationStatus: { in: ["PENDING", "UNDER_REVIEW", "DOCUMENTS_SUBMITTED"] } }
     }),
     prisma.complaint.count({
       where: { status: "OPEN" }
@@ -119,7 +119,7 @@ router.get("/dashboard", catchAsync(async (_request, response) => {
       where: { status: { in: ["PENDING", "ACCEPTED", "WORKER_EN_ROUTE", "IN_PROGRESS"] } }
     }),
     prisma.workerProfile.findMany({
-      where: { verificationStatus: { in: ["UNDER_REVIEW", "DOCUMENTS_SUBMITTED", "AWAITING_ID"] } },
+      where: { verificationStatus: { in: ["PENDING", "UNDER_REVIEW", "DOCUMENTS_SUBMITTED"] } },
       include: {
         user: { select: { firstName: true, lastName: true, phone: true } }
       },
