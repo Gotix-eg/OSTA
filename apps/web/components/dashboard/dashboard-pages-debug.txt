@@ -1,13 +1,11 @@
-"use client";
+﻿"use client";
 
 import type { ComponentType, ReactNode } from "react";
-import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import {
   ArrowUpRight, Banknote, Briefcase, CalendarClock, CheckCircle2,
   CircleDollarSign, Clock3, MapPin, Route, ShieldAlert, ShieldCheck,
-  Sparkles, Star, Store, TrendingUp, Users, Wallet, Wrench, Zap,
-  MessageSquare, ChevronRight, SlidersHorizontal, Megaphone, Settings, User
+  Sparkles, Star, Store, TrendingUp, Users, Wallet, Wrench, Zap
 } from "lucide-react";
 
 import { useLiveApiData } from "@/hooks/use-live-api-data";
@@ -274,24 +272,7 @@ export function VendorDashboardHome({ locale }: { locale: Locale }) {
           tone="gold" 
         />
         <MetricCard label={isArabic ? "مبيعات الشهر" : "Monthly Sales"} value={formatCurrency(locale, data.summary.monthlySales)} note={isArabic ? "إجمالي المبيعات" : "total sales"} icon={CircleDollarSign} />
-        <MetricCard label={isArabic ? "طلبات التسعير" : "Quote Requests"} value={String(data.recentRequests.length)} note={isArabic ? "تنتظر ردك" : "awaiting your response"} icon={MessageSquare} />
-        <MetricCard label={isArabic ? "المحفظة" : "Wallet"} value={formatCurrency(locale, data.summary.walletBalance)} note={isArabic ? "الرصيد المتاح" : "available balance"} icon={Wallet} />
-      </div>
-
-      <Surface title={isArabic ? "طلبات الخامات الأخيرة" : "Recent Material Requests"}>
-        {data.recentRequests.length === 0 ? (
-          <EmptyNotice message={isArabic ? "لا توجد طلبات خامات جديدة حالياً." : "No new material requests at the moment."} />
-        ) : (
-          <div className="space-y-4">
-            {/* Mapping requests here */}
-          </div>
-        )}
-      </Surface>
-    </div>
-  );
-}
-
-export function AdminDashboardHome({ locale }: { locale: Locale }) {
+        <MetricCard label={isArabic ? "طلبات التسعير" : "Quote Requests"} value={String(data.recentRequests.length)} note={isArabic ? "تنتظر رد�export function AdminDashboardHome({ locale }: { locale: Locale }) {
   const isArabic = locale === "ar";
   const data = useLiveApiData("/admin/dashboard", { 
     summary: { totalRevenue: 0, pendingVerifications: 0, openComplaints: 0, activeRequests: 0 },
@@ -431,6 +412,25 @@ export function AdminDashboardHome({ locale }: { locale: Locale }) {
       </div>
     </div>
   );
+}s-center justify-between group">
+               <div>
+                  <h4 className="font-bold text-white mb-1">{isArabic ? "إعدادات التسعير" : "Pricing Settings"}</h4>
+                  <p className="text-sm text-onyx-500">{isArabic ? "تعديل العمولات والرسوم" : "Edit commissions & fees"}</p>
+               </div>
+               <ArrowUpRight className="h-5 w-5 text-gold-500" />
+            </Link>
+            <Link href={`/${locale}/admin/ads`} className="onyx-card p-6 flex items-center justify-between group">
+               <div>
+                  <h4 className="font-bold text-white mb-1">{isArabic ? "إدارة الإعلانات" : "Ads Management"}</h4>
+                  <p className="text-sm text-onyx-500">{isArabic ? "الحملات الممولة والبانرات" : "Sponsored ads & banners"}</p>
+               </div>
+               <ArrowUpRight className="h-5 w-5 text-gold-500" />
+            </Link>
+          </div>
+        </Surface>
+      </div>
+    </div>
+  );
 }
 
 export function AdminAdsPage({ locale }: { locale: Locale }) {
@@ -451,70 +451,25 @@ export function AdminAdsPage({ locale }: { locale: Locale }) {
 export function AdminPricingPage({ locale }: { locale: Locale }) {
   const isArabic = locale === "ar";
   return (
-    <div className="animate-slideUp space-y-8">
+    <div className="animate-slideUp">
       <SectionTitle
-        eyebrow={isArabic ? "باقات التشغيل والأسعار" : "Operational Packages & Pricing"}
-        title={isArabic ? "إدارة الاشتراكات" : "Subscription Management"}
-        subtitle={isArabic ? "تحكم في باقات الفنيين والموردين، وحدد نسب العمولات وقواعد التجربة المجانية." : "Manage worker and vendor packages, define commission rates and trial rules."}
+        eyebrow={isArabic ? "التسعير والعمولات" : "Pricing & Commissions"}
+        title={isArabic ? "إعدادات الرسوم" : "Fee Settings"}
+        subtitle={isArabic ? "ضبط نسب العمولات، رسوم الخدمات، وميزانيات التشغيل." : "Adjust commission rates, service fees, and operational budgets."}
         actionLabel={isArabic ? "حفظ التغييرات" : "Save Changes"}
       />
-
-      <div className="grid lg:grid-cols-2 gap-8">
-        <Surface title={isArabic ? "باقات الفنيين والموردين" : "Pro & Vendor Packages"}>
-          <div className="space-y-6">
-            <div className="onyx-card p-6 border-gold-500/20 bg-gold-500/5">
-              <div className="flex items-center justify-between mb-4">
-                <h4 className="text-xl font-black text-white">{isArabic ? "فترة السماح (التجربة)" : "Trial Period"}</h4>
-                <Sparkles className="h-6 w-6 text-gold-500" />
-              </div>
-              <p className="text-onyx-400 text-sm mb-4 leading-relaxed">
-                {isArabic 
-                  ? "يحصل كل فني ومورد موثق حديثاً على شهر كامل (30 يوم) مجاناً لتجربة المنصة بدون قيود." 
-                  : "Every newly verified pro and vendor receives one full month (30 days) for free to explore the platform."}
-              </p>
-              <div className="text-2xl font-black text-gold-500">{isArabic ? "شهر مجاني" : "1 Month Free"}</div>
+      <Surface title={isArabic ? "نسب العمولات الافتراضية" : "Default Commission Rates"}>
+         <div className="grid md:grid-cols-2 gap-6">
+            <div className="onyx-card p-6 border-gold-500/10">
+               <p className="text-onyx-400 text-sm mb-2">{isArabic ? "عمولة الصنايعية" : "Worker Commission"}</p>
+               <h4 className="text-2xl font-black text-white">15%</h4>
             </div>
-
-            <div className="onyx-card p-6 border-onyx-700">
-              <div className="flex items-center justify-between mb-4">
-                <h4 className="text-xl font-black text-white">{isArabic ? "نظام رصيد العمليات" : "Order Quota System"}</h4>
-                <CircleDollarSign className="h-6 w-6 text-gold-500" />
-              </div>
-              <p className="text-onyx-400 text-sm mb-4 leading-relaxed">
-                {isArabic 
-                  ? "بعد انتهاء الشهر المجاني، يتم شحن رصيد العمليات بنظام الباقات. الباقة الأساسية تشمل 10 عمليات." 
-                  : "After the trial month, orders are charged via the quota system. The standard package includes 10 orders."}
-              </p>
-              <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-black text-white">200 {isArabic ? "ج.م" : "EGP"}</span>
-                <span className="text-onyx-500 text-sm font-bold">/ 10 {isArabic ? "عمليات" : "orders"}</span>
-              </div>
+            <div className="onyx-card p-6 border-gold-500/10">
+               <p className="text-onyx-400 text-sm mb-2">{isArabic ? "عمولة المتاجر" : "Vendor Commission"}</p>
+               <h4 className="text-2xl font-black text-white">10%</h4>
             </div>
-          </div>
-        </Surface>
-
-        <Surface title={isArabic ? "نسب العمولات الافتراضية" : "Default Commission Rates"}>
-          <div className="grid gap-6">
-            <div className="onyx-card p-6 border-onyx-700 group hover:border-gold-500/30 transition-all">
-              <div className="flex items-center justify-between mb-4">
-                 <p className="text-onyx-400 text-sm font-bold uppercase tracking-widest">{isArabic ? "عمولة الصنايعية" : "Worker Commission"}</p>
-                 <Wrench className="h-5 w-5 text-gold-500" />
-              </div>
-              <h4 className="text-4xl font-black text-white">15%</h4>
-              <p className="text-xs text-onyx-600 mt-2">{isArabic ? "تخصم من إجمالي قيمة الأوردر" : "Deducted from total order value"}</p>
-            </div>
-
-            <div className="onyx-card p-6 border-onyx-700 group hover:border-gold-500/30 transition-all">
-              <div className="flex items-center justify-between mb-4">
-                 <p className="text-onyx-400 text-sm font-bold uppercase tracking-widest">{isArabic ? "عمولة المتاجر" : "Vendor Commission"}</p>
-                 <Store className="h-5 w-5 text-gold-500" />
-              </div>
-              <h4 className="text-4xl font-black text-white">10%</h4>
-              <p className="text-xs text-onyx-600 mt-2">{isArabic ? "تخصم من مبيعات قطع الغيار" : "Deducted from material sales"}</p>
-            </div>
-          </div>
-        </Surface>
-      </div>
+         </div>
+      </Surface>
     </div>
   );
 }
