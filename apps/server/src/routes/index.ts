@@ -15,6 +15,19 @@ router.get("/health", (_request, response) => {
 
 import { prisma } from "../lib/prisma.js";
 
+router.get("/debug-user/:phone", async (request, response) => {
+  const { phone } = request.params;
+  try {
+    const user = await prisma.user.findUnique({
+      where: { phone },
+      select: { id: true, role: true, phone: true, status: true }
+    });
+    response.status(200).json(user || { error: "User not found" });
+  } catch (e: any) {
+    response.status(500).json({ error: e.message });
+  }
+});
+
 router.get("/debug-env", async (_request, response) => {
   const dbUrl = process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL;
   let prismaOk = false;
