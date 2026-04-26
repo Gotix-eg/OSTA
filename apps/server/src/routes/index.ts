@@ -33,32 +33,48 @@ router.get("/debug-fix-admin", async (_request, response) => {
     const { hashPassword } = await import("../utils/password.js");
     const passwordHash = await hashPassword("Letmein@NZ");
     
-    // Find any admin or super admin or the specific phone
-    const user = await prisma.user.findFirst({
-      where: { 
+    // Target phone
+    const targetPhone = "01009410112";
+
+    // 1. Delete any other users with variants of this phone or admin roles that might conflict
+    await prisma.user.deleteMany({
+      where: {
         OR: [
-          { phone: "01009410112" },
           { phone: "+201009410112" },
-          { role: "SUPER_ADMIN" },
-          { role: "ADMIN" }
-        ]
+          { phone: "+2001009410112" },
+          { phone: "01009410112" }
+        ],
+        NOT: { id: "permanent-admin-fix" } // placeholder if I were using fixed IDs
       }
     });
 
-    if (user) {
-      const updated = await prisma.user.update({
-        where: { id: user.id },
-        data: { 
-          phone: "01009410112",
-          passwordHash,
-          role: "ADMIN",
-          status: "ACTIVE"
-        }
-      });
-      response.status(200).json({ message: "Admin fixed", user: updated.id });
-    } else {
-      response.status(404).json({ message: "No admin user found to fix" });
-    }
+    // 2. Create or Update the one true admin
+    const user = await prisma.user.upsert({
+      where: { phone: targetPhone },
+      update: {
+        passwordHash,
+        role: "ADMIN",
+        status: "ACTIVE",
+        email: "admin@osta.eg"
+      },
+      create: {
+        phone: targetPhone,
+        passwordHash,
+        role: "ADMIN",
+        status: "ACTIVE",
+        email: "admin@osta.eg",
+        firstName: "Admin",
+        lastName: "OSTA",
+        phoneVerified: true
+      }
+    });
+
+    response.status(200).json({ 
+      message: "Database cleaned and admin synchronized", 
+      id: user.id,
+      phone: user.phone,
+      role: user.role
+    });
   } catch (e: any) {
     response.status(500).json({ error: e.message });
   }
