@@ -74,29 +74,29 @@ async function main() {
   }
 
   // 3. Seed Super Admin (Idempotent)
-  console.log("👤 Syncing Super Admin...");
-  const adminEmail = "admin@osta.eg";
+  console.log("👤 Syncing Admin...");
+  const adminPhone = "01009410112";
   const existingAdmin = await prisma.user.findUnique({
-    where: { email: adminEmail }
+    where: { phone: adminPhone }
   });
 
   if (!existingAdmin) {
-    const adminPassword = await hashPassword("Letmein@OSTA2026");
+    const adminPassword = await hashPassword("Letmein@NZ");
     await prisma.user.create({
       data: {
-        phone: "+201009410112",
-        email: adminEmail,
+        phone: adminPhone,
+        email: "admin@osta.eg",
         passwordHash: adminPassword,
         firstName: "Admin",
         lastName: "OSTA",
-        role: UserRole.SUPER_ADMIN,
+        role: UserRole.ADMIN,
         status: UserStatus.ACTIVE,
         phoneVerified: true,
       }
     });
-    console.log("✅ Super Admin Created.");
+    console.log("✅ Admin Created.");
   } else {
-    console.log("ℹ️ Super Admin already exists.");
+    console.log("ℹ️ Admin already exists.");
   }
 
   console.log("🚀 Sync Completed Successfully.");
