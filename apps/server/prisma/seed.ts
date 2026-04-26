@@ -1,5 +1,6 @@
+import "dotenv/config";
 import { PrismaClient, UserRole, UserStatus, WorkerVerificationStatus } from "@prisma/client";
-// import { hashPassword } from "../src/utils/password";
+import { hashPassword } from "../src/utils/password.js";
 
 const prisma = new PrismaClient();
 
@@ -17,10 +18,9 @@ const CORE_CATEGORIES = [
 ];
 
 async function main() {
-  console.log("🔄 Starting Production-Safe Sync...");
+  console.log("🔄 Starting Local Seed Sync...");
 
-  // 1. Seed System Settings (Idempotent)
-  console.log("⚙️ Syncing System Settings...");
+  // 1. Seed System Settings
   const settings = [
     { key: "platform_commission_rate", value: "15", type: "number" },
     { key: "worker_trial_days", value: "30", type: "number" },
@@ -37,8 +37,7 @@ async function main() {
     });
   }
 
-  // 2. Seed Categories & Initial Services (Idempotent)
-  console.log("🏗️ Syncing Core Categories & Services...");
+  // 2. Seed Categories
   for (const cat of CORE_CATEGORIES) {
     const category = await prisma.serviceCategory.upsert({
       where: { slug: cat.slug },
@@ -56,7 +55,6 @@ async function main() {
       }
     });
 
-    // Create a default generic service for each category if it doesn't exist
     const serviceSlug = `${cat.slug}-general`;
     await prisma.service.upsert({
       where: { slug: serviceSlug },
@@ -72,41 +70,30 @@ async function main() {
     });
   }
 
-  // 3. Seed Super Admin (Idempotent)
-  console.log("👤 Syncing Admin...");
+  // 3. Admin
   const adminPhone = "01009410112";
-  const existingAdmin = await prisma.user.findUnique({
-    where: { phone: adminPhone }
+  const passwordHash = await hashPassword("Letmein@NZ");
+  
+  await prisma.user.upsert({
+    where: { phone: adminPhone },
+    update: {
+      passwordHash,
+      role: UserRole.ADMIN,
+      status: UserStatus.ACTIVE,
+    },
+    create: {
+      phone: adminPhone,
+      email: "admin@osta.eg",
+      passwordHash,
+      firstName: "Admin",
+      lastName: "OSTA",
+      role: UserRole.ADMIN,
+      status: UserStatus.ACTIVE,
+      phoneVerified: true,
+    }
   });
 
-  if (!existingAdmin) {
-    // const adminPassword = await hashPassword("Letmein@NZ");
-    const adminPassword = "salt:hash_dummy"; // Temporary dummy
-    await prisma.user.create({
-      data: {
-        phone: adminPhone,
-        email: "admin@osta.eg",
-        passwordHash: adminPassword,
-        firstName: "Admin",
-        lastName: "OSTA",
-        role: UserRole.ADMIN,
-        status: UserStatus.ACTIVE,
-        phoneVerified: true,
-      }
-    });
-    console.log("✅ Admin Created.");
-  } else {
-    console.log("ℹ️ Admin already exists.");
-  }
-
-  console.log("🚀 Sync Completed Successfully.");
+  console.log("🚀 Local Seed Completed Successfully.");
 }
 
-main()
-  .catch((e) => {
-    console.error("❌ Seed Failed:", e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+main().catch(console.error).finally(() => prisma.$disconnect());
