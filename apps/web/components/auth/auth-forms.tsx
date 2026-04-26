@@ -286,7 +286,7 @@ export function LoginForm({ locale }: { locale: Locale }) {
   const copy = authCopy[locale];
   const isArabic = locale === "ar";
   const [showPassword, setShowPassword] = useState(false);
-  const [phone, setPhone] = useState("+20");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(true);
   const [submitted, setSubmitted] = useState(false);
