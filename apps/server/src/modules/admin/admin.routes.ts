@@ -145,7 +145,7 @@ router.get("/dashboard", catchAsync(async (_request, response) => {
           id: w.id,
           name: `${w.user.firstName} ${w.user.lastName}`,
           phone: w.user.phone,
-          specialty: w.specialty,
+          specialty: "عام",
           status: w.verificationStatus,
           submittedAt: w.createdAt.toISOString().split("T")[0]
         })),
