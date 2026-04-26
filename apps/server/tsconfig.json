@@ -19,6 +19,7 @@
   },
   "include": [
     "src/**/*.ts",
-    "api/**/*.ts"
+    "api/**/*.ts",
+    "prisma/seed.ts"
   ]
 }

@@ -1,6 +1,5 @@
-import "dotenv/config";
 import { PrismaClient, UserRole, UserStatus, WorkerVerificationStatus } from "@prisma/client";
-import { hashPassword } from "../src/utils/password";
+// import { hashPassword } from "../src/utils/password";
 
 const prisma = new PrismaClient();
 
@@ -81,7 +80,8 @@ async function main() {
   });
 
   if (!existingAdmin) {
-    const adminPassword = await hashPassword("Letmein@NZ");
+    // const adminPassword = await hashPassword("Letmein@NZ");
+    const adminPassword = "salt:hash_dummy"; // Temporary dummy
     await prisma.user.create({
       data: {
         phone: adminPhone,
