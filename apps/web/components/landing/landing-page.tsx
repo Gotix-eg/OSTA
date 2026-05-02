@@ -14,12 +14,12 @@ import type { Locale } from "@/lib/locales";
 
 const CRAFTS = [
   { id: "electrical", name: { ar: "الكهرباء", en: "Electrical" }, image: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=800&auto=format&fit=crop", color: "from-yellow-400 to-gold-600" },
-  { id: "plumbing", name: { ar: "السباكة", en: "Plumbing" }, image: "https://images.unsplash.com/photo-1581244276891-833b3a0720b1?q=80&w=800&auto=format&fit=crop", color: "from-blue-400 to-blue-600" },
-  { id: "carpentry", name: { ar: "النجارة", en: "Carpentry" }, image: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?q=80&w=800&auto=format&fit=crop", color: "from-amber-600 to-amber-800" },
-  { id: "ac", name: { ar: "التكييفات", en: "AC Maintenance" }, image: "https://images.unsplash.com/photo-1631543533910-d1901dd59659?q=80&w=800&auto=format&fit=crop", color: "from-cyan-400 to-cyan-600" },
+  { id: "plumbing", name: { ar: "السباكة", en: "Plumbing" }, image: "https://images.unsplash.com/photo-1504148455328-c376907d081c?q=80&w=800&auto=format&fit=crop", color: "from-blue-400 to-blue-600" },
+  { id: "carpentry", name: { ar: "النجارة", en: "Carpentry" }, image: "https://images.unsplash.com/photo-1497219055242-93359eeed651?q=80&w=800&auto=format&fit=crop", color: "from-amber-600 to-amber-800" },
+  { id: "ac", name: { ar: "التكييفات", en: "AC Maintenance" }, image: "https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?q=80&w=800&auto=format&fit=crop", color: "from-cyan-400 to-cyan-600" },
   { id: "appliances", name: { ar: "صيانة أجهزة", en: "Home Appliances" }, image: "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?q=80&w=800&auto=format&fit=crop", color: "from-purple-400 to-purple-600" },
-  { id: "painting", name: { ar: "الدهانات", en: "Painting" }, image: "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?q=80&w=800&auto=format&fit=crop", color: "from-rose-400 to-rose-600" },
-  { id: "aluminum", name: { ar: "الوميتال", en: "Aluminum" }, image: "https://images.unsplash.com/photo-1503387762-592dee58c460?q=80&w=800&auto=format&fit=crop", color: "from-slate-400 to-slate-600" },
+  { id: "painting", name: { ar: "الدهانات", en: "Painting" }, image: "https://images.unsplash.com/photo-1562259949-e8e7689d7828?q=80&w=800&auto=format&fit=crop", color: "from-rose-400 to-rose-600" },
+  { id: "aluminum", name: { ar: "الوميتال", en: "Aluminum" }, image: "https://images.unsplash.com/photo-1554232456-8727aae0cfa4?q=80&w=800&auto=format&fit=crop", color: "from-slate-400 to-slate-600" },
   { id: "networks", name: { ar: "الشبكات", en: "Networks" }, image: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?q=80&w=800&auto=format&fit=crop", color: "from-indigo-400 to-indigo-600" },
   { id: "computer", name: { ar: "صيانة كمبيوتر", en: "Computer" }, image: "https://images.unsplash.com/photo-1588508065123-287b28e013da?q=80&w=800&auto=format&fit=crop", color: "from-emerald-400 to-emerald-600" },
   { id: "cameras", name: { ar: "تركيب كاميرات", en: "CCTV" }, image: "https://images.unsplash.com/photo-1557597774-9d2739f85a76?q=80&w=800&auto=format&fit=crop", color: "from-red-400 to-red-600" },
