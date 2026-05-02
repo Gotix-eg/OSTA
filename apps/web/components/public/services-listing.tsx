@@ -21,16 +21,16 @@ const serviceImages: Record<string, string> = {
   electrical: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=800&auto=format&fit=crop",
   plumbing: "https://images.pexels.com/photos/2310904/pexels-photo-2310904.jpeg?auto=compress&cs=tinysrgb&w=800",
   carpentry: "https://images.unsplash.com/photo-1497219055242-93359eeed651?auto=format&fit=crop&w=800&q=80",
-  ac: "https://images.pexels.com/photos/4421160/pexels-photo-4421160.jpeg?auto=compress&cs=tinysrgb&w=800",
-  "ac-maintenance": "https://images.pexels.com/photos/4421160/pexels-photo-4421160.jpeg?auto=compress&cs=tinysrgb&w=800",
-  appliances: "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?q=80&w=800&auto=format&fit=crop",
-  painting: "https://images.unsplash.com/photo-1562259949-e8e7689d7828?q=80&w=800&auto=format&fit=crop",
-  aluminum: "https://images.pexels.com/photos/209235/pexels-photo-209235.jpeg?auto=compress&cs=tinysrgb&w=800",
-  networks: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?q=80&w=800&auto=format&fit=crop",
-  computer: "https://images.unsplash.com/photo-1588508065123-287b28e013da?q=80&w=800&auto=format&fit=crop",
-  "computer-repair": "https://images.unsplash.com/photo-1588508065123-287b28e013da?q=80&w=800&auto=format&fit=crop",
-  cameras: "https://images.pexels.com/photos/4302082/pexels-photo-4302082.jpeg?auto=compress&cs=tinysrgb&w=800",
-  cctv: "https://images.pexels.com/photos/4302082/pexels-photo-4302082.jpeg?auto=compress&cs=tinysrgb&w=800"
+  ac: "https://images.unsplash.com/photo-1631543533910-d1901dd59659?w=800&auto=format&fit=crop&q=80",
+  "ac-maintenance": "https://images.unsplash.com/photo-1631543533910-d1901dd59659?w=800&auto=format&fit=crop&q=80",
+  appliances: "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=800&auto=format&fit=crop&q=80",
+  painting: "https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=800&auto=format&fit=crop&q=80",
+  aluminum: "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?w=800&auto=format&fit=crop&q=80",
+  networks: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=800&auto=format&fit=crop&q=80",
+  computer: "https://images.unsplash.com/photo-1588508065123-287b28e013da?w=800&auto=format&fit=crop&q=80",
+  "computer-repair": "https://images.unsplash.com/photo-1588508065123-287b28e013da?w=800&auto=format&fit=crop&q=80",
+  cameras: "https://images.unsplash.com/photo-1557597774-9d2739f85a76?w=800&auto=format&fit=crop&q=80",
+  cctv: "https://images.unsplash.com/photo-1557597774-9d2739f85a76?w=800&auto=format&fit=crop&q=80"
 };
 
 const iconMap: Record<string, any> = {
