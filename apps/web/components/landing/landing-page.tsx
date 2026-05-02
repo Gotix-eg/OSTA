@@ -14,15 +14,15 @@ import type { Locale } from "@/lib/locales";
 
 const CRAFTS = [
   { id: "electrical", name: { ar: "الكهرباء", en: "Electrical" }, image: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=800&auto=format&fit=crop", color: "from-yellow-400 to-gold-600" },
-  { id: "plumbing", name: { ar: "السباكة", en: "Plumbing" }, image: "https://images.unsplash.com/photo-1594918589744-4efe14a629b7?auto=format&fit=crop&w=800&q=80", color: "from-blue-400 to-blue-600" },
+  { id: "plumbing", name: { ar: "السباكة", en: "Plumbing" }, image: "https://images.pexels.com/photos/2310904/pexels-photo-2310904.jpeg?auto=compress&cs=tinysrgb&w=800", color: "from-blue-400 to-blue-600" },
   { id: "carpentry", name: { ar: "النجارة", en: "Carpentry" }, image: "https://images.unsplash.com/photo-1497219055242-93359eeed651?auto=format&fit=crop&w=800&q=80", color: "from-amber-600 to-amber-800" },
-  { id: "ac", name: { ar: "التكييفات", en: "AC Maintenance" }, image: "https://images.unsplash.com/photo-1621905252507-b352224075b8?auto=format&fit=crop&w=800&q=80", color: "from-cyan-400 to-cyan-600" },
+  { id: "ac", name: { ar: "التكييفات", en: "AC Maintenance" }, image: "https://images.pexels.com/photos/4421160/pexels-photo-4421160.jpeg?auto=compress&cs=tinysrgb&w=800", color: "from-cyan-400 to-cyan-600" },
   { id: "appliances", name: { ar: "صيانة أجهزة", en: "Home Appliances" }, image: "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?q=80&w=800&auto=format&fit=crop", color: "from-purple-400 to-purple-600" },
   { id: "painting", name: { ar: "الدهانات", en: "Painting" }, image: "https://images.unsplash.com/photo-1562259949-e8e7689d7828?q=80&w=800&auto=format&fit=crop", color: "from-rose-400 to-rose-600" },
-  { id: "aluminum", name: { ar: "الوميتال", en: "Aluminum" }, image: "https://images.unsplash.com/photo-1554232456-8727aae0cfa4?q=80&w=800&auto=format&fit=crop", color: "from-slate-400 to-slate-600" },
+  { id: "aluminum", name: { ar: "الوميتال", en: "Aluminum" }, image: "https://images.pexels.com/photos/209235/pexels-photo-209235.jpeg?auto=compress&cs=tinysrgb&w=800", color: "from-slate-400 to-slate-600" },
   { id: "networks", name: { ar: "الشبكات", en: "Networks" }, image: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?q=80&w=800&auto=format&fit=crop", color: "from-indigo-400 to-indigo-600" },
   { id: "computer", name: { ar: "صيانة كمبيوتر", en: "Computer" }, image: "https://images.unsplash.com/photo-1588508065123-287b28e013da?q=80&w=800&auto=format&fit=crop", color: "from-emerald-400 to-emerald-600" },
-  { id: "cameras", name: { ar: "تركيب كاميرات", en: "CCTV" }, image: "https://images.unsplash.com/photo-1525417071002-5ee4e6bb44f7?auto=format&fit=crop&w=800&q=80", color: "from-red-400 to-red-600" },
+  { id: "cameras", name: { ar: "تركيب كاميرات", en: "CCTV" }, image: "https://images.pexels.com/photos/4302082/pexels-photo-4302082.jpeg?auto=compress&cs=tinysrgb&w=800", color: "from-red-400 to-red-600" },
 ];
 
 export function LandingPage({ locale }: { locale: Locale }) {
