@@ -17,6 +17,22 @@ interface ServiceCategory {
   icon: string;
 }
 
+const serviceImages: Record<string, string> = {
+  electrical: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=800&auto=format&fit=crop",
+  plumbing: "https://images.unsplash.com/photo-1581244276891-833b3a0720b1?q=80&w=800&auto=format&fit=crop",
+  carpentry: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?q=80&w=800&auto=format&fit=crop",
+  ac: "https://images.unsplash.com/photo-1631543533910-d1901dd59659?q=80&w=800&auto=format&fit=crop",
+  "ac-maintenance": "https://images.unsplash.com/photo-1631543533910-d1901dd59659?q=80&w=800&auto=format&fit=crop",
+  appliances: "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?q=80&w=800&auto=format&fit=crop",
+  painting: "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?q=80&w=800&auto=format&fit=crop",
+  aluminum: "https://images.unsplash.com/photo-1503387762-592dee58c460?q=80&w=800&auto=format&fit=crop",
+  networks: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?q=80&w=800&auto=format&fit=crop",
+  computer: "https://images.unsplash.com/photo-1588508065123-287b28e013da?q=80&w=800&auto=format&fit=crop",
+  "computer-repair": "https://images.unsplash.com/photo-1588508065123-287b28e013da?q=80&w=800&auto=format&fit=crop",
+  cameras: "https://images.unsplash.com/photo-1557597774-9d2739f85a76?q=80&w=800&auto=format&fit=crop",
+  cctv: "https://images.unsplash.com/photo-1557597774-9d2739f85a76?q=80&w=800&auto=format&fit=crop"
+};
+
 const iconMap: Record<string, any> = {
   hammer: Hammer,
   droplets: Droplets,
@@ -71,27 +87,33 @@ export function ServicesListing({ locale }: { locale: Locale }) {
         ) : (
           categories.map((cat) => {
             const Icon = iconMap[cat.icon] || Settings;
+            const imgUrl = serviceImages[cat.slug] || serviceImages[cat.icon] || "https://images.unsplash.com/photo-1581092160562-40aa08e78837?q=80&w=800&auto=format&fit=crop";
             return (
               <Link 
                 key={cat.id} 
                 href={`/${locale}/services/${cat.slug}`}
-                className="onyx-card p-8 group hover:-translate-y-2 hover:border-gold-500/30 transition-all duration-500 overflow-hidden"
+                className="onyx-card p-0 group hover:-translate-y-2 hover:border-gold-500/30 transition-all duration-500 overflow-hidden min-h-[220px] relative"
               >
-                <div className="absolute -right-4 -bottom-4 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity duration-500">
-                  <Icon className="h-32 w-32" />
-                </div>
+                <img 
+                  src={imgUrl} 
+                  alt={isArabic ? cat.nameAr : cat.nameEn}
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-onyx-950 via-onyx-950/40 to-transparent" />
                 
-                <div className="h-14 w-14 rounded-2xl bg-onyx-900 border border-onyx-700 flex items-center justify-center text-gold-500 mb-6 group-hover:bg-gold-500 group-hover:text-onyx-950 group-hover:shadow-gold/20 group-hover:shadow-xl transition-all duration-500">
-                  <Icon className="h-6 w-6" />
-                </div>
+                <div className="relative p-8 h-full flex flex-col justify-end">
+                  <div className="h-12 w-12 rounded-xl bg-gold-500 flex items-center justify-center text-onyx-950 mb-4 group-hover:scale-110 transition-transform duration-500">
+                    <Icon className="h-5 w-5" />
+                  </div>
 
-                <h3 className="text-xl font-black text-white mb-2 group-hover:text-gold-500 transition-colors">
-                  {isArabic ? cat.nameAr : cat.nameEn}
-                </h3>
-                
-                <div className="flex items-center gap-2 text-xs font-black text-onyx-500 group-hover:text-gold-500 transition-colors">
-                  {isArabic ? "استكشف الخدمات" : "Explore Services"}
-                  {isArabic ? <ArrowLeft className="h-3 w-3" /> : <ArrowRight className="h-3 w-3" />}
+                  <h3 className="text-xl font-black text-white mb-2 group-hover:text-gold-500 transition-colors">
+                    {isArabic ? cat.nameAr : cat.nameEn}
+                  </h3>
+                  
+                  <div className="flex items-center gap-2 text-xs font-black text-gold-500/80 group-hover:text-gold-500 transition-colors">
+                    {isArabic ? "استكشف الخدمات" : "Explore Services"}
+                    {isArabic ? <ArrowLeft className="h-3 w-3" /> : <ArrowRight className="h-3 w-3" />}
+                  </div>
                 </div>
               </Link>
             );

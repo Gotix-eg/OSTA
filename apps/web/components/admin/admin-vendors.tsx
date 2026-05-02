@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Search, Loader2, Store, Phone, User, ShieldCheck, RotateCcw, Plus } from "lucide-react";
+import { Search, Loader2, Store, Phone, User, ShieldCheck, RotateCcw, Plus, PackageCheck } from "lucide-react";
 import { fetchApiData, postApiData } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
@@ -11,6 +11,7 @@ type Vendor = {
   shopName: string;
   shopNameAr: string | null;
   orderQuota: number;
+  totalOrders: number;
   trialExpiresAt: string | null;
   verificationStatus: string;
   user: {
@@ -118,9 +119,13 @@ export function AdminVendorsManagement({ locale }: { locale: Locale }) {
                       <h3 className="text-2xl font-black text-white group-hover:text-gold-500 transition-colors mb-2">
                         {isArabic ? (vendor.shopNameAr || vendor.shopName) : vendor.shopName}
                       </h3>
-                      <div className="flex items-center gap-6 text-onyx-400 text-sm font-medium">
+                      <div className="flex flex-wrap items-center gap-4 text-onyx-400 text-sm font-medium">
                         <span className="flex items-center gap-2"><User className="h-4 w-4 text-gold-500/60" /> {vendor.user.firstName}</span>
                         <span className="flex items-center gap-2"><Phone className="h-4 w-4 text-gold-500/60" /> {vendor.user.phone}</span>
+                        <span className="flex items-center gap-2 bg-onyx-800 px-3 py-1 rounded-full text-onyx-300">
+                          <PackageCheck className="h-3.5 w-3.5 text-gold-500/70" />
+                          {vendor.totalOrders || 0} {isArabic ? "أوردر مكتمل" : "completed"}
+                        </span>
                       </div>
                     </div>
                   </div>

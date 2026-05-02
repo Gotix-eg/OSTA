@@ -13,16 +13,16 @@ import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/locales";
 
 const CRAFTS = [
-  { id: "electrical", name: { ar: "الكهرباء", en: "Electrical" }, icon: Zap, color: "from-yellow-400 to-gold-600" },
-  { id: "plumbing", name: { ar: "السباكة", en: "Plumbing" }, icon: Waves, color: "from-blue-400 to-blue-600" },
-  { id: "carpentry", name: { ar: "النجارة", en: "Carpentry" }, icon: Hammer, color: "from-amber-600 to-amber-800" },
-  { id: "ac", name: { ar: "التكييفات", en: "AC Maintenance" }, icon: Wind, color: "from-cyan-400 to-cyan-600" },
-  { id: "appliances", name: { ar: "صيانة أجهزة", en: "Home Appliances" }, icon: Smartphone, color: "from-purple-400 to-purple-600" },
-  { id: "painting", name: { ar: "الدهانات", en: "Painting" }, icon: Palette, color: "from-rose-400 to-rose-600" },
-  { id: "aluminum", name: { ar: "الوميتال", en: "Aluminum" }, icon: Layout, color: "from-slate-400 to-slate-600" },
-  { id: "networks", name: { ar: "الشبكات", en: "Networks" }, icon: Globe, color: "from-indigo-400 to-indigo-600" },
-  { id: "computer", name: { ar: "صيانة كمبيوتر", en: "Computer" }, icon: Monitor, color: "from-emerald-400 to-emerald-600" },
-  { id: "cameras", name: { ar: "تركيب كاميرات", en: "CCTV" }, icon: Camera, color: "from-red-400 to-red-600" },
+  { id: "electrical", name: { ar: "الكهرباء", en: "Electrical" }, image: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=800&auto=format&fit=crop", color: "from-yellow-400 to-gold-600" },
+  { id: "plumbing", name: { ar: "السباكة", en: "Plumbing" }, image: "https://images.unsplash.com/photo-1581244276891-833b3a0720b1?q=80&w=800&auto=format&fit=crop", color: "from-blue-400 to-blue-600" },
+  { id: "carpentry", name: { ar: "النجارة", en: "Carpentry" }, image: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?q=80&w=800&auto=format&fit=crop", color: "from-amber-600 to-amber-800" },
+  { id: "ac", name: { ar: "التكييفات", en: "AC Maintenance" }, image: "https://images.unsplash.com/photo-1631543533910-d1901dd59659?q=80&w=800&auto=format&fit=crop", color: "from-cyan-400 to-cyan-600" },
+  { id: "appliances", name: { ar: "صيانة أجهزة", en: "Home Appliances" }, image: "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?q=80&w=800&auto=format&fit=crop", color: "from-purple-400 to-purple-600" },
+  { id: "painting", name: { ar: "الدهانات", en: "Painting" }, image: "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?q=80&w=800&auto=format&fit=crop", color: "from-rose-400 to-rose-600" },
+  { id: "aluminum", name: { ar: "الوميتال", en: "Aluminum" }, image: "https://images.unsplash.com/photo-1503387762-592dee58c460?q=80&w=800&auto=format&fit=crop", color: "from-slate-400 to-slate-600" },
+  { id: "networks", name: { ar: "الشبكات", en: "Networks" }, image: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?q=80&w=800&auto=format&fit=crop", color: "from-indigo-400 to-indigo-600" },
+  { id: "computer", name: { ar: "صيانة كمبيوتر", en: "Computer" }, image: "https://images.unsplash.com/photo-1588508065123-287b28e013da?q=80&w=800&auto=format&fit=crop", color: "from-emerald-400 to-emerald-600" },
+  { id: "cameras", name: { ar: "تركيب كاميرات", en: "CCTV" }, image: "https://images.unsplash.com/photo-1557597774-9d2739f85a76?q=80&w=800&auto=format&fit=crop", color: "from-red-400 to-red-600" },
 ];
 
 export function LandingPage({ locale }: { locale: Locale }) {
@@ -140,12 +140,18 @@ export function LandingPage({ locale }: { locale: Locale }) {
                <div className="grid grid-cols-2 gap-4 w-full h-full">
                   {CRAFTS.slice(0, 4).map((craft, idx) => (
                     <div key={craft.id} className={cn(
-                      "rounded-3xl p-8 flex flex-col items-center justify-center gap-4 group transition-all duration-500",
-                      idx % 2 === 0 ? "bg-onyx-800" : "bg-onyx-900",
-                      "hover:bg-gold-500 hover:scale-105"
+                      "rounded-3xl relative overflow-hidden group transition-all duration-500",
+                      "hover:scale-105 shadow-2xl shadow-black/50"
                     )}>
-                      <craft.icon className="h-12 w-12 text-gold-500 group-hover:text-onyx-950" />
-                      <span className="font-bold text-white group-hover:text-onyx-950">{isArabic ? craft.name.ar : craft.name.en}</span>
+                      <img 
+                        src={craft.image} 
+                        alt={isArabic ? craft.name.ar : craft.name.en}
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-onyx-950 via-onyx-950/20 to-transparent" />
+                      <div className="absolute bottom-4 inset-x-4">
+                        <span className="font-bold text-white text-lg">{isArabic ? craft.name.ar : craft.name.en}</span>
+                      </div>
                     </div>
                   ))}
                </div>
@@ -175,10 +181,14 @@ export function LandingPage({ locale }: { locale: Locale }) {
               <motion.div key={craft.id} variants={itemVariants}>
                 <Link href={`/${locale}/services/${craft.id}`} className="group block p-6 onyx-card hover:border-gold-500/50 transition-all duration-500 hover:-translate-y-2">
                   <div className={cn(
-                    "h-16 w-16 rounded-2xl flex items-center justify-center mb-6 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3",
-                    "bg-gradient-to-br", craft.color, "bg-opacity-10"
+                    "h-20 w-full rounded-2xl overflow-hidden mb-6 transition-transform duration-500 group-hover:scale-105 group-hover:rotate-1 relative",
                   )}>
-                    <craft.icon className="h-8 w-8 text-white" />
+                    <img 
+                      src={craft.image} 
+                      alt={isArabic ? craft.name.ar : craft.name.en}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className={cn("absolute inset-0 bg-gradient-to-br opacity-20", craft.color)} />
                   </div>
                   <h3 className="text-lg font-bold text-white mb-2 group-hover:text-gold-500 transition-colors">
                     {isArabic ? craft.name.ar : craft.name.en}
@@ -201,24 +211,24 @@ export function LandingPage({ locale }: { locale: Locale }) {
           <div className="grid md:grid-cols-3 gap-12">
             {[
               { 
-                icon: ShieldCheck, 
+                image: "https://images.unsplash.com/photo-1557597774-9d2739f85a76?q=80&w=800&auto=format&fit=crop", 
                 title: isArabic ? "أمان تام" : "Full Security", 
                 desc: isArabic ? "جميع الصنايعية موثقين بصورة البطاقة والفيش الجنائي." : "All pros are verified with national ID and criminal records." 
               },
               { 
-                icon: CheckCircle2, 
+                image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=800&auto=format&fit=crop", 
                 title: isArabic ? "ضمان الجودة" : "Quality Guarantee", 
                 desc: isArabic ? "نضمن لك جودة العمل، وفي حالة وجود مشكلة، نحن بجانبك." : "We guarantee the work quality, and we're here if anything goes wrong." 
               },
               { 
-                icon: Store, 
+                image: "https://images.unsplash.com/photo-1513885535751-8b9238bd345a?q=80&w=800&auto=format&fit=crop", 
                 title: isArabic ? "سوق الخامات" : "Materials Market", 
                 desc: isArabic ? "اطلب خاماتك من أقرب المتاجر الموثقة لباب بيتك." : "Order materials from the nearest verified stores to your doorstep." 
               }
             ].map((feature, i) => (
               <div key={i} className="text-center group">
-                <div className="h-20 w-20 bg-onyx-800 rounded-3xl flex items-center justify-center mx-auto mb-8 border border-onyx-700 group-hover:border-gold-500/50 group-hover:gold-glow transition-all duration-500">
-                  <feature.icon className="h-10 w-10 text-gold-500" />
+                <div className="h-24 w-24 bg-onyx-800 rounded-3xl overflow-hidden mx-auto mb-8 border border-onyx-700 group-hover:border-gold-500/50 group-hover:gold-glow transition-all duration-500">
+                  <img src={feature.image} alt={feature.title} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
                 </div>
                 <h3 className="text-2xl font-bold text-white mb-4">{feature.title}</h3>
                 <p className="text-onyx-400 leading-relaxed">{feature.desc}</p>

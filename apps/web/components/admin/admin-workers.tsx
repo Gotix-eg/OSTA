@@ -124,8 +124,10 @@ export function AdminWorkersManagement({ locale }: { locale: Locale }) {
                         <span className="flex items-center gap-2"><Phone className="h-4 w-4 text-gold-500/60" /> {worker.user.phone}</span>
                         <span className="flex items-center gap-2 bg-gold-500/10 px-3 py-1 rounded-full text-gold-500">
                           <Star className="h-3.5 w-3.5 fill-current" /> {worker.rating}
-                          <span className="text-gold-500/40 mx-1">|</span>
-                          {worker.totalJobsCompleted} {isArabic ? "مهمة" : "Jobs"}
+                        </span>
+                        <span className="flex items-center gap-2 bg-onyx-800 px-3 py-1 rounded-full text-onyx-300">
+                          <Wrench className="h-3.5 w-3.5 text-gold-500/70" />
+                          {worker.totalJobsCompleted} {isArabic ? "أوردر مكتمل" : "completed"}
                         </span>
                       </div>
                     </div>
