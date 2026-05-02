@@ -19,18 +19,18 @@ interface ServiceCategory {
 
 const serviceImages: Record<string, string> = {
   electrical: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=800&auto=format&fit=crop",
-  plumbing: "https://images.unsplash.com/photo-1504148455328-c376907d081c?q=80&w=800&auto=format&fit=crop",
-  carpentry: "https://images.unsplash.com/photo-1497219055242-93359eeed651?q=80&w=800&auto=format&fit=crop",
-  ac: "https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?q=80&w=800&auto=format&fit=crop",
-  "ac-maintenance": "https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?q=80&w=800&auto=format&fit=crop",
+  plumbing: "https://images.unsplash.com/photo-1594918589744-4efe14a629b7?auto=format&fit=crop&w=800&q=80",
+  carpentry: "https://images.unsplash.com/photo-1497219055242-93359eeed651?auto=format&fit=crop&w=800&q=80",
+  ac: "https://images.unsplash.com/photo-1621905252507-b352224075b8?auto=format&fit=crop&w=800&q=80",
+  "ac-maintenance": "https://images.unsplash.com/photo-1621905252507-b352224075b8?auto=format&fit=crop&w=800&q=80",
   appliances: "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?q=80&w=800&auto=format&fit=crop",
   painting: "https://images.unsplash.com/photo-1562259949-e8e7689d7828?q=80&w=800&auto=format&fit=crop",
   aluminum: "https://images.unsplash.com/photo-1554232456-8727aae0cfa4?q=80&w=800&auto=format&fit=crop",
   networks: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?q=80&w=800&auto=format&fit=crop",
   computer: "https://images.unsplash.com/photo-1588508065123-287b28e013da?q=80&w=800&auto=format&fit=crop",
   "computer-repair": "https://images.unsplash.com/photo-1588508065123-287b28e013da?q=80&w=800&auto=format&fit=crop",
-  cameras: "https://images.unsplash.com/photo-1557597774-9d2739f85a76?q=80&w=800&auto=format&fit=crop",
-  cctv: "https://images.unsplash.com/photo-1557597774-9d2739f85a76?q=80&w=800&auto=format&fit=crop"
+  cameras: "https://images.unsplash.com/photo-1525417071002-5ee4e6bb44f7?auto=format&fit=crop&w=800&q=80",
+  cctv: "https://images.unsplash.com/photo-1525417071002-5ee4e6bb44f7?auto=format&fit=crop&w=800&q=80"
 };
 
 const iconMap: Record<string, any> = {
