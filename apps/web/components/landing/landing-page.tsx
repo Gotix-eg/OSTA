@@ -51,7 +51,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
             <div className="h-10 w-10 bg-gold-500 rounded-xl flex items-center justify-center rotate-3 group-hover:rotate-0 transition-transform duration-500">
               <span className="text-onyx-950 font-black text-xl">أ</span>
             </div>
-            <span className="text-2xl font-black text-white tracking-tighter">OSTA <span className="text-gold-500">أُسطى</span></span>
+            <span className="text-2xl font-black text-white tracking-tighter">OSTA <span className="text-gold-500">أُسطى v1.1</span></span>
           </Link>
 
           <div className="hidden md:flex items-center gap-8">
