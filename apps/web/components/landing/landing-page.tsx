@@ -13,16 +13,16 @@ import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/locales";
 
 const CRAFTS = [
-  { id: "electrical", name: { ar: "الكهرباء", en: "Electrical" }, image: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=800&auto=format&fit=crop", color: "from-yellow-400 to-gold-600" },
-  { id: "plumbing", name: { ar: "السباكة", en: "Plumbing" }, image: "https://images.pexels.com/photos/2310904/pexels-photo-2310904.jpeg?auto=compress&cs=tinysrgb&w=800", color: "from-blue-400 to-blue-600" },
-  { id: "carpentry", name: { ar: "النجارة", en: "Carpentry" }, image: "https://images.unsplash.com/photo-1497219055242-93359eeed651?auto=format&fit=crop&w=800&q=80", color: "from-amber-600 to-amber-800" },
-  { id: "ac", name: { ar: "التكييفات", en: "AC Maintenance" }, image: "https://images.unsplash.com/photo-1599708145804-03cb0c1db92c?w=800", color: "from-cyan-400 to-cyan-600" },
-  { id: "appliances", name: { ar: "صيانة أجهزة", en: "Home Appliances" }, image: "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=800", color: "from-purple-400 to-purple-600" },
-  { id: "painting", name: { ar: "الدهانات", en: "Painting" }, image: "https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=800", color: "from-rose-400 to-rose-600" },
-  { id: "aluminum", name: { ar: "الوميتال", en: "Aluminum" }, image: "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?w=800", color: "from-slate-400 to-slate-600" },
-  { id: "networks", name: { ar: "الشبكات", en: "Networks" }, image: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=800", color: "from-indigo-400 to-indigo-600" },
-  { id: "computer", name: { ar: "صيانة كمبيوتر", en: "Computer" }, image: "https://images.unsplash.com/photo-1588508065123-287b28e013da?w=800", color: "from-emerald-400 to-emerald-600" },
-  { id: "cameras", name: { ar: "تركيب كاميرات", en: "CCTV" }, image: "https://images.unsplash.com/photo-1528312273730-141893c5c96b?w=800", color: "from-red-400 to-red-600" },
+  { id: "electrical", name: { ar: "الكهرباء", en: "Electrical" }, image: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=800&auto=format&fit=crop&v=osta2", color: "from-yellow-400 to-gold-600" },
+  { id: "plumbing", name: { ar: "السباكة", en: "Plumbing" }, image: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=800&auto=format&fit=crop&v=osta2", color: "from-blue-400 to-blue-600" },
+  { id: "carpentry", name: { ar: "النجارة", en: "Carpentry" }, image: "https://images.unsplash.com/photo-1601058268499-e52658b8bb88?q=80&w=800&auto=format&fit=crop&v=osta2", color: "from-amber-600 to-amber-800" },
+  { id: "ac", name: { ar: "التكييفات", en: "AC Maintenance" }, image: "https://images.unsplash.com/photo-1599708145804-03cb0c1db92c?q=80&w=800&auto=format&fit=crop&v=osta2", color: "from-cyan-400 to-cyan-600" },
+  { id: "appliances", name: { ar: "صيانة أجهزة", en: "Home Appliances" }, image: "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?q=80&w=800&auto=format&fit=crop&v=osta2", color: "from-purple-400 to-purple-600" },
+  { id: "painting", name: { ar: "الدهانات", en: "Painting" }, image: "https://images.unsplash.com/photo-1562259949-e8e7689d7828?q=80&w=800&auto=format&fit=crop&v=osta2", color: "from-rose-400 to-rose-600" },
+  { id: "aluminum", name: { ar: "الوميتال", en: "Aluminum" }, image: "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=800&auto=format&fit=crop&v=osta2", color: "from-slate-400 to-slate-600" },
+  { id: "networks", name: { ar: "الشبكات", en: "Networks" }, image: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?q=80&w=800&auto=format&fit=crop&v=osta2", color: "from-indigo-400 to-indigo-600" },
+  { id: "computer", name: { ar: "صيانة كمبيوتر", en: "Computer" }, image: "https://images.unsplash.com/photo-1588508065123-287b28e013da?q=80&w=800&auto=format&fit=crop&v=osta2", color: "from-emerald-400 to-emerald-600" },
+  { id: "cameras", name: { ar: "تركيب كاميرات", en: "CCTV" }, image: "https://images.unsplash.com/photo-1557597774-9d2739f85a76?q=80&w=800&auto=format&fit=crop&v=osta2", color: "from-red-400 to-red-600" },
 ];
 
 export function LandingPage({ locale }: { locale: Locale }) {
