@@ -19,18 +19,18 @@ interface ServiceCategory {
 
 const serviceImages: Record<string, string> = {
   electrical: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=800&auto=format&fit=crop",
-  plumbing: "https://images.unsplash.com/photo-1504148455328-c376907d081c?q=80&w=1000&auto=format&fit=crop&v=osta4",
+  plumbing: "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?q=80&w=1000&auto=format&fit=crop&v=osta5",
   carpentry: "https://images.unsplash.com/photo-1601058268499-e52658b8bb88?q=80&w=1000&auto=format&fit=crop&v=osta4",
   ac: "https://images.unsplash.com/photo-1621905252507-b352224075b8?q=80&w=1000&auto=format&fit=crop&v=osta4",
   "ac-maintenance": "https://images.unsplash.com/photo-1621905252507-b352224075b8?q=80&w=1000&auto=format&fit=crop&v=osta4",
   appliances: "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?q=80&w=1000&auto=format&fit=crop&v=osta4",
   painting: "https://images.unsplash.com/photo-1562259949-e8e7689d7828?q=80&w=1000&auto=format&fit=crop&v=osta4",
-  aluminum: "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=1000&auto=format&fit=crop&v=osta4",
+  aluminum: "https://images.unsplash.com/photo-1503708928676-1cb796a0891e?q=80&w=1000&auto=format&fit=crop&v=osta5",
   networks: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?q=80&w=1000&auto=format&fit=crop&v=osta4",
   computer: "https://images.unsplash.com/photo-1588508065123-287b28e013da?q=80&w=1000&auto=format&fit=crop&v=osta4",
   "computer-repair": "https://images.unsplash.com/photo-1588508065123-287b28e013da?q=80&w=1000&auto=format&fit=crop&v=osta4",
-  cameras: "https://images.unsplash.com/photo-1557597774-9d2739f85a76?q=80&w=1000&auto=format&fit=crop&v=osta4",
-  cctv: "https://images.unsplash.com/photo-1557597774-9d2739f85a76?q=80&w=1000&auto=format&fit=crop&v=osta4"
+  cameras: "https://images.unsplash.com/photo-1558002038-1055907df827?q=80&w=1000&auto=format&fit=crop&v=osta5",
+  cctv: "https://images.unsplash.com/photo-1558002038-1055907df827?q=80&w=1000&auto=format&fit=crop&v=osta5"
 };
 
 const iconMap: Record<string, any> = {
