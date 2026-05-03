@@ -29,8 +29,8 @@ const serviceImages: Record<string, string> = {
   networks: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?q=80&w=1000&auto=format&fit=crop&v=osta4",
   computer: "https://images.unsplash.com/photo-1588508065123-287b28e013da?q=80&w=1000&auto=format&fit=crop&v=osta4",
   "computer-repair": "https://images.unsplash.com/photo-1588508065123-287b28e013da?q=80&w=1000&auto=format&fit=crop&v=osta4",
-  cameras: "/images/services/cameras.jpg",
-  cctv: "/images/services/cameras.jpg"
+  cameras: "/images/services/cam.jpg",
+  cctv: "/images/services/cam.jpg"
 };
 
 const iconMap: Record<string, any> = {

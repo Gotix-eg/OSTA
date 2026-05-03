@@ -22,7 +22,7 @@ const CRAFTS = [
   { id: "aluminum", name: { ar: "الوميتال", en: "Aluminum" }, image: "/images/services/aluminum.jpg", color: "from-slate-400 to-slate-600" },
   { id: "networks", name: { ar: "الشبكات", en: "Networks" }, image: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?q=80&w=1000&auto=format&fit=crop&v=osta4", color: "from-indigo-400 to-indigo-600" },
   { id: "computer", name: { ar: "صيانة كمبيوتر", en: "Computer" }, image: "https://images.unsplash.com/photo-1588508065123-287b28e013da?q=80&w=1000&auto=format&fit=crop&v=osta4", color: "from-emerald-400 to-emerald-600" },
-  { id: "cameras", name: { ar: "تركيب كاميرات", en: "CCTV" }, image: "/images/services/cameras.jpg", color: "from-red-400 to-red-600" },
+  { id: "cameras", name: { ar: "تركيب كاميرات", en: "CCTV" }, image: "/images/services/cam.jpg", color: "from-red-400 to-red-600" },
 ];
 
 export function LandingPage({ locale }: { locale: Locale }) {
