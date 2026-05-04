@@ -4,7 +4,7 @@ import { WebView } from 'react-native-webview';
 
 export default function App() {
   // يمكنك تغيير هذا الرابط إلى رابطك النهائي (مثل osta.eg) عندما تكون مستعداً
-  const OSTA_URL = 'https://osta-c3zejipbw-gotixs-projects.vercel.app/';
+  const OSTA_URL = 'https://osta.vercel.app/';
 
   return (
     <SafeAreaView style={styles.container}>
