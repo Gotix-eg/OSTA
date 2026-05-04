@@ -418,7 +418,6 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
   const copy = authCopy[locale];
   const isArabic = locale === "ar";
   const { ready, state, setState } = usePersistentState("osta-client-register", clientRegisterDefaults);
-  const [step, setStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -426,6 +425,38 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
   async function handleRegister() {
     setIsSubmitting(true);
     setError(null);
+
+    // Basic Validation
+    if (!state.phone || state.phone.length < 10) {
+      setError(isArabic ? "رقم الهاتف غير صحيح" : "Invalid phone number");
+      setIsSubmitting(false);
+      return;
+    }
+    if (!state.firstName || !state.lastName) {
+      setError(isArabic ? "برجاء إدخال الاسم بالكامل" : "Please enter full name");
+      setIsSubmitting(false);
+      return;
+    }
+    if (state.password.length < 6) {
+      setError(isArabic ? "كلمة المرور يجب أن تكون 6 أحرف على الأقل" : "Password must be at least 6 characters");
+      setIsSubmitting(false);
+      return;
+    }
+    if (state.password !== state.confirmPassword) {
+      setError(isArabic ? "كلمات المرور غير متطابقة" : "Passwords do not match");
+      setIsSubmitting(false);
+      return;
+    }
+    if (!state.governorate || !state.city || !state.address) {
+      setError(isArabic ? "برجاء إكمال بيانات العنوان" : "Please complete address details");
+      setIsSubmitting(false);
+      return;
+    }
+    if (!state.acceptedTerms) {
+      setError(isArabic ? "يجب الموافقة على الشروط والأحكام" : "You must accept terms and conditions");
+      setIsSubmitting(false);
+      return;
+    }
 
     try {
       const payload = await postApiData<AuthSuccessResponse, any>("/auth/register/client", {
@@ -454,8 +485,6 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
         </p>
       </div>
 
-      <StepIndicator current={step} total={3} />
-
       {submitted ? (
         <div className="onyx-card p-10 text-center border-success/30 bg-success/5 space-y-4">
           <ShieldCheck className="h-16 w-16 text-success mx-auto" />
@@ -464,86 +493,84 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
         </div>
       ) : (
         <div className="space-y-6">
-          {step === 0 && (
+          <div className="onyx-card p-6 space-y-6 border-white/5 bg-white/[0.02]">
+            <h3 className="text-lg font-bold text-gold-500 border-b border-white/5 pb-2">
+              {isArabic ? "البيانات الأساسية" : "Basic Information"}
+            </h3>
+            
             <InputField
               label={isArabic ? "رقم الهاتف" : "Phone number"}
               value={state.phone}
               onChange={(phone) => setState({ ...state, phone })}
               placeholder="01x xxxx xxxx"
             />
-          )}
 
-          {step === 1 && (
-            <>
-              <div className="grid gap-6 sm:grid-cols-2">
-                <InputField label={isArabic ? "الاسم الأول" : "First name"} value={state.firstName} onChange={(firstName) => setState({ ...state, firstName })} />
-                <InputField label={isArabic ? "اسم العائلة" : "Last name"} value={state.lastName} onChange={(lastName) => setState({ ...state, lastName })} />
-              </div>
-              <InputField label={isArabic ? "البريد الإلكتروني" : "Email"} value={state.email} onChange={(email) => setState({ ...state, email })} type="email" />
-              <div className="grid gap-6 sm:grid-cols-2">
-                <InputField label={isArabic ? "كلمة المرور" : "Password"} value={state.password} onChange={(password) => setState({ ...state, password })} type="password" />
-                <InputField label={isArabic ? "تأكيد كلمة المرور" : "Confirm password"} value={state.confirmPassword} onChange={(confirmPassword) => setState({ ...state, confirmPassword })} type="password" />
-              </div>
-            </>
-          )}
-
-          {step === 2 && (
-            <div className="space-y-6">
-              <div className="grid gap-6 sm:grid-cols-2">
-                <SelectField
-                  label={isArabic ? "المحافظة" : "Governorate"}
-                  value={state.governorate}
-                  options={egyptianGovernorates.map(g => ({ value: g.value, label: isArabic ? g.labelAr : g.labelEn }))}
-                  onChange={(gov) => setState({ ...state, governorate: gov, city: "" })}
-                  placeholder={isArabic ? "اختر المحافظة" : "Select governorate"}
-                />
-                <SelectField
-                  label={isArabic ? "المدينة / المنطقة" : "City / Area"}
-                  value={state.city}
-                  disabled={!state.governorate}
-                  options={(majorCities[state.governorate] || []).map(c => ({ value: c.value, label: isArabic ? c.labelAr : c.labelEn }))}
-                  onChange={(city) => setState({ ...state, city })}
-                  placeholder={isArabic ? "اختر المدينة" : "Select city"}
-                />
-              </div>
-
-              <div className="space-y-3">
-                <span className="text-sm font-bold text-onyx-300 tracking-wide">{isArabic ? "تحديد الموقع على الخريطة" : "Pin location on map"}</span>
-                <div className="rounded-2xl overflow-hidden border border-onyx-700 h-64 gold-border-glow">
-                  <MapPicker lat={state.latitude} lng={state.longitude} isArabic={isArabic} onChange={(lat, lng) => setState({ ...state, latitude: lat, longitude: lng })} />
-                </div>
-              </div>
-
-              <InputField label={isArabic ? "العنوان التفصيلي" : "Detailed address"} value={state.address} onChange={(address) => setState({ ...state, address })} textarea rows={2} />
-
-              <label className="flex items-center gap-3 cursor-pointer group onyx-card p-4 border-onyx-700 bg-onyx-800/30">
-                <div className="relative flex h-5 w-5 items-center justify-center">
-                   <input type="checkbox" checked={state.acceptedTerms} onChange={(e) => setState({ ...state, acceptedTerms: e.target.checked })} className="peer h-full w-full opacity-0 absolute cursor-pointer" />
-                   <div className="h-full w-full rounded border border-onyx-700 bg-onyx-800 transition peer-checked:border-gold-500 peer-checked:bg-gold-500" />
-                   <Check className="pointer-events-none absolute h-3.5 w-3.5 text-onyx-950 opacity-0 transition peer-checked:opacity-100" />
-                </div>
-                <span className="text-sm text-onyx-400 group-hover:text-onyx-200 transition">{copy.terms}</span>
-              </label>
+            <div className="grid gap-6 sm:grid-cols-2">
+              <InputField label={isArabic ? "الاسم الأول" : "First name"} value={state.firstName} onChange={(firstName) => setState({ ...state, firstName })} />
+              <InputField label={isArabic ? "اسم العائلة" : "Last name"} value={state.lastName} onChange={(lastName) => setState({ ...state, lastName })} />
             </div>
-          )}
-
-          <div className="flex items-center justify-between gap-4 pt-4">
-            <button type="button" onClick={() => setStep(s => Math.max(0, s - 1))} className="btn-onyx h-12 flex items-center gap-2">
-              {isArabic ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-              {isArabic ? "السابق" : "Back"}
-            </button>
-            <button 
-               type="button" 
-               onClick={step === 2 ? handleRegister : () => setStep(s => s + 1)} 
-               disabled={isSubmitting || (step === 2 && !state.acceptedTerms)}
-               className="btn-gold h-12 px-8 flex items-center gap-2"
-            >
-              {isSubmitting ? (isArabic ? "جاري..." : "Processing...") : step === 2 ? (isArabic ? "إنشاء الحساب" : "Create Account") : (isArabic ? "التالي" : "Next")}
-              {isArabic ? <ArrowLeft className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
-            </button>
+            
+            <InputField label={isArabic ? "البريد الإلكتروني" : "Email"} value={state.email} onChange={(email) => setState({ ...state, email })} type="email" />
+            
+            <div className="grid gap-6 sm:grid-cols-2">
+              <InputField label={isArabic ? "كلمة المرور" : "Password"} value={state.password} onChange={(password) => setState({ ...state, password })} type="password" />
+              <InputField label={isArabic ? "تأكيد كلمة المرور" : "Confirm password"} value={state.confirmPassword} onChange={(confirmPassword) => setState({ ...state, confirmPassword })} type="password" />
+            </div>
           </div>
 
-          {error && <div className="onyx-card p-4 border-red-500/20 bg-red-500/5 text-red-500 text-center font-bold text-sm">{error}</div>}
+          <div className="onyx-card p-6 space-y-6 border-white/5 bg-white/[0.02]">
+            <h3 className="text-lg font-bold text-gold-500 border-b border-white/5 pb-2">
+              {isArabic ? "بيانات العنوان" : "Address Details"}
+            </h3>
+
+            <div className="grid gap-6 sm:grid-cols-2">
+              <SelectField
+                label={isArabic ? "المحافظة" : "Governorate"}
+                value={state.governorate}
+                options={egyptianGovernorates.map(g => ({ value: g.value, label: isArabic ? g.labelAr : g.labelEn }))}
+                onChange={(gov) => setState({ ...state, governorate: gov, city: "" })}
+                placeholder={isArabic ? "اختر المحافظة" : "Select governorate"}
+              />
+              <SelectField
+                label={isArabic ? "المدينة / المنطقة" : "City / Area"}
+                value={state.city}
+                disabled={!state.governorate}
+                options={(majorCities[state.governorate] || []).map(c => ({ value: c.value, label: isArabic ? c.labelAr : c.labelEn }))}
+                onChange={(city) => setState({ ...state, city })}
+                placeholder={isArabic ? "اختر المدينة" : "Select city"}
+              />
+            </div>
+
+            <div className="space-y-3">
+              <span className="text-sm font-bold text-onyx-300 tracking-wide">{isArabic ? "تحديد الموقع على الخريطة" : "Pin location on map"}</span>
+              <div className="rounded-2xl overflow-hidden border border-onyx-700 h-64 gold-border-glow">
+                <MapPicker lat={state.latitude} lng={state.longitude} isArabic={isArabic} onChange={(lat, lng) => setState({ ...state, latitude: lat, longitude: lng })} />
+              </div>
+            </div>
+
+            <InputField label={isArabic ? "العنوان التفصيلي" : "Detailed address"} value={state.address} onChange={(address) => setState({ ...state, address })} textarea rows={2} />
+          </div>
+
+          <label className="flex items-center gap-3 cursor-pointer group onyx-card p-4 border-onyx-700 bg-onyx-800/30">
+            <div className="relative flex h-5 w-5 items-center justify-center">
+                <input type="checkbox" checked={state.acceptedTerms} onChange={(e) => setState({ ...state, acceptedTerms: e.target.checked })} className="peer h-full w-full opacity-0 absolute cursor-pointer" />
+                <div className="h-full w-full rounded border border-onyx-700 bg-onyx-800 transition peer-checked:border-gold-500 peer-checked:bg-gold-500" />
+                <Check className="pointer-events-none absolute h-3.5 w-3.5 text-onyx-950 opacity-0 transition peer-checked:opacity-100" />
+            </div>
+            <span className="text-sm text-onyx-400 group-hover:text-onyx-200 transition">{copy.terms}</span>
+          </label>
+
+          <button 
+              type="button" 
+              onClick={handleRegister} 
+              disabled={isSubmitting}
+              className="btn-gold w-full h-14 text-lg font-black flex items-center justify-center gap-2"
+          >
+            {isSubmitting ? (isArabic ? "جاري إنشاء الحساب..." : "Creating Account...") : (isArabic ? "إنشاء الحساب" : "Create Account")}
+            {!isSubmitting && <ArrowUpRight className="h-5 w-5" />}
+          </button>
+
+          {error && <div className="onyx-card p-4 border-red-500/20 bg-red-500/5 text-red-500 text-center font-bold text-sm animate-shake">{error}</div>}
         </div>
       )}
     </div>
@@ -554,7 +581,6 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
   const copy = authCopy[locale];
   const isArabic = locale === "ar";
   const { ready, state, setState } = usePersistentState("osta-worker-register", workerRegisterDefaults);
-  const [step, setStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -562,6 +588,44 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
   async function handleRegister() {
     setIsSubmitting(true);
     setError(null);
+
+    // Validation
+    if (!state.phone || state.phone.length < 10) {
+      setError(isArabic ? "رقم الهاتف غير صحيح" : "Invalid phone number");
+      setIsSubmitting(false);
+      return;
+    }
+    if (!state.firstName || !state.lastName) {
+      setError(isArabic ? "برجاء إدخال الاسم بالكامل" : "Please enter full name");
+      setIsSubmitting(false);
+      return;
+    }
+    if (!state.nationalIdNumber || state.nationalIdNumber.length !== 14) {
+      setError(isArabic ? "الرقم القومي يجب أن يكون 14 رقم" : "National ID must be 14 digits");
+      setIsSubmitting(false);
+      return;
+    }
+    if (!state.nationalIdFront || !state.nationalIdBack) {
+      setError(isArabic ? "برجاء رفع صور البطاقة" : "Please upload ID photos");
+      setIsSubmitting(false);
+      return;
+    }
+    if (state.password.length < 6) {
+      setError(isArabic ? "كلمة المرور يجب أن تكون 6 أحرف على الأقل" : "Password must be at least 6 characters");
+      setIsSubmitting(false);
+      return;
+    }
+    if (state.password !== state.confirmPassword) {
+      setError(isArabic ? "كلمات المرور غير متطابقة" : "Passwords do not match");
+      setIsSubmitting(false);
+      return;
+    }
+    if (!state.acceptedTerms) {
+      setError(isArabic ? "يجب الموافقة على الشروط والأحكام" : "You must accept terms and conditions");
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
       const payload = await postApiData<AuthSuccessResponse, any>("/auth/register/worker", { ...state });
       window.localStorage.removeItem("osta-worker-register");
@@ -587,8 +651,6 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
         </p>
       </div>
 
-      <StepIndicator current={step} total={4} />
-
       {submitted ? (
         <div className="onyx-card p-10 text-center border-success/30 bg-success/5 space-y-4">
           <ShieldCheck className="h-16 w-16 text-success mx-auto" />
@@ -597,72 +659,57 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
         </div>
       ) : (
         <div className="space-y-6">
-          {step === 0 && (
-             <InputField label={isArabic ? "رقم الهاتف" : "Phone number"} value={state.phone} onChange={(phone) => setState({ ...state, phone })} placeholder="01x xxxx xxxx" />
-          )}
+          <div className="onyx-card p-6 space-y-6 border-white/5 bg-white/[0.02]">
+            <h3 className="text-lg font-bold text-gold-500 border-b border-white/5 pb-2">
+              {isArabic ? "البيانات الشخصية" : "Personal Information"}
+            </h3>
+            
+            <InputField label={isArabic ? "رقم الهاتف" : "Phone number"} value={state.phone} onChange={(phone) => setState({ ...state, phone })} placeholder="01x xxxx xxxx" />
 
-          {step === 1 && (
-            <>
-              <div className="grid gap-6 sm:grid-cols-2">
-                <InputField label={isArabic ? "الاسم الأول" : "First name"} value={state.firstName} onChange={(firstName) => setState({ ...state, firstName })} />
-                <InputField label={isArabic ? "اسم العائلة" : "Last name"} value={state.lastName} onChange={(lastName) => setState({ ...state, lastName })} />
-              </div>
-              <InputField label={isArabic ? "الرقم القومي (14 رقم)" : "National ID (14 digits)"} value={state.nationalIdNumber} onChange={(n) => setState({ ...state, nationalIdNumber: n })} />
-            </>
-          )}
-
-          {step === 2 && (
-            <div className="grid gap-8">
-              <div className="grid gap-6 sm:grid-cols-2">
-                <ImageUpload isArabic={isArabic} label={isArabic ? "صورة البطاقة (أمام)" : "ID Front"} value={state.nationalIdFront} onChange={(url) => setState({ ...state, nationalIdFront: url })} />
-                <ImageUpload isArabic={isArabic} label={isArabic ? "صورة البطاقة (خلف)" : "ID Back"} value={state.nationalIdBack} onChange={(url) => setState({ ...state, nationalIdBack: url })} />
-              </div>
-              <div className="grid gap-6 sm:grid-cols-2">
-                <InputField label={isArabic ? "كلمة المرور" : "Password"} value={state.password} onChange={(p) => setState({ ...state, password: p })} type="password" />
-                <InputField label={isArabic ? "تأكيد كلمة المرور" : "Confirm password"} value={state.confirmPassword} onChange={(cp) => setState({ ...state, confirmPassword: cp })} type="password" />
-              </div>
+            <div className="grid gap-6 sm:grid-cols-2">
+              <InputField label={isArabic ? "الاسم الأول" : "First name"} value={state.firstName} onChange={(firstName) => setState({ ...state, firstName })} />
+              <InputField label={isArabic ? "اسم العائلة" : "Last name"} value={state.lastName} onChange={(lastName) => setState({ ...state, lastName })} />
             </div>
-          )}
 
-          {step === 3 && (
-            <div className="space-y-8">
-              <div className="onyx-card p-6 border-gold-500/10 space-y-4">
-                <h3 className="font-black text-lg text-gold-500">{isArabic ? "مراجعة الطلب" : "Review Application"}</h3>
-                <div className="grid gap-3 text-sm">
-                   <div className="flex justify-between border-b border-onyx-800 pb-2"><span className="text-onyx-500">{isArabic ? "الاسم الكامل" : "Full Name"}</span><span className="text-white font-bold">{state.firstName} {state.lastName}</span></div>
-                   <div className="flex justify-between border-b border-onyx-800 pb-2"><span className="text-onyx-500">{isArabic ? "رقم الهاتف" : "Phone"}</span><span className="text-white font-bold">{state.phone}</span></div>
-                   <div className="flex justify-between border-b border-onyx-800 pb-2"><span className="text-onyx-500">{isArabic ? "الرقم القومي" : "National ID"}</span><span className="text-white font-bold">{state.nationalIdNumber}</span></div>
-                </div>
-              </div>
-
-              <label className="flex items-center gap-3 cursor-pointer group onyx-card p-4 border-onyx-700 bg-onyx-800/30">
-                <div className="relative flex h-5 w-5 items-center justify-center">
-                   <input type="checkbox" checked={state.acceptedTerms} onChange={(e) => setState({ ...state, acceptedTerms: e.target.checked })} className="peer h-full w-full opacity-0 absolute cursor-pointer" />
-                   <div className="h-full w-full rounded border border-onyx-700 bg-onyx-800 transition peer-checked:border-gold-500 peer-checked:bg-gold-500" />
-                   <Check className="pointer-events-none absolute h-3.5 w-3.5 text-onyx-950 opacity-0 transition peer-checked:opacity-100" />
-                </div>
-                <span className="text-sm text-onyx-400 group-hover:text-onyx-200 transition">{copy.terms}</span>
-              </label>
-            </div>
-          )}
-
-          <div className="flex items-center justify-between gap-4 pt-4">
-            <button type="button" onClick={() => setStep(s => Math.max(0, s - 1))} className="btn-onyx h-12 flex items-center gap-2">
-              {isArabic ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-              {isArabic ? "السابق" : "Back"}
-            </button>
-            <button 
-               type="button" 
-               onClick={step === 3 ? handleRegister : () => setStep(s => s + 1)} 
-               disabled={isSubmitting || (step === 3 && !state.acceptedTerms)}
-               className="btn-gold h-12 px-8 flex items-center gap-2"
-            >
-              {isSubmitting ? (isArabic ? "جاري..." : "Processing...") : step === 3 ? (isArabic ? "إرسال للمراجعة" : "Submit Review") : (isArabic ? "التالي" : "Next")}
-              {isArabic ? <ArrowLeft className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
-            </button>
+            <InputField label={isArabic ? "الرقم القومي (14 رقم)" : "National ID (14 digits)"} value={state.nationalIdNumber} onChange={(n) => setState({ ...state, nationalIdNumber: n })} />
           </div>
 
-          {error && <div className="onyx-card p-4 border-red-500/20 bg-red-500/5 text-red-500 text-center font-bold text-sm">{error}</div>}
+          <div className="onyx-card p-6 space-y-6 border-white/5 bg-white/[0.02]">
+            <h3 className="text-lg font-bold text-gold-500 border-b border-white/5 pb-2">
+              {isArabic ? "مستندات التوثيق" : "Verification Documents"}
+            </h3>
+            
+            <div className="grid gap-6 sm:grid-cols-2">
+              <ImageUpload isArabic={isArabic} label={isArabic ? "صورة البطاقة (أمام)" : "ID Front"} value={state.nationalIdFront} onChange={(url) => setState({ ...state, nationalIdFront: url })} />
+              <ImageUpload isArabic={isArabic} label={isArabic ? "صورة البطاقة (خلف)" : "ID Back"} value={state.nationalIdBack} onChange={(url) => setState({ ...state, nationalIdBack: url })} />
+            </div>
+
+            <div className="grid gap-6 sm:grid-cols-2">
+              <InputField label={isArabic ? "كلمة المرور" : "Password"} value={state.password} onChange={(p) => setState({ ...state, password: p })} type="password" />
+              <InputField label={isArabic ? "تأكيد كلمة المرور" : "Confirm password"} value={state.confirmPassword} onChange={(cp) => setState({ ...state, confirmPassword: cp })} type="password" />
+            </div>
+          </div>
+
+          <label className="flex items-center gap-3 cursor-pointer group onyx-card p-4 border-onyx-700 bg-onyx-800/30">
+            <div className="relative flex h-5 w-5 items-center justify-center">
+                <input type="checkbox" checked={state.acceptedTerms} onChange={(e) => setState({ ...state, acceptedTerms: e.target.checked })} className="peer h-full w-full opacity-0 absolute cursor-pointer" />
+                <div className="h-full w-full rounded border border-onyx-700 bg-onyx-800 transition peer-checked:border-gold-500 peer-checked:bg-gold-500" />
+                <Check className="pointer-events-none absolute h-3.5 w-3.5 text-onyx-950 opacity-0 transition peer-checked:opacity-100" />
+            </div>
+            <span className="text-sm text-onyx-400 group-hover:text-onyx-200 transition">{copy.terms}</span>
+          </label>
+
+          <button 
+              type="button" 
+              onClick={handleRegister} 
+              disabled={isSubmitting}
+              className="btn-gold w-full h-14 text-lg font-black flex items-center justify-center gap-2"
+          >
+            {isSubmitting ? (isArabic ? "جاري إرسال الطلب..." : "Submitting Application...") : (isArabic ? "إرسال طلب الانضمام" : "Submit Application")}
+            {!isSubmitting && <ArrowUpRight className="h-5 w-5" />}
+          </button>
+
+          {error && <div className="onyx-card p-4 border-red-500/20 bg-red-500/5 text-red-500 text-center font-bold text-sm animate-shake">{error}</div>}
         </div>
       )}
     </div>
@@ -673,7 +720,6 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
   const copy = authCopy[locale];
   const isArabic = locale === "ar";
   const { ready, state, setState } = usePersistentState("osta-vendor-register", vendorRegisterDefaults);
-  const [step, setStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -681,6 +727,49 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
   async function handleRegister() {
     setIsSubmitting(true);
     setError(null);
+
+    // Validation
+    if (!state.phone || state.phone.length < 10) {
+      setError(isArabic ? "رقم الهاتف غير صحيح" : "Invalid phone number");
+      setIsSubmitting(false);
+      return;
+    }
+    if (!state.storeName || !state.category) {
+      setError(isArabic ? "برجاء إدخال اسم وتصنيف المتجر" : "Please enter store name and category");
+      setIsSubmitting(false);
+      return;
+    }
+    if (!state.firstName || !state.lastName) {
+      setError(isArabic ? "برجاء إدخال اسم صاحب المتجر" : "Please enter owner name");
+      setIsSubmitting(false);
+      return;
+    }
+    if (state.password.length < 6) {
+      setError(isArabic ? "كلمة المرور يجب أن تكون 6 أحرف على الأقل" : "Password must be at least 6 characters");
+      setIsSubmitting(false);
+      return;
+    }
+    if (state.password !== state.confirmPassword) {
+      setError(isArabic ? "كلمات المرور غير متطابقة" : "Passwords do not match");
+      setIsSubmitting(false);
+      return;
+    }
+    if (!state.commercialRecord || !state.taxCard) {
+      setError(isArabic ? "برجاء رفع مستندات المتجر" : "Please upload store documents");
+      setIsSubmitting(false);
+      return;
+    }
+    if (!state.governorate || !state.city || !state.address) {
+      setError(isArabic ? "برجاء إكمال بيانات العنوان" : "Please complete address details");
+      setIsSubmitting(false);
+      return;
+    }
+    if (!state.acceptedTerms) {
+      setError(isArabic ? "يجب الموافقة على الشروط والأحكام" : "You must accept terms and conditions");
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
       const payload = await postApiData<AuthSuccessResponse, any>("/auth/register/vendor", { ...state });
       window.localStorage.removeItem("osta-vendor-register");
@@ -706,8 +795,6 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
         </p>
       </div>
 
-      <StepIndicator current={step} total={3} />
-
       {submitted ? (
         <div className="onyx-card p-10 text-center border-success/30 bg-success/5 space-y-4">
           <ShieldCheck className="h-16 w-16 text-success mx-auto" />
@@ -716,96 +803,96 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
         </div>
       ) : (
         <div className="space-y-6">
-          {step === 0 && (
-             <>
-                <InputField label={isArabic ? "رقم الهاتف" : "Phone number"} value={state.phone} onChange={(phone) => setState({ ...state, phone })} placeholder="01x xxxx xxxx" />
-                <InputField label={isArabic ? "اسم المتجر" : "Store Name"} value={state.storeName} onChange={(n) => setState({ ...state, storeName: n })} />
-                <SelectField
-                   label={isArabic ? "تصنيف المتجر" : "Store Category"}
-                   value={state.category}
-                   options={vendorCategories.map(c => ({ value: c.value, label: isArabic ? c.labelAr : c.labelEn }))}
-                   onChange={(cat) => setState({ ...state, category: cat })}
-                   placeholder={isArabic ? "اختر تصنيف المتجر" : "Select store category"}
-                />
-             </>
-          )}
-
-          {step === 1 && (
-            <>
-              <div className="grid gap-6 sm:grid-cols-2">
-                <InputField label={isArabic ? "الاسم الأول" : "First name"} value={state.firstName} onChange={(firstName) => setState({ ...state, firstName })} />
-                <InputField label={isArabic ? "اسم العائلة" : "Last name"} value={state.lastName} onChange={(lastName) => setState({ ...state, lastName })} />
-              </div>
-              <InputField label={isArabic ? "البريد الإلكتروني" : "Email"} value={state.email} onChange={(email) => setState({ ...state, email })} type="email" />
-              <div className="grid gap-6 sm:grid-cols-2">
-                <InputField label={isArabic ? "كلمة المرور" : "Password"} value={state.password} onChange={(password) => setState({ ...state, password })} type="password" />
-                <InputField label={isArabic ? "تأكيد كلمة المرور" : "Confirm password"} value={state.confirmPassword} onChange={(confirmPassword) => setState({ ...state, confirmPassword })} type="password" />
-              </div>
-            </>
-          )}
-
-          {step === 2 && (
-            <div className="space-y-6">
-              <div className="grid gap-6 sm:grid-cols-2">
-                <ImageUpload isArabic={isArabic} label={isArabic ? "السجل التجاري" : "Commercial Record"} value={state.commercialRecord} onChange={(url) => setState({ ...state, commercialRecord: url })} />
-                <ImageUpload isArabic={isArabic} label={isArabic ? "البطاقة الضريبية" : "Tax Card"} value={state.taxCard} onChange={(url) => setState({ ...state, taxCard: url })} />
-              </div>
-
-              <div className="grid gap-6 sm:grid-cols-2">
-                <SelectField
-                  label={isArabic ? "المحافظة" : "Governorate"}
-                  value={state.governorate}
-                  options={egyptianGovernorates.map(g => ({ value: g.value, label: isArabic ? g.labelAr : g.labelEn }))}
-                  onChange={(gov) => setState({ ...state, governorate: gov, city: "" })}
-                  placeholder={isArabic ? "اختر المحافظة" : "Select governorate"}
-                />
-                <SelectField
-                  label={isArabic ? "المدينة / المنطقة" : "City / Area"}
-                  value={state.city}
-                  disabled={!state.governorate}
-                  options={(majorCities[state.governorate] || []).map(c => ({ value: c.value, label: isArabic ? c.labelAr : c.labelEn }))}
-                  onChange={(city) => setState({ ...state, city })}
-                  placeholder={isArabic ? "اختر المدينة" : "Select city"}
-                />
-              </div>
-
-              <div className="space-y-3">
-                <span className="text-sm font-bold text-onyx-300 tracking-wide">{isArabic ? "تحديد الموقع على الخريطة" : "Store Location"}</span>
-                <div className="rounded-2xl overflow-hidden border border-onyx-700 h-64 gold-border-glow">
-                  <MapPicker lat={state.latitude} lng={state.longitude} isArabic={isArabic} onChange={(lat, lng) => setState({ ...state, latitude: lat, longitude: lng })} />
-                </div>
-              </div>
-
-              <InputField label={isArabic ? "العنوان التفصيلي" : "Detailed address"} value={state.address} onChange={(address) => setState({ ...state, address })} textarea rows={2} />
-
-              <label className="flex items-center gap-3 cursor-pointer group onyx-card p-4 border-onyx-700 bg-onyx-800/30">
-                <div className="relative flex h-5 w-5 items-center justify-center">
-                   <input type="checkbox" checked={state.acceptedTerms} onChange={(e) => setState({ ...state, acceptedTerms: e.target.checked })} className="peer h-full w-full opacity-0 absolute cursor-pointer" />
-                   <div className="h-full w-full rounded border border-onyx-700 bg-onyx-800 transition peer-checked:border-gold-500 peer-checked:bg-gold-500" />
-                   <Check className="pointer-events-none absolute h-3.5 w-3.5 text-onyx-950 opacity-0 transition peer-checked:opacity-100" />
-                </div>
-                <span className="text-sm text-onyx-400 group-hover:text-onyx-200 transition">{copy.terms}</span>
-              </label>
-            </div>
-          )}
-
-          <div className="flex items-center justify-between gap-4 pt-4">
-            <button type="button" onClick={() => setStep(s => Math.max(0, s - 1))} className="btn-onyx h-12 flex items-center gap-2">
-              {isArabic ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-              {isArabic ? "السابق" : "Back"}
-            </button>
-            <button 
-               type="button" 
-               onClick={step === 2 ? handleRegister : () => setStep(s => s + 1)} 
-               disabled={isSubmitting || (step === 2 && !state.acceptedTerms)}
-               className="btn-gold h-12 px-8 flex items-center gap-2"
-            >
-              {isSubmitting ? (isArabic ? "جاري..." : "Processing...") : step === 2 ? (isArabic ? "إنشاء الحساب" : "Create Account") : (isArabic ? "التالي" : "Next")}
-              {isArabic ? <ArrowLeft className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
-            </button>
+          <div className="onyx-card p-6 space-y-6 border-white/5 bg-white/[0.02]">
+            <h3 className="text-lg font-bold text-gold-500 border-b border-white/5 pb-2">
+              {isArabic ? "بيانات المتجر" : "Store Information"}
+            </h3>
+            
+            <InputField label={isArabic ? "رقم الهاتف" : "Phone number"} value={state.phone} onChange={(phone) => setState({ ...state, phone })} placeholder="01x xxxx xxxx" />
+            <InputField label={isArabic ? "اسم المتجر" : "Store Name"} value={state.storeName} onChange={(n) => setState({ ...state, storeName: n })} />
+            <SelectField
+                label={isArabic ? "تصنيف المتجر" : "Store Category"}
+                value={state.category}
+                options={vendorCategories.map(c => ({ value: c.value, label: isArabic ? c.labelAr : c.labelEn }))}
+                onChange={(cat) => setState({ ...state, category: cat })}
+                placeholder={isArabic ? "اختر تصنيف المتجر" : "Select store category"}
+            />
           </div>
 
-          {error && <div className="onyx-card p-4 border-red-500/20 bg-red-500/5 text-red-500 text-center font-bold text-sm">{error}</div>}
+          <div className="onyx-card p-6 space-y-6 border-white/5 bg-white/[0.02]">
+            <h3 className="text-lg font-bold text-gold-500 border-b border-white/5 pb-2">
+              {isArabic ? "البيانات الشخصية" : "Owner Information"}
+            </h3>
+            
+            <div className="grid gap-6 sm:grid-cols-2">
+              <InputField label={isArabic ? "الاسم الأول" : "First name"} value={state.firstName} onChange={(firstName) => setState({ ...state, firstName })} />
+              <InputField label={isArabic ? "اسم العائلة" : "Last name"} value={state.lastName} onChange={(lastName) => setState({ ...state, lastName })} />
+            </div>
+            <InputField label={isArabic ? "البريد الإلكتروني" : "Email"} value={state.email} onChange={(email) => setState({ ...state, email })} type="email" />
+            <div className="grid gap-6 sm:grid-cols-2">
+              <InputField label={isArabic ? "كلمة المرور" : "Password"} value={state.password} onChange={(password) => setState({ ...state, password })} type="password" />
+              <InputField label={isArabic ? "تأكيد كلمة المرور" : "Confirm password"} value={state.confirmPassword} onChange={(confirmPassword) => setState({ ...state, confirmPassword })} type="password" />
+            </div>
+          </div>
+
+          <div className="onyx-card p-6 space-y-6 border-white/5 bg-white/[0.02]">
+            <h3 className="text-lg font-bold text-gold-500 border-b border-white/5 pb-2">
+              {isArabic ? "مستندات التوثيق" : "Verification Documents"}
+            </h3>
+            
+            <div className="grid gap-6 sm:grid-cols-2">
+              <ImageUpload isArabic={isArabic} label={isArabic ? "السجل التجاري" : "Commercial Record"} value={state.commercialRecord} onChange={(url) => setState({ ...state, commercialRecord: url })} />
+              <ImageUpload isArabic={isArabic} label={isArabic ? "البطاقة الضريبية" : "Tax Card"} value={state.taxCard} onChange={(url) => setState({ ...state, taxCard: url })} />
+            </div>
+
+            <div className="grid gap-6 sm:grid-cols-2">
+              <SelectField
+                label={isArabic ? "المحافظة" : "Governorate"}
+                value={state.governorate}
+                options={egyptianGovernorates.map(g => ({ value: g.value, label: isArabic ? g.labelAr : g.labelEn }))}
+                onChange={(gov) => setState({ ...state, governorate: gov, city: "" })}
+                placeholder={isArabic ? "اختر المحافظة" : "Select governorate"}
+              />
+              <SelectField
+                label={isArabic ? "المدينة / المنطقة" : "City / Area"}
+                value={state.city}
+                disabled={!state.governorate}
+                options={(majorCities[state.governorate] || []).map(c => ({ value: c.value, label: isArabic ? c.labelAr : c.labelEn }))}
+                onChange={(city) => setState({ ...state, city })}
+                placeholder={isArabic ? "اختر المدينة" : "Select city"}
+              />
+            </div>
+
+            <div className="space-y-3">
+              <span className="text-sm font-bold text-onyx-300 tracking-wide">{isArabic ? "تحديد الموقع على الخريطة" : "Store Location"}</span>
+              <div className="rounded-2xl overflow-hidden border border-onyx-700 h-64 gold-border-glow">
+                <MapPicker lat={state.latitude} lng={state.longitude} isArabic={isArabic} onChange={(lat, lng) => setState({ ...state, latitude: lat, longitude: lng })} />
+              </div>
+            </div>
+
+            <InputField label={isArabic ? "العنوان التفصيلي" : "Detailed address"} value={state.address} onChange={(address) => setState({ ...state, address })} textarea rows={2} />
+          </div>
+
+          <label className="flex items-center gap-3 cursor-pointer group onyx-card p-4 border-onyx-700 bg-onyx-800/30">
+            <div className="relative flex h-5 w-5 items-center justify-center">
+                <input type="checkbox" checked={state.acceptedTerms} onChange={(e) => setState({ ...state, acceptedTerms: e.target.checked })} className="peer h-full w-full opacity-0 absolute cursor-pointer" />
+                <div className="h-full w-full rounded border border-onyx-700 bg-onyx-800 transition peer-checked:border-gold-500 peer-checked:bg-gold-500" />
+                <Check className="pointer-events-none absolute h-3.5 w-3.5 text-onyx-950 opacity-0 transition peer-checked:opacity-100" />
+            </div>
+            <span className="text-sm text-onyx-400 group-hover:text-onyx-200 transition">{copy.terms}</span>
+          </label>
+
+          <button 
+              type="button" 
+              onClick={handleRegister} 
+              disabled={isSubmitting}
+              className="btn-gold w-full h-14 text-lg font-black flex items-center justify-center gap-2"
+          >
+            {isSubmitting ? (isArabic ? "جاري إنشاء الحساب..." : "Creating Account...") : (isArabic ? "إنشاء حساب المتجر" : "Create Store Account")}
+            {!isSubmitting && <ArrowUpRight className="h-5 w-5" />}
+          </button>
+
+          {error && <div className="onyx-card p-4 border-red-500/20 bg-red-500/5 text-red-500 text-center font-bold text-sm animate-shake">{error}</div>}
         </div>
       )}
     </div>
