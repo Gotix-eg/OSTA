@@ -15,7 +15,7 @@ type MapPickerProps = {
 // This internal component will be dynamically imported
 const MapInternal = dynamic(
   async () => {
-    const { MapContainer, TileLayer, Marker, useMapEvents } = await import("react-leaflet");
+    const { MapContainer, TileLayer, Marker, useMapEvents, useMap } = await import("react-leaflet");
     const L = await import("leaflet");
 
     const customIcon = L.icon({
@@ -26,6 +26,14 @@ const MapInternal = dynamic(
     });
 
     return function MapComponent({ lat, lng, onSelect }: { lat: number; lng: number; onSelect: (lat: number, lng: number) => void }) {
+      const ChangeView = ({ center }: { center: [number, number] }) => {
+        const map = useMap();
+        useEffect(() => {
+          map.setView(center, map.getZoom());
+        }, [center, map]);
+        return null;
+      };
+
       const Events = () => {
         useMapEvents({
           click(e) {
@@ -46,6 +54,7 @@ const MapInternal = dynamic(
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
+          <ChangeView center={[lat, lng]} />
           <Marker position={[lat, lng]} icon={customIcon} />
           <Events />
         </MapContainer>
@@ -66,7 +75,7 @@ export function MapPicker({ lat, lng, onChange, isArabic }: MapPickerProps) {
     if (!searchQuery.trim()) return;
     setIsSearching(true);
     try {
-      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&limit=1`);
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&limit=1&countrycodes=eg`);
       const data = await res.json();
       if (data.length > 0) {
         const { lat: newLat, lon: newLng, address } = data[0];
