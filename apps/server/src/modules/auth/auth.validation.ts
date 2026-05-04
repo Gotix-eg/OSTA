@@ -46,17 +46,17 @@ export const refreshTokenSchema = z.object({
 });
 
 export const forgotPasswordSchema = z.object({
-  phone: phoneSchema
+  email: z.string().email("البريد الإلكتروني غير صالح")
 });
 
 export const resetPasswordSchema = z
   .object({
-    phone: phoneSchema,
-    code: z.string().length(6),
-    newPassword: passwordSchema,
+    email: z.string().email("البريد الإلكتروني غير صالح"),
+    code: z.string().length(6, "رمز التحقق يجب أن يكون 6 أرقام"),
+    password: passwordSchema,
     confirmPassword: passwordSchema
   })
-  .refine((value) => value.newPassword === value.confirmPassword, {
-    message: "Passwords do not match",
+  .refine((value) => value.password === value.confirmPassword, {
+    message: "كلمات المرور غير متطابقة",
     path: ["confirmPassword"]
   });

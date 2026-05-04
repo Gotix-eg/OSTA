@@ -903,17 +903,49 @@ export function ForgotPasswordForm({ locale }: { locale: Locale }) {
   const copy = authCopy[locale];
   const isArabic = locale === "ar";
   const [step, setStep] = useState(0);
-  const [phone, setPhone] = useState("+20");
-  const [otp, setOtp] = useState("");
+  const [email, setEmail] = useState("");
+  const [code, setCode] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
+
+  async function handleSendCode() {
+    setIsSubmitting(true);
+    setError(null);
+    try {
+      await postApiData("/auth/forgot-password", { email });
+      setStep(1);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to send code");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  async function handleResetPassword() {
+    if (password !== confirmPassword) {
+      setError(isArabic ? "كلمة المرور غير متطابقة" : "Passwords do not match");
+      return;
+    }
+    setIsSubmitting(true);
+    setError(null);
+    try {
+      await postApiData("/auth/reset-password", { email, code, password });
+      setDone(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to reset password");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
 
   if (done) return (
     <div className="onyx-card p-10 text-center border-success/30 bg-success/5 space-y-4">
       <ShieldCheck className="h-16 w-16 text-success mx-auto" />
       <h3 className="text-2xl font-black text-white">{isArabic ? "تم تحديث كلمة المرور!" : "Password Updated!"}</h3>
-      <p className="text-onyx-400">{copy.success}</p>
+      <p className="text-onyx-400">{isArabic ? "يمكنك الآن تسجيل الدخول بكلمة المرور الجديدة." : "You can now login with your new password."}</p>
     </div>
   );
 
@@ -921,40 +953,54 @@ export function ForgotPasswordForm({ locale }: { locale: Locale }) {
     <div className="space-y-8 animate-fadeIn">
       <div>
         <h2 className="text-4xl font-black text-white tracking-tight mb-4">{copy.forgotPasswordTitle}</h2>
-        <p className="text-onyx-400 leading-relaxed">{isArabic ? "أدخل رقم هاتفك لاستعادة الوصول إلى حسابك." : "Enter your phone number to regain access to your account."}</p>
+        <p className="text-onyx-400 leading-relaxed">{isArabic ? "أدخل بريدك الإلكتروني لاستعادة الوصول إلى حسابك." : "Enter your email to regain access to your account."}</p>
       </div>
 
       <StepIndicator current={step} total={3} />
 
       <div className="space-y-6">
-        {step === 0 && <InputField label={isArabic ? "رقم الهاتف" : "Phone number"} value={phone} onChange={setPhone} placeholder="+20 100 000 0000" />}
+        {step === 0 && (
+          <InputField 
+            label={isArabic ? "البريد الإلكتروني" : "Email address"} 
+            value={email} 
+            onChange={setEmail} 
+            type="email"
+            placeholder="example@mail.com" 
+          />
+        )}
+        
         {step === 1 && (
            <div className="space-y-4">
-              <span className="text-sm font-bold text-onyx-300 tracking-wide">{isArabic ? "رمز التحقق" : "Verification Code"}</span>
-              <OtpBoxes value={otp} onChange={setOtp} />
+              <InputField 
+                label={isArabic ? "رمز التحقق (المرسل للميل)" : "Verification Code (Sent to email)"} 
+                value={code} 
+                onChange={setCode} 
+                placeholder="123456" 
+              />
+              <div className="grid gap-6 sm:grid-cols-2 pt-2">
+                <InputField label={isArabic ? "كلمة المرور الجديدة" : "New password"} value={password} onChange={setPassword} type="password" />
+                <InputField label={isArabic ? "تأكيد كلمة المرور" : "Confirm password"} value={confirmPassword} onChange={setConfirmPassword} type="password" />
+              </div>
            </div>
-        )}
-        {step === 2 && (
-          <div className="grid gap-6 sm:grid-cols-2">
-            <InputField label={isArabic ? "كلمة المرور الجديدة" : "New password"} value={password} onChange={setPassword} type="password" />
-            <InputField label={isArabic ? "تأكيد كلمة المرور" : "Confirm password"} value={confirmPassword} onChange={setConfirmPassword} type="password" />
-          </div>
         )}
 
         <div className="flex items-center justify-between gap-4 pt-4">
-          <button type="button" onClick={() => setStep(s => Math.max(0, s - 1))} className="btn-onyx h-12 flex items-center gap-2">
+          <button type="button" onClick={() => setStep(s => Math.max(0, s - 1))} disabled={step === 0 || isSubmitting} className="btn-onyx h-12 flex items-center gap-2">
             {isArabic ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
             {isArabic ? "السابق" : "Back"}
           </button>
           <button 
              type="button" 
-             onClick={step === 2 ? () => setDone(true) : () => setStep(s => s + 1)} 
+             onClick={step === 0 ? handleSendCode : handleResetPassword} 
+             disabled={isSubmitting}
              className="btn-gold h-12 px-8 flex items-center gap-2"
           >
-            {step === 2 ? (isArabic ? "تحديث" : "Update") : (isArabic ? "التالي" : "Next")}
+            {isSubmitting ? (isArabic ? "جاري..." : "Processing...") : step === 0 ? (isArabic ? "إرسال الكود" : "Send Code") : (isArabic ? "تحديث" : "Update")}
             {isArabic ? <ArrowLeft className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
           </button>
         </div>
+
+        {error && <div className="onyx-card p-4 border-red-500/20 bg-red-500/5 text-red-500 text-center font-bold text-sm">{error}</div>}
       </div>
     </div>
   );

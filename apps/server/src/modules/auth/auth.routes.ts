@@ -171,15 +171,17 @@ router.post("/refresh-token", catchAsync(async (request, response) => {
   response.status(200).json(successResponse(result, "Tokens refreshed"));
 }));
 
-router.post("/forgot-password", (request, response) => {
-  parseBody(forgotPasswordSchema, request.body);
-  response.status(200).json(successResponse({ sent: true }, "OTP sent"));
-});
+router.post("/forgot-password", catchAsync(async (request, response) => {
+  const payload = parseBody(forgotPasswordSchema, request.body);
+  const result = await authService.forgotPassword(payload.email);
+  response.status(200).json(successResponse(result, "Reset code sent to your email"));
+}));
 
-router.post("/reset-password", (request, response) => {
-  parseBody(resetPasswordSchema, request.body);
-  response.status(200).json(successResponse({ reset: true }, "Password reset successful"));
-});
+router.post("/reset-password", catchAsync(async (request, response) => {
+  const payload = parseBody(resetPasswordSchema, request.body);
+  const result = await authService.resetPassword(payload.email, payload.code, payload.password);
+  response.status(200).json(successResponse(result, "Password reset successful"));
+}));
 
 router.post("/logout", authenticate, catchAsync(async (request, response) => {
   clearAuthCookies(response);

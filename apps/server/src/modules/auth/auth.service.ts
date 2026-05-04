@@ -4,6 +4,7 @@ import { prisma } from "../../lib/prisma.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { hashPassword, verifyPassword } from "../../utils/password.js";
 import { signAccessToken, signRefreshToken, verifyRefreshToken } from "../../utils/tokens.js";
+import { sendPasswordResetEmail, sendWelcomeEmail } from "../../utils/email.js";
 
 export type RegisterInput = {
   role: "CLIENT" | "WORKER" | "VENDOR";
@@ -207,6 +208,11 @@ export const authService = {
 
     const tokens = await createSession(user.id, user.role);
 
+    // Send welcome email if email is provided
+    if (user.email) {
+      sendWelcomeEmail(user.email, user.firstName).catch(err => console.error("Failed to send welcome email:", err));
+    }
+
     return {
       ...tokens,
       user: toPublicUser(user as any)
@@ -318,5 +324,76 @@ export const authService = {
     return {
       user: toPublicUser(user)
     };
+  },
+
+  async forgotPassword(email: string) {
+    const user = await prisma.user.findUnique({
+      where: { email }
+    });
+
+    if (!user) {
+      // Don't leak user existence, just return success
+      return { sent: true };
+    }
+
+    // Generate random 6-digit code for OTP
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+
+    await prisma.otpCode.create({
+      data: {
+        userId: user.id,
+        code,
+        type: "PASSWORD_RESET",
+        expiresAt
+      }
+    });
+
+    await sendPasswordResetEmail(user.email!, code).catch(err => console.error("Failed to send reset email:", err));
+
+    return { sent: true };
+  },
+
+  async resetPassword(email: string, code: string, password: string) {
+    const user = await prisma.user.findUnique({
+      where: { email }
+    });
+
+    if (!user) {
+      throw new ApiError(404, "User not found", "USER_NOT_FOUND");
+    }
+
+    const otp = await prisma.otpCode.findFirst({
+      where: {
+        userId: user.id,
+        code,
+        type: "PASSWORD_RESET",
+        isUsed: false,
+        expiresAt: { gt: new Date() }
+      }
+    });
+
+    if (!otp) {
+      throw new ApiError(400, "Invalid or expired reset code", "INVALID_CODE");
+    }
+
+    const passwordHash = await hashPassword(password);
+
+    await prisma.$transaction([
+      prisma.user.update({
+        where: { id: user.id },
+        data: { passwordHash }
+      }),
+      prisma.otpCode.update({
+        where: { id: otp.id },
+        data: { isUsed: true }
+      }),
+      // Revoke all existing sessions for security
+      prisma.session.deleteMany({
+        where: { userId: user.id }
+      })
+    ]);
+
+    return { reset: true };
   }
 };
