@@ -58,9 +58,9 @@ export function SubpageHero({
         </div>
 
         <div className="glass-card p-6 lg:p-8">
-          <p className="text-caption text-white/30 uppercase">OSTA | SIGNATURE</p>
-          <p className="mt-4 text-lg font-medium leading-relaxed text-white/90">
-            Crafting premium experiences through meticulous detail and cinematic precision.
+          <p className="text-caption text-gold-500/50 uppercase">OSTA | الجودة والضمان</p>
+          <p className="mt-4 text-lg font-bold leading-relaxed text-white/90">
+            نقدم لك أفضل الفنيين والحرفيين في مصر مع ضمان الدقة والجودة في كل خدمة.
           </p>
 
           {actionLabel && actionHref ? (
