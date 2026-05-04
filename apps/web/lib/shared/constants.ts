@@ -57,8 +57,8 @@ export const serviceCategories: ServiceCategory[] = [
     },
     services: [
       {
-        id: "electrical-emergency",
-        slug: "electrical-emergency",
+        id: "electrical-maintenance",
+        slug: "electrical-maintenance",
         name: { ar: "صيانة وتمديد كهرباء", en: "Electrical Maintenance" },
         description: {
           ar: "حل عاجل لانقطاع الكهرباء وتركيب المفاتيح ووحدات الإنارة.",
