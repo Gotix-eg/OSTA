@@ -79,7 +79,7 @@ const vendorRegisterDefaults: VendorRegisterState = {
   storeName: "",
   firstName: "",
   lastName: "",
-  phone: "+20",
+  phone: "",
   email: "",
   password: "",
   confirmPassword: "",
@@ -95,7 +95,7 @@ const vendorRegisterDefaults: VendorRegisterState = {
 };
 
 const clientRegisterDefaults: ClientRegisterState = {
-  phone: "+20",
+  phone: "",
   otp: "",
   firstName: "",
   lastName: "",
@@ -111,7 +111,7 @@ const clientRegisterDefaults: ClientRegisterState = {
 };
 
 const workerRegisterDefaults: WorkerRegisterState = {
-  phone: "+20",
+  phone: "",
   otp: "",
   firstName: "",
   lastName: "",
@@ -327,7 +327,7 @@ export function LoginForm({ locale }: { locale: Locale }) {
           label={isArabic ? "رقم الهاتف" : "Phone number"}
           value={phone}
           onChange={setPhone}
-          placeholder="+20 100 000 0000"
+          placeholder="01x xxxx xxxx"
         />
 
         <label className="block space-y-2 text-start">
@@ -469,7 +469,7 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
               label={isArabic ? "رقم الهاتف" : "Phone number"}
               value={state.phone}
               onChange={(phone) => setState({ ...state, phone })}
-              placeholder="+20 100 000 0000"
+              placeholder="01x xxxx xxxx"
             />
           )}
 
@@ -598,7 +598,7 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
       ) : (
         <div className="space-y-6">
           {step === 0 && (
-             <InputField label={isArabic ? "رقم الهاتف" : "Phone number"} value={state.phone} onChange={(phone) => setState({ ...state, phone })} placeholder="+20 100 000 0000" />
+             <InputField label={isArabic ? "رقم الهاتف" : "Phone number"} value={state.phone} onChange={(phone) => setState({ ...state, phone })} placeholder="01x xxxx xxxx" />
           )}
 
           {step === 1 && (
@@ -718,7 +718,7 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
         <div className="space-y-6">
           {step === 0 && (
              <>
-                <InputField label={isArabic ? "رقم الهاتف" : "Phone number"} value={state.phone} onChange={(phone) => setState({ ...state, phone })} placeholder="+20 100 000 0000" />
+                <InputField label={isArabic ? "رقم الهاتف" : "Phone number"} value={state.phone} onChange={(phone) => setState({ ...state, phone })} placeholder="01x xxxx xxxx" />
                 <InputField label={isArabic ? "اسم المتجر" : "Store Name"} value={state.storeName} onChange={(n) => setState({ ...state, storeName: n })} />
                 <SelectField
                    label={isArabic ? "تصنيف المتجر" : "Store Category"}
