@@ -74,10 +74,10 @@ export function LandingPage({ locale }: { locale: Locale }) {
 
       {/* Hero Section */}
       <section className="relative pt-40 pb-20 px-4">
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
+        <div className="max-w-5xl mx-auto text-center">
           <motion.div 
-            initial={{ x: isArabic ? 100 : -100, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
+            initial={{ y: 40, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold-500/10 border border-gold-500/20 text-gold-500 text-xs font-bold mb-6">
@@ -95,13 +95,13 @@ export function LandingPage({ locale }: { locale: Locale }) {
                 </>
               )}
             </h1>
-            <p className="text-onyx-400 text-lg md:text-xl max-w-xl mb-10 leading-relaxed">
+            <p className="text-onyx-400 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
               {isArabic 
                 ? "أول منصة تجمع أمهر الفنيين والمتاجر الموثقة في مصر. جودة مضمونة، أسعار عادلة، وتجربة مستخدم فاخرة."
                 : "The first platform connecting skilled pros and verified stores in Egypt. Guaranteed quality, fair prices, and a premium experience."}
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link href={`/${locale}/register/worker`} className="w-full sm:w-auto btn-gold text-center py-4 px-8 text-lg">
                 {isArabic ? "انضم كصنايعي" : "Join as Pro"}
               </Link>
@@ -110,7 +110,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
               </Link>
             </div>
 
-            <div className="mt-12 flex items-center gap-6">
+            <div className="mt-12 flex items-center justify-center gap-6">
               <div className="flex -space-x-3 rtl:space-x-reverse">
                 {[1,2,3,4].map(i => (
                   <div key={i} className="h-10 w-10 rounded-full border-2 border-onyx-950 bg-onyx-800 flex items-center justify-center">
@@ -128,37 +128,9 @@ export function LandingPage({ locale }: { locale: Locale }) {
               </div>
             </div>
           </motion.div>
-
-          <motion.div 
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 1, delay: 0.2 }}
-            className="relative hidden lg:block"
-          >
-            <div className="absolute inset-0 bg-gold-500/20 blur-[120px] rounded-full animate-gold-pulse" />
-            <div className="relative onyx-card-gold p-4 aspect-square flex items-center justify-center overflow-hidden">
-               <div className="grid grid-cols-2 gap-4 w-full h-full">
-                  {CRAFTS.slice(0, 4).map((craft, idx) => (
-                    <div key={craft.id} className={cn(
-                      "rounded-3xl relative overflow-hidden group transition-all duration-500",
-                      "hover:scale-105 shadow-2xl shadow-black/50"
-                    )}>
-                      <img 
-                        src={craft.image} 
-                        alt={isArabic ? craft.name.ar : craft.name.en}
-                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-onyx-950 via-onyx-950/20 to-transparent" />
-                      <div className="absolute bottom-4 inset-x-4">
-                        <span className="font-bold text-white text-lg">{isArabic ? craft.name.ar : craft.name.en}</span>
-                      </div>
-                    </div>
-                  ))}
-               </div>
-            </div>
-          </motion.div>
         </div>
       </section>
+
 
       {/* Categories Grid */}
       <section className="py-24 px-4 bg-onyx-900/50">
