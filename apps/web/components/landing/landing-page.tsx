@@ -153,7 +153,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
               <motion.div key={craft.id} variants={itemVariants}>
                 <Link href={`/${locale}/services/${craft.id}`} className="group block p-6 onyx-card hover:border-gold-500/50 transition-all duration-500 hover:-translate-y-2">
                   <div className={cn(
-                    "h-20 w-full rounded-2xl overflow-hidden mb-6 transition-transform duration-500 group-hover:scale-105 group-hover:rotate-1 relative",
+                    "h-48 w-full rounded-2xl overflow-hidden mb-6 transition-transform duration-500 group-hover:scale-105 group-hover:rotate-1 relative shadow-lg",
                   )}>
                     <img 
                       src={craft.image} 
