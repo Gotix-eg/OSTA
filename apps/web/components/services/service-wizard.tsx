@@ -54,11 +54,32 @@ const categoryOptions: Record<string, { ar: string; en: string }[]> = {
     { ar: "إصلاح برايز ومفاتيح", en: "Repair sockets and switches" },
     { ar: "تأسيس لوحات كهرباء", en: "Main board installation" },
   ],
+  // DB slug aliases
+  electricity: [
+    { ar: "مساعدة طارئة (انقطاع كهرباء / قفلة)", en: "Emergency help (outage / short circuit)" },
+    { ar: "تركيب وتمديد كهرباء جديد", en: "New electrical installation & wiring" },
+    { ar: "تركيب نجف ووحدات إضاءة", en: "Install chandeliers & lighting units" },
+    { ar: "إصلاح برايز ومفاتيح", en: "Repair sockets and switches" },
+    { ar: "تأسيس لوحات كهرباء", en: "Main board installation" },
+  ],
   "ac-technician": [
     { ar: "صيانة وكشف أعطال تكييف", en: "AC diagnostics & maintenance" },
     { ar: "تركيب تكييف جديد أو فك ونقل", en: "Install new AC or relocate" },
     { ar: "تنظيف وغسيل تكييف", en: "AC deep cleaning" },
     { ar: "شحن فريون", en: "Refrigerant/Freon refill" },
+  ],
+  ac: [
+    { ar: "صيانة وكشف أعطال تكييف", en: "AC diagnostics & maintenance" },
+    { ar: "تركيب تكييف جديد أو فك ونقل", en: "Install new AC or relocate" },
+    { ar: "تنظيف وغسيل تكييف", en: "AC deep cleaning" },
+    { ar: "شحن فريون", en: "Refrigerant/Freon refill" },
+  ],
+  appliances: [
+    { ar: "إصلاح غسالة (أوتوماتيك / فوق أوتوماتيك)", en: "Repair washer (Auto / Top-load)" },
+    { ar: "إصلاح ثلاجة أو ديب فريزر", en: "Repair fridge or deep freezer" },
+    { ar: "إصلاح بوتاجاز أو فرن", en: "Repair stove or oven" },
+    { ar: "إصلاح سخان غاز أو كهرباء", en: "Repair gas or electric heater" },
+    { ar: "صيانة ميكروويف أو أجهزة صغيرة", en: "Microwave or small appliance repair" },
   ],
   "home-appliances": [
     { ar: "إصلاح غسالة (أوتوماتيك / فوق أوتوماتيك)", en: "Repair washer (Auto / Top-load)" },
@@ -80,6 +101,12 @@ const categoryOptions: Record<string, { ar: string; en: string }[]> = {
     { ar: "إصلاح وصيانة شبابيك أو أبواب", en: "Repair & maintain windows or doors" },
     { ar: "تغيير سلك شبابيك", en: "Change window screens/mesh" },
   ],
+  networks: [
+    { ar: "تأسيس شبكة وايرلس (WiFi) منزلية", en: "Setup home WiFi network" },
+    { ar: "تركيب وتمديد كابلات إنترنت (Cat6)", en: "Install & route internet cables" },
+    { ar: "تقوية إشارة الواي فاي (Extenders)", en: "WiFi signal boosting" },
+    { ar: "تأسيس شبكات مكاتب وشركات", en: "Office/Business network setup" },
+  ],
   "computer-networks": [
     { ar: "تأسيس شبكة وايرلس (WiFi) منزلية", en: "Setup home WiFi network" },
     { ar: "تركيب وتمديد كابلات إنترنت (Cat6)", en: "Install & route internet cables" },
@@ -91,6 +118,12 @@ const categoryOptions: Record<string, { ar: string; en: string }[]> = {
     { ar: "إصلاح أعطال هاردوير (شاشة / رامات)", en: "Hardware repair (Screen / RAM)" },
     { ar: "تنظيف اللاب توب وتغيير المعجون", en: "Laptop cleaning & thermal paste" },
     { ar: "استعادة بيانات مفقودة", en: "Data recovery" },
+  ],
+  cctv: [
+    { ar: "تركيب نظام كاميرات مراقبة كامل", en: "Install full CCTV system" },
+    { ar: "إضافة كاميرات لنظام موجود", en: "Add cameras to existing system" },
+    { ar: "صيانة كاميرات أو جهاز التسجيل (DVR)", en: "Maintain cameras or DVR/NVR" },
+    { ar: "ربط الكاميرات بالموبايل", en: "Connect cameras to mobile app" },
   ],
   "camera-installation": [
     { ar: "تركيب نظام كاميرات مراقبة كامل", en: "Install full CCTV system" },
