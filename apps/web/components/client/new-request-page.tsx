@@ -434,7 +434,10 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
                           try {
                             if (item.id === "images") {
                               const remainingSlots = 5 - draft.images.length;
-                              if (remainingSlots <= 0) return;
+                              if (remainingSlots <= 0) {
+                                e.target.value = "";
+                                return;
+                              }
                               
                               const newImages = await Promise.all(
                                 Array.from(files)
@@ -451,6 +454,8 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
                             }
                           } catch (err) {
                             console.error("File processing error", err);
+                          } finally {
+                            e.target.value = "";
                           }
                         }}
                       />
@@ -466,33 +471,41 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
                       </div>
                       <p className="mt-4 text-lg font-semibold text-white">{item.label}</p>
                       
-                      {item.id === "images" && draft.images.length > 0 && (
-                        <div className="mt-4 flex flex-wrap gap-2">
-                          {draft.images.map((img, i) => (
-                            <div key={i} className="group relative h-16 w-16 overflow-hidden rounded-xl border border-white/10">
-                              <img src={img} alt="preview" className="h-full w-full object-cover" />
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  setDraft({ ...draft, images: draft.images.filter((_, idx) => idx !== i) });
-                                }}
-                                className="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 transition group-hover:opacity-100"
-                              >
-                                <span className="text-[10px] font-bold text-white">{isArabic ? "حذف" : "Del"}</span>
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-
                       <p className="mt-2 text-sm leading-7 text-onyx-400">
                         {item.value 
                           ? (isArabic ? "تم اختيار الملف بنجاح" : "File selected successfully")
                           : (isArabic ? "اضغط هنا لاختيار الملف من جهازك" : "Click here to select a file from your device")}
                       </p>
                     </label>
+
+                    {item.id === "images" && draft.images.length > 0 && (
+                      <div className="flex flex-wrap gap-3 p-2">
+                        {draft.images.map((img, i) => (
+                          <div key={i} className="group relative h-20 w-20 overflow-hidden rounded-[1.2rem] border border-white/10 shadow-lg">
+                            <img src={img} alt="preview" className="h-full w-full object-cover" />
+                            <button
+                              type="button"
+                              onClick={() => setDraft({ ...draft, images: draft.images.filter((_, idx) => idx !== i) })}
+                              className="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 transition group-hover:opacity-100"
+                            >
+                              <span className="rounded-full bg-red-500/20 p-2 text-xs font-bold text-red-500">{isArabic ? "حذف" : "Del"}</span>
+                            </button>
+                          </div>
+                        ))}
+                        {draft.images.length < 5 && (
+                          <div 
+                            onClick={() => {
+                              const input = document.querySelector('input[accept="image/*"]') as HTMLInputElement;
+                              input?.click();
+                            }}
+                            className="flex h-20 w-20 cursor-pointer items-center justify-center rounded-[1.2rem] border-2 border-dashed border-onyx-700 bg-onyx-800/30 text-onyx-500 hover:border-primary-500 hover:bg-onyx-800/50"
+                          >
+                            <ImagePlus className="h-6 w-6" />
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </>
                   );
                 })}
               </div>
