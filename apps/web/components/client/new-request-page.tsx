@@ -433,8 +433,15 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
 
                           try {
                             if (item.id === "images") {
-                              const newImages = await Promise.all(Array.from(files).slice(0, 5).map(fileToBase64));
-                              setDraft({ ...draft, images: newImages });
+                              const remainingSlots = 5 - draft.images.length;
+                              if (remainingSlots <= 0) return;
+                              
+                              const newImages = await Promise.all(
+                                Array.from(files)
+                                  .slice(0, remainingSlots)
+                                  .map(fileToBase64)
+                              );
+                              setDraft({ ...draft, images: [...draft.images, ...newImages] });
                             } else if (item.id === "voice" && files[0]) {
                               const voice = await fileToBase64(files[0]);
                               setDraft({ ...draft, voiceNote: voice });
@@ -458,6 +465,28 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
                         )}
                       </div>
                       <p className="mt-4 text-lg font-semibold text-white">{item.label}</p>
+                      
+                      {item.id === "images" && draft.images.length > 0 && (
+                        <div className="mt-4 flex flex-wrap gap-2">
+                          {draft.images.map((img, i) => (
+                            <div key={i} className="group relative h-16 w-16 overflow-hidden rounded-xl border border-white/10">
+                              <img src={img} alt="preview" className="h-full w-full object-cover" />
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  setDraft({ ...draft, images: draft.images.filter((_, idx) => idx !== i) });
+                                }}
+                                className="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 transition group-hover:opacity-100"
+                              >
+                                <span className="text-[10px] font-bold text-white">{isArabic ? "حذف" : "Del"}</span>
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
                       <p className="mt-2 text-sm leading-7 text-onyx-400">
                         {item.value 
                           ? (isArabic ? "تم اختيار الملف بنجاح" : "File selected successfully")
