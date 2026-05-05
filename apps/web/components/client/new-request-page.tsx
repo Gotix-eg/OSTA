@@ -292,61 +292,104 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
 
       <div className="mt-6 grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
         <DashboardBlock title={copy.steps[step] ?? copy.title} eyebrow={isArabic ? "بناء الطلب" : "request builder"}>
-          {step === 0 ? (
-            <div className="grid gap-6 xl:grid-cols-[1fr_1fr]">
-              <div>
-                <h2 className="text-2xl font-semibold text-white">{isArabic ? "اختر الفئة الرئيسية" : "Choose the main category"}</h2>
-                <div className="mt-5 grid gap-3">
-                  {serviceCategories.map((category, index) => (
-                    <button
-                      key={category.id}
-                      type="button"
-                      onClick={() => setDraft({ ...draft, categoryId: category.id, serviceId: category.services[0]?.id ?? "" })}
-                      className={cn(
-                        "rounded-[1.4rem] border p-4 text-start transition",
-                        draft.categoryId === category.id
-                          ? "border-dark-950 bg-dark-950 text-white shadow-soft"
-                          : index % 2 === 0
-                            ? "border-onyx-700 bg-onyx-800/50 hover:border-primary-200"
-                            : "border-onyx-700 bg-onyx-800/80 hover:border-primary-200"
-                      )}
-                    >
-                      <p className={cn("text-lg font-semibold", draft.categoryId === category.id ? "text-white" : "text-white")}>{category.name[locale]}</p>
-                      <p className={cn("mt-2 text-sm", draft.categoryId === category.id ? "text-white/70" : "text-onyx-400")}>{category.description[locale]}</p>
-                    </button>
-                  ))}
+          {/* Selected Service Header (Visible in all steps after selection) */}
+          {selectedService && (
+            <div className="mb-8 flex items-center justify-between rounded-[1.6rem] border border-primary-500/30 bg-primary-500/5 p-4">
+              <div className="flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary-600 text-white shadow-lg">
+                  {selectedCategory?.id === "electricity" && <WandSparkles className="h-6 w-6" />}
+                  {selectedCategory?.id !== "electricity" && <Wrench className="h-6 w-6" />}
+                </div>
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-wider text-primary-500">{selectedCategory?.name[locale]}</p>
+                  <p className="text-xl font-bold text-white">{selectedService.name[locale]}</p>
                 </div>
               </div>
+              {step === 0 ? (
+                <button 
+                  onClick={() => setDraft({ ...draft, serviceId: "" })}
+                  className="text-sm font-medium text-onyx-400 hover:text-white underline underline-offset-4"
+                >
+                  {isArabic ? "تغيير الخدمة" : "Change Service"}
+                </button>
+              ) : (
+                <button 
+                  onClick={() => setStep(0)}
+                  className="text-sm font-medium text-onyx-400 hover:text-white underline underline-offset-4"
+                >
+                  {isArabic ? "تعديل" : "Edit"}
+                </button>
+              )}
+            </div>
+          )}
 
-              <div>
-                <h2 className="text-2xl font-semibold text-white">{isArabic ? "الخدمة المحددة" : "Specific service"}</h2>
-                <div className="mt-5 grid gap-3">
-                  {selectedCategory?.services.length ? (
-                    selectedCategory.services.map((service, index) => (
-                      <button
-                        key={service.id}
-                        type="button"
-                        onClick={() => setDraft({ ...draft, serviceId: service.id })}
-                        className={cn(
-                          "rounded-[1.4rem] border p-4 text-start transition",
-                          draft.serviceId === service.id
-                            ? "border-accent-300 bg-onyx-800/80 shadow-soft"
-                            : index % 2 === 0
-                              ? "border-onyx-700 bg-onyx-800/50 hover:border-accent-200"
-                              : "border-onyx-700 bg-onyx-800/50 hover:border-accent-200"
-                        )}
-                      >
-                        <p className="text-lg font-semibold text-white">{service.name[locale]}</p>
-                        <p className="mt-2 text-sm text-onyx-400">{service.description[locale]}</p>
-                      </button>
-                    ))
-                  ) : (
-                    <SoftCard>
-                      <p className="text-sm text-onyx-400">{isArabic ? "اختر فئة أولًا لإظهار الخدمات المتاحة" : "Choose a category first to reveal the service options."}</p>
-                    </SoftCard>
-                  )}
+          {step === 0 ? (
+            <div className="grid gap-6">
+              {!draft.serviceId ? (
+                <div className="grid gap-6 xl:grid-cols-[1fr_1fr]">
+                  <div>
+                    <h2 className="text-2xl font-semibold text-white">{isArabic ? "اختر الفئة الرئيسية" : "Choose the main category"}</h2>
+                    <div className="mt-5 grid gap-3">
+                      {serviceCategories.map((category, index) => (
+                        <button
+                          key={category.id}
+                          type="button"
+                          onClick={() => setDraft({ ...draft, categoryId: category.id, serviceId: category.services[0]?.id ?? "" })}
+                          className={cn(
+                            "rounded-[1.4rem] border p-4 text-start transition",
+                            draft.categoryId === category.id
+                              ? "border-dark-950 bg-dark-950 text-white shadow-soft"
+                              : index % 2 === 0
+                                ? "border-onyx-700 bg-onyx-800/50 hover:border-primary-200"
+                                : "border-onyx-700 bg-onyx-800/80 hover:border-primary-200"
+                          )}
+                        >
+                          <p className={cn("text-lg font-semibold", draft.categoryId === category.id ? "text-white" : "text-white")}>{category.name[locale]}</p>
+                          <p className={cn("mt-2 text-sm", draft.categoryId === category.id ? "text-white/70" : "text-onyx-400")}>{category.description[locale]}</p>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <h2 className="text-2xl font-semibold text-white">{isArabic ? "الخدمة المحددة" : "Specific service"}</h2>
+                    <div className="mt-5 grid gap-3">
+                      {selectedCategory?.services.length ? (
+                        selectedCategory.services.map((service, index) => (
+                          <button
+                            key={service.id}
+                            type="button"
+                            onClick={() => setDraft({ ...draft, serviceId: service.id })}
+                            className={cn(
+                              "rounded-[1.4rem] border p-4 text-start transition",
+                              draft.serviceId === service.id
+                                ? "border-accent-300 bg-onyx-800/80 shadow-soft"
+                                : index % 2 === 0
+                                  ? "border-onyx-700 bg-onyx-800/50 hover:border-accent-200"
+                                  : "border-onyx-700 bg-onyx-800/50 hover:border-accent-200"
+                            )}
+                          >
+                            <p className="text-lg font-semibold text-white">{service.name[locale]}</p>
+                            <p className="mt-2 text-sm text-onyx-400">{service.description[locale]}</p>
+                          </button>
+                        ))
+                      ) : (
+                        <SoftCard>
+                          <p className="text-sm text-onyx-400">{isArabic ? "اختر فئة أولًا لإظهار الخدمات المتاحة" : "Choose a category first to reveal the service options."}</p>
+                        </SoftCard>
+                      )}
+                    </div>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-10 text-center">
+                  <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-green-500/10 text-green-500 ring-8 ring-green-500/5">
+                    <CheckCircle2 className="h-10 w-10" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white">{isArabic ? "تم اختيار الخدمة" : "Service Selected"}</h3>
+                  <p className="mt-2 text-onyx-400">{isArabic ? "يمكنك الآن الانتقال للخطوة التالية لتحديد تفاصيل المشكلة" : "You can now proceed to the next step to describe the issue"}</p>
+                </div>
+              )}
             </div>
           ) : null}
 
