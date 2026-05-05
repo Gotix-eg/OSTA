@@ -912,6 +912,10 @@ export function ForgotPasswordForm({ locale }: { locale: Locale }) {
   const [done, setDone] = useState(false);
 
   async function handleSendCode() {
+    if (!email) {
+      setError(isArabic ? "برجاء إدخال البريد الإلكتروني" : "Please enter your email");
+      return;
+    }
     setIsSubmitting(true);
     setError(null);
     try {
@@ -925,6 +929,14 @@ export function ForgotPasswordForm({ locale }: { locale: Locale }) {
   }
 
   async function handleResetPassword() {
+    if (code.length < 6) {
+      setError(isArabic ? "برجاء إدخال رمز التحقق كاملاً" : "Please enter the full verification code");
+      return;
+    }
+    if (password.length < 6) {
+      setError(isArabic ? "كلمة المرور يجب أن تكون 6 أحرف على الأقل" : "Password must be at least 6 characters");
+      return;
+    }
     if (password !== confirmPassword) {
       setError(isArabic ? "كلمة المرور غير متطابقة" : "Passwords do not match");
       return;
@@ -944,19 +956,23 @@ export function ForgotPasswordForm({ locale }: { locale: Locale }) {
   if (done) return (
     <div className="onyx-card p-10 text-center border-success/30 bg-success/5 space-y-4">
       <ShieldCheck className="h-16 w-16 text-success mx-auto" />
-      <h3 className="text-2xl font-black text-white">{isArabic ? "تم تحديث كلمة المرور!" : "Password Updated!"}</h3>
-      <p className="text-onyx-400">{isArabic ? "يمكنك الآن تسجيل الدخول بكلمة المرور الجديدة." : "You can now login with your new password."}</p>
+      <h3 className="text-2xl font-black text-white">{copy.passwordUpdated}</h3>
+      <p className="text-onyx-400">{copy.loginNow}</p>
     </div>
   );
 
   return (
     <div className="space-y-8 animate-fadeIn">
       <div>
-        <h2 className="text-4xl font-black text-white tracking-tight mb-4">{copy.forgotPasswordTitle}</h2>
-        <p className="text-onyx-400 leading-relaxed">{isArabic ? "أدخل بريدك الإلكتروني لاستعادة الوصول إلى حسابك." : "Enter your email to regain access to your account."}</p>
+        <h2 className="text-4xl font-black text-white tracking-tight mb-4 font-display">
+          {step === 0 ? copy.forgotPasswordTitle : copy.resetPasswordTitle}
+        </h2>
+        <p className="text-onyx-400 leading-relaxed max-w-lg">
+          {step === 0 ? copy.forgotPasswordBody : copy.resetPasswordBody}
+        </p>
       </div>
 
-      <StepIndicator current={step} total={3} />
+      <StepIndicator current={step} total={2} />
 
       <div className="space-y-6">
         {step === 0 && (
@@ -970,13 +986,14 @@ export function ForgotPasswordForm({ locale }: { locale: Locale }) {
         )}
         
         {step === 1 && (
-           <div className="space-y-4">
-              <InputField 
-                label={isArabic ? "رمز التحقق (المرسل للميل)" : "Verification Code (Sent to email)"} 
-                value={code} 
-                onChange={setCode} 
-                placeholder="123456" 
-              />
+           <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="space-y-3">
+                <span className="text-sm font-bold text-onyx-300 tracking-wide">
+                  {isArabic ? "رمز التحقق (6 أرقام)" : "Verification Code (6 digits)"}
+                </span>
+                <OtpBoxes value={code} onChange={setCode} />
+              </div>
+
               <div className="grid gap-6 sm:grid-cols-2 pt-2">
                 <InputField label={isArabic ? "كلمة المرور الجديدة" : "New password"} value={password} onChange={setPassword} type="password" />
                 <InputField label={isArabic ? "تأكيد كلمة المرور" : "Confirm password"} value={confirmPassword} onChange={setConfirmPassword} type="password" />
@@ -985,22 +1002,30 @@ export function ForgotPasswordForm({ locale }: { locale: Locale }) {
         )}
 
         <div className="flex items-center justify-between gap-4 pt-4">
-          <button type="button" onClick={() => setStep(s => Math.max(0, s - 1))} disabled={step === 0 || isSubmitting} className="btn-onyx h-12 flex items-center gap-2">
+          <button 
+            type="button" 
+            onClick={() => setStep(0)} 
+            disabled={step === 0 || isSubmitting} 
+            className="btn-onyx h-12 flex items-center gap-2"
+          >
             {isArabic ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-            {isArabic ? "السابق" : "Back"}
+            {copy.back}
           </button>
+          
           <button 
              type="button" 
              onClick={step === 0 ? handleSendCode : handleResetPassword} 
              disabled={isSubmitting}
-             className="btn-gold h-12 px-8 flex items-center gap-2"
+             className="btn-gold h-12 px-8 flex items-center gap-2 group"
           >
-            {isSubmitting ? (isArabic ? "جاري..." : "Processing...") : step === 0 ? (isArabic ? "إرسال الكود" : "Send Code") : (isArabic ? "تحديث" : "Update")}
-            {isArabic ? <ArrowLeft className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
+            {isSubmitting ? copy.processing : step === 0 ? copy.sendCode : copy.update}
+            <div className={cn("transition-transform duration-300", isArabic ? "group-hover:-translate-x-1" : "group-hover:translate-x-1")}>
+              {isArabic ? <ArrowLeft className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
+            </div>
           </button>
         </div>
 
-        {error && <div className="onyx-card p-4 border-red-500/20 bg-red-500/5 text-red-500 text-center font-bold text-sm">{error}</div>}
+        {error && <div className="onyx-card p-4 border-red-500/20 bg-red-500/5 text-red-500 text-center font-bold text-sm animate-shake">{error}</div>}
       </div>
     </div>
   );

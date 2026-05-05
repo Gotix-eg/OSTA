@@ -198,12 +198,23 @@ export const authCopy = {
     registerWorkerTitle: "ابدأ رحلتك المهنية مع أُسطى",
     registerVendorTitle: "كن موردًا معتمدًا مع أُسطى",
     forgotPasswordTitle: "استرجاع كلمة المرور",
+    forgotPasswordBody: "أدخل بريدك الإلكتروني المسجل وسنرسل لك رمزاً لتغيير كلمة المرور.",
+    resetPasswordTitle: "تحديث كلمة المرور",
+    resetPasswordBody: "أدخل الرمز المرسل وكلمة المرور الجديدة لإكمال الاستعادة.",
     otpTitle: "تأكيد رمز التحقق",
+    otpBody: "لقد أرسلنا رمزاً مكوّناً من 6 أرقام إلى هاتفك لتأكيد الهوية.",
     terms: "أوافق على الشروط وسياسة الخصوصية",
     submit: "متابعة",
     success: "تم تسجيل الدخول بنجاح! جاري تحويلك...",
     timerLabel: "إعادة الإرسال بعد",
-    resend: "إعادة إرسال الرمز"
+    resend: "إعادة إرسال الرمز",
+    next: "التالي",
+    back: "السابق",
+    sendCode: "إرسال الكود",
+    update: "تحديث",
+    processing: "جاري المعالجة...",
+    passwordUpdated: "تم تحديث كلمة المرور!",
+    loginNow: "يمكنك الآن تسجيل الدخول بكلمة المرور الجديدة."
   },
   en: {
     intro: "Fast and trusted service workflows",
@@ -213,11 +224,22 @@ export const authCopy = {
     registerWorkerTitle: "Start your professional journey with OSTA",
     registerVendorTitle: "Become a trusted vendor with OSTA",
     forgotPasswordTitle: "Reset your password",
+    forgotPasswordBody: "Enter your registered email and we will send you a code to reset your password.",
+    resetPasswordTitle: "Update password",
+    resetPasswordBody: "Enter the code sent to your email and your new password.",
     otpTitle: "Verify your code",
+    otpBody: "We've sent a 6-digit code to your phone to verify your identity.",
     terms: "I agree to the terms and privacy policy",
     submit: "Continue",
     success: "Signed in successfully! Redirecting...",
     timerLabel: "Resend available in",
-    resend: "Resend code"
+    resend: "Resend code",
+    next: "Next",
+    back: "Back",
+    sendCode: "Send Code",
+    update: "Update",
+    processing: "Processing...",
+    passwordUpdated: "Password Updated!",
+    loginNow: "You can now login with your new password."
   }
 } as const;
