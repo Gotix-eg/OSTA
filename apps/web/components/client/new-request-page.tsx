@@ -414,9 +414,9 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
                   const Icon = item.icon;
 
                   return (
-                    <label
-                      key={item.label}
-                      className={cn(
+                    <div key={item.id}>
+                      <label
+                        className={cn(
                         "relative cursor-pointer rounded-[1.5rem] border p-5 transition hover:border-primary-300",
                         item.tone,
                         item.value ? "border-primary-500 ring-1 ring-primary-500" : "border-onyx-700"
@@ -505,7 +505,7 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
                         )}
                       </div>
                     )}
-                  </>
+                    </div>
                   );
                 })}
               </div>
