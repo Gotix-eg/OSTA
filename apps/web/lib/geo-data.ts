@@ -48,7 +48,10 @@ export const majorCities: Record<string, GeoOption[]> = {
     { value: "badr", labelEn: "Badr City", labelAr: "مدينة بدر" },
     { value: "mokattam", labelEn: "Mokattam", labelAr: "المقطم" },
     { value: "basateen", labelEn: "Basateen", labelAr: "البساتين" },
-    { value: "sayeda-zeinab", labelEn: "Sayeda Zeinab", labelAr: "السيدة زينب" }
+    { value: "sayeda-zeinab", labelEn: "Sayeda Zeinab", labelAr: "السيدة زينب" },
+    { value: "hadayek-kobba", labelEn: "Hadayek El Kobba", labelAr: "حدائق القبة" },
+    { value: "abbassia", labelEn: "Abbassia", labelAr: "العباسية" },
+    { value: "rod-farag", labelEn: "Rod El Farag", labelAr: "روض الفرج" }
   ],
   giza: [
     { value: "6th-october", labelEn: "6th of October", labelAr: "6 أكتوبر" },
@@ -65,7 +68,10 @@ export const majorCities: Record<string, GeoOption[]> = {
     { value: "hawamdeya", labelEn: "Hawamdeya", labelAr: "الحوامدية" },
     { value: "badrashein", labelEn: "Al Badrashein", labelAr: "البدرشين" },
     { value: "osseem", labelEn: "Osseem", labelAr: "أوسيم" },
-    { value: "kirdasa", labelEn: "Kirdasa", labelAr: "كرداسة" }
+    { value: "kirdasa", labelEn: "Kirdasa", labelAr: "كرداسة" },
+    { value: "omrania", labelEn: "Omrania", labelAr: "العمرانية" },
+    { value: "talbia", labelEn: "Talbia", labelAr: "الطالبية" },
+    { value: "boulaq-dakrour", labelEn: "Boulaq El Dakrour", labelAr: "بولاق الدكرور" }
   ],
   alexandria: [
     { value: "smouha", labelEn: "Smouha", labelAr: "سموحة" },
