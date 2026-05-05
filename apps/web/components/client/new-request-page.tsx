@@ -14,7 +14,8 @@ import {
   ShieldCheck,
   Sparkles,
   Video,
-  WandSparkles
+  WandSparkles,
+  Wrench
 } from "lucide-react";
 
 import { serviceCategories } from "@/lib/shared";
