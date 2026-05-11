@@ -49,7 +49,6 @@ export function LandingPage({ locale }: { locale: Locale }) {
         <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
           <Link href={`/${locale}`} className="flex items-center gap-2 group">
             <img src="/logo.png" alt="OSTA" className="h-12 w-auto" />
-            <span className="text-2xl font-black text-white tracking-tighter">OSTA <span className="text-gold-500">أُسطى</span></span>
           </Link>
 
           <div className="hidden md:flex items-center gap-8">
@@ -234,7 +233,6 @@ export function LandingPage({ locale }: { locale: Locale }) {
         <div className="max-w-7xl mx-auto px-4 text-center">
           <div className="flex items-center justify-center gap-2 mb-8">
             <img src="/logo.png" alt="OSTA" className="h-10 w-auto opacity-80" />
-            <span className="text-xl font-black text-white tracking-tighter">OSTA <span className="text-gold-500">أُسطى</span></span>
           </div>
           <p className="text-onyx-500 text-sm">
             © {new Date().getFullYear()} OSTA Egypt. {isArabic ? "جميع الحقوق محفوظة." : "All rights reserved."}
