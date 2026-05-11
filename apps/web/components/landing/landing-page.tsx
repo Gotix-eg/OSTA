@@ -49,7 +49,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
         <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
           <Link href={`/${locale}`} className="flex items-center gap-2 group">
             <div className="bg-black p-1 rounded-lg shadow-xl border border-white/5">
-              <img src="/logo.png" alt="OSTA" className="h-16 w-auto" />
+              <img src="/logo.png" alt="OSTA" className="h-20 w-auto" />
             </div>
           </Link>
 
@@ -235,7 +235,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
         <div className="max-w-7xl mx-auto px-4 text-center">
           <div className="flex items-center justify-center gap-2 mb-8">
             <div className="bg-black p-1 rounded-lg">
-              <img src="/logo.png" alt="OSTA" className="h-14 w-auto opacity-90" />
+              <img src="/logo.png" alt="OSTA" className="h-18 w-auto opacity-95" />
             </div>
           </div>
           <p className="text-onyx-500 text-sm">
