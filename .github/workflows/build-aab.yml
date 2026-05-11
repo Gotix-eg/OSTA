@@ -1,0 +1,53 @@
+name: Build Android AAB (EAS)
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'apps/mobile/**'
+  workflow_dispatch:
+
+jobs:
+  build-android-aab:
+    name: Build Android AAB for Google Play
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🏗 Checkout repo
+        uses: actions/checkout@v4
+
+      - name: 🏗 Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: apps/mobile/package-lock.json
+
+      - name: 📦 Install dependencies
+        run: npm install
+        working-directory: ./apps/mobile
+
+      - name: 🏗 Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: 🚀 Build Android AAB (Production)
+        run: eas build --platform android --profile production --non-interactive
+        working-directory: ./apps/mobile
+
+      - name: 📥 Download AAB
+        run: |
+          BUILD_URL=$(eas build:list --platform android --status finished --limit 1 --json --non-interactive | jq -r '.[0].artifacts.buildUrl')
+          echo "Build URL: $BUILD_URL"
+          curl -L -o osta-release.aab "$BUILD_URL"
+        working-directory: ./apps/mobile
+
+      - name: 📤 Upload AAB as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: osta-android-aab
+          path: apps/mobile/osta-release.aab
+          retention-days: 30

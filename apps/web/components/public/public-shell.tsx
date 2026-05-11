@@ -23,9 +23,7 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
       <header className="sticky top-0 z-40 border-b border-white/5 bg-onyx-950/80 backdrop-blur-xl">
         <div className="section-shell flex h-20 items-center justify-between gap-4">
           <Link href={`/${locale}`} className="flex items-center gap-2 group">
-            <div className="h-10 w-10 bg-gold-500 rounded-xl flex items-center justify-center rotate-3 group-hover:rotate-0 transition-transform duration-500 shadow-gold/20 shadow-lg">
-              <span className="text-onyx-950 font-black text-xl">أ</span>
-            </div>
+            <img src="/logo.png" alt="OSTA" className="h-12 w-auto" />
             <span className="text-2xl font-black text-white tracking-tighter">OSTA <span className="text-gold-500">أُسطى</span></span>
           </Link>
 
@@ -52,9 +50,7 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
       <footer className="border-t border-white/5 bg-onyx-950 py-12">
         <div className="section-shell flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-2">
-             <div className="h-8 w-8 bg-gold-500 rounded-lg flex items-center justify-center">
-              <span className="text-onyx-950 font-black text-sm">أ</span>
-            </div>
+            <img src="/logo.png" alt="OSTA" className="h-10 w-auto opacity-80" />
             <span className="text-xl font-black text-white tracking-tighter">OSTA <span className="text-gold-500">أُسطى</span></span>
           </div>
           <div className="flex flex-wrap gap-x-8 gap-y-4 text-sm text-onyx-400">

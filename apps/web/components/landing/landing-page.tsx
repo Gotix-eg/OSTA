@@ -48,9 +48,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
       <nav className="fixed top-0 inset-x-0 z-50 bg-onyx-950/80 backdrop-blur-xl border-b border-white/5">
         <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
           <Link href={`/${locale}`} className="flex items-center gap-2 group">
-            <div className="h-10 w-10 bg-gold-500 rounded-xl flex items-center justify-center rotate-3 group-hover:rotate-0 transition-transform duration-500">
-              <span className="text-onyx-950 font-black text-xl">أ</span>
-            </div>
+            <img src="/logo.png" alt="OSTA" className="h-12 w-auto" />
             <span className="text-2xl font-black text-white tracking-tighter">OSTA <span className="text-gold-500">أُسطى</span></span>
           </Link>
 
@@ -235,9 +233,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
       <footer className="py-12 border-t border-white/5 bg-onyx-950">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <div className="flex items-center justify-center gap-2 mb-8">
-             <div className="h-8 w-8 bg-gold-500 rounded-lg flex items-center justify-center">
-              <span className="text-onyx-950 font-black text-sm">أ</span>
-            </div>
+            <img src="/logo.png" alt="OSTA" className="h-10 w-auto opacity-80" />
             <span className="text-xl font-black text-white tracking-tighter">OSTA <span className="text-gold-500">أُسطى</span></span>
           </div>
           <p className="text-onyx-500 text-sm">
