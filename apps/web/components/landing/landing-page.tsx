@@ -182,24 +182,24 @@ export function LandingPage({ locale }: { locale: Locale }) {
           <div className="grid md:grid-cols-3 gap-12">
             {[
               { 
-                image: "https://images.unsplash.com/photo-1557597774-9d2739f85a76?q=80&w=800&auto=format&fit=crop", 
+                icon: ShieldCheck, 
                 title: isArabic ? "أمان تام" : "Full Security", 
                 desc: isArabic ? "جميع الصنايعية موثقين بصورة البطاقة والفيش الجنائي." : "All pros are verified with national ID and criminal records." 
               },
               { 
-                image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=800&auto=format&fit=crop", 
+                icon: CheckCircle2, 
                 title: isArabic ? "ضمان الجودة" : "Quality Guarantee", 
                 desc: isArabic ? "نضمن لك جودة العمل، وفي حالة وجود مشكلة، نحن بجانبك." : "We guarantee the work quality, and we're here if anything goes wrong." 
               },
               { 
-                image: "https://images.unsplash.com/photo-1513885535751-8b9238bd345a?q=80&w=800&auto=format&fit=crop", 
+                icon: Store, 
                 title: isArabic ? "سوق الخامات" : "Materials Market", 
                 desc: isArabic ? "اطلب خاماتك من أقرب المتاجر الموثقة لباب بيتك." : "Order materials from the nearest verified stores to your doorstep." 
               }
             ].map((feature, i) => (
               <div key={i} className="text-center group">
-                <div className="h-24 w-24 bg-onyx-800 rounded-3xl overflow-hidden mx-auto mb-8 border border-onyx-700 group-hover:border-gold-500/50 group-hover:gold-glow transition-all duration-500">
-                  <img src={feature.image} alt={feature.title} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
+                <div className="h-24 w-24 bg-onyx-800 rounded-3xl flex items-center justify-center mx-auto mb-8 border border-onyx-700 group-hover:border-gold-500/50 group-hover:gold-glow transition-all duration-500">
+                  <feature.icon className="h-12 w-12 text-gold-500 group-hover:scale-110 transition-transform" />
                 </div>
                 <h3 className="text-2xl font-bold text-white mb-4">{feature.title}</h3>
                 <p className="text-onyx-400 leading-relaxed">{feature.desc}</p>
