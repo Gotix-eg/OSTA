@@ -21,10 +21,10 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
   return (
     <main className="onyx-shell-bg min-h-screen text-onyx-50 selection:bg-gold-500 selection:text-onyx-950">
       <header className="sticky top-0 z-40 border-b border-white/5 bg-onyx-950/80 backdrop-blur-xl">
-        <div className="section-shell flex h-20 items-center justify-between gap-4">
+        <div className="section-shell flex h-48 items-center justify-between gap-4">
           <Link href={`/${locale}`} className="flex items-center gap-2 group">
             <div className="bg-black p-1 rounded-lg">
-              <img src="/logo.png" alt="OSTA" className="h-20 w-auto" />
+              <img src="/logo.png" alt="OSTA" className="h-40 w-auto" />
             </div>
           </Link>
 
@@ -52,7 +52,7 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
         <div className="section-shell flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-2">
             <div className="bg-black p-1 rounded-lg">
-              <img src="/logo.png" alt="OSTA" className="h-18 w-auto opacity-95" />
+              <img src="/logo.png" alt="OSTA" className="h-36 w-auto opacity-95" />
             </div>
           </div>
           <div className="flex flex-wrap gap-x-8 gap-y-4 text-sm text-onyx-400">

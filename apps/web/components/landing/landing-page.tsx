@@ -46,10 +46,10 @@ export function LandingPage({ locale }: { locale: Locale }) {
     <div className="min-h-screen bg-onyx-950 onyx-shell-bg selection:bg-gold-500 selection:text-onyx-950 overflow-x-hidden">
       {/* Navigation */}
       <nav className="fixed top-0 inset-x-0 z-50 bg-onyx-950/80 backdrop-blur-xl border-b border-white/5">
-        <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 h-48 flex items-center justify-between">
           <Link href={`/${locale}`} className="flex items-center gap-2 group">
             <div className="bg-black p-1 rounded-lg shadow-xl border border-white/5">
-              <img src="/logo.png" alt="OSTA" className="h-20 w-auto" />
+              <img src="/logo.png" alt="OSTA" className="h-40 w-auto" />
             </div>
           </Link>
 
@@ -235,7 +235,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
         <div className="max-w-7xl mx-auto px-4 text-center">
           <div className="flex items-center justify-center gap-2 mb-8">
             <div className="bg-black p-1 rounded-lg">
-              <img src="/logo.png" alt="OSTA" className="h-18 w-auto opacity-95" />
+              <img src="/logo.png" alt="OSTA" className="h-36 w-auto opacity-95" />
             </div>
           </div>
           <p className="text-onyx-500 text-sm">
