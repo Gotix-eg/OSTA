@@ -23,7 +23,9 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
       <header className="sticky top-0 z-40 border-b border-white/5 bg-onyx-950/80 backdrop-blur-xl">
         <div className="section-shell flex h-20 items-center justify-between gap-4">
           <Link href={`/${locale}`} className="flex items-center gap-2 group">
-            <img src="/logo.png" alt="OSTA" className="h-12 w-auto" />
+            <div className="bg-black p-1 rounded-lg">
+              <img src="/logo.png" alt="OSTA" className="h-16 w-auto" />
+            </div>
           </Link>
 
           <nav className="hidden items-center gap-6 lg:flex">
@@ -49,7 +51,9 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
       <footer className="border-t border-white/5 bg-onyx-950 py-12">
         <div className="section-shell flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-2">
-            <img src="/logo.png" alt="OSTA" className="h-10 w-auto opacity-80" />
+            <div className="bg-black p-1 rounded-lg">
+              <img src="/logo.png" alt="OSTA" className="h-14 w-auto opacity-90" />
+            </div>
           </div>
           <div className="flex flex-wrap gap-x-8 gap-y-4 text-sm text-onyx-400">
             {links.map((item) => (
