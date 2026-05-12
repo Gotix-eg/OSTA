@@ -190,16 +190,3 @@ export function VendorsDirectory({ locale }: { locale: Locale }) {
     </div>
   );
 }
-
-        {filteredVendors.length === 0 && (
-          <div className="py-20 text-center">
-            <PackageOpen className="mx-auto h-12 w-12 text-gray-300" />
-            <p className="mt-4 text-lg font-medium text-gray-900">{isArabic ? "لم نجد متاجر مطابقة لبحثك" : "No vendors matched your search"}</p>
-            <p className="mt-2 text-gray-500">{isArabic ? "جرب البحث بكلمات أخرى أو تغيير التصنيف" : "Try searching with different terms or changing the category"}</p>
-          </div>
-        )}
-
-      </div>
-    </div>
-  );
-}
