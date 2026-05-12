@@ -9,8 +9,10 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/locales";
+import { LocaleSwitcher } from "@/components/shared/locale-switcher";
 
 const CRAFTS = [
   { id: "electricity", name: { ar: "الكهرباء", en: "Electrical" }, image: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=1000&auto=format&fit=crop&v=osta4", color: "from-yellow-400 to-gold-600" },
@@ -27,6 +29,7 @@ const CRAFTS = [
 
 export function LandingPage({ locale }: { locale: Locale }) {
   const isArabic = locale === "ar";
+  const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const containerVariants = {
@@ -60,6 +63,11 @@ export function LandingPage({ locale }: { locale: Locale }) {
             <Link href={`/${locale}/login`} className="text-sm font-medium text-onyx-300 hover:text-gold-500 transition-colors">
               {isArabic ? "تسجيل دخول" : "Login"}
             </Link>
+            <LocaleSwitcher 
+              locale={locale} 
+              pathname={pathname} 
+              className="text-sm font-medium text-onyx-300 hover:text-gold-500 transition-colors border border-white/10 px-3 py-1.5 rounded-lg bg-white/5" 
+            />
             <Link href={`/${locale}/register/client`} className="btn-gold shadow-gold/20">
               {isArabic ? "ابدأ الآن" : "Get Started"}
             </Link>
@@ -69,6 +77,29 @@ export function LandingPage({ locale }: { locale: Locale }) {
             {isMenuOpen ? <X /> : <Menu />}
           </button>
         </div>
+
+        {/* Mobile Menu */}
+        {isMenuOpen && (
+          <div className="md:hidden bg-onyx-900 border-t border-white/5 p-4 flex flex-col gap-4 animate-in slide-in-from-top duration-300">
+            <Link href={`/${locale}/vendors`} className="text-lg font-medium text-white px-4 py-2 border-b border-white/5">
+              {isArabic ? "المتاجر" : "Marketplace"}
+            </Link>
+            <Link href={`/${locale}/login`} className="text-lg font-medium text-white px-4 py-2 border-b border-white/5">
+              {isArabic ? "تسجيل دخول" : "Login"}
+            </Link>
+            <div className="px-4 py-2 flex items-center justify-between border-b border-white/5">
+              <span className="text-onyx-400 text-sm">{isArabic ? "اللغة" : "Language"}</span>
+              <LocaleSwitcher 
+                locale={locale} 
+                pathname={pathname} 
+                className="text-gold-500 font-bold" 
+              />
+            </div>
+            <Link href={`/${locale}/register/client`} className="btn-gold w-full text-center py-4 mt-4">
+              {isArabic ? "ابدأ الآن" : "Get Started"}
+            </Link>
+          </div>
+        )}
       </nav>
 
       {/* Hero Section */}
