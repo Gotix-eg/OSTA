@@ -29,7 +29,7 @@ const CRAFTS = [
 
 export function LandingPage({ locale }: { locale: Locale }) {
   const isArabic = locale === "ar";
-  const pathname = usePathname();
+  const pathname = usePathname() || "";
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const containerVariants = {
