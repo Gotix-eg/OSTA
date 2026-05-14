@@ -183,7 +183,7 @@ router.get("/dashboard", authenticate, requireRoles("VENDOR"), catchAsync(async 
 
   // Sales this month
   const monthlySales = await prisma.directOrder.aggregate({
-    where: { vendorId: vendor.id, status: "COMPLETED", createdAt: { gte: startOfMonth } },
+    where: { vendorId: vendor.id, status: "DELIVERED", createdAt: { gte: startOfMonth } },
     _sum: { totalAmount: true }
   });
 
