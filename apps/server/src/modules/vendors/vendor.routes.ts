@@ -173,6 +173,38 @@ router.put("/direct-orders/:id/status", authenticate, requireRoles("VENDOR"), ca
   response.json(successResponse(updated, "تم تحديث حالة الطلب"));
 }));
 
+// GET /api/vendors/dashboard
+router.get("/dashboard", authenticate, requireRoles("VENDOR"), catchAsync(async (request, response) => {
+  const vendor = await prisma.vendorProfile.findUnique({ where: { userId: request.auth!.userId } });
+  if (!vendor) throw new ApiError(404, "الملف التجاري غير موجود");
+
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+  // Sales this month
+  const monthlySales = await prisma.directOrder.aggregate({
+    where: { vendorId: vendor.id, status: "COMPLETED", createdAt: { gte: startOfMonth } },
+    _sum: { totalAmount: true }
+  });
+
+  // Recent custom requests
+  const recentRequests = await prisma.customRequest.findMany({
+    where: { vendorId: vendor.id },
+    orderBy: { createdAt: "desc" },
+    take: 5
+  });
+
+  response.json(successResponse({
+    summary: {
+      trialExpiresAt: vendor.trialExpiresAt,
+      monthlySales: monthlySales._sum.totalAmount || 0,
+      activeOrders: await prisma.directOrder.count({ where: { vendorId: vendor.id, status: { in: ["PENDING", "PREPARING", "SHIPPED"] } } }),
+      walletBalance: vendor.walletBalance
+    },
+    recentRequests
+  }, "Vendor dashboard data"));
+}));
+
 // =============================================
 // Public Routes (Client Browsing — no auth required)
 // =============================================
