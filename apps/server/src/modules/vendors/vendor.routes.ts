@@ -198,7 +198,7 @@ router.get("/dashboard", authenticate, requireRoles("VENDOR"), catchAsync(async 
     summary: {
       trialExpiresAt: vendor.trialExpiresAt,
       monthlySales: monthlySales._sum.totalAmount || 0,
-      activeOrders: await prisma.directOrder.count({ where: { vendorId: vendor.id, status: { in: ["PENDING", "PREPARING", "SHIPPED"] } } }),
+      activeOrders: await prisma.directOrder.count({ where: { vendorId: vendor.id, status: { in: ["PENDING", "PREPARING", "IN_TRANSIT"] } } }),
       walletBalance: vendor.walletBalance
     },
     recentRequests
