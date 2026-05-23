@@ -24,7 +24,7 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
           <section className="flex flex-col justify-center py-8">
             <Link href={`/${locale}`} className="flex items-center gap-2 mb-12 group">
               <div className="bg-black p-1 rounded-lg shadow-xl border border-white/5">
-                <img src="/logo.png" alt="OSTA" className="h-24 w-auto" />
+                <img src="/logo.svg" alt="OSTA" className="h-24 w-auto" />
               </div>
             </Link>
 
