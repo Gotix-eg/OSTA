@@ -23,9 +23,7 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
         <div className="grid w-full gap-12 lg:grid-cols-[1.1fr_0.9fr]">
           <section className="flex flex-col justify-center py-8">
             <Link href={`/${locale}`} className="flex items-center gap-2 mb-12 group">
-              <div className="bg-black p-1 rounded-lg shadow-xl border border-white/5">
-                <img src="/logo.svg" alt="OSTA" className="h-24 w-auto" />
-              </div>
+              <img src="/logo.svg" alt="OSTA" className="h-24 w-auto" />
             </Link>
 
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold-500/10 border border-gold-500/20 text-gold-500 text-xs font-bold mb-8 w-fit">

@@ -139,9 +139,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
       <nav className="fixed top-0 inset-x-0 z-50 bg-onyx-950/80 backdrop-blur-xl border-b border-white/5">
         <div className="max-w-7xl mx-auto px-4 h-24 flex items-center justify-between">
           <Link href={`/${locale}`} className="flex items-center gap-2 group">
-            <div className="bg-black p-1 rounded-lg shadow-xl border border-white/5">
-              <img src="/logo.svg" alt="OSTA" className="h-12 w-auto" />
-            </div>
+            <img src="/logo.svg" alt="OSTA" className="h-12 w-auto" />
           </Link>
 
           <div className="hidden md:flex items-center gap-8">
@@ -378,9 +376,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
       <footer className="py-12 border-t border-white/5 bg-onyx-950">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <div className="flex items-center justify-center gap-2 mb-8">
-            <div className="bg-black p-1 rounded-lg">
-              <img src="/logo.svg" alt="OSTA" className="h-36 w-auto opacity-95" />
-            </div>
+            <img src="/logo.svg" alt="OSTA" className="h-36 w-auto opacity-95" />
           </div>
           <p className="text-onyx-500 text-sm">
             © {new Date().getFullYear()} OSTA Egypt. {isArabic ? "جميع الحقوق محفوظة." : "All rights reserved."}
