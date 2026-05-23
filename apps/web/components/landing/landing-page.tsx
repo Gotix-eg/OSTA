@@ -197,17 +197,17 @@ export function LandingPage({ locale }: { locale: Locale }) {
           <div
             key={slide.id}
             className={cn(
-              "absolute inset-0 bg-cover bg-center transition-all duration-1000 ease-in-out -z-10",
+              "absolute inset-0 bg-cover bg-center transition-all duration-1000 ease-in-out z-0",
               idx === currentSlideIndex ? "opacity-100 scale-100 blur-none" : "opacity-0 scale-105"
             )}
             style={{ backgroundImage: `url('${cleanImageUrl(slide.imageUrl)}')` }}
           />
         ))}
         {/* Premium deep dark gradient overlay for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-onyx-950 via-onyx-950/80 to-onyx-950/50 -z-10" />
+        <div className="absolute inset-0 bg-gradient-to-t from-onyx-950 via-onyx-950/85 to-onyx-950/60 z-10" />
 
         {slides.length > 0 && (
-          <div className="max-w-5xl mx-auto text-center relative z-10 w-full">
+          <div className="max-w-5xl mx-auto text-center relative z-20 w-full">
             <motion.div 
               key={currentSlideIndex} // Triggers re-animation automatically on slide switch!
               initial={{ y: 30, opacity: 0 }}
