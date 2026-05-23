@@ -8,7 +8,7 @@ import {
   Store, Users, CheckCircle2, Menu, X
 } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/locales";
@@ -31,6 +31,68 @@ export function LandingPage({ locale }: { locale: Locale }) {
   const isArabic = locale === "ar";
   const pathname = usePathname() || "";
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [slides, setSlides] = useState<any[]>([]);
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+
+  const DEFAULT_SLIDES = [
+    {
+      id: "slide-1",
+      eyebrowAr: "منصة الحرفيين رقم 1 في مصر",
+      eyebrowEn: "Egypt's #1 Craftsman Platform",
+      titleAr: "اطلب أسطى محترف بنقرة واحدة",
+      titleEn: "Hire a Professional OSTA in Seconds",
+      descAr: "أول منصة تجمع أمهر الفنيين والمتاجر الموثقة في مصر. جودة مضمونة، أسعار عادلة، وتجربة مستخدم فاخرة.",
+      descEn: "The first platform connecting skilled pros and verified stores in Egypt. Guaranteed quality, fair prices, and a premium experience.",
+      imageUrl: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1600",
+      btn1TextAr: "انضم كصنايعي",
+      btn1TextEn: "Join as Pro",
+      btn1Link: "/register/worker",
+      btn2TextAr: "انضم كمتجر",
+      btn2TextEn: "Join as Vendor",
+      btn2Link: "/register/vendor",
+      isActive: true
+    },
+    {
+      id: "slide-2",
+      eyebrowAr: "ضمان حقيقي ودفع آمن",
+      eyebrowEn: "True Guarantee & Secure Pay",
+      titleAr: "صيانة منزلية بدون قلق أو مفاجآت",
+      titleEn: "Home Maintenance Without Worry",
+      descAr: "نظام دفع محتجز بالكامل (Escrow) يحمي أموالك حتى اكتمال العمل ورضاك التام عن الخدمة.",
+      descEn: "A secure escrow payment system that protects your money until the work is completed and you are fully satisfied.",
+      imageUrl: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=1600",
+      btn1TextAr: "اطلب فني الآن",
+      btn1TextEn: "Book Pro Now",
+      btn1Link: "/register/client",
+      btn2TextAr: "تصفح الخدمات",
+      btn2TextEn: "Browse Services",
+      btn2Link: "/services",
+      isActive: true
+    }
+  ];
+
+  useEffect(() => {
+    const saved = localStorage.getItem("osta_hero_slides");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        const active = parsed.filter((s: any) => s.isActive !== false);
+        setSlides(active.length > 0 ? active : DEFAULT_SLIDES);
+      } catch {
+        setSlides(DEFAULT_SLIDES);
+      }
+    } else {
+      setSlides(DEFAULT_SLIDES);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (slides.length <= 1) return;
+    const timer = setInterval(() => {
+      setCurrentSlideIndex((prev) => (prev + 1) % slides.length);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, [slides]);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -102,63 +164,88 @@ export function LandingPage({ locale }: { locale: Locale }) {
         )}
       </nav>
 
-      {/* Hero Section */}
-      <section className="relative pt-40 pb-20 px-4">
-        <div className="max-w-5xl mx-auto text-center">
-          <motion.div 
-            initial={{ y: 40, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-          >
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold-500/10 border border-gold-500/20 text-gold-500 text-xs font-bold mb-6">
-              <ShieldCheck className="h-3.5 w-3.5" />
-              {isArabic ? "منصة الحرفيين رقم 1 في مصر" : "Egypt's #1 Craftsman Platform"}
-            </div>
-            <h1 className="text-5xl md:text-7xl font-black text-white leading-[1.1] mb-6">
-              {isArabic ? (
-                <>
-                  اطلب <span className="text-gold-gradient">أُسطى</span> محترف <br /> بنقرة واحدة
-                </>
-              ) : (
-                <>
-                  Hire a Professional <br /> <span className="text-gold-gradient">OSTA</span> in Seconds
-                </>
-              )}
-            </h1>
-            <p className="text-onyx-400 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
-              {isArabic 
-                ? "أول منصة تجمع أمهر الفنيين والمتاجر الموثقة في مصر. جودة مضمونة، أسعار عادلة، وتجربة مستخدم فاخرة."
-                : "The first platform connecting skilled pros and verified stores in Egypt. Guaranteed quality, fair prices, and a premium experience."}
-            </p>
+      {/* Hero Section with Dynamic Background Slider */}
+      <section className="relative pt-40 pb-20 px-4 min-h-[90vh] flex items-center justify-center overflow-hidden">
+        {/* Background Images with smooth cross-fade transition */}
+        {slides.map((slide, idx) => (
+          <div
+            key={slide.id}
+            className={cn(
+              "absolute inset-0 bg-cover bg-center transition-all duration-1000 ease-in-out -z-10",
+              idx === currentSlideIndex ? "opacity-100 scale-100 blur-none" : "opacity-0 scale-105"
+            )}
+            style={{ backgroundImage: `url('${slide.imageUrl}')` }}
+          />
+        ))}
+        {/* Premium deep dark gradient overlay for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-onyx-950 via-onyx-950/80 to-onyx-950/50 -z-10" />
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link href={`/${locale}/register/worker`} className="w-full sm:w-auto btn-gold text-center py-4 px-8 text-lg">
-                {isArabic ? "انضم كصنايعي" : "Join as Pro"}
-              </Link>
-              <Link href={`/${locale}/register/vendor`} className="w-full sm:w-auto btn-onyx text-center py-4 px-8 text-lg border-gold-500/30 text-gold-500">
-                {isArabic ? "انضم كمتجر" : "Join as Vendor"}
-              </Link>
-            </div>
+        {slides.length > 0 && (
+          <div className="max-w-5xl mx-auto text-center relative z-10 w-full">
+            <motion.div 
+              key={currentSlideIndex} // Triggers re-animation automatically on slide switch!
+              initial={{ y: 30, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            >
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold-500/10 border border-gold-500/20 text-gold-500 text-xs font-bold mb-6">
+                <ShieldCheck className="h-3.5 w-3.5" />
+                {isArabic ? slides[currentSlideIndex].eyebrowAr : slides[currentSlideIndex].eyebrowEn}
+              </div>
+              <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-[1.15] mb-6 tracking-tight">
+                {isArabic ? slides[currentSlideIndex].titleAr : slides[currentSlideIndex].titleEn}
+              </h1>
+              <p className="text-onyx-200 text-base md:text-lg lg:text-xl max-w-3xl mx-auto mb-10 leading-relaxed font-light">
+                {isArabic ? slides[currentSlideIndex].descAr : slides[currentSlideIndex].descEn}
+              </p>
 
-            <div className="mt-12 flex items-center justify-center gap-6">
-              <div className="flex -space-x-3 rtl:space-x-reverse">
-                {[1,2,3,4].map(i => (
-                  <div key={i} className="h-10 w-10 rounded-full border-2 border-onyx-950 bg-onyx-800 flex items-center justify-center">
-                    <Users className="h-5 w-5 text-gold-500" />
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <Link href={`/${locale}${slides[currentSlideIndex].btn1Link}`} className="w-full sm:w-auto btn-gold text-center py-4 px-8 text-lg font-bold shadow-lg">
+                  {isArabic ? slides[currentSlideIndex].btn1TextAr : slides[currentSlideIndex].btn1TextEn}
+                </Link>
+                {slides[currentSlideIndex].btn2TextAr && (
+                  <Link href={`/${locale}${slides[currentSlideIndex].btn2Link}`} className="w-full sm:w-auto btn-onyx text-center py-4 px-8 text-lg font-bold border-gold-500/30 text-gold-500 hover:bg-gold-500/10">
+                    {isArabic ? slides[currentSlideIndex].btn2TextAr : slides[currentSlideIndex].btn2TextEn}
+                  </Link>
+                )}
+              </div>
+
+              <div className="mt-12 flex items-center justify-center gap-6">
+                <div className="flex -space-x-3 rtl:space-x-reverse">
+                  {[1,2,3,4].map(i => (
+                    <div key={i} className="h-10 w-10 rounded-full border-2 border-onyx-950 bg-onyx-800 flex items-center justify-center">
+                      <Users className="h-5 w-5 text-gold-500" />
+                    </div>
+                  ))}
+                </div>
+                <div className="text-sm text-start">
+                  <div className="flex items-center gap-1 text-gold-500 mb-0.5">
+                    {[1,2,3,4,5].map(i => <Star key={i} className="h-3 w-3 fill-current" />)}
                   </div>
+                  <p className="text-onyx-400">
+                    {isArabic ? "أكثر من 50,000 عميل يثقون بنا" : "Trusted by 50k+ customers"}
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Slider Dots indicators */}
+            {slides.length > 1 && (
+              <div className="flex justify-center items-center gap-3 mt-12">
+                {slides.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setCurrentSlideIndex(idx)}
+                    className={cn(
+                      "h-2 rounded-full transition-all duration-300",
+                      idx === currentSlideIndex ? "bg-gold-500 w-8" : "bg-white/20 w-2 hover:bg-white/45"
+                    )}
+                  />
                 ))}
               </div>
-              <div className="text-sm">
-                <div className="flex items-center gap-1 text-gold-500 mb-0.5">
-                  {[1,2,3,4,5].map(i => <Star key={i} className="h-3 w-3 fill-current" />)}
-                </div>
-                <p className="text-onyx-400">
-                  {isArabic ? "أكثر من 50,000 عميل يثقون بنا" : "Trusted by 50k+ customers"}
-                </p>
-              </div>
-            </div>
-          </motion.div>
-        </div>
+            )}
+          </div>
+        )}
       </section>
 
 

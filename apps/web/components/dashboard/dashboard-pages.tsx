@@ -7,7 +7,8 @@ import {
   ArrowUpRight, Banknote, Briefcase, CalendarClock, CheckCircle2,
   CircleDollarSign, Clock3, MapPin, Route, ShieldAlert, ShieldCheck,
   Sparkles, Star, Store, TrendingUp, Users, Wallet, Wrench, Zap,
-  MessageSquare, ChevronRight, SlidersHorizontal, Megaphone, Settings, User
+  MessageSquare, ChevronRight, SlidersHorizontal, Megaphone, Settings, User,
+  Plus, Trash2, Edit3, Eye, EyeOff, Image as ImageIcon
 } from "lucide-react";
 
 import { useLiveApiData } from "@/hooks/use-live-api-data";
@@ -435,15 +436,567 @@ export function AdminDashboardHome({ locale }: { locale: Locale }) {
 
 export function AdminAdsPage({ locale }: { locale: Locale }) {
   const isArabic = locale === "ar";
+  
+  // Tab and Slider state
+  const [slides, setSlides] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState<"slider" | "ads">("slider");
+  
+  // Form and Editor state
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [formData, setFormData] = useState({
+    eyebrowAr: "", eyebrowEn: "",
+    titleAr: "", titleEn: "",
+    descAr: "", descEn: "",
+    imageUrl: "",
+    btn1TextAr: "", btn1TextEn: "", btn1Link: "",
+    btn2TextAr: "", btn2TextEn: "", btn2Link: "",
+    isActive: true
+  });
+
+  // Preloaded luxury background images for instant selection
+  const PRESET_IMAGES = [
+    { name: isArabic ? "ورشة الأسطى الراقية" : "Luxury Workshop", url: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1600" },
+    { name: isArabic ? "كهرباء وصيانة" : "Electrical Work", url: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=1600" },
+    { name: isArabic ? "أدوات ميكانيكية دقيقة" : "Precision Tools", url: "https://images.unsplash.com/photo-1534224039826-c7a0eda0e6b3?q=80&w=1600" },
+    { name: isArabic ? "سباكة وتوصيلات" : "Plumbing & Pipes", url: "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?q=80&w=1600" },
+    { name: isArabic ? "صيانة أجهزة منزلية" : "Home Appliances", url: "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?q=80&w=1600" },
+    { name: isArabic ? "ديكور خشبي راقٍ" : "Modern Carpentry", url: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?q=80&w=1600" }
+  ];
+
+  const DEFAULT_SLIDES = [
+    {
+      id: "slide-1",
+      eyebrowAr: "منصة الحرفيين رقم 1 في مصر",
+      eyebrowEn: "Egypt's #1 Craftsman Platform",
+      titleAr: "اطلب أسطى محترف بنقرة واحدة",
+      titleEn: "Hire a Professional OSTA in Seconds",
+      descAr: "أول منصة تجمع أمهر الفنيين والمتاجر الموثقة في مصر. جودة مضمونة، أسعار عادلة، وتجربة مستخدم فاخرة.",
+      descEn: "The first platform connecting skilled pros and verified stores in Egypt. Guaranteed quality, fair prices, and a premium experience.",
+      imageUrl: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1600",
+      btn1TextAr: "انضم كصنايعي",
+      btn1TextEn: "Join as Pro",
+      btn1Link: "/register/worker",
+      btn2TextAr: "انضم كمتجر",
+      btn2TextEn: "Join as Vendor",
+      btn2Link: "/register/vendor",
+      isActive: true
+    },
+    {
+      id: "slide-2",
+      eyebrowAr: "ضمان حقيقي ودفع آمن",
+      eyebrowEn: "True Guarantee & Secure Pay",
+      titleAr: "صيانة منزلية بدون قلق أو مفاجآت",
+      titleEn: "Home Maintenance Without Worry",
+      descAr: "نظام دفع محتجز بالكامل (Escrow) يحمي أموالك حتى اكتمال العمل ورضاك التام عن الخدمة.",
+      descEn: "A secure escrow payment system that protects your money until the work is completed and you are fully satisfied.",
+      imageUrl: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=1600",
+      btn1TextAr: "اطلب فني الآن",
+      btn1TextEn: "Book Pro Now",
+      btn1Link: "/register/client",
+      btn2TextAr: "تصفح الخدمات",
+      btn2TextEn: "Browse Services",
+      btn2Link: "/services",
+      isActive: true
+    }
+  ];
+
+  useEffect(() => {
+    const saved = localStorage.getItem("osta_hero_slides");
+    if (saved) {
+      try {
+        setSlides(JSON.parse(saved));
+      } catch {
+        setSlides(DEFAULT_SLIDES);
+        localStorage.setItem("osta_hero_slides", JSON.stringify(DEFAULT_SLIDES));
+      }
+    } else {
+      setSlides(DEFAULT_SLIDES);
+      localStorage.setItem("osta_hero_slides", JSON.stringify(DEFAULT_SLIDES));
+    }
+  }, []);
+
+  const saveSlides = (updated: any[]) => {
+    setSlides(updated);
+    localStorage.setItem("osta_hero_slides", JSON.stringify(updated));
+  };
+
+  const handleCreateNew = () => {
+    setEditingId(null);
+    setFormData({
+      eyebrowAr: isArabic ? "عروض حصرية وضمان" : "Exclusive Offer & Guarantee",
+      eyebrowEn: "Exclusive Offer & Guarantee",
+      titleAr: isArabic ? "عنوان ترويجي جديد للسلايدر" : "New Dynamic Promo Slide",
+      titleEn: "New Dynamic Promo Slide",
+      descAr: isArabic ? "تفاصيل جذابة تظهر للعملاء في واجهة المنصة عند زيارة الموقع..." : "Engaging subtitle description for your users on the frontpage...",
+      descEn: "Engaging subtitle description for your users on the frontpage...",
+      imageUrl: PRESET_IMAGES[0].url,
+      btn1TextAr: isArabic ? "ابدأ الطلب" : "Get Started",
+      btn1TextEn: "Get Started",
+      btn1Link: "/register/client",
+      btn2TextAr: isArabic ? "المتاجر المعتمدة" : "Verified Stores",
+      btn2TextEn: "Verified Stores",
+      btn2Link: "/vendors",
+      isActive: true
+    });
+    setIsEditing(true);
+  };
+
+  const handleEditClick = (slide: any) => {
+    setEditingId(slide.id);
+    setFormData({
+      eyebrowAr: slide.eyebrowAr || "",
+      eyebrowEn: slide.eyebrowEn || "",
+      titleAr: slide.titleAr || "",
+      titleEn: slide.titleEn || "",
+      descAr: slide.descAr || "",
+      descEn: slide.descEn || "",
+      imageUrl: slide.imageUrl || "",
+      btn1TextAr: slide.btn1TextAr || "",
+      btn1TextEn: slide.btn1TextEn || "",
+      btn1Link: slide.btn1Link || "",
+      btn2TextAr: slide.btn2TextAr || "",
+      btn2TextEn: slide.btn2TextEn || "",
+      btn2Link: slide.btn2Link || "",
+      isActive: slide.isActive !== false
+    });
+    setIsEditing(true);
+  };
+
+  const handleDelete = (id: string) => {
+    if (confirm(isArabic ? "هل أنت متأكد من رغبتك في حذف هذا السلايدر؟" : "Are you sure you want to delete this slide?")) {
+      const updated = slides.filter(s => s.id !== id);
+      saveSlides(updated);
+    }
+  };
+
+  const handleToggleActive = (id: string) => {
+    const updated = slides.map(s => s.id === id ? { ...s, isActive: !s.isActive } : s);
+    saveSlides(updated);
+  };
+
+  const handleSave = (e: React.FormEvent) => {
+    e.preventDefault();
+    let updated;
+    if (editingId) {
+      updated = slides.map(s => s.id === editingId ? { ...s, ...formData } : s);
+    } else {
+      updated = [...slides, { id: `slide-${Date.now()}`, ...formData }];
+    }
+    saveSlides(updated);
+    setIsEditing(false);
+    setEditingId(null);
+  };
+
   return (
-    <div className="animate-slideUp">
+    <div className="animate-slideUp space-y-8">
       <SectionTitle
-        eyebrow={isArabic ? "الإعلانات والترويج" : "Ads & Promotions"}
-        title={isArabic ? "إدارة الحملات" : "Campaign Management"}
-        subtitle={isArabic ? "تحكم في البانرات الإعلانية والحملات الممولة للموردين والصنايعية." : "Control ad banners and sponsored campaigns for vendors and pros."}
-        actionLabel={isArabic ? "إنشاء حملة" : "Create Campaign"}
+        eyebrow={isArabic ? "الواجهة والترويج" : "Landing Page Promo"}
+        title={isArabic ? "إدارة السلايدر الترويجي" : "Hero Slider Control"}
+        subtitle={isArabic ? "تحكم في السلايدر الرئيسي بصفحة الهبوط: أضف صور خلفية مذهلة وتصميمات ترويجية جذابة للفنيين والعملاء." : "Fully configure and edit landing page Hero background slides, text contents, buttons, and visual overlays."}
+        actionLabel={isEditing ? (isArabic ? "رجوع للقائمة" : "Back to List") : (isArabic ? "إضافة سلايدر جديد" : "Add New Slide")}
+        actionHref={undefined} // handled below manually
       />
-      <EmptyNotice message={isArabic ? "لا توجد حملات إعلانية نشطة حالياً." : "No active ad campaigns at the moment."} />
+
+      {/* Tabs */}
+      <div className="flex border-b border-onyx-800 gap-4 mb-8">
+        <button
+          onClick={() => { setActiveTab("slider"); setIsEditing(false); }}
+          className={cn(
+            "pb-4 text-sm font-bold transition-all relative",
+            activeTab === "slider" ? "text-gold-500 border-b-2 border-gold-500" : "text-onyx-400 hover:text-white"
+          )}
+        >
+          {isArabic ? "شرائح السلايدر الرئيسي" : "Main Hero Slides"}
+        </button>
+        <button
+          onClick={() => { setActiveTab("ads"); setIsEditing(false); }}
+          className={cn(
+            "pb-4 text-sm font-bold transition-all relative",
+            activeTab === "ads" ? "text-gold-500 border-b-2 border-gold-500" : "text-onyx-400 hover:text-white"
+          )}
+        >
+          {isArabic ? "حملات الموردين الممولة" : "Sponsored Vendor Ads"}
+        </button>
+      </div>
+
+      {activeTab === "ads" ? (
+        <EmptyNotice message={isArabic ? "لا توجد حملات إعلانية نشطة حالياً." : "No active ad campaigns at the moment."} />
+      ) : (
+        <>
+          {/* Main Toggle Action */}
+          {!isEditing && (
+            <div className="flex justify-between items-center bg-onyx-900/50 p-6 rounded-2xl border border-white/5">
+              <div>
+                <h3 className="font-bold text-white mb-1">{isArabic ? "الحالة التشغيلية" : "Operational Status"}</h3>
+                <p className="text-xs text-onyx-400">{isArabic ? `لديك إجمالي ${slides.length} شرائح مسجلة.` : `Total ${slides.length} slides configured.`}</p>
+              </div>
+              <button
+                onClick={handleCreateNew}
+                className="btn-gold flex items-center gap-2 px-5 py-3 text-sm font-bold shadow-lg"
+              >
+                <Plus className="h-4 w-4" />
+                {isArabic ? "إضافة سلايدر جديد" : "Add New Slide"}
+              </button>
+            </div>
+          )}
+
+          {isEditing ? (
+            <div className="grid lg:grid-cols-[1.2fr_0.8fr] gap-8">
+              {/* Form Card */}
+              <div className="onyx-card p-8 border-gold-500/10">
+                <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
+                  <div className="h-6 w-1 bg-gold-500 rounded-full" />
+                  {editingId ? (isArabic ? "تعديل شريحة السلايدر" : "Edit Slider Slide") : (isArabic ? "إنشاء شريحة سلايدر جديدة" : "Create New Slide")}
+                </h3>
+
+                <form onSubmit={handleSave} className="space-y-6">
+                  {/* Image Background URL */}
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-onyx-400 mb-2">
+                      {isArabic ? "رابط صورة الخلفية (تصميم ضهر السلايدر)" : "Background Image URL (Slide Backdrop)"}
+                    </label>
+                    <div className="flex gap-3 mb-3">
+                      <div className="h-12 w-12 bg-onyx-800 rounded-xl flex items-center justify-center text-gold-500 overflow-hidden border border-white/5">
+                        {formData.imageUrl ? (
+                          <img src={formData.imageUrl} className="h-full w-full object-cover" onError={(e) => { (e.target as HTMLElement).style.display='none'; }} />
+                        ) : (
+                          <ImageIcon className="h-5 w-5" />
+                        )}
+                      </div>
+                      <input
+                        type="url"
+                        required
+                        value={formData.imageUrl}
+                        onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+                        placeholder="https://images.unsplash.com/..."
+                        className="flex-1 bg-onyx-950 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold-500"
+                      />
+                    </div>
+
+                    {/* Presets Grid */}
+                    <p className="text-[10px] text-onyx-500 font-bold uppercase tracking-wider mb-2">{isArabic ? "أو اختر خلفية تصميم راقية فوراً:" : "Or select an elegant backdrop instantly:"}</p>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                      {PRESET_IMAGES.map((preset, i) => (
+                        <button
+                          key={i}
+                          type="button"
+                          onClick={() => setFormData({ ...formData, imageUrl: preset.url })}
+                          className={cn(
+                            "text-start p-2 rounded-lg border text-xs font-bold truncate transition-all",
+                            formData.imageUrl === preset.url ? "border-gold-500 bg-gold-500/10 text-gold-500" : "border-white/5 bg-white/5 text-onyx-400 hover:text-white"
+                          )}
+                        >
+                          {preset.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <hr className="border-white/5" />
+
+                  {/* Dual Language Text Grid */}
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {/* Arabic Text Content */}
+                    <div className="space-y-4">
+                      <h4 className="text-xs font-bold text-gold-500 uppercase tracking-widest">{isArabic ? "المحتوى باللغة العربية" : "Arabic Version Content"}</h4>
+                      <div>
+                        <label className="block text-[10px] uppercase font-bold text-onyx-400 mb-1.5">{isArabic ? "الشعار الصغير (العلوي)" : "Small Eyebrow Tag"}</label>
+                        <input
+                          type="text"
+                          required
+                          value={formData.eyebrowAr}
+                          onChange={(e) => setFormData({ ...formData, eyebrowAr: e.target.value })}
+                          className="w-full bg-onyx-950 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] uppercase font-bold text-onyx-400 mb-1.5">{isArabic ? "العنوان الرئيسي" : "Main Headline"}</label>
+                        <input
+                          type="text"
+                          required
+                          value={formData.titleAr}
+                          onChange={(e) => setFormData({ ...formData, titleAr: e.target.value })}
+                          className="w-full bg-onyx-950 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold-500 font-bold"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] uppercase font-bold text-onyx-400 mb-1.5">{isArabic ? "الوصف التوضيحي" : "Subtitle Description"}</label>
+                        <textarea
+                          rows={3}
+                          required
+                          value={formData.descAr}
+                          onChange={(e) => setFormData({ ...formData, descAr: e.target.value })}
+                          className="w-full bg-onyx-950 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold-500 leading-relaxed"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] uppercase font-bold text-onyx-400 mb-1.5">{isArabic ? "نص الزر الأول" : "Button 1 Text"}</label>
+                        <input
+                          type="text"
+                          required
+                          value={formData.btn1TextAr}
+                          onChange={(e) => setFormData({ ...formData, btn1TextAr: e.target.value })}
+                          className="w-full bg-onyx-950 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] uppercase font-bold text-onyx-400 mb-1.5">{isArabic ? "نص الزر الثاني" : "Button 2 Text"}</label>
+                        <input
+                          type="text"
+                          value={formData.btn2TextAr}
+                          onChange={(e) => setFormData({ ...formData, btn2TextAr: e.target.value })}
+                          className="w-full bg-onyx-950 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold-500"
+                        />
+                      </div>
+                    </div>
+
+                    {/* English Text Content */}
+                    <div className="space-y-4">
+                      <h4 className="text-xs font-bold text-gold-500 uppercase tracking-widest">{isArabic ? "المحتوى باللغة الانجليزية" : "English Version Content"}</h4>
+                      <div>
+                        <label className="block text-[10px] uppercase font-bold text-onyx-400 mb-1.5">Eyebrow Tag (EN)</label>
+                        <input
+                          type="text"
+                          required
+                          value={formData.eyebrowEn}
+                          onChange={(e) => setFormData({ ...formData, eyebrowEn: e.target.value })}
+                          className="w-full bg-onyx-950 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] uppercase font-bold text-onyx-400 mb-1.5">Headline (EN)</label>
+                        <input
+                          type="text"
+                          required
+                          value={formData.titleEn}
+                          onChange={(e) => setFormData({ ...formData, titleEn: e.target.value })}
+                          className="w-full bg-onyx-950 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold-500 font-bold"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] uppercase font-bold text-onyx-400 mb-1.5">Description (EN)</label>
+                        <textarea
+                          rows={3}
+                          required
+                          value={formData.descEn}
+                          onChange={(e) => setFormData({ ...formData, descEn: e.target.value })}
+                          className="w-full bg-onyx-950 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold-500 leading-relaxed"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] uppercase font-bold text-onyx-400 mb-1.5">Button 1 Text (EN)</label>
+                        <input
+                          type="text"
+                          required
+                          value={formData.btn1TextEn}
+                          onChange={(e) => setFormData({ ...formData, btn1TextEn: e.target.value })}
+                          className="w-full bg-onyx-950 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] uppercase font-bold text-onyx-400 mb-1.5">Button 2 Text (EN)</label>
+                        <input
+                          type="text"
+                          value={formData.btn2TextEn}
+                          onChange={(e) => setFormData({ ...formData, btn2TextEn: e.target.value })}
+                          className="w-full bg-onyx-950 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold-500"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <hr className="border-white/5" />
+
+                  {/* Actions & Links */}
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-xs font-bold uppercase tracking-wider text-onyx-400 mb-2">
+                        {isArabic ? "رابط توجيه الزر الأول (مثل: /register/worker)" : "Button 1 Target Link"}
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.btn1Link}
+                        onChange={(e) => setFormData({ ...formData, btn1Link: e.target.value })}
+                        placeholder="/register/client"
+                        className="w-full bg-onyx-950 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold uppercase tracking-wider text-onyx-400 mb-2">
+                        {isArabic ? "رابط توجيه الزر الثاني (اختياري)" : "Button 2 Target Link (Optional)"}
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.btn2Link}
+                        onChange={(e) => setFormData({ ...formData, btn2Link: e.target.value })}
+                        placeholder="/services"
+                        className="w-full bg-onyx-950 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-4 bg-onyx-950/60 p-4 rounded-xl border border-white/5">
+                    <input
+                      type="checkbox"
+                      id="isActive"
+                      checked={formData.isActive}
+                      onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                      className="accent-gold-500 h-4 w-4"
+                    />
+                    <label htmlFor="isActive" className="text-sm font-bold text-white cursor-pointer select-none">
+                      {isArabic ? "تفعيل السلايدر ونشره فوراً في صفحة الهبوط" : "Activate and publish this slide on landing page immediately"}
+                    </label>
+                  </div>
+
+                  {/* Form Submit buttons */}
+                  <div className="flex justify-end gap-4 mt-8">
+                    <button
+                      type="button"
+                      onClick={() => setIsEditing(false)}
+                      className="px-6 py-3 rounded-xl border border-white/10 text-white font-bold text-sm hover:bg-white/5 transition-colors"
+                    >
+                      {isArabic ? "إلغاء التعديل" : "Cancel"}
+                    </button>
+                    <button
+                      type="submit"
+                      className="btn-gold px-8 py-3 text-sm font-bold shadow-lg"
+                    >
+                      {isArabic ? "حفظ التغييرات" : "Save Changes"}
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              {/* Real-time Miniature Preview */}
+              <div className="space-y-6">
+                <div className="sticky top-28">
+                  <h4 className="text-xs font-bold uppercase tracking-widest text-gold-500 mb-3">{isArabic ? "معاينة تصميم السلايدر لايف" : "Real-time Live Preview"}</h4>
+                  <div className="relative rounded-[2rem] overflow-hidden min-h-[420px] flex items-center justify-center p-6 border border-white/10 shadow-2xl bg-onyx-950">
+                    {formData.imageUrl ? (
+                      <div
+                        className="absolute inset-0 bg-cover bg-center transition-all duration-500"
+                        style={{ backgroundImage: `url('${formData.imageUrl}')` }}
+                      />
+                    ) : null}
+                    {/* Dark gradient overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-onyx-950 via-onyx-950/85 to-onyx-950/50" />
+
+                    <div className="relative text-center max-w-sm z-10 space-y-4">
+                      {/* Eyebrow */}
+                      <span className="inline-block px-2.5 py-1 rounded-full bg-gold-500/10 border border-gold-500/20 text-gold-500 text-[10px] font-bold">
+                        {isArabic ? (formData.eyebrowAr || "منصة الحرفيين") : (formData.eyebrowEn || "Exclusive Tag")}
+                      </span>
+                      {/* Title */}
+                      <h2 className="text-2xl md:text-3xl font-black text-white leading-tight">
+                        {isArabic ? (formData.titleAr || "اطلب أسطى محترف") : (formData.titleEn || "Catchy Title")}
+                      </h2>
+                      {/* Description */}
+                      <p className="text-onyx-300 text-xs leading-relaxed max-w-xs mx-auto font-light">
+                        {isArabic ? (formData.descAr || "وصف تجريبي للشريحة الترويجية...") : (formData.descEn || "Promo description goes here...")}
+                      </p>
+                      {/* Buttons */}
+                      <div className="flex flex-col gap-2 pt-3">
+                        <button type="button" className="btn-gold py-2.5 px-4 text-xs font-bold pointer-events-none">
+                          {isArabic ? (formData.btn1TextAr || "انضم الآن") : (formData.btn1TextEn || "Button 1")}
+                        </button>
+                        {formData.btn2TextAr && (
+                          <button type="button" className="btn-onyx py-2.5 px-4 text-xs font-bold border-gold-500/20 text-gold-500 pointer-events-none">
+                            {isArabic ? formData.btn2TextAr : formData.btn2TextEn}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="grid gap-6 md:grid-cols-2">
+              {slides.map((slide, i) => (
+                <div
+                  key={slide.id}
+                  className="onyx-card overflow-hidden group hover:border-gold-500/30 flex flex-col relative border-white/5"
+                >
+                  {/* Background Image preview with overlay */}
+                  <div className="relative h-44 w-full bg-onyx-900 overflow-hidden border-b border-white/5">
+                    {slide.imageUrl ? (
+                      <img src={slide.imageUrl} alt="" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                    ) : (
+                      <div className="h-full w-full flex items-center justify-center text-onyx-600"><ImageIcon className="h-8 w-8" /></div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-onyx-950 via-onyx-950/60 to-transparent" />
+                    
+                    <div className="absolute top-4 start-4 flex items-center gap-2">
+                      <span className={cn(
+                        "px-2.5 py-1 rounded-full text-[10px] font-bold border",
+                        slide.isActive !== false 
+                          ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400"
+                          : "bg-onyx-800 border-white/5 text-onyx-400"
+                      )}>
+                        {slide.isActive !== false ? (isArabic ? "نشط" : "Active") : (isArabic ? "مخفي" : "Inactive")}
+                      </span>
+                    </div>
+
+                    <div className="absolute bottom-4 start-4 end-4">
+                      <span className="text-[10px] font-bold text-gold-500/90 uppercase tracking-widest">{isArabic ? slide.eyebrowAr : slide.eyebrowEn}</span>
+                      <h4 className="text-lg font-black text-white mt-1 line-clamp-1">{isArabic ? slide.titleAr : slide.titleEn}</h4>
+                    </div>
+                  </div>
+
+                  {/* Body Content */}
+                  <div className="p-6 flex-1 flex flex-col justify-between">
+                    <p className="text-xs text-onyx-400 leading-relaxed line-clamp-3 mb-6 font-light">
+                      {isArabic ? slide.descAr : slide.descEn}
+                    </p>
+
+                    <div className="flex items-center justify-between border-t border-white/5 pt-4">
+                      {/* Active toggle */}
+                      <button
+                        onClick={() => handleToggleActive(slide.id)}
+                        className={cn(
+                          "p-2 rounded-xl border transition-colors",
+                          slide.isActive !== false 
+                            ? "border-emerald-500/10 bg-emerald-500/5 text-emerald-400 hover:bg-emerald-500/10" 
+                            : "border-white/5 bg-white/5 text-onyx-500 hover:text-white"
+                        )}
+                        title={slide.isActive !== false ? (isArabic ? "إخفاء السلايدر" : "Deactivate") : (isArabic ? "تفعيل السلايدر" : "Activate")}
+                      >
+                        {slide.isActive !== false ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                      </button>
+
+                      {/* Edit / Delete actions */}
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleEditClick(slide)}
+                          className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-white/10 bg-white/5 text-white text-xs font-bold hover:bg-white/10 transition-colors"
+                        >
+                          <Edit3 className="h-3.5 w-3.5" />
+                          {isArabic ? "تعديل" : "Edit"}
+                        </button>
+                        <button
+                          onClick={() => handleDelete(slide.id)}
+                          className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-error/10 bg-error/5 text-error text-xs font-bold hover:bg-error/10 transition-colors"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                          {isArabic ? "حذف" : "Delete"}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              {slides.length === 0 && (
+                <div className="col-span-full">
+                  <EmptyNotice message={isArabic ? "لا توجد أي شرائح ترويجية حالياً. ابدأ بإنشاء شريحة جديدة!" : "No custom slides found. Create your first slide now!"} />
+                </div>
+              )}
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 }
