@@ -32,6 +32,23 @@ function formatCurrency(locale: Locale, value: number) {
   return locale === "ar" ? `${formatted} ج.م` : `EGP ${formatted}`;
 }
 
+export function cleanImageUrl(url: string): string {
+  if (!url) return "";
+  let cleaned = url.trim();
+  
+  // Handle case where user pasted '/images.unsplash.com' or similar:
+  if (cleaned.startsWith("/") && cleaned.includes(".com")) {
+    cleaned = "https://" + cleaned.substring(1);
+  }
+  
+  // Handle case where user typed 'images.unsplash.com' without http/https:
+  if (!cleaned.startsWith("http://") && !cleaned.startsWith("https://") && !cleaned.startsWith("data:") && !cleaned.startsWith("/")) {
+    cleaned = "https://" + cleaned;
+  }
+  
+  return cleaned;
+}
+
 // --- Premium UI Components ---
 
 function SectionTitle({
@@ -575,6 +592,47 @@ export function AdminAdsPage({ locale }: { locale: Locale }) {
     saveSlides(updated);
   };
 
+  const handleLocalImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new window.Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return;
+
+        const MAX_WIDTH = 1200;
+        const MAX_HEIGHT = 800;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width *= MAX_HEIGHT / height;
+            height = MAX_HEIGHT;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const compressedBase64 = canvas.toDataURL("image/jpeg", 0.7);
+        setFormData(prev => ({ ...prev, imageUrl: compressedBase64 }));
+      };
+      img.src = event.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
     let updated;
@@ -656,22 +714,41 @@ export function AdminAdsPage({ locale }: { locale: Locale }) {
                     <label className="block text-xs font-bold uppercase tracking-wider text-onyx-400 mb-2">
                       {isArabic ? "رابط صورة الخلفية (تصميم ضهر السلايدر)" : "Background Image URL (Slide Backdrop)"}
                     </label>
-                    <div className="flex gap-3 mb-3">
-                      <div className="h-12 w-12 bg-onyx-800 rounded-xl flex items-center justify-center text-gold-500 overflow-hidden border border-white/5">
-                        {formData.imageUrl ? (
-                          <img src={formData.imageUrl} className="h-full w-full object-cover" onError={(e) => { (e.target as HTMLElement).style.display='none'; }} />
-                        ) : (
-                          <ImageIcon className="h-5 w-5" />
-                        )}
+                    <div className="flex flex-col sm:flex-row gap-3 mb-3">
+                      <div className="flex-1 flex gap-3">
+                        <div className="h-12 w-12 bg-onyx-800 rounded-xl flex items-center justify-center text-gold-500 overflow-hidden border border-white/5 shrink-0">
+                          {formData.imageUrl ? (
+                            <img src={cleanImageUrl(formData.imageUrl)} className="h-full w-full object-cover" onError={(e) => { (e.target as HTMLElement).style.display='none'; }} />
+                          ) : (
+                            <ImageIcon className="h-5 w-5" />
+                          )}
+                        </div>
+                        <input
+                          type="text"
+                          required
+                          value={formData.imageUrl}
+                          onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+                          placeholder="https://images.unsplash.com/..."
+                          className="flex-1 bg-onyx-950 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold-500"
+                        />
                       </div>
-                      <input
-                        type="url"
-                        required
-                        value={formData.imageUrl}
-                        onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                        placeholder="https://images.unsplash.com/..."
-                        className="flex-1 bg-onyx-950 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold-500"
-                      />
+
+                      {/* File Upload Button */}
+                      <div className="relative shrink-0">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleLocalImageUpload}
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                        />
+                        <button
+                          type="button"
+                          className="h-full w-full sm:w-auto px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white text-sm font-bold flex items-center justify-center gap-2 hover:bg-white/10 transition-colors"
+                        >
+                          <ImageIcon className="h-4 w-4 text-gold-500" />
+                          {isArabic ? "رفع صورة" : "Upload Image"}
+                        </button>
+                      </div>
                     </div>
 
                     {/* Presets Grid */}
@@ -877,7 +954,7 @@ export function AdminAdsPage({ locale }: { locale: Locale }) {
                     {formData.imageUrl ? (
                       <div
                         className="absolute inset-0 bg-cover bg-center transition-all duration-500"
-                        style={{ backgroundImage: `url('${formData.imageUrl}')` }}
+                        style={{ backgroundImage: `url('${cleanImageUrl(formData.imageUrl)}')` }}
                       />
                     ) : null}
                     {/* Dark gradient overlay */}
@@ -922,7 +999,7 @@ export function AdminAdsPage({ locale }: { locale: Locale }) {
                   {/* Background Image preview with overlay */}
                   <div className="relative h-44 w-full bg-onyx-900 overflow-hidden border-b border-white/5">
                     {slide.imageUrl ? (
-                      <img src={slide.imageUrl} alt="" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                      <img src={cleanImageUrl(slide.imageUrl)} alt="" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
                     ) : (
                       <div className="h-full w-full flex items-center justify-center text-onyx-600"><ImageIcon className="h-8 w-8" /></div>
                     )}

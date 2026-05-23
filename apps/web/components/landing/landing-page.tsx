@@ -27,6 +27,21 @@ const CRAFTS = [
   { id: "cctv", name: { ar: "تركيب كاميرات", en: "CCTV" }, image: "/images/services/cam.jpg", color: "from-red-400 to-red-600" },
 ];
 
+function cleanImageUrl(url: string): string {
+  if (!url) return "";
+  let cleaned = url.trim();
+  
+  if (cleaned.startsWith("/") && cleaned.includes(".com")) {
+    cleaned = "https://" + cleaned.substring(1);
+  }
+  
+  if (!cleaned.startsWith("http://") && !cleaned.startsWith("https://") && !cleaned.startsWith("data:") && !cleaned.startsWith("/")) {
+    cleaned = "https://" + cleaned;
+  }
+  
+  return cleaned;
+}
+
 export function LandingPage({ locale }: { locale: Locale }) {
   const isArabic = locale === "ar";
   const pathname = usePathname() || "";
@@ -185,7 +200,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
               "absolute inset-0 bg-cover bg-center transition-all duration-1000 ease-in-out -z-10",
               idx === currentSlideIndex ? "opacity-100 scale-100 blur-none" : "opacity-0 scale-105"
             )}
-            style={{ backgroundImage: `url('${slide.imageUrl}')` }}
+            style={{ backgroundImage: `url('${cleanImageUrl(slide.imageUrl)}')` }}
           />
         ))}
         {/* Premium deep dark gradient overlay for text readability */}
