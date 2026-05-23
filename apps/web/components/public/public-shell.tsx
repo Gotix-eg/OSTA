@@ -20,7 +20,7 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
 
   return (
     <main className="onyx-shell-bg min-h-screen text-onyx-50 selection:bg-gold-500 selection:text-onyx-950">
-      <header className="sticky top-0 z-40 border-b border-white/5 bg-onyx-950/80 backdrop-blur-xl">
+      <header className="sticky top-0 z-40 border-b border-white/5 bg-black/95 backdrop-blur-xl">
         <div className="section-shell flex h-24 items-center justify-between gap-4">
           <Link href={`/${locale}`} className="flex items-center gap-2 group">
             <img src="/logo.svg" alt="OSTA" className="h-12 w-auto" />

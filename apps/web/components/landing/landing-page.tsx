@@ -136,7 +136,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
   return (
     <div className="min-h-screen bg-onyx-950 onyx-shell-bg selection:bg-gold-500 selection:text-onyx-950 overflow-x-hidden">
       {/* Navigation */}
-      <nav className="fixed top-0 inset-x-0 z-50 bg-onyx-950/80 backdrop-blur-xl border-b border-white/5">
+      <nav className="fixed top-0 inset-x-0 z-50 bg-black/95 backdrop-blur-xl border-b border-white/5">
         <div className="max-w-7xl mx-auto px-4 h-24 flex items-center justify-between">
           <Link href={`/${locale}`} className="flex items-center gap-2 group">
             <img src="/logo.svg" alt="OSTA" className="h-12 w-auto" />
