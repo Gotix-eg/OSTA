@@ -107,6 +107,17 @@ export function LandingPage({ locale }: { locale: Locale }) {
     visible: { y: 0, opacity: 1 }
   };
 
+  const currentSlide = slides[currentSlideIndex] || slides[0] || {
+    id: "default",
+    eyebrowAr: "", eyebrowEn: "",
+    titleAr: "", titleEn: "",
+    descAr: "", descEn: "",
+    imageUrl: "",
+    btn1TextAr: "", btn1TextEn: "", btn1Link: "",
+    btn2TextAr: "", btn2TextEn: "", btn2Link: "",
+    isActive: true
+  };
+
   return (
     <div className="min-h-screen bg-onyx-950 onyx-shell-bg selection:bg-gold-500 selection:text-onyx-950 overflow-x-hidden">
       {/* Navigation */}
@@ -190,22 +201,22 @@ export function LandingPage({ locale }: { locale: Locale }) {
             >
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold-500/10 border border-gold-500/20 text-gold-500 text-xs font-bold mb-6">
                 <ShieldCheck className="h-3.5 w-3.5" />
-                {isArabic ? slides[currentSlideIndex].eyebrowAr : slides[currentSlideIndex].eyebrowEn}
+                {isArabic ? currentSlide.eyebrowAr : currentSlide.eyebrowEn}
               </div>
               <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-[1.15] mb-6 tracking-tight">
-                {isArabic ? slides[currentSlideIndex].titleAr : slides[currentSlideIndex].titleEn}
+                {isArabic ? currentSlide.titleAr : currentSlide.titleEn}
               </h1>
               <p className="text-onyx-200 text-base md:text-lg lg:text-xl max-w-3xl mx-auto mb-10 leading-relaxed font-light">
-                {isArabic ? slides[currentSlideIndex].descAr : slides[currentSlideIndex].descEn}
+                {isArabic ? currentSlide.descAr : currentSlide.descEn}
               </p>
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Link href={`/${locale}${slides[currentSlideIndex].btn1Link}`} className="w-full sm:w-auto btn-gold text-center py-4 px-8 text-lg font-bold shadow-lg">
-                  {isArabic ? slides[currentSlideIndex].btn1TextAr : slides[currentSlideIndex].btn1TextEn}
+                <Link href={`/${locale}${currentSlide.btn1Link}`} className="w-full sm:w-auto btn-gold text-center py-4 px-8 text-lg font-bold shadow-lg">
+                  {isArabic ? currentSlide.btn1TextAr : currentSlide.btn1TextEn}
                 </Link>
-                {slides[currentSlideIndex].btn2TextAr && (
-                  <Link href={`/${locale}${slides[currentSlideIndex].btn2Link}`} className="w-full sm:w-auto btn-onyx text-center py-4 px-8 text-lg font-bold border-gold-500/30 text-gold-500 hover:bg-gold-500/10">
-                    {isArabic ? slides[currentSlideIndex].btn2TextAr : slides[currentSlideIndex].btn2TextEn}
+                {currentSlide.btn2TextAr && (
+                  <Link href={`/${locale}${currentSlide.btn2Link}`} className="w-full sm:w-auto btn-onyx text-center py-4 px-8 text-lg font-bold border-gold-500/30 text-gold-500 hover:bg-gold-500/10">
+                    {isArabic ? currentSlide.btn2TextAr : currentSlide.btn2TextEn}
                   </Link>
                 )}
               </div>

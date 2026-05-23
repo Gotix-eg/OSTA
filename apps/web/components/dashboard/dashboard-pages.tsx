@@ -530,7 +530,7 @@ export function AdminAdsPage({ locale }: { locale: Locale }) {
       titleEn: "New Dynamic Promo Slide",
       descAr: isArabic ? "تفاصيل جذابة تظهر للعملاء في واجهة المنصة عند زيارة الموقع..." : "Engaging subtitle description for your users on the frontpage...",
       descEn: "Engaging subtitle description for your users on the frontpage...",
-      imageUrl: PRESET_IMAGES[0].url,
+      imageUrl: PRESET_IMAGES[0]?.url || "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1600",
       btn1TextAr: isArabic ? "ابدأ الطلب" : "Get Started",
       btn1TextEn: "Get Started",
       btn1Link: "/register/client",
