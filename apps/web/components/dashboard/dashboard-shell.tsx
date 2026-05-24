@@ -253,12 +253,12 @@ function SidebarContent({
 
       <div className="relative rounded-[2rem] border border-white/5 bg-white/5 p-5 backdrop-blur-xl">
         <div className="flex items-center gap-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-onyx-800/50 text-white shadow-xl">
-            <Sparkles className="h-5 w-5" />
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-black/45 p-1 border border-white/5 shadow-xl">
+            <img src="/logo.svg" alt="OSTA" className="h-9 w-auto" />
           </div>
           <div>
-            <p className="font-serif text-3xl leading-none tracking-tight text-white">OSTA</p>
-            <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.2em] text-gold-500/80">{roleLabel}</p>
+            <p className="font-serif text-2xl font-black leading-none tracking-tight text-white">OSTA</p>
+            <p className="mt-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-gold-500/80">{roleLabel}</p>
           </div>
         </div>
         <div className="mt-6 flex items-center justify-between rounded-2xl border border-white/5 bg-white/5 px-4 py-3 text-xs">

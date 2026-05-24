@@ -128,7 +128,7 @@ export function VendorsDirectory({ locale }: { locale: Locale }) {
                   {/* Image Area */}
                   <div className="relative h-48 w-full bg-gray-100 overflow-hidden">
                     <Image 
-                      src={vendor.shopImageUrl || "/logo.png"} 
+                      src={vendor.shopImageUrl || "/logo.svg"} 
                       alt={isArabic ? (vendor.shopNameAr || vendor.shopName) : vendor.shopName} 
                       fill 
                       className="object-cover transition duration-500 group-hover:scale-105"
