@@ -123,6 +123,37 @@ router.post("/products", authenticate, requireRoles("VENDOR"), catchAsync(async 
   response.status(201).json(successResponse(product, "تم إضافة المنتج"));
 }));
 
+// POST /api/vendors/products/bulk - bulk add products
+const bulkProductSchema = z.array(productSchema);
+router.post("/products/bulk", authenticate, requireRoles("VENDOR"), catchAsync(async (request, response) => {
+  const payload = parseBody(bulkProductSchema, request.body);
+  const vendor = await prisma.vendorProfile.findUnique({ where: { userId: request.auth!.userId } });
+  if (!vendor) throw new ApiError(404, "الملف التجاري غير موجود");
+  
+  const productsData = payload.map(p => ({
+    vendorId: vendor.id,
+    nameAr: p.nameAr,
+    nameEn: p.nameEn ?? null,
+    description: p.description ?? null,
+    price: p.price,
+    imageUrl: p.imageUrl ?? null,
+    inStock: p.inStock ?? true,
+    stockQty: p.stockQty ?? null,
+  }));
+
+  const count = await prisma.vendorProduct.createMany({
+    data: productsData,
+  });
+
+  const products = await prisma.vendorProduct.findMany({
+    where: { vendorId: vendor.id },
+    orderBy: { createdAt: "desc" },
+    take: payload.length,
+  });
+
+  response.status(201).json(successResponse(products, `تم إضافة ${count.count} منتج بنجاح`));
+}));
+
 // PUT /api/vendors/products/:id - update product
 router.put("/products/:id", authenticate, requireRoles("VENDOR"), catchAsync(async (request, response) => {
   const payload = parseBody(productSchema.partial(), request.body);

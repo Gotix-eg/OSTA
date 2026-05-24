@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
 
 import { getDirection, isLocale, supportedLocales, type Locale } from "@/lib/locales";
+import { FloatingSupport } from "@/components/shared/floating-support";
 
 export function generateStaticParams() {
   return supportedLocales.map((locale) => ({ locale }));
@@ -37,6 +38,7 @@ export default async function LocaleLayout({
   return (
     <div lang={locale} dir={getDirection(locale as Locale)} className="min-h-screen">
       {children}
+      <FloatingSupport locale={locale as Locale} />
     </div>
   );
 }

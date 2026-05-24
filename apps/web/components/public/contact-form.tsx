@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Mail, Phone, MapPin, Send, MessageSquare, Sparkles } from "lucide-react";
+import { Mail, Phone, MapPin, Send, MessageSquare, Sparkles, Facebook, Instagram } from "lucide-react";
 import type { Locale } from "@/lib/locales";
 
 export function ContactForm({ locale }: { locale: Locale }) {
@@ -29,36 +29,74 @@ export function ContactForm({ locale }: { locale: Locale }) {
               </p>
            </div>
 
-           <div className="space-y-6 mt-12 relative z-10">
-              <div className="flex items-center gap-4 group">
-                 <div className="h-12 w-12 rounded-xl bg-onyx-900 border border-onyx-700 flex items-center justify-center text-gold-500 group-hover:bg-gold-500 group-hover:text-onyx-950 transition-all duration-500 shadow-gold/5 group-hover:shadow-gold/20">
-                    <Phone className="h-5 w-5" />
-                 </div>
-                 <div>
-                    <p className="text-xs text-onyx-500 font-bold uppercase tracking-widest">{isArabic ? "اتصل بنا" : "Call Us"}</p>
-                    <p className="text-white font-bold tracking-wider">+20 100 000 0000</p>
-                 </div>
-              </div>
+            <div className="space-y-6 mt-12 relative z-10">
+               <a 
+                  href="https://wa.me/201009410112"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-4 group cursor-pointer"
+               >
+                  <div className="h-12 w-12 rounded-xl bg-onyx-900 border border-onyx-700 flex items-center justify-center text-gold-500 group-hover:bg-gold-500 group-hover:text-onyx-950 transition-all duration-500 shadow-gold/5 group-hover:shadow-gold/20">
+                     <Phone className="h-5 w-5" />
+                  </div>
+                  <div>
+                     <p className="text-xs text-onyx-500 font-bold uppercase tracking-widest">{isArabic ? "تواصل واتساب" : "WhatsApp Us"}</p>
+                     <p className="text-white font-bold tracking-wider group-hover:text-gold-500 transition-colors">+20 100 941 0112</p>
+                  </div>
+               </a>
 
-              <div className="flex items-center gap-4 group">
-                 <div className="h-12 w-12 rounded-xl bg-onyx-900 border border-onyx-700 flex items-center justify-center text-gold-500 group-hover:bg-gold-500 group-hover:text-onyx-950 transition-all duration-500 shadow-gold/5 group-hover:shadow-gold/20">
-                    <Mail className="h-5 w-5" />
-                 </div>
-                 <div>
-                    <p className="text-xs text-onyx-500 font-bold uppercase tracking-widest">{isArabic ? "راسلنا" : "Email Us"}</p>
-                    <p className="text-white font-bold tracking-wider">support@osta.eg</p>
-                 </div>
-              </div>
+               <a 
+                  href="mailto:info@osta.net"
+                  className="flex items-center gap-4 group cursor-pointer"
+               >
+                  <div className="h-12 w-12 rounded-xl bg-onyx-900 border border-onyx-700 flex items-center justify-center text-gold-500 group-hover:bg-gold-500 group-hover:text-onyx-950 transition-all duration-500 shadow-gold/5 group-hover:shadow-gold/20">
+                     <Mail className="h-5 w-5" />
+                  </div>
+                  <div>
+                     <p className="text-xs text-onyx-500 font-bold uppercase tracking-widest">{isArabic ? "راسلنا" : "Email Us"}</p>
+                     <p className="text-white font-bold tracking-wider group-hover:text-gold-500 transition-colors">info@osta.net</p>
+                  </div>
+               </a>
 
-              <div className="flex items-center gap-4 group">
-                 <div className="h-12 w-12 rounded-xl bg-onyx-900 border border-onyx-700 flex items-center justify-center text-gold-500 group-hover:bg-gold-500 group-hover:text-onyx-950 transition-all duration-500 shadow-gold/5 group-hover:shadow-gold/20">
-                    <MapPin className="h-5 w-5" />
-                 </div>
-                 <div>
-                    <p className="text-xs text-onyx-500 font-bold uppercase tracking-widest">{isArabic ? "مقرنا" : "Location"}</p>
-                    <p className="text-white font-bold tracking-wider">{isArabic ? "القاهرة، مصر" : "Cairo, Egypt"}</p>
-                 </div>
-              </div>
+               <div className="flex items-center gap-4 group">
+                  <div className="h-12 w-12 rounded-xl bg-onyx-900 border border-onyx-700 flex items-center justify-center text-gold-500 group-hover:bg-gold-500 group-hover:text-onyx-950 transition-all duration-500 shadow-gold/5 group-hover:shadow-gold/20">
+                     <MapPin className="h-5 w-5" />
+                  </div>
+                  <div>
+                     <p className="text-xs text-onyx-500 font-bold uppercase tracking-widest">{isArabic ? "مقرنا" : "Location"}</p>
+                     <p className="text-white font-bold tracking-wider">{isArabic ? "القاهرة، مصر" : "Cairo, Egypt"}</p>
+                  </div>
+               </div>
+
+               <a 
+                  href="https://facebook.com/osta.egypt"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-4 group cursor-pointer"
+               >
+                  <div className="h-12 w-12 rounded-xl bg-onyx-900 border border-onyx-700 flex items-center justify-center text-gold-500 group-hover:bg-gold-500 group-hover:text-onyx-950 transition-all duration-500 shadow-gold/5 group-hover:shadow-gold/20">
+                     <Facebook className="h-5 w-5" />
+                  </div>
+                  <div>
+                     <p className="text-xs text-onyx-500 font-bold uppercase tracking-widest">{isArabic ? "فيسبوك" : "Facebook"}</p>
+                     <p className="text-white font-bold tracking-wider group-hover:text-gold-500 transition-colors">OSTA Egypt</p>
+                  </div>
+               </a>
+
+               <a 
+                  href="https://instagram.com/osta.egypt"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-4 group cursor-pointer"
+               >
+                  <div className="h-12 w-12 rounded-xl bg-onyx-900 border border-onyx-700 flex items-center justify-center text-gold-500 group-hover:bg-gold-500 group-hover:text-onyx-950 transition-all duration-500 shadow-gold/5 group-hover:shadow-gold/20">
+                     <Instagram className="h-5 w-5" />
+                  </div>
+                  <div>
+                     <p className="text-xs text-onyx-500 font-bold uppercase tracking-widest">{isArabic ? "إنستغرام" : "Instagram"}</p>
+                     <p className="text-white font-bold tracking-wider group-hover:text-gold-500 transition-colors">@osta.egypt</p>
+                  </div>
+               </a>
            </div>
         </div>
       </div>

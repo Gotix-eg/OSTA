@@ -5,7 +5,8 @@ import {
   Zap, Waves, Hammer, Wind, Smartphone, 
   Palette, Layout, Globe, Monitor, Camera, 
   ChevronRight, ArrowLeft, Star, ShieldCheck, 
-  Store, Users, CheckCircle2, Menu, X
+  Store, Users, CheckCircle2, Menu, X,
+  Facebook, Instagram, Phone, Mail
 } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
@@ -224,14 +225,15 @@ export function LandingPage({ locale }: { locale: Locale }) {
               </p>
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Link href={`/${locale}${currentSlide.btn1Link}`} className="w-full sm:w-auto btn-gold text-center py-4 px-8 text-lg font-bold shadow-lg">
-                  {isArabic ? currentSlide.btn1TextAr : currentSlide.btn1TextEn}
+                <Link href={`/${locale}/register/client`} className="w-full sm:w-auto btn-gold text-center py-4 px-8 text-lg shadow-lg shadow-gold-500/20">
+                  {isArabic ? "اطلب صنايعي" : "Order a Pro"}
                 </Link>
-                {currentSlide.btn2TextAr && (
-                  <Link href={`/${locale}${currentSlide.btn2Link}`} className="w-full sm:w-auto btn-onyx text-center py-4 px-8 text-lg font-bold border-gold-500/30 text-gold-500 hover:bg-gold-500/10">
-                    {isArabic ? currentSlide.btn2TextAr : currentSlide.btn2TextEn}
-                  </Link>
-                )}
+                <Link href={`/${locale}/register/worker`} className="w-full sm:w-auto btn-onyx text-center py-4 px-8 text-lg border-gold-500/30 text-gold-500 bg-white/[0.02] backdrop-blur hover:bg-gold-500/10 hover:border-gold-500/50 shadow-lg">
+                  {isArabic ? "انضم كصنايعي" : "Join as Pro"}
+                </Link>
+                <Link href={`/${locale}/register/vendor`} className="w-full sm:w-auto btn-onyx text-center py-4 px-8 text-lg border-white/10 text-white bg-white/[0.01] backdrop-blur hover:bg-white/5 hover:border-white/20 shadow-lg">
+                  {isArabic ? "انضم كمتجر" : "Join as Vendor"}
+                </Link>
               </div>
 
               <div className="mt-12 flex items-center justify-center gap-6">
@@ -353,32 +355,63 @@ export function LandingPage({ locale }: { locale: Locale }) {
 
       {/* CTA */}
       <section className="py-24 px-4">
-        <div className="max-w-5xl mx-auto onyx-card-gold p-12 text-center relative overflow-hidden group">
-          <div className="absolute inset-0 bg-gold-gradient opacity-0 group-hover:opacity-5 transition-opacity" />
-          <h2 className="text-4xl md:text-6xl font-black text-white mb-8">
-            {isArabic ? "جاهز لتجربة أُسطى؟" : "Ready for OSTA Experience?"}
-          </h2>
-          <p className="text-gold-100 text-xl mb-12 max-w-2xl mx-auto">
-            {isArabic ? "سجل الآن كعميل وابدأ في طلب خدماتك أو انضم كمحترف وضاعف دخلك." : "Register now as a client or join as a pro and multiply your income."}
-          </p>
-          <div className="flex flex-wrap justify-center gap-6">
-            <Link href={`/${locale}/register/client`} className="btn-gold py-5 px-12 text-xl">
-              {isArabic ? "سجل كعميل مجاناً" : "Join for Free"}
-            </Link>
-            <Link href={`/${locale}/register/worker`} className="btn-onyx py-5 px-12 text-xl border-gold-500/20 text-gold-500 hover:bg-gold-500/10">
-              {isArabic ? "سجل كفني محترف" : "Join as a Pro"}
-            </Link>
+        <div className="max-w-5xl mx-auto onyx-card p-12 text-center relative overflow-hidden group">
+          <div className="absolute inset-0 bg-gold-gradient opacity-0 group-hover:opacity-5 transition-opacity pointer-events-none" />
+          <div className="relative z-10">
+            <h2 className="text-4xl md:text-6xl font-black text-white mb-8">
+              {isArabic ? "جاهز لتجربة أُسطى؟" : "Ready for OSTA Experience?"}
+            </h2>
+            <p className="text-gold-100 text-xl mb-12 max-w-2xl mx-auto">
+              {isArabic ? "سجل الآن كعميل وابدأ في طلب خدماتك أو انضم كمحترف وضاعف دخلك." : "Register now as a client or join as a pro and multiply your income."}
+            </p>
+            <div className="flex flex-wrap justify-center gap-6">
+              <Link href={`/${locale}/register/client`} className="btn-gold py-5 px-12 text-xl">
+                {isArabic ? "سجل كعميل مجاناً" : "Join for Free"}
+              </Link>
+              <Link href={`/${locale}/register/worker`} className="btn-onyx py-5 px-12 text-xl border-gold-500/20 text-gold-500 hover:bg-gold-500/10">
+                {isArabic ? "سجل كفني محترف" : "Join as a Pro"}
+              </Link>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-12 border-t border-white/5 bg-onyx-950">
+      <footer className="py-16 border-t border-white/5 bg-onyx-950">
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <div className="flex items-center justify-center gap-2 mb-8">
-            <img src="/logo.svg" alt="OSTA" className="h-36 w-auto opacity-95" />
+          <div className="flex flex-col items-center justify-center gap-6 mb-10">
+            <div className="w-fit">
+              <img src="/logo.svg" alt="OSTA" className="h-20 w-auto opacity-95" />
+            </div>
+            
+            {/* Contact Details */}
+            <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-onyx-400 font-medium mt-2">
+              <a href="https://wa.me/201009410112" className="flex items-center gap-2 hover:text-gold-500 transition-colors">
+                <Phone className="h-4 w-4 text-gold-500" />
+                <span>+20 100 941 0112</span>
+              </a>
+              <a href="mailto:info@osta.net" className="flex items-center gap-2 hover:text-gold-500 transition-colors">
+                <Mail className="h-4 w-4 text-gold-500" />
+                <span>info@osta.net</span>
+              </a>
+            </div>
+
+            {/* Social Media Links */}
+            <div className="flex items-center justify-center gap-4 mt-2">
+              <a href="https://facebook.com/osta.egypt" target="_blank" rel="noopener noreferrer" className="h-10 w-10 rounded-xl bg-white/5 hover:bg-gold-500 hover:text-onyx-950 transition-all duration-300 flex items-center justify-center text-onyx-300 border border-white/10 hover:border-gold-500 hover:-translate-y-1">
+                <Facebook className="h-5 w-5" />
+              </a>
+              <a href="https://instagram.com/osta.egypt" target="_blank" rel="noopener noreferrer" className="h-10 w-10 rounded-xl bg-white/5 hover:bg-gold-500 hover:text-onyx-950 transition-all duration-300 flex items-center justify-center text-onyx-300 border border-white/10 hover:border-gold-500 hover:-translate-y-1">
+                <Instagram className="h-5 w-5" />
+              </a>
+              <a href="https://wa.me/201009410112" target="_blank" rel="noopener noreferrer" className="h-10 w-10 rounded-xl bg-white/5 hover:bg-gold-500 hover:text-onyx-950 transition-all duration-300 flex items-center justify-center text-onyx-300 border border-white/10 hover:border-gold-500 hover:-translate-y-1">
+                <svg viewBox="0 0 24 24" className="h-5 w-5 fill-current" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.859-4.42 9.863-9.864.002-2.637-1.023-5.115-2.887-6.979C16.582 1.9 14.1 1.05 11.999 1.05c-5.444 0-9.866 4.42-9.87 9.867a9.81 9.81 0 001.5 5.17l-.988 3.606 3.692-.969zm10.741-6.155c-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.668.149-.198.297-.766.967-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.521.15-.173.198-.297.298-.495.099-.198.05-.371-.025-.521-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                </svg>
+              </a>
+            </div>
           </div>
-          <p className="text-onyx-500 text-sm">
+          <p className="text-onyx-600 text-xs font-semibold tracking-wide">
             © {new Date().getFullYear()} OSTA Egypt. {isArabic ? "جميع الحقوق محفوظة." : "All rights reserved."}
           </p>
         </div>

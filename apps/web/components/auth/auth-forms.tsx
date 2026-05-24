@@ -196,7 +196,8 @@ function InputField({
   type = "text",
   placeholder,
   textarea,
-  rows = 4
+  rows = 4,
+  helperText
 }: {
   label: string;
   value: string;
@@ -205,6 +206,7 @@ function InputField({
   placeholder?: string;
   textarea?: boolean;
   rows?: number;
+  helperText?: string;
 }) {
   return (
     <label className="block space-y-2 text-start">
@@ -225,6 +227,9 @@ function InputField({
           placeholder={placeholder}
           className="h-14 w-full rounded-2xl border border-onyx-700 bg-onyx-800/50 px-5 text-white transition-all placeholder:text-onyx-600 focus:border-gold-500/50 focus:ring-4 focus:ring-gold-500/10 outline-none"
         />
+      )}
+      {helperText && (
+        <p className="text-xs text-onyx-500 mt-1 select-none font-medium leading-normal">{helperText}</p>
       )}
     </label>
   );
@@ -437,8 +442,19 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
       setIsSubmitting(false);
       return;
     }
-    if (state.password.length < 6) {
-      setError(isArabic ? "كلمة المرور يجب أن تكون 6 أحرف على الأقل" : "Password must be at least 6 characters");
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!state.email) {
+      setError(isArabic ? "البريد الإلكتروني مطلوب" : "Email is required");
+      setIsSubmitting(false);
+      return;
+    }
+    if (!emailRegex.test(state.email)) {
+      setError(isArabic ? "صيغة البريد الإلكتروني غير صحيحة" : "Invalid email format");
+      setIsSubmitting(false);
+      return;
+    }
+    if (state.password.length < 8) {
+      setError(isArabic ? "كلمة المرور يجب أن تكون 8 أحرف أو أرقام على الأقل" : "Password must be at least 8 characters");
       setIsSubmitting(false);
       return;
     }
@@ -503,18 +519,40 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
               value={state.phone}
               onChange={(phone) => setState({ ...state, phone })}
               placeholder="01x xxxx xxxx"
+              helperText={isArabic ? "مثال: 01012345678 (رقم هاتف مصري مكون من 11 رقماً)" : "E.g. 01012345678 (11-digit Egyptian phone number)"}
             />
 
             <div className="grid gap-6 sm:grid-cols-2">
-              <InputField label={isArabic ? "الاسم الأول" : "First name"} value={state.firstName} onChange={(firstName) => setState({ ...state, firstName })} />
-              <InputField label={isArabic ? "اسم العائلة" : "Last name"} value={state.lastName} onChange={(lastName) => setState({ ...state, lastName })} />
+              <InputField label={isArabic ? "الاسم الأول" : "First name"} value={state.firstName} onChange={(firstName) => setState({ ...state, firstName })} placeholder={isArabic ? "محمد" : "John"} />
+              <InputField label={isArabic ? "اسم العائلة" : "Last name"} value={state.lastName} onChange={(lastName) => setState({ ...state, lastName })} placeholder={isArabic ? "أحمد" : "Doe"} />
             </div>
             
-            <InputField label={isArabic ? "البريد الإلكتروني" : "Email"} value={state.email} onChange={(email) => setState({ ...state, email })} type="email" />
+            <InputField 
+              label={isArabic ? "البريد الإلكتروني" : "Email"} 
+              value={state.email} 
+              onChange={(email) => setState({ ...state, email })} 
+              type="email" 
+              placeholder="example@mail.com"
+              helperText={isArabic ? "البريد الإلكتروني إلزامي ومطلوب لإكمال التسجيل" : "Email is required and mandatory to complete registration"}
+            />
             
             <div className="grid gap-6 sm:grid-cols-2">
-              <InputField label={isArabic ? "كلمة المرور" : "Password"} value={state.password} onChange={(password) => setState({ ...state, password })} type="password" />
-              <InputField label={isArabic ? "تأكيد كلمة المرور" : "Confirm password"} value={state.confirmPassword} onChange={(confirmPassword) => setState({ ...state, confirmPassword })} type="password" />
+              <InputField 
+                label={isArabic ? "كلمة المرور" : "Password"} 
+                value={state.password} 
+                onChange={(password) => setState({ ...state, password })} 
+                type="password" 
+                placeholder="••••••••"
+                helperText={isArabic ? "يجب أن تحتوي على 8 أحرف أو أرقام على الأقل" : "Must be at least 8 characters/numbers"}
+              />
+              <InputField 
+                label={isArabic ? "تأكيد كلمة المرور" : "Confirm password"} 
+                value={state.confirmPassword} 
+                onChange={(confirmPassword) => setState({ ...state, confirmPassword })} 
+                type="password" 
+                placeholder="••••••••"
+                helperText={isArabic ? "أعد كتابة كلمة المرور المدخلة للتأكيد" : "Retype the password to confirm"}
+              />
             </div>
           </div>
 
@@ -610,8 +648,8 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
       setIsSubmitting(false);
       return;
     }
-    if (state.password.length < 6) {
-      setError(isArabic ? "كلمة المرور يجب أن تكون 6 أحرف على الأقل" : "Password must be at least 6 characters");
+    if (state.password.length < 8) {
+      setError(isArabic ? "كلمة المرور يجب أن تكون 8 أحرف على الأقل" : "Password must be at least 8 characters");
       setIsSubmitting(false);
       return;
     }
@@ -664,14 +702,20 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
               {isArabic ? "البيانات الشخصية" : "Personal Information"}
             </h3>
             
-            <InputField label={isArabic ? "رقم الهاتف" : "Phone number"} value={state.phone} onChange={(phone) => setState({ ...state, phone })} placeholder="01x xxxx xxxx" />
+            <InputField 
+              label={isArabic ? "رقم الهاتف" : "Phone number"} 
+              value={state.phone} 
+              onChange={(phone) => setState({ ...state, phone })} 
+              placeholder="01x xxxx xxxx" 
+              helperText={isArabic ? "مثال: 01012345678 (رقم هاتف مصري مكون من 11 رقماً)" : "E.g. 01012345678 (11-digit Egyptian phone number)"}
+            />
 
             <div className="grid gap-6 sm:grid-cols-2">
-              <InputField label={isArabic ? "الاسم الأول" : "First name"} value={state.firstName} onChange={(firstName) => setState({ ...state, firstName })} />
-              <InputField label={isArabic ? "اسم العائلة" : "Last name"} value={state.lastName} onChange={(lastName) => setState({ ...state, lastName })} />
+              <InputField label={isArabic ? "الاسم الأول" : "First name"} value={state.firstName} onChange={(firstName) => setState({ ...state, firstName })} placeholder={isArabic ? "محمد" : "John"} />
+              <InputField label={isArabic ? "اسم العائلة" : "Last name"} value={state.lastName} onChange={(lastName) => setState({ ...state, lastName })} placeholder={isArabic ? "أحمد" : "Doe"} />
             </div>
 
-            <InputField label={isArabic ? "الرقم القومي (14 رقم)" : "National ID (14 digits)"} value={state.nationalIdNumber} onChange={(n) => setState({ ...state, nationalIdNumber: n })} />
+            <InputField label={isArabic ? "الرقم القومي (14 رقم)" : "National ID (14 digits)"} value={state.nationalIdNumber} onChange={(n) => setState({ ...state, nationalIdNumber: n })} placeholder="2xxxxxxxxxxxxx" />
           </div>
 
           <div className="onyx-card p-6 space-y-6 border-white/5 bg-white/[0.02]">
@@ -685,8 +729,22 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
             </div>
 
             <div className="grid gap-6 sm:grid-cols-2">
-              <InputField label={isArabic ? "كلمة المرور" : "Password"} value={state.password} onChange={(p) => setState({ ...state, password: p })} type="password" />
-              <InputField label={isArabic ? "تأكيد كلمة المرور" : "Confirm password"} value={state.confirmPassword} onChange={(cp) => setState({ ...state, confirmPassword: cp })} type="password" />
+              <InputField 
+                label={isArabic ? "كلمة المرور" : "Password"} 
+                value={state.password} 
+                onChange={(p) => setState({ ...state, password: p })} 
+                type="password" 
+                placeholder="••••••••"
+                helperText={isArabic ? "يجب أن تحتوي على 8 أحرف أو أرقام على الأقل" : "Must be at least 8 characters/numbers"}
+              />
+              <InputField 
+                label={isArabic ? "تأكيد كلمة المرور" : "Confirm password"} 
+                value={state.confirmPassword} 
+                onChange={(cp) => setState({ ...state, confirmPassword: cp })} 
+                type="password" 
+                placeholder="••••••••"
+                helperText={isArabic ? "أعد كتابة كلمة المرور المدخلة للتأكيد" : "Retype the password to confirm"}
+              />
             </div>
           </div>
 
@@ -744,8 +802,19 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
       setIsSubmitting(false);
       return;
     }
-    if (state.password.length < 6) {
-      setError(isArabic ? "كلمة المرور يجب أن تكون 6 أحرف على الأقل" : "Password must be at least 6 characters");
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!state.email) {
+      setError(isArabic ? "البريد الإلكتروني مطلوب" : "Email is required");
+      setIsSubmitting(false);
+      return;
+    }
+    if (!emailRegex.test(state.email)) {
+      setError(isArabic ? "صيغة البريد الإلكتروني غير صحيحة" : "Invalid email format");
+      setIsSubmitting(false);
+      return;
+    }
+    if (state.password.length < 8) {
+      setError(isArabic ? "كلمة المرور يجب أن تكون 8 أحرف أو أرقام على الأقل" : "Password must be at least 8 characters");
       setIsSubmitting(false);
       return;
     }
@@ -808,8 +877,14 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
               {isArabic ? "بيانات المتجر" : "Store Information"}
             </h3>
             
-            <InputField label={isArabic ? "رقم الهاتف" : "Phone number"} value={state.phone} onChange={(phone) => setState({ ...state, phone })} placeholder="01x xxxx xxxx" />
-            <InputField label={isArabic ? "اسم المتجر" : "Store Name"} value={state.storeName} onChange={(n) => setState({ ...state, storeName: n })} />
+            <InputField 
+              label={isArabic ? "رقم الهاتف" : "Phone number"} 
+              value={state.phone} 
+              onChange={(phone) => setState({ ...state, phone })} 
+              placeholder="01x xxxx xxxx" 
+              helperText={isArabic ? "مثال: 01012345678 (رقم هاتف مصري مكون من 11 رقماً)" : "E.g. 01012345678 (11-digit Egyptian phone number)"}
+            />
+            <InputField label={isArabic ? "اسم المتجر" : "Store Name"} value={state.storeName} onChange={(n) => setState({ ...state, storeName: n })} placeholder={isArabic ? "الشركة العربية للمستلزمات" : "Arab Supply Co."} />
             <SelectField
                 label={isArabic ? "تصنيف المتجر" : "Store Category"}
                 value={state.category}
@@ -825,13 +900,34 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
             </h3>
             
             <div className="grid gap-6 sm:grid-cols-2">
-              <InputField label={isArabic ? "الاسم الأول" : "First name"} value={state.firstName} onChange={(firstName) => setState({ ...state, firstName })} />
-              <InputField label={isArabic ? "اسم العائلة" : "Last name"} value={state.lastName} onChange={(lastName) => setState({ ...state, lastName })} />
+              <InputField label={isArabic ? "الاسم الأول" : "First name"} value={state.firstName} onChange={(firstName) => setState({ ...state, firstName })} placeholder={isArabic ? "محمد" : "John"} />
+              <InputField label={isArabic ? "اسم العائلة" : "Last name"} value={state.lastName} onChange={(lastName) => setState({ ...state, lastName })} placeholder={isArabic ? "أحمد" : "Doe"} />
             </div>
-            <InputField label={isArabic ? "البريد الإلكتروني" : "Email"} value={state.email} onChange={(email) => setState({ ...state, email })} type="email" />
+            <InputField 
+              label={isArabic ? "البريد الإلكتروني" : "Email"} 
+              value={state.email} 
+              onChange={(email) => setState({ ...state, email })} 
+              type="email" 
+              placeholder="example@mail.com"
+              helperText={isArabic ? "البريد الإلكتروني إلزامي ومطلوب للتواصل الرسمي" : "Email is required and mandatory for official communication"}
+            />
             <div className="grid gap-6 sm:grid-cols-2">
-              <InputField label={isArabic ? "كلمة المرور" : "Password"} value={state.password} onChange={(password) => setState({ ...state, password })} type="password" />
-              <InputField label={isArabic ? "تأكيد كلمة المرور" : "Confirm password"} value={state.confirmPassword} onChange={(confirmPassword) => setState({ ...state, confirmPassword })} type="password" />
+              <InputField 
+                label={isArabic ? "كلمة المرور" : "Password"} 
+                value={state.password} 
+                onChange={(password) => setState({ ...state, password })} 
+                type="password" 
+                placeholder="••••••••"
+                helperText={isArabic ? "يجب أن تحتوي على 8 أحرف أو أرقام على الأقل" : "Must be at least 8 characters/numbers"}
+              />
+              <InputField 
+                label={isArabic ? "تأكيد كلمة المرور" : "Confirm password"} 
+                value={state.confirmPassword} 
+                onChange={(confirmPassword) => setState({ ...state, confirmPassword })} 
+                type="password" 
+                placeholder="••••••••"
+                helperText={isArabic ? "أعد كتابة كلمة المرور المدخلة للتأكيد" : "Retype the password to confirm"}
+              />
             </div>
           </div>
 
@@ -933,8 +1029,8 @@ export function ForgotPasswordForm({ locale }: { locale: Locale }) {
       setError(isArabic ? "برجاء إدخال رمز التحقق كاملاً" : "Please enter the full verification code");
       return;
     }
-    if (password.length < 6) {
-      setError(isArabic ? "كلمة المرور يجب أن تكون 6 أحرف على الأقل" : "Password must be at least 6 characters");
+    if (password.length < 8) {
+      setError(isArabic ? "كلمة المرور يجب أن تكون 8 أحرف على الأقل" : "Password must be at least 8 characters");
       return;
     }
     if (password !== confirmPassword) {
@@ -995,8 +1091,22 @@ export function ForgotPasswordForm({ locale }: { locale: Locale }) {
               </div>
 
               <div className="grid gap-6 sm:grid-cols-2 pt-2">
-                <InputField label={isArabic ? "كلمة المرور الجديدة" : "New password"} value={password} onChange={setPassword} type="password" />
-                <InputField label={isArabic ? "تأكيد كلمة المرور" : "Confirm password"} value={confirmPassword} onChange={setConfirmPassword} type="password" />
+                <InputField 
+                  label={isArabic ? "كلمة المرور الجديدة" : "New password"} 
+                  value={password} 
+                  onChange={setPassword} 
+                  type="password" 
+                  placeholder="••••••••"
+                  helperText={isArabic ? "يجب أن تحتوي على 8 أحرف أو أرقام على الأقل" : "Must be at least 8 characters/numbers"}
+                />
+                <InputField 
+                  label={isArabic ? "تأكيد كلمة المرور" : "Confirm password"} 
+                  value={confirmPassword} 
+                  onChange={setConfirmPassword} 
+                  type="password" 
+                  placeholder="••••••••"
+                  helperText={isArabic ? "أعد كتابة كلمة المرور المدخلة للتأكيد" : "Retype the password to confirm"}
+                />
               </div>
            </div>
         )}

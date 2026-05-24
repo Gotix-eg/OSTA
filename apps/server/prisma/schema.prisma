@@ -799,6 +799,10 @@ model VendorProfile {
   trialExpiresAt        DateTime?
   subscriptionExpiresAt DateTime?
   isOpen                Boolean                  @default(false)
+  integrationType       String?
+  integrationToken      String?
+  integrationShopUrl    String?
+  lastSyncAt            DateTime?
   createdAt             DateTime                 @default(now())
   updatedAt             DateTime                 @updatedAt
   user                  User                     @relation(fields: [userId], references: [id], onDelete: Cascade)

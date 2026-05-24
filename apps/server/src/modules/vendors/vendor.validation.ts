@@ -31,6 +31,10 @@ export const updateVendorProfileSchema = z.object({
   area: z.string().optional(),
   address: z.string().optional(),
   deliveryRange: z.number().min(1).max(50).optional(),
+  integrationType: z.string().optional().nullable(),
+  integrationToken: z.string().optional().nullable(),
+  integrationShopUrl: z.string().optional().nullable(),
+  lastSyncAt: z.coerce.date().optional().nullable(),
 });
 
 export const updateVendorLocationSchema = z.object({
