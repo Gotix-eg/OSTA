@@ -22,6 +22,7 @@ import { fetchApiData, postApiData, patchApiData } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
 import * as XLSX from "xlsx";
+import ExcelJS from "exceljs";
 
 type VendorProduct = {
   id: string;
@@ -456,8 +457,8 @@ function BulkExcelModal({
   // Dynamic Excel template generator and downloader
   function handleDownloadTemplate() {
     const wsData = [
-      ["اسم المنتج بالعربي (مطلوب)", "الاسم بالإنجليزي (اختياري)", "الوصف (اختياري)", "السعر بالجنيه (مطلوب)", "الكمية بالمخزن (اختياري)", "رابط الصورة (اختياري)"],
-      ["مساعدين أمامية تويوتا كورولا", "Front Shock Absorbers Corolla", "مساعدين غاز ياباني أصلي جودة عالية", "3400", "10", "https://images.unsplash.com/photo-1486006920555-c77dce18193b?w=500"],
+      ["اسم المنتج بالعربي (مطلوب)", "الاسم بالإنجليزي (اختياري)", "الوصف (اختياري)", "السعر بالجنيه (مطلوب)", "الكمية بالمخزن (اختياري)", "صورة المنتج (اسحب الصورة هنا)"],
+      ["مساعدين أمامية تويوتا كورولا", "Front Shock Absorbers Corolla", "مساعدين غاز ياباني أصلي جودة عالية", "3400", "10", ""],
       ["طقم بوجيهات ليزر بلاتينيوم NGK", "NGK Laser Platinum Spark Plugs", "طقم 4 بوجيهات لعمر افتراضي أطول وأداء رياضي", "1200", "25", ""],
       ["فلتر هواء محرك هيونداي إلنترا", "Hyundai Elantra Engine Air Filter", "فلتر هواء أصلي يمنع دخول الأتربة لغرفة الاحتراق", "350", "40", ""]
     ];
@@ -467,8 +468,8 @@ function BulkExcelModal({
     XLSX.writeFile(wb, "OSTA_Bulk_Products_Template.xlsx");
   }
 
-  // Parse Uploaded Excel File
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+  // Parse Uploaded Excel File using ExcelJS to support embedded images!
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const uploadedFile = e.target.files?.[0];
     if (!uploadedFile) return;
 
@@ -481,76 +482,104 @@ function BulkExcelModal({
     setError(null);
     setFile(uploadedFile);
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      try {
-        const data = new Uint8Array(event.target?.result as ArrayBuffer);
-        const workbook = XLSX.read(data, { type: "array" });
-        const sheetName = workbook.SheetNames[0];
-        if (!sheetName) {
-          setError(isArabic ? "الملف فارغ أو تالف" : "File is empty or corrupted");
-          return;
-        }
-        const worksheet = workbook.Sheets[sheetName];
-        if (!worksheet) {
-          setError(isArabic ? "الملف فارغ أو تالف" : "File is empty or corrupted");
-          return;
-        }
-        // Read header rows and parsed records
-        const json = XLSX.utils.sheet_to_json<any[]>(worksheet, { header: 1 });
-        if (json.length <= 1) {
-          setError(isArabic ? "لا توجد بيانات منتجات كافية في الملف" : "No product records found in the file");
-          return;
-        }
-
-        const rows = json.slice(1);
-        const productsList: ParsedProduct[] = rows
-          .filter(row => row && row.length > 0 && row.some((cell: any) => cell !== null && cell !== undefined && cell !== ""))
-          .map((row, idx) => {
-            const nameAr = (row[0] || "").toString().trim();
-            const nameEn = (row[1] || "").toString().trim();
-            const description = (row[2] || "").toString().trim();
-            const priceRaw = (row[3] || "").toString().trim();
-            const stockQtyRaw = (row[4] || "").toString().trim();
-            const imageUrl = (row[5] || "").toString().trim();
-
-            const price = parseFloat(priceRaw);
-            const stockQty = stockQtyRaw ? parseInt(stockQtyRaw) : null;
-
-            const rowErrors: string[] = [];
-            if (!nameAr) {
-              rowErrors.push(isArabic ? "اسم المنتج بالعربي مطلوب" : "Arabic product name is required");
-            }
-            if (!priceRaw || isNaN(price) || price <= 0) {
-              rowErrors.push(isArabic ? "السعر يجب أن يكون رقماً أكبر من 0" : "Price must be a number greater than 0");
-            }
-            if (stockQtyRaw && (isNaN(stockQty!) || stockQty! < 0)) {
-              rowErrors.push(isArabic ? "الكمية يجب أن تكون أكبر من أو تساوي 0" : "Stock quantity must be 0 or more");
-            }
-            if (imageUrl && !imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
-              rowErrors.push(isArabic ? "رابط الصورة غير صالح (يجب أن يبدأ بـ http أو https)" : "Image URL must start with http or https");
-            }
-
-            return {
-              index: idx + 1,
-              nameAr,
-              nameEn: nameEn || null,
-              description: description || null,
-              price: isNaN(price) ? 0 : price,
-              stockQty: stockQty,
-              inStock: stockQty === null ? true : stockQty > 0,
-              imageUrl: imageUrl || null,
-              errors: rowErrors
-            };
-          });
-
-        setParsedData(productsList);
-        setStep("review");
-      } catch {
-        setError(isArabic ? "فشل تحليل وقراءة ملف Excel" : "Failed to parse Excel file");
+    try {
+      const arrayBuffer = await uploadedFile.arrayBuffer();
+      const workbook = new ExcelJS.Workbook();
+      await workbook.xlsx.load(arrayBuffer);
+      const worksheet = workbook.worksheets[0];
+      if (!worksheet) {
+        setError(isArabic ? "الملف فارغ أو تالف" : "File is empty or corrupted");
+        return;
       }
-    };
-    reader.readAsArrayBuffer(uploadedFile);
+
+      // 1. Extract embedded drawing images and map to row index
+      const images = worksheet.getImages();
+      const rowImageMap = new Map<number, string>(); // maps 0-indexed data row index to base64 string
+
+      for (const img of images) {
+        const mediaItem = workbook.model.media[Number(img.imageId)] || workbook.model.media[img.imageId as any];
+        if (mediaItem && mediaItem.buffer) {
+          const blob = new Blob([mediaItem.buffer], { type: `image/${mediaItem.extension}` });
+          const base64 = await new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onerror = reject;
+            reader.onload = () => resolve(reader.result as string);
+            reader.readAsDataURL(blob);
+          });
+          // img.range.tl.row is the 0-indexed row number.
+          // Headers are at row index 0. First data row starts at row index 1.
+          const dataRowIdx = img.range.tl.row - 1;
+          if (dataRowIdx >= 0) {
+            rowImageMap.set(dataRowIdx, base64);
+          }
+        }
+      }
+
+      // 2. Read cell values and construct product records
+      const productsList: ParsedProduct[] = [];
+      let dataRowIdx = 0;
+
+      worksheet.eachRow((row, rowNumber) => {
+        if (rowNumber === 1) return; // skip header row
+
+        const nameAr = (row.getCell(1).value || "").toString().trim();
+        const nameEn = (row.getCell(2).value || "").toString().trim();
+        const description = (row.getCell(3).value || "").toString().trim();
+        const priceRaw = (row.getCell(4).value || "").toString().trim();
+        const stockQtyRaw = (row.getCell(5).value || "").toString().trim();
+
+        // Skip blank rows
+        if (!nameAr && !nameEn && !description && !priceRaw && !stockQtyRaw) {
+          return;
+        }
+
+        const price = parseFloat(priceRaw);
+        const stockQty = stockQtyRaw ? parseInt(stockQtyRaw) : null;
+
+        // Try getting image from rowImageMap, or fallback to text URL in Column 6 (index 6)
+        let imageUrl = rowImageMap.get(rowNumber - 2) || "";
+        if (!imageUrl) {
+          imageUrl = (row.getCell(6).value || "").toString().trim();
+        }
+
+        const rowErrors: string[] = [];
+        if (!nameAr) {
+          rowErrors.push(isArabic ? "اسم المنتج بالعربي مطلوب" : "Arabic product name is required");
+        }
+        if (!priceRaw || isNaN(price) || price <= 0) {
+          rowErrors.push(isArabic ? "السعر يجب أن يكون رقماً أكبر من 0" : "Price must be a number greater than 0");
+        }
+        if (stockQtyRaw && (isNaN(stockQty!) || stockQty! < 0)) {
+          rowErrors.push(isArabic ? "الكمية يجب أن تكون أكبر من أو تساوي 0" : "Stock quantity must be 0 or more");
+        }
+        if (imageUrl && !imageUrl.startsWith("data:image") && !imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
+          rowErrors.push(isArabic ? "رابط الصورة غير صالح" : "Image URL must start with http or https");
+        }
+
+        productsList.push({
+          index: dataRowIdx + 1,
+          nameAr,
+          nameEn: nameEn || null,
+          description: description || null,
+          price: isNaN(price) ? 0 : price,
+          stockQty: stockQty,
+          inStock: stockQty === null ? true : stockQty > 0,
+          imageUrl: imageUrl || null,
+          errors: rowErrors
+        });
+        dataRowIdx++;
+      });
+
+      if (productsList.length === 0) {
+        setError(isArabic ? "لا توجد بيانات منتجات كافية في الملف" : "No product records found in the file");
+        return;
+      }
+
+      setParsedData(productsList);
+      setStep("review");
+    } catch (e) {
+      setError(isArabic ? "فشل تحليل وقراءة ملف Excel" : "Failed to parse Excel file");
+    }
   }
 
   // Update parsed grid cell values directly
@@ -578,8 +607,8 @@ function BulkExcelModal({
           }
 
           const imgUrl = field === "imageUrl" ? val.toString().trim() : (updated.imageUrl || "");
-          if (imgUrl && !imgUrl.startsWith("http://") && !imgUrl.startsWith("https://")) {
-            rowErrors.push(isArabic ? "رابط الصورة غير صالح (يجب أن يبدأ بـ http أو https)" : "Image URL must start with http or https");
+          if (imgUrl && !imgUrl.startsWith("data:image") && !imgUrl.startsWith("http://") && !imgUrl.startsWith("https://")) {
+            rowErrors.push(isArabic ? "رابط الصورة غير صالح" : "Image URL must start with http or https");
           }
 
           return {
@@ -655,7 +684,7 @@ function BulkExcelModal({
               </div>
               <div className="flex-1">
                 <h4 className="text-sm font-semibold text-white">{isArabic ? "هل تحتاج لنموذج إكسل معد مسبقاً؟" : "Need the template model?"}</h4>
-                <p className="text-xs text-onyx-400 mt-1">{isArabic ? "قم بتحميل النموذج المعتمد واملأه ببيانات منتجاتك مباشرة" : "Download OSTA standard file to structure your catalogue"}</p>
+                <p className="text-xs text-onyx-400 mt-1">{isArabic ? "قم بتحميل النموذج المعتمد واملأه ببيانات منتجاتك وضع صورك به مباشرة" : "Download OSTA standard file to structure your catalogue and place images directly"}</p>
               </div>
               <button
                 type="button"
@@ -673,7 +702,7 @@ function BulkExcelModal({
                   {isArabic ? "اسحب وأفلت ملف المنتجات هنا" : "Drag and drop your products file here"}
                 </span>
                 <span className="text-xs text-onyx-500 mt-1.5 block">
-                  {isArabic ? "صيغة xlsx, xls, csv — حتى 10MB" : "Supports xlsx, xls, csv — up to 10MB"}
+                  {isArabic ? "ملفات Excel التي تحتوي على صور مدمجة — حتى 15MB" : "Excel files with embedded pictures — up to 15MB"}
                 </span>
               </div>
               <input type="file" accept=".xlsx, .xls, .csv" className="hidden" onChange={handleFileChange} />
@@ -694,8 +723,8 @@ function BulkExcelModal({
             <div className="flex items-center justify-between">
               <p className="text-sm text-onyx-400">
                 {isArabic
-                  ? `تم استخراج ${parsedData.length} منتج من الملف. يرجى مراجعة وتعديل أي أخطاء مظللة بالأحمر قبل الحفظ.`
-                  : `Extracted ${parsedData.length} products. Verify and edit highlighted errors before saving.`}
+                  ? `تم استخراج ${parsedData.length} منتج وصورهم من الملف. يرجى مراجعة وتعديل أي أخطاء مظللة بالأحمر قبل الحفظ.`
+                  : `Extracted ${parsedData.length} products and their pictures. Verify and edit highlighted errors before saving.`}
               </p>
               {hasErrors && (
                 <div className="rounded-full bg-error/10 border border-error/20 px-3.5 py-1 text-xs font-semibold text-error flex items-center gap-1.5">
@@ -709,14 +738,14 @@ function BulkExcelModal({
             <div className="overflow-x-auto max-h-[50vh] rounded-[1.2rem] border border-onyx-800 bg-onyx-850/20">
               <table className="w-full text-start border-collapse">
                 <thead>
-                  <tr className="bg-onyx-850 text-onyx-400 text-xs font-bold uppercase tracking-wider text-right">
+                  <tr className="bg-onyx-850 text-onyx-400 text-xs font-bold uppercase tracking-wider text-right border-b border-onyx-700">
                     <th className="p-3 text-center w-12">#</th>
                     <th className="p-3 text-right">{isArabic ? "الاسم بالعربي *" : "Arabic Name *"}</th>
                     <th className="p-3 text-right">{isArabic ? "الاسم بالإنجليزي" : "English Name"}</th>
                     <th className="p-3 text-right">{isArabic ? "الوصف" : "Description"}</th>
                     <th className="p-3 text-right w-32">{isArabic ? "السعر *" : "Price *"}</th>
                     <th className="p-3 text-right w-28">{isArabic ? "الكمية" : "Stock"}</th>
-                    <th className="p-3 text-right">{isArabic ? "رابط الصورة" : "Image URL"}</th>
+                    <th className="p-3 text-right w-64">{isArabic ? "صورة المنتج" : "Product Image"}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-onyx-800 text-sm text-white">
@@ -797,18 +826,42 @@ function BulkExcelModal({
 
                       {/* ImageUrl */}
                       <td className="p-2">
-                        <input
-                          type="url"
-                          value={p.imageUrl || ""}
-                          placeholder="https://..."
-                          onChange={e => updateCell(p.index, "imageUrl", e.target.value)}
-                          className={cn(
-                            "w-full bg-transparent px-2.5 py-1.5 rounded-lg border focus:outline-none focus:ring-1 focus:ring-primary-500",
-                            p.imageUrl && !p.imageUrl.startsWith("http://") && !p.imageUrl.startsWith("https://")
-                              ? "border-error/40 bg-error/5 text-error"
-                              : "border-transparent hover:border-onyx-700"
-                          )}
-                        />
+                        {p.imageUrl ? (
+                          <div className="flex items-center gap-2">
+                            <div className="relative h-9 w-9 overflow-hidden rounded-lg border border-onyx-700 bg-onyx-800 shrink-0">
+                              <img src={p.imageUrl} alt="preview" className="h-full w-full object-cover" />
+                            </div>
+                            <input
+                              type="text"
+                              value={p.imageUrl.startsWith("data:image") ? (isArabic ? "صورة مدمجة من Excel" : "Embedded Excel Image") : p.imageUrl}
+                              disabled={p.imageUrl.startsWith("data:image")}
+                              onChange={e => updateCell(p.index, "imageUrl", e.target.value)}
+                              className={cn(
+                                "flex-1 bg-transparent px-2 py-1 rounded-lg border text-xs focus:outline-none focus:ring-1 focus:ring-primary-500 truncate min-w-[6rem]",
+                                p.imageUrl.startsWith("data:image")
+                                  ? "border-gold-500/20 text-gold-500 bg-gold-500/5 font-semibold"
+                                  : p.imageUrl && !p.imageUrl.startsWith("http://") && !p.imageUrl.startsWith("https://")
+                                    ? "border-error/40 bg-error/5 text-error"
+                                    : "border-transparent hover:border-onyx-700"
+                              )}
+                            />
+                            <button
+                              type="button"
+                              onClick={() => updateCell(p.index, "imageUrl", "")}
+                              className="text-error hover:text-error/80 p-1 rounded hover:bg-white/5 transition"
+                            >
+                              <X className="h-4 w-4" />
+                            </button>
+                          </div>
+                        ) : (
+                          <input
+                            type="text"
+                            value=""
+                            placeholder={isArabic ? "لا توجد صورة" : "No image"}
+                            onChange={e => updateCell(p.index, "imageUrl", e.target.value)}
+                            className="w-full bg-transparent px-2.5 py-1.5 rounded-lg border border-transparent hover:border-onyx-700 text-xs focus:outline-none focus:ring-1 focus:ring-primary-500"
+                          />
+                        )}
                       </td>
                     </tr>
                   ))}
