@@ -1,4 +1,4 @@
-"use client";
+"use client";`nimport "leaflet/dist/leaflet.css";
 
 import { useEffect, useState, useMemo } from "react";
 import dynamic from "next/dynamic";
@@ -17,7 +17,7 @@ const MapInternal = dynamic(
   async () => {
     const { MapContainer, TileLayer, Marker, useMapEvents, useMap } = await import("react-leaflet");
     const L = await import('leaflet');
-    await import('leaflet/dist/leaflet.css');
+    
 
     const customIcon = L.icon({
       iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
