@@ -16,7 +16,8 @@ type MapPickerProps = {
 const MapInternal = dynamic(
   async () => {
     const { MapContainer, TileLayer, Marker, useMapEvents, useMap } = await import("react-leaflet");
-    const L = await import("leaflet");
+    const L = await import('leaflet');
+    await import('leaflet/dist/leaflet.css');
 
     const customIcon = L.icon({
       iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
@@ -70,6 +71,7 @@ const MapInternal = dynamic(
 export function MapPicker({ lat, lng, onChange, isArabic }: MapPickerProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
+  const [searchError, setSearchError] = useState("");
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
@@ -78,8 +80,11 @@ export function MapPicker({ lat, lng, onChange, isArabic }: MapPickerProps) {
       const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&limit=1&countrycodes=eg`);
       const data = await res.json();
       if (data.length > 0) {
+        setSearchError("");
         const { lat: newLat, lon: newLng, address } = data[0];
         onChange(parseFloat(newLat), parseFloat(newLng), address);
+      } else {
+        setSearchError(isArabic ? "لم يتم العثور على المكان، حاول كتابة اسم أعم (مثل اسم المنطقة أو المدينة)." : "Location not found, try a more general name (like area or city).");
       }
     } catch (err) {
       console.error("Search error:", err);
@@ -109,10 +114,13 @@ export function MapPicker({ lat, lng, onChange, isArabic }: MapPickerProps) {
         <input
           type="text"
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={(e) => {
+            setSearchQuery(e.target.value);
+            if (searchError) setSearchError("");
+          }}
           onKeyDown={(e) => e.key === "Enter" && handleSearch()}
           placeholder={isArabic ? "ابحث عن مكان..." : "Search for a place..."}
-          className="h-12 w-full rounded-[1.2rem] border border-onyx-700 bg-onyx-800/50 pl-12 pr-4 text-sm shadow-soft focus:border-primary-400 focus:ring-2 focus:ring-primary-500/30"
+          className={`h-12 w-full rounded-[1.2rem] border bg-onyx-800/50 pl-12 pr-4 text-sm shadow-soft focus:ring-2 ${searchError ? "border-red-500/50 focus:border-red-500 focus:ring-red-500/30 text-red-500" : "border-onyx-700 focus:border-primary-400 focus:ring-primary-500/30"}`}
         />
         <button
           onClick={(e) => {
@@ -125,6 +133,12 @@ export function MapPicker({ lat, lng, onChange, isArabic }: MapPickerProps) {
           <Search className="h-5 w-5" />
         </button>
       </div>
+
+      {searchError && (
+        <p className="text-sm font-medium text-red-400 -mt-2 px-2 animate-in slide-in-from-top-1">
+          {searchError}
+        </p>
+      )}
 
       <div className="overflow-hidden rounded-[1.8rem] border border-onyx-700 shadow-panel">
         <MapInternal lat={lat} lng={lng} onSelect={reverseGeocode} />

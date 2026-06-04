@@ -634,8 +634,8 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
                   </div>
                 </div>
                 <MapPicker 
-                  lat={draft.lat} 
-                  lng={draft.lng} 
+                  lat={draft.lat || 30.0444} 
+                  lng={draft.lng || 31.2357} 
                   isArabic={isArabic}
                   onChange={(lat, lng, addressDetails) => {
                     setDraft(prev => {
