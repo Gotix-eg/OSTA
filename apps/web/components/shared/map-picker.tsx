@@ -1,4 +1,5 @@
-"use client";`nimport "leaflet/dist/leaflet.css";
+"use client";
+import "leaflet/dist/leaflet.css";
 
 import { useEffect, useState, useMemo } from "react";
 import dynamic from "next/dynamic";
