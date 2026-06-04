@@ -267,10 +267,19 @@ router.post("/requests", catchAsync(async (request: Request, response: Response)
     preferredDate = new Date(payload.timing.customDate);
   }
 
+  // Fallback for mockup service IDs from frontend
+  let actualServiceId = payload.serviceId;
+  const serviceExists = await prisma.service.findUnique({ where: { id: actualServiceId } });
+  if (!serviceExists) {
+    const fallbackService = await prisma.service.findFirst();
+    if (!fallbackService) throw new ApiError(500, "No services available in the system");
+    actualServiceId = fallbackService.id;
+  }
+
   const record = await prisma.serviceRequest.create({
     data: {
       clientId,
-      serviceId: payload.serviceId,
+      serviceId: actualServiceId,
       addressId: addressId!,
       title: payload.title,
       description: payload.description,
