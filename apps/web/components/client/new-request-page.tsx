@@ -31,6 +31,7 @@ import {
 import { postApiData } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
+import { MapPicker } from "@/components/shared/map-picker";
 
 const draftStorageKey = "osta-client-new-request";
 
@@ -56,6 +57,8 @@ type RequestDraft = {
   city: string;
   district: string;
   street: string;
+  lat: number;
+  lng: number;
   timing: "emergency" | "today" | "tomorrow" | "custom";
   customDate: string;
   customWindow: string;
@@ -76,6 +79,8 @@ const initialDraft: RequestDraft = {
   city: "القاهرة الجديدة",
   district: "التجمع الخامس",
   street: "شارع التسعين",
+  lat: 30.0444,
+  lng: 31.2357,
   timing: "today",
   customDate: "",
   customWindow: "",
@@ -221,7 +226,9 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
           governorate: draft.addressMode === "new" ? draft.governorate : undefined,
           city: draft.addressMode === "new" ? draft.city : undefined,
           district: draft.addressMode === "new" ? draft.district : undefined,
-          street: draft.addressMode === "new" ? draft.street : undefined
+          street: draft.addressMode === "new" ? draft.street : undefined,
+          lat: draft.addressMode === "new" ? draft.lat : undefined,
+          lng: draft.addressMode === "new" ? draft.lng : undefined
         },
         timing: {
           type: draft.timing,
@@ -617,18 +624,43 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
               </div>
 
               <div className="onyx-card overflow-hidden p-5">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 mb-5">
                   <div className="flex h-12 w-12 items-center justify-center rounded-[1rem] bg-onyx-800/50 text-primary-700 shadow-soft">
                     <MapPin className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="text-lg font-semibold text-white">{isArabic ? "معاينة الخريطة" : "Map preview"}</p>
-                    <p className="text-sm text-onyx-400">{isArabic ? "واجهة تمهيدية لتحديد الموقع ووضع المؤشر لاحقًا" : "Placeholder for geolocation and pin placement"}</p>
+                    <p className="text-lg font-semibold text-white">{isArabic ? "الموقع على الخريطة" : "Location on map"}</p>
+                    <p className="text-sm text-onyx-400">{isArabic ? "ابحث أو حدد موقعك بدقة على الخريطة لسهولة وصول الفني" : "Search or precisely pin your location for easy technician access"}</p>
                   </div>
                 </div>
-                <div className="mt-5 flex min-h-80 items-center justify-center rounded-[1.6rem] border border-dashed border-dark-300 bg-onyx-800/50 text-sm text-onyx-500">
-                  {isArabic ? "معاينة المنطقة + موضع المؤشر" : "Area preview + pin position"}
-                </div>
+                <MapPicker 
+                  lat={draft.lat} 
+                  lng={draft.lng} 
+                  isArabic={isArabic}
+                  onChange={(lat, lng, addressDetails) => {
+                    setDraft(prev => {
+                      const updates: Partial<RequestDraft> = { lat, lng };
+                      
+                      // Optionally pre-fill city/governorate if provided by nominatim
+                      if (addressDetails) {
+                        if (addressDetails.city || addressDetails.town || addressDetails.village) {
+                          updates.city = addressDetails.city || addressDetails.town || addressDetails.village;
+                        }
+                        if (addressDetails.state || addressDetails.county) {
+                          updates.governorate = addressDetails.state || addressDetails.county;
+                        }
+                        if (addressDetails.suburb || addressDetails.neighbourhood) {
+                          updates.district = addressDetails.suburb || addressDetails.neighbourhood;
+                        }
+                        if (addressDetails.road) {
+                          updates.street = addressDetails.road;
+                        }
+                      }
+                      
+                      return { ...prev, ...updates };
+                    });
+                  }}
+                />
               </div>
             </div>
           ) : null}
