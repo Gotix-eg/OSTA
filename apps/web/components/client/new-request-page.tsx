@@ -221,14 +221,13 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
         description: draft.description,
         mediaNotes: draft.mediaNotes,
         address: {
-          mode: draft.addressMode,
-          savedAddressId: draft.addressMode === "saved" ? draft.savedAddress : undefined,
-          governorate: draft.addressMode === "new" ? draft.governorate : undefined,
-          city: draft.addressMode === "new" ? draft.city : undefined,
-          district: draft.addressMode === "new" ? draft.district : undefined,
-          street: draft.addressMode === "new" ? draft.street : undefined,
-          lat: draft.addressMode === "new" ? draft.lat : undefined,
-          lng: draft.addressMode === "new" ? draft.lng : undefined
+          mode: "new",
+          governorate: draft.addressMode === "saved" ? "القاهرة" : draft.governorate,
+          city: draft.addressMode === "saved" ? "القاهرة" : draft.city,
+          district: draft.addressMode === "saved" ? "المنطقة" : draft.district,
+          street: draft.addressMode === "saved" ? "الشارع الرئيسي" : draft.street,
+          lat: draft.addressMode === "saved" ? 30.0444 : draft.lat,
+          lng: draft.addressMode === "saved" ? 31.2357 : draft.lng
         },
         timing: {
           type: draft.timing,
