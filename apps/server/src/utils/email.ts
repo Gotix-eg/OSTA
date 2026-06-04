@@ -3,7 +3,7 @@ import nodemailer from "nodemailer";
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST || "smtp.ethereal.email",
   port: parseInt(process.env.SMTP_PORT || "587"),
-  secure: process.env.SMTP_SECURE === "true",
+  secure: parseInt(process.env.SMTP_PORT || "587") === 465,
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
@@ -20,8 +20,10 @@ export async function sendWelcomeEmail(to: string, name: string) {
 
   const mailOptions = {
     from: process.env.SMTP_FROM || '"OSTA" <noreply@osta.eg>',
+    replyTo: process.env.SMTP_USER || '"OSTA" <noreply@osta.eg>',
     to,
     subject: "Welcome to OSTA! | أهلاً بك في أُسطى",
+    text: `أهلاً بك يا ${name}!\n\nسعداء جداً بانضمامك إلى منصة أُسطى. نحن هنا لنوفر لك أفضل الخدمات المنزلية بكل سهولة وأمان.\nنعدك بتجربة مميزة مع أفضل الفنيين المعتمدين في مصر.\n\nهذه الرسالة مرسلة تلقائياً، برجاء عدم الرد عليها.`,
     html: `
       <div style="font-family: sans-serif; direction: rtl; text-align: right; max-width: 600px; margin: 0 auto; border: 1px solid #eee; padding: 20px; border-radius: 10px;">
         <h1 style="color: #d4af37;">أهلاً بك يا ${name}!</h1>
@@ -51,8 +53,10 @@ export async function sendPasswordResetEmail(to: string, code: string) {
   
   const mailOptions = {
     from: process.env.SMTP_FROM || '"OSTA" <noreply@osta.eg>',
+    replyTo: process.env.SMTP_USER || '"OSTA" <noreply@osta.eg>',
     to,
     subject: "Reset Your Password | إعادة تعيين كلمة المرور",
+    text: `طلب إعادة تعيين كلمة المرور\n\nلقد تلقينا طلباً لإعادة تعيين كلمة المرور الخاصة بحسابك في أُسطى.\n\nرمز التحقق الخاص بك هو:\n${code}\n\nهذا الرمز صالح لمدة ساعة واحدة فقط.\nإذا لم تطلب هذا، يمكنك تجاهل هذه الرسالة بأمان.\n\nمنصة أُسطى - الجودة والضمان.`,
     html: `
       <div style="font-family: sans-serif; direction: rtl; text-align: right; max-width: 600px; margin: 0 auto; border: 1px solid #eee; padding: 20px; border-radius: 10px;">
         <h2 style="color: #d4af37;">طلب إعادة تعيين كلمة المرور</h2>
