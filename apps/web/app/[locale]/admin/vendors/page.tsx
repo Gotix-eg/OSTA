@@ -1,14 +1,16 @@
 import { AdminVendorsManagement } from "@/components/admin/admin-vendors";
+import { DashboardShell } from "@/components/dashboard/dashboard-shell";
 import type { Locale } from "@/lib/locales";
 
-export default function AdminVendorsPage({
-  params: { locale }
+export default async function AdminVendorsPage({
+  params
 }: {
-  params: { locale: Locale }
+  params: Promise<{ locale: Locale }>
 }) {
+  const { locale } = await params;
   return (
-    <div className="container mx-auto px-4 py-8">
+    <DashboardShell locale={locale} role="admin">
       <AdminVendorsManagement locale={locale} />
-    </div>
+    </DashboardShell>
   );
 }

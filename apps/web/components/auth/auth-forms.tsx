@@ -25,7 +25,7 @@ import { cn } from "@/lib/utils";
 import { MapPicker } from "@/components/shared/map-picker";
 import { SelectField } from "@/components/shared/select-field";
 import { ImageUpload } from "@/components/shared/image-upload";
-import { egyptianGovernorates, majorCities, vendorCategories } from "@/lib/geo-data";
+import { egyptianGovernorates, majorCities, vendorCategories, workerProfessions } from "@/lib/geo-data";
 
 type ClientRegisterState = {
   phone: string;
@@ -35,11 +35,6 @@ type ClientRegisterState = {
   email: string;
   password: string;
   confirmPassword: string;
-  governorate: string;
-  city: string;
-  address: string;
-  latitude: number;
-  longitude: number;
   acceptedTerms: boolean;
 };
 
@@ -53,6 +48,7 @@ type WorkerRegisterState = {
   nationalIdBack: string;
   password: string;
   confirmPassword: string;
+  profession: string;
   acceptedTerms: boolean;
 };
 
@@ -102,11 +98,6 @@ const clientRegisterDefaults: ClientRegisterState = {
   email: "",
   password: "",
   confirmPassword: "",
-  governorate: "",
-  city: "",
-  address: "",
-  latitude: 30.0444,
-  longitude: 31.2357,
   acceptedTerms: false
 };
 
@@ -120,6 +111,7 @@ const workerRegisterDefaults: WorkerRegisterState = {
   nationalIdBack: "",
   password: "",
   confirmPassword: "",
+  profession: "",
   acceptedTerms: false
 };
 
@@ -141,7 +133,8 @@ function usePersistentState<T>(key: string, initialValue: T) {
 
     if (rawValue) {
       try {
-        setState(JSON.parse(rawValue) as T);
+        const parsed = JSON.parse(rawValue) as Partial<T>;
+        setState({ ...initialValue, ...parsed });
       } catch {
         window.localStorage.removeItem(key);
       }
@@ -463,11 +456,7 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
       setIsSubmitting(false);
       return;
     }
-    if (!state.governorate || !state.city || !state.address) {
-      setError(isArabic ? "برجاء إكمال بيانات العنوان" : "Please complete address details");
-      setIsSubmitting(false);
-      return;
-    }
+
     if (!state.acceptedTerms) {
       setError(isArabic ? "يجب الموافقة على الشروط والأحكام" : "You must accept terms and conditions");
       setIsSubmitting(false);
@@ -556,39 +545,6 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
             </div>
           </div>
 
-          <div className="onyx-card p-6 space-y-6 border-white/5 bg-white/[0.02]">
-            <h3 className="text-lg font-bold text-gold-500 border-b border-white/5 pb-2">
-              {isArabic ? "بيانات العنوان" : "Address Details"}
-            </h3>
-
-            <div className="grid gap-6 sm:grid-cols-2">
-              <SelectField
-                label={isArabic ? "المحافظة" : "Governorate"}
-                value={state.governorate}
-                options={egyptianGovernorates.map(g => ({ value: g.value, label: isArabic ? g.labelAr : g.labelEn }))}
-                onChange={(gov) => setState({ ...state, governorate: gov, city: "" })}
-                placeholder={isArabic ? "اختر المحافظة" : "Select governorate"}
-              />
-              <SelectField
-                label={isArabic ? "المدينة / المنطقة" : "City / Area"}
-                value={state.city}
-                disabled={!state.governorate}
-                options={(majorCities[state.governorate] || []).map(c => ({ value: c.value, label: isArabic ? c.labelAr : c.labelEn }))}
-                onChange={(city) => setState({ ...state, city })}
-                placeholder={isArabic ? "اختر المدينة" : "Select city"}
-              />
-            </div>
-
-            <div className="space-y-3">
-              <span className="text-sm font-bold text-onyx-300 tracking-wide">{isArabic ? "تحديد الموقع على الخريطة" : "Pin location on map"}</span>
-              <div className="rounded-2xl overflow-hidden border border-onyx-700 h-64 gold-border-glow">
-                <MapPicker lat={state.latitude} lng={state.longitude} isArabic={isArabic} onChange={(lat, lng) => setState({ ...state, latitude: lat, longitude: lng })} />
-              </div>
-            </div>
-
-            <InputField label={isArabic ? "العنوان التفصيلي" : "Detailed address"} value={state.address} onChange={(address) => setState({ ...state, address })} textarea rows={2} />
-          </div>
-
           <label className="flex items-center gap-3 cursor-pointer group onyx-card p-4 border-onyx-700 bg-onyx-800/30">
             <div className="relative flex h-5 w-5 items-center justify-center">
                 <input type="checkbox" checked={state.acceptedTerms} onChange={(e) => setState({ ...state, acceptedTerms: e.target.checked })} className="peer h-full w-full opacity-0 absolute cursor-pointer" />
@@ -635,6 +591,11 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
     }
     if (!state.firstName || !state.lastName) {
       setError(isArabic ? "برجاء إدخال الاسم بالكامل" : "Please enter full name");
+      setIsSubmitting(false);
+      return;
+    }
+    if (!state.profession) {
+      setError(isArabic ? "برجاء اختيار المهنة" : "Please select a profession");
       setIsSubmitting(false);
       return;
     }
@@ -715,7 +676,16 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
               <InputField label={isArabic ? "اسم العائلة" : "Last name"} value={state.lastName} onChange={(lastName) => setState({ ...state, lastName })} placeholder={isArabic ? "أحمد" : "Doe"} />
             </div>
 
-            <InputField label={isArabic ? "الرقم القومي (14 رقم)" : "National ID (14 digits)"} value={state.nationalIdNumber} onChange={(n) => setState({ ...state, nationalIdNumber: n })} placeholder="2xxxxxxxxxxxxx" />
+            <div className="grid gap-6 sm:grid-cols-2">
+              <InputField label={isArabic ? "الرقم القومي (14 رقم)" : "National ID (14 digits)"} value={state.nationalIdNumber} onChange={(n) => setState({ ...state, nationalIdNumber: n })} placeholder="2xxxxxxxxxxxxx" />
+              <SelectField
+                label={isArabic ? "المهنة / التخصص" : "Profession / Specialization"}
+                value={state.profession}
+                options={workerProfessions.map(p => ({ value: p.value, label: isArabic ? p.labelAr : p.labelEn }))}
+                onChange={(prof) => setState({ ...state, profession: prof })}
+                placeholder={isArabic ? "اختر المهنة" : "Select profession"}
+              />
+            </div>
           </div>
 
           <div className="onyx-card p-6 space-y-6 border-white/5 bg-white/[0.02]">

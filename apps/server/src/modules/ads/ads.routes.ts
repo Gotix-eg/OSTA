@@ -56,6 +56,17 @@ router.post("/:id/click", catchAsync(async (request, response) => {
 
 
 // ============================
+// User/Vendor/Worker Routes
+// ============================
+
+// GET /api/ads/my
+router.get("/my", authenticate, requireRoles("VENDOR", "WORKER", "ADMIN", "SUPER_ADMIN"), catchAsync(async (request, response) => {
+  const ownerId = request.auth!.userId;
+  const results = await adsService.getMyCampaigns(ownerId);
+  response.json(successResponse(results, "تم استرجاع إعلاناتك"));
+}));
+
+// ============================
 // Admin Management Routes
 // ============================
 

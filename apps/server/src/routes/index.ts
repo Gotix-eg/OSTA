@@ -105,6 +105,8 @@ import { materialsRouter } from "../modules/materials/materials.routes.js";
 import { adsRouter } from "../modules/ads/ads.routes.js";
 import { settingsRouter } from "../modules/settings/settings.routes.js";
 import { notificationsRouter } from "../modules/notifications/notifications.routes.js";
+import { chatRouter } from "../modules/chat/chat.routes.js";
+import { reviewsRouter } from "../modules/reviews/reviews.routes.js";
 
 router.use("/auth", authRouter);
 router.use("/clients", clientsRouter);
@@ -116,5 +118,7 @@ router.use("/materials", materialsRouter);
 router.use("/ads", adsRouter);
 router.use("/settings", settingsRouter);
 router.use("/notifications", notificationsRouter);
+router.use("/chat", chatRouter);
+router.use("/reviews", reviewsRouter);
 
 export const apiRouter = router;

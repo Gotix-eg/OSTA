@@ -1,17 +1,19 @@
-import { AdminWorkersManagement } from "@/components/admin/admin-workers";
+import { ReactNode } from "react";
 import { DashboardShell } from "@/components/dashboard/dashboard-shell";
-import type { Locale } from "@/lib/locales";
+import { Locale } from "@/lib/locales";
 
-export default async function AdminWorkersPage({
+export default async function AdminLayout({
+  children,
   params
 }: {
+  children: ReactNode;
   params: Promise<{ locale: Locale }>;
 }) {
   const { locale } = await params;
-
+  
   return (
     <DashboardShell locale={locale} role="admin">
-      <AdminWorkersManagement locale={locale} />
+      {children}
     </DashboardShell>
   );
 }

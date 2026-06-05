@@ -25,6 +25,7 @@ export type RegisterInput = {
   nationalIdBack?: string;
   commercialRecord?: string;
   taxCard?: string;
+  profession?: string;
 };
 
 type LoginInput = {
@@ -105,15 +106,24 @@ export const authService = {
   async register(input: RegisterInput) {
     const existingUser = await prisma.user.findFirst({
       where: {
-        OR: [
-          { phone: input.phone },
-          ...(input.email ? [{ email: input.email }] : [])
-        ]
+        OR: [{ phone: input.phone }, ...(input.email ? [{ email: input.email }] : [])]
       }
     });
 
     if (existingUser) {
-      throw new ApiError(409, "User already exists", "USER_EXISTS");
+      if (existingUser.phone === input.phone) {
+        throw new ApiError(409, "رقم الهاتف مسجل بالفعل", "PHONE_EXISTS");
+      }
+      throw new ApiError(409, "البريد الإلكتروني مسجل بالفعل", "EMAIL_EXISTS");
+    }
+
+    if (input.role === "WORKER" && input.nationalIdNumber) {
+      const existingWorker = await prisma.workerProfile.findUnique({
+        where: { nationalIdNumber: input.nationalIdNumber }
+      });
+      if (existingWorker) {
+        throw new ApiError(409, "الرقم القومي مسجل بالفعل", "NATIONAL_ID_EXISTS");
+      }
     }
 
     const passwordHash = await hashPassword(input.password);
@@ -159,6 +169,7 @@ export const authService = {
                   nationalIdNumber: input.nationalIdNumber,
                   nationalIdFront: input.nationalIdFront,
                   nationalIdBack: input.nationalIdBack,
+                  profession: input.profession,
                   yearsOfExperience: 0,
                   rating: 0,
                   ratingCount: 0,

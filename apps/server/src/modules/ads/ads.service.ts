@@ -36,6 +36,13 @@ export const adsService = {
     });
   },
 
+  async getMyCampaigns(ownerId: string) {
+    return prisma.adCampaign.findMany({
+      where: { ownerId },
+      orderBy: { createdAt: "desc" }
+    });
+  },
+
   async createCampaign(data: {
     type: AdType;
     placement: AdPlacement;

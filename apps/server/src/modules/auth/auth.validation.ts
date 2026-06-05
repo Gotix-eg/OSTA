@@ -23,7 +23,8 @@ export const registerSchema = z
     nationalIdFront: z.string().optional(),
     nationalIdBack: z.string().optional(),
     commercialRecord: z.string().optional(),
-    taxCard: z.string().optional()
+    taxCard: z.string().optional(),
+    profession: z.string().optional()
   })
   .refine((value) => value.password === value.confirmPassword, {
     message: "كلمة المرور غير متطابقة",

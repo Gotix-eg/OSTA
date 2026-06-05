@@ -53,9 +53,9 @@ type NavItem = {
 };
 
 const iconSets: Record<DashboardRole, Array<NavItem["icon"]>> = {
-  client: [Home, Briefcase, FolderClock, Store, Heart, Wallet, Settings],
-  worker: [Home, FolderClock, Briefcase, CreditCard, BarChart3, Settings],
-  vendor: [Home, Bell, Briefcase, Package, Wallet, Settings],
+  client: [Home, Briefcase, FolderClock, Store, Package, Heart, Wallet, Settings],
+  worker: [Home, FolderClock, Briefcase, CreditCard, Megaphone, BarChart3, Settings],
+  vendor: [Home, Bell, Briefcase, Wrench, Package, Megaphone, Wallet, Settings],
   admin: [Home, ShieldCheck, Users, FolderClock, Store, Wrench, CreditCard, Megaphone, SlidersHorizontal, Settings]
 };
 
@@ -125,9 +125,9 @@ export function DashboardShell({
 
   const navItems = useMemo(() => {
     const routes: Record<DashboardRole, string[]> = {
-      client: ["/client", "/client/new-request", "/client/my-requests", "/client/stores", "/client/favorites", "/client/wallet", "/client/settings"],
-      worker: ["/worker", "/worker/requests/incoming", "/worker/requests/active", "/worker/earnings", "/worker/ratings", "/worker/settings"],
-      vendor: ["/vendor", "/vendor/requests", "/vendor/active-orders", "/vendor/inventory", "/vendor/wallet", "/vendor/settings"],
+      client: ["/client", "/client/new-request", "/client/my-requests", "/client/stores", "/client/materials", "/client/favorites", "/client/wallet", "/client/settings"],
+      worker: ["/worker", "/worker/requests/incoming", "/worker/requests/active", "/worker/earnings", "/worker/ads", "/worker/ratings", "/worker/settings"],
+      vendor: ["/vendor", "/vendor/requests", "/vendor/active-orders", "/vendor/materials", "/vendor/inventory", "/vendor/ads", "/vendor/wallet", "/vendor/settings"],
       admin: ["/admin", "/admin/workers/pending", "/admin/clients", "/admin/requests", "/admin/vendors", "/admin/workers", "/admin/finance", "/admin/ads", "/admin/pricing", "/admin/settings"]
     };
 
@@ -251,17 +251,12 @@ function SidebarContent({
       <div className={cn("absolute -right-12 top-8 h-36 w-36 rounded-full blur-3xl", theme.orb)} />
       <div className="absolute -left-14 bottom-12 h-44 w-44 rounded-full bg-white/5 blur-3xl" />
 
-      <div className="relative rounded-[2rem] border border-white/5 bg-white/5 p-5 backdrop-blur-xl">
-        <div className="flex items-center gap-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-black/45 p-1 border border-white/5 shadow-xl">
-            <img src="/logo.svg" alt="OSTA" className="h-9 w-auto" />
-          </div>
-          <div>
-            <p className="font-serif text-2xl font-black leading-none tracking-tight text-white">OSTA</p>
-            <p className="mt-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-gold-500/80">{roleLabel}</p>
-          </div>
+      <div className="relative rounded-[2rem] border border-white/5 bg-white/5 p-5 backdrop-blur-xl flex flex-col items-center">
+        <div className="flex h-16 shrink-0 items-center justify-center w-full">
+          <img src="/logo.svg" alt="OSTA" className="h-10 w-auto object-contain" />
         </div>
-        <div className="mt-6 flex items-center justify-between rounded-2xl border border-white/5 bg-white/5 px-4 py-3 text-xs">
+
+        <div className="mt-6 flex items-center justify-between rounded-2xl w-full border border-white/5 bg-white/5 px-4 py-3 text-xs">
           <div>
             <p className="opacity-40">{locale === "ar" ? "الوضع" : "Mode"}</p>
             <p className="mt-1 font-bold text-white/90">{theme.tag}</p>

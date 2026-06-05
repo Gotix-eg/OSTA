@@ -5,6 +5,8 @@ declare global {
 }
 
 function getDatabaseUrl() {
+  if (process.env.OSTA_DB_URL) return process.env.OSTA_DB_URL;
+
   const unpooled = process.env.DATABASE_URL_UNPOOLED;
   if (unpooled) return unpooled;
 
@@ -15,13 +17,33 @@ function getDatabaseUrl() {
   return url;
 }
 
-export const prisma = globalThis.__ostaPrisma__ ?? new PrismaClient({
+import { socketService } from "./socket.js";
+
+const basePrisma = globalThis.__ostaPrisma__ ?? new PrismaClient({
   datasources: {
     db: {
       url: getDatabaseUrl()
     }
   }
 });
+
+export const prisma = basePrisma.$extends({
+  query: {
+    notification: {
+      async create({ args, query }) {
+        const notification = await query(args);
+        try {
+          if (notification && notification.userId) {
+            socketService.sendNotification(notification.userId as string, notification);
+          }
+        } catch (error) {
+          console.error("Socket error on notification create:", error);
+        }
+        return notification;
+      }
+    }
+  }
+}) as unknown as PrismaClient;
 
 if (process.env.NODE_ENV !== "production") {
   globalThis.__ostaPrisma__ = prisma;

@@ -19,8 +19,8 @@ export default async function RegisterClientPage({ params }: { params: Promise<{
       title={authCopy[locale].registerClientTitle}
       description={
         locale === "ar"
-          ? "ابدأ كعميل بخطوات قصيرة تشمل التحقق، البيانات الشخصية، والعنوان الافتراضي."
-          : "Start as a client with a short flow covering verification, personal details, and your default address."
+          ? "ابدأ كعميل بخطوات قصيرة تشمل التحقق والبيانات الشخصية."
+          : "Start as a client with a short flow covering verification and personal details."
       }
     >
       <ClientRegisterForm locale={locale} />

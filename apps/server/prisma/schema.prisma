@@ -5,7 +5,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("OSTA_DB_URL")
 }
 
 enum UserRole {
@@ -240,6 +240,7 @@ model WorkerProfile {
   nationalIdFront       String?
   nationalIdBack        String?
   selfieWithId          String?
+  profession            String?
   nationalIdNumber      String?                  @unique
   criminalRecord        String?
   verificationStatus    WorkerVerificationStatus @default(PENDING)

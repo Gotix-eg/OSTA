@@ -275,3 +275,15 @@ export const vendorCategories: GeoOption[] = [
   { value: "ac", labelEn: "AC & Heating Parts", labelAr: "قطع غيار تكييف" },
   { value: "furniture", labelEn: "Furniture & Carpentry", labelAr: "أثاث ونجارة" }
 ];
+export const workerProfessions: GeoOption[] = [
+  { value: "plumber", labelEn: "Plumber", labelAr: "سباك" },
+  { value: "electrician", labelEn: "Electrician", labelAr: "كهربائي" },
+  { value: "carpenter", labelEn: "Carpenter", labelAr: "نجار" },
+  { value: "painter", labelEn: "Painter", labelAr: "نقاش" },
+  { value: "ac-technician", labelEn: "AC Technician", labelAr: "فني تكييف" },
+  { value: "appliance-repair", labelEn: "Appliance Repair", labelAr: "صيانة أجهزة منزلية" },
+  { value: "cleaning", labelEn: "Cleaning Worker", labelAr: "عامل نظافة" },
+  { value: "gypsum", labelEn: "Gypsum Worker", labelAr: "فني جبس" },
+  { value: "ceramic", labelEn: "Ceramic Installer", labelAr: "مبلط سيراميك" },
+  { value: "networks-cameras", labelEn: "Networks & Cameras", labelAr: "شبكات وكاميرات" }
+];

@@ -1,12 +1,13 @@
 import { notFound } from "next/navigation";
-
-import { AdminDashboardHome } from "@/components/dashboard/dashboard-pages";
+import { AdminDashboardView } from "@/components/admin/admin-dashboard-view";
 import { DashboardShell } from "@/components/dashboard/dashboard-shell";
-import { isLocale } from "@/lib/locales";
+import { isLocale, type Locale } from "@/lib/locales";
 
-export const dynamic = "force-dynamic";
+export const metadata = {
+  title: "Super Admin Dashboard | OSTA",
+};
 
-export default async function AdminDashboardPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function AdminPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
 
   if (!isLocale(locale)) {
@@ -14,8 +15,8 @@ export default async function AdminDashboardPage({ params }: { params: Promise<{
   }
 
   return (
-    <DashboardShell locale={locale} role="admin">
-      <AdminDashboardHome locale={locale} />
+    <DashboardShell locale={locale as Locale} role="admin">
+      <AdminDashboardView />
     </DashboardShell>
   );
 }
