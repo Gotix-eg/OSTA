@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from "react";
 
-import { Building2, CreditCard, Save, ShieldCheck, Sparkles, Users, Wallet, Wrench } from "lucide-react";
+import { Building2, CreditCard, Save, ShieldCheck, Sparkles, Users, Wallet, Wrench, Trash2, Loader2 } from "lucide-react";
+import { patchApiData, deleteApiData } from "@/lib/api";
+import { cn } from "@/lib/utils";
 
 import {
   DashboardBlock,
@@ -28,7 +30,77 @@ function formatCurrency(locale: Locale, value: number) {
 
 export function AdminClientsPage({ locale, initialData }: { locale: Locale; initialData: AdminClientsData }) {
   const isArabic = locale === "ar";
-  const data = useLiveApiData("/admin/clients", initialData);
+  const liveData = useLiveApiData("/admin/clients", initialData);
+  const [data, setData] = useState(initialData);
+
+  useEffect(() => {
+    if (liveData) {
+      setData(liveData);
+    }
+  }, [liveData]);
+
+  // Wallet and Delete State
+  const [walletModalOpen, setWalletModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedClient, setSelectedClient] = useState<any | null>(null);
+  const [walletAmount, setWalletAmount] = useState("");
+  const [walletAction, setWalletAction] = useState<"add" | "deduct" | "set">("add");
+  const [actionLoading, setActionLoading] = useState(false);
+
+  async function handleDeleteClient() {
+    if (!selectedClient) return;
+    setActionLoading(true);
+    try {
+      await deleteApiData(`/admin/users/${selectedClient.id}`); // client.id is the User.id
+      setData(prev => ({
+        ...prev,
+        clients: prev.clients.filter(c => c.id !== selectedClient.id),
+        summary: {
+          ...prev.summary,
+          totalClients: prev.summary.totalClients - 1
+        }
+      }));
+      setDeleteModalOpen(false);
+      setSelectedClient(null);
+    } catch (err) {
+      alert(isArabic ? "فشل حذف العميل" : "Failed to delete client");
+    } finally {
+      setActionLoading(false);
+    }
+  }
+
+  async function handleAdjustWallet() {
+    if (!selectedClient) return;
+    const amountNum = parseFloat(walletAmount);
+    if (isNaN(amountNum) || amountNum <= 0) {
+      alert(isArabic ? "يرجى إدخال مبلغ صحيح" : "Please enter a valid amount");
+      return;
+    }
+    setActionLoading(true);
+    try {
+      const body: any = {};
+      if (walletAction === "set") {
+        body.balance = amountNum;
+      } else if (walletAction === "add") {
+        body.amount = amountNum;
+      } else {
+        body.amount = -amountNum;
+      }
+
+      const updatedProfile = await patchApiData<any, any>(`/admin/clients/${selectedClient.id}/wallet`, body);
+      setData(prev => ({
+        ...prev,
+        clients: prev.clients.map(c => c.id === selectedClient.id ? { ...c, walletBalance: updatedProfile.walletBalance } : c)
+      }));
+      setWalletModalOpen(false);
+      setWalletAmount("");
+      setSelectedClient(null);
+    } catch (err) {
+      alert(isArabic ? "فشل تعديل رصيد المحفظة" : "Failed to adjust wallet balance");
+    } finally {
+      setActionLoading(false);
+    }
+  }
 
   return (
     <div>
@@ -62,7 +134,31 @@ export function AdminClientsPage({ locale, initialData }: { locale: Locale; init
                     <h2 className="text-2xl font-semibold text-white">{client.name}</h2>
                     <p className="mt-2 text-onyx-400">{client.city}</p>
                   </div>
-                  <SoftBadge label={client.status} tone={client.status === "VIP" ? "sun" : "accent"} />
+                  <div className="flex items-center gap-3">
+                    <SoftBadge label={client.status} tone={client.status === "VIP" ? "sun" : "accent"} />
+                    <button 
+                      onClick={() => {
+                        setSelectedClient(client);
+                        setWalletAmount("");
+                        setWalletAction("add");
+                        setWalletModalOpen(true);
+                      }}
+                      className="h-10 w-10 rounded-xl bg-onyx-900 border border-onyx-700 flex items-center justify-center text-gold-500 hover:text-onyx-950 hover:bg-gold-500 transition-all"
+                      title={isArabic ? "تعديل المحفظة" : "Adjust Wallet"}
+                    >
+                      <Wallet className="h-4 w-4" />
+                    </button>
+                    <button 
+                      onClick={() => {
+                        setSelectedClient(client);
+                        setDeleteModalOpen(true);
+                      }}
+                      className="h-10 w-10 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 hover:bg-red-500 hover:text-white transition-all"
+                      title={isArabic ? "حذف الحساب" : "Delete Account"}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
                 </div>
                 <div className="mt-4">
                   <SplitInfo
@@ -77,6 +173,130 @@ export function AdminClientsPage({ locale, initialData }: { locale: Locale; init
           </div>
         )}
       </DashboardBlock>
+
+      {/* Wallet Adjustment Modal */}
+      {walletModalOpen && selectedClient && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fadeIn">
+          <div className="onyx-card max-w-md w-full p-8 border-gold-500/30 space-y-6">
+            <h3 className="text-2xl font-black text-white">
+              {isArabic ? `تعديل محفظة: ${selectedClient.name}` : `Adjust Wallet: ${selectedClient.name}`}
+            </h3>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-bold text-onyx-400 mb-2 block">
+                  {isArabic ? "نوع الإجراء" : "Action Type"}
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setWalletAction("add")}
+                    className={cn(
+                      "py-2 px-3 rounded-xl border text-sm font-bold transition-all",
+                      walletAction === "add" ? "bg-gold-500 text-onyx-950 border-gold-500" : "bg-onyx-900 border-onyx-700 text-white"
+                    )}
+                  >
+                    {isArabic ? "إضافة رصيد" : "Add"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setWalletAction("deduct")}
+                    className={cn(
+                      "py-2 px-3 rounded-xl border text-sm font-bold transition-all",
+                      walletAction === "deduct" ? "bg-red-500 text-white border-red-500" : "bg-onyx-900 border-onyx-700 text-white"
+                    )}
+                  >
+                    {isArabic ? "خصم رصيد" : "Deduct"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setWalletAction("set")}
+                    className={cn(
+                      "py-2 px-3 rounded-xl border text-sm font-bold transition-all",
+                      walletAction === "set" ? "bg-emerald-500 text-white border-emerald-500" : "bg-onyx-900 border-onyx-700 text-white"
+                    )}
+                  >
+                    {isArabic ? "تعيين رصيد" : "Set"}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-sm font-bold text-onyx-400 mb-2 block">
+                  {isArabic ? "المبلغ (ج.م)" : "Amount (EGP)"}
+                </label>
+                <input
+                  type="number"
+                  placeholder="0.00"
+                  className="w-full bg-onyx-900 border border-onyx-700 rounded-xl px-4 py-3 text-white focus:border-gold-500/50 outline-none"
+                  value={walletAmount}
+                  onChange={(e) => setWalletAmount(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-3 justify-end pt-4">
+              <button
+                type="button"
+                onClick={() => {
+                  setWalletModalOpen(false);
+                  setSelectedClient(null);
+                }}
+                disabled={actionLoading}
+                className="btn-onyx py-3 px-6 text-sm font-bold"
+              >
+                {isArabic ? "إلغاء" : "Cancel"}
+              </button>
+              <button
+                type="button"
+                onClick={handleAdjustWallet}
+                disabled={actionLoading}
+                className="btn-gold py-3 px-6 text-sm font-bold"
+              >
+                {actionLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : (isArabic ? "تأكيد التعديل" : "Confirm")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteModalOpen && selectedClient && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fadeIn">
+          <div className="onyx-card max-w-md w-full p-8 border-red-500/30 space-y-6">
+            <h3 className="text-2xl font-black text-white">
+              {isArabic ? "تأكيد حذف الحساب نهائياً" : "Confirm Permanent Delete"}
+            </h3>
+            <p className="text-onyx-300 text-sm leading-relaxed">
+              {isArabic 
+                ? `هل أنت متأكد من رغبتك في حذف حساب العميل "${selectedClient.name}" بالكامل؟ سيتم مسح هذا الحساب وكافة الطلبات والبيانات والتقييمات التابعة له ولا يمكن التراجع عن هذا القرار.` 
+                : `Are you sure you want to permanently delete client "${selectedClient.name}"? This will delete their entire account, requests, and ratings. This action cannot be undone.`}
+            </p>
+
+            <div className="flex gap-3 justify-end pt-4">
+              <button
+                type="button"
+                onClick={() => {
+                  setDeleteModalOpen(false);
+                  setSelectedClient(null);
+                }}
+                disabled={actionLoading}
+                className="btn-onyx py-3 px-6 text-sm font-bold"
+              >
+                {isArabic ? "إلغاء" : "Cancel"}
+              </button>
+              <button
+                type="button"
+                onClick={handleDeleteClient}
+                disabled={actionLoading}
+                className="bg-red-600 hover:bg-red-700 text-white rounded-xl py-3 px-6 text-sm font-bold transition-all"
+              >
+                {actionLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : (isArabic ? "حذف نهائي" : "Delete Permanently")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

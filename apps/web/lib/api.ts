@@ -99,3 +99,22 @@ export async function patchApiData<TResponse, TBody>(path: string, body?: TBody)
 
   return payload.data;
 }
+
+export async function deleteApiData<TResponse>(path: string) {
+  const response = await fetch(`${resolveApiBaseUrl()}${path}`, {
+    method: "DELETE",
+    credentials: "include",
+    headers: {
+      Accept: "application/json",
+      Authorization: typeof window !== "undefined" ? `Bearer ${window.localStorage.getItem("osta_access_token") || window.sessionStorage.getItem("osta_access_token") || ""}` : ""
+    }
+  });
+
+  const payload = (await response.json()) as ApiEnvelope<TResponse>;
+
+  if (!response.ok || !payload.success) {
+    throw new Error(payload.error ?? payload.message ?? `Request failed with ${response.status}`);
+  }
+
+  return payload.data;
+}

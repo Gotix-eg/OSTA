@@ -466,4 +466,314 @@ router.post("/vendors/:id/verify", catchAsync(async (request, response) => {
   response.json(successResponse(updated, "Vendor verified and 30-day trial started successfully"));
 }));
 
+// --- USER DELETION ---
+router.delete("/users/:id", catchAsync(async (req, res) => {
+  const id = req.params.id as string;
+
+  const user = await prisma.user.findUnique({
+    where: { id },
+    include: {
+      clientProfile: true,
+      workerProfile: true,
+      vendorProfile: true
+    }
+  });
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  const clientProfileId = user.clientProfile?.id;
+  const workerProfileId = user.workerProfile?.id;
+  const vendorProfileId = user.vendorProfile?.id;
+
+  const deleteOperations: any[] = [];
+
+  // 1. AuditLog: nullify userId
+  deleteOperations.push(
+    prisma.auditLog.updateMany({
+      where: { userId: id },
+      data: { userId: null }
+    })
+  );
+
+  // 2. Messages
+  deleteOperations.push(
+    prisma.message.deleteMany({
+      where: { OR: [{ senderId: id }, { receiverId: id }] }
+    })
+  );
+
+  // 3. WalletTransactions
+  deleteOperations.push(
+    prisma.walletTransaction.deleteMany({
+      where: { userId: id }
+    })
+  );
+
+  // 4. Reviews
+  deleteOperations.push(
+    prisma.review.deleteMany({
+      where: { OR: [{ authorId: id }, { targetId: id }] }
+    })
+  );
+
+  // 5. Complaints
+  deleteOperations.push(
+    prisma.complaint.deleteMany({
+      where: { OR: [{ authorId: id }, { targetId: id }] }
+    })
+  );
+
+  // 6. AdCampaigns
+  deleteOperations.push(
+    prisma.adCampaign.deleteMany({
+      where: { ownerId: id }
+    })
+  );
+
+  // 7. MaterialRequests & Orders for Client/Requester
+  deleteOperations.push(
+    prisma.materialOrder.deleteMany({
+      where: {
+        OR: [
+          { clientId: id },
+          { clientId: clientProfileId || "" },
+          { request: { requesterId: id } }
+        ]
+      }
+    })
+  );
+
+  deleteOperations.push(
+    prisma.materialRequest.deleteMany({
+      where: { requesterId: id }
+    })
+  );
+
+  // 8. DirectOrders where Client
+  deleteOperations.push(
+    prisma.directOrder.deleteMany({
+      where: {
+        OR: [
+          { clientId: id },
+          { clientId: clientProfileId || "" }
+        ]
+      }
+    })
+  );
+
+  // 9. ClientProfile specific: ServiceRequests
+  if (clientProfileId) {
+    // Delete non-cascade children of ServiceRequest
+    deleteOperations.push(
+      prisma.payment.deleteMany({
+        where: { request: { clientId: clientProfileId } }
+      })
+    );
+    deleteOperations.push(
+      prisma.review.deleteMany({
+        where: { request: { clientId: clientProfileId } }
+      })
+    );
+    deleteOperations.push(
+      prisma.warranty.deleteMany({
+        where: { request: { clientId: clientProfileId } }
+      })
+    );
+    deleteOperations.push(
+      prisma.complaint.deleteMany({
+        where: { request: { clientId: clientProfileId } }
+      })
+    );
+    deleteOperations.push(
+      prisma.invoice.deleteMany({
+        where: { request: { clientId: clientProfileId } }
+      })
+    );
+    deleteOperations.push(
+      prisma.serviceRequest.deleteMany({
+        where: { clientId: clientProfileId }
+      })
+    );
+  }
+
+  // 10. WorkerProfile specific
+  if (workerProfileId) {
+    deleteOperations.push(
+      prisma.serviceRequest.updateMany({
+        where: { workerId: workerProfileId },
+        data: { workerId: null }
+      })
+    );
+    deleteOperations.push(
+      prisma.requestOffer.deleteMany({
+        where: { workerId: workerProfileId }
+      })
+    );
+  }
+
+  // 11. VendorProfile specific
+  if (vendorProfileId) {
+    deleteOperations.push(
+      prisma.directOrder.deleteMany({
+        where: { vendorId: vendorProfileId }
+      })
+    );
+    deleteOperations.push(
+      prisma.materialOrder.deleteMany({
+        where: { vendorId: vendorProfileId }
+      })
+    );
+    deleteOperations.push(
+      prisma.materialOffer.deleteMany({
+        where: { vendorId: vendorProfileId }
+      })
+    );
+  }
+
+  // 12. Delete User itself (cascades clientProfile, workerProfile, vendorProfile, addresses, sessions, notifications, otpCodes)
+  deleteOperations.push(
+    prisma.user.delete({
+      where: { id }
+    })
+  );
+
+  await prisma.$transaction(deleteOperations);
+
+  res.json(successResponse({}, "User deleted successfully"));
+}));
+
+// --- WALLET MANAGEMENT ---
+
+// PATCH /admin/workers/:id/wallet
+router.patch("/workers/:id/wallet", catchAsync(async (req, res) => {
+  const id = req.params.id as string;
+  const { amount, balance } = req.body;
+
+  let updateData: any = {};
+  if (balance !== undefined) {
+    updateData = { walletBalance: parseFloat(balance) };
+  } else if (amount !== undefined) {
+    updateData = { walletBalance: { increment: parseFloat(amount) } };
+  } else {
+    throw new ApiError(400, "Must provide amount or balance");
+  }
+
+  // Fetch worker to get userId for creating wallet transaction log
+  const worker = await prisma.workerProfile.findUnique({
+    where: { id },
+    select: { userId: true, walletBalance: true }
+  });
+
+  if (!worker) {
+    throw new ApiError(404, "Worker not found");
+  }
+
+  const updated = await prisma.workerProfile.update({
+    where: { id },
+    data: updateData
+  });
+
+  // Create WalletTransaction log
+  const newBalance = updated.walletBalance;
+  const diff = newBalance - worker.walletBalance;
+  await prisma.walletTransaction.create({
+    data: {
+      userId: worker.userId,
+      type: diff >= 0 ? "ADMIN_CREDIT" : "ADMIN_DEBIT",
+      amount: Math.abs(diff),
+      balance: newBalance,
+      description: `تعديل الرصيد بواسطة الإدارة: ${diff >= 0 ? '+' : ''}${diff}`
+    }
+  });
+
+  res.json(successResponse(updated, "Worker wallet updated successfully"));
+}));
+
+// PATCH /admin/vendors/:id/wallet
+router.patch("/vendors/:id/wallet", catchAsync(async (req, res) => {
+  const id = req.params.id as string;
+  const { amount, balance } = req.body;
+
+  let updateData: any = {};
+  if (balance !== undefined) {
+    updateData = { walletBalance: parseFloat(balance) };
+  } else if (amount !== undefined) {
+    updateData = { walletBalance: { increment: parseFloat(amount) } };
+  } else {
+    throw new ApiError(400, "Must provide amount or balance");
+  }
+
+  const vendor = await prisma.vendorProfile.findUnique({
+    where: { id },
+    select: { userId: true, walletBalance: true }
+  });
+
+  if (!vendor) {
+    throw new ApiError(404, "Vendor not found");
+  }
+
+  const updated = await prisma.vendorProfile.update({
+    where: { id },
+    data: updateData
+  });
+
+  const newBalance = updated.walletBalance;
+  const diff = newBalance - vendor.walletBalance;
+  await prisma.walletTransaction.create({
+    data: {
+      userId: vendor.userId,
+      type: diff >= 0 ? "ADMIN_CREDIT" : "ADMIN_DEBIT",
+      amount: Math.abs(diff),
+      balance: newBalance,
+      description: `تعديل الرصيد بواسطة الإدارة: ${diff >= 0 ? '+' : ''}${diff}`
+    }
+  });
+
+  res.json(successResponse(updated, "Vendor wallet updated successfully"));
+}));
+
+// PATCH /admin/clients/:id/wallet
+router.patch("/clients/:id/wallet", catchAsync(async (req, res) => {
+  const id = req.params.id as string;
+  const { amount, balance } = req.body;
+
+  let updateData: any = {};
+  if (balance !== undefined) {
+    updateData = { walletBalance: parseFloat(balance) };
+  } else if (amount !== undefined) {
+    updateData = { walletBalance: { increment: parseFloat(amount) } };
+  } else {
+    throw new ApiError(400, "Must provide amount or balance");
+  }
+
+  let clientProfile = await prisma.clientProfile.findFirst({
+    where: { OR: [{ id }, { userId: id }] }
+  });
+
+  if (!clientProfile) {
+    throw new ApiError(404, "Client profile not found");
+  }
+
+  const updated = await prisma.clientProfile.update({
+    where: { id: clientProfile.id },
+    data: updateData
+  });
+
+  const newBalance = updated.walletBalance;
+  const diff = newBalance - clientProfile.walletBalance;
+  await prisma.walletTransaction.create({
+    data: {
+      userId: clientProfile.userId,
+      type: diff >= 0 ? "ADMIN_CREDIT" : "ADMIN_DEBIT",
+      amount: Math.abs(diff),
+      balance: newBalance,
+      description: `تعديل الرصيد بواسطة الإدارة: ${diff >= 0 ? '+' : ''}${diff}`
+    }
+  });
+
+  res.json(successResponse(updated, "Client wallet updated successfully"));
+}));
+
 export const adminRouter = router;
