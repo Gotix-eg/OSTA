@@ -398,7 +398,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
 
             {/* Social Media Links */}
             <div className="flex items-center justify-center gap-4 mt-2">
-              <a href="https://facebook.com/osta.egypt" target="_blank" rel="noopener noreferrer" className="h-10 w-10 rounded-xl bg-white/5 hover:bg-gold-500 hover:text-onyx-950 transition-all duration-300 flex items-center justify-center text-onyx-300 border border-white/10 hover:border-gold-500 hover:-translate-y-1">
+              <a href="https://www.facebook.com/2ostafy/" target="_blank" rel="noopener noreferrer" className="h-10 w-10 rounded-xl bg-white/5 hover:bg-gold-500 hover:text-onyx-950 transition-all duration-300 flex items-center justify-center text-onyx-300 border border-white/10 hover:border-gold-500 hover:-translate-y-1">
                 <Facebook className="h-5 w-5" />
               </a>
               <a href="https://instagram.com/osta.egypt" target="_blank" rel="noopener noreferrer" className="h-10 w-10 rounded-xl bg-white/5 hover:bg-gold-500 hover:text-onyx-950 transition-all duration-300 flex items-center justify-center text-onyx-300 border border-white/10 hover:border-gold-500 hover:-translate-y-1">

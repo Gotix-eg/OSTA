@@ -69,7 +69,7 @@ export function ContactForm({ locale }: { locale: Locale }) {
                </div>
 
                <a 
-                  href="https://facebook.com/osta.egypt"
+                  href="https://www.facebook.com/2ostafy/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-4 group cursor-pointer"
