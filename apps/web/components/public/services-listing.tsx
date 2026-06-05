@@ -126,10 +126,10 @@ export function ServicesListing({ locale }: { locale: Locale }) {
          <div className="absolute top-0 left-0 p-8 opacity-20"><Sparkles className="h-12 w-12 text-gold-500" /></div>
          <div className="space-y-4 text-center md:text-start relative z-10">
             <h2 className="text-3xl font-black text-white">{isArabic ? "هل أنت حرفي متميز؟" : "Are you a master technician?"}</h2>
-            <p className="text-onyx-400 max-w-md">{isArabic ? "انضم إلى أُسطى وابدأ في بناء مستقبلك المهني مع أفضل العملاء في مصر." : "Join OSTA and start building your career with the best clients in Egypt."}</p>
+            <p className="text-onyx-400 max-w-md">{isArabic ? "انضم إلى أُسطفاي وابدأ في بناء مستقبلك المهني مع أفضل العملاء في مصر." : "Join OSTAFY and start building your career with the best clients in Egypt."}</p>
          </div>
          <Link href={`/${locale}/register/worker`} className="btn-gold px-10 h-14 flex items-center gap-3 relative z-10">
-            {isArabic ? "سجل الآن كأُسطى" : "Register as OSTA Master"}
+            {isArabic ? "سجل الآن كأُسطفاي" : "Register as OSTAFY Master"}
             {isArabic ? <ArrowLeft className="h-5 w-5" /> : <ArrowRight className="h-5 w-5" />}
          </Link>
       </section>

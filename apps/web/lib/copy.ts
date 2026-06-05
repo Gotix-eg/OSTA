@@ -8,7 +8,7 @@ export const landingCopy = {
     login: "دخول",
     getStarted: "ابدأ الآن",
     heroEyebrow: "منصة موثوقة للحرفيين المعتمدين في مصر",
-    heroTitle: "أُسطى في بيتك... بضغطة زر",
+    heroTitle: "أُسطفاي في بيتك... بضغطة زر",
     heroSubtitle:
       "اطلب فني موثق يصل إليك بسرعة، مع تسعير واضح وضمان على الخدمة ودفع آمن يحفظ حقك.",
     searchService: "ما الخدمة التي تحتاجها؟",
@@ -25,9 +25,9 @@ export const landingCopy = {
       { value: 100, suffix: "%", label: "ضمان رضا" }
     ],
     servicesTitle: "خدماتنا",
-    servicesSubtitle: "فئات واضحة، فنيين متاحين، واستجابة سريعة من أقرب أُسطى مناسب لطلبك.",
+    servicesSubtitle: "فئات واضحة، فنيين متاحين، واستجابة سريعة من أقرب أُسطفاي مناسب لطلبك.",
     viewAllServices: "عرض كل الخدمات",
-    howTitle: "كيف يعمل OSTA؟",
+    howTitle: "كيف يعمل OSTAFY؟",
     howSubtitle: "تجربة سهلة مثل أوبر، لكن مصممة خصيصًا للخدمات المنزلية والمهارية.",
     steps: [
       {
@@ -47,7 +47,7 @@ export const landingCopy = {
         description: "الدفع يبقى محمي لحد التأكيد، وبعدها تقدر تضيف تقييمك وضمانك."
       }
     ],
-    whyTitle: "لماذا أُسطى؟",
+    whyTitle: "لماذا أُسطفاي؟",
     whySubtitle: "بناء الثقة هنا مش شعارات، لكنه نظام كامل يحمي العميل والفني معًا.",
     whyCards: [
       ["توثيق أمني من 5 خطوات", "هوية، مستندات، ومراجعة قبل تفعيل أي عامل."],
@@ -67,8 +67,8 @@ export const landingCopy = {
       "انضم لمنصة تفتح لك طلبات يومية، ساعات مرنة، ودعم مهني يساعدك تكبر شغلك باحتراف.",
     workerBenefits: ["دخل مستمر", "ساعات مرنة", "تدريب مستمر", "دعم فني", "سوق أدوات مهني"],
     workerStats: "انضم إلى 5000+ عامل يحققون متوسط 8000 جنيه شهريًا",
-    registerWorker: "سجّل كأُسطى",
-    downloadTitle: "تطبيق OSTA قريبًا",
+    registerWorker: "سجّل كأُسطفاي",
+    downloadTitle: "تطبيق OSTAFY قريبًا",
     downloadBody: "تابع الطلبات والدفع والتواصل من موبايلك بتجربة مصممة للحركة اليومية.",
     comingSoon: "قريبًا",
     faqTitle: "أسئلة شائعة",
@@ -88,11 +88,11 @@ export const landingCopy = {
       contact: "تواصل"
     },
     footerItems: {
-      quick: ["الخدمات", "كيف يعمل", "عن OSTA", "اتصل بنا"],
+      quick: ["الخدمات", "كيف يعمل", "عن OSTAFY", "اتصل بنا"],
       workers: ["سجل الآن", "الأسئلة الشائعة", "التدريب", "الدعم"],
       contact: ["support@osta.eg", "+20 100 000 0000", "القاهرة، مصر"]
     },
-    footerBottom: "جميع الحقوق محفوظة لـ OSTA"
+    footerBottom: "جميع الحقوق محفوظة لـ OSTAFY"
   },
   en: {
     homeLabel: "Home",
@@ -120,7 +120,7 @@ export const landingCopy = {
     servicesTitle: "Our Services",
     servicesSubtitle: "Clear categories, ready workers, and fast matching to the right specialist near you.",
     viewAllServices: "View All Services",
-    howTitle: "How OSTA Works",
+    howTitle: "How OSTAFY Works",
     howSubtitle: "As smooth as ride-hailing, rebuilt for skilled home services and repairs.",
     steps: [
       {
@@ -140,7 +140,7 @@ export const landingCopy = {
         description: "Your payment stays protected until the service is completed properly."
       }
     ],
-    whyTitle: "Why OSTA",
+    whyTitle: "Why OSTAFY",
     whySubtitle: "Trust is not a marketing line here. It is built into the full service flow.",
     whyCards: [
       ["5-step worker verification", "Identity, documents, and compliance review before activation."],
@@ -161,7 +161,7 @@ export const landingCopy = {
     workerBenefits: ["Steady income", "Flexible hours", "Training", "Dedicated support", "Tools marketplace"],
     workerStats: "Join 5,000+ workers earning an average of EGP 8,000 per month",
     registerWorker: "Register as a Worker",
-    downloadTitle: "OSTA App is Coming Soon",
+    downloadTitle: "OSTAFY App is Coming Soon",
     downloadBody: "Manage requests, payments, and communication from a mobile-first experience built for daily movement.",
     comingSoon: "Coming Soon",
     faqTitle: "Frequently Asked Questions",
@@ -181,11 +181,11 @@ export const landingCopy = {
       contact: "Contact"
     },
     footerItems: {
-      quick: ["Services", "How It Works", "About OSTA", "Contact"],
+      quick: ["Services", "How It Works", "About OSTAFY", "Contact"],
       workers: ["Register", "FAQ", "Training", "Support"],
       contact: ["support@osta.eg", "+20 100 000 0000", "Cairo, Egypt"]
     },
-    footerBottom: "All rights reserved by OSTA"
+    footerBottom: "All rights reserved by OSTAFY"
   }
 } as const;
 
@@ -195,8 +195,8 @@ export const authCopy = {
     loginTitle: "سجّل دخولك وابدأ طلبك",
     loginBody: "ادخل رقم الهاتف وكلمة المرور للوصول إلى الطلبات والمحفظة والإشعارات.",
     registerClientTitle: "افتح حساب عميل في دقائق",
-    registerWorkerTitle: "ابدأ رحلتك المهنية مع أُسطى",
-    registerVendorTitle: "كن موردًا معتمدًا مع أُسطى",
+    registerWorkerTitle: "ابدأ رحلتك المهنية مع أُسطفاي",
+    registerVendorTitle: "كن موردًا معتمدًا مع أُسطفاي",
     forgotPasswordTitle: "استرجاع كلمة المرور",
     forgotPasswordBody: "أدخل بريدك الإلكتروني المسجل وسنرسل لك رمزاً لتغيير كلمة المرور.",
     resetPasswordTitle: "تحديث كلمة المرور",
@@ -221,8 +221,8 @@ export const authCopy = {
     loginTitle: "Sign in and continue your request",
     loginBody: "Use your phone and password to access requests, wallet, and notifications.",
     registerClientTitle: "Create a client account in minutes",
-    registerWorkerTitle: "Start your professional journey with OSTA",
-    registerVendorTitle: "Become a trusted vendor with OSTA",
+    registerWorkerTitle: "Start your professional journey with OSTAFY",
+    registerVendorTitle: "Become a trusted vendor with OSTAFY",
     forgotPasswordTitle: "Reset your password",
     forgotPasswordBody: "Enter your registered email and we will send you a code to reset your password.",
     resetPasswordTitle: "Update password",

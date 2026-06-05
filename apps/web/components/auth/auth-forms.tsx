@@ -485,8 +485,8 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
         <h2 className="text-4xl font-black text-white tracking-tight mb-4 font-display">{copy.registerClientTitle}</h2>
         <p className="text-onyx-400 leading-relaxed text-pretty">
           {isArabic 
-            ? "انضم إلى مجتمع أُسطى واحصل على أفضل الفنيين لخدماتك المنزلية بكل سهولة." 
-            : "Join the OSTA community and get the best technicians for your home services with ease."}
+            ? "انضم إلى مجتمع أُسطفاي واحصل على أفضل الفنيين لخدماتك المنزلية بكل سهولة." 
+            : "Join the OSTAFY community and get the best technicians for your home services with ease."}
         </p>
       </div>
 
@@ -645,8 +645,8 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
         <h2 className="text-4xl font-black text-white tracking-tight mb-4 font-display">{copy.registerWorkerTitle}</h2>
         <p className="text-onyx-400 leading-relaxed text-pretty">
           {isArabic 
-            ? "انضم إلى فريق النخبة من الفنيين في أُسطى وابدأ في استقبال الطلبات المربحة فوراً." 
-            : "Join the elite team of technicians at OSTA and start receiving profitable requests immediately."}
+            ? "انضم إلى فريق النخبة من الفنيين في أُسطفاي وابدأ في استقبال الطلبات المربحة فوراً." 
+            : "Join the elite team of technicians at OSTAFY and start receiving profitable requests immediately."}
         </p>
       </div>
 

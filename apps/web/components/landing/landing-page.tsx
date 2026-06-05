@@ -140,7 +140,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
       <nav className="fixed top-0 inset-x-0 z-50 bg-black/95 backdrop-blur-xl border-b border-white/5">
         <div className="max-w-7xl mx-auto px-4 h-24 flex items-center justify-between">
           <Link href={`/${locale}`} className="flex items-center gap-2 group">
-            <img src="/logo.svg" alt="OSTA" className="h-12 w-auto" />
+            <img src="/logo.svg" alt="OSTAFY" className="h-12 w-auto" />
           </Link>
 
           <div className="hidden md:flex items-center gap-8">
@@ -359,7 +359,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
           <div className="absolute inset-0 bg-gold-gradient opacity-0 group-hover:opacity-5 transition-opacity pointer-events-none" />
           <div className="relative z-10">
             <h2 className="text-4xl md:text-6xl font-black text-white mb-8">
-              {isArabic ? "جاهز لتجربة أُسطى؟" : "Ready for OSTA Experience?"}
+              {isArabic ? "جاهز لتجربة أُسطفاي؟" : "Ready for OSTAFY Experience?"}
             </h2>
             <p className="text-gold-100 text-xl mb-12 max-w-2xl mx-auto">
               {isArabic ? "سجل الآن كعميل وابدأ في طلب خدماتك أو انضم كمحترف وضاعف دخلك." : "Register now as a client or join as a pro and multiply your income."}
@@ -381,7 +381,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
         <div className="max-w-7xl mx-auto px-4 text-center">
           <div className="flex flex-col items-center justify-center gap-6 mb-10">
             <div className="w-fit">
-              <img src="/logo.svg" alt="OSTA" className="h-20 w-auto opacity-95" />
+              <img src="/logo.svg" alt="OSTAFY" className="h-20 w-auto opacity-95" />
             </div>
             
             {/* Contact Details */}
@@ -412,7 +412,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
             </div>
           </div>
           <p className="text-onyx-600 text-xs font-semibold tracking-wide">
-            © {new Date().getFullYear()} OSTA Egypt. {isArabic ? "جميع الحقوق محفوظة." : "All rights reserved."}
+            © {new Date().getFullYear()} OSTAFY Egypt. {isArabic ? "جميع الحقوق محفوظة." : "All rights reserved."}
           </p>
         </div>
       </footer>

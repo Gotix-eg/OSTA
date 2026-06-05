@@ -18,7 +18,7 @@ export const publicPageCopy = {
       services: {
         eyebrow: "الخدمات",
         title: "خدمات منظمة بطريقة واضحة",
-        description: "من الكهرباء والسباكة والتكييف، تقدم أُسطى فئات واضحة ومطابقة أسرع مع عمال موثقين ومتاحين.",
+        description: "من الكهرباء والسباكة والتكييف، تقدم أُسطفاي فئات واضحة ومطابقة أسرع مع عمال موثقين ومتاحين.",
         sections: [
           {
             title: "الفئات الأساسية",
@@ -54,8 +54,8 @@ export const publicPageCopy = {
         ]
       },
       about: {
-        eyebrow: "عن أُسطى",
-        title: "أُسطى مبني على الثقة قبل أي حجز",
+        eyebrow: "عن أُسطفاي",
+        title: "أُسطفاي مبني على الثقة قبل أي حجز",
         description: "الهدف هو التقريب بين أصحاب البيوت والعمال الموثقين بتجربة واضحة، زي تطبيقات التنقل بس مصممة للخدمات المنزلية.",
         sections: [
           {
@@ -74,7 +74,7 @@ export const publicPageCopy = {
       },
       contact: {
         eyebrow: "تواصل معنا",
-        title: "كيف تتواصل مع أُسطى",
+        title: "كيف تتواصل مع أُسطفاي",
         description: "دعم، شراكات، استفسارات عن الانضمام، أو طلبات الأعمال — كلها من خلال قنوات واضحة ومنظمة.",
         sections: [
           {
@@ -154,7 +154,7 @@ export const publicPageCopy = {
       services: {
         eyebrow: "Services",
         title: "Service categories built for clarity",
-        description: "From electrical and plumbing to AC work and finishing, OSTA organizes every service into clear, trusted booking flows.",
+        description: "From electrical and plumbing to AC work and finishing, OSTAFY organizes every service into clear, trusted booking flows.",
         sections: [
           {
             title: "Core categories",
@@ -190,8 +190,8 @@ export const publicPageCopy = {
         ]
       },
       about: {
-        eyebrow: "About OSTA",
-        title: "OSTA is built around trust before booking",
+        eyebrow: "About OSTAFY",
+        title: "OSTAFY is built around trust before booking",
         description: "The platform connects households with verified skilled workers through a cleaner, faster, and more accountable service model.",
         sections: [
           {
@@ -210,7 +210,7 @@ export const publicPageCopy = {
       },
       contact: {
         eyebrow: "Contact",
-        title: "How to reach OSTA",
+        title: "How to reach OSTAFY",
         description: "Support, onboarding questions, partnerships, or business requests all route through clear channels.",
         sections: [
           {

@@ -23,7 +23,7 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
       <header className="sticky top-0 z-40 border-b border-white/5 bg-black/95 backdrop-blur-xl">
         <div className="section-shell flex h-24 items-center justify-between gap-4">
           <Link href={`/${locale}`} className="flex items-center gap-2 group">
-            <img src="/logo.svg" alt="OSTA" className="h-12 w-auto" />
+            <img src="/logo.svg" alt="OSTAFY" className="h-12 w-auto" />
           </Link>
 
           <nav className="hidden items-center gap-6 lg:flex">
@@ -51,7 +51,7 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
           <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between border-b border-white/5 pb-8">
             <div className="flex flex-col gap-4">
               <div className="w-fit">
-                <img src="/logo.svg" alt="OSTA" className="h-16 w-auto opacity-95" />
+                <img src="/logo.svg" alt="OSTAFY" className="h-16 w-auto opacity-95" />
               </div>
               
               {/* Contact Info */}
@@ -91,7 +91,7 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
                 </Link>
               ))}
             </div>
-            <p className="text-onyx-600">© {new Date().getFullYear()} OSTA Egypt. All rights reserved.</p>
+            <p className="text-onyx-600">© {new Date().getFullYear()} OSTAFY Egypt. All rights reserved.</p>
           </div>
         </div>
       </footer>
