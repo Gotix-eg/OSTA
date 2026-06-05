@@ -257,7 +257,7 @@ router.get("/clients", catchAsync(async (_request, response) => {
   const mappedClients = clients.map(c => ({
     id: c.id,
     name: `${c.firstName} ${c.lastName}`.trim(),
-    city: c.addresses && c.addresses.length > 0 ? c.addresses[0].city || "غير محدد" : "غير محدد",
+    city: c.addresses?.[0]?.city || "غير محدد",
     requests: c.clientProfile?.totalRequests || 0,
     walletBalance: c.clientProfile?.walletBalance || 0,
     status: c.status
