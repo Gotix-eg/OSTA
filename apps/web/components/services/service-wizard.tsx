@@ -195,7 +195,7 @@ export function ServiceWizard({ locale, category }: { locale: Locale; category: 
               <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gray-900 text-white shadow-lg ring-4 ring-gray-900/5">
                 <Sparkles className="h-5 w-5" />
               </div>
-              <span className="text-xl font-bold tracking-tight text-gray-900 sm:block">OSTA</span>
+              <span className="text-xl font-bold tracking-tight text-gray-900 sm:block">OSTAFY</span>
             </Link>
             <div className="h-6 w-px bg-gray-200" />
             <div className="flex items-center gap-2">
