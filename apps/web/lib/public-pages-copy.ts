@@ -154,7 +154,7 @@ export const publicPageCopy = {
       services: {
         eyebrow: "Services",
         title: "Service categories built for clarity",
-        description: "From electrical and plumbing to AC work and finishing, OSTAFY organizes every service into clear, trusted booking flows.",
+        description: "From electrical and plumbing to AC work and finishing, Ostafy organizes every service into clear, trusted booking flows.",
         sections: [
           {
             title: "Core categories",
@@ -190,8 +190,8 @@ export const publicPageCopy = {
         ]
       },
       about: {
-        eyebrow: "About OSTAFY",
-        title: "OSTAFY is built around trust before booking",
+        eyebrow: "About Ostafy",
+        title: "Ostafy is built around trust before booking",
         description: "The platform connects households with verified skilled workers through a cleaner, faster, and more accountable service model.",
         sections: [
           {
@@ -210,7 +210,7 @@ export const publicPageCopy = {
       },
       contact: {
         eyebrow: "Contact",
-        title: "How to reach OSTAFY",
+        title: "How to reach Ostafy",
         description: "Support, onboarding questions, partnerships, or business requests all route through clear channels.",
         sections: [
           {

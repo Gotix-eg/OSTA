@@ -170,7 +170,7 @@ export function ClientDashboardHome({ locale }: { locale: Locale }) {
     <div className="animate-slideUp">
       <SectionTitle
         eyebrow={isArabic ? "بوابة العميل" : "Client Portal"}
-        title={isArabic ? "أهلاً بك في أُسطفاي" : "Welcome to OSTAFY"}
+        title={isArabic ? "أهلاً بك في أُسطفاي" : "Welcome to Ostafy"}
         subtitle={isArabic ? "تحكم في طلباتك، تتبع الفنيين، وأدر مدفوعاتك بكل سهولة وأمان." : "Manage your requests, track pros, and handle payments with ease and security."}
         actionLabel={isArabic ? "طلب جديد" : "New Request"}
         actionHref={`/${locale}/client/new-request`}
@@ -232,7 +232,7 @@ export function WorkerDashboardHome({ locale }: { locale: Locale }) {
       <SectionTitle
         eyebrow={isArabic ? "لوحة المحترفين" : "Pro Dashboard"}
         title={isArabic ? "أهلاً بك يا بطل" : "Welcome Hero"}
-        subtitle={isArabic ? "تتبع أرباحك، استقبل الطلبات، ونمّ أعمالك مع أُسطفاي." : "Track earnings, accept jobs, and grow your business with OSTAFY."}
+        subtitle={isArabic ? "تتبع أرباحك، استقبل الطلبات، ونمّ أعمالك مع أُسطفاي." : "Track earnings, accept jobs, and grow your business with Ostafy."}
         actionLabel={isArabic ? "استعراض الطلبات" : "Browse Jobs"}
         actionHref={`/${locale}/worker/requests`}
       />
@@ -321,7 +321,7 @@ export function AdminDashboardHome({ locale }: { locale: Locale }) {
       <SectionTitle
         eyebrow={isArabic ? "لوحة التحكم الرئيسية" : "Command Center"}
         title={isArabic ? "إدارة المنصة" : "Platform Management"}
-        subtitle={isArabic ? "راقب العمليات، وثق الحسابات، وحل المشكلات لضمان جودة أُسطفاي." : "Monitor operations, verify accounts, and resolve issues to ensure OSTAFY quality."}
+        subtitle={isArabic ? "راقب العمليات، وثق الحسابات، وحل المشكلات لضمان جودة أُسطفاي." : "Monitor operations, verify accounts, and resolve issues to ensure Ostafy quality."}
         actionLabel={isArabic ? "المستخدمين الجدد" : "Pending Users"}
         actionHref={`/${locale}/admin/workers`}
       />
@@ -487,7 +487,7 @@ export function AdminAdsPage({ locale }: { locale: Locale }) {
       eyebrowAr: "منصة الحرفيين رقم 1 في مصر",
       eyebrowEn: "Egypt's #1 Craftsman Platform",
       titleAr: "اطلب أسطى محترف بنقرة واحدة",
-      titleEn: "Hire a Professional OSTA in Seconds",
+      titleEn: "Hire a Professional Ostafy in Seconds",
       descAr: "أول منصة تجمع أمهر الفنيين والمتاجر الموثقة في مصر. جودة مضمونة، أسعار عادلة، وتجربة مستخدم فاخرة.",
       descEn: "The first platform connecting skilled pros and verified stores in Egypt. Guaranteed quality, fair prices, and a premium experience.",
       imageUrl: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1600",

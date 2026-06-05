@@ -2,8 +2,8 @@ import { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'OSTAFY - أُسطفاي',
-    short_name: 'OSTAFY',
+    name: 'Ostafy - أُسطفاي',
+    short_name: 'Ostafy',
     description: 'أول منصة تجمع أمهر الفنيين والمتاجر الموثقة في مصر',
     start_url: '/',
     display: 'standalone',

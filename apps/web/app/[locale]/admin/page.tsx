@@ -4,7 +4,7 @@ import { DashboardShell } from "@/components/dashboard/dashboard-shell";
 import { isLocale, type Locale } from "@/lib/locales";
 
 export const metadata = {
-  title: "Super Admin Dashboard | OSTA",
+  title: "Super Admin Dashboard | Ostafy",
 };
 
 export default async function AdminPage({ params }: { params: Promise<{ locale: string }> }) {

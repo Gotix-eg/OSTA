@@ -486,7 +486,7 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
         <p className="text-onyx-400 leading-relaxed text-pretty">
           {isArabic 
             ? "انضم إلى مجتمع أُسطفاي واحصل على أفضل الفنيين لخدماتك المنزلية بكل سهولة." 
-            : "Join the OSTAFY community and get the best technicians for your home services with ease."}
+            : "Join the Ostafy community and get the best technicians for your home services with ease."}
         </p>
       </div>
 
@@ -646,7 +646,7 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
         <p className="text-onyx-400 leading-relaxed text-pretty">
           {isArabic 
             ? "انضم إلى فريق النخبة من الفنيين في أُسطفاي وابدأ في استقبال الطلبات المربحة فوراً." 
-            : "Join the elite team of technicians at OSTAFY and start receiving profitable requests immediately."}
+            : "Join the elite team of technicians at Ostafy and start receiving profitable requests immediately."}
         </p>
       </div>
 

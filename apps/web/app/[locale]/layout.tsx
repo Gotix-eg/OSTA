@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const isArabic = locale === "ar";
 
   return {
-    title: isArabic ? "أُسطفاي | منصة الصنايعية الموثقين" : "OSTAFY | Verified Skilled Workers",
+    title: isArabic ? "أُسطفاي | منصة الصنايعية الموثقين" : "Ostafy | Verified Skilled Workers",
     description: isArabic
       ? "منصة تجمع أصحاب البيوت بفنيين موثقين مع دفع آمن وضمان على الخدمة."
       : "A premium platform connecting households with verified workers through secure payments and trusted service."

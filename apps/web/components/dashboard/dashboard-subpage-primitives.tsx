@@ -58,7 +58,7 @@ export function SubpageHero({
         </div>
 
         <div className="glass-card p-6 lg:p-8">
-          <p className="text-caption text-gold-500/50 uppercase">OSTAFY | الجودة والضمان</p>
+          <p className="text-caption text-gold-500/50 uppercase">Ostafy | الجودة والضمان</p>
           <p className="mt-4 text-lg font-bold leading-relaxed text-white/90">
             نقدم لك أفضل الفنيين والحرفيين في مصر مع ضمان الدقة والجودة في كل خدمة.
           </p>

@@ -253,7 +253,7 @@ function SidebarContent({
 
       <div className="relative rounded-[2rem] border border-white/5 bg-white/5 p-5 backdrop-blur-xl flex flex-col items-center">
         <div className="flex h-16 shrink-0 items-center justify-center w-full">
-          <img src="/logo.svg" alt="OSTAFY" className="h-10 w-auto object-contain" />
+          <img src="/logo.svg" alt="Ostafy" className="h-10 w-auto object-contain" />
         </div>
 
         <div className="mt-6 flex items-center justify-between rounded-2xl w-full border border-white/5 bg-white/5 px-4 py-3 text-xs">

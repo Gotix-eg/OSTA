@@ -173,7 +173,7 @@ export default function VendorAdsClientPage({ locale }: { locale: Locale }) {
               <div className="flex items-center gap-2">
                 <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
                 <span className="text-emerald-400 text-xs font-bold tracking-[0.25em] uppercase">
-                  {isArabic ? "منصة ترويج المتاجر والموردين" : "OSTA Merchant Promotion"}
+                  {isArabic ? "منصة ترويج المتاجر والموردين" : "Ostafy Merchant Promotion"}
                 </span>
               </div>
               <h1 className="mt-2.5 text-3xl md:text-4xl font-black text-white tracking-tight">
@@ -362,7 +362,7 @@ export default function VendorAdsClientPage({ locale }: { locale: Locale }) {
               <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/[0.02] blur-3xl pointer-events-none" />
               
               <h3 className="font-extrabold text-white text-base">
-                {isArabic ? "مزايا حملات الترويج للمتاجر" : "Why promote your store on OSTA?"}
+                {isArabic ? "مزايا حملات الترويج للمتاجر" : "Why promote your store on Ostafy?"}
               </h3>
 
               <div className="space-y-4 text-sm">
@@ -402,8 +402,8 @@ export default function VendorAdsClientPage({ locale }: { locale: Locale }) {
                     <h4 className="font-bold text-white">{isArabic ? "تكامل الأرباح المباشرة" : "Secure ROI Tracking"}</h4>
                     <p className="text-xs text-onyx-400 mt-1 leading-relaxed">
                       {isArabic
-                        ? "ادفع فقط مقابل التسويق الفعلي، مع خصم ذكي للميزانية مباشرة من محفظة متجرك على أسطى."
-                        : "Pay directly using your active OSTA vendor wallet balance and track impressions dynamically."}
+                        ? "ادفع فقط مقابل التسويق الفعلي، مع خصم ذكي للميزانية مباشرة من محفظة متجرك على أُسطفاي."
+                        : "Pay directly using your active Ostafy vendor wallet balance and track impressions dynamically."}
                     </p>
                   </div>
                 </div>
@@ -438,7 +438,7 @@ export default function VendorAdsClientPage({ locale }: { locale: Locale }) {
               <p className="mt-2 text-sm text-onyx-400">
                 {isArabic 
                   ? "اختر نوع الإعلان واملأ البيانات للترويج لمتجرك والحصول على طلبات خامات أكثر." 
-                  : "Launch visual banner ads or search-top visibility funded securely from your OSTA wallet."}
+                  : "Launch visual banner ads or search-top visibility funded securely from your Ostafy wallet."}
               </p>
 
               <form onSubmit={handleCreateCampaign} className="mt-6 space-y-4">

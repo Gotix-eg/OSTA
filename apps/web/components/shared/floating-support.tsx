@@ -12,10 +12,10 @@ export function FloatingSupport({ locale }: { locale: Locale }) {
   // WhatsApp Support Number and custom greeting message
   const whatsappNumber = "201009410112";
   const welcomeText = isArabic 
-    ? encodeURIComponent("مرحباً دعم أُسطى، أرغب في الاستفسار عن خدمات المنصة.")
-    : encodeURIComponent("Hello OSTA Support, I'd like to inquire about the platform services.");
+    ? encodeURIComponent("مرحباً دعم أُسطفاي، أرغب في الاستفسار عن خدمات المنصة.")
+    : encodeURIComponent("Hello Ostafy Support, I'd like to inquire about the platform services.");
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${welcomeText}`;
-  const emailUrl = "mailto:info@osta.net?subject=OSTA%20Support%20Request";
+  const emailUrl = "mailto:info@osta.net?subject=Ostafy%20Support%20Request";
 
   return (
     <div className="fixed bottom-6 end-6 z-[9999] flex flex-col items-end gap-4 font-sans">
@@ -36,7 +36,7 @@ export function FloatingSupport({ locale }: { locale: Locale }) {
                 </div>
                 <div>
                   <h4 className="text-sm font-black text-white">
-                    {isArabic ? "الدعم الفني لأُسطى" : "OSTA Support"}
+                    {isArabic ? "الدعم الفني لأُسطفاي" : "Ostafy Support"}
                   </h4>
                   <p className="text-[10px] text-onyx-400 font-bold uppercase tracking-wider">
                     {isArabic ? "متاحون لمساعدتك دائماً" : "We're here to help"}

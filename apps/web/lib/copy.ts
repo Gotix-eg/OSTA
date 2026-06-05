@@ -27,7 +27,7 @@ export const landingCopy = {
     servicesTitle: "خدماتنا",
     servicesSubtitle: "فئات واضحة، فنيين متاحين، واستجابة سريعة من أقرب أُسطفاي مناسب لطلبك.",
     viewAllServices: "عرض كل الخدمات",
-    howTitle: "كيف يعمل OSTAFY؟",
+    howTitle: "كيف يعمل Ostafy؟",
     howSubtitle: "تجربة سهلة مثل أوبر، لكن مصممة خصيصًا للخدمات المنزلية والمهارية.",
     steps: [
       {
@@ -68,7 +68,7 @@ export const landingCopy = {
     workerBenefits: ["دخل مستمر", "ساعات مرنة", "تدريب مستمر", "دعم فني", "سوق أدوات مهني"],
     workerStats: "انضم إلى 5000+ عامل يحققون متوسط 8000 جنيه شهريًا",
     registerWorker: "سجّل كأُسطفاي",
-    downloadTitle: "تطبيق OSTAFY قريبًا",
+    downloadTitle: "تطبيق Ostafy قريبًا",
     downloadBody: "تابع الطلبات والدفع والتواصل من موبايلك بتجربة مصممة للحركة اليومية.",
     comingSoon: "قريبًا",
     faqTitle: "أسئلة شائعة",
@@ -88,11 +88,11 @@ export const landingCopy = {
       contact: "تواصل"
     },
     footerItems: {
-      quick: ["الخدمات", "كيف يعمل", "عن OSTAFY", "اتصل بنا"],
+      quick: ["الخدمات", "كيف يعمل", "عن Ostafy", "اتصل بنا"],
       workers: ["سجل الآن", "الأسئلة الشائعة", "التدريب", "الدعم"],
       contact: ["support@osta.eg", "+20 100 000 0000", "القاهرة، مصر"]
     },
-    footerBottom: "جميع الحقوق محفوظة لـ OSTAFY"
+    footerBottom: "جميع الحقوق محفوظة لـ Ostafy"
   },
   en: {
     homeLabel: "Home",
@@ -120,7 +120,7 @@ export const landingCopy = {
     servicesTitle: "Our Services",
     servicesSubtitle: "Clear categories, ready workers, and fast matching to the right specialist near you.",
     viewAllServices: "View All Services",
-    howTitle: "How OSTAFY Works",
+    howTitle: "How Ostafy Works",
     howSubtitle: "As smooth as ride-hailing, rebuilt for skilled home services and repairs.",
     steps: [
       {
@@ -140,7 +140,7 @@ export const landingCopy = {
         description: "Your payment stays protected until the service is completed properly."
       }
     ],
-    whyTitle: "Why OSTAFY",
+    whyTitle: "Why Ostafy",
     whySubtitle: "Trust is not a marketing line here. It is built into the full service flow.",
     whyCards: [
       ["5-step worker verification", "Identity, documents, and compliance review before activation."],
@@ -161,7 +161,7 @@ export const landingCopy = {
     workerBenefits: ["Steady income", "Flexible hours", "Training", "Dedicated support", "Tools marketplace"],
     workerStats: "Join 5,000+ workers earning an average of EGP 8,000 per month",
     registerWorker: "Register as a Worker",
-    downloadTitle: "OSTAFY App is Coming Soon",
+    downloadTitle: "Ostafy App is Coming Soon",
     downloadBody: "Manage requests, payments, and communication from a mobile-first experience built for daily movement.",
     comingSoon: "Coming Soon",
     faqTitle: "Frequently Asked Questions",
@@ -181,11 +181,11 @@ export const landingCopy = {
       contact: "Contact"
     },
     footerItems: {
-      quick: ["Services", "How It Works", "About OSTAFY", "Contact"],
+      quick: ["Services", "How It Works", "About Ostafy", "Contact"],
       workers: ["Register", "FAQ", "Training", "Support"],
       contact: ["support@osta.eg", "+20 100 000 0000", "Cairo, Egypt"]
     },
-    footerBottom: "All rights reserved by OSTAFY"
+    footerBottom: "All rights reserved by Ostafy"
   }
 } as const;
 
@@ -221,8 +221,8 @@ export const authCopy = {
     loginTitle: "Sign in and continue your request",
     loginBody: "Use your phone and password to access requests, wallet, and notifications.",
     registerClientTitle: "Create a client account in minutes",
-    registerWorkerTitle: "Start your professional journey with OSTAFY",
-    registerVendorTitle: "Become a trusted vendor with OSTAFY",
+    registerWorkerTitle: "Start your professional journey with Ostafy",
+    registerVendorTitle: "Become a trusted vendor with Ostafy",
     forgotPasswordTitle: "Reset your password",
     forgotPasswordBody: "Enter your registered email and we will send you a code to reset your password.",
     resetPasswordTitle: "Update password",

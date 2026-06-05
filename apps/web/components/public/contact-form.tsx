@@ -79,7 +79,7 @@ export function ContactForm({ locale }: { locale: Locale }) {
                   </div>
                   <div>
                      <p className="text-xs text-onyx-500 font-bold uppercase tracking-widest">{isArabic ? "فيسبوك" : "Facebook"}</p>
-                     <p className="text-white font-bold tracking-wider group-hover:text-gold-500 transition-colors">OSTA Egypt</p>
+                     <p className="text-white font-bold tracking-wider group-hover:text-gold-500 transition-colors">Ostafy Egypt</p>
                   </div>
                </a>
 

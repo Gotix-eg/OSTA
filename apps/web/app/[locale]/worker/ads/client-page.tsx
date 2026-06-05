@@ -173,7 +173,7 @@ export default function WorkerAdsClientPage({ locale }: { locale: Locale }) {
               <div className="flex items-center gap-2">
                 <span className="flex h-2 w-2 rounded-full bg-accent-500 animate-ping" />
                 <span className="text-accent-500 text-xs font-bold tracking-[0.25em] uppercase">
-                  {isArabic ? "منصة أُسطى الترويجية" : "OSTA Sponsored Campaigns"}
+                  {isArabic ? "منصة أُسطفاي الترويجية" : "Ostafy Sponsored Campaigns"}
                 </span>
               </div>
               <h1 className="mt-2.5 text-3xl md:text-4xl font-black text-white tracking-tight">
@@ -182,7 +182,7 @@ export default function WorkerAdsClientPage({ locale }: { locale: Locale }) {
               <p className="mt-3 text-sm text-onyx-400 max-w-xl leading-relaxed">
                 {isArabic 
                   ? "ضاعف أرباحك وتصدر نتائج البحث فوراً! أنشئ بروفايل ممول أو بنر إعلاني يظهر لآلاف العملاء في منطقتك الجغرافية ليتم الدفع مباشرة من محفظتك."
-                  : "Boost your reach and capture more jobs! Create sponsored profile placements or top-of-search banners funded securely from your OSTA wallet."}
+                  : "Boost your reach and capture more jobs! Create sponsored profile placements or top-of-search banners funded securely from your Ostafy wallet."}
               </p>
             </div>
 
@@ -362,7 +362,7 @@ export default function WorkerAdsClientPage({ locale }: { locale: Locale }) {
               <div className="absolute top-0 right-0 w-32 h-32 bg-accent-500/[0.02] blur-3xl pointer-events-none" />
               
               <h3 className="font-extrabold text-white text-base">
-                {isArabic ? "لماذا تطلق إعلاناً ممولاً على أسطى؟" : "Why promote your services on OSTA?"}
+                {isArabic ? "لماذا تطلق إعلاناً ممولاً على أُسطفاي؟" : "Why promote your services on Ostafy?"}
               </h3>
 
               <div className="space-y-4 text-sm">
@@ -438,7 +438,7 @@ export default function WorkerAdsClientPage({ locale }: { locale: Locale }) {
               <p className="mt-2 text-sm text-onyx-400">
                 {isArabic 
                   ? "اختر نوع الإعلان واملأ البيانات للترويج لملفك أو بنرك الإعلاني فوراً." 
-                  : "Draft your campaign specifications below. Direct funds will be deducted from your OSTA wallet."}
+                  : "Draft your campaign specifications below. Direct funds will be deducted from your Ostafy wallet."}
               </p>
 
               <form onSubmit={handleCreateCampaign} className="mt-6 space-y-4">

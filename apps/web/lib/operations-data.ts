@@ -488,7 +488,7 @@ export function getClientRequestDetailData(id: string) {
   return fetchApiData<ClientRequestDetailData>(`/clients/requests/${id}`, {
     ...clientRequestDetailFallback,
     id,
-    requestNumber: id === clientRequestDetailFallback.id ? clientRequestDetailFallback.requestNumber : `OSTAFY-${id}`
+    requestNumber: id === clientRequestDetailFallback.id ? clientRequestDetailFallback.requestNumber : `Ostafy-${id}`
   });
 }
 

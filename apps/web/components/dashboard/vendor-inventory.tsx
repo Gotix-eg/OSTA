@@ -464,8 +464,8 @@ function BulkExcelModal({
     ];
     const ws = XLSX.utils.aoa_to_sheet(wsData);
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "OSTA Template");
-    XLSX.writeFile(wb, "OSTA_Bulk_Products_Template.xlsx");
+    XLSX.utils.book_append_sheet(wb, ws, "Ostafy Template");
+    XLSX.writeFile(wb, "Ostafy_Bulk_Products_Template.xlsx");
   }
 
   // Parse Uploaded Excel File using ExcelJS to support embedded images!
@@ -684,7 +684,7 @@ function BulkExcelModal({
               </div>
               <div className="flex-1">
                 <h4 className="text-sm font-semibold text-white">{isArabic ? "هل تحتاج لنموذج إكسل معد مسبقاً؟" : "Need the template model?"}</h4>
-                <p className="text-xs text-onyx-400 mt-1">{isArabic ? "قم بتحميل النموذج المعتمد واملأه ببيانات منتجاتك وضع صورك به مباشرة" : "Download OSTA standard file to structure your catalogue and place images directly"}</p>
+                <p className="text-xs text-onyx-400 mt-1">{isArabic ? "قم بتحميل النموذج المعتمد واملأه ببيانات منتجاتك وضع صورك به مباشرة" : "Download Ostafy standard file to structure your catalogue and place images directly"}</p>
               </div>
               <button
                 type="button"
