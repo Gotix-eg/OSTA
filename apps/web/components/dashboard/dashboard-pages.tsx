@@ -473,7 +473,7 @@ export function AdminAdsPage({ locale }: { locale: Locale }) {
 
   // Preloaded luxury background images for instant selection
   const PRESET_IMAGES = [
-    { name: isArabic ? "ورشة الأسطى الراقية" : "Luxury Workshop", url: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1600" },
+    { name: isArabic ? "ورشة العمل الراقية" : "Luxury Workshop", url: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1600" },
     { name: isArabic ? "كهرباء وصيانة" : "Electrical Work", url: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=1600" },
     { name: isArabic ? "أدوات ميكانيكية دقيقة" : "Precision Tools", url: "https://images.unsplash.com/photo-1534224039826-c7a0eda0e6b3?q=80&w=1600" },
     { name: isArabic ? "سباكة وتوصيلات" : "Plumbing & Pipes", url: "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?q=80&w=1600" },
@@ -486,7 +486,7 @@ export function AdminAdsPage({ locale }: { locale: Locale }) {
       id: "slide-1",
       eyebrowAr: "منصة الحرفيين رقم 1 في مصر",
       eyebrowEn: "Egypt's #1 Craftsman Platform",
-      titleAr: "اطلب أسطى محترف بنقرة واحدة",
+      titleAr: "اطلب أُسطفاي محترف بنقرة واحدة",
       titleEn: "Hire a Professional Ostafy in Seconds",
       descAr: "أول منصة تجمع أمهر الفنيين والمتاجر الموثقة في مصر. جودة مضمونة، أسعار عادلة، وتجربة مستخدم فاخرة.",
       descEn: "The first platform connecting skilled pros and verified stores in Egypt. Guaranteed quality, fair prices, and a premium experience.",
@@ -967,7 +967,7 @@ export function AdminAdsPage({ locale }: { locale: Locale }) {
                       </span>
                       {/* Title */}
                       <h2 className="text-2xl md:text-3xl font-black text-white leading-tight">
-                        {isArabic ? (formData.titleAr || "اطلب أسطى محترف") : (formData.titleEn || "Catchy Title")}
+                        {isArabic ? (formData.titleAr || "اطلب أُسطفاي محترف") : (formData.titleEn || "Catchy Title")}
                       </h2>
                       {/* Description */}
                       <p className="text-onyx-300 text-xs leading-relaxed max-w-xs mx-auto font-light">

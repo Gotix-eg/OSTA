@@ -55,7 +55,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
       id: "slide-1",
       eyebrowAr: "منصة الحرفيين رقم 1 في مصر",
       eyebrowEn: "Egypt's #1 Craftsman Platform",
-      titleAr: "اطلب أسطى محترف بنقرة واحدة",
+      titleAr: "اطلب أُسطفاي محترف بنقرة واحدة",
       titleEn: "Hire a Professional Ostafy in Seconds",
       descAr: "أول منصة تجمع أمهر الفنيين والمتاجر الموثقة في مصر. جودة مضمونة، أسعار عادلة، وتجربة مستخدم فاخرة.",
       descEn: "The first platform connecting skilled pros and verified stores in Egypt. Guaranteed quality, fair prices, and a premium experience.",

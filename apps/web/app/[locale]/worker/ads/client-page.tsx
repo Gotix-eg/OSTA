@@ -501,7 +501,7 @@ export default function WorkerAdsClientPage({ locale }: { locale: Locale }) {
                   <input
                     type="text"
                     required
-                    placeholder={isArabic ? "مثال: أسطى سباكة معتمد - خبرة 15 عاماً" : "e.g., Certified plumbing expert - 15 yrs experience"}
+                    placeholder={isArabic ? "مثال: فني سباكة معتمد - خبرة 15 عاماً" : "e.g., Certified plumbing expert - 15 yrs experience"}
                     value={formTitle}
                     onChange={(e) => setFormTitle(e.target.value)}
                     className="h-12 w-full rounded-xl border border-white/5 bg-white/5 px-4 text-white focus:border-accent-500/30 focus:bg-white/10 outline-none text-sm transition-all"
