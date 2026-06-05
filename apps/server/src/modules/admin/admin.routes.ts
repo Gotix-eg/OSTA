@@ -279,7 +279,6 @@ router.get("/clients", catchAsync(async (_request, response) => {
 router.get("/requests", catchAsync(async (_request, response) => {
   const requests = await prisma.serviceRequest.findMany({
     include: {
-      client: { select: { firstName: true, lastName: true } },
       address: { select: { city: true } }
     },
     orderBy: { createdAt: "desc" }
