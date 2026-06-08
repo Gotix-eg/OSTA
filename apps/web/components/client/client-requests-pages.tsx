@@ -55,17 +55,23 @@ function getServiceName(serviceId: string, locale: Locale) {
   return serviceId;
 }
 
-function getStatusMeta(locale: Locale, status: ClientRequestListItem["status"]) {
-  const labels = {
-    PENDING: { ar: "قيد المراجعة", en: "Pending review", tone: "sun" as const },
-    WORKER_EN_ROUTE: { ar: "العامل في الطريق", en: "Worker en route", tone: "accent" as const },
-    IN_PROGRESS: { ar: "قيد التنفيذ", en: "In progress", tone: "primary" as const },
-    COMPLETED: { ar: "مكتمل", en: "Completed", tone: "success" as const }
-  } as const;
+function getStatusMeta(locale: Locale, status: string) {
+  const labels: Record<string, { ar: string; en: string; tone: "sun" | "accent" | "primary" | "success" | "error" }> = {
+    PENDING: { ar: "قيد الانتظار", en: "Pending", tone: "sun" },
+    ACCEPTED: { ar: "تم القبول", en: "Accepted", tone: "primary" },
+    WORKER_EN_ROUTE: { ar: "العامل في الطريق", en: "Worker en route", tone: "accent" },
+    IN_PROGRESS: { ar: "قيد التنفيذ", en: "In progress", tone: "primary" },
+    COMPLETED: { ar: "مكتمل", en: "Completed", tone: "success" },
+    CONFIRMED_BY_CLIENT: { ar: "مؤكد من العميل", en: "Confirmed by client", tone: "success" },
+    CANCELLED_BY_CLIENT: { ar: "ملغي من العميل", en: "Cancelled by client", tone: "error" },
+    CANCELLED_BY_WORKER: { ar: "ملغي من الفني", en: "Cancelled by worker", tone: "error" },
+    DISPUTED: { ar: "قيد النزاع", en: "Disputed", tone: "error" },
+  };
 
+  const meta = labels[status] || { ar: status, en: status, tone: "sun" };
   return {
-    label: labels[status][locale],
-    tone: labels[status].tone
+    label: meta[locale],
+    tone: meta.tone
   };
 }
 

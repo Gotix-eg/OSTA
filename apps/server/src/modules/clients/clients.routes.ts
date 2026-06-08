@@ -362,9 +362,22 @@ router.post(
       actualServiceId = fallbackService.id;
     }
 
+    let requestNumber = "";
+    while (true) {
+      const candidate = String(Math.floor(10000000 + Math.random() * 90000000));
+      const existing = await prisma.serviceRequest.findUnique({
+        where: { requestNumber: candidate },
+      });
+      if (!existing) {
+        requestNumber = candidate;
+        break;
+      }
+    }
+
     const record = await prisma.serviceRequest.create({
       data: {
         clientId,
+        requestNumber,
         serviceId: actualServiceId,
         addressId: addressId!,
         title: payload.title,

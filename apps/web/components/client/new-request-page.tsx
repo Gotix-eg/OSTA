@@ -98,6 +98,19 @@ const savedAddresses = [
   { id: "villa-maadi", ar: "الفيلا - المعادي", en: "Villa - Maadi" },
 ];
 
+const statusTranslations: Record<string, { ar: string; en: string }> = {
+  PENDING: { ar: "قيد الانتظار", en: "Pending" },
+  ACCEPTED: { ar: "تم القبول", en: "Accepted" },
+  WORKER_EN_ROUTE: { ar: "العامل في الطريق", en: "Worker en route" },
+  IN_PROGRESS: { ar: "قيد التنفيذ", en: "In progress" },
+  COMPLETED: { ar: "مكتمل", en: "Completed" },
+  CANCELLED: { ar: "ملغي", en: "Cancelled" },
+};
+
+const reviewEtaTranslations: Record<string, { ar: string; en: string }> = {
+  "Within 5 minutes": { ar: "خلال 5 دقائق", en: "Within 5 minutes" },
+};
+
 function usePersistentDraft(key: string) {
   const [draft, setDraft] = useState<RequestDraft>(initialDraft);
   const [ready, setReady] = useState(false);
@@ -340,7 +353,11 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
             />
             <MiniMetric
               label={isArabic ? "الحالة" : "Status"}
-              value={submittedRequest.status || "PENDING"}
+              value={
+                statusTranslations[submittedRequest.status]?.[locale] ||
+                submittedRequest.status ||
+                (isArabic ? "قيد الانتظار" : "Pending")
+              }
               note={isArabic ? "تم الإنشاء الآن" : "freshly created"}
               icon={CheckCircle2}
               tone="sun"
@@ -356,8 +373,12 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
             />
             <MiniMetric
               label={isArabic ? "زمن المراجعة" : "Review ETA"}
-              value={submittedRequest.reviewEta || "5m"}
-              note={isArabic ? "تسليم التشغبل" : "ops handoff"}
+              value={
+                reviewEtaTranslations[submittedRequest.reviewEta]?.[locale] ||
+                submittedRequest.reviewEta ||
+                (isArabic ? "خلال 5 دقائق" : "Within 5 minutes")
+              }
+              note={isArabic ? "تسليم التشغيل" : "ops handoff"}
               icon={Clock3}
               tone="dark"
             />

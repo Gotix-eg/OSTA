@@ -126,7 +126,14 @@ export function MiniMetric({
       <div className="relative flex items-start justify-between gap-4">
         <div className="min-w-0">
           <p className="text-eyebrow opacity-60">{label}</p>
-          <p className="mt-5 font-serif text-4xl leading-none text-white">{value}</p>
+          <p className={cn(
+            "mt-5 font-serif leading-none text-white transition-all duration-300",
+            value.length > 15
+              ? "text-sm sm:text-base"
+              : value.length > 8
+                ? "text-base sm:text-lg"
+                : "text-lg sm:text-xl lg:text-2xl"
+          )}>{value}</p>
           {note ? <p className="mt-5 max-w-xs text-metadata">{note}</p> : null}
         </div>
         <div className={cn("flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl shadow-xl transition-transform duration-500 group-hover:scale-110", iconTones[tone])}>
