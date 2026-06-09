@@ -55,10 +55,12 @@ router.get("/contacts/list", catchAsync(async (request: Request, response: Respo
 }));
 
 // GET /api/chat/:userId - Get chat history with a specific user
+// Supports ?since=ISO_DATE for incremental polling (returns only new messages)
 router.get("/:otherUserId", catchAsync(async (request: Request, response: Response) => {
   const currentUserId = request.auth!.userId;
   const otherUserId = request.params.otherUserId as string;
   const requestId = request.query.requestId as string | undefined;
+  const since = request.query.since as string | undefined; // ISO date for incremental fetch
 
   const whereClause: any = {
     OR: [
@@ -71,23 +73,33 @@ router.get("/:otherUserId", catchAsync(async (request: Request, response: Respon
     whereClause.requestId = requestId;
   }
 
+  // Incremental polling: only return messages newer than ?since=
+  if (since) {
+    const sinceDate = new Date(since);
+    if (!isNaN(sinceDate.getTime())) {
+      whereClause.createdAt = { gt: sinceDate };
+    }
+  }
+
   const messages = await prisma.message.findMany({
     where: whereClause,
     orderBy: { createdAt: "asc" },
   });
 
-  // Mark unread messages as read
-  await prisma.message.updateMany({
-    where: {
-      senderId: otherUserId,
-      receiverId: currentUserId,
-      isRead: false,
-    },
-    data: {
-      isRead: true,
-      readAt: new Date(),
-    },
-  });
+  // Mark unread messages as read (only when doing full load, not incremental)
+  if (!since) {
+    await prisma.message.updateMany({
+      where: {
+        senderId: otherUserId,
+        receiverId: currentUserId,
+        isRead: false,
+      },
+      data: {
+        isRead: true,
+        readAt: new Date(),
+      },
+    });
+  }
 
   response.json(successResponse(messages, "Messages retrieved successfully"));
 }));
