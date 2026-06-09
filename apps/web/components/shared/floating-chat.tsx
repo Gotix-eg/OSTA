@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageSquare, X, Send, User, ChevronLeft } from "lucide-react";
 import { useSocket } from "@/components/providers/socket-provider";
@@ -37,8 +37,17 @@ export function FloatingChatWidget() {
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // Refs to hold latest values inside socket callback (avoids stale closures)
+  const activeChatRef = useRef<ChatUser | null>(null);
+  const currentUserIdRef = useRef<string | null>(null);
+
+  // Keep refs in sync with state
+  activeChatRef.current = activeChat;
+  currentUserIdRef.current = currentUserId;
+
   const { socket } = useSocket();
 
+  // Load current user ID on mount
   useEffect(() => {
     async function loadUser() {
       try {
@@ -52,8 +61,9 @@ export function FloatingChatWidget() {
     loadUser();
   }, []);
 
+  // Listen for external trigger to open chat with a specific user
   useEffect(() => {
-    const handleOpenChat = (e?: Event) => {
+    const handleOpenChat = () => {
       const stored = localStorage.getItem("osta_open_chat_user");
       if (stored) {
         try {
@@ -64,12 +74,12 @@ export function FloatingChatWidget() {
         } catch (err) {
           // ignore
         }
-      } else if (e) {
+      } else {
         setIsOpen(true);
       }
     };
 
-    // On mount, only open if there's an actual user queued
+    // On mount, only open if there's a user queued
     const stored = localStorage.getItem("osta_open_chat_user");
     if (stored) {
       handleOpenChat();
@@ -81,33 +91,70 @@ export function FloatingChatWidget() {
     };
   }, []);
 
+  // Load contacts when chat is opened without an active conversation
   useEffect(() => {
     if (isOpen && !activeChat) {
       loadContacts();
     }
   }, [isOpen, activeChat]);
 
+  // Load messages when switching to a chat
   useEffect(() => {
     if (activeChat) {
       loadMessages(activeChat.id);
+    } else {
+      setMessages([]);
     }
   }, [activeChat]);
 
+  // Scroll to bottom when messages change
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
 
+  // Real-time socket listener — uses refs to avoid stale closures
   useEffect(() => {
     if (!socket) return;
-    
-    const handleNewMessage = (msg: Message) => {
-      // If chat is open with the sender, add to messages
-      if (activeChat && (msg.senderId === activeChat.id || msg.receiverId === activeChat.id)) {
-        setMessages(prev => [...prev, msg]);
+
+    const handleNewMessage = (msg: any) => {
+      const uid = currentUserIdRef.current;
+      const chat = activeChatRef.current;
+
+      // Normalise: server sends the full DB row which may include a `sender` object
+      const normalized: Message = {
+        id: msg.id,
+        content: msg.content,
+        senderId: msg.senderId,
+        receiverId: msg.receiverId,
+        createdAt: msg.createdAt,
+        isRead: msg.isRead ?? false,
+      };
+
+      // Add to the active conversation if it belongs there
+      if (
+        chat &&
+        (normalized.senderId === chat.id || normalized.receiverId === chat.id)
+      ) {
+        setMessages((prev) => {
+          // Avoid duplicates (our own optimistic message has a random id)
+          const alreadyExists = prev.some(
+            (m) =>
+              m.id === normalized.id ||
+              (m.content === normalized.content &&
+                m.senderId === normalized.senderId &&
+                Math.abs(
+                  new Date(m.createdAt).getTime() -
+                    new Date(normalized.createdAt).getTime()
+                ) < 3000)
+          );
+          if (alreadyExists) return prev;
+          return [...prev, normalized];
+        });
       }
-      // Reload contacts to update last message & unread counts
+
+      // Always refresh contacts list for unread badge updates
       loadContacts();
     };
 
@@ -115,16 +162,16 @@ export function FloatingChatWidget() {
     return () => {
       socket.off("new_message", handleNewMessage);
     };
-  }, [socket, activeChat]);
+  }, [socket]); // only depends on socket — refs handle the rest
 
-  async function loadContacts() {
+  const loadContacts = useCallback(async () => {
     try {
       const data = await fetchApiData<Contact[]>("/chat/contacts/list", []);
       setContacts(data);
     } catch (e) {
       console.error(e);
     }
-  }
+  }, []);
 
   async function loadMessages(otherUserId: string) {
     try {
@@ -139,23 +186,34 @@ export function FloatingChatWidget() {
     e.preventDefault();
     if (!input.trim() || !activeChat || !currentUserId) return;
 
+    const content = input.trim();
+    setInput("");
+
+    // Optimistic update
     const tempMsg: Message = {
-      id: Math.random().toString(),
-      content: input,
+      id: `temp-${Date.now()}`,
+      content,
       senderId: currentUserId,
       receiverId: activeChat.id,
       createdAt: new Date().toISOString(),
-      isRead: false
+      isRead: false,
     };
 
-    setMessages(prev => [...prev, tempMsg]);
-    setInput("");
+    setMessages((prev) => [...prev, tempMsg]);
 
     try {
-      await postApiData(`/chat/${activeChat.id}`, { content: tempMsg.content });
+      const sent = await postApiData<any, any>(`/chat/${activeChat.id}`, { content });
+      // Replace temp message with real one from server
+      if (sent?.id) {
+        setMessages((prev) =>
+          prev.map((m) => (m.id === tempMsg.id ? { ...sent } : m))
+        );
+      }
       loadContacts();
     } catch (e) {
       console.error(e);
+      // Remove failed temp message
+      setMessages((prev) => prev.filter((m) => m.id !== tempMsg.id));
     }
   }
 
