@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
 
-import { PublicContentPage } from "@/components/public/public-pages";
+import { HowItWorksCustom } from "@/components/public/how-it-works-custom";
 import { PublicShell } from "@/components/public/public-shell";
-import { isLocale } from "@/lib/locales";
+import { isLocale, type Locale } from "@/lib/locales";
 
 export default async function HowItWorksPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -10,8 +10,11 @@ export default async function HowItWorksPage({ params }: { params: Promise<{ loc
   if (!isLocale(locale)) notFound();
 
   return (
-    <PublicShell locale={locale} pathname="/how-it-works">
-      <PublicContentPage locale={locale} pageKey="how-it-works" />
+    <PublicShell locale={locale as Locale} pathname="/how-it-works">
+      <div className="section-shell py-12">
+        <HowItWorksCustom locale={locale as Locale} />
+      </div>
     </PublicShell>
   );
 }
+
