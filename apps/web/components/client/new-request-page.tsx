@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useSearchParams } from "next/navigation";
 
 import Link from "next/link";
 import {
@@ -229,12 +230,28 @@ const fileToBase64 = (file: File): Promise<string> => {
 
 export function NewRequestPage({ locale }: { locale: Locale }) {
   const isArabic = locale === "ar";
+  const searchParams = useSearchParams();
+  const workerId = searchParams?.get("workerId");
+  const queryCategoryId = searchParams?.get("categoryId");
+  const queryServiceId = searchParams?.get("serviceId");
+
   const { draft, ready, setDraft } = usePersistentDraft(draftStorageKey);
   const [step, setStep] = useState(0);
   const [submittedRequest, setSubmittedRequest] =
     useState<CreatedRequest | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (ready && workerId && queryCategoryId && queryServiceId) {
+      setDraft((prev) => ({
+        ...prev,
+        categoryId: queryCategoryId,
+        serviceId: queryServiceId,
+      }));
+      setStep(1);
+    }
+  }, [ready, workerId, queryCategoryId, queryServiceId, setDraft]);
 
   const selectedCategory = serviceCategories.find(
     (item) => item.id === draft.categoryId,
@@ -306,6 +323,7 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
         title: draft.title,
         description: draft.description,
         mediaNotes: draft.mediaNotes,
+        workerId: workerId || undefined,
         address: {
           mode: "new",
           governorate:

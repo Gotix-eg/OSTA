@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { 
   Zap, Waves, Hammer, Wind, Smartphone, 
   Palette, Layout, Globe, Monitor, Camera, 
-  ChevronRight, ArrowLeft, Star, ShieldCheck, 
+  ChevronRight, ArrowLeft, Star, ShieldCheck, MapPin,
   Store, Users, CheckCircle2, Menu, X,
   Facebook, Instagram, Phone, Mail
 } from "lucide-react";
@@ -14,6 +14,8 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/locales";
 import { LocaleSwitcher } from "@/components/shared/locale-switcher";
+import { egyptianGovernorates, majorCities } from "@/lib/geo-data";
+import { resolveApiBaseUrl } from "@/lib/api";
 
 const CRAFTS = [
   { id: "electricity", name: { ar: "الكهرباء", en: "Electrical" }, image: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=1000&auto=format&fit=crop&v=osta4", color: "from-yellow-400 to-gold-600" },
@@ -27,6 +29,32 @@ const CRAFTS = [
   { id: "computer-repair", name: { ar: "صيانة كمبيوتر", en: "Computer" }, image: "https://images.unsplash.com/photo-1588508065123-287b28e013da?q=80&w=1000&auto=format&fit=crop&v=osta4", color: "from-emerald-400 to-emerald-600" },
   { id: "cctv", name: { ar: "تركيب كاميرات", en: "CCTV" }, image: "/images/services/cam.jpg", color: "from-red-400 to-red-600" },
 ];
+
+const POPULAR_NEIGHBORHOODS: Record<string, { value: string; labelAr: string; labelEn: string }[]> = {
+  "new-cairo": [
+    { value: "5th-settlement", labelAr: "التجمع الخامس", labelEn: "Fifth Settlement" },
+    { value: "1st-settlement", labelAr: "التجمع الأول", labelEn: "First Settlement" },
+    { value: "rehab", labelAr: "الرحاب", labelEn: "Rehab" },
+    { value: "madinaty", labelAr: "مدينتي", labelEn: "Madinaty" },
+  ],
+  "nasr-city": [
+    { value: "1st-district", labelAr: "الحي الأول", labelEn: "First District" },
+    { value: "8th-district", labelAr: "الحي الثامن", labelEn: "Eighth District" },
+    { value: "zahraa-nasr-city", labelAr: "زهراء مدينة نصر", labelEn: "Zahraa Nasr City" },
+  ],
+  "maadi": [
+    { value: "sarayat-maadi", labelAr: "سرايات المعادي", labelEn: "Sarayat Maadi" },
+    { value: "hadayek-maadi", labelAr: "حدائق المعادي", labelEn: "Hadayek Maadi" },
+    { value: "deglah", labelAr: "دجلة", labelEn: "Degla" },
+  ],
+  "6th-october": [
+    { value: "1st-district", labelAr: "الحي الأول", labelEn: "First District" },
+    { value: "5th-district", labelAr: "الحي الخامس", labelEn: "Fifth District" },
+  ],
+  "sheikh-zayed": [
+    { value: "green-belt", labelAr: "الحزام الأخضر", labelEn: "Green Belt" },
+  ]
+};
 
 function cleanImageUrl(url: string): string {
   if (!url) return "";
@@ -49,6 +77,19 @@ export function LandingPage({ locale }: { locale: Locale }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [slides, setSlides] = useState<any[]>([]);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+
+  const [selectedSpecialty, setSelectedSpecialty] = useState<string>("");
+  const [selectedGov, setSelectedGov] = useState<string>("");
+  const [selectedCity, setSelectedCity] = useState<string>("");
+  const [selectedArea, setSelectedArea] = useState<string>("");
+  const [workers, setWorkers] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const [selectedWorkerForBooking, setSelectedWorkerForBooking] = useState<any | null>(null);
+  const [showAuthModal, setShowAuthModal] = useState<boolean>(false);
+  const [isClient, setIsClient] = useState<boolean>(false);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
   const DEFAULT_SLIDES = [
     {
@@ -109,6 +150,62 @@ export function LandingPage({ locale }: { locale: Locale }) {
     }, 6000);
     return () => clearInterval(timer);
   }, [slides]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const token = window.localStorage.getItem("osta_access_token") || window.sessionStorage.getItem("osta_access_token");
+      const role = window.localStorage.getItem("osta_user_role");
+      setIsLoggedIn(!!token);
+      setIsClient(role === "CLIENT");
+    }
+  }, []);
+
+  const fetchWorkers = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const params = new URLSearchParams();
+      if (selectedSpecialty) params.append("specialty", selectedSpecialty);
+      if (selectedGov) params.append("governorate", selectedGov);
+      if (selectedCity) params.append("city", selectedCity);
+      if (selectedArea) params.append("area", selectedArea);
+
+      const baseUrl = resolveApiBaseUrl();
+      const res = await fetch(`${baseUrl}/public/workers?${params.toString()}`);
+      if (!res.ok) {
+        throw new Error("Failed to fetch workers");
+      }
+      const data = await res.json();
+      if (data.success) {
+        setWorkers(data.data);
+      } else {
+        setWorkers([]);
+      }
+    } catch (err) {
+      console.error(err);
+      setError(isArabic ? "تعذر جلب الفنيين" : "Failed to load workers.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchWorkers();
+  }, [selectedSpecialty, selectedGov, selectedCity, selectedArea]);
+
+  const handleBookClick = (worker: any) => {
+    if (isLoggedIn) {
+      if (isClient) {
+        const redirectUrl = `/${locale}/client/new-request?workerId=${worker.id}&categoryId=${worker.categoryId}&serviceId=${worker.serviceId}`;
+        window.location.assign(redirectUrl);
+      } else {
+        alert(isArabic ? "هذا الإجراء متاح لحسابات العملاء فقط." : "Booking is only available for client accounts.");
+      }
+    } else {
+      setSelectedWorkerForBooking(worker);
+      setShowAuthModal(true);
+    }
+  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -273,6 +370,342 @@ export function LandingPage({ locale }: { locale: Locale }) {
           </div>
         )}
       </section>
+
+      {/* Worker Exploration Section */}
+      <section className="py-20 px-4 bg-onyx-950 relative border-b border-white/5">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <span className="text-xs font-bold uppercase tracking-wider text-gold-500 px-3 py-1 rounded-full bg-gold-500/10 border border-gold-500/25">
+              {isArabic ? "استكشاف الفنيين" : "Explore Pros"}
+            </span>
+            <h2 className="text-3xl md:text-5xl font-black text-white mt-4 mb-4">
+              {isArabic ? "ابحث عن فني محترف واحجزه فوراً" : "Find & Book a Pro Instantly"}
+            </h2>
+            <p className="text-onyx-400 max-w-2xl mx-auto text-base md:text-lg">
+              {isArabic 
+                ? "تصفح قائمة أمهر الحرفيين والتقييمات، وحرك طلبك المباشر مع إضافة الفني للمفضلة تلقائياً" 
+                : "Browse top-rated craftsmen, book directly, and automatically add them to your favorites"}
+            </p>
+            <div className="h-1 w-24 bg-gold-500 mx-auto rounded-full mt-6" />
+          </div>
+
+          {/* Filters Panel */}
+          <div className="onyx-card p-6 md:p-8 mb-10 border-white/5 bg-white/[0.02] backdrop-blur-md rounded-3xl">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {/* Specialty Filter */}
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-bold text-onyx-300">
+                  {isArabic ? "التخصص المهني" : "Profession / Specialty"}
+                </label>
+                <select
+                  value={selectedSpecialty}
+                  onChange={(e) => setSelectedSpecialty(e.target.value)}
+                  className="h-12 bg-onyx-900 border border-white/10 text-white rounded-xl px-4 focus:outline-none focus:border-gold-500/50 transition-colors cursor-pointer text-sm font-medium"
+                >
+                  <option value="">{isArabic ? "كل التخصصات" : "All Specialties"}</option>
+                  {CRAFTS.map((craft) => (
+                    <option key={craft.id} value={craft.id}>
+                      {isArabic ? craft.name.ar : craft.name.en}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Governorate Filter */}
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-bold text-onyx-300">
+                  {isArabic ? "المحافظة" : "Governorate"}
+                </label>
+                <select
+                  value={selectedGov}
+                  onChange={(e) => {
+                    setSelectedGov(e.target.value);
+                    setSelectedCity("");
+                    setSelectedArea("");
+                  }}
+                  className="h-12 bg-onyx-900 border border-white/10 text-white rounded-xl px-4 focus:outline-none focus:border-gold-500/50 transition-colors cursor-pointer text-sm font-medium"
+                >
+                  <option value="">{isArabic ? "اختر المحافظة" : "Select Governorate"}</option>
+                  {egyptianGovernorates.map((gov) => (
+                    <option key={gov.value} value={gov.value}>
+                      {isArabic ? gov.labelAr : gov.labelEn}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* City Filter */}
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-bold text-onyx-300">
+                  {isArabic ? "المنطقة / المدينة" : "City / Region"}
+                </label>
+                <select
+                  value={selectedCity}
+                  onChange={(e) => {
+                    setSelectedCity(e.target.value);
+                    setSelectedArea("");
+                  }}
+                  disabled={!selectedGov}
+                  className="h-12 bg-onyx-900 border border-white/10 text-white rounded-xl px-4 focus:outline-none focus:border-gold-500/50 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+                >
+                  <option value="">{isArabic ? "اختر المدينة" : "Select City"}</option>
+                  {selectedGov && majorCities[selectedGov]?.map((city) => (
+                    <option key={city.value} value={city.value}>
+                      {isArabic ? city.labelAr : city.labelEn}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Neighborhood Filter */}
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-bold text-onyx-300">
+                  {isArabic ? "الحي السكني" : "Neighborhood"}
+                </label>
+                {selectedCity && POPULAR_NEIGHBORHOODS[selectedCity] ? (
+                  <select
+                    value={selectedArea}
+                    onChange={(e) => setSelectedArea(e.target.value)}
+                    disabled={!selectedCity}
+                    className="h-12 bg-onyx-900 border border-white/10 text-white rounded-xl px-4 focus:outline-none focus:border-gold-500/50 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+                  >
+                    <option value="">{isArabic ? "اختر الحي" : "Select Neighborhood"}</option>
+                    {POPULAR_NEIGHBORHOODS[selectedCity].map((neighborhood) => (
+                      <option key={neighborhood.value} value={neighborhood.value}>
+                        {isArabic ? neighborhood.labelAr : neighborhood.labelEn}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    type="text"
+                    value={selectedArea}
+                    onChange={(e) => setSelectedArea(e.target.value)}
+                    placeholder={isArabic ? "اكتب الحي (مثال: الدقي)" : "Type neighborhood (e.g. Dokki)"}
+                    disabled={!selectedCity}
+                    className="h-12 bg-onyx-900 border border-white/10 text-white rounded-xl px-4 focus:outline-none focus:border-gold-500/50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+                  />
+                )}
+              </div>
+            </div>
+
+            {/* Clear Filters Link */}
+            {(selectedSpecialty || selectedGov || selectedCity || selectedArea) && (
+              <div className="mt-4 flex justify-end">
+                <button
+                  onClick={() => {
+                    setSelectedSpecialty("");
+                    setSelectedGov("");
+                    setSelectedCity("");
+                    setSelectedArea("");
+                  }}
+                  className="text-xs text-gold-500 hover:text-gold-400 font-semibold underline underline-offset-4"
+                >
+                  {isArabic ? "إعادة ضبط الفلاتر" : "Reset Filters"}
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Fallback Warning Banner */}
+          {workers.length > 0 && workers.some(w => w.isNearby) && (
+            <div className="mb-8 p-4 rounded-2xl border border-amber-500/20 bg-amber-500/5 text-amber-500 text-sm font-semibold flex items-center gap-3 animate-fadeIn">
+              <span className="text-lg">⚠️</span>
+              <p>
+                {isArabic 
+                  ? "عذراً، لا يوجد فنيين متوفرين في الحي المحدد حالياً. تم تلقائياً عرض الفنيين المتاحين في الأحياء المجاورة التابعة لنفس المدينة."
+                  : "Sorry, no technicians are currently available in the selected neighborhood. We have automatically displayed available technicians in neighboring neighborhoods of the same city."}
+              </p>
+            </div>
+          )}
+
+          {/* Loading / Error / Results states */}
+          {loading ? (
+            <div className="flex flex-col items-center justify-center py-20 text-onyx-400">
+              <div className="h-10 w-10 border-4 border-gold-500 border-t-transparent rounded-full animate-spin mb-4" />
+              <p className="text-sm font-medium">{isArabic ? "جاري البحث عن أفضل الفنيين..." : "Searching for the best pros..."}</p>
+            </div>
+          ) : error ? (
+            <div className="text-center py-20 onyx-card border-red-500/20 bg-red-500/5 text-red-500 font-bold rounded-3xl">
+              {error}
+            </div>
+          ) : workers.length === 0 ? (
+            <div className="text-center py-16 onyx-card border-white/5 bg-white/[0.01] rounded-3xl">
+              <Users className="h-16 w-16 text-onyx-600 mx-auto mb-4" />
+              <h4 className="text-xl font-bold text-white mb-2">
+                {isArabic ? "لم نجد أي فنيين" : "No Technicians Found"}
+              </h4>
+              <p className="text-onyx-400 text-sm max-w-md mx-auto">
+                {isArabic 
+                  ? "لا يوجد فنيين مسجلين يطابقون هذه الفلاتر حالياً. حاول تعديل خيارات التصفية أو اختيار تخصص آخر." 
+                  : "There are no registered pros matching these filters at the moment. Try modifying your search options."}
+              </p>
+            </div>
+          ) : (
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {workers.map((worker) => (
+                <div 
+                  key={worker.id}
+                  className="onyx-card border-white/5 bg-white/[0.02] hover:border-gold-500/30 transition-all duration-300 rounded-3xl p-6 flex flex-col justify-between group"
+                >
+                  <div>
+                    {/* Header: Status and Badges */}
+                    <div className="flex items-center justify-between mb-4">
+                      {/* Availability status */}
+                      <div className="flex items-center gap-2">
+                        <span className={cn(
+                          "h-2.5 w-2.5 rounded-full",
+                          worker.isOnline ? "bg-emerald-500 green-glow" : "bg-onyx-600"
+                        )} />
+                        <span className="text-xs text-onyx-400 font-medium">
+                          {worker.isOnline 
+                            ? (isArabic ? "متصل الآن" : "Online")
+                            : (isArabic ? "نشط مؤخراً" : "Active recently")}
+                        </span>
+                      </div>
+
+                      {/* Badges */}
+                      <div className="flex items-center gap-2">
+                        {worker.isFeatured && (
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-onyx-950 bg-gold-500 px-2 py-0.5 rounded-md shadow-sm">
+                            {isArabic ? "مميز" : "Featured"}
+                          </span>
+                        )}
+                        {worker.isNearby && (
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-amber-500 bg-amber-500/10 border border-amber-500/25 px-2 py-0.5 rounded-md">
+                            {isArabic ? "منطقة مجاورة" : "Nearby"}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Pro Info */}
+                    <div className="flex items-start gap-4 mb-4">
+                      {/* Avatar */}
+                      <div className="h-16 w-16 rounded-2xl bg-onyx-800 border border-white/10 overflow-hidden flex items-center justify-center text-gold-500 text-xl font-bold flex-shrink-0 shadow-inner">
+                        {worker.avatarUrl ? (
+                          <img src={worker.avatarUrl} alt={worker.name} className="h-full w-full object-cover" />
+                        ) : (
+                          worker.name.charAt(0)
+                        )}
+                      </div>
+
+                      {/* Name & Specialty */}
+                      <div className="min-w-0 flex-1">
+                        <h4 className="text-lg font-black text-white truncate group-hover:text-gold-500 transition-colors">
+                          {worker.name}
+                        </h4>
+                        <p className="text-sm text-gold-500/90 font-medium mt-0.5">
+                          {isArabic ? worker.professionAr : worker.professionEn}
+                        </p>
+                        
+                        {/* Rating */}
+                        <div className="flex items-center gap-1.5 mt-2">
+                          <Star className="h-4 w-4 text-gold-500 fill-current" />
+                          <span className="text-sm font-bold text-white">{worker.rating > 0 ? worker.rating.toFixed(1) : "5.0"}</span>
+                          <span className="text-xs text-onyx-500">({worker.ratingCount || 1})</span>
+                          <span className="text-onyx-700 mx-1">|</span>
+                          <span className="text-xs text-onyx-400 font-semibold">{worker.totalJobs || 0} {isArabic ? "عملية ناجحة" : "jobs"}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Locations */}
+                    <div className="border-t border-white/5 pt-4 mb-6">
+                      <p className="text-xs text-onyx-500 font-bold mb-2 uppercase tracking-wide">
+                        {isArabic ? "مناطق التغطية" : "Service Coverage"}
+                      </p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {worker.areas.slice(0, 3).map((a: string, idx: number) => (
+                          <span key={idx} className="text-xs bg-onyx-800/80 text-onyx-300 px-2.5 py-1 rounded-lg border border-white/[0.03]">
+                            {a}
+                          </span>
+                        ))}
+                        {worker.areas.length > 3 && (
+                          <span className="text-xs bg-onyx-800/80 text-onyx-400 px-2.5 py-1 rounded-lg border border-white/[0.03]">
+                            +{worker.areas.length - 3}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Booking Action */}
+                  <button
+                    onClick={() => handleBookClick(worker)}
+                    className="w-full btn-gold py-3 text-sm font-black flex items-center justify-center gap-2 group/btn shadow-md"
+                  >
+                    <span>{isArabic ? "اطلب هذا الفني" : "Book Pro Now"}</span>
+                    <ChevronRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-1 rtl:rotate-180 rtl:group-hover/btn:-translate-x-1" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Auth Prompt Modal */}
+      {showAuthModal && selectedWorkerForBooking && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm animate-fadeIn">
+          <div className="onyx-card border-white/10 bg-onyx-900 max-w-md w-full p-8 rounded-3xl shadow-2xl relative border animate-scaleUp">
+            {/* Close Button */}
+            <button 
+              onClick={() => setShowAuthModal(false)}
+              className="absolute top-4 right-4 text-onyx-400 hover:text-white transition-colors"
+            >
+              <X className="h-6 w-6" />
+            </button>
+
+            <div className="text-center">
+              <div className="h-16 w-16 bg-gold-500/10 border border-gold-500/25 rounded-full flex items-center justify-center mx-auto mb-6 text-gold-500">
+                <Users className="h-8 w-8" />
+              </div>
+
+              <h3 className="text-2xl font-black text-white mb-2">
+                {isArabic ? "طلب حجز مباشر" : "Direct Booking Request"}
+              </h3>
+              
+              <p className="text-gold-500 font-bold mb-4 text-sm">
+                {isArabic 
+                  ? `حجز مع الفني: ${selectedWorkerForBooking.name}` 
+                  : `Booking with Pro: ${selectedWorkerForBooking.name}`}
+              </p>
+
+              <p className="text-onyx-300 text-sm leading-relaxed mb-8">
+                {isArabic
+                  ? "لإتمام طلب الحجز المباشر مع الفني وإضافته تلقائياً لقائمة الفنيين المفضلين لديك لتسهيل التواصل لاحقاً، يرجى تسجيل الدخول أو إنشاء حساب عميل جديد."
+                  : "To complete your direct booking request and automatically add this technician to your favorites list for easier future contact, please sign in or create a client account."}
+              </p>
+
+              <div className="flex flex-col gap-3">
+                <Link
+                  href={`/${locale}/login?redirect=${encodeURIComponent(
+                    `/${locale}/client/new-request?workerId=${selectedWorkerForBooking.id}&categoryId=${selectedWorkerForBooking.categoryId}&serviceId=${selectedWorkerForBooking.serviceId}`
+                  )}`}
+                  className="btn-gold py-3 text-sm font-black w-full text-center rounded-xl shadow-lg shadow-gold-500/10"
+                >
+                  {isArabic ? "تسجيل الدخول كعميل" : "Login as Client"}
+                </Link>
+                <Link
+                  href={`/${locale}/register/client?redirect=${encodeURIComponent(
+                    `/${locale}/client/new-request?workerId=${selectedWorkerForBooking.id}&categoryId=${selectedWorkerForBooking.categoryId}&serviceId=${selectedWorkerForBooking.serviceId}`
+                  )}`}
+                  className="btn-onyx py-3 text-sm font-black w-full text-center border-white/10 text-white hover:bg-white/5 rounded-xl"
+                >
+                  {isArabic ? "إنشاء حساب عميل جديد" : "Register as Client"}
+                </Link>
+                <button
+                  onClick={() => setShowAuthModal(false)}
+                  className="text-xs text-onyx-500 hover:text-onyx-300 transition-colors font-bold mt-4"
+                >
+                  {isArabic ? "إلغاء ومتابعة التصفح" : "Cancel and Continue Browsing"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
 
       {/* Categories Grid */}

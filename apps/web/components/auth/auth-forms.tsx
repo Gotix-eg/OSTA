@@ -277,6 +277,15 @@ function applyAuthSuccess(locale: Locale, payload: AuthSuccessResponse, remember
     remember
   );
 
+  if (typeof window !== "undefined") {
+    const searchParams = new URLSearchParams(window.location.search);
+    const redirectTo = searchParams.get("redirect");
+    if (redirectTo) {
+      window.location.assign(redirectTo);
+      return;
+    }
+  }
+
   window.location.assign(getDashboardRoute(locale, payload.user.role));
 }
 
