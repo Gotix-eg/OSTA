@@ -276,7 +276,7 @@ router.get("/public/requests", async (request, response) => {
       orderBy: {
         createdAt: "desc",
       },
-      take: 15,
+      take: 50,
     });
 
     const result = openRequests.map((r) => ({
@@ -293,6 +293,14 @@ router.get("/public/requests", async (request, response) => {
       city: r.address.city,
       createdAt: r.createdAt,
     }));
+
+    // Sort public requests: EMERGENCY first, then newest first
+    result.sort((a, b) => {
+      const aUrgent = a.urgency === "EMERGENCY" ? 1 : 0;
+      const bUrgent = b.urgency === "EMERGENCY" ? 1 : 0;
+      if (aUrgent !== bUrgent) return bUrgent - aUrgent;
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
 
     response.status(200).json(successResponse(result, "Public open requests fetched"));
   } catch (e: any) {
