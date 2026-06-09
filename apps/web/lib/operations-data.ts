@@ -166,6 +166,10 @@ export interface WorkerIncomingRequestsData {
     budgetMax: number;
     distanceKm: number;
     freshnessMinutes: number;
+    serviceNameAr?: string;
+    serviceNameEn?: string;
+    areaNameAr?: string;
+    areaNameEn?: string;
   }>;
 }
 
@@ -186,6 +190,10 @@ export interface WorkerActiveRequestsData {
     area: DashboardAreaCode;
     scheduledWindow: string;
     earnings: number;
+    serviceNameAr?: string;
+    serviceNameEn?: string;
+    areaNameAr?: string;
+    areaNameEn?: string;
   }>;
 }
 

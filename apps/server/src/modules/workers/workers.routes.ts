@@ -86,31 +86,69 @@ const acceptRequestSchema = z.object({
   workerName: z.string().min(2).max(80).optional()
 });
 
-function buildIncomingSummary() {
-  const sameDay = incomingRequests.filter((item) => item.urgency === "SAME_DAY").length;
-  const emergency = incomingRequests.filter((item) => item.urgency === "URGENT").length;
-  const averageBudget =
-    incomingRequests.length > 0
-      ? Math.round(
-          incomingRequests.reduce((total, item) => total + (item.budgetMin + item.budgetMax) / 2, 0) / incomingRequests.length
-        )
-      : 0;
-
-  return {
-    availableNow: incomingRequests.length,
-    sameDay,
-    emergency,
-    averageBudget
-  };
+function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 6371; // Radius of earth in km
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
 }
 
-function buildActiveSummary() {
-  return {
-    activeJobs: activeRequests.length,
-    enRoute: activeRequests.filter((item) => item.status === "EN_ROUTE").length,
-    onSite: activeRequests.filter((item) => item.status === "ON_SITE").length,
-    wrapUp: activeRequests.filter((item) => item.status === "WRAP_UP").length
-  };
+function estimateFallbackDistance(requestAddress: { governorate: string; city: string; area: string | null }, workerAreas: Array<{ governorate: string; city: string; area: string | null }>): number {
+  if (!workerAreas || workerAreas.length === 0) return 50; // no preference -> medium distance
+  let bestDistance = 100; // default far distance
+  for (const wa of workerAreas) {
+    const govMatch = wa.governorate.toLowerCase().trim() === requestAddress.governorate.toLowerCase().trim();
+    const cityMatch = wa.city.toLowerCase().trim() === requestAddress.city.toLowerCase().trim();
+    const areaMatch = wa.area && requestAddress.area && wa.area.toLowerCase().trim() === requestAddress.area.toLowerCase().trim();
+    
+    if (govMatch && cityMatch && areaMatch) {
+      bestDistance = Math.min(bestDistance, 1);
+    } else if (govMatch && cityMatch) {
+      bestDistance = Math.min(bestDistance, 5);
+    } else if (govMatch) {
+      bestDistance = Math.min(bestDistance, 15);
+    }
+  }
+  return bestDistance;
+}
+
+function getCategorySlugsForProfession(profession: string | null | undefined): string[] {
+  if (!profession) return [];
+  const p = profession.toLowerCase().trim();
+  if (p === "carpenter" || p === "نجار" || p.includes("نجار")) return ["carpentry"];
+  if (p === "plumber" || p === "سباك" || p.includes("سبا")) return ["plumbing"];
+  if (p === "electrician" || p === "كهربائي" || p.includes("كهرب")) return ["electricity", "electrical"];
+  if (p === "ac-technician" || p === "تكييف" || p.includes("تكيي")) return ["ac", "ac-technician"];
+  if (p === "painter" || p === "نقاش" || p.includes("نقاش") || p.includes("دهان")) return ["painting"];
+  if (p === "aluminum" || p === "الوميتال" || p.includes("الوم")) return ["aluminum"];
+  if (p === "networks" || p === "شبكات" || p.includes("شبك")) return ["networks", "computer-networks"];
+  if (p === "computer" || p === "كمبيوتر" || p.includes("كمبيو")) return ["computer", "computer-repair"];
+  if (p === "cctv" || p === "كاميرات" || p.includes("كامير")) return ["cctv", "camera-installation"];
+  if (p === "appliances" || p === "أجهزة" || p.includes("جهز")) return ["appliances", "home-appliances"];
+  return [];
+}
+
+function mapDbAreaToAreaCode(city: string): WorkerAreaCode {
+  const c = city.toLowerCase();
+  if (c.includes("nasr") || c.includes("نصر")) return "nasrCity";
+  if (c.includes("maadi") || c.includes("معادي")) return "maadi";
+  return "newCairo";
+}
+
+function mapDbServiceToServiceCode(serviceSlug: string): WorkerServiceCode {
+  if (serviceSlug.includes("plumb")) return "kitchenPlumbing";
+  if (serviceSlug.includes("elec") || serviceSlug.includes("volt")) return "electricalRepair";
+  if (serviceSlug.includes("ac") || serviceSlug.includes("cool")) return "acMaintenance";
+  if (serviceSlug.includes("paint")) return "paintingRefresh";
+  if (serviceSlug.includes("fan")) return "ceilingFanInstallation";
+  if (serviceSlug.includes("heat")) return "heaterMaintenance";
+  if (serviceSlug.includes("faucet")) return "faucetInstallation";
+  return "electricalRepair";
 }
 
 router.get("/dashboard", catchAsync(async (request, response) => {
@@ -162,29 +200,120 @@ router.get("/dashboard", catchAsync(async (request, response) => {
   );
 }));
 
-router.get("/requests/incoming", (_request, response) => {
-  response.status(200).json(
-    successResponse(
-      {
-        summary: buildIncomingSummary(),
-        requests: incomingRequests
-      },
-      "Incoming worker requests fetched"
-    )
-  );
-});
-
-router.get("/requests/active", catchAsync(async (request, response) => {
-  const userId = request.auth!.userId;
+async function getIncomingRequestsForWorker(userId: string) {
   const worker = await prisma.workerProfile.findUnique({
-    where: { userId }
+    where: { userId },
+    include: {
+      specializations: true,
+      workAreas: true
+    }
   });
 
   if (!worker) throw new ApiError(404, "Worker profile not found");
 
+  const specServiceIds = worker.specializations.map(s => s.serviceId);
+  const allowedCategories = getCategorySlugsForProfession(worker.profession);
+
   const reqs = await prisma.serviceRequest.findMany({
     where: {
-      workerId: worker.id,
+      status: "PENDING",
+      OR: [
+        { workerId: worker.id },
+        {
+          workerId: null,
+          OR: [
+            { serviceId: { in: specServiceIds } },
+            {
+              service: {
+                category: {
+                  slug: { in: allowedCategories }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    include: {
+      service: {
+        include: {
+          category: true
+        }
+      },
+      address: true
+    }
+  });
+
+  const mappedRequests = reqs.map(r => {
+    let distanceKm = 10;
+    if (
+      worker.lastLocationLat !== null &&
+      worker.lastLocationLng !== null &&
+      r.address.latitude !== null &&
+      r.address.longitude !== null
+    ) {
+      distanceKm = calculateDistance(
+        worker.lastLocationLat,
+        worker.lastLocationLng,
+        r.address.latitude,
+        r.address.longitude
+      );
+    } else {
+      distanceKm = estimateFallbackDistance(r.address, worker.workAreas);
+    }
+
+    const freshnessMinutes = Math.max(
+      1,
+      Math.round((Date.now() - new Date(r.createdAt).getTime()) / 60000)
+    );
+
+    const budgetMin = r.estimatedPrice ? Math.round(r.estimatedPrice * 0.9) : (r.service.basePriceMin || 100);
+    const budgetMax = r.estimatedPrice ? Math.round(r.estimatedPrice * 1.1) : (r.service.basePriceMax || 300);
+
+    return {
+      id: r.id,
+      service: mapDbServiceToServiceCode(r.service.slug),
+      urgency: (r.urgency === "EMERGENCY" ? "URGENT" : r.urgency) as "NORMAL" | "SAME_DAY" | "URGENT",
+      area: mapDbAreaToAreaCode(r.address.city),
+      budgetMin,
+      budgetMax,
+      distanceKm,
+      freshnessMinutes,
+      serviceNameAr: r.service.nameAr,
+      serviceNameEn: r.service.nameEn,
+      areaNameAr: r.address.area || r.address.city,
+      areaNameEn: r.address.area || r.address.city
+    };
+  });
+
+  mappedRequests.sort((a, b) => a.distanceKm - b.distanceKm);
+
+  const availableNow = mappedRequests.length;
+  const sameDay = mappedRequests.filter(item => item.urgency === "SAME_DAY").length;
+  const emergency = mappedRequests.filter(item => item.urgency === "URGENT").length;
+  const averageBudget =
+    mappedRequests.length > 0
+      ? Math.round(
+          mappedRequests.reduce((total, item) => total + (item.budgetMin + item.budgetMax) / 2, 0) /
+            mappedRequests.length
+        )
+      : 0;
+
+  return {
+    summary: {
+      availableNow,
+      sameDay,
+      emergency,
+      averageBudget
+    },
+    requests: mappedRequests
+  };
+}
+
+async function getActiveRequestsForWorker(workerId: string) {
+  const reqs = await prisma.serviceRequest.findMany({
+    where: {
+      workerId: workerId,
       status: {
         in: ["WORKER_EN_ROUTE", "IN_PROGRESS"]
       }
@@ -203,6 +332,7 @@ router.get("/requests/active", catchAsync(async (request, response) => {
         }
       },
       address: true,
+      service: true
     },
     orderBy: {
       createdAt: "desc"
@@ -211,16 +341,20 @@ router.get("/requests/active", catchAsync(async (request, response) => {
 
   const resultRequests = reqs.map((r) => ({
     id: r.id,
-    service: "electricalRepair" as WorkerServiceCode,
+    service: mapDbServiceToServiceCode(r.service.slug),
     status: (r.status === "WORKER_EN_ROUTE" ? "EN_ROUTE" : "ON_SITE") as "EN_ROUTE" | "ON_SITE" | "WRAP_UP",
     clientName: `${r.client.user.firstName} ${r.client.user.lastName}`,
     clientUserId: r.client.user.id,
     clientPhone: ["WORKER_EN_ROUTE", "IN_PROGRESS", "COMPLETED", "CONFIRMED_BY_CLIENT"].includes(r.status)
       ? r.client.user.phone
       : null,
-    area: "newCairo" as WorkerAreaCode,
+    area: mapDbAreaToAreaCode(r.address.city),
     scheduledWindow: r.preferredTimeSlot || "Today",
     earnings: r.finalPrice || r.estimatedPrice || 150,
+    serviceNameAr: r.service.nameAr,
+    serviceNameEn: r.service.nameEn,
+    areaNameAr: r.address.area || r.address.city,
+    areaNameEn: r.address.area || r.address.city
   }));
 
   const summary = {
@@ -230,20 +364,33 @@ router.get("/requests/active", catchAsync(async (request, response) => {
     wrapUp: 0
   };
 
-  response.status(200).json(
-    successResponse(
-      {
-        summary,
-        requests: resultRequests
-      },
-      "Active worker requests fetched"
-    )
-  );
+  return {
+    summary,
+    requests: resultRequests
+  };
+}
+
+router.get("/requests/incoming", catchAsync(async (request, response) => {
+  const userId = request.auth!.userId;
+  const data = await getIncomingRequestsForWorker(userId);
+  response.status(200).json(successResponse(data, "Incoming worker requests fetched"));
+}));
+
+router.get("/requests/active", catchAsync(async (request, response) => {
+  const userId = request.auth!.userId;
+  const worker = await prisma.workerProfile.findUnique({
+    where: { userId }
+  });
+
+  if (!worker) throw new ApiError(404, "Worker profile not found");
+
+  const data = await getActiveRequestsForWorker(worker.id);
+  response.status(200).json(successResponse(data, "Active worker requests fetched"));
 }));
 
 router.patch("/requests/:id/accept", catchAsync(async (request, response) => {
   const userId = request.auth!.userId;
-  const requestId = request.params.id;
+  const requestId = request.params.id as string;
 
   // 1. Get Worker Profile
   const worker = await prisma.workerProfile.findUnique({
@@ -281,7 +428,7 @@ router.patch("/requests/:id/accept", catchAsync(async (request, response) => {
 
   // 3. Update Request Status
   const serviceRequest = await prisma.serviceRequest.update({
-    where: { id: requestId as string },
+    where: { id: requestId },
     data: {
       workerId: worker.id,
       status: "WORKER_EN_ROUTE"
@@ -296,47 +443,38 @@ router.patch("/requests/:id/accept", catchAsync(async (request, response) => {
   );
 }));
 
-router.patch("/requests/:id/reject", (request, response) => {
-  const index = incomingRequests.findIndex((item) => item.id === request.params.id);
-
-  if (index === -1) {
-    response.status(404).json({ success: false, message: "Incoming request not found", error: "NOT_FOUND" });
-    return;
+router.patch("/requests/:id/reject", catchAsync(async (request, response) => {
+  const userId = request.auth!.userId;
+  const requestId = request.params.id as string;
+  const worker = await prisma.workerProfile.findUnique({ where: { userId } });
+  if (worker) {
+    const req = await prisma.serviceRequest.findUnique({ where: { id: requestId } });
+    if (req && req.workerId === worker.id && req.status === "PENDING") {
+      await prisma.serviceRequest.update({
+        where: { id: requestId },
+        data: { workerId: null }
+      });
+    }
   }
 
-  incomingRequests.splice(index, 1);
+  const data = await getIncomingRequestsForWorker(userId);
+  response.status(200).json(successResponse(data, "Worker request rejected"));
+}));
 
-  response.status(200).json(
-    successResponse(
-      {
-        summary: buildIncomingSummary(),
-        requests: incomingRequests
-      },
-      "Worker request rejected"
-    )
-  );
-});
+router.patch("/requests/:id/start", catchAsync(async (request, response) => {
+  const userId = request.auth!.userId;
+  const requestId = request.params.id as string;
+  const worker = await prisma.workerProfile.findUnique({ where: { userId } });
+  if (!worker) throw new ApiError(404, "Worker profile not found");
 
-router.patch("/requests/:id/start", (request, response) => {
-  const item = activeRequests.find((current) => current.id === request.params.id);
+  await prisma.serviceRequest.updateMany({
+    where: { id: requestId, workerId: worker.id },
+    data: { status: "IN_PROGRESS" }
+  });
 
-  if (!item) {
-    response.status(404).json({ success: false, message: "Active request not found", error: "NOT_FOUND" });
-    return;
-  }
-
-  item.status = "ON_SITE";
-
-  response.status(200).json(
-    successResponse(
-      {
-        summary: buildActiveSummary(),
-        requests: activeRequests
-      },
-      "Worker request started"
-    )
-  );
-});
+  const data = await getActiveRequestsForWorker(worker.id);
+  response.status(200).json(successResponse(data, "Worker request started"));
+}));
 
 router.patch("/requests/:id/complete", catchAsync(async (request, response) => {
   const userId = request.auth!.userId;

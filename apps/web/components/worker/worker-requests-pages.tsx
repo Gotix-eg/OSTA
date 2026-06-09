@@ -131,13 +131,22 @@ export function WorkerIncomingRequestsPage({ locale, initialData }: { locale: Lo
                 <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-3">
-                      <h2 className="text-2xl font-semibold text-white">{serviceLabels[item.service][locale]}</h2>
+                      <h2 className="text-2xl font-semibold text-white">
+                        {isArabic
+                          ? (item.serviceNameAr || serviceLabels[item.service]?.[locale] || item.service)
+                          : (item.serviceNameEn || serviceLabels[item.service]?.[locale] || item.service)}
+                      </h2>
                       <SoftBadge label={urgencyLabel(locale, item.urgency)} tone={item.urgency === "URGENT" ? "error" : item.urgency === "SAME_DAY" ? "sun" : "accent"} />
                     </div>
                     <div className="mt-4">
                       <SplitInfo
                         items={[
-                          { label: isArabic ? "المنطقة" : "Area", value: areaLabels[item.area][locale] },
+                          {
+                            label: isArabic ? "المنطقة" : "Area",
+                            value: isArabic
+                              ? (item.areaNameAr || areaLabels[item.area]?.[locale] || item.area)
+                              : (item.areaNameEn || areaLabels[item.area]?.[locale] || item.area)
+                          },
                           { label: isArabic ? "المسافة" : "Distance", value: `${formatNumber(locale, item.distanceKm, 1)} km` },
                           { label: isArabic ? "الحداثة" : "Freshness", value: isArabic ? `منذ ${formatNumber(locale, item.freshnessMinutes)} د` : `${formatNumber(locale, item.freshnessMinutes)} mins ago` },
                           { label: isArabic ? "الميزانية" : "Budget", value: `${formatCurrency(locale, item.budgetMin)} - ${formatCurrency(locale, item.budgetMax)}` }
@@ -234,7 +243,11 @@ export function WorkerActiveRequestsPage({ locale, initialData }: { locale: Loca
                 <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-3">
-                      <h2 className="text-2xl font-semibold text-white">{serviceLabels[item.service][locale]}</h2>
+                      <h2 className="text-2xl font-semibold text-white">
+                        {isArabic
+                          ? (item.serviceNameAr || serviceLabels[item.service]?.[locale] || item.service)
+                          : (item.serviceNameEn || serviceLabels[item.service]?.[locale] || item.service)}
+                      </h2>
                       <SoftBadge label={activeStatusLabel(locale, item.status)} tone={item.status === "WRAP_UP" ? "success" : item.status === "ON_SITE" ? "sun" : "accent"} />
                     </div>
                     <div className="mt-4">
@@ -242,7 +255,12 @@ export function WorkerActiveRequestsPage({ locale, initialData }: { locale: Loca
                         items={[
                           { label: isArabic ? "العميل" : "Client", value: item.clientName },
                           ...(item.clientPhone ? [{ label: isArabic ? "الهاتف" : "Phone", value: item.clientPhone }] : []),
-                          { label: isArabic ? "المنطقة" : "Area", value: areaLabels[item.area][locale] },
+                          {
+                            label: isArabic ? "المنطقة" : "Area",
+                            value: isArabic
+                              ? (item.areaNameAr || areaLabels[item.area]?.[locale] || item.area)
+                              : (item.areaNameEn || areaLabels[item.area]?.[locale] || item.area)
+                          },
                           { label: isArabic ? "الفترة" : "Window", value: item.scheduledWindow },
                           { label: isArabic ? "العائد" : "Earnings", value: formatCurrency(locale, item.earnings) }
                         ]}
