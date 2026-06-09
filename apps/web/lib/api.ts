@@ -43,13 +43,15 @@ export async function fetchApiData<T>(path: string, fallback: T): Promise<T> {
     });
 
     if (!response.ok) {
+      console.error("API GET request failed:", { path, status: response.status });
       throw new Error(`Request failed with ${response.status}`);
     }
 
     const payload = (await response.json()) as ApiEnvelope<T>;
 
     if (!payload.success || payload.data === undefined) {
-      throw new Error(payload.error ?? "Missing data payload");
+      console.error("API GET payload failed:", { path, payload });
+      throw new Error(payload.error ?? payload.message ?? "Missing data payload");
     }
 
     return payload.data;
@@ -73,6 +75,7 @@ export async function postApiData<TResponse, TBody>(path: string, body: TBody) {
   const payload = (await response.json()) as ApiEnvelope<TResponse>;
 
   if (!response.ok || !payload.success || payload.data === undefined) {
+    console.error("API POST request failed:", { path, status: response.status, payload });
     throw new Error(payload.error ?? payload.message ?? `Request failed with ${response.status}`);
   }
 
@@ -94,6 +97,7 @@ export async function patchApiData<TResponse, TBody>(path: string, body?: TBody)
   const payload = (await response.json()) as ApiEnvelope<TResponse>;
 
   if (!response.ok || !payload.success || payload.data === undefined) {
+    console.error("API PATCH request failed:", { path, status: response.status, payload });
     throw new Error(payload.error ?? payload.message ?? `Request failed with ${response.status}`);
   }
 
@@ -113,6 +117,7 @@ export async function deleteApiData<TResponse>(path: string) {
   const payload = (await response.json()) as ApiEnvelope<TResponse>;
 
   if (!response.ok || !payload.success) {
+    console.error("API DELETE request failed:", { path, status: response.status, payload });
     throw new Error(payload.error ?? payload.message ?? `Request failed with ${response.status}`);
   }
 
