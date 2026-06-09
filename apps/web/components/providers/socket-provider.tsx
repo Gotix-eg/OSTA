@@ -29,10 +29,17 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
       return undefined;
     };
     
-    const token = getCookie("token");
-    if (!token) return;
+    const token = getCookie("osta_access_token") || 
+                  (typeof window !== "undefined" ? (window.localStorage.getItem("osta_access_token") || window.sessionStorage.getItem("osta_access_token")) : undefined);
+    if (!token) {
+      console.log("Socket: No token found. Connection skipped.");
+      return;
+    }
 
-    const socketUrl = process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") || "http://localhost:3001";
+    const apiVal = process.env.NEXT_PUBLIC_OSTA_API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
+    const socketUrl = apiVal.replace("/api", "");
+
+    console.log("Connecting to socket server at:", socketUrl);
 
     const socketInstance = io(socketUrl, {
       auth: { token },
@@ -42,7 +49,7 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
 
     socketInstance.on("connect", () => {
       setIsConnected(true);
-      console.log("Socket connected!");
+      console.log("Socket connected successfully!");
     });
 
     socketInstance.on("disconnect", () => {
