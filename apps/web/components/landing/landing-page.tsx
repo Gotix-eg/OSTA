@@ -98,6 +98,9 @@ export function LandingPage({ locale }: { locale: Locale }) {
   const [selectedRequestForAccept, setSelectedRequestForAccept] = useState<any | null>(null);
   const [isWorker, setIsWorker] = useState<boolean>(false);
 
+  const [visibleWorkersLimit, setVisibleWorkersLimit] = useState<number>(4);
+  const [visibleRequestsLimit, setVisibleRequestsLimit] = useState<number>(4);
+
   const DEFAULT_SLIDES = [
     {
       id: "slide-1",
@@ -199,6 +202,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
 
   useEffect(() => {
     fetchWorkers();
+    setVisibleWorkersLimit(4);
   }, [selectedSpecialty, selectedGov, selectedCity, selectedArea]);
 
   const fetchPublicRequests = async () => {
@@ -227,6 +231,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
 
   useEffect(() => {
     fetchPublicRequests();
+    setVisibleRequestsLimit(4);
   }, [selectedRequestSpecialty]);
 
   const handleBookClick = (worker: any) => {
@@ -591,8 +596,9 @@ export function LandingPage({ locale }: { locale: Locale }) {
               </p>
             </div>
           ) : (
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {workers.map((worker) => (
+            <>
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {workers.slice(0, visibleWorkersLimit).map((worker) => (
                 <div 
                   key={worker.id}
                   className="onyx-card border-white/5 bg-white/[0.02] hover:border-gold-500/30 transition-all duration-300 rounded-3xl p-6 flex flex-col justify-between group"
@@ -689,7 +695,19 @@ export function LandingPage({ locale }: { locale: Locale }) {
                   </button>
                 </div>
               ))}
-            </div>
+              </div>
+              {workers.length > visibleWorkersLimit && (
+                <div className="flex justify-center mt-10">
+                  <button
+                    onClick={() => setVisibleWorkersLimit((prev) => prev + 4)}
+                    className="btn-onyx py-3 px-8 text-sm font-bold border-gold-500/20 text-gold-500 bg-white/[0.02] backdrop-blur hover:bg-gold-500/10 hover:border-gold-500/50 shadow-lg rounded-xl transition-all duration-300 flex items-center gap-2"
+                  >
+                    <span>{isArabic ? "مزيد من الفنيين" : "Show More Technicians"}</span>
+                    <ChevronRight className="h-4 w-4 rotate-90 rtl:-rotate-90" />
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </section>
@@ -822,8 +840,9 @@ export function LandingPage({ locale }: { locale: Locale }) {
               </p>
             </div>
           ) : (
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {publicRequests.map((req) => (
+            <>
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {publicRequests.slice(0, visibleRequestsLimit).map((req) => (
                 <div
                   key={req.id}
                   className="onyx-card border-white/5 bg-white/[0.02] hover:border-gold-500/30 transition-all duration-300 rounded-3xl p-6 flex flex-col justify-between group"
@@ -880,7 +899,19 @@ export function LandingPage({ locale }: { locale: Locale }) {
                   </div>
                 </div>
               ))}
-            </div>
+              </div>
+              {publicRequests.length > visibleRequestsLimit && (
+                <div className="flex justify-center mt-10">
+                  <button
+                    onClick={() => setVisibleRequestsLimit((prev) => prev + 4)}
+                    className="btn-onyx py-3 px-8 text-sm font-bold border-gold-500/20 text-gold-500 bg-white/[0.02] backdrop-blur hover:bg-gold-500/10 hover:border-gold-500/50 shadow-lg rounded-xl transition-all duration-300 flex items-center gap-2"
+                  >
+                    <span>{isArabic ? "مزيد من الطلبات" : "Show More Requests"}</span>
+                    <ChevronRight className="h-4 w-4 rotate-90 rtl:-rotate-90" />
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </section>
