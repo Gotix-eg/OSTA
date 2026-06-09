@@ -38,6 +38,8 @@ export interface ClientRequestDetailData {
   };
   status: DashboardRequestStatus | "PENDING" | "COMPLETED";
   area: string;
+  estimatedPrice?: number | null;
+  finalPrice?: number | null;
   createdAt: string;
   updatedAt: string;
   worker?: {
@@ -336,6 +338,8 @@ const clientRequestDetailFallback: ClientRequestDetailData = {
   },
   status: "PENDING",
   area: "",
+  estimatedPrice: null,
+  finalPrice: null,
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString()
 };

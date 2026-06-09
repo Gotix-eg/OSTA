@@ -460,6 +460,37 @@ router.patch("/requests/:id/accept", catchAsync(async (request, response) => {
   );
 }));
 
+router.patch("/requests/:id/budget", catchAsync(async (request, response) => {
+  const userId = request.auth!.userId;
+  const worker = await prisma.workerProfile.findUnique({ where: { userId } });
+  if (!worker) throw new ApiError(404, "Worker profile not found");
+
+  const requestId = request.params.id as string;
+  const { price } = request.body as { price: number };
+  if (!price || isNaN(price) || price <= 0) {
+    throw new ApiError(400, "Valid price is required");
+  }
+
+  const record = await prisma.serviceRequest.findFirst({
+    where: { id: requestId, workerId: worker.id }
+  });
+  if (!record) throw new ApiError(404, "Request not found or not assigned to you");
+
+  if (["COMPLETED", "CONFIRMED_BY_CLIENT", "CANCELLED_BY_CLIENT", "CANCELLED_BY_WORKER"].includes(record.status)) {
+    throw new ApiError(400, "Cannot edit budget for completed or cancelled requests");
+  }
+
+  const updated = await prisma.serviceRequest.update({
+    where: { id: requestId },
+    data: {
+      finalPrice: price,
+      estimatedPrice: price
+    }
+  });
+
+  response.status(200).json(successResponse(updated, "Request budget updated"));
+}));
+
 router.patch("/requests/:id/reject", catchAsync(async (request, response) => {
   const userId = request.auth!.userId;
   const requestId = request.params.id as string;

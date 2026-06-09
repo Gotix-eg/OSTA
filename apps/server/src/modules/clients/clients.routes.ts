@@ -325,6 +325,8 @@ router.get(
       },
       mediaNotes: record.voiceNote || "",
       images: record.images || [],
+      estimatedPrice: record.estimatedPrice,
+      finalPrice: record.finalPrice,
       createdAt: record.createdAt,
       updatedAt: record.updatedAt,
       worker: record.worker ? {
@@ -343,6 +345,41 @@ router.get(
       .status(200)
       .json(successResponse(mapped, "Client request fetched"));
   }),
+);
+
+router.patch(
+  "/requests/:id/budget",
+  catchAsync(async (request: Request, response: Response) => {
+    const profile = await prisma.clientProfile.findUnique({
+      where: { userId: request.auth!.userId },
+    });
+    if (!profile) throw new ApiError(404, "Client profile not found");
+    
+    const { id } = request.params as { id: string };
+    const { price } = request.body as { price: number };
+    if (!price || isNaN(price) || price <= 0) {
+      throw new ApiError(400, "Valid price is required");
+    }
+
+    const record = await prisma.serviceRequest.findFirst({
+      where: { id, clientId: profile.id },
+    });
+    if (!record) throw new ApiError(404, "Request not found");
+
+    if (["COMPLETED", "CONFIRMED_BY_CLIENT", "CANCELLED_BY_CLIENT", "CANCELLED_BY_WORKER"].includes(record.status)) {
+      throw new ApiError(400, "Cannot edit budget for completed or cancelled requests");
+    }
+
+    const updated = await prisma.serviceRequest.update({
+      where: { id },
+      data: {
+        estimatedPrice: price,
+        finalPrice: record.status !== "PENDING" ? price : undefined,
+      },
+    });
+
+    response.status(200).json(successResponse(updated, "Request budget updated"));
+  })
 );
 
 router.post(

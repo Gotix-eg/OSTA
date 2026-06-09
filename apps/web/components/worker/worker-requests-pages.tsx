@@ -13,7 +13,7 @@ import {
   SubpageHero
 } from "@/components/dashboard/dashboard-subpage-primitives";
 import { useLiveApiData } from "@/hooks/use-live-api-data";
-import { patchApiData } from "@/lib/api";
+import { fetchApiData, patchApiData } from "@/lib/api";
 import type { DashboardAreaCode, DashboardServiceCode } from "@/lib/dashboard-data";
 import type { Locale } from "@/lib/locales";
 import type { WorkerActiveRequestsData, WorkerIncomingRequestsData } from "@/lib/operations-data";
@@ -241,6 +241,38 @@ export function WorkerActiveRequestsPage({ locale, initialData }: { locale: Loca
     }
   }
 
+  async function handleEditActivePrice(id: string, currentEarnings: number) {
+    const promptText = isArabic
+      ? `أدخل السعر/العائد الجديد المقترح (ج.م) [الحالي: ${formatCurrency(locale, currentEarnings)}]:`
+      : `Enter new proposed price/earnings (EGP) [Current: ${formatCurrency(locale, currentEarnings)}]:`;
+    
+    const userInput = prompt(promptText);
+    if (userInput === null) return;
+    
+    const parsed = parseFloat(userInput);
+    if (isNaN(parsed) || parsed <= 0) {
+      alert(isArabic ? "يرجى إدخال سعر صحيح أكبر من الصفر." : "Please enter a valid price greater than zero.");
+      return;
+    }
+
+    setBusyId(id);
+    setFeedback(null);
+
+    try {
+      await patchApiData<any, any>(
+        `/workers/requests/${id}/budget`,
+        { price: parsed }
+      );
+      setFeedback(isArabic ? "تم تحديث السعر بنجاح" : "Price updated successfully");
+      const nextData = await fetchApiData<WorkerActiveRequestsData>("/workers/requests/active", initialData);
+      setData(nextData);
+    } catch (error) {
+      setFeedback(error instanceof Error ? error.message : isArabic ? "حدثت مشكلة" : "Something went wrong");
+    } finally {
+      setBusyId(null);
+    }
+  }
+
   return (
     <div>
       <SubpageHero
@@ -306,11 +338,23 @@ export function WorkerActiveRequestsPage({ locale, initialData }: { locale: Loca
                         localStorage.setItem("osta_open_chat_user", JSON.stringify({ id: item.clientUserId, firstName: item.clientName, lastName: "" }));
                         window.dispatchEvent(new Event("osta_open_chat"));
                       }}
-                      className="rounded-full border border-onyx-700 bg-onyx-800/50 p-2.5 text-sm font-semibold text-onyx-200 shadow-soft hover:bg-white/5 transition-colors flex items-center justify-center"
+                      className="rounded-full border border-onyx-700 bg-onyx-800/50 p-2.5 text-sm font-semibold text-onyx-200 shadow-soft hover:bg-white/5 transition-colors flex items-center justify-center mr-1"
                       title={isArabic ? "محادثة العميل" : "Chat with Client"}
                     >
                       <MessageSquare className="h-4.5 w-4.5 text-gold-500" />
                     </button>
+
+                    {item.status !== "WRAP_UP" && (
+                      <button
+                        type="button"
+                        onClick={() => void handleEditActivePrice(item.id, item.earnings)}
+                        disabled={busyId === item.id}
+                        className="rounded-full border border-onyx-700 bg-onyx-800/50 p-2.5 text-sm font-semibold text-onyx-200 shadow-soft hover:bg-white/5 transition-colors flex items-center justify-center mr-1 disabled:opacity-50"
+                        title={isArabic ? "تعديل السعر" : "Edit Price"}
+                      >
+                        <Wallet className="h-4.5 w-4.5 text-accent-500" />
+                      </button>
+                    )}
 
                     {item.status === "EN_ROUTE" ? (
                       <button
