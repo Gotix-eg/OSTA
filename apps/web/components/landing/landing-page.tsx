@@ -91,6 +91,13 @@ export function LandingPage({ locale }: { locale: Locale }) {
   const [isClient, setIsClient] = useState<boolean>(false);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
+  const [publicRequests, setPublicRequests] = useState<any[]>([]);
+  const [loadingRequests, setLoadingRequests] = useState<boolean>(false);
+  const [selectedRequestSpecialty, setSelectedRequestSpecialty] = useState<string>("");
+  const [showWorkerAuthModal, setShowWorkerAuthModal] = useState<boolean>(false);
+  const [selectedRequestForAccept, setSelectedRequestForAccept] = useState<any | null>(null);
+  const [isWorker, setIsWorker] = useState<boolean>(false);
+
   const DEFAULT_SLIDES = [
     {
       id: "slide-1",
@@ -157,6 +164,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
       const role = window.localStorage.getItem("osta_user_role");
       setIsLoggedIn(!!token);
       setIsClient(role === "CLIENT");
+      setIsWorker(role === "WORKER");
     }
   }, []);
 
@@ -193,6 +201,34 @@ export function LandingPage({ locale }: { locale: Locale }) {
     fetchWorkers();
   }, [selectedSpecialty, selectedGov, selectedCity, selectedArea]);
 
+  const fetchPublicRequests = async () => {
+    setLoadingRequests(true);
+    try {
+      const params = new URLSearchParams();
+      if (selectedRequestSpecialty) params.append("specialty", selectedRequestSpecialty);
+
+      const baseUrl = resolveApiBaseUrl();
+      const res = await fetch(`${baseUrl}/public/requests?${params.toString()}`);
+      if (!res.ok) {
+        throw new Error("Failed to fetch public requests");
+      }
+      const data = await res.json();
+      if (data.success) {
+        setPublicRequests(data.data);
+      } else {
+        setPublicRequests([]);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingRequests(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPublicRequests();
+  }, [selectedRequestSpecialty]);
+
   const handleBookClick = (worker: any) => {
     if (isLoggedIn) {
       if (isClient) {
@@ -204,6 +240,19 @@ export function LandingPage({ locale }: { locale: Locale }) {
     } else {
       setSelectedWorkerForBooking(worker);
       setShowAuthModal(true);
+    }
+  };
+
+  const handleAcceptRequestClick = (req: any) => {
+    if (isLoggedIn) {
+      if (isWorker) {
+        window.location.assign(`/${locale}/worker`);
+      } else {
+        alert(isArabic ? "هذا الإجراء متاح لحسابات الفنيين فقط." : "Accepting requests is only available for technician accounts.");
+      }
+    } else {
+      setSelectedRequestForAccept(req);
+      setShowWorkerAuthModal(true);
     }
   };
 
@@ -697,6 +746,197 @@ export function LandingPage({ locale }: { locale: Locale }) {
                 </Link>
                 <button
                   onClick={() => setShowAuthModal(false)}
+                  className="text-xs text-onyx-500 hover:text-onyx-300 transition-colors font-bold mt-4"
+                >
+                  {isArabic ? "إلغاء ومتابعة التصفح" : "Cancel and Continue Browsing"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Public Open Requests Job Board Section */}
+      <section className="py-20 px-4 bg-onyx-900/30 border-b border-white/5">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <span className="text-xs font-bold uppercase tracking-wider text-gold-500 px-3 py-1 rounded-full bg-gold-500/10 border border-gold-500/25">
+              {isArabic ? "فرص العمل المتاحة" : "Open Opportunities"}
+            </span>
+            <h2 className="text-3xl md:text-5xl font-black text-white mt-4 mb-4">
+              {isArabic ? "طلبات صيانة مفتوحة تنتظر فنيين" : "Active Home Maintenance Jobs"}
+            </h2>
+            <p className="text-onyx-400 max-w-2xl mx-auto text-base md:text-lg">
+              {isArabic 
+                ? "شاهد طلبات العملاء الحالية في منطقتك، واستلم العمل فوراً بمجرد تسجيلك كفني محترف" 
+                : "View open maintenance requests, select jobs, and start earning by joining as a pro"}
+            </p>
+            <div className="h-1 w-24 bg-gold-500 mx-auto rounded-full mt-6" />
+          </div>
+
+          {/* Specialty Filter Tab/Buttons */}
+          <div className="flex flex-wrap justify-center gap-3 mb-10">
+            <button
+              onClick={() => setSelectedRequestSpecialty("")}
+              className={cn(
+                "px-5 py-2.5 rounded-full text-sm font-semibold transition-all border",
+                selectedRequestSpecialty === ""
+                  ? "bg-gold-500 text-onyx-950 border-gold-500 shadow-md"
+                  : "bg-onyx-900 border-white/10 text-onyx-300 hover:text-white"
+              )}
+            >
+              {isArabic ? "كل الفئات" : "All Categories"}
+            </button>
+            {CRAFTS.map((craft) => (
+              <button
+                key={craft.id}
+                onClick={() => setSelectedRequestSpecialty(craft.id)}
+                className={cn(
+                  "px-5 py-2.5 rounded-full text-sm font-semibold transition-all border",
+                  selectedRequestSpecialty === craft.id
+                    ? "bg-gold-500 text-onyx-950 border-gold-500 shadow-md"
+                    : "bg-onyx-900 border-white/10 text-onyx-300 hover:text-white"
+                )}
+              >
+                {isArabic ? craft.name.ar : craft.name.en}
+              </button>
+            ))}
+          </div>
+
+          {/* Requests List */}
+          {loadingRequests ? (
+            <div className="flex flex-col items-center justify-center py-20 text-onyx-400">
+              <div className="h-10 w-10 border-4 border-gold-500 border-t-transparent rounded-full animate-spin mb-4" />
+              <p className="text-sm font-medium">{isArabic ? "جاري تحميل الفرص المتاحة..." : "Loading open requests..."}</p>
+            </div>
+          ) : publicRequests.length === 0 ? (
+            <div className="text-center py-16 onyx-card border-white/5 bg-white/[0.01] rounded-3xl">
+              <Store className="h-16 w-16 text-onyx-600 mx-auto mb-4" />
+              <h4 className="text-xl font-bold text-white mb-2">
+                {isArabic ? "لا يوجد طلبات مفتوحة حالياً" : "No Open Requests"}
+              </h4>
+              <p className="text-onyx-400 text-sm max-w-md mx-auto">
+                {isArabic 
+                  ? "جميع طلبات الصيانة مستلمة حالياً من قبل فنيين آخرين. يرجى التحقق مرة أخرى لاحقاً." 
+                  : "All maintenance requests are currently assigned. Please check back later."}
+              </p>
+            </div>
+          ) : (
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {publicRequests.map((req) => (
+                <div
+                  key={req.id}
+                  className="onyx-card border-white/5 bg-white/[0.02] hover:border-gold-500/30 transition-all duration-300 rounded-3xl p-6 flex flex-col justify-between group"
+                >
+                  <div>
+                    {/* Badge and Location */}
+                    <div className="flex items-center justify-between mb-4">
+                      <span className={cn(
+                        "text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md",
+                        req.urgency === "EMERGENCY" 
+                          ? "bg-red-500/10 text-red-500 border border-red-500/20" 
+                          : "bg-onyx-800 text-onyx-300 border border-white/5"
+                      )}>
+                        {req.urgency === "EMERGENCY" 
+                          ? (isArabic ? "حالة طوارئ" : "Emergency") 
+                          : (isArabic ? "طلب عادي" : "Normal")}
+                      </span>
+
+                      <span className="text-xs text-onyx-500 font-medium">
+                        {new Date(req.createdAt).toLocaleDateString(isArabic ? 'ar-EG' : 'en-US', {
+                          month: 'short',
+                          day: 'numeric'
+                        })}
+                      </span>
+                    </div>
+
+                    <h4 className="text-lg font-black text-white mb-1.5 line-clamp-1 group-hover:text-gold-500 transition-colors">
+                      {req.title}
+                    </h4>
+
+                    <p className="text-xs text-gold-500 font-bold mb-3 uppercase tracking-wider">
+                      {isArabic ? req.categoryNameAr : req.categoryNameEn}
+                    </p>
+
+                    <p className="text-sm text-onyx-400 line-clamp-3 leading-relaxed mb-6">
+                      {req.description}
+                    </p>
+                  </div>
+
+                  {/* Footer & Action */}
+                  <div className="border-t border-white/5 pt-4 mt-auto">
+                    <div className="flex items-center gap-2 text-xs text-onyx-400 mb-4 font-semibold">
+                      <MapPin className="h-4 w-4 text-gold-500 flex-shrink-0" />
+                      <span>{isArabic ? `${req.governorate}، ${req.city}` : `${req.governorate}, ${req.city}`}</span>
+                    </div>
+
+                    <button
+                      onClick={() => handleAcceptRequestClick(req)}
+                      className="w-full btn-gold py-3 text-sm font-black flex items-center justify-center gap-2 group/btn shadow-md"
+                    >
+                      <span>{isArabic ? "اقبل الطلب الآن" : "Accept Job Now"}</span>
+                      <ChevronRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-1 rtl:rotate-180 rtl:group-hover/btn:-translate-x-1" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Worker Auth Prompt Modal */}
+      {showWorkerAuthModal && selectedRequestForAccept && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm animate-fadeIn">
+          <div className="onyx-card border-white/10 bg-onyx-900 max-w-md w-full p-8 rounded-3xl shadow-2xl relative border animate-scaleUp">
+            {/* Close Button */}
+            <button 
+              onClick={() => setShowWorkerAuthModal(false)}
+              className="absolute top-4 right-4 text-onyx-400 hover:text-white transition-colors"
+            >
+              <X className="h-6 w-6" />
+            </button>
+
+            <div className="text-center">
+              <div className="h-16 w-16 bg-gold-500/10 border border-gold-500/25 rounded-full flex items-center justify-center mx-auto mb-6 text-gold-500">
+                <Store className="h-8 w-8" />
+              </div>
+
+              <h3 className="text-2xl font-black text-white mb-2">
+                {isArabic ? "استقبال طلب الصيانة" : "Receive Service Request"}
+              </h3>
+              
+              <p className="text-gold-500 font-bold mb-4 text-sm">
+                {isArabic 
+                  ? `قبول طلب: ${selectedRequestForAccept.title}` 
+                  : `Accepting: ${selectedRequestForAccept.title}`}
+              </p>
+
+              <p className="text-onyx-300 text-sm leading-relaxed mb-8">
+                {isArabic
+                  ? "لقبول هذا الطلب والبدء في التواصل وعرض أسعارك للعميل، يرجى تسجيل الدخول كفني أو التسجيل كفني محترف جديد بالمنصة."
+                  : "To accept this job and start bidding/communicating with the client, please sign in as a technician or register as a new professional pro."}
+              </p>
+
+              <div className="flex flex-col gap-3">
+                <Link
+                  href={`/${locale}/login?redirect=${encodeURIComponent(
+                    `/${locale}/worker`
+                  )}`}
+                  className="btn-gold py-3 text-sm font-black w-full text-center rounded-xl shadow-lg shadow-gold-500/10"
+                >
+                  {isArabic ? "تسجيل الدخول كفني" : "Login as Pro"}
+                </Link>
+                <Link
+                  href={`/${locale}/register/worker?redirect=${encodeURIComponent(
+                    `/${locale}/worker`
+                  )}`}
+                  className="btn-onyx py-3 text-sm font-black w-full text-center border-white/10 text-white hover:bg-white/5 rounded-xl"
+                >
+                  {isArabic ? "سجل كفني محترف جديد" : "Register as Pro"}
+                </Link>
+                <button
+                  onClick={() => setShowWorkerAuthModal(false)}
                   className="text-xs text-onyx-500 hover:text-onyx-300 transition-colors font-bold mt-4"
                 >
                   {isArabic ? "إلغاء ومتابعة التصفح" : "Cancel and Continue Browsing"}

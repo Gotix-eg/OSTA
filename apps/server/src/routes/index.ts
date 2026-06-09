@@ -249,6 +249,57 @@ router.get("/public/workers", async (request, response) => {
   }
 });
 
+router.get("/public/requests", async (request, response) => {
+  const { specialty } = request.query as { specialty?: string };
+
+  try {
+    const openRequests = await prisma.serviceRequest.findMany({
+      where: {
+        status: "PENDING",
+        workerId: null,
+        ...(specialty && {
+          service: {
+            category: {
+              slug: specialty,
+            },
+          },
+        }),
+      },
+      include: {
+        service: {
+          include: {
+            category: true,
+          },
+        },
+        address: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: 15,
+    });
+
+    const result = openRequests.map((r) => ({
+      id: r.id,
+      title: r.title,
+      description: r.description.length > 150 ? `${r.description.substring(0, 150)}...` : r.description,
+      urgency: r.urgency,
+      serviceNameAr: r.service.nameAr,
+      serviceNameEn: r.service.nameEn,
+      categorySlug: r.service.category.slug,
+      categoryNameAr: r.service.category.nameAr,
+      categoryNameEn: r.service.category.nameEn,
+      governorate: r.address.governorate,
+      city: r.address.city,
+      createdAt: r.createdAt,
+    }));
+
+    response.status(200).json(successResponse(result, "Public open requests fetched"));
+  } catch (e: any) {
+    response.status(500).json({ error: e.message });
+  }
+});
+
 router.use("/auth", authRouter);
 router.use("/clients", clientsRouter);
 router.use("/workers", workersRouter);
