@@ -234,7 +234,7 @@ export function WorkerDashboardHome({ locale }: { locale: Locale }) {
         title={isArabic ? "أهلاً بك يا بطل" : "Welcome Hero"}
         subtitle={isArabic ? "تتبع أرباحك، استقبل الطلبات، ونمّ أعمالك مع أُسطفاي." : "Track earnings, accept jobs, and grow your business with Ostafy."}
         actionLabel={isArabic ? "استعراض الطلبات" : "Browse Jobs"}
-        actionHref={`/${locale}/worker/requests`}
+        actionHref={`/${locale}/worker/requests/incoming`}
       />
 
       <div className="mb-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
