@@ -170,6 +170,8 @@ export interface WorkerIncomingRequestsData {
     serviceNameEn?: string;
     areaNameAr?: string;
     areaNameEn?: string;
+    clientUserId?: string;
+    clientName?: string;
   }>;
 }
 

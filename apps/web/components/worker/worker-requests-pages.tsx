@@ -80,13 +80,31 @@ export function WorkerIncomingRequestsPage({ locale, initialData }: { locale: Lo
   }, [liveData]);
 
   async function handleIncomingAction(id: string, action: "accept" | "reject") {
+    let price: number | undefined = undefined;
+
+    if (action === "accept") {
+      const promptText = isArabic
+        ? "أدخل السعر/الميزانية المقترحة لإنجاز هذا الطلب (ج.م):"
+        : "Enter your proposed price/budget for this request (EGP):";
+      const userInput = prompt(promptText);
+      if (userInput === null) {
+        return; // User clicked Cancel
+      }
+      const parsed = parseFloat(userInput);
+      if (isNaN(parsed) || parsed <= 0) {
+        alert(isArabic ? "يرجى إدخال سعر صحيح أكبر من الصفر." : "Please enter a valid price greater than zero.");
+        return;
+      }
+      price = parsed;
+    }
+
     setBusyId(id);
     setFeedback(null);
 
     try {
-      const nextData = await patchApiData<WorkerIncomingRequestsData, Record<string, string>>(
+      const nextData = await patchApiData<WorkerIncomingRequestsData, any>(
         `/workers/requests/${id}/${action}`,
-        action === "accept" ? { workerName: "Youssef El-Sharif" } : {}
+        action === "accept" ? { workerName: "Youssef El-Sharif", price } : {}
       );
 
       setData(nextData);
@@ -156,6 +174,19 @@ export function WorkerIncomingRequestsPage({ locale, initialData }: { locale: Lo
                   </div>
 
                   <div className="flex flex-wrap items-center gap-3">
+                    {item.clientUserId ? (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          localStorage.setItem("osta_open_chat_user", JSON.stringify({ id: item.clientUserId, firstName: item.clientName || "", lastName: "" }));
+                          window.dispatchEvent(new Event("osta_open_chat"));
+                        }}
+                        className="rounded-full border border-onyx-700 bg-onyx-800/50 p-2.5 text-sm font-semibold text-onyx-200 shadow-soft hover:bg-white/5 transition-colors flex items-center justify-center mr-1"
+                        title={isArabic ? "محادثة العميل قبل القبول" : "Chat with Client before accepting"}
+                      >
+                        <MessageSquare className="h-4.5 w-4.5 text-gold-500" />
+                      </button>
+                    ) : null}
                     <button
                       type="button"
                       onClick={() => void handleIncomingAction(item.id, "reject")}

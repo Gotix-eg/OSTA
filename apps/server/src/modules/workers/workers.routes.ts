@@ -83,7 +83,8 @@ const workerSettings = {
 };
 
 const acceptRequestSchema = z.object({
-  workerName: z.string().min(2).max(80).optional()
+  workerName: z.string().min(2).max(80).optional(),
+  price: z.number().optional()
 });
 
 function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
@@ -240,7 +241,18 @@ async function getIncomingRequestsForWorker(userId: string) {
           category: true
         }
       },
-      address: true
+      address: true,
+      client: {
+        include: {
+          user: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true
+            }
+          }
+        }
+      }
     }
   });
 
@@ -282,7 +294,9 @@ async function getIncomingRequestsForWorker(userId: string) {
       serviceNameAr: r.service.nameAr,
       serviceNameEn: r.service.nameEn,
       areaNameAr: r.address.area || r.address.city,
-      areaNameEn: r.address.area || r.address.city
+      areaNameEn: r.address.area || r.address.city,
+      clientUserId: r.client?.user.id,
+      clientName: r.client ? `${r.client.user.firstName} ${r.client.user.lastName}` : undefined
     };
   });
 
@@ -426,12 +440,15 @@ router.patch("/requests/:id/accept", catchAsync(async (request, response) => {
     throw new ApiError(403, "عذراً، يجب تجديد الباقة لتتمكن من قبول طلبات جديدة.");
   }
 
-  // 3. Update Request Status
+  // 3. Update Request Status & Price
+  const payload = acceptRequestSchema.parse(request.body);
   const serviceRequest = await prisma.serviceRequest.update({
     where: { id: requestId },
     data: {
       workerId: worker.id,
-      status: "WORKER_EN_ROUTE"
+      status: "WORKER_EN_ROUTE",
+      finalPrice: payload.price || undefined,
+      estimatedPrice: payload.price || undefined
     }
   });
 
