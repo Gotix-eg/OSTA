@@ -53,7 +53,7 @@ export function FloatingChatWidget() {
   }, []);
 
   useEffect(() => {
-    const handleOpenChat = () => {
+    const handleOpenChat = (e?: Event) => {
       const stored = localStorage.getItem("osta_open_chat_user");
       if (stored) {
         try {
@@ -61,13 +61,20 @@ export function FloatingChatWidget() {
           setActiveChat(user);
           setIsOpen(true);
           localStorage.removeItem("osta_open_chat_user");
-        } catch (e) {
+        } catch (err) {
           // ignore
         }
+      } else if (e) {
+        setIsOpen(true);
       }
     };
 
-    handleOpenChat();
+    // On mount, only open if there's an actual user queued
+    const stored = localStorage.getItem("osta_open_chat_user");
+    if (stored) {
+      handleOpenChat();
+    }
+
     window.addEventListener("osta_open_chat", handleOpenChat);
     return () => {
       window.removeEventListener("osta_open_chat", handleOpenChat);

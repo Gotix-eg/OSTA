@@ -43,6 +43,7 @@ import { dashboardCopy } from "@/lib/dashboard-copy";
 import { stripLocalePrefix, type Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
 import { NotificationsPopover } from "./notifications-popover";
+import { HeaderChatButton } from "./header-chat-button";
 
 type DashboardRole = "client" | "worker" | "vendor" | "admin";
 
@@ -202,6 +203,7 @@ export function DashboardShell({
                   className="inline-flex h-12 items-center justify-center rounded-full border border-white/5 bg-white/5 px-5 text-[10px] font-bold uppercase tracking-widest text-white shadow-xl transition-all duration-500 hover:bg-white/10"
                 />
                 <NotificationsPopover locale={locale} />
+                <HeaderChatButton locale={locale} />
                 <div className="flex items-center gap-3 rounded-full border border-white/5 bg-white/5 p-1.5 pe-5 shadow-xl">
                   <div className={cn("flex h-10 w-10 items-center justify-center rounded-full shadow-inner", theme.orb, theme.ring)}>
                     <UserCircle2 className="h-5 w-5" />
