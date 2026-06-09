@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, RotateCcw, User, Phone, Search, Loader2, Wrench, Star, ShieldCheck, Trash2, Wallet } from "lucide-react";
+import { Plus, RotateCcw, User, Phone, Search, Loader2, Wrench, Star, ShieldCheck, Trash2, Wallet, Eye, X } from "lucide-react";
 import { fetchApiData, postApiData, patchApiData, deleteApiData } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
+import { workerProfessions } from "@/lib/geo-data";
 
 type Worker = {
   id: string;
@@ -16,6 +17,10 @@ type Worker = {
   totalJobsCompleted: number;
   verificationStatus: string;
   walletBalance: number;
+  nationalIdNumber?: string | null;
+  nationalIdFront?: string | null;
+  nationalIdBack?: string | null;
+  profession?: string | null;
   user: {
     firstName: string;
     lastName: string;
@@ -37,6 +42,7 @@ export function AdminWorkersManagement({ locale }: { locale: Locale }) {
   const [walletAmount, setWalletAmount] = useState("");
   const [walletAction, setWalletAction] = useState<"add" | "deduct" | "set">("add");
   const [actionLoading, setActionLoading] = useState(false);
+  const [detailsModalOpen, setDetailsModalOpen] = useState(false);
 
   useEffect(() => {
     fetchApiData<{ data: Worker[] }>("/admin/workers", { data: [] }).then(res => {
@@ -220,6 +226,17 @@ export function AdminWorkersManagement({ locale }: { locale: Locale }) {
                     </div>
 
                     <div className="flex items-center gap-3">
+                       <button 
+                         onClick={() => {
+                           setSelectedWorker(worker);
+                           setDetailsModalOpen(true);
+                         }}
+                         className="h-12 w-12 rounded-2xl bg-onyx-800 border border-onyx-700 flex items-center justify-center text-gold-500 hover:text-onyx-950 hover:bg-gold-500 transition-all shrink-0"
+                         title={isArabic ? "عرض الملف والمستندات" : "View Profile & Docs"}
+                       >
+                         <Eye className="h-5 w-5" />
+                       </button>
+
                        {worker.verificationStatus !== "VERIFIED" ? (
                          <button 
                            onClick={() => handleVerify(worker.id)}
@@ -397,6 +414,180 @@ export function AdminWorkersManagement({ locale }: { locale: Locale }) {
               >
                 {actionLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : (isArabic ? "حذف نهائي" : "Delete Permanently")}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Worker Details & Verification Modal */}
+      {detailsModalOpen && selectedWorker && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm overflow-y-auto animate-fadeIn">
+          <div className="onyx-card max-w-2xl w-full p-8 border-gold-500/30 space-y-6 my-8">
+            <div className="flex items-center justify-between border-b border-white/5 pb-4">
+              <h3 className="text-2xl font-black text-white flex items-center gap-3">
+                <User className="h-6 w-6 text-gold-500" />
+                {isArabic ? "ملف الفني والمستندات" : "Pro Profile & Documents"}
+              </h3>
+              <button
+                type="button"
+                onClick={() => {
+                  setDetailsModalOpen(false);
+                  setSelectedWorker(null);
+                }}
+                className="h-10 w-10 rounded-xl bg-onyx-800 border border-onyx-700 flex items-center justify-center text-onyx-400 hover:text-white transition-all"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-2">
+              <div className="space-y-4">
+                <h4 className="text-sm font-bold text-gold-500 uppercase tracking-wider">
+                  {isArabic ? "البيانات الشخصية" : "Personal Information"}
+                </h4>
+                <div className="onyx-card p-4 space-y-3 bg-white/[0.01] border-white/5">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-onyx-400">{isArabic ? "الاسم الكامل" : "Full Name"}</span>
+                    <span className="text-white font-bold">{selectedWorker.user.firstName} {selectedWorker.user.lastName}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-onyx-400">{isArabic ? "رقم الهاتف" : "Phone Number"}</span>
+                    <span className="text-white font-mono">{selectedWorker.user.phone}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-onyx-400">{isArabic ? "التخصص المهني" : "Profession"}</span>
+                    <span className="text-gold-500 font-bold">
+                      {(() => {
+                        const prof = workerProfessions.find(p => p.value === selectedWorker.profession);
+                        return isArabic ? (prof?.labelAr || selectedWorker.profession || "غير محدد") : (prof?.labelEn || selectedWorker.profession || "Unassigned");
+                      })()}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-onyx-400">{isArabic ? "حالة التوثيق" : "Verification Status"}</span>
+                    <span className={cn(
+                      "font-bold",
+                      selectedWorker.verificationStatus === "VERIFIED" ? "text-emerald-500" : "text-amber-500"
+                    )}>
+                      {selectedWorker.verificationStatus === "VERIFIED" 
+                        ? (isArabic ? "موثق" : "Verified")
+                        : (isArabic ? "غير موثق" : "Pending Verification")}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h4 className="text-sm font-bold text-gold-500 uppercase tracking-wider">
+                  {isArabic ? "إحصائيات العمليات والرصيد" : "Operations & Balance"}
+                </h4>
+                <div className="onyx-card p-4 space-y-3 bg-white/[0.01] border-white/5">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-onyx-400">{isArabic ? "التقييم العام" : "Average Rating"}</span>
+                    <span className="text-white font-bold flex items-center gap-1">
+                      <Star className="h-4 w-4 fill-gold-500 text-gold-500" />
+                      {selectedWorker.rating}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-onyx-400">{isArabic ? "العمليات المكتملة" : "Completed Orders"}</span>
+                    <span className="text-white font-bold">{selectedWorker.totalJobsCompleted} {isArabic ? "أوردر" : "jobs"}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-onyx-400">{isArabic ? "رصيد المهام المتبقي" : "Order Quota"}</span>
+                    <span className="text-emerald-400 font-bold">{selectedWorker.orderQuota}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-onyx-400">{isArabic ? "رصيد المحفظة" : "Wallet Balance"}</span>
+                    <span className="text-gold-500 font-bold">{selectedWorker.walletBalance} {isArabic ? "ج.م" : "EGP"}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-4 pt-2">
+              <div className="flex items-center justify-between">
+                <h4 className="text-sm font-bold text-gold-500 uppercase tracking-wider">
+                  {isArabic ? "الرقم القومي والمستندات" : "National ID & Documents"}
+                </h4>
+                <span className="text-sm font-mono text-white bg-onyx-900 px-3 py-1 rounded-lg border border-white/5">
+                  {selectedWorker.nationalIdNumber || (isArabic ? "رقم قومي غير متوفر" : "No National ID")}
+                </span>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <span className="text-xs font-bold text-onyx-400 block">{isArabic ? "صورة البطاقة (وجه)" : "ID Front"}</span>
+                  {selectedWorker.nationalIdFront ? (
+                    <a
+                      href={selectedWorker.nationalIdFront}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="block relative group overflow-hidden rounded-2xl border border-onyx-700 bg-onyx-900 aspect-[1.58] w-full"
+                    >
+                      <img src={selectedWorker.nationalIdFront} alt="National ID Front" className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-300" />
+                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white font-bold text-xs gap-2">
+                        <Eye className="h-4 w-4 text-gold-500" />
+                        <span>{isArabic ? "فتح الصورة الأصلية" : "Open Original"}</span>
+                      </div>
+                    </a>
+                  ) : (
+                    <div className="rounded-2xl border border-dashed border-onyx-700 bg-onyx-900/30 p-8 text-center text-xs text-onyx-500 font-bold">
+                      {isArabic ? "لم يتم رفع الوجه" : "Not uploaded"}
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <span className="text-xs font-bold text-onyx-400 block">{isArabic ? "صورة البطاقة (ظهر)" : "ID Back"}</span>
+                  {selectedWorker.nationalIdBack ? (
+                    <a
+                      href={selectedWorker.nationalIdBack}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="block relative group overflow-hidden rounded-2xl border border-onyx-700 bg-onyx-900 aspect-[1.58] w-full"
+                    >
+                      <img src={selectedWorker.nationalIdBack} alt="National ID Back" className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-300" />
+                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white font-bold text-xs gap-2">
+                        <Eye className="h-4 w-4 text-gold-500" />
+                        <span>{isArabic ? "فتح الصورة الأصلية" : "Open Original"}</span>
+                      </div>
+                    </a>
+                  ) : (
+                    <div className="rounded-2xl border border-dashed border-onyx-700 bg-onyx-900/30 p-8 text-center text-xs text-onyx-500 font-bold">
+                      {isArabic ? "لم يتم رفع الظهر" : "Not uploaded"}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-3 justify-end pt-4 border-t border-white/5">
+              <button
+                type="button"
+                onClick={() => {
+                  setDetailsModalOpen(false);
+                  setSelectedWorker(null);
+                }}
+                className="btn-onyx py-3 px-6 text-sm font-bold"
+              >
+                {isArabic ? "إغلاق" : "Close"}
+              </button>
+
+              {selectedWorker.verificationStatus !== "VERIFIED" && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleVerify(selectedWorker.id);
+                    setDetailsModalOpen(false);
+                    setSelectedWorker(null);
+                  }}
+                  className="btn-gold py-3 px-8 text-sm font-black shadow-[0_0_20px_rgba(234,179,8,0.15)]"
+                >
+                  <ShieldCheck className="h-4 w-4 mr-2" />
+                  {isArabic ? "توثيق الحساب الآن" : "Verify Account Now"}
+                </button>
+              )}
             </div>
           </div>
         </div>
