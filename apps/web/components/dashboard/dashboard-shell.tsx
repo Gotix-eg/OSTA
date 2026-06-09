@@ -110,7 +110,8 @@ export function DashboardShell({
         return;
       }
       
-      const user = await fetchApiData<any>("/auth/me", null);
+      const data = await fetchApiData<any>("/auth/me", null);
+      const user = data?.user || data;
       if (user?.role === "VENDOR") {
         const profile = user.profile;
         if (!profile?.category || !profile?.latitude) {

@@ -43,7 +43,8 @@ export function FloatingChatWidget() {
     async function loadUser() {
       try {
         const data = await fetchApiData<any>("/auth/me", null);
-        if (data && data.id) setCurrentUserId(data.id);
+        const userId = data?.id || data?.user?.id;
+        if (userId) setCurrentUserId(userId);
       } catch (e) {
         // ignore
       }
