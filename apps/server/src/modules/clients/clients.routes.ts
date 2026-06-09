@@ -277,7 +277,23 @@ router.get(
 
     const record = await prisma.serviceRequest.findUnique({
       where: { id: id, clientId: profile.id },
-      include: { service: true, address: true },
+      include: {
+        service: true,
+        address: true,
+        worker: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                phone: true,
+                avatarUrl: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     if (!record) {
@@ -311,6 +327,16 @@ router.get(
       images: record.images || [],
       createdAt: record.createdAt,
       updatedAt: record.updatedAt,
+      worker: record.worker ? {
+        id: record.worker.id,
+        userId: record.worker.user.id,
+        name: `${record.worker.user.firstName} ${record.worker.user.lastName}`,
+        avatarUrl: record.worker.user.avatarUrl,
+        rating: record.worker.rating,
+        phone: ["WORKER_EN_ROUTE", "IN_PROGRESS", "COMPLETED", "CONFIRMED_BY_CLIENT"].includes(record.status)
+          ? record.worker.user.phone
+          : null,
+      } : null,
     };
 
     response

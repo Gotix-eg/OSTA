@@ -174,17 +174,72 @@ router.get("/requests/incoming", (_request, response) => {
   );
 });
 
-router.get("/requests/active", (_request, response) => {
+router.get("/requests/active", catchAsync(async (request, response) => {
+  const userId = request.auth!.userId;
+  const worker = await prisma.workerProfile.findUnique({
+    where: { userId }
+  });
+
+  if (!worker) throw new ApiError(404, "Worker profile not found");
+
+  const reqs = await prisma.serviceRequest.findMany({
+    where: {
+      workerId: worker.id,
+      status: {
+        in: ["WORKER_EN_ROUTE", "IN_PROGRESS"]
+      }
+    },
+    include: {
+      client: {
+        include: {
+          user: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              phone: true,
+            }
+          }
+        }
+      },
+      address: true,
+    },
+    orderBy: {
+      createdAt: "desc"
+    }
+  });
+
+  const resultRequests = reqs.map((r) => ({
+    id: r.id,
+    service: "electricalRepair" as WorkerServiceCode,
+    status: (r.status === "WORKER_EN_ROUTE" ? "EN_ROUTE" : "ON_SITE") as "EN_ROUTE" | "ON_SITE" | "WRAP_UP",
+    clientName: `${r.client.user.firstName} ${r.client.user.lastName}`,
+    clientUserId: r.client.user.id,
+    clientPhone: ["WORKER_EN_ROUTE", "IN_PROGRESS", "COMPLETED", "CONFIRMED_BY_CLIENT"].includes(r.status)
+      ? r.client.user.phone
+      : null,
+    area: "newCairo" as WorkerAreaCode,
+    scheduledWindow: r.preferredTimeSlot || "Today",
+    earnings: r.finalPrice || r.estimatedPrice || 150,
+  }));
+
+  const summary = {
+    activeJobs: resultRequests.length,
+    enRoute: resultRequests.filter((item) => item.status === "EN_ROUTE").length,
+    onSite: resultRequests.filter((item) => item.status === "ON_SITE").length,
+    wrapUp: 0
+  };
+
   response.status(200).json(
     successResponse(
       {
-        summary: buildActiveSummary(),
-        requests: activeRequests
+        summary,
+        requests: resultRequests
       },
       "Active worker requests fetched"
     )
   );
-});
+}));
 
 router.patch("/requests/:id/accept", catchAsync(async (request, response) => {
   const userId = request.auth!.userId;

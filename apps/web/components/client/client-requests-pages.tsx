@@ -16,7 +16,8 @@ import {
   Wrench,
   Store,
   MessageSquare,
-  ShoppingBag
+  ShoppingBag,
+  Star
 } from "lucide-react";
 
 import { serviceCategories } from "@/lib/shared";
@@ -680,6 +681,51 @@ export function ClientRequestDetailPage({ locale, requestId, initialData }: { lo
           </div>
         </DashboardBlock>
       </div>
+
+      {data.worker && (
+        <div className="mt-6">
+          <DashboardBlock title={isArabic ? "الفني المعين" : "Assigned Pro"} eyebrow={isArabic ? "تفاصيل الاتصال" : "contact profile"}>
+            <div className="onyx-card p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-gold-500/10">
+              <div className="flex items-center gap-4">
+                <div className="h-16 w-16 rounded-2xl bg-onyx-800 border border-white/10 flex items-center justify-center text-gold-500 text-xl font-bold overflow-hidden">
+                  {data.worker.avatarUrl ? (
+                    <img src={data.worker.avatarUrl} alt="" className="h-full w-full object-cover" />
+                  ) : (
+                    data.worker.name.charAt(0)
+                  )}
+                </div>
+                <div>
+                  <h4 className="text-lg font-black text-white">{data.worker.name}</h4>
+                  <div className="flex items-center gap-1.5 mt-1 text-sm text-gold-500 font-bold">
+                    <Star className="h-4 w-4 fill-current" />
+                    <span>{data.worker.rating.toFixed(1)}</span>
+                  </div>
+                  {data.worker.phone ? (
+                    <p className="text-sm font-semibold text-white mt-1.5">{data.worker.phone}</p>
+                  ) : (
+                    <p className="text-xs text-amber-500 mt-1.5">
+                      {isArabic ? "سيظهر رقم الهاتف بعد قبول الطلب من الطرفين" : "Phone number will appear after order is accepted"}
+                    </p>
+                  )}
+                </div>
+              </div>
+              
+              <button
+                onClick={() => {
+                  if (data.worker) {
+                    localStorage.setItem("osta_open_chat_user", JSON.stringify({ id: data.worker.userId, firstName: data.worker.name, lastName: "" }));
+                    window.dispatchEvent(new Event("osta_open_chat"));
+                  }
+                }}
+                className="btn-gold py-3 px-6 text-sm font-black flex items-center justify-center gap-2 group/btn shadow-md shrink-0"
+              >
+                <MessageSquare className="h-4 w-4" />
+                <span>{isArabic ? "محادثة الفني" : "Chat with Pro"}</span>
+              </button>
+            </div>
+          </DashboardBlock>
+        </div>
+      )}
     </div>
   );
 }

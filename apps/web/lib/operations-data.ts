@@ -40,6 +40,14 @@ export interface ClientRequestDetailData {
   area: string;
   createdAt: string;
   updatedAt: string;
+  worker?: {
+    id: string;
+    userId: string;
+    name: string;
+    avatarUrl?: string | null;
+    rating: number;
+    phone?: string | null;
+  } | null;
 }
 
 export interface ClientFavoritesData {
@@ -173,6 +181,8 @@ export interface WorkerActiveRequestsData {
     service: DashboardServiceCode;
     status: "EN_ROUTE" | "ON_SITE" | "WRAP_UP";
     clientName: string;
+    clientPhone?: string | null;
+    clientUserId: string;
     area: DashboardAreaCode;
     scheduledWindow: string;
     earnings: number;

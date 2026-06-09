@@ -52,6 +52,28 @@ export function FloatingChatWidget() {
   }, []);
 
   useEffect(() => {
+    const handleOpenChat = () => {
+      const stored = localStorage.getItem("osta_open_chat_user");
+      if (stored) {
+        try {
+          const user = JSON.parse(stored);
+          setActiveChat(user);
+          setIsOpen(true);
+          localStorage.removeItem("osta_open_chat_user");
+        } catch (e) {
+          // ignore
+        }
+      }
+    };
+
+    handleOpenChat();
+    window.addEventListener("osta_open_chat", handleOpenChat);
+    return () => {
+      window.removeEventListener("osta_open_chat", handleOpenChat);
+    };
+  }, []);
+
+  useEffect(() => {
     if (isOpen && !activeChat) {
       loadContacts();
     }

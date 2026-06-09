@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import { Briefcase, Clock3, Loader2, MapPin, Route, Wallet, Wrench } from "lucide-react";
+import { Briefcase, Clock3, Loader2, MapPin, Route, Wallet, Wrench, MessageSquare, Phone } from "lucide-react";
 
 import {
   DashboardBlock,
@@ -241,6 +241,7 @@ export function WorkerActiveRequestsPage({ locale, initialData }: { locale: Loca
                       <SplitInfo
                         items={[
                           { label: isArabic ? "العميل" : "Client", value: item.clientName },
+                          ...(item.clientPhone ? [{ label: isArabic ? "الهاتف" : "Phone", value: item.clientPhone }] : []),
                           { label: isArabic ? "المنطقة" : "Area", value: areaLabels[item.area][locale] },
                           { label: isArabic ? "الفترة" : "Window", value: item.scheduledWindow },
                           { label: isArabic ? "العائد" : "Earnings", value: formatCurrency(locale, item.earnings) }
@@ -250,6 +251,18 @@ export function WorkerActiveRequestsPage({ locale, initialData }: { locale: Loca
                   </div>
 
                   <div className="flex flex-wrap items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        localStorage.setItem("osta_open_chat_user", JSON.stringify({ id: item.clientUserId, firstName: item.clientName, lastName: "" }));
+                        window.dispatchEvent(new Event("osta_open_chat"));
+                      }}
+                      className="rounded-full border border-onyx-700 bg-onyx-800/50 p-2.5 text-sm font-semibold text-onyx-200 shadow-soft hover:bg-white/5 transition-colors flex items-center justify-center"
+                      title={isArabic ? "محادثة العميل" : "Chat with Client"}
+                    >
+                      <MessageSquare className="h-4.5 w-4.5 text-gold-500" />
+                    </button>
+
                     {item.status === "EN_ROUTE" ? (
                       <button
                         type="button"

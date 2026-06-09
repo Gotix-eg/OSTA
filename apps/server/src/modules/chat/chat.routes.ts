@@ -48,6 +48,19 @@ router.get("/:otherUserId", catchAsync(async (request: Request, response: Respon
   response.json(successResponse(messages, "Messages retrieved successfully"));
 }));
 
+function containsPhoneNumber(text: string): boolean {
+  const arabicNumerals = [/٠/g, /١/g, /٢/g, /٣/g, /٤/g, /٥/g, /٦/g, /٧/g, /٨/g, /٩/g];
+  let normalized = text;
+  for (let i = 0; i < 10; i++) {
+    const regex = arabicNumerals[i];
+    if (regex) {
+      normalized = normalized.replace(regex, String(i));
+    }
+  }
+  const clean = normalized.replace(/[\s\-\.\(\)\+\*\_]/g, "");
+  return /\d{8,}/.test(clean);
+}
+
 const sendMessageSchema = z.object({
   content: z.string().min(1),
   requestId: z.string().optional(),
@@ -60,6 +73,50 @@ router.post("/:receiverId", catchAsync(async (request: Request, response: Respon
   const senderId = request.auth!.userId;
   const receiverId = request.params.receiverId as string;
   const data = sendMessageSchema.parse(request.body);
+
+  if (containsPhoneNumber(data.content)) {
+    const sender = await prisma.user.findUnique({
+      where: { id: senderId },
+      select: { role: true, clientProfile: { select: { id: true } }, workerProfile: { select: { id: true } } }
+    });
+    const receiver = await prisma.user.findUnique({
+      where: { id: receiverId },
+      select: { role: true, clientProfile: { select: { id: true } }, workerProfile: { select: { id: true } } }
+    });
+
+    let hasAcceptedRequest = false;
+
+    if (data.requestId) {
+      const requestRecord = await prisma.serviceRequest.findUnique({
+        where: { id: data.requestId }
+      });
+      if (requestRecord && ["WORKER_EN_ROUTE", "IN_PROGRESS", "COMPLETED", "CONFIRMED_BY_CLIENT"].includes(requestRecord.status)) {
+        hasAcceptedRequest = true;
+      }
+    } else if (sender && receiver) {
+      const clientId = sender.role === "CLIENT" ? sender.clientProfile?.id : receiver.clientProfile?.id;
+      const workerId = sender.role === "WORKER" ? sender.workerProfile?.id : receiver.workerProfile?.id;
+
+      if (clientId && workerId) {
+        const activeRequest = await prisma.serviceRequest.findFirst({
+          where: {
+            clientId,
+            workerId,
+            status: {
+              in: ["WORKER_EN_ROUTE", "IN_PROGRESS", "COMPLETED", "CONFIRMED_BY_CLIENT"]
+            }
+          }
+        });
+        if (activeRequest) {
+          hasAcceptedRequest = true;
+        }
+      }
+    }
+
+    if (!hasAcceptedRequest) {
+      throw new ApiError(400, "غير مسموح بمشاركة أرقام الهاتف قبل قبول الطلب من الطرفين لحمايتك.");
+    }
+  }
 
   const message = await prisma.message.create({
     data: {
