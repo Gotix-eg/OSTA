@@ -15,7 +15,7 @@ export function FloatingSupport({ locale }: { locale: Locale }) {
     ? encodeURIComponent("مرحباً دعم أُسطفاي، أرغب في الاستفسار عن خدمات المنصة.")
     : encodeURIComponent("Hello Ostafy Support, I'd like to inquire about the platform services.");
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${welcomeText}`;
-  const emailUrl = "mailto:info@osta.net?subject=Ostafy%20Support%20Request";
+  const emailUrl = "mailto:info@ostafy.com?subject=Ostafy%20Support%20Request";
 
   return (
     <div className="fixed bottom-6 end-6 z-[9999] flex flex-col items-end gap-4 font-sans">
@@ -90,7 +90,7 @@ export function FloatingSupport({ locale }: { locale: Locale }) {
                   <span className="block text-xs text-onyx-400 font-bold tracking-wide group-hover:text-gold-500 transition-colors">
                     {isArabic ? "البريد الإلكتروني" : "Email Support"}
                   </span>
-                  <span className="font-extrabold group-hover:text-gold-400 transition-colors">info@osta.net</span>
+                  <span className="font-extrabold group-hover:text-gold-400 transition-colors">info@ostafy.com</span>
                 </div>
               </a>
             </div>

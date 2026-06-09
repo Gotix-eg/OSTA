@@ -1125,9 +1125,9 @@ export function LandingPage({ locale }: { locale: Locale }) {
                 <Phone className="h-4 w-4 text-gold-500" />
                 <span>+20 100 941 0112</span>
               </a>
-              <a href="mailto:info@osta.net" className="flex items-center gap-2 hover:text-gold-500 transition-colors">
+              <a href="mailto:info@ostafy.com" className="flex items-center gap-2 hover:text-gold-500 transition-colors">
                 <Mail className="h-4 w-4 text-gold-500" />
-                <span>info@osta.net</span>
+                <span>info@ostafy.com</span>
               </a>
             </div>
 

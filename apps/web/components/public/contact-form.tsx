@@ -46,7 +46,7 @@ export function ContactForm({ locale }: { locale: Locale }) {
                </a>
 
                <a 
-                  href="mailto:info@osta.net"
+                  href="mailto:info@ostafy.com"
                   className="flex items-center gap-4 group cursor-pointer"
                >
                   <div className="h-12 w-12 rounded-xl bg-onyx-900 border border-onyx-700 flex items-center justify-center text-gold-500 group-hover:bg-gold-500 group-hover:text-onyx-950 transition-all duration-500 shadow-gold/5 group-hover:shadow-gold/20">
@@ -54,7 +54,7 @@ export function ContactForm({ locale }: { locale: Locale }) {
                   </div>
                   <div>
                      <p className="text-xs text-onyx-500 font-bold uppercase tracking-widest">{isArabic ? "راسلنا" : "Email Us"}</p>
-                     <p className="text-white font-bold tracking-wider group-hover:text-gold-500 transition-colors">info@osta.net</p>
+                     <p className="text-white font-bold tracking-wider group-hover:text-gold-500 transition-colors">info@ostafy.com</p>
                   </div>
                </a>
 

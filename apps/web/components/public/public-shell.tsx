@@ -60,9 +60,9 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
                   <Phone className="h-3.5 w-3.5 text-gold-500" />
                   <span>+20 100 941 0112</span>
                 </a>
-                <a href="mailto:info@osta.net" className="flex items-center gap-2 hover:text-gold-500 transition-colors">
+                <a href="mailto:info@ostafy.com" className="flex items-center gap-2 hover:text-gold-500 transition-colors">
                   <Mail className="h-3.5 w-3.5 text-gold-500" />
-                  <span>info@osta.net</span>
+                  <span>info@ostafy.com</span>
                 </a>
               </div>
             </div>
