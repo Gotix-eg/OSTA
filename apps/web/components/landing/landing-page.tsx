@@ -1147,7 +1147,11 @@ export function LandingPage({ locale }: { locale: Locale }) {
             </div>
           </div>
           <p className="text-onyx-600 text-xs font-semibold tracking-wide">
-            © {new Date().getFullYear()} Ostafy Egypt. {isArabic ? "جميع الحقوق محفوظة. تم التطوير بواسطة شركة Gotix للبرمجيات" : "All rights reserved. Developed by Gotix Software"}
+            © {new Date().getFullYear()} Ostafy Egypt. {isArabic ? (
+              <>جميع الحقوق محفوظة. تم التطوير بواسطة <a href="https://www.gotix-eg.com" target="_blank" rel="noopener noreferrer" className="text-gold-500 hover:underline">شركة Gotix للبرمجيات</a></>
+            ) : (
+              <>All rights reserved. Developed by <a href="https://www.gotix-eg.com" target="_blank" rel="noopener noreferrer" className="text-gold-500 hover:underline">Gotix Software</a></>
+            )}
           </p>
         </div>
       </footer>

@@ -24,7 +24,11 @@ export function AboutProfileCustom({ locale }: { locale: Locale }) {
     ar: {
       eyebrow: "من نحن",
       title: "ملف أُسطفاي التعريفي",
-      subtitle: "ريادة مصرية متكاملة لتنظيم وتطوير قطاع الصيانة المنزلية والخدمات الفنية من خلال حلول تقنية مبتكرة وآمنة، تم تطويرها وإدارتها بواسطة شركة Gotix للبرمجة.",
+      subtitle: (
+        <>
+          ريادة مصرية متكاملة لتنظيم وتطوير قطاع الصيانة المنزلية والخدمات الفنية من خلال حلول تقنية مبتكرة وآمنة، تم تطويرها وإدارتها بواسطة <a href="https://www.gotix-eg.com" target="_blank" rel="noopener noreferrer" className="text-gold-500 hover:underline font-bold">شركة Gotix للبرمجة</a>.
+        </>
+      ),
       
       missionTitle: "رسالتنا",
       missionDesc: "نهدف إلى تمكين أصحاب المنازل والمنشآت من الوصول الآمن والسريع لأكفأ الكوادر الفنية (الصنايعية) الموثقين، مع تنظيم وضمان جودة الخدمات وتقديم حلول تقنية تسهل حياة الفرد والمجتمع وتطور أداء الحرفي المصري.",
@@ -69,7 +73,11 @@ export function AboutProfileCustom({ locale }: { locale: Locale }) {
     en: {
       eyebrow: "ABOUT US",
       title: "Ostafy Platform Profile",
-      subtitle: "Bilingual Egyptian leadership in organizing and developing the home maintenance and technical services sector, developed and managed by Gotix Software.",
+      subtitle: (
+        <>
+          Bilingual Egyptian leadership in organizing and developing the home maintenance and technical services sector, developed and managed by <a href="https://www.gotix-eg.com" target="_blank" rel="noopener noreferrer" className="text-gold-500 hover:underline font-bold">Gotix Software</a>.
+        </>
+      ),
       
       missionTitle: "Our Mission",
       missionDesc: "We aim to empower homeowners and businesses with safe, fast access to the most skilled verified technicians, while organizing and guaranteeing service quality, providing technical solutions that improve lives, and elevating the profession of Egyptian craftsmen.",

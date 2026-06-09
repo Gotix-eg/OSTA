@@ -92,7 +92,11 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
               ))}
             </div>
              <p className="text-onyx-600">
-              © {new Date().getFullYear()} Ostafy Egypt. {locale === "ar" ? "جميع الحقوق محفوظة. تم التطوير بواسطة شركة Gotix للبرمجيات" : "All rights reserved. Developed by Gotix Software"}
+              © {new Date().getFullYear()} Ostafy Egypt. {locale === "ar" ? (
+                <>جميع الحقوق محفوظة. تم التطوير بواسطة <a href="https://www.gotix-eg.com" target="_blank" rel="noopener noreferrer" className="text-gold-500 hover:underline">شركة Gotix للبرمجيات</a></>
+              ) : (
+                <>All rights reserved. Developed by <a href="https://www.gotix-eg.com" target="_blank" rel="noopener noreferrer" className="text-gold-500 hover:underline">Gotix Software</a></>
+              )}
             </p>
           </div>
         </div>
