@@ -13,10 +13,13 @@ const ALLOWED_ORIGINS = [
   "http://localhost:3001",
   env.APP_URL,
   "https://web-gold-nu-39.vercel.app",
+  "https://www.ostafy.com",
+  "https://ostafy.com",
 ].filter(Boolean);
 
 // Allow all Vercel preview deployments
 const VERCEL_PREVIEW_REGEX = /^https:\/\/.*\.vercel\.app$/;
+const OSTAFY_REGEX = /^https?:\/\/(?:[a-zA-Z0-9-]+\.)*ostafy\.com$/;
 
 export function createApp() {
   const app = express();
@@ -26,7 +29,12 @@ export function createApp() {
     cors({
       origin: (origin, callback) => {
         // allow requests with no origin or from the same domain
-        if (!origin || ALLOWED_ORIGINS.includes(origin) || VERCEL_PREVIEW_REGEX.test(origin)) {
+        if (
+          !origin ||
+          ALLOWED_ORIGINS.includes(origin) ||
+          VERCEL_PREVIEW_REGEX.test(origin) ||
+          OSTAFY_REGEX.test(origin)
+        ) {
           return callback(null, true);
         }
         callback(new Error(`CORS: origin ${origin} not allowed`));
