@@ -27,7 +27,7 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
           </Link>
 
           <nav className="hidden items-center gap-6 lg:flex">
-            {links.slice(0, 3).map((item) => (
+            {links.slice(0, 6).map((item) => (
               <Link key={item.href} href={item.href as `/${string}`} className="text-sm font-medium text-onyx-300 transition hover:text-gold-500">
                 {item.label}
               </Link>

@@ -294,9 +294,15 @@ export function LandingPage({ locale }: { locale: Locale }) {
             <img src="/logo.svg" alt="Ostafy" className="h-12 w-auto" />
           </Link>
 
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-6">
             <Link href={`/${locale}/vendors`} className="text-sm font-medium text-onyx-300 hover:text-gold-500 transition-colors">
               {isArabic ? "المتاجر" : "Marketplace"}
+            </Link>
+            <Link href={`/${locale}/how-it-works`} className="text-sm font-medium text-onyx-300 hover:text-gold-500 transition-colors">
+              {isArabic ? "كيف يعمل" : "How It Works"}
+            </Link>
+            <Link href={`/${locale}/about`} className="text-sm font-medium text-onyx-300 hover:text-gold-500 transition-colors">
+              {isArabic ? "من نحن" : "About"}
             </Link>
             <Link href={`/${locale}/login`} className="text-sm font-medium text-onyx-300 hover:text-gold-500 transition-colors">
               {isArabic ? "تسجيل دخول" : "Login"}
@@ -306,7 +312,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
               pathname={pathname} 
               className="text-sm font-medium text-onyx-300 hover:text-gold-500 transition-colors border border-white/10 px-3 py-1.5 rounded-lg bg-white/5" 
             />
-            <Link href={`/${locale}/register/client`} className="btn-gold shadow-gold/20">
+            <Link href={`/${locale}/register/client`} className="btn-gold shadow-gold/20 px-5 py-2.5 text-sm">
               {isArabic ? "ابدأ الآن" : "Get Started"}
             </Link>
           </div>
@@ -321,6 +327,12 @@ export function LandingPage({ locale }: { locale: Locale }) {
           <div className="md:hidden bg-onyx-900 border-t border-white/5 p-4 flex flex-col gap-4 animate-in slide-in-from-top duration-300">
             <Link href={`/${locale}/vendors`} className="text-lg font-medium text-white px-4 py-2 border-b border-white/5">
               {isArabic ? "المتاجر" : "Marketplace"}
+            </Link>
+            <Link href={`/${locale}/how-it-works`} className="text-lg font-medium text-white px-4 py-2 border-b border-white/5">
+              {isArabic ? "كيف يعمل" : "How It Works"}
+            </Link>
+            <Link href={`/${locale}/about`} className="text-lg font-medium text-white px-4 py-2 border-b border-white/5">
+              {isArabic ? "من نحن" : "About"}
             </Link>
             <Link href={`/${locale}/login`} className="text-lg font-medium text-white px-4 py-2 border-b border-white/5">
               {isArabic ? "تسجيل دخول" : "Login"}
@@ -1086,6 +1098,25 @@ export function LandingPage({ locale }: { locale: Locale }) {
           <div className="flex flex-col items-center justify-center gap-6 mb-10">
             <div className="w-fit">
               <img src="/logo.svg" alt="Ostafy" className="h-20 w-auto opacity-95" />
+            </div>
+
+            {/* Footer Navigation Links */}
+            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm font-semibold text-onyx-400 mt-2">
+              <Link href={`/${locale}`} className="hover:text-gold-500 transition-colors">
+                {isArabic ? "الرئيسية" : "Home"}
+              </Link>
+              <Link href={`/${locale}/services`} className="hover:text-gold-500 transition-colors">
+                {isArabic ? "الخدمات" : "Services"}
+              </Link>
+              <Link href={`/${locale}/vendors`} className="hover:text-gold-500 transition-colors">
+                {isArabic ? "المتاجر" : "Marketplace"}
+              </Link>
+              <Link href={`/${locale}/how-it-works`} className="hover:text-gold-500 transition-colors">
+                {isArabic ? "كيف يعمل" : "How It Works"}
+              </Link>
+              <Link href={`/${locale}/about`} className="hover:text-gold-500 transition-colors">
+                {isArabic ? "من نحن" : "About"}
+              </Link>
             </div>
             
             {/* Contact Details */}
