@@ -21,7 +21,7 @@ import { postApiData } from "@/lib/api";
 import { getDashboardRoute, saveAuthSession, type AuthRole } from "@/lib/auth-session";
 import { authCopy } from "@/lib/copy";
 import type { Locale } from "@/lib/locales";
-import { cn } from "@/lib/utils";
+import { cn, getLocalizedError } from "@/lib/utils";
 import { MapPicker } from "@/components/shared/map-picker";
 import { SelectField } from "@/components/shared/select-field";
 import { ImageUpload } from "@/components/shared/image-upload";
@@ -313,7 +313,7 @@ export function LoginForm({ locale }: { locale: Locale }) {
       setSubmitted(true);
       applyAuthSuccess(locale, payload, remember);
     } catch (loginError) {
-      setError(loginError instanceof Error ? loginError.message : isArabic ? "تعذر تسجيل الدخول" : "Unable to sign in.");
+      setError(getLocalizedError(loginError instanceof Error ? loginError.message : "", locale));
     } finally {
       setIsSubmitting(false);
     }
@@ -480,7 +480,7 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
       setSubmitted(true);
       applyAuthSuccess(locale, payload, true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : isArabic ? "تعذر إنشاء الحساب" : "Unable to create account.");
+      setError(getLocalizedError(err instanceof Error ? err.message : "", locale));
     } finally {
       setIsSubmitting(false);
     }
@@ -640,7 +640,7 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
       setSubmitted(true);
       applyAuthSuccess(locale, payload, true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : isArabic ? "تعذر إرسال الطلب" : "Unable to submit.");
+      setError(getLocalizedError(err instanceof Error ? err.message : "", locale));
     } finally {
       setIsSubmitting(false);
     }
@@ -824,7 +824,7 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
       setSubmitted(true);
       applyAuthSuccess(locale, payload, true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : isArabic ? "تعذر إنشاء الحساب" : "Unable to create account.");
+      setError(getLocalizedError(err instanceof Error ? err.message : "", locale));
     } finally {
       setIsSubmitting(false);
     }
@@ -997,7 +997,7 @@ export function ForgotPasswordForm({ locale }: { locale: Locale }) {
       await postApiData("/auth/forgot-password", { email });
       setStep(1);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to send code");
+      setError(getLocalizedError(err instanceof Error ? err.message : "", locale));
     } finally {
       setIsSubmitting(false);
     }
@@ -1022,7 +1022,7 @@ export function ForgotPasswordForm({ locale }: { locale: Locale }) {
       await postApiData("/auth/reset-password", { email, code, password });
       setDone(true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to reset password");
+      setError(getLocalizedError(err instanceof Error ? err.message : "", locale));
     } finally {
       setIsSubmitting(false);
     }
