@@ -8,6 +8,7 @@ import { successResponse } from "../../utils/ApiResponse.js";
 import { prisma } from "../../lib/prisma.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { catchAsync } from "../../utils/catchAsync.js";
+import { socketService } from "../../lib/socket.js";
 
 const router = Router();
 
@@ -449,15 +450,32 @@ router.patch("/requests/:id/accept", catchAsync(async (request, response) => {
       status: "WORKER_EN_ROUTE",
       finalPrice: payload.price || undefined,
       estimatedPrice: payload.price || undefined
+    },
+    include: {
+      client: { include: { user: { select: { id: true, firstName: true } } } },
+      service: { select: { nameAr: true } }
     }
   });
 
-  response.status(200).json(
-    successResponse(
-      serviceRequest,
-      "Worker request accepted"
-    )
-  );
+  // 4. Notify the client in real-time via WebSocket
+  try {
+    const clientUserId = serviceRequest.client?.user?.id;
+    if (clientUserId) {
+      socketService.sendNotification(clientUserId, {
+        id: Math.random().toString(),
+        title: "تم قبول طلبك! 🎉",
+        body: `الفني ${worker.user.firstName} ${worker.user.lastName} قبل طلبك وهو في الطريق إليك.`,
+        type: "REQUEST_ACCEPTED",
+        data: { requestId, workerId: worker.id }
+      });
+    }
+  } catch (notifyErr) {
+    console.error("Failed to notify client:", notifyErr);
+  }
+
+  // 5. Return updated incoming requests list so UI refreshes
+  const updatedIncoming = await getIncomingRequestsForWorker(userId);
+  response.status(200).json(successResponse(updatedIncoming, "Worker request accepted"));
 }));
 
 router.patch("/requests/:id/budget", catchAsync(async (request, response) => {
@@ -538,9 +556,13 @@ router.patch("/requests/:id/complete", catchAsync(async (request, response) => {
   if (!serviceRequest) throw new ApiError(404, "Request not found or not assigned to you");
 
   // 1. Update request status
-  await prisma.serviceRequest.update({
+  const completedRequest = await prisma.serviceRequest.update({
     where: { id: requestId as string },
-    data: { status: "COMPLETED" }
+    data: { status: "COMPLETED" },
+    include: {
+      client: { include: { user: { select: { id: true, firstName: true } } } },
+      service: { select: { nameAr: true } }
+    }
   });
 
   // 2. Deduct quota if trial is expired
@@ -554,12 +576,25 @@ router.patch("/requests/:id/complete", catchAsync(async (request, response) => {
     });
   }
 
-  response.status(200).json(
-    successResponse(
-      null,
-      "Worker request completed and quota updated"
-    )
-  );
+  // 3. Notify the client that the job is completed
+  try {
+    const clientUserId = completedRequest.client?.user?.id;
+    if (clientUserId) {
+      socketService.sendNotification(clientUserId, {
+        id: Math.random().toString(),
+        title: "اكتملت الخدمة ✅",
+        body: `انتهى الفني من إنجاز خدمة ${completedRequest.service?.nameAr || 'الصيانة'}. يرجى تأكيد الاستلام.`,
+        type: "REQUEST_COMPLETED",
+        data: { requestId: completedRequest.id }
+      });
+    }
+  } catch (notifyErr) {
+    console.error("Failed to notify client on complete:", notifyErr);
+  }
+
+  // 4. Return updated active requests for UI refresh
+  const updatedActive = await getActiveRequestsForWorker(worker.id);
+  response.status(200).json(successResponse(updatedActive, "Worker request completed and quota updated"));
 }));
 
 router.get("/earnings/summary", (_request, response) => {

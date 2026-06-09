@@ -102,13 +102,14 @@ export function WorkerIncomingRequestsPage({ locale, initialData }: { locale: Lo
     setFeedback(null);
 
     try {
+      // Both accept and reject now return updated WorkerIncomingRequestsData
       const nextData = await patchApiData<WorkerIncomingRequestsData, any>(
         `/workers/requests/${id}/${action}`,
         action === "accept" ? { workerName: "Youssef El-Sharif", price } : {}
       );
 
       setData(nextData);
-      setFeedback(action === "accept" ? (isArabic ? "تم قبول الطلب" : "Request accepted") : isArabic ? "تم رفض الطلب" : "Request rejected");
+      setFeedback(action === "accept" ? (isArabic ? "تم قبول الطلب ✅" : "Request accepted ✅") : isArabic ? "تم رفض الطلب" : "Request rejected");
     } catch (error) {
       setFeedback(error instanceof Error ? error.message : isArabic ? "حدثت مشكلة" : "Something went wrong");
     } finally {
@@ -232,8 +233,15 @@ export function WorkerActiveRequestsPage({ locale, initialData }: { locale: Loca
 
     try {
       const nextData = await patchApiData<WorkerActiveRequestsData, Record<string, never>>(`/workers/requests/${id}/${action}`, {});
-      setData(nextData);
-      setFeedback(action === "start" ? (isArabic ? "تم بدء التنفيذ" : "Request started") : isArabic ? "تم النقل إلى الإنهاء" : "Moved to wrap up");
+      // Server returns updated active requests for both start and complete
+      if (nextData && typeof nextData === "object" && "requests" in nextData) {
+        setData(nextData);
+      }
+      setFeedback(
+        action === "start"
+          ? (isArabic ? "تم بدء التنفيذ ✅" : "Request started ✅")
+          : (isArabic ? "تم إنجاز الطلب ✅" : "Request completed ✅")
+      );
     } catch (error) {
       setFeedback(error instanceof Error ? error.message : isArabic ? "حدثت مشكلة" : "Something went wrong");
     } finally {
