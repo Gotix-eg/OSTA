@@ -6,6 +6,8 @@ export interface ClientRequestListItem {
   requestNumber: string;
   title: string;
   serviceId: string;
+  serviceNameAr?: string;
+  serviceNameEn?: string;
   status: DashboardRequestStatus | "PENDING" | "COMPLETED";
   area: string;
   createdAt: string;
@@ -16,6 +18,8 @@ export interface ClientRequestDetailData {
   requestNumber: string;
   categoryId: string;
   serviceId: string;
+  serviceNameAr?: string;
+  serviceNameEn?: string;
   title: string;
   description: string;
   mediaNotes: string;

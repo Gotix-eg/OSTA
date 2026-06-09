@@ -111,6 +111,28 @@ const reviewEtaTranslations: Record<string, { ar: string; en: string }> = {
   "Within 5 minutes": { ar: "خلال 5 دقائق", en: "Within 5 minutes" },
 };
 
+function translateArea(area: string, locale: Locale) {
+  const translations: Record<string, { ar: string; en: string }> = {
+    "القاهرة": { ar: "القاهرة", en: "Cairo" },
+    "Cairo": { ar: "القاهرة", en: "Cairo" },
+    "المنطقة": { ar: "المنطقة", en: "District" },
+    "District": { ar: "المنطقة", en: "District" },
+    "الشارع الرئيسي": { ar: "الشارع الرئيسي", en: "Main Street" },
+    "Main Street": { ar: "الشارع الرئيسي", en: "Main Street" },
+    "المعادي": { ar: "المعادي", en: "Maadi" },
+    "Maadi": { ar: "المعادي", en: "Maadi" },
+    "القاهرة الجديدة": { ar: "القاهرة الجديدة", en: "New Cairo" },
+    "New Cairo": { ar: "القاهرة الجديدة", en: "New Cairo" },
+    "التجمع الخامس": { ar: "التجمع الخامس", en: "Fifth Settlement" },
+    "Fifth Settlement": { ar: "التجمع الخامس", en: "Fifth Settlement" },
+    "Unknown": { ar: "غير معروف", en: "Unknown" },
+    "Pending": { ar: "قيد التحديد", en: "Pending" },
+    "قيد التحديد": { ar: "قيد التحديد", en: "Pending" },
+  };
+
+  return translations[area]?.[locale] || area;
+}
+
 function usePersistentDraft(key: string) {
   const [draft, setDraft] = useState<RequestDraft>(initialDraft);
   const [ready, setReady] = useState(false);
@@ -365,7 +387,9 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
             <MiniMetric
               label={isArabic ? "المنطقة" : "Area"}
               value={
-                submittedRequest.area || (isArabic ? "قيد التحديد" : "Pending")
+                submittedRequest.area
+                  ? translateArea(submittedRequest.area, locale)
+                  : (isArabic ? "قيد التحديد" : "Pending")
               }
               note={isArabic ? "موقع الخدمة" : "service location"}
               icon={MapPin}

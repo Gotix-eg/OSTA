@@ -253,6 +253,8 @@ router.get(
           requestNumber: item.requestNumber,
           title: item.title,
           serviceId: item.serviceId,
+          serviceNameAr: item.service?.nameAr || item.serviceId,
+          serviceNameEn: item.service?.nameEn || item.serviceId,
           status: item.status,
           area: item.address ? item.address.city : "Unknown",
           createdAt: item.createdAt,
@@ -289,6 +291,8 @@ router.get(
       status: record.status,
       area: record.address?.area || record.address?.city || "Unknown",
       serviceId: record.serviceId,
+      serviceNameAr: record.service?.nameAr || record.serviceId,
+      serviceNameEn: record.service?.nameEn || record.serviceId,
       timing: {
         type: record.urgency === "EMERGENCY" ? "emergency" : "today",
         customWindow: record.preferredTimeSlot || undefined,

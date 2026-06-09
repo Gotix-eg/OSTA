@@ -46,9 +46,21 @@ function formatDate(locale: Locale, value: string) {
   }).format(new Date(value));
 }
 
-function getServiceName(serviceId: string, locale: Locale) {
+function getServiceName(item: any, locale: Locale) {
+  if (item && typeof item === "object") {
+    if (locale === "ar" && item.serviceNameAr) return item.serviceNameAr;
+    if (locale === "en" && item.serviceNameEn) return item.serviceNameEn;
+    const serviceId = item.serviceId;
+    for (const category of serviceCategories) {
+      const service = category.services.find((s) => s.id === serviceId);
+      if (service) return service.name[locale];
+    }
+    return serviceId;
+  }
+
+  const serviceId = String(item);
   for (const category of serviceCategories) {
-    const service = category.services.find((item) => item.id === serviceId);
+    const service = category.services.find((s) => s.id === serviceId);
     if (service) return service.name[locale];
   }
 
@@ -75,6 +87,28 @@ function getStatusMeta(locale: Locale, status: string) {
   };
 }
 
+function translateArea(area: string, locale: Locale) {
+  const translations: Record<string, { ar: string; en: string }> = {
+    "القاهرة": { ar: "القاهرة", en: "Cairo" },
+    "Cairo": { ar: "القاهرة", en: "Cairo" },
+    "المنطقة": { ar: "المنطقة", en: "District" },
+    "District": { ar: "المنطقة", en: "District" },
+    "الشارع الرئيسي": { ar: "الشارع الرئيسي", en: "Main Street" },
+    "Main Street": { ar: "الشارع الرئيسي", en: "Main Street" },
+    "المعادي": { ar: "المعادي", en: "Maadi" },
+    "Maadi": { ar: "المعادي", en: "Maadi" },
+    "القاهرة الجديدة": { ar: "القاهرة الجديدة", en: "New Cairo" },
+    "New Cairo": { ar: "القاهرة الجديدة", en: "New Cairo" },
+    "التجمع الخامس": { ar: "التجمع الخامس", en: "Fifth Settlement" },
+    "Fifth Settlement": { ar: "التجمع الخامس", en: "Fifth Settlement" },
+    "Unknown": { ar: "غير معروف", en: "Unknown" },
+    "Pending": { ar: "قيد التحديد", en: "Pending" },
+    "قيد التحديد": { ar: "قيد التحديد", en: "Pending" },
+  };
+
+  return translations[area]?.[locale] || area;
+}
+
 function formatTiming(locale: Locale, timing: ClientRequestDetailData["timing"]) {
   if (timing.type === "emergency") return locale === "ar" ? "طوارئ خلال ساعة" : "Emergency within 1 hour";
   if (timing.type === "today") return locale === "ar" ? "اليوم" : "Today";
@@ -88,7 +122,10 @@ function resolveAddress(locale: Locale, detail: ClientRequestDetailData) {
     return saved ? saved[locale] : locale === "ar" ? "عنوان محفوظ" : "Saved address";
   }
 
-  return [detail.address.governorate, detail.address.city, detail.address.district, detail.address.street].filter(Boolean).join(", ");
+  return [detail.address.governorate, detail.address.city, detail.address.district, detail.address.street]
+    .filter(Boolean)
+    .map((val) => translateArea(val || "", locale))
+    .join(", ");
 }
 
 export interface CustomRequestItem {
@@ -547,8 +584,8 @@ export function ClientRequestsPage({ locale, initialData }: { locale: Locale; in
                           <SplitInfo
                             items={[
                               { label: isArabic ? "رقم الطلب" : "Request no", value: item.requestNumber },
-                              { label: isArabic ? "الخدمة" : "Service", value: getServiceName(item.serviceId, locale) },
-                              { label: isArabic ? "المنطقة" : "Area", value: item.area },
+                              { label: isArabic ? "الخدمة" : "Service", value: getServiceName(item, locale) },
+                              { label: isArabic ? "المنطقة" : "Area", value: translateArea(item.area, locale) },
                               { label: isArabic ? "تاريخ الإنشاء" : "Created", value: formatDate(locale, item.createdAt) }
                             ]}
                           />
@@ -597,9 +634,9 @@ export function ClientRequestDetailPage({ locale, requestId, initialData }: { lo
 
       <div className="mb-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <MiniMetric label={isArabic ? "الحالة" : "Status"} value={status.label} note={isArabic ? "الحالة الحالية للطلب" : "current request state"} icon={ShieldCheck} tone="primary" />
-        <MiniMetric label={isArabic ? "الخدمة" : "Service"} value={getServiceName(data.serviceId, locale)} note={isArabic ? "الفئة المطلوبة" : "requested category"} icon={Wrench} tone="sun" />
+        <MiniMetric label={isArabic ? "الخدمة" : "Service"} value={getServiceName(data, locale)} note={isArabic ? "الفئة المطلوبة" : "requested category"} icon={Wrench} tone="sun" />
         <MiniMetric label={isArabic ? "التوقيت" : "Timing"} value={formatTiming(locale, data.timing)} note={isArabic ? "الموعد المفضل" : "preferred schedule"} icon={Clock3} tone="accent" />
-        <MiniMetric label={isArabic ? "المنطقة" : "Area"} value={data.area} note={isArabic ? "منطقة الخدمة" : "delivery zone"} icon={MapPin} tone="dark" />
+        <MiniMetric label={isArabic ? "المنطقة" : "Area"} value={translateArea(data.area, locale)} note={isArabic ? "منطقة الخدمة" : "delivery zone"} icon={MapPin} tone="dark" />
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
@@ -607,7 +644,7 @@ export function ClientRequestDetailPage({ locale, requestId, initialData }: { lo
           <div className="grid gap-4">
             <SoftCard>
               <p className="text-xs uppercase tracking-[0.22em] text-onyx-500">{isArabic ? "الخدمة" : "Service"}</p>
-              <p className="mt-3 text-lg font-semibold text-white">{getServiceName(data.serviceId, locale)}</p>
+              <p className="mt-3 text-lg font-semibold text-white">{getServiceName(data, locale)}</p>
             </SoftCard>
             <SoftCard>
               <p className="text-xs uppercase tracking-[0.22em] text-onyx-500">{isArabic ? "الوصف" : "Description"}</p>
