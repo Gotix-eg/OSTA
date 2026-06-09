@@ -91,7 +91,9 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
                 </Link>
               ))}
             </div>
-            <p className="text-onyx-600">© {new Date().getFullYear()} Ostafy Egypt. All rights reserved.</p>
+             <p className="text-onyx-600">
+              © {new Date().getFullYear()} Ostafy Egypt. {locale === "ar" ? "جميع الحقوق محفوظة. تم التطوير بواسطة شركة Gotix للبرمجيات" : "All rights reserved. Developed by Gotix Software"}
+            </p>
           </div>
         </div>
       </footer>
