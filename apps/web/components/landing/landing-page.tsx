@@ -98,8 +98,8 @@ export function LandingPage({ locale }: { locale: Locale }) {
   const [selectedRequestForAccept, setSelectedRequestForAccept] = useState<any | null>(null);
   const [isWorker, setIsWorker] = useState<boolean>(false);
 
-  const [visibleWorkersLimit, setVisibleWorkersLimit] = useState<number>(4);
-  const [visibleRequestsLimit, setVisibleRequestsLimit] = useState<number>(4);
+  const [visibleWorkersLimit, setVisibleWorkersLimit] = useState<number>(3);
+  const [visibleRequestsLimit, setVisibleRequestsLimit] = useState<number>(3);
 
   const DEFAULT_SLIDES = [
     {
@@ -202,7 +202,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
 
   useEffect(() => {
     fetchWorkers();
-    setVisibleWorkersLimit(4);
+    setVisibleWorkersLimit(3);
   }, [selectedSpecialty, selectedGov, selectedCity, selectedArea]);
 
   const fetchPublicRequests = async () => {
@@ -231,7 +231,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
 
   useEffect(() => {
     fetchPublicRequests();
-    setVisibleRequestsLimit(4);
+    setVisibleRequestsLimit(3);
   }, [selectedRequestSpecialty]);
 
   const handleBookClick = (worker: any) => {
@@ -699,7 +699,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
               {workers.length > visibleWorkersLimit && (
                 <div className="flex justify-center mt-10">
                   <button
-                    onClick={() => setVisibleWorkersLimit((prev) => prev + 4)}
+                    onClick={() => setVisibleWorkersLimit((prev) => prev + 3)}
                     className="btn-onyx py-3 px-8 text-sm font-bold border-gold-500/20 text-gold-500 bg-white/[0.02] backdrop-blur hover:bg-gold-500/10 hover:border-gold-500/50 shadow-lg rounded-xl transition-all duration-300 flex items-center gap-2"
                   >
                     <span>{isArabic ? "مزيد من الفنيين" : "Show More Technicians"}</span>
@@ -903,7 +903,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
               {publicRequests.length > visibleRequestsLimit && (
                 <div className="flex justify-center mt-10">
                   <button
-                    onClick={() => setVisibleRequestsLimit((prev) => prev + 4)}
+                    onClick={() => setVisibleRequestsLimit((prev) => prev + 3)}
                     className="btn-onyx py-3 px-8 text-sm font-bold border-gold-500/20 text-gold-500 bg-white/[0.02] backdrop-blur hover:bg-gold-500/10 hover:border-gold-500/50 shadow-lg rounded-xl transition-all duration-300 flex items-center gap-2"
                   >
                     <span>{isArabic ? "مزيد من الطلبات" : "Show More Requests"}</span>
