@@ -928,6 +928,45 @@ export function LandingPage({ locale }: { locale: Locale }) {
         </div>
       </section>
 
+      {/* 3-Step How It Works Row */}
+      <section className="py-16 px-4 bg-onyx-950/40 border-b border-white/5">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-2xl md:text-3xl font-black text-white">
+              {isArabic ? "خطوات بسيطة لبدء الصيانة" : "How OSTA Works"}
+            </h2>
+            <div className="h-1 w-16 bg-gold-500 mx-auto rounded-full mt-4" />
+          </div>
+          <div className="grid gap-8 md:grid-cols-3">
+            {[
+              {
+                step: "1",
+                title: isArabic ? "١. اطلب الخدمة" : "1. Request Service",
+                desc: isArabic ? "اختر التخصص واكتب تفاصيل مشكلتك بوضوح." : "Choose a trade and describe your problem clearly."
+              },
+              {
+                step: "2",
+                title: isArabic ? "٢. قارن عروض الأسعار" : "2. Compare Quotes",
+                desc: isArabic ? "استقبل عروضاً مباشرة من فنيين موثقين قريبين منك." : "Get direct quotes from verified local pros."
+              },
+              {
+                step: "3",
+                title: isArabic ? "٣. أنجز طلبك بأمان" : "3. Complete Safely",
+                desc: isArabic ? "اختر الفني المناسب، ودردش لتأكيد الشغل والضمان." : "Select the best tech, chat to confirm, and activate warranty."
+              }
+            ].map((s, idx) => (
+              <div key={idx} className="onyx-card p-8 text-center space-y-4 hover:border-gold-500/20 transition-all duration-300">
+                <div className="h-12 w-12 rounded-full bg-gold-500/10 text-gold-500 flex items-center justify-center font-black text-lg mx-auto border border-gold-500/20">
+                  {s.step}
+                </div>
+                <h3 className="text-lg font-bold text-white">{s.title}</h3>
+                <p className="text-sm text-onyx-400 leading-relaxed max-w-xs mx-auto">{s.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Worker Auth Prompt Modal */}
       {showWorkerAuthModal && selectedRequestForAccept && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm animate-fadeIn">
