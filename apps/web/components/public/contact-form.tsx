@@ -41,7 +41,7 @@ export function ContactForm({ locale }: { locale: Locale }) {
                   </div>
                   <div>
                      <p className="text-xs text-onyx-500 font-bold uppercase tracking-widest">{isArabic ? "تواصل واتساب" : "WhatsApp Us"}</p>
-                     <p className="text-white font-bold tracking-wider group-hover:text-gold-500 transition-colors">+20 100 941 0112</p>
+                     <p className="text-white font-bold tracking-wider group-hover:text-gold-500 transition-colors" dir="ltr">+20 100 941 0112</p>
                   </div>
                </a>
 

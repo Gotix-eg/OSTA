@@ -1123,7 +1123,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
             <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-onyx-400 font-medium mt-2">
               <a href="https://wa.me/201009410112" className="flex items-center gap-2 hover:text-gold-500 transition-colors">
                 <Phone className="h-4 w-4 text-gold-500" />
-                <span>+20 100 941 0112</span>
+                <span dir="ltr" className="inline-block">+20 100 941 0112</span>
               </a>
               <a href="mailto:info@ostafy.com" className="flex items-center gap-2 hover:text-gold-500 transition-colors">
                 <Mail className="h-4 w-4 text-gold-500" />

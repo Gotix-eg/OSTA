@@ -58,7 +58,7 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
               <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-onyx-400 mt-2 font-medium">
                 <a href="https://wa.me/201009410112" className="flex items-center gap-2 hover:text-gold-500 transition-colors">
                   <Phone className="h-3.5 w-3.5 text-gold-500" />
-                  <span>+20 100 941 0112</span>
+                  <span dir="ltr" className="inline-block">+20 100 941 0112</span>
                 </a>
                 <a href="mailto:info@ostafy.com" className="flex items-center gap-2 hover:text-gold-500 transition-colors">
                   <Mail className="h-3.5 w-3.5 text-gold-500" />
