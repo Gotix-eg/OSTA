@@ -9,7 +9,7 @@ import {
   Facebook, Instagram, Phone, Mail
 } from "lucide-react";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/locales";
@@ -85,6 +85,16 @@ export function LandingPage({ locale }: { locale: Locale }) {
   const [workers, setWorkers] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+
+  const sponsoredWorkers = useMemo(() => {
+    return [...workers]
+      .sort((a, b) => {
+        if (a.isFeatured && !b.isFeatured) return -1;
+        if (!a.isFeatured && b.isFeatured) return 1;
+        return 0;
+      })
+      .slice(0, 9);
+  }, [workers]);
 
   const [selectedWorkerForBooking, setSelectedWorkerForBooking] = useState<any | null>(null);
   const [showAuthModal, setShowAuthModal] = useState<boolean>(false);
@@ -175,14 +185,8 @@ export function LandingPage({ locale }: { locale: Locale }) {
     setLoading(true);
     setError(null);
     try {
-      const params = new URLSearchParams();
-      if (selectedSpecialty) params.append("specialty", selectedSpecialty);
-      if (selectedGov) params.append("governorate", selectedGov);
-      if (selectedCity) params.append("city", selectedCity);
-      if (selectedArea) params.append("area", selectedArea);
-
       const baseUrl = resolveApiBaseUrl();
-      const res = await fetch(`${baseUrl}/public/workers?${params.toString()}`);
+      const res = await fetch(`${baseUrl}/public/workers`);
       if (!res.ok) {
         throw new Error("Failed to fetch workers");
       }
@@ -202,8 +206,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
 
   useEffect(() => {
     fetchWorkers();
-    setVisibleWorkersLimit(3);
-  }, [selectedSpecialty, selectedGov, selectedCity, selectedArea]);
+  }, []);
 
   const fetchPublicRequests = async () => {
     setLoadingRequests(true);
@@ -442,148 +445,18 @@ export function LandingPage({ locale }: { locale: Locale }) {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <span className="text-xs font-bold uppercase tracking-wider text-gold-500 px-3 py-1 rounded-full bg-gold-500/10 border border-gold-500/25">
-              {isArabic ? "استكشاف الفنيين" : "Explore Pros"}
+              {isArabic ? "الفنيين المميزين" : "Featured Pros"}
             </span>
             <h2 className="text-3xl md:text-5xl font-black text-white mt-4 mb-4">
-              {isArabic ? "ابحث عن فني محترف واحجزه فوراً" : "Find & Book a Pro Instantly"}
+              {isArabic ? "أفضل فنيين وصنايعية موثقين ورعاة" : "Top Sponsored & Featured Pros"}
             </h2>
             <p className="text-onyx-400 max-w-2xl mx-auto text-base md:text-lg">
               {isArabic 
-                ? "تصفح قائمة أمهر الحرفيين والتقييمات، وحرك طلبك المباشر مع إضافة الفني للمفضلة تلقائياً" 
-                : "Browse top-rated craftsmen, book directly, and automatically add them to your favorites"}
+                ? "تصفح قائمة أمهر الفنيين الحاصلين على أعلى التقييمات والموثقين للبدء فوراً" 
+                : "Browse our top-rated sponsored and verified technicians for immediate service."}
             </p>
             <div className="h-1 w-24 bg-gold-500 mx-auto rounded-full mt-6" />
           </div>
-
-          {/* Filters Panel */}
-          <div className="onyx-card p-6 md:p-8 mb-10 border-white/5 bg-white/[0.02] backdrop-blur-md rounded-3xl">
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {/* Specialty Filter */}
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-bold text-onyx-300">
-                  {isArabic ? "التخصص المهني" : "Profession / Specialty"}
-                </label>
-                <select
-                  value={selectedSpecialty}
-                  onChange={(e) => setSelectedSpecialty(e.target.value)}
-                  className="h-12 bg-onyx-900 border border-white/10 text-white rounded-xl px-4 focus:outline-none focus:border-gold-500/50 transition-colors cursor-pointer text-sm font-medium"
-                >
-                  <option value="">{isArabic ? "كل التخصصات" : "All Specialties"}</option>
-                  {CRAFTS.map((craft) => (
-                    <option key={craft.id} value={craft.id}>
-                      {isArabic ? craft.name.ar : craft.name.en}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Governorate Filter */}
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-bold text-onyx-300">
-                  {isArabic ? "المحافظة" : "Governorate"}
-                </label>
-                <select
-                  value={selectedGov}
-                  onChange={(e) => {
-                    setSelectedGov(e.target.value);
-                    setSelectedCity("");
-                    setSelectedArea("");
-                  }}
-                  className="h-12 bg-onyx-900 border border-white/10 text-white rounded-xl px-4 focus:outline-none focus:border-gold-500/50 transition-colors cursor-pointer text-sm font-medium"
-                >
-                  <option value="">{isArabic ? "اختر المحافظة" : "Select Governorate"}</option>
-                  {egyptianGovernorates.map((gov) => (
-                    <option key={gov.value} value={gov.value}>
-                      {isArabic ? gov.labelAr : gov.labelEn}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* City Filter */}
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-bold text-onyx-300">
-                  {isArabic ? "المنطقة / المدينة" : "City / Region"}
-                </label>
-                <select
-                  value={selectedCity}
-                  onChange={(e) => {
-                    setSelectedCity(e.target.value);
-                    setSelectedArea("");
-                  }}
-                  disabled={!selectedGov}
-                  className="h-12 bg-onyx-900 border border-white/10 text-white rounded-xl px-4 focus:outline-none focus:border-gold-500/50 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
-                >
-                  <option value="">{isArabic ? "اختر المدينة" : "Select City"}</option>
-                  {selectedGov && majorCities[selectedGov]?.map((city) => (
-                    <option key={city.value} value={city.value}>
-                      {isArabic ? city.labelAr : city.labelEn}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Neighborhood Filter */}
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-bold text-onyx-300">
-                  {isArabic ? "الحي السكني" : "Neighborhood"}
-                </label>
-                {selectedCity && POPULAR_NEIGHBORHOODS[selectedCity] ? (
-                  <select
-                    value={selectedArea}
-                    onChange={(e) => setSelectedArea(e.target.value)}
-                    disabled={!selectedCity}
-                    className="h-12 bg-onyx-900 border border-white/10 text-white rounded-xl px-4 focus:outline-none focus:border-gold-500/50 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
-                  >
-                    <option value="">{isArabic ? "اختر الحي" : "Select Neighborhood"}</option>
-                    {POPULAR_NEIGHBORHOODS[selectedCity].map((neighborhood) => (
-                      <option key={neighborhood.value} value={neighborhood.value}>
-                        {isArabic ? neighborhood.labelAr : neighborhood.labelEn}
-                      </option>
-                    ))}
-                  </select>
-                ) : (
-                  <input
-                    type="text"
-                    value={selectedArea}
-                    onChange={(e) => setSelectedArea(e.target.value)}
-                    placeholder={isArabic ? "اكتب الحي (مثال: الدقي)" : "Type neighborhood (e.g. Dokki)"}
-                    disabled={!selectedCity}
-                    className="h-12 bg-onyx-900 border border-white/10 text-white rounded-xl px-4 focus:outline-none focus:border-gold-500/50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
-                  />
-                )}
-              </div>
-            </div>
-
-            {/* Clear Filters Link */}
-            {(selectedSpecialty || selectedGov || selectedCity || selectedArea) && (
-              <div className="mt-4 flex justify-end">
-                <button
-                  onClick={() => {
-                    setSelectedSpecialty("");
-                    setSelectedGov("");
-                    setSelectedCity("");
-                    setSelectedArea("");
-                  }}
-                  className="text-xs text-gold-500 hover:text-gold-400 font-semibold underline underline-offset-4"
-                >
-                  {isArabic ? "إعادة ضبط الفلاتر" : "Reset Filters"}
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* Fallback Warning Banner */}
-          {workers.length > 0 && workers.some(w => w.isNearby) && (
-            <div className="mb-8 p-4 rounded-2xl border border-amber-500/20 bg-amber-500/5 text-amber-500 text-sm font-semibold flex items-center gap-3 animate-fadeIn">
-              <span className="text-lg">⚠️</span>
-              <p>
-                {isArabic 
-                  ? "عذراً، لا يوجد فنيين متوفرين في الحي المحدد حالياً. تم تلقائياً عرض الفنيين المتاحين في الأحياء المجاورة التابعة لنفس المدينة."
-                  : "Sorry, no technicians are currently available in the selected neighborhood. We have automatically displayed available technicians in neighboring neighborhoods of the same city."}
-              </p>
-            </div>
-          )}
 
           {/* Loading / Error / Results states */}
           {loading ? (
@@ -595,22 +468,20 @@ export function LandingPage({ locale }: { locale: Locale }) {
             <div className="text-center py-20 onyx-card border-red-500/20 bg-red-500/5 text-red-500 font-bold rounded-3xl">
               {error}
             </div>
-          ) : workers.length === 0 ? (
+          ) : sponsoredWorkers.length === 0 ? (
             <div className="text-center py-16 onyx-card border-white/5 bg-white/[0.01] rounded-3xl">
               <Users className="h-16 w-16 text-onyx-600 mx-auto mb-4" />
               <h4 className="text-xl font-bold text-white mb-2">
                 {isArabic ? "لم نجد أي فنيين" : "No Technicians Found"}
               </h4>
               <p className="text-onyx-400 text-sm max-w-md mx-auto">
-                {isArabic 
-                  ? "لا يوجد فنيين مسجلين يطابقون هذه الفلاتر حالياً. حاول تعديل خيارات التصفية أو اختيار تخصص آخر." 
-                  : "There are no registered pros matching these filters at the moment. Try modifying your search options."}
+                {isArabic ? "لا يوجد فنيين مسجلين حالياً." : "There are no registered pros at the moment."}
               </p>
             </div>
           ) : (
             <>
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {workers.slice(0, visibleWorkersLimit).map((worker) => (
+                {sponsoredWorkers.map((worker) => (
                 <div 
                   key={worker.id}
                   className="onyx-card border-white/5 bg-white/[0.02] hover:border-gold-500/30 transition-all duration-300 rounded-3xl p-6 flex flex-col justify-between group"
@@ -708,17 +579,15 @@ export function LandingPage({ locale }: { locale: Locale }) {
                 </div>
               ))}
               </div>
-              {workers.length > visibleWorkersLimit && (
-                <div className="flex justify-center mt-10">
-                  <button
-                    onClick={() => setVisibleWorkersLimit((prev) => prev + 3)}
-                    className="btn-onyx py-3 px-8 text-sm font-bold border-gold-500/20 text-gold-500 bg-white/[0.02] backdrop-blur hover:bg-gold-500/10 hover:border-gold-500/50 shadow-lg rounded-xl transition-all duration-300 flex items-center gap-2"
-                  >
-                    <span>{isArabic ? "مزيد من الفنيين" : "Show More Technicians"}</span>
-                    <ChevronRight className="h-4 w-4 rotate-90 rtl:-rotate-90" />
-                  </button>
-                </div>
-              )}
+              <div className="flex justify-center mt-10">
+                <Link
+                  href={`/${locale}/workers`}
+                  className="btn-gold py-3 px-8 text-sm font-black shadow-md flex items-center gap-2"
+                >
+                  <span>{isArabic ? "عرض كل الفنيين" : "View All Technicians"}</span>
+                  <ChevronRight className="h-4.5 w-4.5 rtl:rotate-180" />
+                </Link>
+              </div>
             </>
           )}
         </div>
