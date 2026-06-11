@@ -1,12 +1,15 @@
-import type { ReactNode } from "react";
+"use client";
+
+import { useState, type ReactNode } from "react";
 import Link from "next/link";
-import { LayoutDashboard, Facebook, Instagram, Phone, Mail } from "lucide-react";
+import { LayoutDashboard, Facebook, Instagram, Phone, Mail, Menu, X } from "lucide-react";
 import { LocaleSwitcher } from "@/components/shared/locale-switcher";
 import { publicPageCopy } from "@/lib/public-pages-copy";
 import type { Locale } from "@/lib/locales";
 
 export function PublicShell({ locale, pathname, children }: { locale: Locale; pathname: string; children: ReactNode }) {
   const copy = publicPageCopy[locale].nav;
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const links = [
     { href: `/${locale}`, label: copy.home },
@@ -40,8 +43,48 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
               <LayoutDashboard className="h-4 w-4" />
               {copy.dashboards}
             </Link>
+
+            {/* Mobile Hamburger Menu Button */}
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-onyx-300 hover:bg-white/10 hover:text-white lg:hidden transition-all duration-200"
+              aria-label="Toggle Menu"
+            >
+              {isMobileMenuOpen ? (
+                <X className="h-5.5 w-5.5 text-gold-500" />
+              ) : (
+                <Menu className="h-5.5 w-5.5" />
+              )}
+            </button>
           </div>
         </div>
+
+        {/* Mobile Menu Dropdown */}
+        {isMobileMenuOpen && (
+          <div className="border-t border-white/5 bg-black/95 backdrop-blur-xl lg:hidden animate-fadeIn">
+            <nav className="section-shell flex flex-col gap-4 py-6">
+              {links.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href as `/${string}`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="text-base font-bold text-onyx-250 py-2 border-b border-white/[0.03] transition hover:text-gold-500"
+                >
+                  {item.label}
+                </Link>
+              ))}
+              
+              <Link 
+                href={`/${locale}/dashboards`}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="btn-gold mt-4 flex items-center justify-center gap-2 py-3.5 text-sm font-black w-full"
+              >
+                <LayoutDashboard className="h-4.5 w-4.5" />
+                {copy.dashboards}
+              </Link>
+            </nav>
+          </div>
+        )}
       </header>
 
       <div className="min-h-[calc(100vh-80px-120px)]">{children}</div>
