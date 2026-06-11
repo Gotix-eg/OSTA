@@ -6,19 +6,20 @@ import { LayoutDashboard, Facebook, Instagram, Phone, Mail, Menu, X } from "luci
 import { LocaleSwitcher } from "@/components/shared/locale-switcher";
 import { publicPageCopy } from "@/lib/public-pages-copy";
 import type { Locale } from "@/lib/locales";
+import { cn } from "@/lib/utils";
 
 export function PublicShell({ locale, pathname, children }: { locale: Locale; pathname: string; children: ReactNode }) {
   const copy = publicPageCopy[locale].nav;
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const links = [
-    { href: `/${locale}`, label: copy.home },
-    { href: `/${locale}/services`, label: copy.services },
-    { href: `/${locale}/vendors`, label: copy.vendors },
-    { href: `/${locale}/how-it-works`, label: copy.how },
-    { href: `/${locale}/about`, label: copy.about },
-    { href: `/${locale}/contact`, label: copy.contact },
-    { href: `/${locale}/faq`, label: copy.faq }
+    { href: `/${locale}`, label: copy.home, path: "/" },
+    { href: `/${locale}/services`, label: copy.services, path: "/services" },
+    { href: `/${locale}/vendors`, label: copy.vendors, path: "/vendors" },
+    { href: `/${locale}/how-it-works`, label: copy.how, path: "/how-it-works" },
+    { href: `/${locale}/about`, label: copy.about, path: "/about" },
+    { href: `/${locale}/contact`, label: copy.contact, path: "/contact" },
+    { href: `/${locale}/faq`, label: copy.faq, path: "/faq" }
   ];
 
   return (
@@ -30,11 +31,25 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
           </Link>
 
           <nav className="hidden items-center gap-6 lg:flex">
-            {links.slice(0, 6).map((item) => (
-              <Link key={item.href} href={item.href as `/${string}`} className="text-sm font-medium text-onyx-300 transition hover:text-gold-500">
-                {item.label}
-              </Link>
-            ))}
+            {links.slice(0, 6).map((item) => {
+              const isActive = item.path === "/" 
+                ? pathname === "/" || pathname === "" 
+                : pathname.startsWith(item.path);
+              return (
+                <Link 
+                  key={item.href} 
+                  href={item.href as `/${string}`} 
+                  className={cn(
+                    "text-sm font-semibold transition-colors relative py-1",
+                    isActive 
+                      ? "text-gold-500 after:absolute after:-bottom-1 after:left-0 after:right-0 after:h-0.5 after:bg-gold-500 after:rounded-full"
+                      : "text-onyx-300 hover:text-gold-500"
+                  )}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
           </nav>
 
           <div className="flex items-center gap-3">
@@ -63,16 +78,26 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
         {isMobileMenuOpen && (
           <div className="border-t border-white/5 bg-black/95 backdrop-blur-xl lg:hidden animate-fadeIn">
             <nav className="section-shell flex flex-col gap-4 py-6">
-              {links.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href as `/${string}`}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="text-base font-bold text-onyx-250 py-2 border-b border-white/[0.03] transition hover:text-gold-500"
-                >
-                  {item.label}
-                </Link>
-              ))}
+              {links.map((item) => {
+                const isActive = item.path === "/" 
+                  ? pathname === "/" || pathname === "" 
+                  : pathname.startsWith(item.path);
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href as `/${string}`}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={cn(
+                      "text-base font-bold py-2 border-b border-white/[0.03] transition-colors",
+                      isActive 
+                        ? "text-gold-500 border-l-2 border-gold-500 pl-3 rtl:border-l-0 rtl:border-r-2 rtl:pr-3" 
+                        : "text-onyx-250 hover:text-gold-500"
+                    )}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
               
               <Link 
                 href={`/${locale}/dashboards`}
@@ -128,11 +153,23 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
 
           <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between text-xs font-semibold tracking-wide text-onyx-500">
             <div className="flex flex-wrap gap-x-6 gap-y-3">
-              {links.map((item) => (
-                <Link key={item.href} href={item.href as `/${string}`} className="hover:text-gold-500 transition-colors">
-                  {item.label}
-                </Link>
-              ))}
+              {links.map((item) => {
+                const isActive = item.path === "/" 
+                  ? pathname === "/" || pathname === "" 
+                  : pathname.startsWith(item.path);
+                return (
+                  <Link 
+                    key={item.href} 
+                    href={item.href as `/${string}`} 
+                    className={cn(
+                      "transition-colors",
+                      isActive ? "text-gold-500 font-bold" : "hover:text-gold-500"
+                    )}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
             </div>
              <p className="text-onyx-600">
               © {new Date().getFullYear()} Ostafy Egypt. {locale === "ar" ? (
