@@ -81,3 +81,47 @@ export async function sendPasswordResetEmail(to: string, code: string) {
     console.error("[EmailService] Error sending password reset email:", error);
   }
 }
+
+export async function sendNewRequestNotificationEmail(
+  to: string,
+  name: string,
+  requestTitle: string,
+  categoryName: string,
+  area: string
+) {
+  if (!to) return;
+
+  console.log(`[EmailService] Attempting to send new request notification email to: ${to}`);
+
+  const mailOptions = {
+    from: process.env.SMTP_FROM || '"OSTA" <noreply@osta.eg>',
+    replyTo: process.env.SMTP_USER || '"OSTA" <noreply@osta.eg>',
+    to,
+    subject: "New Job Opportunity Available! | فرصة عمل جديدة متاحة",
+    text: `أهلاً بك يا ${name}!\n\nهناك فرصة عمل جديدة متاحة في منطقتك تطابق تخصصك:\n\nالخدمة: ${categoryName}\nالعنوان: ${requestTitle}\nالمنطقة: ${area}\n\nسجل الدخول إلى حسابك في أُسطى لعرض التفاصيل وقبول الطلب.\n\nمنصة أُسطى - الجودة والضمان.`,
+    html: `
+      <div style="font-family: sans-serif; direction: rtl; text-align: right; max-width: 600px; margin: 0 auto; border: 1px solid #eee; padding: 20px; border-radius: 10px;">
+        <h2 style="color: #d4af37;">فرصة عمل جديدة متاحة! 🎉</h2>
+        <p>أهلاً بك يا ${name}،</p>
+        <p>تم إضافة طلب صيانة جديد في منطقتك يطابق تخصصك المهني:</p>
+        <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin: 20px 0; border-right: 4px solid #d4af37;">
+          <p style="margin: 5px 0;"><strong>نوع الخدمة:</strong> ${categoryName}</p>
+          <p style="margin: 5px 0;"><strong>تفاصيل الطلب:</strong> ${requestTitle}</p>
+          <p style="margin: 5px 0;"><strong>المنطقة/المدينة:</strong> ${area}</p>
+        </div>
+        <p>يرجى تسجيل الدخول إلى تطبيق أو موقع أُسطى فوراً لعرض التفاصيل الكاملة وقبول الفرصة.</p>
+        <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
+        <p style="font-size: 12px; color: #888;">منصة أُسطى - الجودة والضمان.</p>
+      </div>
+    `,
+  };
+
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log(`[EmailService] New request notification email sent: ${info.messageId}`);
+    return info;
+  } catch (error) {
+    console.error("[EmailService] Error sending new request notification email:", error);
+  }
+}
+

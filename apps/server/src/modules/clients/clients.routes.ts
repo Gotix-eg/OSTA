@@ -9,8 +9,10 @@ import {
 } from "../../middleware/auth.middleware.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { successResponse } from "../../utils/ApiResponse.js";
-import { catchAsync } from "../../utils/catchAsync.js";
 import { prisma } from "../../lib/prisma.js";
+import { catchAsync } from "../../utils/catchAsync.js";
+import { sendAppNotification } from "../../utils/notification.util.js";
+import { sendNewRequestNotificationEmail } from "../../utils/email.js";
 
 const router = Router();
 
@@ -491,6 +493,85 @@ router.post(
         body: `تم استلام طلب الصيانة الخاص بك (${record.requestNumber}) وجاري البحث عن فني مناسب.`,
       },
     });
+
+    // Notify suitable workers who cover the location and match the specialization
+    try {
+      const requestAddress = await prisma.address.findUnique({
+        where: { id: record.addressId }
+      });
+
+      if (requestAddress) {
+        let workersToNotify: any[] = [];
+
+        if (payload.workerId) {
+          const directWorker = await prisma.workerProfile.findUnique({
+            where: { id: payload.workerId },
+            include: {
+              user: {
+                select: { id: true, firstName: true, lastName: true, email: true }
+              }
+            }
+          });
+          if (directWorker) workersToNotify.push(directWorker);
+        } else {
+          workersToNotify = await prisma.workerProfile.findMany({
+            where: {
+              verificationStatus: "VERIFIED",
+              specializations: {
+                some: {
+                  serviceId: record.serviceId
+                }
+              },
+              workAreas: {
+                some: {
+                  governorate: requestAddress.governorate,
+                  city: requestAddress.city
+                }
+              }
+            },
+            include: {
+              user: {
+                select: { id: true, firstName: true, lastName: true, email: true }
+              }
+            }
+          });
+        }
+
+        const serviceCategory = await prisma.service.findUnique({
+          where: { id: record.serviceId },
+          include: { category: true }
+        });
+        const categoryName = serviceCategory?.category.nameAr || serviceCategory?.category.nameEn || "صيانة";
+
+        for (const worker of workersToNotify) {
+          const isPremium = worker.subscriptionTier !== "free" || (worker.trialExpiresAt && worker.trialExpiresAt > new Date());
+          
+          // 1. App Notification
+          if (worker.notificationsEnabledApp && isPremium) {
+            await sendAppNotification({
+              userId: worker.user.id,
+              type: "CUSTOM_REQUEST_NEW",
+              title: "طلب صيانة جديد متاح 🛠️",
+              body: `تم إضافة طلب جديد في تخصصك: ${categoryName} بموقعك.`,
+              data: { requestId: record.id }
+            });
+          }
+
+          // 2. Email Notification
+          if (worker.notificationsEnabledEmail && worker.user.email && isPremium) {
+            await sendNewRequestNotificationEmail(
+              worker.user.email,
+              `${worker.user.firstName} ${worker.user.lastName}`,
+              record.title,
+              categoryName,
+              `${requestAddress.governorate}، ${requestAddress.city}`
+            );
+          }
+        }
+      }
+    } catch (notifyErr) {
+      console.error("Failed to notify suitable workers:", notifyErr);
+    }
 
     response.status(201).json(
       successResponse(

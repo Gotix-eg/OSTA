@@ -637,6 +637,7 @@ router.get("/settings", catchAsync(async (request, response) => {
   const userId = request.auth!.userId;
   const user = await prisma.user.findUnique({
     where: { id: userId },
+    include: { workerProfile: true }
   });
 
   if (!user) throw new ApiError(404, "User not found");
@@ -648,10 +649,37 @@ router.get("/settings", catchAsync(async (request, response) => {
       lastName: user.lastName,
       phone: user.phone,
       email: user.email
+    },
+    workPreferences: {
+      isAvailable: user.workerProfile?.isAvailable ?? false,
+      notificationsEnabledApp: user.workerProfile?.notificationsEnabledApp ?? true,
+      notificationsEnabledEmail: user.workerProfile?.notificationsEnabledEmail ?? true,
+      subscriptionTier: user.workerProfile?.subscriptionTier ?? "free"
     }
   };
 
   response.status(200).json(successResponse(settings, "Worker settings fetched"));
+}));
+
+router.patch("/settings", catchAsync(async (request, response) => {
+  const userId = request.auth!.userId;
+  const { notificationsEnabledApp, notificationsEnabledEmail, isAvailable } = request.body;
+
+  const worker = await prisma.workerProfile.findUnique({
+    where: { userId }
+  });
+  if (!worker) throw new ApiError(404, "Worker profile not found");
+
+  const updated = await prisma.workerProfile.update({
+    where: { id: worker.id },
+    data: {
+      notificationsEnabledApp: notificationsEnabledApp !== undefined ? !!notificationsEnabledApp : undefined,
+      notificationsEnabledEmail: notificationsEnabledEmail !== undefined ? !!notificationsEnabledEmail : undefined,
+      isAvailable: isAvailable !== undefined ? !!isAvailable : undefined
+    }
+  });
+
+  response.status(200).json(successResponse(updated, "Worker settings updated successfully"));
 }));
 
 export const workersRouter = router;
