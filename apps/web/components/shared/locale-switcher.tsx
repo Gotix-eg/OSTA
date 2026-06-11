@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { Globe } from "lucide-react";
 import { getAltLocale, stripLocalePrefix, type Locale } from "@/lib/locales";
+import { cn } from "@/lib/utils";
 
 interface LocaleSwitcherProps {
   locale: Locale;
@@ -14,10 +16,11 @@ export function LocaleSwitcher({ locale, pathname, className }: LocaleSwitcherPr
   return (
     <Link
       href={`/${altLocale}${pathWithoutLocale}` as `/${string}`}
-      className={className}
+      className={cn("inline-flex items-center gap-2", className)}
       aria-label={`Switch language to ${altLocale.toUpperCase()}`}
     >
-      {altLocale === "ar" ? "العربية" : "English"}
+      <Globe className="h-4 w-4 text-gold-500 shrink-0" />
+      <span>{altLocale === "ar" ? "العربية" : "English"}</span>
     </Link>
   );
 }
