@@ -14,7 +14,9 @@ export default async function VendorStorePage({
 
   return (
     <PublicShell locale={locale} pathname={`/vendors/${vendorId}`}>
-      <VendorStore locale={locale} vendorId={vendorId} />
+      <div className="section-shell py-12">
+        <VendorStore locale={locale} vendorId={vendorId} />
+      </div>
     </PublicShell>
   );
 }

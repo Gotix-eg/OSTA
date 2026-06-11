@@ -14,7 +14,9 @@ export default async function VendorRequestPage({
 
   return (
     <PublicShell locale={locale} pathname={`/vendors/${vendorId}/request`}>
-      <VendorRequestWizard locale={locale} vendorId={vendorId} />
+      <div className="section-shell py-12">
+        <VendorRequestWizard locale={locale} vendorId={vendorId} />
+      </div>
     </PublicShell>
   );
 }

@@ -10,7 +10,9 @@ export default async function VendorsPage({ params }: { params: Promise<{ locale
 
   return (
     <PublicShell locale={locale} pathname="/vendors">
-      <VendorsDirectory locale={locale} />
+      <div className="section-shell py-12">
+        <VendorsDirectory locale={locale} />
+      </div>
     </PublicShell>
   );
 }
