@@ -211,11 +211,8 @@ export function LandingPage({ locale }: { locale: Locale }) {
   const fetchPublicRequests = async () => {
     setLoadingRequests(true);
     try {
-      const params = new URLSearchParams();
-      if (selectedRequestSpecialty) params.append("specialty", selectedRequestSpecialty);
-
       const baseUrl = resolveApiBaseUrl();
-      const res = await fetch(`${baseUrl}/public/requests?${params.toString()}`);
+      const res = await fetch(`${baseUrl}/public/requests`);
       if (!res.ok) {
         throw new Error("Failed to fetch public requests");
       }
@@ -234,8 +231,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
 
   useEffect(() => {
     fetchPublicRequests();
-    setVisibleRequestsLimit(3);
-  }, [selectedRequestSpecialty]);
+  }, []);
 
   const handleBookClick = (worker: any) => {
     if (isLoggedIn) {
@@ -675,35 +671,6 @@ export function LandingPage({ locale }: { locale: Locale }) {
             <div className="h-1 w-24 bg-gold-500 mx-auto rounded-full mt-6" />
           </div>
 
-          {/* Specialty Filter Tab/Buttons */}
-          <div className="flex flex-wrap justify-center gap-3 mb-10">
-            <button
-              onClick={() => setSelectedRequestSpecialty("")}
-              className={cn(
-                "px-5 py-2.5 rounded-full text-sm font-semibold transition-all border",
-                selectedRequestSpecialty === ""
-                  ? "bg-gold-500 text-onyx-950 border-gold-500 shadow-md"
-                  : "bg-onyx-900 border-white/10 text-onyx-300 hover:text-white"
-              )}
-            >
-              {isArabic ? "كل الفئات" : "All Categories"}
-            </button>
-            {CRAFTS.map((craft) => (
-              <button
-                key={craft.id}
-                onClick={() => setSelectedRequestSpecialty(craft.id)}
-                className={cn(
-                  "px-5 py-2.5 rounded-full text-sm font-semibold transition-all border",
-                  selectedRequestSpecialty === craft.id
-                    ? "bg-gold-500 text-onyx-950 border-gold-500 shadow-md"
-                    : "bg-onyx-900 border-white/10 text-onyx-300 hover:text-white"
-                )}
-              >
-                {isArabic ? craft.name.ar : craft.name.en}
-              </button>
-            ))}
-          </div>
-
           {/* Requests List */}
           {loadingRequests ? (
             <div className="flex flex-col items-center justify-center py-20 text-onyx-400">
@@ -725,7 +692,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
           ) : (
             <>
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {publicRequests.slice(0, visibleRequestsLimit).map((req) => (
+                {publicRequests.slice(0, 6).map((req) => (
                 <div
                   key={req.id}
                   className="onyx-card border-white/5 bg-white/[0.02] hover:border-gold-500/30 transition-all duration-300 rounded-3xl p-6 flex flex-col justify-between group"
@@ -783,17 +750,15 @@ export function LandingPage({ locale }: { locale: Locale }) {
                 </div>
               ))}
               </div>
-              {publicRequests.length > visibleRequestsLimit && (
-                <div className="flex justify-center mt-10">
-                  <button
-                    onClick={() => setVisibleRequestsLimit((prev) => prev + 3)}
-                    className="btn-onyx py-3 px-8 text-sm font-bold border-gold-500/20 text-gold-500 bg-white/[0.02] backdrop-blur hover:bg-gold-500/10 hover:border-gold-500/50 shadow-lg rounded-xl transition-all duration-300 flex items-center gap-2"
-                  >
-                    <span>{isArabic ? "مزيد من الطلبات" : "Show More Requests"}</span>
-                    <ChevronRight className="h-4 w-4 rotate-90 rtl:-rotate-90" />
-                  </button>
-                </div>
-              )}
+              <div className="flex justify-center mt-10">
+                <Link
+                  href={`/${locale}/orders`}
+                  className="btn-gold py-3 px-8 text-sm font-black shadow-md flex items-center gap-2"
+                >
+                  <span>{isArabic ? "عرض كل الطلبات المتاحة" : "View All Open Orders"}</span>
+                  <ChevronRight className="h-4.5 w-4.5 rtl:rotate-180" />
+                </Link>
+              </div>
             </>
           )}
         </div>
