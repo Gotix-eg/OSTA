@@ -408,19 +408,21 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
                     {/* Pro Info */}
                     <div className="flex items-start gap-4 mb-4">
                       {/* Avatar */}
-                      <div className="h-16 w-16 rounded-2xl bg-onyx-800 border border-white/10 overflow-hidden flex items-center justify-center text-gold-500 text-xl font-bold flex-shrink-0 shadow-inner">
+                      <Link href={`/${locale}/workers/${worker.id}`} className="h-16 w-16 rounded-2xl bg-onyx-800 border border-white/10 overflow-hidden flex items-center justify-center text-gold-500 text-xl font-bold flex-shrink-0 shadow-inner hover:border-gold-500/50 transition-colors">
                         {worker.avatarUrl ? (
                           <img src={worker.avatarUrl} alt={worker.name} className="h-full w-full object-cover" />
                         ) : (
                           worker.name.charAt(0)
                         )}
-                      </div>
+                      </Link>
 
                       {/* Name & Specialty */}
                       <div className="min-w-0 flex-1">
-                        <h4 className="text-lg font-black text-white truncate group-hover:text-gold-500 transition-colors">
-                          {worker.name}
-                        </h4>
+                        <Link href={`/${locale}/workers/${worker.id}`}>
+                          <h4 className="text-lg font-black text-white truncate hover:text-gold-500 transition-colors cursor-pointer">
+                            {worker.name}
+                          </h4>
+                        </Link>
                         <p className="text-sm text-gold-500/90 font-medium mt-0.5">
                           {isArabic ? worker.professionAr : worker.professionEn}
                         </p>

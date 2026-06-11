@@ -249,6 +249,67 @@ router.get("/public/workers", async (request, response) => {
   }
 });
 
+router.get("/public/workers/:id", async (request, response) => {
+  const { id } = request.params;
+  try {
+    const worker = await prisma.workerProfile.findUnique({
+      where: { id },
+      include: {
+        user: { select: { firstName: true, lastName: true, avatarUrl: true, createdAt: true } },
+        specializations: { include: { service: { include: { category: true } } } },
+        workAreas: true,
+      }
+    });
+
+    if (!worker) {
+      return response.status(404).json({ error: "Worker not found" });
+    }
+
+    // Fetch reviews for the worker's user
+    const reviews = await prisma.review.findMany({
+      where: { targetId: worker.userId },
+      include: {
+        author: {
+          select: { firstName: true, lastName: true, avatarUrl: true }
+        }
+      },
+      orderBy: { createdAt: "desc" }
+    });
+
+    const result = {
+      id: worker.id,
+      userId: worker.userId,
+      name: `${worker.user.firstName} ${worker.user.lastName}`,
+      avatarUrl: worker.user.avatarUrl,
+      professionAr: worker.specializations[0]?.service.category.nameAr || "",
+      professionEn: worker.specializations[0]?.service.category.nameEn || "",
+      categoryId: worker.specializations[0]?.service.category.slug || "",
+      serviceId: worker.specializations[0]?.service.id || "",
+      rating: worker.rating,
+      ratingCount: worker.ratingCount,
+      totalJobs: worker.totalJobsCompleted,
+      isOnline: worker.isOnline,
+      isAvailable: worker.isAvailable,
+      isFeatured: worker.subscriptionTier === "featured",
+      areas: worker.workAreas.map((wa: any) => wa.area || wa.city),
+      bio: worker.bio,
+      joinedAt: worker.user.createdAt,
+      reviews: reviews.map(r => ({
+        id: r.id,
+        authorName: `${r.author.firstName} ${r.author.lastName}`,
+        authorAvatar: r.author.avatarUrl,
+        rating: r.overallRating,
+        comment: r.comment,
+        createdAt: r.createdAt
+      }))
+    };
+
+    response.status(200).json(successResponse(result, "Worker profile fetched"));
+  } catch (e: any) {
+    response.status(500).json({ error: e.message });
+  }
+});
+
 router.get("/public/requests", async (request, response) => {
   const { specialty } = request.query as { specialty?: string };
 
