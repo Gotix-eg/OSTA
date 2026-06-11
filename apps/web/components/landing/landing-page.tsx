@@ -79,7 +79,7 @@ const DEFAULT_SLIDES = [
     titleEn: "Hire a Professional Ostafy in Seconds",
     descAr: "أول منصة تجمع أمهر الفنيين والمتاجر الموثقة في مصر. جودة مضمونة، أسعار عادلة، وتجربة مستخدم فاخرة.",
     descEn: "The first platform connecting skilled pros and verified stores in Egypt. Guaranteed quality, fair prices, and a premium experience.",
-    imageUrl: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=1600",
+    imageUrl: "https://images.unsplash.com/photo-1621905252507-b354bc25edac?q=80&w=1600",
     btn1TextAr: "انضم كصنايعي",
     btn1TextEn: "Join as Pro",
     btn1Link: "/register/worker",
@@ -96,7 +96,7 @@ const DEFAULT_SLIDES = [
     titleEn: "Home Maintenance Without Worry",
     descAr: "نظام دفع محتجز بالكامل (Escrow) يحمي أموالك حتى اكتمال العمل ورضاك التام عن الخدمة.",
     descEn: "A secure escrow payment system that protects your money until the work is completed and you are fully satisfied.",
-    imageUrl: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=1600",
+    imageUrl: "https://images.unsplash.com/photo-1504148455328-c376907d081c?q=80&w=1600",
     btn1TextAr: "اطلب فني الآن",
     btn1TextEn: "Book Pro Now",
     btn1Link: "/register/client",
@@ -153,7 +153,11 @@ export function LandingPage({ locale }: { locale: Locale }) {
       try {
         const parsed = JSON.parse(saved);
         const active = parsed.filter((s: any) => s.isActive !== false);
-        setSlides(active.length > 0 ? active : DEFAULT_SLIDES);
+        const hasOldUrls = active.some((s: any) => 
+          s.imageUrl.includes("photo-1504307651254-35680f356dfd") || 
+          s.imageUrl.includes("photo-1618221195710-dd6b41faaea6")
+        );
+        setSlides(active.length > 0 && !hasOldUrls ? active : DEFAULT_SLIDES);
       } catch {
         setSlides(DEFAULT_SLIDES);
       }
@@ -324,10 +328,10 @@ export function LandingPage({ locale }: { locale: Locale }) {
                 <Link href={`/${locale}/register/client`} className="w-full sm:w-auto btn-gold text-center py-4 px-8 text-lg shadow-lg shadow-gold-500/20">
                   {isArabic ? "اطلب صنايعي" : "Order a Pro"}
                 </Link>
-                <Link href={`/${locale}/register/worker`} className="w-full sm:w-auto btn-onyx text-center py-4 px-8 text-lg border-gold-500/30 text-gold-500 bg-white/[0.02] backdrop-blur hover:bg-gold-500/10 hover:border-gold-500/50 shadow-lg">
+                <Link href={`/${locale}/register/worker`} className="w-full sm:w-auto btn-ghost text-center py-4 px-8 text-lg shadow-lg">
                   {isArabic ? "انضم كصنايعي" : "Join as Pro"}
                 </Link>
-                <Link href={`/${locale}/register/vendor`} className="w-full sm:w-auto btn-onyx text-center py-4 px-8 text-lg border-white/10 text-white bg-white/[0.01] backdrop-blur hover:bg-white/5 hover:border-white/20 shadow-lg">
+                <Link href={`/${locale}/register/vendor`} className="w-full sm:w-auto btn-ghost text-center py-4 px-8 text-lg shadow-lg">
                   {isArabic ? "انضم كمتجر" : "Join as Vendor"}
                 </Link>
               </div>
@@ -893,7 +897,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
               <Link href={`/${locale}/register/client`} className="btn-gold py-5 px-12 text-xl">
                 {isArabic ? "سجل كعميل مجاناً" : "Join for Free"}
               </Link>
-              <Link href={`/${locale}/register/worker`} className="btn-onyx py-5 px-12 text-xl border-gold-500/20 text-gold-500 hover:bg-gold-500/10">
+              <Link href={`/${locale}/register/worker`} className="btn-ghost py-5 px-12 text-xl">
                 {isArabic ? "سجل كفني محترف" : "Join as a Pro"}
               </Link>
             </div>
