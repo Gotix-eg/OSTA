@@ -190,7 +190,8 @@ function InputField({
   placeholder,
   textarea,
   rows = 4,
-  helperText
+  helperText,
+  errorText
 }: {
   label: string;
   value: string;
@@ -200,6 +201,7 @@ function InputField({
   textarea?: boolean;
   rows?: number;
   helperText?: string;
+  errorText?: string;
 }) {
   return (
     <label className="block space-y-2 text-start">
@@ -210,7 +212,10 @@ function InputField({
           rows={rows}
           onChange={(event) => onChange(event.target.value)}
           placeholder={placeholder}
-          className="min-h-28 w-full rounded-2xl border border-onyx-700 bg-onyx-800/50 px-5 py-4 text-white transition-all placeholder:text-onyx-600 focus:border-gold-500/50 focus:ring-4 focus:ring-gold-500/10 outline-none"
+          className={cn(
+            "min-h-28 w-full rounded-2xl border bg-onyx-800/50 px-5 py-4 text-white transition-all placeholder:text-onyx-600 focus:ring-4 focus:ring-gold-500/10 outline-none",
+            errorText ? "border-red-500/50 focus:border-red-500/50" : "border-onyx-700 focus:border-gold-500/50"
+          )}
         />
       ) : (
         <input
@@ -218,12 +223,17 @@ function InputField({
           value={value}
           onChange={(event) => onChange(event.target.value)}
           placeholder={placeholder}
-          className="h-14 w-full rounded-2xl border border-onyx-700 bg-onyx-800/50 px-5 text-white transition-all placeholder:text-onyx-600 focus:border-gold-500/50 focus:ring-4 focus:ring-gold-500/10 outline-none"
+          className={cn(
+            "h-14 w-full rounded-2xl border bg-onyx-800/50 px-5 text-white transition-all placeholder:text-onyx-600 focus:ring-4 focus:ring-gold-500/10 outline-none",
+            errorText ? "border-red-500/50 focus:border-red-500/50" : "border-onyx-700 focus:border-gold-500/50"
+          )}
         />
       )}
-      {helperText && (
+      {errorText ? (
+        <p className="text-xs text-red-500 mt-1 select-none font-bold animate-fadeIn">{errorText}</p>
+      ) : helperText ? (
         <p className="text-xs text-onyx-500 mt-1 select-none font-medium leading-normal">{helperText}</p>
-      )}
+      ) : null}
     </label>
   );
 }
@@ -300,7 +310,29 @@ export function LoginForm({ locale }: { locale: Locale }) {
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Inline validation error states
+  const [phoneError, setPhoneError] = useState<string | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+
   async function handleLogin() {
+    let isValid = true;
+    
+    if (!phone.trim()) {
+      setPhoneError(isArabic ? "رقم الهاتف مطلوب" : "Phone number is required");
+      isValid = false;
+    } else {
+      setPhoneError(null);
+    }
+
+    if (!password.trim()) {
+      setPasswordError(isArabic ? "كلمة المرور مطلوبة" : "Password is required");
+      isValid = false;
+    } else {
+      setPasswordError(null);
+    }
+
+    if (!isValid) return;
+
     setIsSubmitting(true);
     setError(null);
 
@@ -325,8 +357,12 @@ export function LoginForm({ locale }: { locale: Locale }) {
         <InputField
           label={isArabic ? "رقم الهاتف" : "Phone number"}
           value={phone}
-          onChange={setPhone}
+          onChange={(val) => {
+            setPhone(val);
+            if (phoneError) setPhoneError(null);
+          }}
           placeholder="01x xxxx xxxx"
+          errorText={phoneError || undefined}
         />
 
         <label className="block space-y-2 text-start">
@@ -335,8 +371,14 @@ export function LoginForm({ locale }: { locale: Locale }) {
             <input
               type={showPassword ? "text" : "password"}
               value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              className="h-14 w-full rounded-2xl border border-onyx-700 bg-onyx-800/50 px-5 pe-12 text-white transition-all placeholder:text-onyx-600 focus:border-gold-500/50 focus:ring-4 focus:ring-gold-500/10 outline-none"
+              onChange={(event) => {
+                setPassword(event.target.value);
+                if (passwordError) setPasswordError(null);
+              }}
+              className={cn(
+                "h-14 w-full rounded-2xl border bg-onyx-800/50 px-5 pe-12 text-white transition-all placeholder:text-onyx-600 focus:ring-4 focus:ring-gold-500/10 outline-none",
+                passwordError ? "border-red-500/50 focus:border-red-500/50" : "border-onyx-700 focus:border-gold-500/50"
+              )}
             />
             <button
               type="button"
@@ -346,6 +388,9 @@ export function LoginForm({ locale }: { locale: Locale }) {
               {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
             </button>
           </div>
+          {passwordError && (
+            <p className="text-xs text-red-500 mt-1 select-none font-bold animate-fadeIn">{passwordError}</p>
+          )}
         </label>
 
         <div className="flex flex-wrap items-center justify-between gap-4 text-sm font-medium">
