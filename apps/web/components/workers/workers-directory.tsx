@@ -88,15 +88,20 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
     }
   }, []);
 
-  const fetchWorkers = async () => {
+  const fetchWorkers = async (overrides?: { specialty?: string; gov?: string; city?: string; area?: string }) => {
     setIsLoading(true);
     setError(null);
     try {
+      const specialty = overrides && overrides.specialty !== undefined ? overrides.specialty : selectedSpecialty;
+      const gov = overrides && overrides.gov !== undefined ? overrides.gov : selectedGov;
+      const city = overrides && overrides.city !== undefined ? overrides.city : selectedCity;
+      const area = overrides && overrides.area !== undefined ? overrides.area : selectedArea;
+
       const params = new URLSearchParams();
-      if (selectedSpecialty) params.append("specialty", selectedSpecialty);
-      if (selectedGov) params.append("governorate", selectedGov);
-      if (selectedCity) params.append("city", selectedCity);
-      if (selectedArea) params.append("area", selectedArea);
+      if (specialty) params.append("specialty", specialty);
+      if (gov) params.append("governorate", gov);
+      if (city) params.append("city", city);
+      if (area) params.append("area", area);
 
       const baseUrl = resolveApiBaseUrl();
       const res = await fetch(`${baseUrl}/public/workers?${params.toString()}`);
@@ -119,7 +124,7 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
 
   useEffect(() => {
     fetchWorkers();
-  }, [selectedSpecialty, selectedGov, selectedCity, selectedArea]);
+  }, []);
 
   const handleBookClick = (worker: any) => {
     if (isLoggedIn) {
@@ -141,6 +146,7 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
     setSelectedGov("");
     setSelectedCity("");
     setSelectedArea("");
+    fetchWorkers({ specialty: "", gov: "", city: "", area: "" });
   };
 
   const filteredWorkers = useMemo(() => {
@@ -250,6 +256,20 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
           />
         )}
       </div>
+
+      {/* Search Button */}
+      <button
+        onClick={() => fetchWorkers()}
+        disabled={isLoading}
+        className="w-full btn-gold py-3.5 text-sm font-black flex items-center justify-center gap-2 shadow-md shadow-gold-500/10 disabled:opacity-75 disabled:cursor-not-allowed"
+      >
+        {isLoading ? (
+          <Loader2 className="h-4 w-4 animate-spin" />
+        ) : (
+          <Search className="h-4 w-4" />
+        )}
+        <span>{isArabic ? "بحث" : "Search"}</span>
+      </button>
 
       {/* Reset Button */}
       {(selectedSpecialty || selectedGov || selectedCity || selectedArea || searchQuery) && (
@@ -495,7 +515,10 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
             </div>
             
             <button
-              onClick={() => setIsMobileFilterOpen(false)}
+              onClick={() => {
+                fetchWorkers();
+                setIsMobileFilterOpen(false);
+              }}
               className="btn-gold w-full mt-8 py-4 font-black"
             >
               {isArabic ? "عرض النتائج" : "Show Results"}
