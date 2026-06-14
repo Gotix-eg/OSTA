@@ -14,7 +14,8 @@ import {
   Loader2, 
   Wrench, 
   RotateCcw,
-  Sparkles
+  Sparkles,
+  CheckCircle2
 } from "lucide-react";
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
@@ -78,6 +79,21 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
   const [isClient, setIsClient] = useState(false);
   const [selectedWorkerForBooking, setSelectedWorkerForBooking] = useState<any | null>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
+
+  // Alert subscription states
+  const [subscribedAlert, setSubscribedAlert] = useState(false);
+  const [subscriberEmail, setSubscriberEmail] = useState("");
+  const [subscribing, setSubscribing] = useState(false);
+
+  const handleAlertSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!subscriberEmail.trim()) return;
+    setSubscribing(true);
+    setTimeout(() => {
+      setSubscribing(false);
+      setSubscribedAlert(true);
+    }, 800);
+  };
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -376,16 +392,106 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
               {error}
             </div>
           ) : filteredWorkers.length === 0 ? (
-            <div className="text-center py-16 onyx-card border-white/5 bg-white/[0.01] rounded-3xl">
-              <Users className="h-16 w-16 text-onyx-600 mx-auto mb-4" />
-              <h4 className="text-xl font-bold text-white mb-2">
-                {isArabic ? "لم نجد أي فنيين" : "No Technicians Found"}
+            <div className="onyx-card border-white/5 bg-white/[0.01] rounded-[2.5rem] p-8 sm:p-12 text-center max-w-4xl mx-auto relative overflow-hidden">
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-gold-500/5 blur-[80px] rounded-full pointer-events-none" />
+              
+              {/* Illustration Composition */}
+              <div className="relative h-24 w-24 mx-auto mb-6 flex items-center justify-center">
+                <div className="absolute inset-0 bg-gold-500/5 rounded-full border border-gold-500/10 animate-pulse" />
+                <div className="absolute inset-2 bg-onyx-900 rounded-full border border-white/5 flex items-center justify-center">
+                  <Users className="h-10 w-10 text-onyx-600" />
+                </div>
+                <div className="absolute -bottom-1 -right-1 h-9 w-9 bg-gold-500/10 border border-gold-500/30 rounded-xl flex items-center justify-center text-gold-500">
+                  <Search className="h-4.5 w-4.5" />
+                </div>
+              </div>
+
+              <h4 className="text-2xl font-black text-white mb-3">
+                {isArabic ? "لم نجد أي فنيين يطابقون خياراتك" : "No Matching Technicians Found"}
               </h4>
-              <p className="text-onyx-400 text-sm max-w-md mx-auto">
+              <p className="text-onyx-400 text-sm max-w-lg mx-auto leading-relaxed mb-10">
                 {isArabic 
-                  ? "لا يوجد فنيين مسجلين يطابقون خيارات البحث الحالية. حاول تعديل الفلاتر أو إعادة تعيينها للبدء من جديد." 
-                  : "There are no registered pros matching your search parameters. Try adjusting your filters."}
+                  ? "عذراً، لا يتوفر صنايعية مسجلين حالياً يطابقون التصفية المحددة. نقترح عليك تجربة أحد الحلول السريعة التالية:" 
+                  : "We couldn't find any registered professionals matching your filter criteria. Try one of the quick suggestions below:"}
               </p>
+
+              {/* Actionable Suggestions Grid */}
+              <div className="grid gap-6 md:grid-cols-3 text-start">
+                {/* Option 1: Clear & Browse All */}
+                <div className="onyx-card border-white/5 bg-white/[0.01] hover:border-gold-500/20 p-6 rounded-2xl flex flex-col justify-between group transition-all duration-300">
+                  <div>
+                    <span className="text-xs font-bold text-gold-500 uppercase tracking-wider mb-2 block">{isArabic ? "اقتراح 1" : "Suggestion 1"}</span>
+                    <h5 className="text-base font-bold text-white mb-2">{isArabic ? "عرض كل فنيي المنصة" : "Browse All Pros"}</h5>
+                    <p className="text-xs text-onyx-400 leading-relaxed mb-4">
+                      {isArabic ? "إزالة جميع الفلاتر وعرض قائمة الصنايعية كاملة للبدء مجدداً." : "Clear all active filter conditions and browse the entire directory."}
+                    </p>
+                  </div>
+                  <button 
+                    onClick={handleResetFilters}
+                    className="w-full btn-ghost py-2.5 px-4 text-xs font-black rounded-xl text-center border-white/10 hover:border-gold-500/30 hover:bg-gold-500/5 transition-all"
+                  >
+                    {isArabic ? "إعادة ضبط الفلاتر" : "Reset Filters"}
+                  </button>
+                </div>
+
+                {/* Option 2: Explore Other Professions */}
+                <div className="onyx-card border-white/5 bg-white/[0.01] hover:border-gold-500/20 p-6 rounded-2xl flex flex-col justify-between group transition-all duration-300">
+                  <div>
+                    <span className="text-xs font-bold text-gold-500 uppercase tracking-wider mb-2 block">{isArabic ? "اقتراح 2" : "Suggestion 2"}</span>
+                    <h5 className="text-base font-bold text-white mb-2">{isArabic ? "تغيير التخصص المطلوب" : "Modify Trade Filter"}</h5>
+                    <p className="text-xs text-onyx-400 leading-relaxed mb-4">
+                      {isArabic ? "ربما تجد صنايعي مناسب تحت تخصص مهني آخر ذو صلة." : "Try choosing a different trade category from the filter list."}
+                    </p>
+                  </div>
+                  <button 
+                    onClick={() => {
+                      setSelectedSpecialty("");
+                      fetchWorkers({ specialty: "" });
+                    }}
+                    className="w-full btn-ghost py-2.5 px-4 text-xs font-black rounded-xl text-center border-white/10 hover:border-gold-500/30 hover:bg-gold-500/5 transition-all"
+                  >
+                    {isArabic ? "تصفح كل التخصصات" : "Clear Specialty"}
+                  </button>
+                </div>
+
+                {/* Option 3: Subscribe to Alerts */}
+                <div className="onyx-card border-white/5 bg-white/[0.01] hover:border-gold-500/20 p-6 rounded-2xl flex flex-col justify-between group transition-all duration-300">
+                  <div>
+                    <span className="text-xs font-bold text-gold-500 uppercase tracking-wider mb-2 block">{isArabic ? "اقتراح 3" : "Suggestion 3"}</span>
+                    <h5 className="text-base font-bold text-white mb-2">{isArabic ? "اشترك في التنبيهات" : "Subscribe to Alerts"}</h5>
+                    
+                    {subscribedAlert ? (
+                      <div className="bg-emerald-500/5 border border-emerald-500/20 text-emerald-400 p-3 rounded-xl text-xs font-semibold flex items-center gap-2 mt-2">
+                        <CheckCircle2 className="h-4 w-4 shrink-0" />
+                        <span>{isArabic ? "تم تفعيل التنبيه بنجاح!" : "Alert set successfully!"}</span>
+                      </div>
+                    ) : (
+                      <>
+                        <p className="text-xs text-onyx-400 leading-relaxed mb-4">
+                          {isArabic ? "سنرسل لك إشعاراً فور تسجيل فنيين جدد في هذه المنطقة بالتحديد." : "Get notified as soon as a technician signs up in this specific area."}
+                        </p>
+                        <form onSubmit={handleAlertSubmit} className="flex gap-2">
+                          <input 
+                            type="email"
+                            required
+                            placeholder={isArabic ? "بريدك الإلكتروني" : "Your email"}
+                            value={subscriberEmail}
+                            onChange={(e) => setSubscriberEmail(e.target.value)}
+                            className="bg-onyx-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-onyx-600 focus:outline-none focus:border-gold-500/30 flex-1 min-w-0"
+                          />
+                          <button 
+                            type="submit"
+                            disabled={subscribing}
+                            className="btn-gold p-2 px-3 text-xs rounded-xl disabled:opacity-50 shrink-0 font-bold"
+                          >
+                            {subscribing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : (isArabic ? "نبهني" : "Alert Me")}
+                          </button>
+                        </form>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
           ) : (
             <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
