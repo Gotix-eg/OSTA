@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from "express";
-import { ZodError } from "zod";
+import { z, ZodError } from "zod";
 
 const catchAsync = (fn: (req: Request, res: Response, next: NextFunction) => Promise<any>) => {
   return (req: Request, res: Response, next: NextFunction) => {
@@ -52,6 +52,13 @@ router.post("/register/client", catchAsync(async (request, response) => {
     longitude: payload.longitude
   });
 
+  if ("needsVerification" in result) {
+    response.status(200).json(
+      successResponse(result, "Verification code sent to email")
+    );
+    return;
+  }
+
   setAuthCookies(response, {
     accessToken: result.accessToken,
     refreshToken: result.refreshToken,
@@ -63,9 +70,28 @@ router.post("/register/client", catchAsync(async (request, response) => {
   );
 }));
 
+router.post("/verify-registration-otp", catchAsync(async (request, response) => {
+  const payload = parseBody(z.object({
+    email: z.string().email("البريد الإلكتروني غير صالح"),
+    code: z.string().length(6, "رمز التحقق يجب أن يكون 6 أرقام")
+  }), request.body);
+
+  const result = await authService.verifyRegistrationOtp(payload.email, payload.code);
+
+  setAuthCookies(response, {
+    accessToken: result.accessToken,
+    refreshToken: result.refreshToken,
+    role: result.user.role
+  });
+
+  response.status(200).json(
+    successResponse(result, "Email verified and profile activated")
+  );
+}));
+
 router.post("/register/worker", catchAsync(async (request, response) => {
   const payload = parseBody(registerSchema, request.body);
-  const result = await authService.register({
+  const result = (await authService.register({
     role: "WORKER",
     firstName: payload.firstName,
     lastName: payload.lastName,
@@ -81,7 +107,7 @@ router.post("/register/worker", catchAsync(async (request, response) => {
     nationalIdFront: payload.nationalIdFront,
     nationalIdBack: payload.nationalIdBack,
     profession: payload.profession
-  });
+  })) as any;
 
   setAuthCookies(response, {
     accessToken: result.accessToken,
@@ -96,7 +122,7 @@ router.post("/register/worker", catchAsync(async (request, response) => {
 
 router.post("/register/vendor", catchAsync(async (request, response) => {
   const payload = parseBody(registerSchema, request.body);
-  const result = await authService.register({
+  const result = (await authService.register({
     role: "VENDOR",
     firstName: payload.firstName,
     lastName: payload.lastName,
@@ -112,7 +138,7 @@ router.post("/register/vendor", catchAsync(async (request, response) => {
     category: (payload as any).category,
     commercialRecord: payload.commercialRecord,
     taxCard: payload.taxCard
-  });
+  })) as any;
 
   setAuthCookies(response, {
     accessToken: result.accessToken,

@@ -466,6 +466,13 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Email verification states
+  const [needsOtpVerify, setNeedsOtpVerify] = useState(false);
+  const [registeredEmail, setRegisteredEmail] = useState("");
+  const [otpCode, setOtpCode] = useState("");
+  const [otpError, setOtpError] = useState<string | null>(null);
+  const [otpSubmitting, setOtpSubmitting] = useState(false);
+
   async function handleRegister() {
     setIsSubmitting(true);
     setError(null);
@@ -510,12 +517,18 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
     }
 
     try {
-      const payload = await postApiData<AuthSuccessResponse, any>("/auth/register/client", {
+      const payload: any = await postApiData<any, any>("/auth/register/client", {
         ...state
       });
-      window.localStorage.removeItem("osta-client-register");
-      setSubmitted(true);
-      applyAuthSuccess(locale, payload, true);
+
+      if (payload.needsVerification) {
+        setRegisteredEmail(payload.email);
+        setNeedsOtpVerify(true);
+      } else {
+        window.localStorage.removeItem("osta-client-register");
+        setSubmitted(true);
+        applyAuthSuccess(locale, payload, true);
+      }
     } catch (err) {
       setError(getLocalizedError(err instanceof Error ? err.message : "", locale));
     } finally {
@@ -523,7 +536,70 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
     }
   }
 
+  async function handleVerifyOtp() {
+    setOtpSubmitting(true);
+    setOtpError(null);
+
+    try {
+      const payload = await postApiData<AuthSuccessResponse, { email: string; code: string }>("/auth/verify-registration-otp", {
+        email: registeredEmail,
+        code: otpCode
+      });
+
+      window.localStorage.removeItem("osta-client-register");
+      setSubmitted(true);
+      
+      setTimeout(() => {
+        applyAuthSuccess(locale, payload, true);
+      }, 1500);
+    } catch (err) {
+      setOtpError(getLocalizedError(err instanceof Error ? err.message : "", locale));
+    } finally {
+      setOtpSubmitting(false);
+    }
+  }
+
   if (!ready) return <div className="text-onyx-600 font-bold">{isArabic ? "جاري التحضير..." : "Preparing..."}</div>;
+
+  if (needsOtpVerify) {
+    return (
+      <div className="space-y-8 animate-fadeIn">
+        <div className="text-center space-y-3">
+          <div className="h-16 w-16 bg-gold-500/10 border border-gold-500/25 rounded-full flex items-center justify-center mx-auto text-gold-500">
+             <ShieldCheck className="h-8 w-8" />
+          </div>
+          <h2 className="text-2xl font-black text-white">{isArabic ? "أدخل رمز التحقق" : "Verify Your Email"}</h2>
+          <p className="text-onyx-400 text-sm leading-relaxed">
+            {isArabic 
+              ? `لقد أرسلنا رمز تحقق مكون من 6 أرقام إلى بريدك الإلكتروني: ${registeredEmail}`
+              : `We've sent a 6-digit verification code to your email: ${registeredEmail}`}
+          </p>
+        </div>
+
+        <div className="space-y-6">
+           <OtpBoxes value={otpCode} onChange={(val) => {
+             setOtpCode(val);
+             if (otpError) setOtpError(null);
+           }} />
+
+           {otpError && (
+             <div className="onyx-card p-4 border-red-500/20 bg-red-500/5 text-red-500 text-center font-bold">
+               {otpError}
+             </div>
+           )}
+
+           <button
+             type="button"
+             onClick={handleVerifyOtp}
+             disabled={otpSubmitting || otpCode.length < 6}
+             className="w-full btn-gold h-14 text-lg font-black disabled:opacity-50"
+           >
+             {otpSubmitting ? (isArabic ? "... جاري التحقق" : "Verifying...") : isArabic ? "تفعيل الحساب" : "Activate Account"}
+           </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 animate-fadeIn">

@@ -4,7 +4,7 @@ import { prisma } from "../../lib/prisma.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { hashPassword, verifyPassword } from "../../utils/password.js";
 import { signAccessToken, signRefreshToken, verifyRefreshToken } from "../../utils/tokens.js";
-import { sendPasswordResetEmail, sendWelcomeEmail } from "../../utils/email.js";
+import { sendPasswordResetEmail, sendWelcomeEmail, sendVerificationEmail } from "../../utils/email.js";
 
 export type RegisterInput = {
   role: "CLIENT" | "WORKER" | "VENDOR";
@@ -117,6 +117,10 @@ export const authService = {
       throw new ApiError(409, "البريد الإلكتروني مسجل بالفعل", "EMAIL_EXISTS");
     }
 
+    if (input.role === "CLIENT" && !input.email) {
+      throw new ApiError(400, "البريد الإلكتروني مطلوب لتسجيل حساب عميل", "EMAIL_REQUIRED");
+    }
+
     if (input.role === "WORKER" && input.nationalIdNumber) {
       const existingWorker = await prisma.workerProfile.findUnique({
         where: { nationalIdNumber: input.nationalIdNumber }
@@ -152,6 +156,7 @@ export const authService = {
         email: input.email,
         passwordHash,
         role: input.role,
+        status: input.role === "CLIENT" ? "INACTIVE" : "ACTIVE",
         clientProfile:
           input.role === "CLIENT"
             ? {
@@ -217,6 +222,31 @@ export const authService = {
       }
     });
 
+    if (user.role === "CLIENT") {
+      const code = Math.floor(100000 + Math.random() * 900000).toString();
+      const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+
+      await prisma.otpCode.create({
+        data: {
+          userId: user.id,
+          code,
+          type: "EMAIL_VERIFICATION",
+          expiresAt
+        }
+      });
+
+      sendVerificationEmail(user.email!, user.firstName, code).catch(err =>
+        console.error("Failed to send verification email:", err)
+      );
+
+      return {
+        needsVerification: true,
+        userId: user.id,
+        phone: user.phone,
+        email: user.email
+      };
+    }
+
     const tokens = await createSession(user.id, user.role);
 
     // Send welcome email if email is provided
@@ -275,6 +305,70 @@ export const authService = {
 
     if (!user) {
       throw new ApiError(404, "User not found", "USER_NOT_FOUND");
+    }
+
+    const tokens = await createSession(user.id, user.role);
+
+    return {
+      ...tokens,
+      user: toPublicUser(user)
+    };
+  },
+
+  async verifyRegistrationOtp(phoneOrEmail: string, code: string) {
+    const user = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { phone: phoneOrEmail },
+          { email: phoneOrEmail }
+        ]
+      },
+      include: {
+        clientProfile: true,
+        workerProfile: true,
+        vendorProfile: true
+      }
+    });
+
+    if (!user) {
+      throw new ApiError(404, "المستخدم غير موجود", "USER_NOT_FOUND");
+    }
+
+    const otp = await prisma.otpCode.findFirst({
+      where: {
+        userId: user.id,
+        code,
+        type: "EMAIL_VERIFICATION",
+        isUsed: false,
+        expiresAt: { gt: new Date() }
+      }
+    });
+
+    if (!otp) {
+      throw new ApiError(400, "رمز التحقق غير صحيح أو منتهي الصلاحية", "INVALID_CODE");
+    }
+
+    await prisma.$transaction([
+      prisma.user.update({
+        where: { id: user.id },
+        data: {
+          status: "ACTIVE",
+          emailVerified: true
+        }
+      }),
+      prisma.otpCode.update({
+        where: { id: otp.id },
+        data: { isUsed: true }
+      })
+    ]);
+
+    user.status = "ACTIVE";
+    user.emailVerified = true;
+
+    if (user.email) {
+      sendWelcomeEmail(user.email, user.firstName).catch(err =>
+        console.error("Failed to send welcome email:", err)
+      );
     }
 
     const tokens = await createSession(user.id, user.role);

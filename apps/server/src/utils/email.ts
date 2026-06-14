@@ -125,3 +125,40 @@ export async function sendNewRequestNotificationEmail(
   }
 }
 
+export async function sendVerificationEmail(to: string, name: string, code: string) {
+  if (!to) return;
+
+  console.log(`[EmailService] Attempting to send verification email to: ${to}`);
+
+  const mailOptions = {
+    from: process.env.SMTP_FROM || '"OSTA" <noreply@osta.eg>',
+    replyTo: process.env.SMTP_USER || '"OSTA" <noreply@osta.eg>',
+    to,
+    subject: "Verify Your Email | تأكيد البريد الإلكتروني",
+    text: `رمز التحقق الخاص بك لتفعيل الحساب في أُسطى هو:\n${code}\n\nهذا الرمز صالح لمدة ساعة واحدة فقط.\n\nمنصة أُسطى - الجودة والضمان.`,
+    html: `
+      <div style="font-family: sans-serif; direction: rtl; text-align: right; max-width: 600px; margin: 0 auto; border: 1px solid #eee; padding: 20px; border-radius: 10px;">
+        <h2 style="color: #d4af37;">تأكيد البريد الإلكتروني - منصة أُسطى</h2>
+        <p>مرحباً يا ${name}،</p>
+        <p>شكراً لتسجيلك في منصة أُسطى. لتفعيل حسابك والبدء في استخدام المنصة، يرجى استخدام رمز التحقق التالي:</p>
+        <div style="background: #f4f4f4; padding: 15px; text-align: center; font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #333; margin: 20px 0;">
+          ${code}
+        </div>
+        <p>هذا الرمز صالح لمدة ساعة واحدة فقط.</p>
+        <p>إذا لم تقم بالتسجيل في منصتنا، يرجى تجاهل هذه الرسالة.</p>
+        <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
+        <p style="font-size: 12px; color: #888;">منصة أُسطى - الجودة والضمان.</p>
+      </div>
+    `,
+  };
+
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log(`[EmailService] Verification email sent: ${info.messageId}`);
+    return info;
+  } catch (error) {
+    console.error("[EmailService] Error sending verification email:", error);
+  }
+}
+
+
