@@ -344,7 +344,7 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
             />
           </div>
 
-          <FiltersContent />
+          {FiltersContent()}
         </aside>
 
         {/* ── Mobile Filter Trigger Button ── */}
@@ -617,7 +617,7 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
                 </button>
               </div>
 
-              <FiltersContent />
+              {FiltersContent()}
             </div>
             
             <button

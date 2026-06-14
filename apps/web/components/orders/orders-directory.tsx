@@ -344,7 +344,7 @@ export function OrdersDirectory({ locale }: { locale: Locale }) {
             />
           </div>
 
-          <FiltersContent />
+          {FiltersContent()}
         </aside>
 
         {/* Mobile Filter Trigger */}
@@ -474,7 +474,7 @@ export function OrdersDirectory({ locale }: { locale: Locale }) {
                 </button>
               </div>
 
-              <FiltersContent />
+              {FiltersContent()}
             </div>
             
             <button
