@@ -1,6 +1,6 @@
 import type { Locale } from "./locales";
 
-export type PublicPageKey = "services" | "how-it-works" | "about" | "contact" | "faq";
+export type PublicPageKey = "services" | "how-it-works" | "about" | "contact" | "faq" | "terms";
 
 export const publicPageCopy = {
   ar: {
@@ -107,6 +107,25 @@ export const publicPageCopy = {
           {
             title: "إذا حدث شيء خطأ",
             body: "في مسار شكاوى مدعوم بالأدلة ومراجعة الإدارة لضمان حفظ حقوق الطرفين."
+          }
+        ]
+      },
+      terms: {
+        eyebrow: "شروط الخدمة",
+        title: "اتفاقية الاستخدام وشروط الخدمة",
+        description: "شروط وقواعد استخدام منصة أُسطفاي لحفظ حقوق العملاء والفنيين.",
+        sections: [
+          {
+            title: "١) القواعد العامة",
+            body: "تلتزم منصة أُسطفاي بتوفير آلية ربط آمنة وشفافة بين العملاء ومقدمي الخدمات (الفنيين والمتاجر)."
+          },
+          {
+            title: "٢) حماية المدفوعات والضمان",
+            body: "يتم الاحتفاظ بمدفوعات العملاء بشكل آمن ولا يتم تحريرها للفني إلا بعد تأكيد تنفيذ الخدمة وضمان جودتها."
+          },
+          {
+            title: "٣) سياسة إلغاء الطلبات والنزاعات",
+            body: "تخضع جميع الطلبات والنزاعات لسياسة إلغاء واضحة مع إمكانية فتح شكوى وتدخل الإدارة للفصل وحماية حقوق الطرفين."
           }
         ]
       }
@@ -243,6 +262,25 @@ export const publicPageCopy = {
           {
             title: "If something goes wrong",
             body: "There is a complaint path with evidence support and admin review so both sides stay protected."
+          }
+        ]
+      },
+      terms: {
+        eyebrow: "Terms of Service",
+        title: "Terms of Service Agreement",
+        description: "Rules and guidelines for using the Ostafy platform to protect both clients and service providers.",
+        sections: [
+          {
+            title: "1) General Rules",
+            body: "Ostafy connects clients and verified service providers (workers/vendors) in a secure, transparent manner."
+          },
+          {
+            title: "2) Payment Protection & Warranty",
+            body: "Payments are held securely and only released to the worker once service completion is confirmed and verified."
+          },
+          {
+            title: "3) Cancellation & Disputes",
+            body: "All requests and disputes are subject to our cancellation policy, with active admin review to protect user rights."
           }
         ]
       }

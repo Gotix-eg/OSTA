@@ -66,7 +66,23 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
 
               <div className="mt-10 pt-8 border-t border-white/5 text-center">
                 <p className="text-sm text-onyx-500">
-                  {isArabic ? "بالتسجيل، أنت توافق على شروط الخدمة." : "By joining, you agree to our Terms of Service."}
+                  {isArabic ? (
+                    <>
+                      بالتسجيل، أنت توافق على{" "}
+                      <Link href={`/${locale}/terms`} className="underline text-gold-500 hover:text-gold-400 transition-colors">
+                        شروط الخدمة
+                      </Link>
+                      .
+                    </>
+                  ) : (
+                    <>
+                      By joining, you agree to our{" "}
+                      <Link href={`/${locale}/terms`} className="underline text-gold-500 hover:text-gold-400 transition-colors">
+                        Terms of Service
+                      </Link>
+                      .
+                    </>
+                  )}
                 </p>
               </div>
             </div>
