@@ -294,7 +294,7 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
           className="flex items-center justify-center gap-2 w-full py-3 border border-white/10 bg-white/5 hover:bg-white/10 text-white rounded-xl font-bold text-sm transition-all"
         >
           <RotateCcw className="h-4 w-4" />
-          <span>{isArabic ? "إعادة ضبط الفلاتر" : "Reset Filters"}</span>
+          <span>{isArabic ? "مسح الفلاتر" : "Clear Filters"}</span>
         </button>
       )}
     </div>
@@ -430,7 +430,7 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
                     onClick={handleResetFilters}
                     className="w-full btn-ghost py-2.5 px-4 text-xs font-black rounded-xl text-center border-white/10 hover:border-gold-500/30 hover:bg-gold-500/5 transition-all"
                   >
-                    {isArabic ? "إعادة ضبط الفلاتر" : "Reset Filters"}
+                    {isArabic ? "مسح الفلاتر" : "Clear Filters"}
                   </button>
                 </div>
 
