@@ -321,14 +321,6 @@ export function LoginForm({ locale }: { locale: Locale }) {
 
   return (
     <div className="space-y-8 animate-fadeIn">
-      <div>
-        <span className="text-eyebrow mb-6">
-          {copy.intro}
-        </span>
-        <h2 className="text-4xl font-black text-white tracking-tight mb-4 font-display">{copy.loginTitle}</h2>
-        <p className="text-onyx-400 leading-relaxed text-lg text-pretty">{copy.loginBody}</p>
-      </div>
-
       <div className="grid gap-6">
         <InputField
           label={isArabic ? "رقم الهاتف" : "Phone number"}
@@ -490,15 +482,6 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
 
   return (
     <div className="space-y-8 animate-fadeIn">
-      <div>
-        <h2 className="text-4xl font-black text-white tracking-tight mb-4 font-display">{copy.registerClientTitle}</h2>
-        <p className="text-onyx-400 leading-relaxed text-pretty">
-          {isArabic 
-            ? "انضم إلى مجتمع أُسطفاي واحصل على أفضل الفنيين لخدماتك المنزلية بكل سهولة." 
-            : "Join the Ostafy community and get the best technicians for your home services with ease."}
-        </p>
-      </div>
-
       {submitted ? (
         <div className="onyx-card p-10 text-center border-success/30 bg-success/5 space-y-4">
           <ShieldCheck className="h-16 w-16 text-success mx-auto" />
@@ -650,15 +633,6 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
 
   return (
     <div className="space-y-8 animate-fadeIn">
-      <div>
-        <h2 className="text-4xl font-black text-white tracking-tight mb-4 font-display">{copy.registerWorkerTitle}</h2>
-        <p className="text-onyx-400 leading-relaxed text-pretty">
-          {isArabic 
-            ? "انضم إلى فريق النخبة من الفنيين في أُسطفاي وابدأ في استقبال الطلبات المربحة فوراً." 
-            : "Join the elite team of technicians at Ostafy and start receiving profitable requests immediately."}
-        </p>
-      </div>
-
       {submitted ? (
         <div className="onyx-card p-10 text-center border-success/30 bg-success/5 space-y-4">
           <ShieldCheck className="h-16 w-16 text-success mx-auto" />
@@ -834,15 +808,6 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
 
   return (
     <div className="space-y-8 animate-fadeIn">
-      <div>
-        <h2 className="text-4xl font-black text-white tracking-tight mb-4 font-display">{copy.registerVendorTitle}</h2>
-        <p className="text-onyx-400 leading-relaxed text-pretty">
-          {isArabic 
-            ? "حوّل متجرك إلى وجهة رقمية لبيع الخامات وقطع الغيار لأفضل الفنيين في مصر." 
-            : "Turn your store into a digital destination for selling materials and spare parts to Egypt's best technicians."}
-        </p>
-      </div>
-
       {submitted ? (
         <div className="onyx-card p-10 text-center border-success/30 bg-success/5 space-y-4">
           <ShieldCheck className="h-16 w-16 text-success mx-auto" />
@@ -1038,15 +1003,6 @@ export function ForgotPasswordForm({ locale }: { locale: Locale }) {
 
   return (
     <div className="space-y-8 animate-fadeIn">
-      <div>
-        <h2 className="text-4xl font-black text-white tracking-tight mb-4 font-display">
-          {step === 0 ? copy.forgotPasswordTitle : copy.resetPasswordTitle}
-        </h2>
-        <p className="text-onyx-400 leading-relaxed max-w-lg">
-          {step === 0 ? copy.forgotPasswordBody : copy.resetPasswordBody}
-        </p>
-      </div>
-
       <StepIndicator current={step} total={2} />
 
       <div className="space-y-6">
@@ -1140,11 +1096,6 @@ export function VerifyOtpForm({ locale }: { locale: Locale }) {
 
   return (
     <div className="space-y-8 animate-fadeIn">
-      <div>
-        <h2 className="text-4xl font-black text-white tracking-tight mb-4">{copy.otpTitle}</h2>
-        <p className="text-onyx-400 leading-relaxed">{isArabic ? "لقد أرسلنا رمزاً مكوّناً من 6 أرقام إلى هاتفك." : "We've sent a 6-digit code to your phone."}</p>
-      </div>
-
       <div className="space-y-8">
          <OtpBoxes value={otp} onChange={setOtp} />
          
