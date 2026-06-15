@@ -6,7 +6,8 @@ import {
   Palette, Layout, Globe, Monitor, Camera, 
   ChevronRight, ArrowLeft, Star, ShieldCheck, MapPin,
   Store, Users, CheckCircle2, Menu, X,
-  Facebook, Instagram, Phone, Mail
+  Facebook, Instagram, Phone, Mail,
+  Droplets, Wrench, PaintBucket, Network
 } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect, useMemo } from "react";
@@ -18,16 +19,16 @@ import { egyptianGovernorates, majorCities } from "@/lib/geo-data";
 import { resolveApiBaseUrl } from "@/lib/api";
 
 const CRAFTS = [
-  { id: "electricity", name: { ar: "الكهرباء", en: "Electrical" }, image: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=1000&auto=format&fit=crop&v=osta4", color: "from-yellow-400 to-gold-600" },
-  { id: "plumbing", name: { ar: "السباكة", en: "Plumbing" }, image: "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?q=80&w=1000&auto=format&fit=crop&v=osta5", color: "from-blue-400 to-blue-600" },
-  { id: "carpentry", name: { ar: "النجارة", en: "Carpentry" }, image: "https://images.unsplash.com/photo-1601058268499-e52658b8bb88?q=80&w=1000&auto=format&fit=crop&v=osta4", color: "from-amber-600 to-amber-800" },
-  { id: "ac", name: { ar: "التكييفات", en: "AC Maintenance" }, image: "/images/services/ac.jpg", color: "from-cyan-400 to-cyan-600" },
-  { id: "appliances", name: { ar: "صيانة أجهزة", en: "Home Appliances" }, image: "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?q=80&w=1000&auto=format&fit=crop&v=osta4", color: "from-purple-400 to-purple-600" },
-  { id: "painting", name: { ar: "الدهانات", en: "Painting" }, image: "https://images.unsplash.com/photo-1562259949-e8e7689d7828?q=80&w=1000&auto=format&fit=crop&v=osta4", color: "from-rose-400 to-rose-600" },
-  { id: "aluminum", name: { ar: "الوميتال", en: "Aluminum" }, image: "/images/services/aluminum.jpg", color: "from-slate-400 to-slate-600" },
-  { id: "networks", name: { ar: "الشبكات", en: "Networks" }, image: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?q=80&w=1000&auto=format&fit=crop&v=osta4", color: "from-indigo-400 to-indigo-600" },
-  { id: "computer-repair", name: { ar: "صيانة كمبيوتر", en: "Computer" }, image: "https://images.unsplash.com/photo-1588508065123-287b28e013da?q=80&w=1000&auto=format&fit=crop&v=osta4", color: "from-emerald-400 to-emerald-600" },
-  { id: "cctv", name: { ar: "تركيب كاميرات", en: "CCTV" }, image: "/images/services/cam.jpg", color: "from-red-400 to-red-600" },
+  { id: "electricity", name: { ar: "الكهرباء", en: "Electrical" }, image: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=1000&auto=format&fit=crop&v=osta4", color: "from-yellow-400 to-gold-600", icon: Zap },
+  { id: "plumbing", name: { ar: "السباكة", en: "Plumbing" }, image: "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?q=80&w=1000&auto=format&fit=crop&v=osta5", color: "from-blue-400 to-blue-600", icon: Droplets },
+  { id: "carpentry", name: { ar: "النجارة", en: "Carpentry" }, image: "https://images.unsplash.com/photo-1601058268499-e52658b8bb88?q=80&w=1000&auto=format&fit=crop&v=osta4", color: "from-amber-600 to-amber-800", icon: Hammer },
+  { id: "ac", name: { ar: "التكييفات", en: "AC Maintenance" }, image: "/images/services/ac.jpg", color: "from-cyan-400 to-cyan-600", icon: Wind },
+  { id: "appliances", name: { ar: "صيانة أجهزة", en: "Home Appliances" }, image: "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?q=80&w=1000&auto=format&fit=crop&v=osta4", color: "from-purple-400 to-purple-600", icon: Wrench },
+  { id: "painting", name: { ar: "الدهانات", en: "Painting" }, image: "https://images.unsplash.com/photo-1562259949-e8e7689d7828?q=80&w=1000&auto=format&fit=crop&v=osta4", color: "from-rose-400 to-rose-600", icon: PaintBucket },
+  { id: "aluminum", name: { ar: "الوميتال", en: "Aluminum" }, image: "/images/services/aluminum.jpg", color: "from-slate-400 to-slate-600", icon: Layout },
+  { id: "networks", name: { ar: "الشبكات", en: "Networks" }, image: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?q=80&w=1000&auto=format&fit=crop&v=osta4", color: "from-indigo-400 to-indigo-600", icon: Network },
+  { id: "computer-repair", name: { ar: "صيانة كمبيوتر", en: "Computer" }, image: "https://images.unsplash.com/photo-1588508065123-287b28e013da?q=80&w=1000&auto=format&fit=crop&v=osta4", color: "from-emerald-400 to-emerald-600", icon: Monitor },
+  { id: "cctv", name: { ar: "تركيب كاميرات", en: "CCTV" }, image: "/images/services/cam.jpg", color: "from-red-400 to-red-600", icon: Camera },
 ];
 
 const POPULAR_NEIGHBORHOODS: Record<string, { value: string; labelAr: string; labelEn: string }[]> = {
@@ -825,19 +826,28 @@ export function LandingPage({ locale }: { locale: Locale }) {
               <motion.div key={craft.id} variants={itemVariants}>
                 <Link href={`/${locale}/services/${craft.id}`} className="group block p-6 onyx-card hover:border-gold-500/50 transition-all duration-500 hover:-translate-y-2">
                   <div className={cn(
-                    "h-48 w-full rounded-2xl overflow-hidden mb-6 transition-transform duration-500 group-hover:scale-105 group-hover:rotate-1 relative shadow-lg",
+                    "h-48 w-full rounded-2xl overflow-hidden mb-6 transition-transform duration-500 group-hover:scale-105 group-hover:rotate-1 relative shadow-lg bg-onyx-800 border border-white/5",
                   )}>
                     <img 
                       src={craft.image} 
-                      alt={isArabic ? craft.name.ar : craft.name.en}
+                      alt="" 
                       className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                      }}
                     />
-                    <div className={cn("absolute inset-0 bg-gradient-to-br opacity-20", craft.color)} />
+                    <div className={cn("absolute inset-0 bg-gradient-to-br opacity-20 transition-opacity duration-500 group-hover:opacity-30", craft.color)} />
+                    <div className="absolute inset-0 bg-gradient-to-t from-onyx-950/90 via-onyx-950/20 to-transparent" />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="h-14 w-14 rounded-2xl bg-onyx-900/60 border border-white/10 backdrop-blur-md flex items-center justify-center text-white shadow-xl transition-all duration-500 group-hover:scale-110 group-hover:bg-gold-500 group-hover:text-onyx-950 group-hover:border-gold-500 group-hover:shadow-gold-500/20">
+                        <craft.icon className="h-6 w-6 transition-transform duration-500 group-hover:rotate-6" />
+                      </div>
+                    </div>
                   </div>
                   <h3 className="text-lg font-bold text-white mb-2 group-hover:text-gold-500 transition-colors">
                     {isArabic ? craft.name.ar : craft.name.en}
                   </h3>
-                  <div className="flex items-center gap-1 text-xs text-onyx-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="flex items-center gap-1 text-xs text-gold-500 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-[-4px] group-hover:translate-x-0">
                     {isArabic ? "اطلب الآن" : "Book Now"}
                     <ChevronRight className="h-3 w-3 rtl:rotate-180" />
                   </div>
