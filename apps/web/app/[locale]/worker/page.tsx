@@ -1,8 +1,16 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { DashboardShell } from "@/components/dashboard/dashboard-shell";
 import { WorkerDashboardHome } from "@/components/dashboard/dashboard-pages";
 import { isLocale } from "@/lib/locales";
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return {
+    title: locale === "ar" ? "لوحة تحكم الفني" : "Worker Dashboard"
+  };
+}
 
 export const dynamic = "force-dynamic";
 
