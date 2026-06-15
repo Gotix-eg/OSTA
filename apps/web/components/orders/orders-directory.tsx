@@ -422,7 +422,9 @@ export function OrdersDirectory({ locale }: { locale: Locale }) {
                     </div>
 
                     <h4 className="text-lg font-black text-white mb-1.5 line-clamp-1 group-hover:text-gold-500 transition-colors">
-                      {req.title}
+                      <Link href={`/${locale}/orders/${req.id}`}>
+                        {req.title}
+                      </Link>
                     </h4>
 
                     <p className="text-xs text-gold-500 font-bold mb-3 uppercase tracking-wider">
@@ -441,13 +443,20 @@ export function OrdersDirectory({ locale }: { locale: Locale }) {
                       <span>{isArabic ? `${req.governorate}، ${req.city}` : `${req.governorate}, ${req.city}`}</span>
                     </div>
 
-                    <button
-                      onClick={() => handleAcceptRequestClick(req)}
-                      className="w-full btn-gold py-3 text-sm font-black flex items-center justify-center gap-2 group/btn shadow-md"
-                    >
-                      <span>{isArabic ? "اقبل الطلب الآن" : "Accept Job Now"}</span>
-                      <ChevronRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-1 rtl:rotate-180 rtl:group-hover/btn:-translate-x-1" />
-                    </button>
+                    <div className="grid grid-cols-2 gap-3">
+                      <Link
+                        href={`/${locale}/orders/${req.id}`}
+                        className="btn-ghost py-3 text-xs sm:text-sm font-black flex items-center justify-center border-white/10 text-white hover:bg-white/5 rounded-xl"
+                      >
+                        {isArabic ? "التفاصيل" : "Details"}
+                      </Link>
+                      <button
+                        onClick={() => handleAcceptRequestClick(req)}
+                        className="btn-gold py-3 text-xs sm:text-sm font-black flex items-center justify-center gap-1.5 group/btn shadow-md"
+                      >
+                        <span>{isArabic ? "اقبل الآن" : "Accept"}</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}

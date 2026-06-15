@@ -369,6 +369,66 @@ router.get("/public/requests", async (request, response) => {
   }
 });
 
+router.get("/public/requests/:id", async (request, response) => {
+  const { id } = request.params;
+
+  try {
+    const serviceRequest = await prisma.serviceRequest.findUnique({
+      where: { id },
+      include: {
+        service: {
+          include: {
+            category: true,
+          },
+        },
+        address: true,
+        _count: {
+          select: {
+            offers: true,
+          },
+        },
+      },
+    });
+
+    if (!serviceRequest) {
+      return response.status(404).json({ error: "Order not found" });
+    }
+
+    const result = {
+      id: serviceRequest.id,
+      requestNumber: serviceRequest.requestNumber,
+      title: serviceRequest.title,
+      description: serviceRequest.description,
+      urgency: serviceRequest.urgency,
+      serviceNameAr: serviceRequest.service.nameAr,
+      serviceNameEn: serviceRequest.service.nameEn,
+      categorySlug: serviceRequest.service.category.slug,
+      categoryNameAr: serviceRequest.service.category.nameAr,
+      categoryNameEn: serviceRequest.service.category.nameEn,
+      createdAt: serviceRequest.createdAt,
+      preferredDate: serviceRequest.preferredDate,
+      preferredTimeSlot: serviceRequest.preferredTimeSlot,
+      estimatedPrice: serviceRequest.estimatedPrice,
+      offersCount: serviceRequest._count.offers,
+      address: {
+        governorate: serviceRequest.address.governorate,
+        city: serviceRequest.address.city,
+        area: serviceRequest.address.area,
+        street: serviceRequest.address.street,
+        building: serviceRequest.address.building,
+        floor: serviceRequest.address.floor,
+        apartment: serviceRequest.address.apartment,
+        landmark: serviceRequest.address.landmark,
+      },
+    };
+
+    response.status(200).json(successResponse(result, "Public request details fetched"));
+  } catch (e: any) {
+    response.status(500).json({ error: e.message });
+  }
+});
+
+
 router.use("/auth", authRouter);
 router.use("/clients", clientsRouter);
 router.use("/workers", workersRouter);
