@@ -14,7 +14,8 @@ import {
   Eye,
   EyeOff,
   ShieldCheck,
-  ArrowUpRight
+  ArrowUpRight,
+  Loader2
 } from "lucide-react";
 
 import { postApiData } from "@/lib/api";
@@ -458,6 +459,78 @@ export function LoginForm({ locale }: { locale: Locale }) {
   );
 }
 
+function FormSkeleton({ locale }: { locale: Locale }) {
+  const isArabic = locale === "ar";
+  return (
+    <div className="space-y-8 animate-pulse">
+      {/* Title / Section Header Skeleton */}
+      <div className="space-y-3">
+        <div className="h-6 w-32 bg-onyx-800/50 rounded-lg" />
+        <div className="h-0.5 w-16 bg-gold-500/30 rounded-full" />
+      </div>
+
+      <div className="space-y-6">
+        <div className="onyx-card p-6 space-y-6 border-white/5 bg-white/[0.02]">
+          {/* Section subtitle */}
+          <div className="h-5 w-40 bg-onyx-800/50 rounded-md border-b border-white/5 pb-2" />
+          
+          {/* Input 1 */}
+          <div className="space-y-2">
+            <div className="h-4 w-24 bg-onyx-800/50 rounded" />
+            <div className="h-12 w-full bg-onyx-900/50 border border-white/5 rounded-xl" />
+            <div className="h-3 w-56 bg-onyx-800/30 rounded" />
+          </div>
+
+          {/* Grid inputs */}
+          <div className="grid gap-6 sm:grid-cols-2">
+            <div className="space-y-2">
+              <div className="h-4 w-20 bg-onyx-800/50 rounded" />
+              <div className="h-12 w-full bg-onyx-900/50 border border-white/5 rounded-xl" />
+            </div>
+            <div className="space-y-2">
+              <div className="h-4 w-20 bg-onyx-800/50 rounded" />
+              <div className="h-12 w-full bg-onyx-900/50 border border-white/5 rounded-xl" />
+            </div>
+          </div>
+
+          {/* Input 2 */}
+          <div className="space-y-2">
+            <div className="h-4 w-28 bg-onyx-800/50 rounded" />
+            <div className="h-12 w-full bg-onyx-900/50 border border-white/5 rounded-xl" />
+            <div className="h-3 w-64 bg-onyx-800/30 rounded" />
+          </div>
+          
+          {/* Grid inputs 2 */}
+          <div className="grid gap-6 sm:grid-cols-2">
+            <div className="space-y-2">
+              <div className="h-4 w-20 bg-onyx-800/50 rounded" />
+              <div className="h-12 w-full bg-onyx-900/50 border border-white/5 rounded-xl" />
+            </div>
+            <div className="space-y-2">
+              <div className="h-4 w-20 bg-onyx-800/50 rounded" />
+              <div className="h-12 w-full bg-onyx-900/50 border border-white/5 rounded-xl" />
+            </div>
+          </div>
+        </div>
+
+        {/* Checkbox skeleton */}
+        <div className="flex items-center gap-3 onyx-card p-4 border-white/5 bg-white/[0.01]">
+          <div className="h-5 w-5 bg-onyx-800/50 rounded border border-white/5" />
+          <div className="h-4 w-64 bg-onyx-800/40 rounded" />
+        </div>
+
+        {/* Button skeleton */}
+        <div className="h-14 w-full bg-gold-500/20 border border-gold-500/10 rounded-2xl flex items-center justify-center gap-2">
+          <Loader2 className="h-5 w-5 animate-spin text-gold-500" />
+          <span className="text-sm font-bold text-gold-500/70">
+            {isArabic ? "جاري التحضير..." : "Preparing..."}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function ClientRegisterForm({ locale }: { locale: Locale }) {
   const copy = authCopy[locale];
   const isArabic = locale === "ar";
@@ -559,7 +632,7 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
     }
   }
 
-  if (!ready) return <div className="text-onyx-600 font-bold">{isArabic ? "جاري التحضير..." : "Preparing..."}</div>;
+  if (!ready) return <FormSkeleton locale={locale} />;
 
   if (needsOtpVerify) {
     return (
@@ -750,7 +823,7 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
     }
   }
 
-  if (!ready) return <div className="text-onyx-600 font-bold">{isArabic ? "جاري التحضير..." : "Preparing..."}</div>;
+  if (!ready) return <FormSkeleton locale={locale} />;
 
   return (
     <div className="space-y-8 animate-fadeIn">
@@ -925,7 +998,7 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
     }
   }
 
-  if (!ready) return <div className="text-onyx-600 font-bold">{isArabic ? "جاري التحضير..." : "Preparing..."}</div>;
+  if (!ready) return <FormSkeleton locale={locale} />;
 
   return (
     <div className="space-y-8 animate-fadeIn">
