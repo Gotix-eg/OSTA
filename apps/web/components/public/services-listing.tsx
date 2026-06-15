@@ -96,8 +96,11 @@ export function ServicesListing({ locale }: { locale: Locale }) {
               >
                 <img 
                   src={imgUrl} 
-                  alt={isArabic ? cat.nameAr : cat.nameEn}
+                  alt=""
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                  }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-onyx-950 via-onyx-950/40 to-transparent" />
                 
