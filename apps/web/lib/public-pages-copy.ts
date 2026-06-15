@@ -1,6 +1,6 @@
 import type { Locale } from "./locales";
 
-export type PublicPageKey = "services" | "how-it-works" | "about" | "contact" | "faq" | "terms";
+export type PublicPageKey = "services" | "how-it-works" | "about" | "contact" | "faq" | "terms" | "privacy" | "careers";
 
 export const publicPageCopy = {
   ar: {
@@ -126,6 +126,44 @@ export const publicPageCopy = {
           {
             title: "٣) سياسة إلغاء الطلبات والنزاعات",
             body: "تخضع جميع الطلبات والنزاعات لسياسة إلغاء واضحة مع إمكانية فتح شكوى وتدخل الإدارة للفصل وحماية حقوق الطرفين."
+          }
+        ]
+      },
+      privacy: {
+        eyebrow: "سياسة الخصوصية",
+        title: "سياسة الخصوصية وحماية البيانات",
+        description: "نلتزم في أُسطفاي بحماية خصوصية بياناتك ومعلوماتك الشخصية وتأمينها بالكامل.",
+        sections: [
+          {
+            title: "١) جمع البيانات",
+            body: "نقوم بجمع المعلومات اللازمة فقط لتقديم خدمات التوثيق والتطابق والصيانة بشكل آمن."
+          },
+          {
+            title: "٢) حماية المعلومات",
+            body: "نستخدم تقنيات تشفير متطورة لحماية بيانات الدفع والبيانات الشخصية من أي وصول غير مصرح به."
+          },
+          {
+            title: "٣) مشاركة البيانات",
+            body: "لا نقوم ببيع بياناتك الشخصية لأي طرف ثالث، ويتم مشاركتها فقط مع الفني المحدد لتنفيذ طلبك."
+          }
+        ]
+      },
+      careers: {
+        eyebrow: "الوظائف",
+        title: "انضم إلى فريق عمل أُسطفاي",
+        description: "ابنِ معنا مستقبل الخدمات المنزلية والتقنية في مصر والشرق الأوسط.",
+        sections: [
+          {
+            title: "١) بيئة العمل",
+            body: "نوفر بيئة عمل مرنة ومحفزة على الابتكار والنمو المهني المستمر."
+          },
+          {
+            title: "٢) فرص النمو",
+            body: "كن جزءًا من فريق سريع النمو يهدف إلى تغيير حياة ملايين العملاء والحرفيين."
+          },
+          {
+            title: "٣) كيفية التقديم",
+            body: "أرسل سيرتك الذاتية ومجال تخصصك إلى careers@osta.eg وسنتواصل معك فور توفر فرصة مناسبة."
           }
         ]
       }
@@ -281,6 +319,44 @@ export const publicPageCopy = {
           {
             title: "3) Cancellation & Disputes",
             body: "All requests and disputes are subject to our cancellation policy, with active admin review to protect user rights."
+          }
+        ]
+      },
+      privacy: {
+        eyebrow: "Privacy Policy",
+        title: "Privacy Policy & Data Protection",
+        description: "At Ostafy, we are fully committed to protecting and securing your privacy and personal data.",
+        sections: [
+          {
+            title: "1) Data Collection",
+            body: "We only collect information necessary to securely provide verification, matching, and maintenance services."
+          },
+          {
+            title: "2) Information Security",
+            body: "We use advanced encryption technologies to protect payment details and personal data from unauthorized access."
+          },
+          {
+            title: "3) Data Sharing",
+            body: "We do not sell your personal data to third parties, and it is only shared with the selected technician to complete your order."
+          }
+        ]
+      },
+      careers: {
+        eyebrow: "Careers",
+        title: "Join the Ostafy Team",
+        description: "Build the future of home and technical services in Egypt and the Middle East with us.",
+        sections: [
+          {
+            title: "1) Work Environment",
+            body: "We provide a flexible work environment that fosters innovation and continuous professional growth."
+          },
+          {
+            title: "2) Growth Opportunities",
+            body: "Be part of a fast-growing team aiming to impact the lives of millions of clients and craftspeople."
+          },
+          {
+            title: "3) How to Apply",
+            body: "Send your resume and area of expertise to careers@osta.eg and we will reach out as soon as a suitable opportunity opens."
           }
         ]
       }

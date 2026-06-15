@@ -114,27 +114,93 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
 
       <div className="min-h-[calc(100vh-80px-120px)]">{children}</div>
 
-      <footer className="border-t border-white/5 bg-onyx-950 py-16">
-        <div className="section-shell flex flex-col gap-10">
-          <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between border-b border-white/5 pb-8">
-            <div className="flex flex-col gap-4">
+      <footer className="border-t border-white/5 bg-onyx-950 pt-16 pb-12">
+        <div className="section-shell flex flex-col gap-12">
+          {/* Main Footer Grid */}
+          <div className="grid gap-10 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 border-b border-white/5 pb-12">
+            {/* Column 1: Brand Description & Contact Info */}
+            <div className="flex flex-col gap-6 lg:col-span-2">
               <div className="w-fit">
                 <img src="/logo.svg" alt="Ostafy" className="h-16 w-auto opacity-95" />
               </div>
-              
+              <p className="text-sm text-onyx-400 leading-relaxed max-w-sm">
+                {locale === "ar"
+                  ? "أُسطفاي هي المنصة الرائدة لربط العملاء بأمهر الفنيين والحرفيين الموثقين في مصر مع ضمان جودة الصيانة وحماية المدفوعات."
+                  : "Ostafy is the leading platform connecting clients with skilled, verified technicians in Egypt, guaranteeing maintenance quality and secure payments."}
+              </p>
               {/* Contact Info */}
-              <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-onyx-400 mt-2 font-medium">
-                <a href="https://wa.me/201009410112" className="flex items-center gap-2 hover:text-gold-500 transition-colors">
-                  <Phone className="h-3.5 w-3.5 text-gold-500" />
+              <div className="flex flex-col gap-3.5 text-xs font-semibold tracking-wide text-onyx-400">
+                <a href="https://wa.me/201009410112" className="flex items-center gap-2.5 hover:text-gold-500 transition-colors w-fit">
+                  <Phone className="h-4 w-4 text-gold-500" />
                   <span dir="ltr" className="inline-block">+20 100 941 0112</span>
                 </a>
-                <a href="mailto:info@ostafy.com" className="flex items-center gap-2 hover:text-gold-500 transition-colors">
-                  <Mail className="h-3.5 w-3.5 text-gold-500" />
+                <a href="mailto:info@ostafy.com" className="flex items-center gap-2.5 hover:text-gold-500 transition-colors w-fit">
+                  <Mail className="h-4 w-4 text-gold-500" />
                   <span>info@ostafy.com</span>
                 </a>
               </div>
             </div>
 
+            {/* Column 2: Company Navigation */}
+            <div className="flex flex-col gap-4">
+              <h4 className="text-sm font-black uppercase tracking-wider text-white">
+                {locale === "ar" ? "الشركة" : "Company"}
+              </h4>
+              <ul className="flex flex-col gap-3 text-sm text-onyx-400 font-bold">
+                <li>
+                  <Link href={`/${locale}/about`} className="hover:text-gold-500 transition-colors">
+                    {locale === "ar" ? "من نحن" : "About Us"}
+                  </Link>
+                </li>
+                <li>
+                  <Link href={`/${locale}/careers`} className="hover:text-gold-500 transition-colors">
+                    {locale === "ar" ? "انضم إلينا" : "Careers"}
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Column 3: Support Navigation */}
+            <div className="flex flex-col gap-4">
+              <h4 className="text-sm font-black uppercase tracking-wider text-white">
+                {locale === "ar" ? "الدعم" : "Support"}
+              </h4>
+              <ul className="flex flex-col gap-3 text-sm text-onyx-400 font-bold">
+                <li>
+                  <Link href={`/${locale}/faq`} className="hover:text-gold-500 transition-colors">
+                    {locale === "ar" ? "الأسئلة الشائعة" : "FAQ"}
+                  </Link>
+                </li>
+                <li>
+                  <Link href={`/${locale}/contact`} className="hover:text-gold-500 transition-colors">
+                    {locale === "ar" ? "تواصل معنا" : "Contact Support"}
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Column 4: Legal Navigation */}
+            <div className="flex flex-col gap-4">
+              <h4 className="text-sm font-black uppercase tracking-wider text-white">
+                {locale === "ar" ? "الشروط والقوانين" : "Legal"}
+              </h4>
+              <ul className="flex flex-col gap-3 text-sm text-onyx-400 font-bold">
+                <li>
+                  <Link href={`/${locale}/privacy`} className="hover:text-gold-500 transition-colors">
+                    {locale === "ar" ? "سياسة الخصوصية" : "Privacy Policy"}
+                  </Link>
+                </li>
+                <li>
+                  <Link href={`/${locale}/terms`} className="hover:text-gold-500 transition-colors">
+                    {locale === "ar" ? "شروط الخدمة" : "Terms of Service"}
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Bottom Footer Section */}
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between text-xs font-semibold tracking-wide text-onyx-500">
             {/* Social Media Links */}
             <div className="flex items-center gap-3">
               <a href="https://www.facebook.com/2ostafy/" target="_blank" rel="noopener noreferrer" className="h-9 w-9 rounded-lg bg-white/5 hover:bg-gold-500 hover:text-onyx-950 transition-all duration-300 flex items-center justify-center text-onyx-300 border border-white/10 hover:border-gold-500 hover:-translate-y-1">
@@ -149,29 +215,8 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
                 </svg>
               </a>
             </div>
-          </div>
 
-          <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between text-xs font-semibold tracking-wide text-onyx-500">
-            <div className="flex flex-wrap gap-x-6 gap-y-3">
-              {links.map((item) => {
-                const isActive = item.path === "/" 
-                  ? pathname === "/" || pathname === "" 
-                  : pathname.startsWith(item.path);
-                return (
-                  <Link 
-                    key={item.href} 
-                    href={item.href as `/${string}`} 
-                    className={cn(
-                      "transition-colors",
-                      isActive ? "text-gold-500 font-bold" : "hover:text-gold-500"
-                    )}
-                  >
-                    {item.label}
-                  </Link>
-                );
-              })}
-            </div>
-             <p className="text-onyx-600">
+            <p className="text-onyx-600">
               © {new Date().getFullYear()} Ostafy Egypt. {locale === "ar" ? (
                 <>جميع الحقوق محفوظة. تم التطوير بواسطة <a href="https://www.gotix-eg.com" target="_blank" rel="noopener noreferrer" className="text-gold-500 hover:underline">شركة Gotix للبرمجيات</a></>
               ) : (
