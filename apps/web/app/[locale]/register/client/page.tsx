@@ -9,7 +9,11 @@ import { isLocale } from "@/lib/locales";
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
   return {
-    title: locale === "ar" ? "إنشاء حساب عميل" : "Create Client Account"
+    title: locale === "ar" ? "إنشاء حساب عميل" : "Create Client Account",
+    description:
+      locale === "ar"
+        ? "أنشئ حساب عميل مجاني على أُسطفاي في دقائق واطلب فنيين موثقين بالقرب منك."
+        : "Create your free Ostafy client account in minutes and book verified technicians near you."
   };
 }
 
