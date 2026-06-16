@@ -526,6 +526,24 @@ function FormSkeleton({ locale }: { locale: Locale }) {
             {isArabic ? "جاري التحضير..." : "Preparing..."}
           </span>
         </div>
+
+        <div className="text-center text-sm font-semibold text-onyx-400 pt-2">
+          {isArabic ? (
+            <>
+              لديك حساب بالفعل؟{" "}
+              <Link href={`/${locale}/login`} className="text-gold-500 hover:text-gold-400 underline transition-colors font-bold">
+                تسجيل الدخول
+              </Link>
+            </>
+          ) : (
+            <>
+              Already have an account?{" "}
+              <Link href={`/${locale}/login`} className="text-gold-500 hover:text-gold-400 underline transition-colors font-bold">
+                Sign in
+              </Link>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -750,6 +768,24 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
             {!isSubmitting && <ArrowUpRight className="h-5 w-5" />}
           </button>
 
+          <div className="text-center text-sm font-semibold text-onyx-400 pt-2">
+            {isArabic ? (
+              <>
+                لديك حساب بالفعل؟{" "}
+                <Link href={`/${locale}/login`} className="text-gold-500 hover:text-gold-400 underline transition-colors font-bold">
+                  تسجيل الدخول
+                </Link>
+              </>
+            ) : (
+              <>
+                Already have an account?{" "}
+                <Link href={`/${locale}/login`} className="text-gold-500 hover:text-gold-400 underline transition-colors font-bold">
+                  Sign in
+                </Link>
+              </>
+            )}
+          </div>
+
           {error && <div className="onyx-card p-4 border-red-500/20 bg-red-500/5 text-red-500 text-center font-bold text-sm animate-shake">{error}</div>}
         </div>
       )}
@@ -913,6 +949,24 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
             {isSubmitting ? (isArabic ? "جاري إرسال الطلب..." : "Submitting Application...") : (isArabic ? "إرسال طلب الانضمام" : "Submit Application")}
             {!isSubmitting && <ArrowUpRight className="h-5 w-5" />}
           </button>
+
+          <div className="text-center text-sm font-semibold text-onyx-400 pt-2">
+            {isArabic ? (
+              <>
+                لديك حساب بالفعل؟{" "}
+                <Link href={`/${locale}/login`} className="text-gold-500 hover:text-gold-400 underline transition-colors font-bold">
+                  تسجيل الدخول
+                </Link>
+              </>
+            ) : (
+              <>
+                Already have an account?{" "}
+                <Link href={`/${locale}/login`} className="text-gold-500 hover:text-gold-400 underline transition-colors font-bold">
+                  Sign in
+                </Link>
+              </>
+            )}
+          </div>
 
           {error && <div className="onyx-card p-4 border-red-500/20 bg-red-500/5 text-red-500 text-center font-bold text-sm animate-shake">{error}</div>}
         </div>
@@ -1125,6 +1179,24 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
             {isSubmitting ? (isArabic ? "جاري إنشاء الحساب..." : "Creating Account...") : (isArabic ? "إنشاء حساب المتجر" : "Create Store Account")}
             {!isSubmitting && <ArrowUpRight className="h-5 w-5" />}
           </button>
+
+          <div className="text-center text-sm font-semibold text-onyx-400 pt-2">
+            {isArabic ? (
+              <>
+                لديك حساب بالفعل؟{" "}
+                <Link href={`/${locale}/login`} className="text-gold-500 hover:text-gold-400 underline transition-colors font-bold">
+                  تسجيل الدخول
+                </Link>
+              </>
+            ) : (
+              <>
+                Already have an account?{" "}
+                <Link href={`/${locale}/login`} className="text-gold-500 hover:text-gold-400 underline transition-colors font-bold">
+                  Sign in
+                </Link>
+              </>
+            )}
+          </div>
 
           {error && <div className="onyx-card p-4 border-red-500/20 bg-red-500/5 text-red-500 text-center font-bold text-sm animate-shake">{error}</div>}
         </div>
