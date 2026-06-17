@@ -7,7 +7,7 @@ import {
   ChevronRight, ArrowLeft, Star, ShieldCheck, MapPin,
   Store, Users, CheckCircle2, Menu, X,
   Facebook, Instagram, Phone, Mail,
-  Droplets, Wrench, PaintBucket, Network
+  Droplets, Wrench, PaintBucket, Network, Settings
 } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect, useMemo } from "react";
