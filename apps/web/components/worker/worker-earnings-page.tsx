@@ -31,10 +31,10 @@ export function WorkerEarningsPage({ locale, initialData }: { locale: Locale; in
   const data = useLiveApiData("/workers/earnings/summary", initialData);
 
   const stats = [
-    { label: isArabic ? "elyom" : "Today", value: data.today, note: isArabic ? "cash generated now" : "cash generated now", icon: Wallet, tone: "accent" as const },
-    { label: isArabic ? "el osboo3 da" : "This week", value: data.week, note: isArabic ? "weekly momentum" : "weekly momentum", icon: TrendingUp, tone: "primary" as const },
-    { label: isArabic ? "el shahr da" : "This month", value: data.month, note: isArabic ? `+${formatNumber(locale, data.growth)}% growth` : `+${formatNumber(locale, data.growth)}% growth`, icon: CircleDollarSignProxy, tone: "sun" as const },
-    { label: isArabic ? "sa7b mo3ala2" : "Pending withdrawal", value: data.pendingWithdrawal, note: isArabic ? "next payout rail" : "next payout rail", icon: CreditCard, tone: "dark" as const }
+    { label: isArabic ? "اليوم" : "Today", value: data.today, note: isArabic ? "الأموال المكتسبة الآن" : "cash generated now", icon: Wallet, tone: "accent" as const },
+    { label: isArabic ? "هذا الأسبوع" : "This week", value: data.week, note: isArabic ? "الحركة الأسبوعية" : "weekly momentum", icon: TrendingUp, tone: "primary" as const },
+    { label: isArabic ? "هذا الشهر" : "This month", value: data.month, note: isArabic ? `نمو +${formatNumber(locale, data.growth)}%` : `+${formatNumber(locale, data.growth)}% growth`, icon: CircleDollarSignProxy, tone: "sun" as const },
+    { label: isArabic ? "سحب معلق" : "Pending withdrawal", value: data.pendingWithdrawal, note: isArabic ? "دورة الدفع القادمة" : "next payout rail", icon: CreditCard, tone: "dark" as const }
   ];
 
   const maxChartValue = Math.max(...data.chart.map((item) => item.amount), 1);
@@ -42,14 +42,14 @@ export function WorkerEarningsPage({ locale, initialData }: { locale: Locale; in
   return (
     <div>
       <SubpageHero
-        eyebrow={isArabic ? "worker finance" : "Worker finance"}
-        title={isArabic ? "el arba7" : "Earnings"}
+        eyebrow={isArabic ? "مالية العامل" : "Worker finance"}
+        title={isArabic ? "الأرباح" : "Earnings"}
         subtitle={
           isArabic
-            ? "tab3 el d5l, el payout rail, w 7arket el floos mn layout aktr rafahya w awda7."
+            ? "تتبع الدخل، مواعيد الدفع، وحركة الأموال من خلال عرض مالي أكثر تفصيلاً ووضوحاً."
             : "Track income, payout timing, and transaction motion through a richer finance view."
         }
-        actionLabel={isArabic ? "active jobs" : "Active jobs"}
+        actionLabel={isArabic ? "الطلبات النشطة" : "Active jobs"}
         actionHref={`/${locale}/worker/requests/active`}
         tone="accent"
       />
@@ -61,7 +61,7 @@ export function WorkerEarningsPage({ locale, initialData }: { locale: Locale; in
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-        <DashboardBlock title={isArabic ? "earnings rhythm" : "Earnings rhythm"} eyebrow={isArabic ? "monthly climb" : "monthly climb"}>
+        <DashboardBlock title={isArabic ? "وتيرة الأرباح" : "Earnings rhythm"} eyebrow={isArabic ? "الصعود الشهري" : "monthly climb"}>
           <div className="grid grid-cols-4 items-end gap-4">
             {data.chart.map((item, index) => (
               <div key={item.label} className="flex flex-col items-center gap-3">
@@ -80,7 +80,7 @@ export function WorkerEarningsPage({ locale, initialData }: { locale: Locale; in
           </div>
         </DashboardBlock>
 
-        <DashboardBlock title={isArabic ? "payout lane" : "Payout lane"} eyebrow={isArabic ? "cash movement" : "cash movement"} dark>
+        <DashboardBlock title={isArabic ? "مسار الدفع" : "Payout lane"} eyebrow={isArabic ? "حركة النقد" : "cash movement"} dark>
           <div className="space-y-4">
             {data.payouts.map((item) => (
               <div key={item.id} className="rounded-[1.35rem] border border-white/10 bg-white/5 p-4">
@@ -89,14 +89,14 @@ export function WorkerEarningsPage({ locale, initialData }: { locale: Locale; in
                     <p className="text-lg font-semibold text-white">{formatCurrency(locale, item.amount)}</p>
                     <p className="mt-1 text-sm text-white/60">{item.date}</p>
                   </div>
-                  <SoftBadge label={item.status === "paid" ? (isArabic ? "paid" : "Paid") : isArabic ? "scheduled" : "Scheduled"} tone={item.status === "paid" ? "success" : "sun"} />
+                  <SoftBadge label={item.status === "paid" ? (isArabic ? "مدفوع" : "Paid") : isArabic ? "مجدول" : "Scheduled"} tone={item.status === "paid" ? "success" : "sun"} />
                 </div>
               </div>
             ))}
             <SplitInfo
               items={[
-                { label: isArabic ? "growth" : "Growth", value: `+${formatNumber(locale, data.growth)}%` },
-                { label: isArabic ? "records" : "Entries", value: formatNumber(locale, data.transactions.length) }
+                { label: isArabic ? "النمو" : "Growth", value: `+${formatNumber(locale, data.growth)}%` },
+                { label: isArabic ? "القيود" : "Entries", value: formatNumber(locale, data.transactions.length) }
               ]}
             />
           </div>
@@ -104,7 +104,7 @@ export function WorkerEarningsPage({ locale, initialData }: { locale: Locale; in
       </div>
 
       <div className="mt-6 grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
-        <DashboardBlock title={isArabic ? "latest transactions" : "Latest transactions"} eyebrow={isArabic ? "money stream" : "money stream"}>
+        <DashboardBlock title={isArabic ? "أحدث المعاملات" : "Latest transactions"} eyebrow={isArabic ? "تدفق الأموال" : "money stream"}>
           <div className="grid gap-4">
             {data.transactions.map((item, index) => (
               <div key={item.id} className={index % 2 === 0 ? "onyx-card flex flex-wrap items-center justify-between gap-3 p-4" : "onyx-card flex flex-wrap items-center justify-between gap-3 bg-onyx-800/80 p-4"}>
@@ -123,21 +123,21 @@ export function WorkerEarningsPage({ locale, initialData }: { locale: Locale; in
           </div>
         </DashboardBlock>
 
-        <DashboardBlock title={isArabic ? "quick finance actions" : "Quick finance actions"} eyebrow={isArabic ? "next step" : "next step"}>
+        <DashboardBlock title={isArabic ? "إجراءات مالية سريعة" : "Quick finance actions"} eyebrow={isArabic ? "الخطوة التالية" : "next step"}>
           <div className="grid gap-4">
             <SoftCard>
-              <p className="text-xs uppercase tracking-[0.22em] text-onyx-500">{isArabic ? "pending rail" : "Pending rail"}</p>
+              <p className="text-xs uppercase tracking-[0.22em] text-onyx-500">{isArabic ? "مسار معلق" : "Pending rail"}</p>
               <p className="mt-3 text-lg font-semibold text-white">{formatCurrency(locale, data.pendingWithdrawal)}</p>
-              <p className="mt-2 text-sm leading-7 text-onyx-300">{isArabic ? "el amount da mostani el cycle el gaya lel payout." : "This amount is waiting for the next payout cycle."}</p>
+              <p className="mt-2 text-sm leading-7 text-onyx-300">{isArabic ? "هذا المبلغ بانتظار دورة الدفع القادمة." : "This amount is waiting for the next payout cycle."}</p>
             </SoftCard>
             <SoftCard>
-              <p className="text-xs uppercase tracking-[0.22em] text-onyx-500">{isArabic ? "ops links" : "Ops links"}</p>
+              <p className="text-xs uppercase tracking-[0.22em] text-onyx-500">{isArabic ? "روابط العمليات" : "Ops links"}</p>
               <div className="mt-4 flex flex-wrap gap-3">
                 <Link href={`/${locale}/worker/requests/incoming`} className="rounded-full border border-onyx-700 bg-onyx-800/50 px-4 py-2 text-sm font-semibold text-onyx-200 shadow-soft">
-                  {isArabic ? "incoming" : "Incoming jobs"}
+                  {isArabic ? "الطلبات الواردة" : "Incoming jobs"}
                 </Link>
                 <Link href={`/${locale}/worker/requests/active`} className="rounded-full border border-onyx-700 bg-onyx-800/50 px-4 py-2 text-sm font-semibold text-onyx-200 shadow-soft">
-                  {isArabic ? "active" : "Active jobs"}
+                  {isArabic ? "الطلبات النشطة" : "Active jobs"}
                 </Link>
               </div>
             </SoftCard>
