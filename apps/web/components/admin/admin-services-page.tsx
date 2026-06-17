@@ -70,7 +70,10 @@ export function AdminServicesPage({ locale }: { locale: Locale }) {
       const res = await fetchApiData<ServiceCategory[]>("/admin/services/categories", []);
       setCategories(res);
       if (res.length > 0 && !selectedId) {
-        selectCategory(res[0]);
+        const firstCat = res[0];
+        if (firstCat) {
+          selectCategory(firstCat);
+        }
       }
     } catch (err) {
       console.error("Failed to load categories:", err);
