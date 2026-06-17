@@ -418,9 +418,9 @@ export function ServiceWizard({ locale, category }: { locale: Locale; category: 
                   <div className="flex flex-1 flex-col gap-4 sm:flex-row sm:justify-end">
                     <button type="button" onClick={handleContinue} disabled={!canContinue}
                       className={cn(
-                        "inline-flex h-14 items-center justify-center gap-3 rounded-2xl px-12 text-base font-bold text-white shadow-2xl transition-all duration-300",
+                        "inline-flex h-14 items-center justify-center gap-3 rounded-2xl px-12 text-base font-bold shadow-2xl transition-all duration-300",
                         canContinue
-                          ? "bg-primary-600 shadow-primary-200 hover:bg-primary-700 hover:-translate-y-1"
+                          ? "bg-gold-500 text-onyx-950 shadow-gold hover:bg-gold-600 hover:-translate-y-1"
                           : "bg-gray-200 text-gray-400 cursor-not-allowed shadow-none"
                       )}>
                       {step === "location"
