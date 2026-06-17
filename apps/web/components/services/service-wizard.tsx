@@ -202,7 +202,7 @@ export function ServiceWizard({ locale, category }: { locale: Locale; category: 
           </div>
           
           <div className="hidden items-center gap-4 sm:flex">
-            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-gray-700">
               <div className="h-2 w-2 rounded-full bg-green-500" />
               {isArabic ? "فنيون متاحون الآن" : "PROS ONLINE NOW"}
             </div>
@@ -219,7 +219,7 @@ export function ServiceWizard({ locale, category }: { locale: Locale; category: 
             <div className="relative overflow-hidden rounded-[2rem] bg-white p-6 shadow-xl shadow-black/5 border border-gold-600/10">
               <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-primary-50/50" />
               <h1 className="relative text-2xl font-bold text-gray-900">{category.name[locale]}</h1>
-              <p className="relative mt-2 text-sm leading-relaxed text-gray-500">{category.description[locale]}</p>
+              <p className="relative mt-2 text-sm leading-relaxed text-gray-700">{category.description[locale]}</p>
             </div>
 
             {/* Progress steps */}
@@ -234,7 +234,7 @@ export function ServiceWizard({ locale, category }: { locale: Locale; category: 
                       "group flex items-center gap-4 rounded-2xl px-4 py-3 text-sm transition-all duration-300",
                       active && "bg-gray-900 text-white shadow-lg shadow-gray-900/20 font-medium scale-[1.02]",
                       done && "text-green-600 bg-green-50/50",
-                      !active && !done && "text-gray-400 hover:bg-gray-50"
+                      !active && !done && "text-gray-700 hover:bg-gray-50"
                     )}>
                       <div className={cn(
                         "flex h-8 w-8 items-center justify-center rounded-xl transition-colors",
@@ -268,14 +268,14 @@ export function ServiceWizard({ locale, category }: { locale: Locale; category: 
             </div>
 
             {/* Trust Banner */}
-            <div className="rounded-[2rem] bg-gradient-to-br from-primary-600 to-primary-700 p-6 text-white shadow-xl shadow-primary-200">
+            <div className="rounded-[2rem] bg-gray-900 p-6 text-white shadow-xl">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/20">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gold-500 text-onyx-950">
                   <Users className="h-5 w-5" />
                 </div>
-                <p className="text-xl font-bold">{category.workersAvailable.toLocaleString()}+</p>
+                <p className="text-xl font-bold text-white">{category.workersAvailable.toLocaleString()}+</p>
               </div>
-              <p className="mt-2 text-xs font-medium text-primary-100">
+              <p className="mt-2 text-xs font-medium text-gold-500/80">
                 {isArabic ? "فني موثق وجاهز لخدمتك في منطقتك" : "Verified pros ready in your area"}
               </p>
             </div>
@@ -298,7 +298,7 @@ export function ServiceWizard({ locale, category }: { locale: Locale; category: 
                       <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
                         {isArabic ? "إيه اللي محتاجه بالظبط؟" : "What do you need help with?"}
                       </h2>
-                      <p className="mt-3 text-lg text-gray-500">
+                      <p className="mt-3 text-lg text-gray-700">
                         {isArabic ? "حدد نوع المهمة عشان نختار لك أنسب متخصص" : "Pick a task so we can find the right specialist"}
                       </p>
                     </div>
@@ -338,7 +338,7 @@ export function ServiceWizard({ locale, category }: { locale: Locale; category: 
                       <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
                         {isArabic ? "إمتى تحتاج الفني؟" : "When do you need the pro?"}
                       </h2>
-                      <p className="mt-3 text-lg text-gray-500">
+                      <p className="mt-3 text-lg text-gray-700">
                         {isArabic ? "بنرتب المواعيد حسب رغبتك واستعجالك" : "We coordinate based on your schedule & urgency"}
                       </p>
                     </div>
@@ -379,7 +379,7 @@ export function ServiceWizard({ locale, category }: { locale: Locale; category: 
                       <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
                         {isArabic ? "إنت فين بالظبط؟" : "Where are you located?"}
                       </h2>
-                      <p className="mt-3 text-lg text-gray-500">
+                      <p className="mt-3 text-lg text-gray-700">
                         {isArabic ? "هنوصل ليك أقرب فني في منطقتك لتوفير الوقت" : "Matching you with the nearest pro to save your time"}
                       </p>
                     </div>
