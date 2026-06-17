@@ -28,8 +28,8 @@ router.get("/categories", catchAsync(async (_request, response) => {
       "cctv": "/images/services/cam.jpg"
     };
 
-    for (let i = 0; i < serviceCategories.length; i++) {
-      const cat = serviceCategories[i];
+    let i = 0;
+    for (const cat of serviceCategories) {
       const slug = cat.slug;
       const category = await prisma.serviceCategory.upsert({
         where: { slug },
@@ -40,13 +40,13 @@ router.get("/categories", catchAsync(async (_request, response) => {
           slug,
           icon: cat.icon,
           imageUrl: defaultImages[slug] || null,
-          sortOrder: i,
+          sortOrder: i++,
           isActive: true
         }
       });
 
-      for (let j = 0; j < cat.services.length; j++) {
-        const srv = cat.services[j];
+      let j = 0;
+      for (const srv of cat.services) {
         await prisma.service.upsert({
           where: { slug: srv.slug },
           update: {},
@@ -55,7 +55,7 @@ router.get("/categories", catchAsync(async (_request, response) => {
             nameAr: srv.name.ar,
             nameEn: srv.name.en,
             slug: srv.slug,
-            sortOrder: j,
+            sortOrder: j++,
             isActive: true
           }
         });

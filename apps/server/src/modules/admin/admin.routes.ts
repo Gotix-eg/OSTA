@@ -500,8 +500,8 @@ router.get("/services/categories", catchAsync(async (_request, response) => {
 
     const { serviceCategories: defaultCats } = await import("../../data/services.js");
 
-    for (let i = 0; i < defaultCats.length; i++) {
-      const cat = defaultCats[i];
+    let i = 0;
+    for (const cat of defaultCats) {
       const slug = cat.slug;
       await prisma.serviceCategory.upsert({
         where: { slug },
@@ -512,7 +512,7 @@ router.get("/services/categories", catchAsync(async (_request, response) => {
           slug,
           icon: cat.icon,
           imageUrl: defaultImages[slug] || null,
-          sortOrder: i,
+          sortOrder: i++,
           isActive: true
         }
       });
