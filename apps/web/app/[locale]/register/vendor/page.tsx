@@ -1,9 +1,17 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { VendorRegisterForm } from "@/components/auth/auth-forms";
 import { AuthShell } from "@/components/auth/auth-shell";
 import { authCopy } from "@/lib/copy";
 import { isLocale } from "@/lib/locales";
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return {
+    title: locale === "ar" ? "حساب متجر جديد" : "Vendor Signup"
+  };
+}
 
 export default async function RegisterVendorPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;

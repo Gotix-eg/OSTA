@@ -9,8 +9,10 @@ import {
 } from "../../middleware/auth.middleware.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { successResponse } from "../../utils/ApiResponse.js";
-import { catchAsync } from "../../utils/catchAsync.js";
 import { prisma } from "../../lib/prisma.js";
+import { catchAsync } from "../../utils/catchAsync.js";
+import { sendAppNotification } from "../../utils/notification.util.js";
+import { sendNewRequestNotificationEmail } from "../../utils/email.js";
 
 const router = Router();
 
@@ -29,6 +31,7 @@ const createRequestSchema = z.object({
   title: z.string().min(3).max(120),
   description: z.string().min(10).max(1200),
   mediaNotes: z.string().max(500).optional(),
+  workerId: z.string().optional(),
   address: z
     .object({
       mode: z.enum(["saved", "new"]),
@@ -253,6 +256,8 @@ router.get(
           requestNumber: item.requestNumber,
           title: item.title,
           serviceId: item.serviceId,
+          serviceNameAr: item.service?.nameAr || item.serviceId,
+          serviceNameEn: item.service?.nameEn || item.serviceId,
           status: item.status,
           area: item.address ? item.address.city : "Unknown",
           createdAt: item.createdAt,
@@ -274,7 +279,23 @@ router.get(
 
     const record = await prisma.serviceRequest.findUnique({
       where: { id: id, clientId: profile.id },
-      include: { service: true, address: true },
+      include: {
+        service: true,
+        address: true,
+        worker: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                phone: true,
+                avatarUrl: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     if (!record) {
@@ -289,6 +310,8 @@ router.get(
       status: record.status,
       area: record.address?.area || record.address?.city || "Unknown",
       serviceId: record.serviceId,
+      serviceNameAr: record.service?.nameAr || record.serviceId,
+      serviceNameEn: record.service?.nameEn || record.serviceId,
       timing: {
         type: record.urgency === "EMERGENCY" ? "emergency" : "today",
         customWindow: record.preferredTimeSlot || undefined,
@@ -304,14 +327,61 @@ router.get(
       },
       mediaNotes: record.voiceNote || "",
       images: record.images || [],
+      estimatedPrice: record.estimatedPrice,
+      finalPrice: record.finalPrice,
       createdAt: record.createdAt,
       updatedAt: record.updatedAt,
+      worker: record.worker ? {
+        id: record.worker.id,
+        userId: record.worker.user.id,
+        name: `${record.worker.user.firstName} ${record.worker.user.lastName}`,
+        avatarUrl: record.worker.user.avatarUrl,
+        rating: record.worker.rating,
+        phone: ["WORKER_EN_ROUTE", "IN_PROGRESS", "COMPLETED", "CONFIRMED_BY_CLIENT"].includes(record.status)
+          ? record.worker.user.phone
+          : null,
+      } : null,
     };
 
     response
       .status(200)
       .json(successResponse(mapped, "Client request fetched"));
   }),
+);
+
+router.patch(
+  "/requests/:id/budget",
+  catchAsync(async (request: Request, response: Response) => {
+    const profile = await prisma.clientProfile.findUnique({
+      where: { userId: request.auth!.userId },
+    });
+    if (!profile) throw new ApiError(404, "Client profile not found");
+    
+    const { id } = request.params as { id: string };
+    const { price } = request.body as { price: number };
+    if (!price || isNaN(price) || price <= 0) {
+      throw new ApiError(400, "Valid price is required");
+    }
+
+    const record = await prisma.serviceRequest.findFirst({
+      where: { id, clientId: profile.id },
+    });
+    if (!record) throw new ApiError(404, "Request not found");
+
+    if (["COMPLETED", "CONFIRMED_BY_CLIENT", "CANCELLED_BY_CLIENT", "CANCELLED_BY_WORKER"].includes(record.status)) {
+      throw new ApiError(400, "Cannot edit budget for completed or cancelled requests");
+    }
+
+    const updated = await prisma.serviceRequest.update({
+      where: { id },
+      data: {
+        estimatedPrice: price,
+        finalPrice: record.status !== "PENDING" ? price : undefined,
+      },
+    });
+
+    response.status(200).json(successResponse(updated, "Request budget updated"));
+  })
 );
 
 router.post(
@@ -362,9 +432,22 @@ router.post(
       actualServiceId = fallbackService.id;
     }
 
+    let requestNumber = "";
+    while (true) {
+      const candidate = String(Math.floor(10000000 + Math.random() * 90000000));
+      const existing = await prisma.serviceRequest.findUnique({
+        where: { requestNumber: candidate },
+      });
+      if (!existing) {
+        requestNumber = candidate;
+        break;
+      }
+    }
+
     const record = await prisma.serviceRequest.create({
       data: {
         clientId,
+        requestNumber,
         serviceId: actualServiceId,
         addressId: addressId!,
         title: payload.title,
@@ -376,8 +459,30 @@ router.post(
         preferredTimeSlot: payload.timing.customWindow,
         urgency: payload.timing.type === "emergency" ? "EMERGENCY" : "NORMAL",
         status: "PENDING",
+        workerId: payload.workerId || undefined,
       },
     });
+
+    // Automatically add to favorites for direct booking
+    if (payload.workerId) {
+      try {
+        await prisma.favoriteWorker.upsert({
+          where: {
+            clientId_workerId: {
+              clientId,
+              workerId: payload.workerId,
+            },
+          },
+          update: {},
+          create: {
+            clientId,
+            workerId: payload.workerId,
+          },
+        });
+      } catch (favErr) {
+        console.error("Auto-favorite failed: ", favErr);
+      }
+    }
 
     // System notification for the client
     await prisma.notification.create({
@@ -388,6 +493,85 @@ router.post(
         body: `تم استلام طلب الصيانة الخاص بك (${record.requestNumber}) وجاري البحث عن فني مناسب.`,
       },
     });
+
+    // Notify suitable workers who cover the location and match the specialization
+    try {
+      const requestAddress = await prisma.address.findUnique({
+        where: { id: record.addressId }
+      });
+
+      if (requestAddress) {
+        let workersToNotify: any[] = [];
+
+        if (payload.workerId) {
+          const directWorker = await prisma.workerProfile.findUnique({
+            where: { id: payload.workerId },
+            include: {
+              user: {
+                select: { id: true, firstName: true, lastName: true, email: true }
+              }
+            }
+          });
+          if (directWorker) workersToNotify.push(directWorker);
+        } else {
+          workersToNotify = await prisma.workerProfile.findMany({
+            where: {
+              verificationStatus: "VERIFIED",
+              specializations: {
+                some: {
+                  serviceId: record.serviceId
+                }
+              },
+              workAreas: {
+                some: {
+                  governorate: requestAddress.governorate,
+                  city: requestAddress.city
+                }
+              }
+            },
+            include: {
+              user: {
+                select: { id: true, firstName: true, lastName: true, email: true }
+              }
+            }
+          });
+        }
+
+        const serviceCategory = await prisma.service.findUnique({
+          where: { id: record.serviceId },
+          include: { category: true }
+        });
+        const categoryName = serviceCategory?.category.nameAr || serviceCategory?.category.nameEn || "صيانة";
+
+        for (const worker of workersToNotify) {
+          const isPremium = worker.subscriptionTier !== "free" || (worker.trialExpiresAt && worker.trialExpiresAt > new Date());
+          
+          // 1. App Notification
+          if (worker.notificationsEnabledApp && isPremium) {
+            await sendAppNotification({
+              userId: worker.user.id,
+              type: "CUSTOM_REQUEST_NEW",
+              title: "طلب صيانة جديد متاح 🛠️",
+              body: `تم إضافة طلب جديد في تخصصك: ${categoryName} بموقعك.`,
+              data: { requestId: record.id }
+            });
+          }
+
+          // 2. Email Notification
+          if (worker.notificationsEnabledEmail && worker.user.email && isPremium) {
+            await sendNewRequestNotificationEmail(
+              worker.user.email,
+              `${worker.user.firstName} ${worker.user.lastName}`,
+              record.title,
+              categoryName,
+              `${requestAddress.governorate}، ${requestAddress.city}`
+            );
+          }
+        }
+      }
+    } catch (notifyErr) {
+      console.error("Failed to notify suitable workers:", notifyErr);
+    }
 
     response.status(201).json(
       successResponse(
@@ -567,6 +751,63 @@ router.get(
       ),
     );
   }),
+);
+
+router.post(
+  "/favorites",
+  catchAsync(async (request: Request, response: Response) => {
+    const { workerId } = request.body as { workerId: string };
+    if (!workerId) throw new ApiError(400, "Worker ID is required");
+
+    const profile = await prisma.clientProfile.findUnique({
+      where: { userId: request.auth!.userId },
+    });
+    if (!profile) throw new ApiError(404, "Client profile not found");
+
+    const existing = await prisma.favoriteWorker.findUnique({
+      where: {
+        clientId_workerId: {
+          clientId: profile.id,
+          workerId
+        }
+      }
+    });
+
+    if (existing) {
+      return response.status(200).json(successResponse(existing, "Worker already in favorites"));
+    }
+
+    const favorite = await prisma.favoriteWorker.create({
+      data: {
+        clientId: profile.id,
+        workerId
+      }
+    });
+
+    response.status(201).json(successResponse(favorite, "Worker added to favorites"));
+  })
+);
+
+router.delete(
+  "/favorites/:workerId",
+  catchAsync(async (request: Request, response: Response) => {
+    const { workerId } = request.params as { workerId: string };
+    const profile = await prisma.clientProfile.findUnique({
+      where: { userId: request.auth!.userId },
+    });
+    if (!profile) throw new ApiError(404, "Client profile not found");
+
+    await prisma.favoriteWorker.delete({
+      where: {
+        clientId_workerId: {
+          clientId: profile.id,
+          workerId
+        }
+      }
+    });
+
+    response.status(200).json(successResponse(null, "Worker removed from favorites"));
+  })
 );
 
 export const clientsRouter = router;

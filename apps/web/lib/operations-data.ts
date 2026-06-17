@@ -6,6 +6,8 @@ export interface ClientRequestListItem {
   requestNumber: string;
   title: string;
   serviceId: string;
+  serviceNameAr?: string;
+  serviceNameEn?: string;
   status: DashboardRequestStatus | "PENDING" | "COMPLETED";
   area: string;
   createdAt: string;
@@ -16,6 +18,8 @@ export interface ClientRequestDetailData {
   requestNumber: string;
   categoryId: string;
   serviceId: string;
+  serviceNameAr?: string;
+  serviceNameEn?: string;
   title: string;
   description: string;
   mediaNotes: string;
@@ -34,8 +38,18 @@ export interface ClientRequestDetailData {
   };
   status: DashboardRequestStatus | "PENDING" | "COMPLETED";
   area: string;
+  estimatedPrice?: number | null;
+  finalPrice?: number | null;
   createdAt: string;
   updatedAt: string;
+  worker?: {
+    id: string;
+    userId: string;
+    name: string;
+    avatarUrl?: string | null;
+    rating: number;
+    phone?: string | null;
+  } | null;
 }
 
 export interface ClientFavoritesData {
@@ -154,6 +168,12 @@ export interface WorkerIncomingRequestsData {
     budgetMax: number;
     distanceKm: number;
     freshnessMinutes: number;
+    serviceNameAr?: string;
+    serviceNameEn?: string;
+    areaNameAr?: string;
+    areaNameEn?: string;
+    clientUserId?: string;
+    clientName?: string;
   }>;
 }
 
@@ -169,9 +189,15 @@ export interface WorkerActiveRequestsData {
     service: DashboardServiceCode;
     status: "EN_ROUTE" | "ON_SITE" | "WRAP_UP";
     clientName: string;
+    clientPhone?: string | null;
+    clientUserId: string;
     area: DashboardAreaCode;
     scheduledWindow: string;
     earnings: number;
+    serviceNameAr?: string;
+    serviceNameEn?: string;
+    areaNameAr?: string;
+    areaNameEn?: string;
   }>;
 }
 
@@ -312,6 +338,8 @@ const clientRequestDetailFallback: ClientRequestDetailData = {
   },
   status: "PENDING",
   area: "",
+  estimatedPrice: null,
+  finalPrice: null,
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString()
 };
@@ -488,7 +516,7 @@ export function getClientRequestDetailData(id: string) {
   return fetchApiData<ClientRequestDetailData>(`/clients/requests/${id}`, {
     ...clientRequestDetailFallback,
     id,
-    requestNumber: id === clientRequestDetailFallback.id ? clientRequestDetailFallback.requestNumber : `OSTAFY-${id}`
+    requestNumber: id === clientRequestDetailFallback.id ? clientRequestDetailFallback.requestNumber : `Ostafy-${id}`
   });
 }
 

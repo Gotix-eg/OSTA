@@ -14,14 +14,15 @@ import {
   Eye,
   EyeOff,
   ShieldCheck,
-  ArrowUpRight
+  ArrowUpRight,
+  Loader2
 } from "lucide-react";
 
 import { postApiData } from "@/lib/api";
 import { getDashboardRoute, saveAuthSession, type AuthRole } from "@/lib/auth-session";
 import { authCopy } from "@/lib/copy";
 import type { Locale } from "@/lib/locales";
-import { cn } from "@/lib/utils";
+import { cn, getLocalizedError } from "@/lib/utils";
 import { MapPicker } from "@/components/shared/map-picker";
 import { SelectField } from "@/components/shared/select-field";
 import { ImageUpload } from "@/components/shared/image-upload";
@@ -190,7 +191,8 @@ function InputField({
   placeholder,
   textarea,
   rows = 4,
-  helperText
+  helperText,
+  errorText
 }: {
   label: string;
   value: string;
@@ -200,6 +202,7 @@ function InputField({
   textarea?: boolean;
   rows?: number;
   helperText?: string;
+  errorText?: string;
 }) {
   return (
     <label className="block space-y-2 text-start">
@@ -210,7 +213,10 @@ function InputField({
           rows={rows}
           onChange={(event) => onChange(event.target.value)}
           placeholder={placeholder}
-          className="min-h-28 w-full rounded-2xl border border-onyx-700 bg-onyx-800/50 px-5 py-4 text-white transition-all placeholder:text-onyx-600 focus:border-gold-500/50 focus:ring-4 focus:ring-gold-500/10 outline-none"
+          className={cn(
+            "min-h-28 w-full rounded-2xl border bg-onyx-800/50 px-5 py-4 text-white transition-all placeholder:text-onyx-600 focus:ring-4 focus:ring-gold-500/10 outline-none",
+            errorText ? "border-red-500/50 focus:border-red-500/50" : "border-onyx-700 focus:border-gold-500/50"
+          )}
         />
       ) : (
         <input
@@ -218,12 +224,17 @@ function InputField({
           value={value}
           onChange={(event) => onChange(event.target.value)}
           placeholder={placeholder}
-          className="h-14 w-full rounded-2xl border border-onyx-700 bg-onyx-800/50 px-5 text-white transition-all placeholder:text-onyx-600 focus:border-gold-500/50 focus:ring-4 focus:ring-gold-500/10 outline-none"
+          className={cn(
+            "h-14 w-full rounded-2xl border bg-onyx-800/50 px-5 text-white transition-all placeholder:text-onyx-600 focus:ring-4 focus:ring-gold-500/10 outline-none",
+            errorText ? "border-red-500/50 focus:border-red-500/50" : "border-onyx-700 focus:border-gold-500/50"
+          )}
         />
       )}
-      {helperText && (
+      {errorText ? (
+        <p className="text-xs text-red-500 mt-1 select-none font-bold animate-fadeIn">{errorText}</p>
+      ) : helperText ? (
         <p className="text-xs text-onyx-500 mt-1 select-none font-medium leading-normal">{helperText}</p>
-      )}
+      ) : null}
     </label>
   );
 }
@@ -277,6 +288,15 @@ function applyAuthSuccess(locale: Locale, payload: AuthSuccessResponse, remember
     remember
   );
 
+  if (typeof window !== "undefined") {
+    const searchParams = new URLSearchParams(window.location.search);
+    const redirectTo = searchParams.get("redirect");
+    if (redirectTo) {
+      window.location.assign(redirectTo);
+      return;
+    }
+  }
+
   window.location.assign(getDashboardRoute(locale, payload.user.role));
 }
 
@@ -291,7 +311,29 @@ export function LoginForm({ locale }: { locale: Locale }) {
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Inline validation error states
+  const [phoneError, setPhoneError] = useState<string | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+
   async function handleLogin() {
+    let isValid = true;
+    
+    if (!phone.trim()) {
+      setPhoneError(isArabic ? "رقم الهاتف مطلوب" : "Phone number is required");
+      isValid = false;
+    } else {
+      setPhoneError(null);
+    }
+
+    if (!password.trim()) {
+      setPasswordError(isArabic ? "كلمة المرور مطلوبة" : "Password is required");
+      isValid = false;
+    } else {
+      setPasswordError(null);
+    }
+
+    if (!isValid) return;
+
     setIsSubmitting(true);
     setError(null);
 
@@ -304,7 +346,7 @@ export function LoginForm({ locale }: { locale: Locale }) {
       setSubmitted(true);
       applyAuthSuccess(locale, payload, remember);
     } catch (loginError) {
-      setError(loginError instanceof Error ? loginError.message : isArabic ? "تعذر تسجيل الدخول" : "Unable to sign in.");
+      setError(getLocalizedError(loginError instanceof Error ? loginError.message : "", locale));
     } finally {
       setIsSubmitting(false);
     }
@@ -312,20 +354,16 @@ export function LoginForm({ locale }: { locale: Locale }) {
 
   return (
     <div className="space-y-8 animate-fadeIn">
-      <div>
-        <span className="text-eyebrow mb-6">
-          {copy.intro}
-        </span>
-        <h2 className="text-4xl font-black text-white tracking-tight mb-4 font-display">{copy.loginTitle}</h2>
-        <p className="text-onyx-400 leading-relaxed text-lg text-pretty">{copy.loginBody}</p>
-      </div>
-
       <div className="grid gap-6">
         <InputField
           label={isArabic ? "رقم الهاتف" : "Phone number"}
           value={phone}
-          onChange={setPhone}
+          onChange={(val) => {
+            setPhone(val);
+            if (phoneError) setPhoneError(null);
+          }}
           placeholder="01x xxxx xxxx"
+          errorText={phoneError || undefined}
         />
 
         <label className="block space-y-2 text-start">
@@ -334,8 +372,14 @@ export function LoginForm({ locale }: { locale: Locale }) {
             <input
               type={showPassword ? "text" : "password"}
               value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              className="h-14 w-full rounded-2xl border border-onyx-700 bg-onyx-800/50 px-5 pe-12 text-white transition-all placeholder:text-onyx-600 focus:border-gold-500/50 focus:ring-4 focus:ring-gold-500/10 outline-none"
+              onChange={(event) => {
+                setPassword(event.target.value);
+                if (passwordError) setPasswordError(null);
+              }}
+              className={cn(
+                "h-14 w-full rounded-2xl border bg-onyx-800/50 px-5 pe-12 text-white transition-all placeholder:text-onyx-600 focus:ring-4 focus:ring-gold-500/10 outline-none",
+                passwordError ? "border-red-500/50 focus:border-red-500/50" : "border-onyx-700 focus:border-gold-500/50"
+              )}
             />
             <button
               type="button"
@@ -345,6 +389,9 @@ export function LoginForm({ locale }: { locale: Locale }) {
               {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
             </button>
           </div>
+          {passwordError && (
+            <p className="text-xs text-red-500 mt-1 select-none font-bold animate-fadeIn">{passwordError}</p>
+          )}
         </label>
 
         <div className="flex flex-wrap items-center justify-between gap-4 text-sm font-medium">
@@ -412,6 +459,96 @@ export function LoginForm({ locale }: { locale: Locale }) {
   );
 }
 
+function FormSkeleton({ locale }: { locale: Locale }) {
+  const isArabic = locale === "ar";
+  return (
+    <div className="space-y-8 animate-pulse">
+      {/* Title / Section Header Skeleton */}
+      <div className="space-y-3">
+        <div className="h-6 w-32 bg-onyx-800/50 rounded-lg" />
+        <div className="h-0.5 w-16 bg-gold-500/30 rounded-full" />
+      </div>
+
+      <div className="space-y-6">
+        <div className="onyx-card p-6 space-y-6 border-white/5 bg-white/[0.02]">
+          {/* Section subtitle */}
+          <div className="h-5 w-40 bg-onyx-800/50 rounded-md border-b border-white/5 pb-2" />
+          
+          {/* Input 1 */}
+          <div className="space-y-2">
+            <div className="h-4 w-24 bg-onyx-800/50 rounded" />
+            <div className="h-12 w-full bg-onyx-900/50 border border-white/5 rounded-xl" />
+            <div className="h-3 w-56 bg-onyx-800/30 rounded" />
+          </div>
+
+          {/* Grid inputs */}
+          <div className="grid gap-6 sm:grid-cols-2">
+            <div className="space-y-2">
+              <div className="h-4 w-20 bg-onyx-800/50 rounded" />
+              <div className="h-12 w-full bg-onyx-900/50 border border-white/5 rounded-xl" />
+            </div>
+            <div className="space-y-2">
+              <div className="h-4 w-20 bg-onyx-800/50 rounded" />
+              <div className="h-12 w-full bg-onyx-900/50 border border-white/5 rounded-xl" />
+            </div>
+          </div>
+
+          {/* Input 2 */}
+          <div className="space-y-2">
+            <div className="h-4 w-28 bg-onyx-800/50 rounded" />
+            <div className="h-12 w-full bg-onyx-900/50 border border-white/5 rounded-xl" />
+            <div className="h-3 w-64 bg-onyx-800/30 rounded" />
+          </div>
+          
+          {/* Grid inputs 2 */}
+          <div className="grid gap-6 sm:grid-cols-2">
+            <div className="space-y-2">
+              <div className="h-4 w-20 bg-onyx-800/50 rounded" />
+              <div className="h-12 w-full bg-onyx-900/50 border border-white/5 rounded-xl" />
+            </div>
+            <div className="space-y-2">
+              <div className="h-4 w-20 bg-onyx-800/50 rounded" />
+              <div className="h-12 w-full bg-onyx-900/50 border border-white/5 rounded-xl" />
+            </div>
+          </div>
+        </div>
+
+        {/* Checkbox skeleton */}
+        <div className="flex items-center gap-3 onyx-card p-4 border-white/5 bg-white/[0.01]">
+          <div className="h-5 w-5 bg-onyx-800/50 rounded border border-white/5" />
+          <div className="h-4 w-64 bg-onyx-800/40 rounded" />
+        </div>
+
+        {/* Button skeleton */}
+        <div className="h-14 w-full bg-gold-500/20 border border-gold-500/10 rounded-2xl flex items-center justify-center gap-2">
+          <Loader2 className="h-5 w-5 animate-spin text-gold-500" />
+          <span className="text-sm font-bold text-gold-500/70">
+            {isArabic ? "جاري التحضير..." : "Preparing..."}
+          </span>
+        </div>
+
+        <div className="text-center text-sm font-semibold text-onyx-400 pt-2">
+          {isArabic ? (
+            <>
+              لديك حساب بالفعل؟{" "}
+              <Link href={`/${locale}/login`} className="text-gold-500 hover:text-gold-400 underline transition-colors font-bold">
+                تسجيل الدخول
+              </Link>
+            </>
+          ) : (
+            <>
+              Already have an account?{" "}
+              <Link href={`/${locale}/login`} className="text-gold-500 hover:text-gold-400 underline transition-colors font-bold">
+                Sign in
+              </Link>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function ClientRegisterForm({ locale }: { locale: Locale }) {
   const copy = authCopy[locale];
   const isArabic = locale === "ar";
@@ -419,6 +556,13 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Email verification states
+  const [needsOtpVerify, setNeedsOtpVerify] = useState(false);
+  const [registeredEmail, setRegisteredEmail] = useState("");
+  const [otpCode, setOtpCode] = useState("");
+  const [otpError, setOtpError] = useState<string | null>(null);
+  const [otpSubmitting, setOtpSubmitting] = useState(false);
 
   async function handleRegister() {
     setIsSubmitting(true);
@@ -464,32 +608,92 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
     }
 
     try {
-      const payload = await postApiData<AuthSuccessResponse, any>("/auth/register/client", {
+      const payload: any = await postApiData<any, any>("/auth/register/client", {
         ...state
       });
-      window.localStorage.removeItem("osta-client-register");
-      setSubmitted(true);
-      applyAuthSuccess(locale, payload, true);
+
+      if (payload.needsVerification) {
+        setRegisteredEmail(payload.email);
+        setNeedsOtpVerify(true);
+      } else {
+        window.localStorage.removeItem("osta-client-register");
+        setSubmitted(true);
+        applyAuthSuccess(locale, payload, true);
+      }
     } catch (err) {
-      setError(err instanceof Error ? err.message : isArabic ? "تعذر إنشاء الحساب" : "Unable to create account.");
+      setError(getLocalizedError(err instanceof Error ? err.message : "", locale));
     } finally {
       setIsSubmitting(false);
     }
   }
 
-  if (!ready) return <div className="text-onyx-600 font-bold">{isArabic ? "جاري التحضير..." : "Preparing..."}</div>;
+  async function handleVerifyOtp() {
+    setOtpSubmitting(true);
+    setOtpError(null);
+
+    try {
+      const payload = await postApiData<AuthSuccessResponse, { email: string; code: string }>("/auth/verify-registration-otp", {
+        email: registeredEmail,
+        code: otpCode
+      });
+
+      window.localStorage.removeItem("osta-client-register");
+      setSubmitted(true);
+      
+      setTimeout(() => {
+        applyAuthSuccess(locale, payload, true);
+      }, 1500);
+    } catch (err) {
+      setOtpError(getLocalizedError(err instanceof Error ? err.message : "", locale));
+    } finally {
+      setOtpSubmitting(false);
+    }
+  }
+
+  if (!ready) return <FormSkeleton locale={locale} />;
+
+  if (needsOtpVerify) {
+    return (
+      <div className="space-y-8 animate-fadeIn">
+        <div className="text-center space-y-3">
+          <div className="h-16 w-16 bg-gold-500/10 border border-gold-500/25 rounded-full flex items-center justify-center mx-auto text-gold-500">
+             <ShieldCheck className="h-8 w-8" />
+          </div>
+          <h2 className="text-2xl font-black text-white">{isArabic ? "أدخل رمز التحقق" : "Verify Your Email"}</h2>
+          <p className="text-onyx-400 text-sm leading-relaxed">
+            {isArabic 
+              ? `لقد أرسلنا رمز تحقق مكون من 6 أرقام إلى بريدك الإلكتروني: ${registeredEmail}`
+              : `We've sent a 6-digit verification code to your email: ${registeredEmail}`}
+          </p>
+        </div>
+
+        <div className="space-y-6">
+           <OtpBoxes value={otpCode} onChange={(val) => {
+             setOtpCode(val);
+             if (otpError) setOtpError(null);
+           }} />
+
+           {otpError && (
+             <div className="onyx-card p-4 border-red-500/20 bg-red-500/5 text-red-500 text-center font-bold">
+               {otpError}
+             </div>
+           )}
+
+           <button
+             type="button"
+             onClick={handleVerifyOtp}
+             disabled={otpSubmitting || otpCode.length < 6}
+             className="w-full btn-gold h-14 text-lg font-black disabled:opacity-50"
+           >
+             {otpSubmitting ? (isArabic ? "... جاري التحقق" : "Verifying...") : isArabic ? "تفعيل الحساب" : "Activate Account"}
+           </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 animate-fadeIn">
-      <div>
-        <h2 className="text-4xl font-black text-white tracking-tight mb-4 font-display">{copy.registerClientTitle}</h2>
-        <p className="text-onyx-400 leading-relaxed text-pretty">
-          {isArabic 
-            ? "انضم إلى مجتمع أُسطفاي واحصل على أفضل الفنيين لخدماتك المنزلية بكل سهولة." 
-            : "Join the OSTAFY community and get the best technicians for your home services with ease."}
-        </p>
-      </div>
-
       {submitted ? (
         <div className="onyx-card p-10 text-center border-success/30 bg-success/5 space-y-4">
           <ShieldCheck className="h-16 w-16 text-success mx-auto" />
@@ -564,6 +768,24 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
             {!isSubmitting && <ArrowUpRight className="h-5 w-5" />}
           </button>
 
+          <div className="text-center text-sm font-semibold text-onyx-400 pt-2">
+            {isArabic ? (
+              <>
+                لديك حساب بالفعل؟{" "}
+                <Link href={`/${locale}/login`} className="text-gold-500 hover:text-gold-400 underline transition-colors font-bold">
+                  تسجيل الدخول
+                </Link>
+              </>
+            ) : (
+              <>
+                Already have an account?{" "}
+                <Link href={`/${locale}/login`} className="text-gold-500 hover:text-gold-400 underline transition-colors font-bold">
+                  Sign in
+                </Link>
+              </>
+            )}
+          </div>
+
           {error && <div className="onyx-card p-4 border-red-500/20 bg-red-500/5 text-red-500 text-center font-bold text-sm animate-shake">{error}</div>}
         </div>
       )}
@@ -631,25 +853,16 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
       setSubmitted(true);
       applyAuthSuccess(locale, payload, true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : isArabic ? "تعذر إرسال الطلب" : "Unable to submit.");
+      setError(getLocalizedError(err instanceof Error ? err.message : "", locale));
     } finally {
       setIsSubmitting(false);
     }
   }
 
-  if (!ready) return <div className="text-onyx-600 font-bold">{isArabic ? "جاري التحضير..." : "Preparing..."}</div>;
+  if (!ready) return <FormSkeleton locale={locale} />;
 
   return (
     <div className="space-y-8 animate-fadeIn">
-      <div>
-        <h2 className="text-4xl font-black text-white tracking-tight mb-4 font-display">{copy.registerWorkerTitle}</h2>
-        <p className="text-onyx-400 leading-relaxed text-pretty">
-          {isArabic 
-            ? "انضم إلى فريق النخبة من الفنيين في أُسطفاي وابدأ في استقبال الطلبات المربحة فوراً." 
-            : "Join the elite team of technicians at OSTAFY and start receiving profitable requests immediately."}
-        </p>
-      </div>
-
       {submitted ? (
         <div className="onyx-card p-10 text-center border-success/30 bg-success/5 space-y-4">
           <ShieldCheck className="h-16 w-16 text-success mx-auto" />
@@ -737,6 +950,24 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
             {!isSubmitting && <ArrowUpRight className="h-5 w-5" />}
           </button>
 
+          <div className="text-center text-sm font-semibold text-onyx-400 pt-2">
+            {isArabic ? (
+              <>
+                لديك حساب بالفعل؟{" "}
+                <Link href={`/${locale}/login`} className="text-gold-500 hover:text-gold-400 underline transition-colors font-bold">
+                  تسجيل الدخول
+                </Link>
+              </>
+            ) : (
+              <>
+                Already have an account?{" "}
+                <Link href={`/${locale}/login`} className="text-gold-500 hover:text-gold-400 underline transition-colors font-bold">
+                  Sign in
+                </Link>
+              </>
+            )}
+          </div>
+
           {error && <div className="onyx-card p-4 border-red-500/20 bg-red-500/5 text-red-500 text-center font-bold text-sm animate-shake">{error}</div>}
         </div>
       )}
@@ -815,25 +1046,16 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
       setSubmitted(true);
       applyAuthSuccess(locale, payload, true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : isArabic ? "تعذر إنشاء الحساب" : "Unable to create account.");
+      setError(getLocalizedError(err instanceof Error ? err.message : "", locale));
     } finally {
       setIsSubmitting(false);
     }
   }
 
-  if (!ready) return <div className="text-onyx-600 font-bold">{isArabic ? "جاري التحضير..." : "Preparing..."}</div>;
+  if (!ready) return <FormSkeleton locale={locale} />;
 
   return (
     <div className="space-y-8 animate-fadeIn">
-      <div>
-        <h2 className="text-4xl font-black text-white tracking-tight mb-4 font-display">{copy.registerVendorTitle}</h2>
-        <p className="text-onyx-400 leading-relaxed text-pretty">
-          {isArabic 
-            ? "حوّل متجرك إلى وجهة رقمية لبيع الخامات وقطع الغيار لأفضل الفنيين في مصر." 
-            : "Turn your store into a digital destination for selling materials and spare parts to Egypt's best technicians."}
-        </p>
-      </div>
-
       {submitted ? (
         <div className="onyx-card p-10 text-center border-success/30 bg-success/5 space-y-4">
           <ShieldCheck className="h-16 w-16 text-success mx-auto" />
@@ -958,6 +1180,24 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
             {!isSubmitting && <ArrowUpRight className="h-5 w-5" />}
           </button>
 
+          <div className="text-center text-sm font-semibold text-onyx-400 pt-2">
+            {isArabic ? (
+              <>
+                لديك حساب بالفعل؟{" "}
+                <Link href={`/${locale}/login`} className="text-gold-500 hover:text-gold-400 underline transition-colors font-bold">
+                  تسجيل الدخول
+                </Link>
+              </>
+            ) : (
+              <>
+                Already have an account?{" "}
+                <Link href={`/${locale}/login`} className="text-gold-500 hover:text-gold-400 underline transition-colors font-bold">
+                  Sign in
+                </Link>
+              </>
+            )}
+          </div>
+
           {error && <div className="onyx-card p-4 border-red-500/20 bg-red-500/5 text-red-500 text-center font-bold text-sm animate-shake">{error}</div>}
         </div>
       )}
@@ -988,7 +1228,7 @@ export function ForgotPasswordForm({ locale }: { locale: Locale }) {
       await postApiData("/auth/forgot-password", { email });
       setStep(1);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to send code");
+      setError(getLocalizedError(err instanceof Error ? err.message : "", locale));
     } finally {
       setIsSubmitting(false);
     }
@@ -1013,7 +1253,7 @@ export function ForgotPasswordForm({ locale }: { locale: Locale }) {
       await postApiData("/auth/reset-password", { email, code, password });
       setDone(true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to reset password");
+      setError(getLocalizedError(err instanceof Error ? err.message : "", locale));
     } finally {
       setIsSubmitting(false);
     }
@@ -1029,15 +1269,6 @@ export function ForgotPasswordForm({ locale }: { locale: Locale }) {
 
   return (
     <div className="space-y-8 animate-fadeIn">
-      <div>
-        <h2 className="text-4xl font-black text-white tracking-tight mb-4 font-display">
-          {step === 0 ? copy.forgotPasswordTitle : copy.resetPasswordTitle}
-        </h2>
-        <p className="text-onyx-400 leading-relaxed max-w-lg">
-          {step === 0 ? copy.forgotPasswordBody : copy.resetPasswordBody}
-        </p>
-      </div>
-
       <StepIndicator current={step} total={2} />
 
       <div className="space-y-6">
@@ -1131,11 +1362,6 @@ export function VerifyOtpForm({ locale }: { locale: Locale }) {
 
   return (
     <div className="space-y-8 animate-fadeIn">
-      <div>
-        <h2 className="text-4xl font-black text-white tracking-tight mb-4">{copy.otpTitle}</h2>
-        <p className="text-onyx-400 leading-relaxed">{isArabic ? "لقد أرسلنا رمزاً مكوّناً من 6 أرقام إلى هاتفك." : "We've sent a 6-digit code to your phone."}</p>
-      </div>
-
       <div className="space-y-8">
          <OtpBoxes value={otp} onChange={setOtp} />
          

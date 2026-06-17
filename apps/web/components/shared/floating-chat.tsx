@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageSquare, X, Send, User, ChevronLeft } from "lucide-react";
+import { MessageSquare, X, Send, User, ChevronLeft, Wifi, WifiOff } from "lucide-react";
 import { useSocket } from "@/components/providers/socket-provider";
 import { fetchApiData, postApiData } from "@/lib/api";
 
@@ -28,6 +28,11 @@ interface Contact {
   unreadCount: number;
 }
 
+// Polling interval in ms — 2 seconds when chat is open (fast like Messenger)
+const POLL_INTERVAL_MS = 2000;
+// Contacts polling interval — every 5 seconds
+const CONTACTS_POLL_MS = 5000;
+
 export function FloatingChatWidget() {
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -37,95 +42,200 @@ export function FloatingChatWidget() {
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const { socket } = useSocket();
+  // Refs to avoid stale closures inside timers/socket handlers
+  const activeChatRef = useRef<ChatUser | null>(null);
+  const currentUserIdRef = useRef<string | null>(null);
+  const messageIdsRef = useRef<Set<string>>(new Set()); // Dedup by ID only
+  const lastPollRef = useRef<number>(0);
+  const isMountedRef = useRef(true);
 
+  activeChatRef.current = activeChat;
+  currentUserIdRef.current = currentUserId;
+
+  const { socket, isConnected } = useSocket();
+
+  // ─── Load current user ──────────────────────────────────────────────────────
   useEffect(() => {
     async function loadUser() {
       try {
         const data = await fetchApiData<any>("/auth/me", null);
-        if (data && data.id) setCurrentUserId(data.id);
-      } catch (e) {
-        // ignore
-      }
+        const userId = data?.id || data?.user?.id;
+        if (userId && isMountedRef.current) setCurrentUserId(userId);
+      } catch (e) { /* ignore */ }
     }
     loadUser();
+    return () => { isMountedRef.current = false; };
   }, []);
 
+  // ─── External trigger (from request cards) ──────────────────────────────────
   useEffect(() => {
-    if (isOpen && !activeChat) {
-      loadContacts();
-    }
-  }, [isOpen, activeChat]);
+    const handleOpenChat = () => {
+      const stored = localStorage.getItem("osta_open_chat_user");
+      if (stored) {
+        try {
+          const user = JSON.parse(stored);
+          setActiveChat(user);
+          setIsOpen(true);
+          localStorage.removeItem("osta_open_chat_user");
+        } catch { /* ignore */ }
+      } else {
+        setIsOpen(true);
+      }
+    };
+    if (localStorage.getItem("osta_open_chat_user")) handleOpenChat();
+    window.addEventListener("osta_open_chat", handleOpenChat);
+    return () => window.removeEventListener("osta_open_chat", handleOpenChat);
+  }, []);
 
+  // ─── Load contacts ───────────────────────────────────────────────────────────
+  const loadContacts = useCallback(async () => {
+    try {
+      const data = await fetchApiData<Contact[]>("/chat/contacts/list", []);
+      if (isMountedRef.current) setContacts(data);
+    } catch { /* ignore */ }
+  }, []);
+
+  // ─── Merge new messages (dedup by ID) ───────────────────────────────────────
+  const mergeMessages = useCallback((incoming: Message[]) => {
+    if (!isMountedRef.current) return;
+    const newOnes = incoming.filter(m => !messageIdsRef.current.has(m.id));
+    if (newOnes.length === 0) return;
+    newOnes.forEach(m => messageIdsRef.current.add(m.id));
+    setMessages(prev => {
+      // Replace any temp messages that now have a real ID
+      const filtered = prev.filter(m => !m.id.startsWith("temp-") ||
+        !newOnes.some(n => n.content === m.content && n.senderId === m.senderId));
+      return [...filtered, ...newOnes].sort(
+        (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      );
+    });
+  }, []);
+
+  // ─── Poll messages for the active chat (incremental — only new messages) ───
+  const pollMessages = useCallback(async () => {
+    const chat = activeChatRef.current;
+    if (!chat) return;
+    try {
+      // Use ?since= to only get messages newer than the last known message
+      const ids = messageIdsRef.current;
+      const msgs = await fetchApiData<Message[]>(`/chat/${chat.id}`, []);
+      // Only merge ones we haven't seen yet
+      const newOnes = msgs.filter(m => !ids.has(m.id));
+      if (newOnes.length > 0) mergeMessages(newOnes);
+    } catch { /* ignore */ }
+    lastPollRef.current = Date.now();
+  }, [mergeMessages]);
+
+  // ─── Load messages when opening a chat (full load + reset dedup) ─────────────
   useEffect(() => {
-    if (activeChat) {
-      loadMessages(activeChat.id);
+    if (!activeChat) {
+      setMessages([]);
+      messageIdsRef.current = new Set();
+      return;
     }
+    messageIdsRef.current = new Set();
+    // Full initial load
+    fetchApiData<Message[]>(`/chat/${activeChat.id}`, []).then(data => {
+      if (!isMountedRef.current) return;
+      data.forEach(m => messageIdsRef.current.add(m.id));
+      setMessages(data);
+    }).catch(() => {});
   }, [activeChat]);
 
+  // ─── POLLING: runs while chat is open ────────────────────────────────────────
   useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [messages]);
+    if (!isOpen) return;
 
+    // Poll messages every 2s when a chat is active
+    const msgInterval = setInterval(() => {
+      if (activeChatRef.current) pollMessages();
+    }, POLL_INTERVAL_MS);
+
+    // Poll contacts every 5s
+    const contactInterval = setInterval(() => {
+      if (!activeChatRef.current) loadContacts();
+    }, CONTACTS_POLL_MS);
+
+    return () => {
+      clearInterval(msgInterval);
+      clearInterval(contactInterval);
+    };
+  }, [isOpen, pollMessages, loadContacts]);
+
+  // ─── Load contacts when chat panel opens ────────────────────────────────────
+  useEffect(() => {
+    if (isOpen && !activeChat) loadContacts();
+  }, [isOpen, activeChat, loadContacts]);
+
+  // ─── SOCKET: instant delivery on top of polling ──────────────────────────────
   useEffect(() => {
     if (!socket) return;
-    
-    const handleNewMessage = (msg: Message) => {
-      // If chat is open with the sender, add to messages
-      if (activeChat && (msg.senderId === activeChat.id || msg.receiverId === activeChat.id)) {
-        setMessages(prev => [...prev, msg]);
+
+    const handleNewMessage = (msg: any) => {
+      const chat = activeChatRef.current;
+
+      // Normalize: server sends full DB row with optional `sender` relation
+      const normalized: Message = {
+        id: msg.id,
+        content: msg.content,
+        senderId: msg.senderId,
+        receiverId: msg.receiverId,
+        createdAt: msg.createdAt,
+        isRead: msg.isRead ?? false,
+      };
+
+      // Add to current chat if it belongs there
+      if (chat && (normalized.senderId === chat.id || normalized.receiverId === chat.id)) {
+        mergeMessages([normalized]);
       }
-      // Reload contacts to update last message & unread counts
+
+      // Always update contacts badges
       loadContacts();
     };
 
     socket.on("new_message", handleNewMessage);
-    return () => {
-      socket.off("new_message", handleNewMessage);
-    };
-  }, [socket, activeChat]);
+    return () => { socket.off("new_message", handleNewMessage); };
+  }, [socket, mergeMessages, loadContacts]);
 
-  async function loadContacts() {
-    try {
-      const data = await fetchApiData<Contact[]>("/chat/contacts/list", []);
-      setContacts(data);
-    } catch (e) {
-      console.error(e);
-    }
-  }
+  // ─── Scroll to bottom on new messages ───────────────────────────────────────
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
-  async function loadMessages(otherUserId: string) {
-    try {
-      const data = await fetchApiData<Message[]>(`/chat/${otherUserId}`, []);
-      setMessages(data);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
+  // ─── Send message ────────────────────────────────────────────────────────────
   async function sendMessage(e: React.FormEvent) {
     e.preventDefault();
-    if (!input.trim() || !activeChat || !currentUserId) return;
+    const uid = currentUserIdRef.current;
+    if (!input.trim() || !activeChat || !uid) return;
 
-    const tempMsg: Message = {
-      id: Math.random().toString(),
-      content: input,
-      senderId: currentUserId,
-      receiverId: activeChat.id,
-      createdAt: new Date().toISOString(),
-      isRead: false
-    };
-
-    setMessages(prev => [...prev, tempMsg]);
+    const content = input.trim();
     setInput("");
 
+    // Optimistic temp message (use negative timestamp so it sorts last)
+    const tempId = `temp-${Date.now()}`;
+    const tempMsg: Message = {
+      id: tempId,
+      content,
+      senderId: uid,
+      receiverId: activeChat.id,
+      createdAt: new Date().toISOString(),
+      isRead: false,
+    };
+    setMessages(prev => [...prev, tempMsg]);
+
     try {
-      await postApiData(`/chat/${activeChat.id}`, { content: tempMsg.content });
+      const sent = await postApiData<any, any>(`/chat/${activeChat.id}`, { content });
+      if (sent?.id) {
+        // Replace temp with real message
+        messageIdsRef.current.add(sent.id);
+        setMessages(prev =>
+          prev.map(m => m.id === tempId ? { ...sent } : m)
+        );
+      }
       loadContacts();
-    } catch (e) {
-      console.error(e);
+    } catch (err) {
+      // Remove failed temp message
+      setMessages(prev => prev.filter(m => m.id !== tempId));
     }
   }
 
@@ -135,6 +245,7 @@ export function FloatingChatWidget() {
 
   return (
     <>
+      {/* Floating Button */}
       <button
         onClick={() => setIsOpen(true)}
         className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-gold-500 text-onyx-950 shadow-2xl hover:scale-105 active:scale-95 transition-transform"
@@ -147,6 +258,7 @@ export function FloatingChatWidget() {
         )}
       </button>
 
+      {/* Chat Panel */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -167,7 +279,17 @@ export function FloatingChatWidget() {
                   <h3 className="font-bold text-white">
                     {activeChat ? `${activeChat.firstName} ${activeChat.lastName}` : "المحادثات"}
                   </h3>
-                  {activeChat && <span className="text-[10px] text-onyx-400">متصل الآن</span>}
+                  {activeChat && (
+                    <div className="flex items-center gap-1.5">
+                      {isConnected
+                        ? <Wifi className="h-3 w-3 text-green-400" />
+                        : <WifiOff className="h-3 w-3 text-yellow-400" />
+                      }
+                      <span className={`text-[10px] ${isConnected ? "text-green-400" : "text-yellow-400"}`}>
+                        {isConnected ? "مباشر" : "متصل (تحديث كل 2ث)"}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
               <button onClick={() => setIsOpen(false)} className="rounded-full p-1.5 hover:bg-white/10 text-onyx-400 transition-colors">
@@ -178,7 +300,6 @@ export function FloatingChatWidget() {
             {/* Body */}
             <div className="flex-1 overflow-y-auto bg-onyx-950/50 p-4">
               {!activeChat ? (
-                // Contacts List
                 <div className="space-y-2">
                   {contacts.length === 0 ? (
                     <div className="flex h-40 flex-col items-center justify-center text-onyx-500">
@@ -199,7 +320,7 @@ export function FloatingChatWidget() {
                           <div className="flex justify-between items-center">
                             <h4 className="truncate font-bold text-white text-sm">{contact.user.firstName} {contact.user.lastName}</h4>
                             <span className="text-[10px] text-onyx-500">
-                              {new Date(contact.lastMessage.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                              {new Date(contact.lastMessage.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                             </span>
                           </div>
                           <p className="truncate text-xs text-onyx-400 mt-1">
@@ -216,17 +337,17 @@ export function FloatingChatWidget() {
                   )}
                 </div>
               ) : (
-                // Messages List
                 <div className="flex flex-col gap-3">
                   {messages.map((msg) => {
                     const isMe = msg.senderId === currentUserId;
+                    const isTemp = msg.id.startsWith("temp-");
                     return (
                       <div key={msg.id} className={`flex max-w-[80%] flex-col ${isMe ? "self-end" : "self-start"}`}>
-                        <div className={`rounded-2xl p-3 text-sm ${isMe ? "bg-gold-500 text-onyx-950 rounded-br-sm" : "bg-onyx-800 text-white rounded-bl-sm border border-white/5"}`}>
+                        <div className={`rounded-2xl p-3 text-sm transition-opacity ${isMe ? "bg-gold-500 text-onyx-950 rounded-br-sm" : "bg-onyx-800 text-white rounded-bl-sm border border-white/5"} ${isTemp ? "opacity-60" : "opacity-100"}`}>
                           {msg.content}
                         </div>
                         <span className={`mt-1 text-[9px] text-onyx-500 ${isMe ? "text-right" : "text-left"}`}>
-                          {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          {isTemp ? "جاري الإرسال..." : new Date(msg.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                         </span>
                       </div>
                     );
@@ -236,7 +357,7 @@ export function FloatingChatWidget() {
               )}
             </div>
 
-            {/* Footer / Input */}
+            {/* Input */}
             {activeChat && (
               <form onSubmit={sendMessage} className="shrink-0 border-t border-white/10 bg-onyx-900/50 p-3 flex gap-2">
                 <input

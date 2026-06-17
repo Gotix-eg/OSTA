@@ -44,6 +44,7 @@ import { dashboardCopy } from "@/lib/dashboard-copy";
 import { stripLocalePrefix, type Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
 import { NotificationsPopover } from "./notifications-popover";
+import { HeaderChatButton } from "./header-chat-button";
 
 type DashboardRole = "client" | "worker" | "vendor" | "admin";
 
@@ -111,7 +112,8 @@ export function DashboardShell({
         return;
       }
       
-      const user = await fetchApiData<any>("/auth/me", null);
+      const data = await fetchApiData<any>("/auth/me", null);
+      const user = data?.user || data;
       if (user?.role === "VENDOR") {
         const profile = user.profile;
         if (!profile?.category || !profile?.latitude) {
@@ -202,6 +204,7 @@ export function DashboardShell({
                   className="inline-flex h-12 items-center justify-center rounded-full border border-white/5 bg-white/5 px-5 text-[10px] font-bold uppercase tracking-widest text-white shadow-xl transition-all duration-500 hover:bg-white/10"
                 />
                 <NotificationsPopover locale={locale} />
+                <HeaderChatButton locale={locale} />
                 <div className="flex items-center gap-3 rounded-full border border-white/5 bg-white/5 p-1.5 pe-5 shadow-xl">
                   <div className={cn("flex h-10 w-10 items-center justify-center rounded-full shadow-inner", theme.orb, theme.ring)}>
                     <UserCircle2 className="h-5 w-5" />
@@ -254,7 +257,7 @@ function SidebarContent({
 
       <div className="relative rounded-[2rem] border border-white/5 bg-white/5 p-5 backdrop-blur-xl flex flex-col items-center">
         <div className="flex h-16 shrink-0 items-center justify-center w-full">
-          <img src="/logo.svg" alt="OSTAFY" className="h-10 w-auto object-contain" />
+          <img src="/logo.svg" alt="Ostafy" className="h-10 w-auto object-contain" />
         </div>
 
         <div className="mt-6 flex items-center justify-between rounded-2xl w-full border border-white/5 bg-white/5 px-4 py-3 text-xs">

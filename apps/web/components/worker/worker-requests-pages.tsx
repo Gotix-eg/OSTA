@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import { Briefcase, Clock3, Loader2, MapPin, Route, Wallet, Wrench } from "lucide-react";
+import { Briefcase, Clock3, Loader2, MapPin, Route, Wallet, Wrench, MessageSquare, Phone } from "lucide-react";
 
 import {
   DashboardBlock,
@@ -13,7 +13,7 @@ import {
   SubpageHero
 } from "@/components/dashboard/dashboard-subpage-primitives";
 import { useLiveApiData } from "@/hooks/use-live-api-data";
-import { patchApiData } from "@/lib/api";
+import { fetchApiData, patchApiData } from "@/lib/api";
 import type { DashboardAreaCode, DashboardServiceCode } from "@/lib/dashboard-data";
 import type { Locale } from "@/lib/locales";
 import type { WorkerActiveRequestsData, WorkerIncomingRequestsData } from "@/lib/operations-data";
@@ -80,17 +80,36 @@ export function WorkerIncomingRequestsPage({ locale, initialData }: { locale: Lo
   }, [liveData]);
 
   async function handleIncomingAction(id: string, action: "accept" | "reject") {
+    let price: number | undefined = undefined;
+
+    if (action === "accept") {
+      const promptText = isArabic
+        ? "أدخل السعر/الميزانية المقترحة لإنجاز هذا الطلب (ج.م):"
+        : "Enter your proposed price/budget for this request (EGP):";
+      const userInput = prompt(promptText);
+      if (userInput === null) {
+        return; // User clicked Cancel
+      }
+      const parsed = parseFloat(userInput);
+      if (isNaN(parsed) || parsed <= 0) {
+        alert(isArabic ? "يرجى إدخال سعر صحيح أكبر من الصفر." : "Please enter a valid price greater than zero.");
+        return;
+      }
+      price = parsed;
+    }
+
     setBusyId(id);
     setFeedback(null);
 
     try {
-      const nextData = await patchApiData<WorkerIncomingRequestsData, Record<string, string>>(
+      // Both accept and reject now return updated WorkerIncomingRequestsData
+      const nextData = await patchApiData<WorkerIncomingRequestsData, any>(
         `/workers/requests/${id}/${action}`,
-        action === "accept" ? { workerName: "Youssef El-Sharif" } : {}
+        action === "accept" ? { workerName: "Youssef El-Sharif", price } : {}
       );
 
       setData(nextData);
-      setFeedback(action === "accept" ? (isArabic ? "تم قبول الطلب" : "Request accepted") : isArabic ? "تم رفض الطلب" : "Request rejected");
+      setFeedback(action === "accept" ? (isArabic ? "تم قبول الطلب ✅" : "Request accepted ✅") : isArabic ? "تم رفض الطلب" : "Request rejected");
     } catch (error) {
       setFeedback(error instanceof Error ? error.message : isArabic ? "حدثت مشكلة" : "Something went wrong");
     } finally {
@@ -131,13 +150,22 @@ export function WorkerIncomingRequestsPage({ locale, initialData }: { locale: Lo
                 <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-3">
-                      <h2 className="text-2xl font-semibold text-white">{serviceLabels[item.service][locale]}</h2>
+                      <h2 className="text-2xl font-semibold text-white">
+                        {isArabic
+                          ? (item.serviceNameAr || serviceLabels[item.service]?.[locale] || item.service)
+                          : (item.serviceNameEn || serviceLabels[item.service]?.[locale] || item.service)}
+                      </h2>
                       <SoftBadge label={urgencyLabel(locale, item.urgency)} tone={item.urgency === "URGENT" ? "error" : item.urgency === "SAME_DAY" ? "sun" : "accent"} />
                     </div>
                     <div className="mt-4">
                       <SplitInfo
                         items={[
-                          { label: isArabic ? "المنطقة" : "Area", value: areaLabels[item.area][locale] },
+                          {
+                            label: isArabic ? "المنطقة" : "Area",
+                            value: isArabic
+                              ? (item.areaNameAr || areaLabels[item.area]?.[locale] || item.area)
+                              : (item.areaNameEn || areaLabels[item.area]?.[locale] || item.area)
+                          },
                           { label: isArabic ? "المسافة" : "Distance", value: `${formatNumber(locale, item.distanceKm, 1)} km` },
                           { label: isArabic ? "الحداثة" : "Freshness", value: isArabic ? `منذ ${formatNumber(locale, item.freshnessMinutes)} د` : `${formatNumber(locale, item.freshnessMinutes)} mins ago` },
                           { label: isArabic ? "الميزانية" : "Budget", value: `${formatCurrency(locale, item.budgetMin)} - ${formatCurrency(locale, item.budgetMax)}` }
@@ -147,6 +175,19 @@ export function WorkerIncomingRequestsPage({ locale, initialData }: { locale: Lo
                   </div>
 
                   <div className="flex flex-wrap items-center gap-3">
+                    {item.clientUserId ? (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          localStorage.setItem("osta_open_chat_user", JSON.stringify({ id: item.clientUserId, firstName: item.clientName || "", lastName: "" }));
+                          window.dispatchEvent(new Event("osta_open_chat"));
+                        }}
+                        className="rounded-full border border-onyx-700 bg-onyx-800/50 p-2.5 text-sm font-semibold text-onyx-200 shadow-soft hover:bg-white/5 transition-colors flex items-center justify-center mr-1"
+                        title={isArabic ? "محادثة العميل قبل القبول" : "Chat with Client before accepting"}
+                      >
+                        <MessageSquare className="h-4.5 w-4.5 text-gold-500" />
+                      </button>
+                    ) : null}
                     <button
                       type="button"
                       onClick={() => void handleIncomingAction(item.id, "reject")}
@@ -192,8 +233,47 @@ export function WorkerActiveRequestsPage({ locale, initialData }: { locale: Loca
 
     try {
       const nextData = await patchApiData<WorkerActiveRequestsData, Record<string, never>>(`/workers/requests/${id}/${action}`, {});
+      // Server returns updated active requests for both start and complete
+      if (nextData && typeof nextData === "object" && "requests" in nextData) {
+        setData(nextData);
+      }
+      setFeedback(
+        action === "start"
+          ? (isArabic ? "تم بدء التنفيذ ✅" : "Request started ✅")
+          : (isArabic ? "تم إنجاز الطلب ✅" : "Request completed ✅")
+      );
+    } catch (error) {
+      setFeedback(error instanceof Error ? error.message : isArabic ? "حدثت مشكلة" : "Something went wrong");
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  async function handleEditActivePrice(id: string, currentEarnings: number) {
+    const promptText = isArabic
+      ? `أدخل السعر/العائد الجديد المقترح (ج.م) [الحالي: ${formatCurrency(locale, currentEarnings)}]:`
+      : `Enter new proposed price/earnings (EGP) [Current: ${formatCurrency(locale, currentEarnings)}]:`;
+    
+    const userInput = prompt(promptText);
+    if (userInput === null) return;
+    
+    const parsed = parseFloat(userInput);
+    if (isNaN(parsed) || parsed <= 0) {
+      alert(isArabic ? "يرجى إدخال سعر صحيح أكبر من الصفر." : "Please enter a valid price greater than zero.");
+      return;
+    }
+
+    setBusyId(id);
+    setFeedback(null);
+
+    try {
+      await patchApiData<any, any>(
+        `/workers/requests/${id}/budget`,
+        { price: parsed }
+      );
+      setFeedback(isArabic ? "تم تحديث السعر بنجاح" : "Price updated successfully");
+      const nextData = await fetchApiData<WorkerActiveRequestsData>("/workers/requests/active", initialData);
       setData(nextData);
-      setFeedback(action === "start" ? (isArabic ? "تم بدء التنفيذ" : "Request started") : isArabic ? "تم النقل إلى الإنهاء" : "Moved to wrap up");
     } catch (error) {
       setFeedback(error instanceof Error ? error.message : isArabic ? "حدثت مشكلة" : "Something went wrong");
     } finally {
@@ -234,14 +314,24 @@ export function WorkerActiveRequestsPage({ locale, initialData }: { locale: Loca
                 <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-3">
-                      <h2 className="text-2xl font-semibold text-white">{serviceLabels[item.service][locale]}</h2>
+                      <h2 className="text-2xl font-semibold text-white">
+                        {isArabic
+                          ? (item.serviceNameAr || serviceLabels[item.service]?.[locale] || item.service)
+                          : (item.serviceNameEn || serviceLabels[item.service]?.[locale] || item.service)}
+                      </h2>
                       <SoftBadge label={activeStatusLabel(locale, item.status)} tone={item.status === "WRAP_UP" ? "success" : item.status === "ON_SITE" ? "sun" : "accent"} />
                     </div>
                     <div className="mt-4">
                       <SplitInfo
                         items={[
                           { label: isArabic ? "العميل" : "Client", value: item.clientName },
-                          { label: isArabic ? "المنطقة" : "Area", value: areaLabels[item.area][locale] },
+                          ...(item.clientPhone ? [{ label: isArabic ? "الهاتف" : "Phone", value: item.clientPhone }] : []),
+                          {
+                            label: isArabic ? "المنطقة" : "Area",
+                            value: isArabic
+                              ? (item.areaNameAr || areaLabels[item.area]?.[locale] || item.area)
+                              : (item.areaNameEn || areaLabels[item.area]?.[locale] || item.area)
+                          },
                           { label: isArabic ? "الفترة" : "Window", value: item.scheduledWindow },
                           { label: isArabic ? "العائد" : "Earnings", value: formatCurrency(locale, item.earnings) }
                         ]}
@@ -250,6 +340,30 @@ export function WorkerActiveRequestsPage({ locale, initialData }: { locale: Loca
                   </div>
 
                   <div className="flex flex-wrap items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        localStorage.setItem("osta_open_chat_user", JSON.stringify({ id: item.clientUserId, firstName: item.clientName, lastName: "" }));
+                        window.dispatchEvent(new Event("osta_open_chat"));
+                      }}
+                      className="rounded-full border border-onyx-700 bg-onyx-800/50 p-2.5 text-sm font-semibold text-onyx-200 shadow-soft hover:bg-white/5 transition-colors flex items-center justify-center mr-1"
+                      title={isArabic ? "محادثة العميل" : "Chat with Client"}
+                    >
+                      <MessageSquare className="h-4.5 w-4.5 text-gold-500" />
+                    </button>
+
+                    {item.status !== "WRAP_UP" && (
+                      <button
+                        type="button"
+                        onClick={() => void handleEditActivePrice(item.id, item.earnings)}
+                        disabled={busyId === item.id}
+                        className="rounded-full border border-onyx-700 bg-onyx-800/50 p-2.5 text-sm font-semibold text-onyx-200 shadow-soft hover:bg-white/5 transition-colors flex items-center justify-center mr-1 disabled:opacity-50"
+                        title={isArabic ? "تعديل السعر" : "Edit Price"}
+                      >
+                        <Wallet className="h-4.5 w-4.5 text-accent-500" />
+                      </button>
+                    )}
+
                     {item.status === "EN_ROUTE" ? (
                       <button
                         type="button"

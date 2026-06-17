@@ -1,6 +1,6 @@
 import type { Locale } from "./locales";
 
-export type PublicPageKey = "services" | "how-it-works" | "about" | "contact" | "faq";
+export type PublicPageKey = "services" | "how-it-works" | "about" | "contact" | "faq" | "terms" | "privacy" | "careers";
 
 export const publicPageCopy = {
   ar: {
@@ -109,6 +109,63 @@ export const publicPageCopy = {
             body: "في مسار شكاوى مدعوم بالأدلة ومراجعة الإدارة لضمان حفظ حقوق الطرفين."
           }
         ]
+      },
+      terms: {
+        eyebrow: "شروط الخدمة",
+        title: "اتفاقية الاستخدام وشروط الخدمة",
+        description: "شروط وقواعد استخدام منصة أُسطفاي لحفظ حقوق العملاء والفنيين.",
+        sections: [
+          {
+            title: "١) القواعد العامة",
+            body: "تلتزم منصة أُسطفاي بتوفير آلية ربط آمنة وشفافة بين العملاء ومقدمي الخدمات (الفنيين والمتاجر)."
+          },
+          {
+            title: "٢) حماية المدفوعات والضمان",
+            body: "يتم الاحتفاظ بمدفوعات العملاء بشكل آمن ولا يتم تحريرها للفني إلا بعد تأكيد تنفيذ الخدمة وضمان جودتها."
+          },
+          {
+            title: "٣) سياسة إلغاء الطلبات والنزاعات",
+            body: "تخضع جميع الطلبات والنزاعات لسياسة إلغاء واضحة مع إمكانية فتح شكوى وتدخل الإدارة للفصل وحماية حقوق الطرفين."
+          }
+        ]
+      },
+      privacy: {
+        eyebrow: "سياسة الخصوصية",
+        title: "سياسة الخصوصية وحماية البيانات",
+        description: "نلتزم في أُسطفاي بحماية خصوصية بياناتك ومعلوماتك الشخصية وتأمينها بالكامل.",
+        sections: [
+          {
+            title: "١) جمع البيانات",
+            body: "نقوم بجمع المعلومات اللازمة فقط لتقديم خدمات التوثيق والتطابق والصيانة بشكل آمن."
+          },
+          {
+            title: "٢) حماية المعلومات",
+            body: "نستخدم تقنيات تشفير متطورة لحماية بيانات الدفع والبيانات الشخصية من أي وصول غير مصرح به."
+          },
+          {
+            title: "٣) مشاركة البيانات",
+            body: "لا نقوم ببيع بياناتك الشخصية لأي طرف ثالث، ويتم مشاركتها فقط مع الفني المحدد لتنفيذ طلبك."
+          }
+        ]
+      },
+      careers: {
+        eyebrow: "الوظائف",
+        title: "انضم إلى فريق عمل أُسطفاي",
+        description: "ابنِ معنا مستقبل الخدمات المنزلية والتقنية في مصر والشرق الأوسط.",
+        sections: [
+          {
+            title: "١) بيئة العمل",
+            body: "نوفر بيئة عمل مرنة ومحفزة على الابتكار والنمو المهني المستمر."
+          },
+          {
+            title: "٢) فرص النمو",
+            body: "كن جزءًا من فريق سريع النمو يهدف إلى تغيير حياة ملايين العملاء والحرفيين."
+          },
+          {
+            title: "٣) كيفية التقديم",
+            body: "أرسل سيرتك الذاتية ومجال تخصصك إلى careers@osta.eg وسنتواصل معك فور توفر فرصة مناسبة."
+          }
+        ]
       }
     },
     dashboards: {
@@ -154,7 +211,7 @@ export const publicPageCopy = {
       services: {
         eyebrow: "Services",
         title: "Service categories built for clarity",
-        description: "From electrical and plumbing to AC work and finishing, OSTAFY organizes every service into clear, trusted booking flows.",
+        description: "From electrical and plumbing to AC work and finishing, Ostafy organizes every service into clear, trusted booking flows.",
         sections: [
           {
             title: "Core categories",
@@ -190,8 +247,8 @@ export const publicPageCopy = {
         ]
       },
       about: {
-        eyebrow: "About OSTAFY",
-        title: "OSTAFY is built around trust before booking",
+        eyebrow: "About Ostafy",
+        title: "Ostafy is built around trust before booking",
         description: "The platform connects households with verified skilled workers through a cleaner, faster, and more accountable service model.",
         sections: [
           {
@@ -210,7 +267,7 @@ export const publicPageCopy = {
       },
       contact: {
         eyebrow: "Contact",
-        title: "How to reach OSTAFY",
+        title: "How to reach Ostafy",
         description: "Support, onboarding questions, partnerships, or business requests all route through clear channels.",
         sections: [
           {
@@ -243,6 +300,63 @@ export const publicPageCopy = {
           {
             title: "If something goes wrong",
             body: "There is a complaint path with evidence support and admin review so both sides stay protected."
+          }
+        ]
+      },
+      terms: {
+        eyebrow: "Terms of Service",
+        title: "Terms of Service Agreement",
+        description: "Rules and guidelines for using the Ostafy platform to protect both clients and service providers.",
+        sections: [
+          {
+            title: "1) General Rules",
+            body: "Ostafy connects clients and verified service providers (workers/vendors) in a secure, transparent manner."
+          },
+          {
+            title: "2) Payment Protection & Warranty",
+            body: "Payments are held securely and only released to the worker once service completion is confirmed and verified."
+          },
+          {
+            title: "3) Cancellation & Disputes",
+            body: "All requests and disputes are subject to our cancellation policy, with active admin review to protect user rights."
+          }
+        ]
+      },
+      privacy: {
+        eyebrow: "Privacy Policy",
+        title: "Privacy Policy & Data Protection",
+        description: "At Ostafy, we are fully committed to protecting and securing your privacy and personal data.",
+        sections: [
+          {
+            title: "1) Data Collection",
+            body: "We only collect information necessary to securely provide verification, matching, and maintenance services."
+          },
+          {
+            title: "2) Information Security",
+            body: "We use advanced encryption technologies to protect payment details and personal data from unauthorized access."
+          },
+          {
+            title: "3) Data Sharing",
+            body: "We do not sell your personal data to third parties, and it is only shared with the selected technician to complete your order."
+          }
+        ]
+      },
+      careers: {
+        eyebrow: "Careers",
+        title: "Join the Ostafy Team",
+        description: "Build the future of home and technical services in Egypt and the Middle East with us.",
+        sections: [
+          {
+            title: "1) Work Environment",
+            body: "We provide a flexible work environment that fosters innovation and continuous professional growth."
+          },
+          {
+            title: "2) Growth Opportunities",
+            body: "Be part of a fast-growing team aiming to impact the lives of millions of clients and craftspeople."
+          },
+          {
+            title: "3) How to Apply",
+            body: "Send your resume and area of expertise to careers@osta.eg and we will reach out as soon as a suitable opportunity opens."
           }
         ]
       }

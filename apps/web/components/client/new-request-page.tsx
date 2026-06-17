@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useSearchParams } from "next/navigation";
 
 import Link from "next/link";
 import {
@@ -98,6 +99,41 @@ const savedAddresses = [
   { id: "villa-maadi", ar: "الفيلا - المعادي", en: "Villa - Maadi" },
 ];
 
+const statusTranslations: Record<string, { ar: string; en: string }> = {
+  PENDING: { ar: "قيد الانتظار", en: "Pending" },
+  ACCEPTED: { ar: "تم القبول", en: "Accepted" },
+  WORKER_EN_ROUTE: { ar: "العامل في الطريق", en: "Worker en route" },
+  IN_PROGRESS: { ar: "قيد التنفيذ", en: "In progress" },
+  COMPLETED: { ar: "مكتمل", en: "Completed" },
+  CANCELLED: { ar: "ملغي", en: "Cancelled" },
+};
+
+const reviewEtaTranslations: Record<string, { ar: string; en: string }> = {
+  "Within 5 minutes": { ar: "خلال 5 دقائق", en: "Within 5 minutes" },
+};
+
+function translateArea(area: string, locale: Locale) {
+  const translations: Record<string, { ar: string; en: string }> = {
+    "القاهرة": { ar: "القاهرة", en: "Cairo" },
+    "Cairo": { ar: "القاهرة", en: "Cairo" },
+    "المنطقة": { ar: "المنطقة", en: "District" },
+    "District": { ar: "المنطقة", en: "District" },
+    "الشارع الرئيسي": { ar: "الشارع الرئيسي", en: "Main Street" },
+    "Main Street": { ar: "الشارع الرئيسي", en: "Main Street" },
+    "المعادي": { ar: "المعادي", en: "Maadi" },
+    "Maadi": { ar: "المعادي", en: "Maadi" },
+    "القاهرة الجديدة": { ar: "القاهرة الجديدة", en: "New Cairo" },
+    "New Cairo": { ar: "القاهرة الجديدة", en: "New Cairo" },
+    "التجمع الخامس": { ar: "التجمع الخامس", en: "Fifth Settlement" },
+    "Fifth Settlement": { ar: "التجمع الخامس", en: "Fifth Settlement" },
+    "Unknown": { ar: "غير معروف", en: "Unknown" },
+    "Pending": { ar: "قيد التحديد", en: "Pending" },
+    "قيد التحديد": { ar: "قيد التحديد", en: "Pending" },
+  };
+
+  return translations[area]?.[locale] || area;
+}
+
 function usePersistentDraft(key: string) {
   const [draft, setDraft] = useState<RequestDraft>(initialDraft);
   const [ready, setReady] = useState(false);
@@ -194,12 +230,28 @@ const fileToBase64 = (file: File): Promise<string> => {
 
 export function NewRequestPage({ locale }: { locale: Locale }) {
   const isArabic = locale === "ar";
+  const searchParams = useSearchParams();
+  const workerId = searchParams?.get("workerId");
+  const queryCategoryId = searchParams?.get("categoryId");
+  const queryServiceId = searchParams?.get("serviceId");
+
   const { draft, ready, setDraft } = usePersistentDraft(draftStorageKey);
   const [step, setStep] = useState(0);
   const [submittedRequest, setSubmittedRequest] =
     useState<CreatedRequest | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (ready && workerId && queryCategoryId && queryServiceId) {
+      setDraft((prev) => ({
+        ...prev,
+        categoryId: queryCategoryId,
+        serviceId: queryServiceId,
+      }));
+      setStep(1);
+    }
+  }, [ready, workerId, queryCategoryId, queryServiceId, setDraft]);
 
   const selectedCategory = serviceCategories.find(
     (item) => item.id === draft.categoryId,
@@ -271,6 +323,7 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
         title: draft.title,
         description: draft.description,
         mediaNotes: draft.mediaNotes,
+        workerId: workerId || undefined,
         address: {
           mode: "new",
           governorate:
@@ -340,7 +393,11 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
             />
             <MiniMetric
               label={isArabic ? "الحالة" : "Status"}
-              value={submittedRequest.status || "PENDING"}
+              value={
+                statusTranslations[submittedRequest.status]?.[locale] ||
+                submittedRequest.status ||
+                (isArabic ? "قيد الانتظار" : "Pending")
+              }
               note={isArabic ? "تم الإنشاء الآن" : "freshly created"}
               icon={CheckCircle2}
               tone="sun"
@@ -348,7 +405,9 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
             <MiniMetric
               label={isArabic ? "المنطقة" : "Area"}
               value={
-                submittedRequest.area || (isArabic ? "قيد التحديد" : "Pending")
+                submittedRequest.area
+                  ? translateArea(submittedRequest.area, locale)
+                  : (isArabic ? "قيد التحديد" : "Pending")
               }
               note={isArabic ? "موقع الخدمة" : "service location"}
               icon={MapPin}
@@ -356,8 +415,12 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
             />
             <MiniMetric
               label={isArabic ? "زمن المراجعة" : "Review ETA"}
-              value={submittedRequest.reviewEta || "5m"}
-              note={isArabic ? "تسليم التشغبل" : "ops handoff"}
+              value={
+                reviewEtaTranslations[submittedRequest.reviewEta]?.[locale] ||
+                submittedRequest.reviewEta ||
+                (isArabic ? "خلال 5 دقائق" : "Within 5 minutes")
+              }
+              note={isArabic ? "تسليم التشغيل" : "ops handoff"}
               icon={Clock3}
               tone="dark"
             />

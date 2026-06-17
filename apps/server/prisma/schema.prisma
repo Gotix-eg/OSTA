@@ -270,6 +270,8 @@ model WorkerProfile {
   subscriptionTier      String                   @default("free")
   acceptanceRate        Float                    @default(100)
   avgResponseTime       Int                      @default(0)
+  notificationsEnabledApp   Boolean                  @default(true)
+  notificationsEnabledEmail Boolean                  @default(true)
   createdAt             DateTime                 @default(now())
   updatedAt             DateTime                 @updatedAt
   user                  User                     @relation(fields: [userId], references: [id], onDelete: Cascade)

@@ -1,8 +1,16 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { PublicContentPage } from "@/components/public/public-pages";
+import { AboutProfileCustom } from "@/components/public/about-profile-custom";
 import { PublicShell } from "@/components/public/public-shell";
-import { isLocale } from "@/lib/locales";
+import { isLocale, type Locale } from "@/lib/locales";
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return {
+    title: locale === "ar" ? "من نحن" : "About Us"
+  };
+}
 
 export default async function AboutPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -10,8 +18,11 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
   if (!isLocale(locale)) notFound();
 
   return (
-    <PublicShell locale={locale} pathname="/about">
-      <PublicContentPage locale={locale} pageKey="about" />
+    <PublicShell locale={locale as Locale} pathname="/about">
+      <div className="section-shell py-12">
+        <AboutProfileCustom locale={locale as Locale} />
+      </div>
     </PublicShell>
   );
 }
+

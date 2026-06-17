@@ -6,7 +6,7 @@ import { serifFont, sansFont, displayFont } from "@/lib/fonts";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "OSTAFY | Skilled Workers Platform",
+  title: "Ostafy | Skilled Workers Platform",
   description: "Premium bilingual platform connecting Egyptian households with verified skilled workers."
 };
 

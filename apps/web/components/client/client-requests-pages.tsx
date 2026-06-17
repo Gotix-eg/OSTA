@@ -16,7 +16,8 @@ import {
   Wrench,
   Store,
   MessageSquare,
-  ShoppingBag
+  ShoppingBag,
+  Star
 } from "lucide-react";
 
 import { serviceCategories } from "@/lib/shared";
@@ -31,6 +32,7 @@ import {
   SubpageHero
 } from "@/components/dashboard/dashboard-subpage-primitives";
 import { useLiveApiData } from "@/hooks/use-live-api-data";
+import { patchApiData } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
 import type { ClientRequestDetailData, ClientRequestListItem } from "@/lib/operations-data";
 
@@ -39,6 +41,11 @@ const savedAddresses = {
   "villa-maadi": { ar: "الفيلا - المعادي", en: "Villa - Maadi" }
 } as const;
 
+function formatPrice(locale: Locale, price: number) {
+  const n = new Intl.NumberFormat(locale === "ar" ? "ar-EG" : "en-US", { maximumFractionDigits: 0 }).format(price);
+  return locale === "ar" ? `${n} ج.م` : `EGP ${n}`;
+}
+
 function formatDate(locale: Locale, value: string) {
   return new Intl.DateTimeFormat(locale === "ar" ? "ar-EG" : "en-US", {
     dateStyle: "medium",
@@ -46,27 +53,67 @@ function formatDate(locale: Locale, value: string) {
   }).format(new Date(value));
 }
 
-function getServiceName(serviceId: string, locale: Locale) {
+function getServiceName(item: any, locale: Locale) {
+  if (item && typeof item === "object") {
+    if (locale === "ar" && item.serviceNameAr) return item.serviceNameAr;
+    if (locale === "en" && item.serviceNameEn) return item.serviceNameEn;
+    const serviceId = item.serviceId;
+    for (const category of serviceCategories) {
+      const service = category.services.find((s) => s.id === serviceId);
+      if (service) return service.name[locale];
+    }
+    return serviceId;
+  }
+
+  const serviceId = String(item);
   for (const category of serviceCategories) {
-    const service = category.services.find((item) => item.id === serviceId);
+    const service = category.services.find((s) => s.id === serviceId);
     if (service) return service.name[locale];
   }
 
   return serviceId;
 }
 
-function getStatusMeta(locale: Locale, status: ClientRequestListItem["status"]) {
-  const labels = {
-    PENDING: { ar: "قيد المراجعة", en: "Pending review", tone: "sun" as const },
-    WORKER_EN_ROUTE: { ar: "العامل في الطريق", en: "Worker en route", tone: "accent" as const },
-    IN_PROGRESS: { ar: "قيد التنفيذ", en: "In progress", tone: "primary" as const },
-    COMPLETED: { ar: "مكتمل", en: "Completed", tone: "success" as const }
-  } as const;
-
-  return {
-    label: labels[status][locale],
-    tone: labels[status].tone
+function getStatusMeta(locale: Locale, status: string) {
+  const labels: Record<string, { ar: string; en: string; tone: "sun" | "accent" | "primary" | "success" | "error" }> = {
+    PENDING: { ar: "قيد الانتظار", en: "Pending", tone: "sun" },
+    ACCEPTED: { ar: "تم القبول", en: "Accepted", tone: "primary" },
+    WORKER_EN_ROUTE: { ar: "العامل في الطريق", en: "Worker en route", tone: "accent" },
+    IN_PROGRESS: { ar: "قيد التنفيذ", en: "In progress", tone: "primary" },
+    COMPLETED: { ar: "مكتمل", en: "Completed", tone: "success" },
+    CONFIRMED_BY_CLIENT: { ar: "مؤكد من العميل", en: "Confirmed by client", tone: "success" },
+    CANCELLED_BY_CLIENT: { ar: "ملغي من العميل", en: "Cancelled by client", tone: "error" },
+    CANCELLED_BY_WORKER: { ar: "ملغي من الفني", en: "Cancelled by worker", tone: "error" },
+    DISPUTED: { ar: "قيد النزاع", en: "Disputed", tone: "error" },
   };
+
+  const meta = labels[status] || { ar: status, en: status, tone: "sun" };
+  return {
+    label: meta[locale],
+    tone: meta.tone
+  };
+}
+
+function translateArea(area: string, locale: Locale) {
+  const translations: Record<string, { ar: string; en: string }> = {
+    "القاهرة": { ar: "القاهرة", en: "Cairo" },
+    "Cairo": { ar: "القاهرة", en: "Cairo" },
+    "المنطقة": { ar: "المنطقة", en: "District" },
+    "District": { ar: "المنطقة", en: "District" },
+    "الشارع الرئيسي": { ar: "الشارع الرئيسي", en: "Main Street" },
+    "Main Street": { ar: "الشارع الرئيسي", en: "Main Street" },
+    "المعادي": { ar: "المعادي", en: "Maadi" },
+    "Maadi": { ar: "المعادي", en: "Maadi" },
+    "القاهرة الجديدة": { ar: "القاهرة الجديدة", en: "New Cairo" },
+    "New Cairo": { ar: "القاهرة الجديدة", en: "New Cairo" },
+    "التجمع الخامس": { ar: "التجمع الخامس", en: "Fifth Settlement" },
+    "Fifth Settlement": { ar: "التجمع الخامس", en: "Fifth Settlement" },
+    "Unknown": { ar: "غير معروف", en: "Unknown" },
+    "Pending": { ar: "قيد التحديد", en: "Pending" },
+    "قيد التحديد": { ar: "قيد التحديد", en: "Pending" },
+  };
+
+  return translations[area]?.[locale] || area;
 }
 
 function formatTiming(locale: Locale, timing: ClientRequestDetailData["timing"]) {
@@ -82,7 +129,10 @@ function resolveAddress(locale: Locale, detail: ClientRequestDetailData) {
     return saved ? saved[locale] : locale === "ar" ? "عنوان محفوظ" : "Saved address";
   }
 
-  return [detail.address.governorate, detail.address.city, detail.address.district, detail.address.street].filter(Boolean).join(", ");
+  return [detail.address.governorate, detail.address.city, detail.address.district, detail.address.street]
+    .filter(Boolean)
+    .map((val) => translateArea(val || "", locale))
+    .join(", ");
 }
 
 export interface CustomRequestItem {
@@ -541,8 +591,8 @@ export function ClientRequestsPage({ locale, initialData }: { locale: Locale; in
                           <SplitInfo
                             items={[
                               { label: isArabic ? "رقم الطلب" : "Request no", value: item.requestNumber },
-                              { label: isArabic ? "الخدمة" : "Service", value: getServiceName(item.serviceId, locale) },
-                              { label: isArabic ? "المنطقة" : "Area", value: item.area },
+                              { label: isArabic ? "الخدمة" : "Service", value: getServiceName(item, locale) },
+                              { label: isArabic ? "المنطقة" : "Area", value: translateArea(item.area, locale) },
                               { label: isArabic ? "تاريخ الإنشاء" : "Created", value: formatDate(locale, item.createdAt) }
                             ]}
                           />
@@ -578,6 +628,31 @@ export function ClientRequestDetailPage({ locale, requestId, initialData }: { lo
   const data = useLiveApiData(`/clients/requests/${requestId}`, initialData);
   const status = getStatusMeta(locale, data.status);
 
+  const currentPrice = data.finalPrice || data.estimatedPrice || 0;
+
+  const handleEditBudget = async () => {
+    const promptText = isArabic
+      ? `أدخل الميزانية/السعر الجديد المقترح (ج.م) [الحالي: ${currentPrice ? formatPrice(locale, currentPrice) : "غير محدد"}]:`
+      : `Enter new proposed budget/price (EGP) [Current: ${currentPrice ? formatPrice(locale, currentPrice) : "none"}]:`;
+    
+    const userInput = prompt(promptText);
+    if (userInput === null) return;
+    
+    const parsed = parseFloat(userInput);
+    if (isNaN(parsed) || parsed <= 0) {
+      alert(isArabic ? "يرجى إدخال سعر صحيح أكبر من الصفر." : "Please enter a valid price greater than zero.");
+      return;
+    }
+
+    try {
+      await patchApiData(`/clients/requests/${requestId}/budget`, { price: parsed });
+      alert(isArabic ? "تم تحديث الميزانية بنجاح" : "Budget updated successfully");
+      window.location.reload();
+    } catch (err: any) {
+      alert(err.message || (isArabic ? "فشل تعديل الميزانية" : "Failed to update budget"));
+    }
+  };
+
   return (
     <div>
       <SubpageHero
@@ -591,9 +666,9 @@ export function ClientRequestDetailPage({ locale, requestId, initialData }: { lo
 
       <div className="mb-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <MiniMetric label={isArabic ? "الحالة" : "Status"} value={status.label} note={isArabic ? "الحالة الحالية للطلب" : "current request state"} icon={ShieldCheck} tone="primary" />
-        <MiniMetric label={isArabic ? "الخدمة" : "Service"} value={getServiceName(data.serviceId, locale)} note={isArabic ? "الفئة المطلوبة" : "requested category"} icon={Wrench} tone="sun" />
+        <MiniMetric label={isArabic ? "الخدمة" : "Service"} value={getServiceName(data, locale)} note={isArabic ? "الفئة المطلوبة" : "requested category"} icon={Wrench} tone="sun" />
         <MiniMetric label={isArabic ? "التوقيت" : "Timing"} value={formatTiming(locale, data.timing)} note={isArabic ? "الموعد المفضل" : "preferred schedule"} icon={Clock3} tone="accent" />
-        <MiniMetric label={isArabic ? "المنطقة" : "Area"} value={data.area} note={isArabic ? "منطقة الخدمة" : "delivery zone"} icon={MapPin} tone="dark" />
+        <MiniMetric label={isArabic ? "المنطقة" : "Area"} value={translateArea(data.area, locale)} note={isArabic ? "منطقة الخدمة" : "delivery zone"} icon={MapPin} tone="dark" />
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
@@ -601,7 +676,7 @@ export function ClientRequestDetailPage({ locale, requestId, initialData }: { lo
           <div className="grid gap-4">
             <SoftCard>
               <p className="text-xs uppercase tracking-[0.22em] text-onyx-500">{isArabic ? "الخدمة" : "Service"}</p>
-              <p className="mt-3 text-lg font-semibold text-white">{getServiceName(data.serviceId, locale)}</p>
+              <p className="mt-3 text-lg font-semibold text-white">{getServiceName(data, locale)}</p>
             </SoftCard>
             <SoftCard>
               <p className="text-xs uppercase tracking-[0.22em] text-onyx-500">{isArabic ? "الوصف" : "Description"}</p>
@@ -610,6 +685,24 @@ export function ClientRequestDetailPage({ locale, requestId, initialData }: { lo
             <SoftCard>
               <p className="text-xs uppercase tracking-[0.22em] text-onyx-500">{isArabic ? "ملاحظات الوسائط" : "Media notes"}</p>
               <p className="mt-3 text-sm leading-7 text-onyx-300">{data.mediaNotes || (isArabic ? "لا توجد ملاحظات" : "No notes added")}</p>
+            </SoftCard>
+            <SoftCard>
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.22em] text-onyx-500">{isArabic ? "الميزانية / السعر" : "Budget / Price"}</p>
+                  <p className="mt-3 text-lg font-semibold text-white">
+                    {currentPrice > 0 ? formatPrice(locale, currentPrice) : (isArabic ? "غير محدد" : "Not specified")}
+                  </p>
+                </div>
+                {["PENDING", "ACCEPTED", "WORKER_EN_ROUTE", "IN_PROGRESS"].includes(data.status) && (
+                  <button
+                    onClick={handleEditBudget}
+                    className="rounded-full bg-white/5 border border-white/10 px-4 py-2 text-xs font-semibold text-gold-500 hover:bg-white/10 transition-colors"
+                  >
+                    {isArabic ? "تعديل السعر" : "Edit Price"}
+                  </button>
+                )}
+              </div>
             </SoftCard>
           </div>
         </DashboardBlock>
@@ -637,6 +730,51 @@ export function ClientRequestDetailPage({ locale, requestId, initialData }: { lo
           </div>
         </DashboardBlock>
       </div>
+
+      {data.worker && (
+        <div className="mt-6">
+          <DashboardBlock title={isArabic ? "الفني المعين" : "Assigned Pro"} eyebrow={isArabic ? "تفاصيل الاتصال" : "contact profile"}>
+            <div className="onyx-card p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-gold-500/10">
+              <div className="flex items-center gap-4">
+                <div className="h-16 w-16 rounded-2xl bg-onyx-800 border border-white/10 flex items-center justify-center text-gold-500 text-xl font-bold overflow-hidden">
+                  {data.worker.avatarUrl ? (
+                    <img src={data.worker.avatarUrl} alt="" className="h-full w-full object-cover" />
+                  ) : (
+                    data.worker.name.charAt(0)
+                  )}
+                </div>
+                <div>
+                  <h4 className="text-lg font-black text-white">{data.worker.name}</h4>
+                  <div className="flex items-center gap-1.5 mt-1 text-sm text-gold-500 font-bold">
+                    <Star className="h-4 w-4 fill-current" />
+                    <span>{data.worker.rating.toFixed(1)}</span>
+                  </div>
+                  {data.worker.phone ? (
+                    <p className="text-sm font-semibold text-white mt-1.5">{data.worker.phone}</p>
+                  ) : (
+                    <p className="text-xs text-amber-500 mt-1.5">
+                      {isArabic ? "سيظهر رقم الهاتف بعد قبول الطلب من الطرفين" : "Phone number will appear after order is accepted"}
+                    </p>
+                  )}
+                </div>
+              </div>
+              
+              <button
+                onClick={() => {
+                  if (data.worker) {
+                    localStorage.setItem("osta_open_chat_user", JSON.stringify({ id: data.worker.userId, firstName: data.worker.name, lastName: "" }));
+                    window.dispatchEvent(new Event("osta_open_chat"));
+                  }
+                }}
+                className="btn-gold py-3 px-6 text-sm font-black flex items-center justify-center gap-2 group/btn shadow-md shrink-0"
+              >
+                <MessageSquare className="h-4 w-4" />
+                <span>{isArabic ? "محادثة الفني" : "Chat with Pro"}</span>
+              </button>
+            </div>
+          </DashboardBlock>
+        </div>
+      )}
     </div>
   );
 }
