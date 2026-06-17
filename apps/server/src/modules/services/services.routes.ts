@@ -74,7 +74,7 @@ router.get("/categories", catchAsync(async (_request, response) => {
 
 router.get("/categories/:slug", catchAsync(async (request, response) => {
   const category = await prisma.serviceCategory.findFirst({
-    where: { slug: request.params.slug, isActive: true },
+    where: { slug: request.params.slug as string, isActive: true },
     include: { services: { where: { isActive: true }, orderBy: { sortOrder: "asc" } } }
   });
 
@@ -116,7 +116,7 @@ router.get("/", catchAsync(async (_request, response) => {
 
 router.get("/:slug", catchAsync(async (request, response) => {
   const dbService = await prisma.service.findFirst({
-    where: { slug: request.params.slug, isActive: true },
+    where: { slug: request.params.slug as string, isActive: true },
     include: {
       category: {
         select: {
