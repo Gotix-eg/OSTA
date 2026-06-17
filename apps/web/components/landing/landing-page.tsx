@@ -14,6 +14,27 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/locales";
 import { LocaleSwitcher } from "@/components/shared/locale-switcher";
+import { useLiveApiData } from "@/hooks/use-live-api-data";
+
+function getCategoryColor(slug: string): string {
+  const colors: Record<string, string> = {
+    electricity: "from-yellow-400 to-gold-600",
+    electrical: "from-yellow-400 to-gold-600",
+    plumbing: "from-blue-400 to-blue-600",
+    carpentry: "from-amber-600 to-amber-800",
+    ac: "from-cyan-400 to-cyan-600",
+    "ac-maintenance": "from-cyan-400 to-cyan-600",
+    appliances: "from-purple-400 to-purple-600",
+    painting: "from-rose-400 to-rose-600",
+    aluminum: "from-slate-400 to-slate-600",
+    networks: "from-indigo-400 to-indigo-600",
+    computer: "from-emerald-400 to-emerald-600",
+    "computer-repair": "from-emerald-400 to-emerald-600",
+    cctv: "from-red-400 to-red-600",
+    cameras: "from-red-400 to-red-600",
+  };
+  return colors[slug] || "from-gold-400 to-gold-600";
+}
 
 const CRAFTS = [
   { id: "electricity", name: { ar: "الكهرباء", en: "Electrical" }, image: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=1000&auto=format&fit=crop&v=osta4", color: "from-yellow-400 to-gold-600" },
@@ -45,6 +66,17 @@ function cleanImageUrl(url: string): string {
 
 export function LandingPage({ locale }: { locale: Locale }) {
   const isArabic = locale === "ar";
+  const liveCategories = useLiveApiData<any[]>("/services/categories", []);
+
+  const displayCrafts = liveCategories.length > 0
+    ? liveCategories.map((cat) => ({
+        id: cat.slug,
+        name: { ar: cat.nameAr, en: cat.nameEn },
+        image: cat.imageUrl || "https://images.unsplash.com/photo-1581092160562-40aa08e78837?q=80&w=800&auto=format&fit=crop",
+        color: getCategoryColor(cat.slug),
+      }))
+    : CRAFTS;
+
   const pathname = usePathname() || "";
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [slides, setSlides] = useState<any[]>([]);
@@ -292,7 +324,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
             viewport={{ once: true }}
             className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6"
           >
-            {CRAFTS.map((craft) => (
+            {displayCrafts.map((craft) => (
               <motion.div key={craft.id} variants={itemVariants}>
                 <Link href={`/${locale}/services/${craft.id}`} className="group block p-6 onyx-card hover:border-gold-500/50 transition-all duration-500 hover:-translate-y-2">
                   <div className={cn(

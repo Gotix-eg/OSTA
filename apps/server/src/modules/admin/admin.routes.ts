@@ -466,4 +466,93 @@ router.post("/vendors/:id/verify", catchAsync(async (request, response) => {
   response.json(successResponse(updated, "Vendor verified and 30-day trial started successfully"));
 }));
 
+// --- SERVICE CATEGORIES MANAGEMENT ---
+
+const updateCategorySchema = z.object({
+  nameAr: z.string().optional(),
+  nameEn: z.string().optional(),
+  icon: z.string().optional(),
+  imageUrl: z.string().nullable().optional(),
+  sortOrder: z.number().optional(),
+  isActive: z.boolean().optional()
+});
+
+// GET /api/admin/services/categories — List all service categories for admin
+router.get("/services/categories", catchAsync(async (_request, response) => {
+  let categories = await prisma.serviceCategory.findMany({
+    orderBy: { sortOrder: "asc" }
+  });
+
+  // If empty, seed from default categories
+  if (categories.length === 0) {
+    const defaultImages: Record<string, string> = {
+      "electrical": "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=1000&auto=format&fit=crop&v=osta4",
+      "plumbing": "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?q=80&w=1000&auto=format&fit=crop&v=osta5",
+      "carpentry": "https://images.unsplash.com/photo-1601058268499-e52658b8bb88?q=80&w=1000&auto=format&fit=crop&v=osta4",
+      "ac": "/images/services/ac.jpg",
+      "appliances": "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?q=80&w=1000&auto=format&fit=crop&v=osta4",
+      "painting": "https://images.unsplash.com/photo-1562259949-e8e7689d7828?q=80&w=1000&auto=format&fit=crop&v=osta4",
+      "aluminum": "/images/services/aluminum.jpg",
+      "networks": "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?q=80&w=1000&auto=format&fit=crop&v=osta4",
+      "computer-repair": "https://images.unsplash.com/photo-1588508065123-287b28e013da?q=80&w=1000&auto=format&fit=crop&v=osta4",
+      "cctv": "/images/services/cam.jpg"
+    };
+
+    const { serviceCategories: defaultCats } = await import("../../data/services.js");
+
+    for (let i = 0; i < defaultCats.length; i++) {
+      const cat = defaultCats[i];
+      const slug = cat.slug;
+      await prisma.serviceCategory.upsert({
+        where: { slug },
+        update: {},
+        create: {
+          nameAr: cat.name.ar,
+          nameEn: cat.name.en,
+          slug,
+          icon: cat.icon,
+          imageUrl: defaultImages[slug] || null,
+          sortOrder: i,
+          isActive: true
+        }
+      });
+    }
+
+    categories = await prisma.serviceCategory.findMany({
+      orderBy: { sortOrder: "asc" }
+    });
+  }
+
+  response.json(successResponse(categories, "Service categories fetched successfully"));
+}));
+
+// PUT /api/admin/services/categories/:id — Update a service category
+router.put("/services/categories/:id", catchAsync(async (request, response) => {
+  const id = request.params.id as string;
+  const payload = updateCategorySchema.parse(request.body ?? {});
+
+  const category = await prisma.serviceCategory.findUnique({
+    where: { id }
+  });
+
+  if (!category) {
+    response.status(404).json({ success: false, message: "Category not found", error: "NOT_FOUND" });
+    return;
+  }
+
+  const updated = await prisma.serviceCategory.update({
+    where: { id },
+    data: {
+      nameAr: payload.nameAr !== undefined ? payload.nameAr : category.nameAr,
+      nameEn: payload.nameEn !== undefined ? payload.nameEn : category.nameEn,
+      icon: payload.icon !== undefined ? payload.icon : category.icon,
+      imageUrl: payload.imageUrl !== undefined ? payload.imageUrl : category.imageUrl,
+      sortOrder: payload.sortOrder !== undefined ? payload.sortOrder : category.sortOrder,
+      isActive: payload.isActive !== undefined ? payload.isActive : category.isActive
+    }
+  });
+
+  response.json(successResponse(updated, "Service category updated successfully"));
+}));
+
 export const adminRouter = router;

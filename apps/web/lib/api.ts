@@ -99,3 +99,24 @@ export async function patchApiData<TResponse, TBody>(path: string, body?: TBody)
 
   return payload.data;
 }
+
+export async function putApiData<TResponse, TBody>(path: string, body?: TBody) {
+  const response = await fetch(`${getApiBaseUrl()}${path}`, {
+    method: "PUT",
+    credentials: "include",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: typeof window !== "undefined" ? `Bearer ${window.localStorage.getItem("osta_access_token") || window.sessionStorage.getItem("osta_access_token") || ""}` : ""
+    },
+    body: body === undefined ? undefined : JSON.stringify(body)
+  });
+
+  const payload = (await response.json()) as ApiEnvelope<TResponse>;
+
+  if (!response.ok || !payload.success || payload.data === undefined) {
+    throw new Error(payload.error ?? payload.message ?? `Request failed with ${response.status}`);
+  }
+
+  return payload.data;
+}

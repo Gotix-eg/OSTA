@@ -15,6 +15,7 @@ interface ServiceCategory {
   nameEn: string;
   slug: string;
   icon: string;
+  imageUrl?: string | null;
 }
 
 const serviceImages: Record<string, string> = {
@@ -87,7 +88,7 @@ export function ServicesListing({ locale }: { locale: Locale }) {
         ) : (
           categories.map((cat) => {
             const Icon = iconMap[cat.icon] || Settings;
-            const imgUrl = serviceImages[cat.slug] || serviceImages[cat.icon] || "https://images.unsplash.com/photo-1581092160562-40aa08e78837?q=80&w=800&auto=format&fit=crop";
+            const imgUrl = cat.imageUrl || serviceImages[cat.slug] || serviceImages[cat.icon] || "https://images.unsplash.com/photo-1581092160562-40aa08e78837?q=80&w=800&auto=format&fit=crop";
             return (
               <Link 
                 key={cat.id} 
