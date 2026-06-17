@@ -873,7 +873,6 @@ export function LandingPage({ locale }: { locale: Locale }) {
                         e.currentTarget.style.display = 'none';
                       }}
                     />
-                    <div className={cn("absolute inset-0 bg-gradient-to-br opacity-20 transition-opacity duration-500 group-hover:opacity-30", craft.color)} />
                     <div className="absolute inset-0 bg-gradient-to-t from-onyx-950/90 via-onyx-950/20 to-transparent" />
                     <div className="absolute inset-0 flex items-center justify-center">
                       <div className="h-14 w-14 rounded-2xl bg-onyx-900/60 border border-white/10 backdrop-blur-md flex items-center justify-center text-white shadow-xl transition-all duration-500 group-hover:scale-110 group-hover:bg-gold-500 group-hover:text-onyx-950 group-hover:border-gold-500 group-hover:shadow-gold-500/20">
