@@ -351,10 +351,6 @@ export function LandingPage({ locale }: { locale: Locale }) {
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
             >
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold-500/10 border border-gold-500/20 text-gold-500 text-xs font-bold mb-6">
-                <ShieldCheck className="h-3.5 w-3.5" />
-                {isArabic ? currentSlide.eyebrowAr : currentSlide.eyebrowEn}
-              </div>
               <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-[1.15] mb-6 tracking-tight">
                 {isArabic ? currentSlide.titleAr : currentSlide.titleEn}
               </h1>
