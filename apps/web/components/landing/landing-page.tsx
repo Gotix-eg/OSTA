@@ -39,6 +39,10 @@ function getCategoryColor(slug: string): string {
   return colors[slug] || "from-gold-400 to-gold-600";
 }
 
+const iconMap: Record<string, any> = {
+  Zap, Waves, Hammer, Wind, Smartphone, Palette, Layout, Globe, Monitor, Camera, Droplets, Wrench, PaintBucket, Network, Settings
+};
+
 const CRAFTS = [
   { id: "electricity", name: { ar: "الكهرباء", en: "Electrical" }, image: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=1000&auto=format&fit=crop&v=osta4", color: "from-yellow-400 to-gold-600", icon: Zap },
   { id: "plumbing", name: { ar: "السباكة", en: "Plumbing" }, image: "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?q=80&w=1000&auto=format&fit=crop&v=osta5", color: "from-blue-400 to-blue-600", icon: Droplets },
@@ -139,6 +143,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
         name: { ar: cat.nameAr, en: cat.nameEn },
         image: cat.imageUrl || "https://images.unsplash.com/photo-1581092160562-40aa08e78837?q=80&w=800&auto=format&fit=crop",
         color: getCategoryColor(cat.slug),
+        icon: iconMap[cat.icon] || Settings,
       }))
     : CRAFTS;
 
