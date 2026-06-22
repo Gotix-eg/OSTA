@@ -2,10 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { 
-  Zap, Waves, Hammer, Wind, Smartphone, Palette, Layout, 
-  Network, Monitor, Camera, Settings, ShieldCheck, 
   Loader2, Save, ArrowRight, ArrowLeft, Check, Image as ImageIcon,
-  Edit2, Eye, EyeOff
+  Edit2, Eye, EyeOff, ShieldCheck
 } from "lucide-react";
 import { fetchApiData, putApiData } from "@/lib/api";
 import { ImageUpload } from "@/components/shared/image-upload";
@@ -23,24 +21,7 @@ type ServiceCategory = {
   isActive: boolean;
 };
 
-const iconMap: Record<string, any> = {
-  Zap, Waves, Hammer, Wind, Smartphone, Palette, Layout, Network, Monitor, Camera, Settings, ShieldCheck
-};
 
-const ICON_OPTIONS = [
-  { value: "Zap", label: "Zap (الكهرباء)" },
-  { value: "Waves", label: "Waves (السباكة)" },
-  { value: "Hammer", label: "Hammer (النجارة)" },
-  { value: "Wind", label: "Wind (التكييفات)" },
-  { value: "Smartphone", label: "Smartphone (صيانة أجهزة)" },
-  { value: "Palette", label: "Palette (الدهانات)" },
-  { value: "Layout", label: "Layout (الوميتال)" },
-  { value: "Network", label: "Network (الشبكات)" },
-  { value: "Monitor", label: "Monitor (صيانة كمبيوتر)" },
-  { value: "Camera", label: "Camera (تركيب كاميرات)" },
-  { value: "Settings", label: "Settings (إعدادات)" },
-  { value: "ShieldCheck", label: "ShieldCheck (أمان)" }
-];
 
 export function AdminServicesPage({ locale }: { locale: Locale }) {
   const isArabic = locale === "ar";
@@ -54,7 +35,6 @@ export function AdminServicesPage({ locale }: { locale: Locale }) {
   const [formData, setFormData] = useState({
     nameAr: "",
     nameEn: "",
-    icon: "Zap",
     imageUrl: "",
     sortOrder: 0,
     isActive: true
@@ -87,7 +67,6 @@ export function AdminServicesPage({ locale }: { locale: Locale }) {
     setFormData({
       nameAr: cat.nameAr,
       nameEn: cat.nameEn,
-      icon: cat.icon || "Zap",
       imageUrl: cat.imageUrl || "",
       sortOrder: cat.sortOrder,
       isActive: cat.isActive
@@ -108,7 +87,6 @@ export function AdminServicesPage({ locale }: { locale: Locale }) {
         {
           nameAr: formData.nameAr,
           nameEn: formData.nameEn,
-          icon: formData.icon,
           imageUrl: formData.imageUrl || null,
           sortOrder: Number(formData.sortOrder),
           isActive: formData.isActive
@@ -160,7 +138,6 @@ export function AdminServicesPage({ locale }: { locale: Locale }) {
             </h2>
             <div className="grid gap-3 max-h-[600px] overflow-y-auto pr-2">
               {categories.map((cat) => {
-                const IconComponent = iconMap[cat.icon || "Zap"] || Zap;
                 const isSelected = selectedId === cat.id;
 
                 return (
@@ -175,12 +152,6 @@ export function AdminServicesPage({ locale }: { locale: Locale }) {
                     )}
                   >
                     <div className="flex items-center gap-4">
-                      <div className={cn(
-                        "h-12 w-12 rounded-xl flex items-center justify-center transition-all duration-500",
-                        isSelected ? "bg-gold-500 text-onyx-950" : "bg-onyx-800 text-gold-500 group-hover:scale-110"
-                      )}>
-                        <IconComponent className="h-5 w-5" />
-                      </div>
                       <div>
                         <div className="font-bold text-white">
                           {isArabic ? cat.nameAr : cat.nameEn}
@@ -262,36 +233,18 @@ export function AdminServicesPage({ locale }: { locale: Locale }) {
                     </div>
                   </div>
 
-                  {/* Icon and Sort Order */}
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <label className="block text-xs font-bold uppercase tracking-wider text-onyx-400">
-                        {isArabic ? "الأيقونة" : "Icon"}
-                      </label>
-                      <select
-                        className="w-full bg-onyx-900/50 border border-onyx-700 rounded-2xl px-5 py-3.5 text-white focus:border-gold-500/50 focus:ring-4 focus:ring-gold-500/5 transition-all outline-none appearance-none"
-                        value={formData.icon}
-                        onChange={e => setFormData(prev => ({ ...prev, icon: e.target.value }))}
-                      >
-                        {ICON_OPTIONS.map(opt => (
-                          <option key={opt.value} value={opt.value} className="bg-onyx-950 text-white">
-                            {opt.label}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="space-y-2">
-                      <label className="block text-xs font-bold uppercase tracking-wider text-onyx-400">
-                        {isArabic ? "ترتيب الظهور" : "Sort Order"}
-                      </label>
-                      <input
-                        type="number"
-                        min="0"
-                        className="w-full bg-onyx-900/50 border border-onyx-700 rounded-2xl px-5 py-3.5 text-white focus:border-gold-500/50 focus:ring-4 focus:ring-gold-500/5 transition-all outline-none"
-                        value={formData.sortOrder}
-                        onChange={e => setFormData(prev => ({ ...prev, sortOrder: Number(e.target.value) }))}
-                      />
-                    </div>
+                  {/* Sort Order */}
+                  <div className="space-y-2">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-onyx-400">
+                      {isArabic ? "ترتيب الظهور" : "Sort Order"}
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      className="w-full bg-onyx-900/50 border border-onyx-700 rounded-2xl px-5 py-3.5 text-white focus:border-gold-500/50 focus:ring-4 focus:ring-gold-500/5 transition-all outline-none"
+                      value={formData.sortOrder}
+                      onChange={e => setFormData(prev => ({ ...prev, sortOrder: Number(e.target.value) }))}
+                    />
                   </div>
 
                   {/* Image Upload */}

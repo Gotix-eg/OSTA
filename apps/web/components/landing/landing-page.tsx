@@ -870,11 +870,6 @@ export function LandingPage({ locale }: { locale: Locale }) {
                       }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-onyx-950/90 via-onyx-950/20 to-transparent" />
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="h-14 w-14 rounded-2xl bg-onyx-900/60 border border-white/10 backdrop-blur-md flex items-center justify-center text-white shadow-xl transition-all duration-500 group-hover:scale-110 group-hover:bg-gold-500 group-hover:text-onyx-950 group-hover:border-gold-500 group-hover:shadow-gold-500/20">
-                        <craft.icon className="h-6 w-6 transition-transform duration-500 group-hover:rotate-6" />
-                      </div>
-                    </div>
                   </div>
                   <h3 className="text-lg font-bold text-white mb-2 group-hover:text-gold-500 transition-colors">
                     {isArabic ? craft.name.ar : craft.name.en}

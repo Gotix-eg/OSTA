@@ -2,8 +2,6 @@
 
 import Link from "next/link";
 import { 
-  Hammer, Droplets, Zap, Wind, Settings, 
-  PaintBucket, Layout, Network, Monitor, Camera,
   ArrowRight, ArrowLeft, Search, Sparkles
 } from "lucide-react";
 import { useLiveApiData } from "@/hooks/use-live-api-data";
@@ -34,18 +32,7 @@ const serviceImages: Record<string, string> = {
   cctv: "/images/services/cam.jpg"
 };
 
-const iconMap: Record<string, any> = {
-  hammer: Hammer,
-  droplets: Droplets,
-  zap: Zap,
-  wind: Wind,
-  settings: Settings,
-  "paint-bucket": PaintBucket,
-  layout: Layout,
-  network: Network,
-  monitor: Monitor,
-  camera: Camera
-};
+
 
 export function ServicesListing({ locale }: { locale: Locale }) {
   const isArabic = locale === "ar";
@@ -87,7 +74,6 @@ export function ServicesListing({ locale }: { locale: Locale }) {
           ))
         ) : (
           categories.map((cat) => {
-            const Icon = iconMap[cat.icon] || Settings;
             const imgUrl = cat.imageUrl || serviceImages[cat.slug] || serviceImages[cat.icon] || "https://images.unsplash.com/photo-1581092160562-40aa08e78837?q=80&w=800&auto=format&fit=crop";
             return (
               <Link 
@@ -106,10 +92,6 @@ export function ServicesListing({ locale }: { locale: Locale }) {
                 <div className="absolute inset-0 bg-gradient-to-t from-onyx-950 via-onyx-950/40 to-transparent" />
                 
                 <div className="relative p-8 h-full flex flex-col justify-end">
-                  <div className="h-12 w-12 rounded-xl bg-gold-500 flex items-center justify-center text-onyx-950 mb-4 group-hover:scale-110 transition-transform duration-500">
-                    <Icon className="h-5 w-5" />
-                  </div>
-
                   <h3 className="text-xl font-black text-white mb-2 group-hover:text-gold-500 transition-colors">
                     {isArabic ? cat.nameAr : cat.nameEn}
                   </h3>
