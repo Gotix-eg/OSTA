@@ -8,6 +8,7 @@ import { successResponse } from "../../utils/ApiResponse.js";
 import { prisma } from "../../lib/prisma.js";
 import { catchAsync } from "../../utils/catchAsync.js";
 import { ApiError } from "../../utils/ApiError.js";
+import { normalizeHeroSlidesForStorage } from "./hero-slides.storage.js";
 
 const router = Router();
 
@@ -910,7 +911,7 @@ router.patch("/clients/:id/wallet", catchAsync(async (req, res) => {
 }));
 
 // ──────────────────────────────────────────────────────────────────────────────
-// Hero Slides — stored in SystemSetting table as JSON
+// Hero Slides — metadata stored in SystemSetting, images stored in Vercel Blob.
 // ──────────────────────────────────────────────────────────────────────────────
 
 const SLIDES_KEY = "hero_slides";
@@ -926,14 +927,15 @@ router.get("/slides", authenticate, requireRoles(UserRole.ADMIN), catchAsync(asy
 router.put("/slides", authenticate, requireRoles(UserRole.ADMIN), catchAsync(async (req, res) => {
   const { slides } = req.body;
   if (!Array.isArray(slides)) throw new ApiError(400, "slides must be an array");
+  const normalized = await normalizeHeroSlidesForStorage(slides);
 
   await prisma.systemSetting.upsert({
     where: { key: SLIDES_KEY },
-    update: { value: JSON.stringify(slides), type: "json" },
-    create: { key: SLIDES_KEY, value: JSON.stringify(slides), type: "json" }
+    update: { value: JSON.stringify(normalized.slides), type: "json" },
+    create: { key: SLIDES_KEY, value: JSON.stringify(normalized.slides), type: "json" }
   });
 
-  res.json(successResponse(slides, "Hero slides saved"));
+  res.json(successResponse(normalized.slides, "Hero slides saved"));
 }));
 
 export const adminRouter = router;

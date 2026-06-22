@@ -11,10 +11,12 @@
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "prisma:generate": "prisma generate",
     "prisma:push": "prisma db push",
-    "seed": "tsx prisma/seed.ts"
+    "seed": "tsx prisma/seed.ts",
+    "migrate:hero-slides:blob": "tsx src/scripts/migrate-hero-slides-to-blob.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.5.0",
+    "@vercel/blob": "^2.3.3",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
