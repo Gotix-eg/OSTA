@@ -81,8 +81,6 @@ export function PendingWorkersPage({ locale, initialData }: { locale: Locale; in
             ? "راجع قائمة الانتظار ذات الأولوية، تحقق من جاهزية المستندات، واتخذ قرار القبول أو الرفض من لوحة التحكم."
             : "Review the priority queue, inspect document readiness, and take faster verify or reject decisions from a stronger control view."
         }
-        actionLabel={isArabic ? "لوحة الإدارة" : "Admin Dashboard"}
-        actionHref={`/${locale}/admin`}
         tone="sun"
       />
 
