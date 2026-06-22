@@ -36,10 +36,10 @@ export async function fetchApiData<T>(path: string, fallback: T): Promise<T> {
     }
 
     const response = await fetch(`${getApiBaseUrl()}${path}`, {
-      cache: "no-store",
+      next: { revalidate: 60 },
       credentials: "include",
       headers,
-      signal: AbortSignal.timeout(3500)
+      signal: AbortSignal.timeout(5000)
     });
 
     if (!response.ok) {

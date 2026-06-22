@@ -85,6 +85,7 @@ export function ServicesListing({ locale }: { locale: Locale }) {
                   src={imgUrl} 
                   alt=""
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  loading="lazy"
                   onError={(e) => {
                     e.currentTarget.style.display = 'none';
                   }}

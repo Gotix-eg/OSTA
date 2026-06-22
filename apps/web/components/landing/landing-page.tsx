@@ -246,7 +246,9 @@ export function LandingPage({ locale }: { locale: Locale }) {
   };
 
   useEffect(() => {
-    fetchWorkers();
+    // Defer workers fetch so it doesn't block first paint
+    const t = setTimeout(() => fetchWorkers(), 800);
+    return () => clearTimeout(t);
   }, []);
 
   const fetchPublicRequests = async () => {
@@ -271,7 +273,9 @@ export function LandingPage({ locale }: { locale: Locale }) {
   };
 
   useEffect(() => {
-    fetchPublicRequests();
+    // Defer public requests fetch so it doesn't block first paint
+    const t = setTimeout(() => fetchPublicRequests(), 1200);
+    return () => clearTimeout(t);
   }, []);
 
   const handleBookClick = (worker: any) => {
