@@ -38,7 +38,7 @@ export function VendorRequestWizard({ locale, vendorId }: { locale: Locale; vend
               ? "سيقوم التاجر بمراجعة طلبك والرد عليك بعرض سعر. يمكنك متابعة حالة الطلب من الداشبورد." 
               : "The vendor will review your request and reply with a quote. You can track this from your dashboard."}
           </p>
-          <Link href={`/${locale}/dashboards`} className="mt-8 btn-gold py-3.5 px-8 text-sm font-black shadow-md">
+          <Link href={`/${locale}/client`} className="mt-8 btn-gold py-3.5 px-8 text-sm font-black shadow-md">
             {isArabic ? "الذهاب للداشبورد" : "Go to Dashboard"}
           </Link>
         </div>

@@ -37,7 +37,8 @@ export function middleware(request: NextRequest) {
   const allowedRoles = protectedSegments[segment as keyof typeof protectedSegments] as readonly string[];
 
   if (!role || !allowedRoles.includes(role as (typeof allowedRoles)[number])) {
-    return NextResponse.redirect(new URL(`/${locale}/dashboards`, request.url));
+    const fallbackTarget = role ? role.toLowerCase() : "login";
+    return NextResponse.redirect(new URL(`/${locale}/${fallbackTarget}`, request.url));
   }
 
   return NextResponse.next();

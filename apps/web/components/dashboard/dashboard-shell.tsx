@@ -11,7 +11,7 @@ import {
   BarChart3,
   Bell,
   Briefcase,
-  Command,
+
   CreditCard,
   FolderClock,
   Heart,
@@ -194,10 +194,7 @@ export function DashboardShell({
               </div>
 
               <div className="hidden items-center gap-4 xl:flex">
-                <Link href={`/${locale}/dashboards`} className="inline-flex h-12 items-center gap-3 rounded-full border border-white/5 bg-white/5 px-6 text-[10px] font-bold uppercase tracking-widest text-white shadow-xl transition-all duration-500 hover:bg-white/10">
-                  <Command className="h-4 w-4" />
-                  {isArabic ? "مركز اللوحات" : "Dashboard hub"}
-                </Link>
+
                 <LocaleSwitcher
                   locale={locale}
                   pathname={currentPath}
@@ -341,13 +338,7 @@ function SidebarContent({
         <ArrowUpRight className="h-4 w-4 opacity-50" />
       </button>
 
-      <Link href={`/${locale}/dashboards`} className="group relative mt-4 inline-flex items-center justify-between rounded-2xl border border-white/5 bg-white/5 px-5 py-4 text-sm font-bold text-white transition-all duration-500 hover:bg-white/10">
-        <span className="flex items-center gap-3">
-          <Command className="h-4 w-4" />
-          {locale === "ar" ? "مركز اللوحات" : "Dashboard hub"}
-        </span>
-        <ArrowUpRight className="h-4 w-4 opacity-0 -translate-x-2 transition-all duration-500 group-hover:opacity-100 group-hover:translate-x-0" />
-      </Link>
+
     </div>
   );
 }
