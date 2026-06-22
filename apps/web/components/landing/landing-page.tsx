@@ -186,22 +186,19 @@ export function LandingPage({ locale }: { locale: Locale }) {
   const [visibleRequestsLimit, setVisibleRequestsLimit] = useState<number>(3);
 
   useEffect(() => {
-    const saved = localStorage.getItem("osta_hero_slides");
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        const active = parsed.filter((s: any) => s.isActive !== false);
-        const hasOldUrls = active.some((s: any) => 
-          s.imageUrl.includes("photo-1504307651254-35680f356dfd") || 
-          s.imageUrl.includes("photo-1618221195710-dd6b41faaea6")
-        );
-        setSlides(active.length > 0 && !hasOldUrls ? active : DEFAULT_SLIDES);
-      } catch {
-        setSlides(DEFAULT_SLIDES);
-      }
-    } else {
-      setSlides(DEFAULT_SLIDES);
-    }
+    // Load slides from database API — same data for ALL browsers/devices
+    const baseUrl = resolveApiBaseUrl();
+    fetch(`${baseUrl}/public/slides`)
+      .then(r => r.json())
+      .then(payload => {
+        if (payload.success && Array.isArray(payload.data) && payload.data.length > 0) {
+          const active = payload.data.filter((s: any) => s.isActive !== false);
+          setSlides(active.length > 0 ? active : DEFAULT_SLIDES);
+        } else {
+          setSlides(DEFAULT_SLIDES);
+        }
+      })
+      .catch(() => setSlides(DEFAULT_SLIDES));
   }, []);
 
   useEffect(() => {

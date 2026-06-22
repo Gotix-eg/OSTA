@@ -429,6 +429,17 @@ router.get("/public/requests/:id", async (request, response) => {
 });
 
 
+// GET /api/public/slides — Public hero slides (no auth required)
+router.get("/public/slides", async (_req, response) => {
+  try {
+    const setting = await prisma.systemSetting.findUnique({ where: { key: "hero_slides" } });
+    const slides = setting ? JSON.parse(setting.value) : [];
+    response.json({ success: true, data: slides });
+  } catch (e: any) {
+    response.json({ success: true, data: [] });
+  }
+});
+
 router.use("/auth", authRouter);
 router.use("/clients", clientsRouter);
 router.use("/workers", workersRouter);

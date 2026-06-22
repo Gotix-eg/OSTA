@@ -865,4 +865,31 @@ router.patch("/clients/:id/wallet", catchAsync(async (req, res) => {
   res.json(successResponse(updated, "Client wallet updated successfully"));
 }));
 
+// ──────────────────────────────────────────────────────────────────────────────
+// Hero Slides — stored in SystemSetting table as JSON
+// ──────────────────────────────────────────────────────────────────────────────
+
+const SLIDES_KEY = "hero_slides";
+
+// GET /api/admin/slides — Get current hero slides
+router.get("/slides", authenticate, requireRoles([UserRole.ADMIN]), catchAsync(async (_req, res) => {
+  const setting = await prisma.systemSetting.findUnique({ where: { key: SLIDES_KEY } });
+  const slides = setting ? JSON.parse(setting.value) : [];
+  res.json(successResponse(slides, "Hero slides fetched"));
+}));
+
+// PUT /api/admin/slides — Save hero slides
+router.put("/slides", authenticate, requireRoles([UserRole.ADMIN]), catchAsync(async (req, res) => {
+  const { slides } = req.body;
+  if (!Array.isArray(slides)) throw new ApiError(400, "slides must be an array");
+
+  await prisma.systemSetting.upsert({
+    where: { key: SLIDES_KEY },
+    update: { value: JSON.stringify(slides), type: "json" },
+    create: { key: SLIDES_KEY, value: JSON.stringify(slides), type: "json" }
+  });
+
+  res.json(successResponse(slides, "Hero slides saved"));
+}));
+
 export const adminRouter = router;
