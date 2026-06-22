@@ -519,23 +519,40 @@ export function AdminAdsPage({ locale }: { locale: Locale }) {
   ];
 
   useEffect(() => {
-    const saved = localStorage.getItem("osta_hero_slides");
-    if (saved) {
-      try {
-        setSlides(JSON.parse(saved));
-      } catch {
-        setSlides(DEFAULT_SLIDES);
-        localStorage.setItem("osta_hero_slides", JSON.stringify(DEFAULT_SLIDES));
-      }
-    } else {
-      setSlides(DEFAULT_SLIDES);
-      localStorage.setItem("osta_hero_slides", JSON.stringify(DEFAULT_SLIDES));
-    }
+    // Load slides from database API
+    const token = window.localStorage.getItem("osta_access_token") || window.sessionStorage.getItem("osta_access_token") || "";
+    const baseUrl = (process.env.NEXT_PUBLIC_OSTA_API_URL ?? "/api");
+    fetch(`${baseUrl}/admin/slides`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(r => r.json())
+      .then(payload => {
+        if (payload.success && Array.isArray(payload.data) && payload.data.length > 0) {
+          setSlides(payload.data);
+        } else {
+          setSlides(DEFAULT_SLIDES);
+        }
+      })
+      .catch(() => setSlides(DEFAULT_SLIDES));
   }, []);
 
-  const saveSlides = (updated: any[]) => {
+  const saveSlides = async (updated: any[]) => {
     setSlides(updated);
-    localStorage.setItem("osta_hero_slides", JSON.stringify(updated));
+    // Save to database API so ALL browsers/devices see the same slides
+    try {
+      const token = window.localStorage.getItem("osta_access_token") || window.sessionStorage.getItem("osta_access_token") || "";
+      const baseUrl = (process.env.NEXT_PUBLIC_OSTA_API_URL ?? "/api");
+      await fetch(`${baseUrl}/admin/slides`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ slides: updated })
+      });
+    } catch (err) {
+      console.error("Failed to save slides to DB:", err);
+    }
   };
 
   const handleCreateNew = () => {
