@@ -43,36 +43,31 @@ export function SubpageHero({
       <div className="absolute -right-12 top-6 h-48 w-48 rounded-full bg-gold-500/5 blur-3xl" />
       <div className="absolute -left-16 bottom-4 h-56 w-56 rounded-full bg-accent-500/5 blur-[100px]" />
 
-      <div className="relative grid gap-10 xl:grid-cols-[1.618fr_1fr] xl:items-end">
-        <div>
+      <div className="relative z-10 flex flex-col md:flex-row md:items-end md:justify-between gap-8">
+        <div className="max-w-3xl">
           <div className="text-eyebrow">
             {eyebrow}
           </div>
-          <h1 className="mt-6 max-w-4xl text-balance font-serif text-5xl leading-[1.1] sm:text-6xl xl:text-[4rem] text-white">
+          <h1 className="mt-6 text-balance font-serif text-4xl leading-[1.1] sm:text-5xl xl:text-6xl text-white">
             {title}
           </h1>
-          <div className="mt-8 h-px w-24 bg-gradient-to-r from-gold-500/50 to-transparent" />
-          <p className="mt-8 max-w-2xl text-lg leading-relaxed text-onyx-400">
+          <div className="mt-6 h-px w-24 bg-gradient-to-r from-gold-500/50 to-transparent" />
+          <p className="mt-6 text-base leading-relaxed text-onyx-300">
             {subtitle}
           </p>
         </div>
 
-        <div className="glass-card p-6 lg:p-8">
-          <p className="text-caption text-gold-500/50 uppercase">Ostafy | الجودة والضمان</p>
-          <p className="mt-4 text-lg font-bold leading-relaxed text-white/90">
-            نقدم لك أفضل الفنيين والحرفيين في مصر مع ضمان الدقة والجودة في كل خدمة.
-          </p>
-
-          {actionLabel && actionHref ? (
+        {actionLabel && actionHref ? (
+          <div className="shrink-0">
             <Link
               href={actionHref as `/${string}`}
-              className="mt-8 btn-gold inline-flex items-center gap-3"
+              className="btn-gold inline-flex items-center gap-3 py-3.5 px-6 rounded-2xl text-sm font-bold shadow-lg"
             >
               {actionLabel}
               <ArrowUpRight className="h-4 w-4" />
             </Link>
-          ) : null}
-        </div>
+          </div>
+        ) : null}
       </div>
     </section>
   );
