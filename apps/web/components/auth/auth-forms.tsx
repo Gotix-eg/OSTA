@@ -300,7 +300,7 @@ function applyAuthSuccess(locale: Locale, payload: AuthSuccessResponse, remember
   window.location.assign(getDashboardRoute(locale, payload.user.role));
 }
 
-export function LoginForm({ locale }: { locale: Locale }) {
+export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin?: boolean }) {
   const copy = authCopy[locale];
   const isArabic = locale === "ar";
   const [showPassword, setShowPassword] = useState(false);
@@ -310,6 +310,7 @@ export function LoginForm({ locale }: { locale: Locale }) {
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [activeTab, setActiveTab] = useState<"CLIENT" | "WORKER" | "VENDOR">("CLIENT");
 
   // Inline validation error states
   const [phoneError, setPhoneError] = useState<string | null>(null);
@@ -343,6 +344,22 @@ export function LoginForm({ locale }: { locale: Locale }) {
         password
       });
 
+      // Role check and validation
+      if (isAdmin) {
+        if (payload.user.role !== "ADMIN") {
+          throw new Error(isArabic ? "هذا الحساب لا يملك صلاحيات الإدارة" : "This account does not have admin privileges");
+        }
+      } else {
+        if (payload.user.role !== activeTab) {
+          const roleName = activeTab === "CLIENT"
+            ? (isArabic ? "عميل" : "client")
+            : activeTab === "WORKER"
+            ? (isArabic ? "فني" : "technician")
+            : (isArabic ? "مورد" : "vendor");
+          throw new Error(isArabic ? `هذا الحساب غير مسجل كـ ${roleName}` : `This account is not registered as a ${roleName}`);
+        }
+      }
+
       setSubmitted(true);
       applyAuthSuccess(locale, payload, remember);
     } catch (loginError) {
@@ -354,6 +371,36 @@ export function LoginForm({ locale }: { locale: Locale }) {
 
   return (
     <div className="space-y-8 animate-fadeIn">
+      {!isAdmin && (
+        <div className="grid grid-cols-3 gap-2 rounded-2xl bg-onyx-950 p-1.5 border border-onyx-800">
+          {(["CLIENT", "WORKER", "VENDOR"] as const).map((role) => {
+            const label = role === "CLIENT"
+              ? (isArabic ? "عميل" : "Client")
+              : role === "WORKER"
+              ? (isArabic ? "فني" : "Technician")
+              : (isArabic ? "مورد" : "Vendor");
+            return (
+              <button
+                key={role}
+                type="button"
+                onClick={() => {
+                  setActiveTab(role);
+                  setError(null);
+                }}
+                className={cn(
+                  "rounded-xl py-3 text-sm font-bold transition-all duration-300",
+                  activeTab === role
+                    ? "bg-gold-500 text-onyx-950 shadow-md shadow-gold-500/10"
+                    : "text-onyx-400 hover:text-white hover:bg-onyx-900/50"
+                )}
+              >
+                {label}
+              </button>
+            );
+          })}
+        </div>
+      )}
+
       <div className="grid gap-6">
         <InputField
           label={isArabic ? "رقم الهاتف" : "Phone number"}
@@ -434,26 +481,30 @@ export function LoginForm({ locale }: { locale: Locale }) {
           </div>
         )}
 
-        <div className="relative py-4">
-          <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-onyx-800" /></div>
-          <div className="relative flex justify-center text-xs uppercase tracking-widest"><span className="bg-onyx-900 px-4 text-onyx-600 font-black">{isArabic ? "أو" : "or"}</span></div>
-        </div>
+        {!isAdmin && (
+          <>
+            <div className="relative py-4">
+              <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-onyx-800" /></div>
+              <div className="relative flex justify-center text-xs uppercase tracking-widest"><span className="bg-onyx-900 px-4 text-onyx-600 font-black">{isArabic ? "أو" : "or"}</span></div>
+            </div>
 
-        <div className="grid gap-4 sm:grid-cols-3">
-          {[
-            { labelAr: "تسجيل عميل", labelEn: "Register Client", href: "client" },
-            { labelAr: "تسجيل عامل", labelEn: "Register Worker", href: "worker" },
-            { labelAr: "تسجيل مورد", labelEn: "Register Vendor", href: "vendor" }
-          ].map((btn) => (
-            <Link
-               key={btn.href}
-               href={`/${locale}/register/${btn.href}`}
-               className="btn-onyx h-12 flex items-center justify-center text-xs px-2"
-            >
-               {isArabic ? btn.labelAr : btn.labelEn}
-            </Link>
-          ))}
-        </div>
+            <div className="grid gap-4 sm:grid-cols-3">
+              {[
+                { labelAr: "تسجيل عميل", labelEn: "Register Client", href: "client" },
+                { labelAr: "تسجيل عامل", labelEn: "Register Worker", href: "worker" },
+                { labelAr: "تسجيل مورد", labelEn: "Register Vendor", href: "vendor" }
+              ].map((btn) => (
+                <Link
+                   key={btn.href}
+                   href={`/${locale}/register/${btn.href}`}
+                   className="btn-onyx h-12 flex items-center justify-center text-xs px-2"
+                >
+                   {isArabic ? btn.labelAr : btn.labelEn}
+                </Link>
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

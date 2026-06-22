@@ -12,7 +12,8 @@ export const publicPageCopy = {
       about: "من نحن",
       contact: "تواصل",
       faq: "أسئلة شائعة",
-      dashboards: "الداشبوردات"
+      dashboards: "الداشبوردات",
+      login: "تسجيل الدخول"
     },
     pages: {
       services: {
@@ -205,7 +206,8 @@ export const publicPageCopy = {
       about: "About",
       contact: "Contact",
       faq: "FAQ",
-      dashboards: "Dashboards"
+      dashboards: "Dashboards",
+      login: "Login"
     },
     pages: {
       services: {

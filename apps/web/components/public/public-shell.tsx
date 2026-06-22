@@ -2,7 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 import Link from "next/link";
-import { LayoutDashboard, Facebook, Instagram, Phone, Mail, Menu, X } from "lucide-react";
+import { LogIn, Facebook, Instagram, Phone, Mail, Menu, X } from "lucide-react";
 import { LocaleSwitcher } from "@/components/shared/locale-switcher";
 import { publicPageCopy } from "@/lib/public-pages-copy";
 import type { Locale } from "@/lib/locales";
@@ -54,9 +54,9 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
 
           <div className="flex items-center gap-3">
             <LocaleSwitcher locale={locale} pathname={pathname} className="rounded-xl border border-onyx-700 bg-onyx-800 px-4 py-2 text-sm font-semibold text-onyx-200 hover:border-onyx-600 transition" />
-            <Link href={`/${locale}/dashboards`} className="btn-gold hidden sm:flex items-center gap-2 px-5 py-2.5 text-sm">
-              <LayoutDashboard className="h-4 w-4" />
-              {copy.dashboards}
+            <Link href={`/${locale}/login`} className="btn-gold hidden sm:flex items-center gap-2 px-5 py-2.5 text-sm">
+              <LogIn className="h-4 w-4" />
+              {copy.login}
             </Link>
 
             {/* Mobile Hamburger Menu Button */}
@@ -100,12 +100,12 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
               })}
               
               <Link 
-                href={`/${locale}/dashboards`}
+                href={`/${locale}/login`}
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="btn-gold mt-4 flex items-center justify-center gap-2 py-3.5 text-sm font-black w-full"
               >
-                <LayoutDashboard className="h-4.5 w-4.5" />
-                {copy.dashboards}
+                <LogIn className="h-4.5 w-4.5" />
+                {copy.login}
               </Link>
             </nav>
           </div>
