@@ -277,8 +277,8 @@ router.get(
     if (!profile) throw new ApiError(404, "Client profile not found");
     const { id } = request.params as { id: string };
 
-    const record = await prisma.serviceRequest.findUnique({
-      where: { id: id, clientId: profile.id },
+    const record = await prisma.serviceRequest.findFirst({
+      where: { id, clientId: profile.id },
       include: {
         service: true,
         address: true,
@@ -395,19 +395,39 @@ router.post(
     if (!profile) throw new ApiError(404, "Client profile not found");
     const clientId = profile.id;
 
+    const service = await prisma.service.findUnique({
+      where: { id: payload.serviceId },
+      include: { category: true },
+    });
+    if (!service || !service.isActive || !service.category.isActive) {
+      throw new ApiError(400, "Invalid or inactive service");
+    }
+
     let addressId = payload.address.savedAddressId;
+    let requestAddress;
     if (payload.address.mode === "new" || !addressId) {
       const newAddress = await prisma.address.create({
         data: {
           userId: request.auth!.userId,
           governorate: payload.address.governorate!,
           city: payload.address.city!,
-          area: payload.address.city!,
+          area: payload.address.district!,
           street: payload.address.street!,
           label: "New Address",
         },
       });
       addressId = newAddress.id;
+      requestAddress = newAddress;
+    } else {
+      requestAddress = await prisma.address.findFirst({
+        where: {
+          id: addressId,
+          userId: request.auth!.userId,
+        },
+      });
+      if (!requestAddress) {
+        throw new ApiError(400, "Invalid address");
+      }
     }
 
     let preferredDate: Date | null = null;
@@ -420,16 +440,31 @@ router.post(
       preferredDate = new Date(payload.timing.customDate);
     }
 
-    // Fallback for mockup service IDs from frontend
-    let actualServiceId = payload.serviceId;
-    const serviceExists = await prisma.service.findUnique({
-      where: { id: actualServiceId },
-    });
-    if (!serviceExists) {
-      const fallbackService = await prisma.service.findFirst();
-      if (!fallbackService)
-        throw new ApiError(500, "No services available in the system");
-      actualServiceId = fallbackService.id;
+    if (payload.workerId) {
+      const directWorker = await prisma.workerProfile.findFirst({
+        where: {
+          id: payload.workerId,
+          verificationStatus: "VERIFIED",
+          specializations: {
+            some: {
+              serviceId: service.id,
+            },
+          },
+          workAreas: {
+            some: {
+              governorate: requestAddress.governorate,
+              city: requestAddress.city,
+              OR: [
+                { area: null },
+                { area: requestAddress.area },
+              ],
+            },
+          },
+        },
+      });
+      if (!directWorker) {
+        throw new ApiError(400, "Selected worker is not eligible for this service and location");
+      }
     }
 
     let requestNumber = "";
@@ -448,7 +483,7 @@ router.post(
       data: {
         clientId,
         requestNumber,
-        serviceId: actualServiceId,
+        serviceId: service.id,
         addressId: addressId!,
         title: payload.title,
         description: payload.description,

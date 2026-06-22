@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { PrismaClient, UserRole, UserStatus, WorkerVerificationStatus } from "@prisma/client";
+import { PrismaClient, UserRole, UserStatus } from "@prisma/client";
 import { hashPassword } from "../src/utils/password.js";
 
 const prisma = new PrismaClient();
@@ -70,28 +70,35 @@ async function main() {
     });
   }
 
-  // 3. Admin
-  const adminPhone = "01009410112";
-  const passwordHash = await hashPassword("Letmein@NZ");
-  
-  await prisma.user.upsert({
-    where: { phone: adminPhone },
-    update: {
-      passwordHash,
-      role: UserRole.ADMIN,
-      status: UserStatus.ACTIVE,
-    },
-    create: {
-      phone: adminPhone,
-      email: "admin@osta.eg",
-      passwordHash,
-      firstName: "Admin",
-      lastName: "OSTA",
-      role: UserRole.ADMIN,
-      status: UserStatus.ACTIVE,
-      phoneVerified: true,
-    }
-  });
+  // 3. Optional admin seed. Never use a hard-coded production password.
+  const adminPhone = process.env.SEED_ADMIN_PHONE;
+  const adminPassword = process.env.SEED_ADMIN_PASSWORD;
+  const adminEmail = process.env.SEED_ADMIN_EMAIL ?? "admin@osta.eg";
+
+  if (adminPhone && adminPassword) {
+    const passwordHash = await hashPassword(adminPassword);
+
+    await prisma.user.upsert({
+      where: { phone: adminPhone },
+      update: {
+        passwordHash,
+        role: UserRole.ADMIN,
+        status: UserStatus.ACTIVE,
+      },
+      create: {
+        phone: adminPhone,
+        email: adminEmail,
+        passwordHash,
+        firstName: "Admin",
+        lastName: "OSTA",
+        role: UserRole.ADMIN,
+        status: UserStatus.ACTIVE,
+        phoneVerified: true,
+      }
+    });
+  } else {
+    console.log("Skipping admin seed. Set SEED_ADMIN_PHONE and SEED_ADMIN_PASSWORD to create/update an admin.");
+  }
 
   console.log("🚀 Local Seed Completed Successfully.");
 }

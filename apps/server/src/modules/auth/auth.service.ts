@@ -293,7 +293,7 @@ export const authService = {
     };
   },
 
-  async verifyOtp(phone: string) {
+  async verifyOtp(phone: string, code: string, type: "registration" | "login" | "reset") {
     const user = await prisma.user.findUnique({
       where: { phone },
       include: {
@@ -305,6 +305,41 @@ export const authService = {
 
     if (!user) {
       throw new ApiError(404, "User not found", "USER_NOT_FOUND");
+    }
+
+    const otpType =
+      type === "registration"
+        ? "EMAIL_VERIFICATION"
+        : type === "reset"
+          ? "PASSWORD_RESET"
+          : "LOGIN";
+
+    const otp = await prisma.otpCode.findFirst({
+      where: {
+        userId: user.id,
+        code,
+        type: otpType,
+        isUsed: false,
+        expiresAt: { gt: new Date() }
+      }
+    });
+
+    if (!otp) {
+      throw new ApiError(400, "Invalid or expired OTP code", "INVALID_CODE");
+    }
+
+    await prisma.otpCode.update({
+      where: { id: otp.id },
+      data: { isUsed: true }
+    });
+
+    if (type === "registration" && user.status !== "ACTIVE") {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { status: "ACTIVE", emailVerified: true }
+      });
+      user.status = "ACTIVE";
+      user.emailVerified = true;
     }
 
     const tokens = await createSession(user.id, user.role);

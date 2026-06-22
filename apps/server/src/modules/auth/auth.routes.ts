@@ -171,7 +171,7 @@ router.post("/login", catchAsync(async (request, response) => {
 
 router.post("/verify-otp", catchAsync(async (request, response) => {
   const payload = parseBody(verifyOtpSchema, request.body);
-  const result = await authService.verifyOtp(payload.phone);
+  const result = await authService.verifyOtp(payload.phone, payload.code, payload.type);
 
   setAuthCookies(response, {
     accessToken: result.accessToken,

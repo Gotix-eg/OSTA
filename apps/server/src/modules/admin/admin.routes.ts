@@ -31,8 +31,6 @@ const verifyWorkerSchema = z.object({
   status: z.enum(["VERIFIED", "REJECTED"])
 });
 
-const pendingWorkers: PendingWorkerRecord[] = [];
-
 const adminClients = {
   summary: {
     totalClients: 0,
@@ -82,19 +80,63 @@ const adminSettings = {
   }
 };
 
-function buildPendingSummary() {
-  const visibleWorkers = pendingWorkers.filter((item) => item.status !== "VERIFIED" && item.status !== "REJECTED");
-
-  return {
-    totalPending: visibleWorkers.length,
-    highPriority: visibleWorkers.filter((item) => item.status === "UNDER_REVIEW" || item.status === "AWAITING_ID").length,
-    submittedToday: visibleWorkers.filter((item) => item.submittedAt === "2026-03-28").length,
-    averageReviewHours: visibleWorkers.length === 0 ? 0 : 29
-  };
+function mapPendingWorkerSpecialty(profession?: string | null): PendingWorkerRecord["specialty"] {
+  const value = (profession || "").toLowerCase();
+  if (value.includes("سبا") || value.includes("plumb")) return "plumber";
+  if (value.includes("تكييف") || value.includes("ac")) return "acTechnician";
+  return "electrician";
 }
 
-function getVisiblePendingWorkers() {
-  return pendingWorkers.filter((item) => item.status !== "VERIFIED" && item.status !== "REJECTED");
+function mapPendingWorkerStatus(status: string): VerificationStatus {
+  if (status === "UNDER_REVIEW" || status === "DOCUMENTS_SUBMITTED") return status;
+  if (status === "REJECTED" || status === "VERIFIED") return status;
+  return "DOCUMENTS_SUBMITTED";
+}
+
+async function getPendingWorkersData() {
+  const pendingStatuses = ["PENDING", "DOCUMENTS_SUBMITTED", "UNDER_REVIEW"] as const;
+  const workers = await prisma.workerProfile.findMany({
+    where: {
+      verificationStatus: { in: [...pendingStatuses] }
+    },
+    include: {
+      user: { select: { firstName: true, lastName: true } },
+      workAreas: { take: 1 }
+    },
+    orderBy: { createdAt: "desc" }
+  });
+
+  const today = new Date().toISOString().split("T")[0] ?? "";
+  const visibleWorkers: PendingWorkerRecord[] = workers.map((worker) => {
+    const documentsReady = [
+      worker.nationalIdFront,
+      worker.nationalIdBack,
+      worker.selfieWithId,
+      worker.criminalRecord
+    ].filter(Boolean).length;
+
+    return {
+      id: worker.id,
+      name: `${worker.user.firstName} ${worker.user.lastName}`.trim(),
+      specialty: mapPendingWorkerSpecialty(worker.profession),
+      area: worker.workAreas[0]?.area || worker.workAreas[0]?.city || "غير محدد",
+      experienceYears: worker.yearsOfExperience,
+      rating: worker.rating,
+      documentsReady,
+      submittedAt: worker.createdAt.toISOString().split("T")[0] ?? "",
+      status: mapPendingWorkerStatus(worker.verificationStatus)
+    };
+  });
+
+  return {
+    summary: {
+      totalPending: visibleWorkers.length,
+      highPriority: visibleWorkers.filter((item) => item.status === "UNDER_REVIEW" || item.documentsReady < 2).length,
+      submittedToday: visibleWorkers.filter((item) => item.submittedAt === today).length,
+      averageReviewHours: 0
+    },
+    workers: visibleWorkers
+  };
 }
 
 router.get("/dashboard", catchAsync(async (_request, response) => {
@@ -182,39 +224,41 @@ router.get("/analytics", (_request, response) => {
   );
 });
 
-router.get("/workers/pending", (_request, response) => {
+router.get("/workers/pending", catchAsync(async (_request, response) => {
   response.status(200).json(
     successResponse(
-      {
-        summary: buildPendingSummary(),
-        workers: getVisiblePendingWorkers()
-      },
+      await getPendingWorkersData(),
       "Pending workers fetched"
     )
   );
-});
+}));
 
-router.patch("/workers/:id/verify", (request, response) => {
+router.patch("/workers/:id/verify", catchAsync(async (request, response) => {
   const payload = verifyWorkerSchema.parse(request.body ?? {});
-  const worker = pendingWorkers.find((item) => item.id === request.params.id);
+  const workerId = request.params.id as string;
+  const now = new Date();
+  const trialExpiresAt = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
 
-  if (!worker) {
-    response.status(404).json({ success: false, message: "Worker not found", error: "NOT_FOUND" });
-    return;
-  }
-
-  worker.status = payload.status;
+  await prisma.workerProfile.update({
+    where: { id: workerId },
+    data: payload.status === "VERIFIED"
+      ? {
+          verificationStatus: "VERIFIED",
+          verifiedAt: now,
+          trialExpiresAt
+        }
+      : {
+          verificationStatus: "REJECTED"
+        }
+  });
 
   response.status(200).json(
     successResponse(
-      {
-        summary: buildPendingSummary(),
-        workers: getVisiblePendingWorkers()
-      },
+      await getPendingWorkersData(),
       payload.status === "VERIFIED" ? "Worker verified" : "Worker rejected"
     )
   );
-});
+}));
 
 router.get("/finance/revenue", (_request, response) => {
   response.status(200).json(
