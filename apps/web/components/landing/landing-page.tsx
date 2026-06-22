@@ -96,42 +96,9 @@ function cleanImageUrl(url: string): string {
   
   return cleaned;
 }
-const DEFAULT_SLIDES = [
-  {
-    id: "slide-1",
-    eyebrowAr: "منصة الحرفيين رقم 1 في مصر",
-    eyebrowEn: "Egypt's #1 Craftsman Platform",
-    titleAr: "اطلب أُسطفاي محترف بنقرة واحدة",
-    titleEn: "Hire a Professional Ostafy in Seconds",
-    descAr: "أول منصة تجمع أمهر الفنيين والمتاجر الموثقة في مصر. جودة مضمونة، أسعار عادلة، وتجربة مستخدم فاخرة.",
-    descEn: "The first platform connecting skilled pros and verified stores in Egypt. Guaranteed quality, fair prices, and a premium experience.",
-    imageUrl: "https://images.unsplash.com/photo-1621905252507-b354bc25edac?q=80&w=1600",
-    btn1TextAr: "انضم كصنايعي",
-    btn1TextEn: "Join as Pro",
-    btn1Link: "/register/worker",
-    btn2TextAr: "انضم كمتجر",
-    btn2TextEn: "Join as Vendor",
-    btn2Link: "/register/vendor",
-    isActive: true
-  },
-  {
-    id: "slide-2",
-    eyebrowAr: "ضمان حقيقي ودفع آمن",
-    eyebrowEn: "True Guarantee & Secure Pay",
-    titleAr: "صيانة منزلية بدون قلق أو مفاجآت",
-    titleEn: "Home Maintenance Without Worry",
-    descAr: "نظام دفع محتجز بالكامل (Escrow) يحمي أموالك حتى اكتمال العمل ورضاك التام عن الخدمة.",
-    descEn: "A secure escrow payment system that protects your money until the work is completed and you are fully satisfied.",
-    imageUrl: "https://images.unsplash.com/photo-1504148455328-c376907d081c?q=80&w=1600",
-    btn1TextAr: "اطلب فني الآن",
-    btn1TextEn: "Book Pro Now",
-    btn1Link: "/register/client",
-    btn2TextAr: "تصفح الخدمات",
-    btn2TextEn: "Browse Services",
-    btn2Link: "/services",
-    isActive: true
-  }
-];
+// No default mock slides to force usage of uploaded database/API slides only
+const DEFAULT_SLIDES: any[] = [];
+
 
 export function LandingPage({ locale }: { locale: Locale }) {
   const isArabic = locale === "ar";

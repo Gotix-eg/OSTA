@@ -471,52 +471,11 @@ export function AdminAdsPage({ locale }: { locale: Locale }) {
     isActive: true
   });
 
-  // Preloaded luxury background images for instant selection
-  const PRESET_IMAGES = [
-    { name: isArabic ? "ورشة العمل الراقية" : "Luxury Workshop", url: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1600" },
-    { name: isArabic ? "كهرباء وصيانة" : "Electrical Work", url: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=1600" },
-    { name: isArabic ? "أدوات ميكانيكية دقيقة" : "Precision Tools", url: "https://images.unsplash.com/photo-1534224039826-c7a0eda0e6b3?q=80&w=1600" },
-    { name: isArabic ? "سباكة وتوصيلات" : "Plumbing & Pipes", url: "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?q=80&w=1600" },
-    { name: isArabic ? "صيانة أجهزة منزلية" : "Home Appliances", url: "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?q=80&w=1600" },
-    { name: isArabic ? "ديكور خشبي راقٍ" : "Modern Carpentry", url: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?q=80&w=1600" }
-  ];
 
-  const DEFAULT_SLIDES = [
-    {
-      id: "slide-1",
-      eyebrowAr: "منصة الحرفيين رقم 1 في مصر",
-      eyebrowEn: "Egypt's #1 Craftsman Platform",
-      titleAr: "اطلب أُسطفاي محترف بنقرة واحدة",
-      titleEn: "Hire a Professional Ostafy in Seconds",
-      descAr: "أول منصة تجمع أمهر الفنيين والمتاجر الموثقة في مصر. جودة مضمونة، أسعار عادلة، وتجربة مستخدم فاخرة.",
-      descEn: "The first platform connecting skilled pros and verified stores in Egypt. Guaranteed quality, fair prices, and a premium experience.",
-      imageUrl: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1600",
-      btn1TextAr: "انضم كصنايعي",
-      btn1TextEn: "Join as Pro",
-      btn1Link: "/register/worker",
-      btn2TextAr: "انضم كمتجر",
-      btn2TextEn: "Join as Vendor",
-      btn2Link: "/register/vendor",
-      isActive: true
-    },
-    {
-      id: "slide-2",
-      eyebrowAr: "ضمان حقيقي ودفع آمن",
-      eyebrowEn: "True Guarantee & Secure Pay",
-      titleAr: "صيانة منزلية بدون قلق أو مفاجآت",
-      titleEn: "Home Maintenance Without Worry",
-      descAr: "نظام دفع محتجز بالكامل (Escrow) يحمي أموالك حتى اكتمال العمل ورضاك التام عن الخدمة.",
-      descEn: "A secure escrow payment system that protects your money until the work is completed and you are fully satisfied.",
-      imageUrl: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=1600",
-      btn1TextAr: "اطلب فني الآن",
-      btn1TextEn: "Book Pro Now",
-      btn1Link: "/register/client",
-      btn2TextAr: "تصفح الخدمات",
-      btn2TextEn: "Browse Services",
-      btn2Link: "/services",
-      isActive: true
-    }
-  ];
+
+  // No default mock slides to force usage of database/API slides only
+  const DEFAULT_SLIDES: any[] = [];
+
 
   useEffect(() => {
     // Load slides from database API
@@ -564,7 +523,7 @@ export function AdminAdsPage({ locale }: { locale: Locale }) {
       titleEn: "New Dynamic Promo Slide",
       descAr: isArabic ? "تفاصيل جذابة تظهر للعملاء في واجهة المنصة عند زيارة الموقع..." : "Engaging subtitle description for your users on the frontpage...",
       descEn: "Engaging subtitle description for your users on the frontpage...",
-      imageUrl: PRESET_IMAGES[0]?.url || "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1600",
+      imageUrl: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1600",
       btn1TextAr: isArabic ? "ابدأ الطلب" : "Get Started",
       btn1TextEn: "Get Started",
       btn1Link: "/register/client",
@@ -768,23 +727,7 @@ export function AdminAdsPage({ locale }: { locale: Locale }) {
                       </div>
                     </div>
 
-                    {/* Presets Grid */}
-                    <p className="text-[10px] text-onyx-500 font-bold uppercase tracking-wider mb-2">{isArabic ? "أو اختر خلفية تصميم راقية فوراً:" : "Or select an elegant backdrop instantly:"}</p>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                      {PRESET_IMAGES.map((preset, i) => (
-                        <button
-                          key={i}
-                          type="button"
-                          onClick={() => setFormData({ ...formData, imageUrl: preset.url })}
-                          className={cn(
-                            "text-start p-2 rounded-lg border text-xs font-bold truncate transition-all",
-                            formData.imageUrl === preset.url ? "border-gold-500 bg-gold-500/10 text-gold-500" : "border-white/5 bg-white/5 text-onyx-400 hover:text-white"
-                          )}
-                        >
-                          {preset.name}
-                        </button>
-                      ))}
-                    </div>
+
                   </div>
 
                   <hr className="border-white/5" />
