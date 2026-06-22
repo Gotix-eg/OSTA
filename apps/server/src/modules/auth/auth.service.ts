@@ -1,4 +1,5 @@
 import type { UserRole } from "@prisma/client";
+import { createHash, randomInt, timingSafeEqual } from "node:crypto";
 
 import { prisma } from "../../lib/prisma.js";
 import { ApiError } from "../../utils/ApiError.js";
@@ -32,6 +33,36 @@ type LoginInput = {
   phone: string;
   password: string;
 };
+
+const OTP_HASH_PREFIX = "sha256:";
+
+function generateOtpCode() {
+  return randomInt(100000, 1000000).toString();
+}
+
+function hashOtpCode(userId: string, type: string, code: string) {
+  const secret = process.env.JWT_SECRET || "local-otp-secret";
+  const digest = createHash("sha256")
+    .update(`${userId}:${type}:${code}:${secret}`)
+    .digest("hex");
+
+  return `${OTP_HASH_PREFIX}${digest}`;
+}
+
+function safeEqual(left: string, right: string) {
+  const leftBuffer = Buffer.from(left);
+  const rightBuffer = Buffer.from(right);
+  return leftBuffer.length === rightBuffer.length && timingSafeEqual(leftBuffer, rightBuffer);
+}
+
+function otpMatches(storedCode: string, userId: string, type: string, submittedCode: string) {
+  if (storedCode.startsWith(OTP_HASH_PREFIX)) {
+    return safeEqual(storedCode, hashOtpCode(userId, type, submittedCode));
+  }
+
+  // Legacy fallback for OTP rows created before hashing was introduced.
+  return safeEqual(storedCode, submittedCode);
+}
 
 function toPublicUser(user: {
   id: string;
@@ -223,13 +254,13 @@ export const authService = {
     });
 
     if (user.role === "CLIENT") {
-      const code = Math.floor(100000 + Math.random() * 900000).toString();
+      const code = generateOtpCode();
       const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
 
       await prisma.otpCode.create({
         data: {
           userId: user.id,
-          code,
+          code: hashOtpCode(user.id, "EMAIL_VERIFICATION", code),
           type: "EMAIL_VERIFICATION",
           expiresAt
         }
@@ -314,15 +345,17 @@ export const authService = {
           ? "PASSWORD_RESET"
           : "LOGIN";
 
-    const otp = await prisma.otpCode.findFirst({
+    const candidateOtps = await prisma.otpCode.findMany({
       where: {
         userId: user.id,
-        code,
         type: otpType,
         isUsed: false,
         expiresAt: { gt: new Date() }
-      }
+      },
+      orderBy: { createdAt: "desc" },
+      take: 5
     });
+    const otp = candidateOtps.find((record) => otpMatches(record.code, user.id, otpType, code));
 
     if (!otp) {
       throw new ApiError(400, "Invalid or expired OTP code", "INVALID_CODE");
@@ -369,15 +402,17 @@ export const authService = {
       throw new ApiError(404, "المستخدم غير موجود", "USER_NOT_FOUND");
     }
 
-    const otp = await prisma.otpCode.findFirst({
+    const candidateOtps = await prisma.otpCode.findMany({
       where: {
         userId: user.id,
-        code,
         type: "EMAIL_VERIFICATION",
         isUsed: false,
         expiresAt: { gt: new Date() }
-      }
+      },
+      orderBy: { createdAt: "desc" },
+      take: 5
     });
+    const otp = candidateOtps.find((record) => otpMatches(record.code, user.id, "EMAIL_VERIFICATION", code));
 
     if (!otp) {
       throw new ApiError(400, "رمز التحقق غير صحيح أو منتهي الصلاحية", "INVALID_CODE");
@@ -476,14 +511,13 @@ export const authService = {
       return { sent: true };
     }
 
-    // Generate random 6-digit code for OTP
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    const code = generateOtpCode();
     const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
 
     await prisma.otpCode.create({
       data: {
         userId: user.id,
-        code,
+        code: hashOtpCode(user.id, "PASSWORD_RESET", code),
         type: "PASSWORD_RESET",
         expiresAt
       }
@@ -503,15 +537,17 @@ export const authService = {
       throw new ApiError(404, "User not found", "USER_NOT_FOUND");
     }
 
-    const otp = await prisma.otpCode.findFirst({
+    const candidateOtps = await prisma.otpCode.findMany({
       where: {
         userId: user.id,
-        code,
         type: "PASSWORD_RESET",
         isUsed: false,
         expiresAt: { gt: new Date() }
-      }
+      },
+      orderBy: { createdAt: "desc" },
+      take: 5
     });
+    const otp = candidateOtps.find((record) => otpMatches(record.code, user.id, "PASSWORD_RESET", code));
 
     if (!otp) {
       throw new ApiError(400, "Invalid or expired reset code", "INVALID_CODE");

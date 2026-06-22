@@ -12,17 +12,22 @@ const ALLOWED_ORIGINS = [
   "http://localhost:3000",
   "http://localhost:3001",
   env.APP_URL,
-  "https://web-gold-nu-39.vercel.app",
   "https://www.ostafy.com",
   "https://ostafy.com",
+  "https://osta.vercel.app",
+  ...(process.env.CORS_ALLOWED_ORIGINS || "")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean),
 ].filter(Boolean);
 
-// Allow all Vercel preview deployments
-const VERCEL_PREVIEW_REGEX = /^https:\/\/.*\.vercel\.app$/;
-const OSTAFY_REGEX = /^https?:\/\/(?:[a-zA-Z0-9-]+\.)*ostafy\.com$/;
+const allowVercelPreviews =
+  process.env.NODE_ENV !== "production" || process.env.ALLOW_VERCEL_PREVIEW_ORIGINS === "true";
+const VERCEL_PREVIEW_REGEX = /^https:\/\/[a-zA-Z0-9-]+\.vercel\.app$/;
 
 export function createApp() {
   const app = express();
+  app.set("trust proxy", 1);
 
   app.use(helmet());
   app.use(
@@ -32,8 +37,7 @@ export function createApp() {
         if (
           !origin ||
           ALLOWED_ORIGINS.includes(origin) ||
-          VERCEL_PREVIEW_REGEX.test(origin) ||
-          OSTAFY_REGEX.test(origin)
+          (allowVercelPreviews && VERCEL_PREVIEW_REGEX.test(origin))
         ) {
           return callback(null, true);
         }

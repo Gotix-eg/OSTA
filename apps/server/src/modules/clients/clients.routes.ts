@@ -1,3 +1,4 @@
+import { randomInt } from "node:crypto";
 import { Router, Request, Response } from "express";
 import { UserRole } from "@prisma/client";
 
@@ -469,7 +470,7 @@ router.post(
 
     let requestNumber = "";
     while (true) {
-      const candidate = String(Math.floor(10000000 + Math.random() * 90000000));
+      const candidate = String(randomInt(10000000, 100000000));
       const existing = await prisma.serviceRequest.findUnique({
         where: { requestNumber: candidate },
       });

@@ -1,3 +1,4 @@
+import { randomInt } from "node:crypto";
 import { Router, Request, Response } from "express";
 import { authenticate } from "../../middleware/auth.middleware.js";
 import { catchAsync } from "../../utils/catchAsync.js";
@@ -126,7 +127,7 @@ router.post("/direct", catchAsync(async (request: Request, response: Response) =
   // Generate unique request number
   let requestNumber = "";
   while (true) {
-    const candidate = String(Math.floor(10000000 + Math.random() * 90000000));
+    const candidate = String(randomInt(10000000, 100000000));
     const existingReq = await prisma.serviceRequest.findUnique({
       where: { requestNumber: candidate },
     });

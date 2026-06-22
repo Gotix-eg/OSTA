@@ -8,6 +8,13 @@ const catchAsync = (fn: (req: Request, res: Response, next: NextFunction) => Pro
 };
 
 import { authenticate } from "../../middleware/auth.middleware.js";
+import {
+  authLimiter,
+  loginLimiter,
+  otpLimiter,
+  passwordResetLimiter,
+  registrationLimiter
+} from "../../middleware/rate-limit.middleware.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { successResponse } from "../../utils/ApiResponse.js";
 import { clearAuthCookies, setAuthCookies } from "../../utils/auth-cookies.js";
@@ -23,6 +30,8 @@ import {
 
 const router = Router();
 
+router.use(authLimiter);
+
 function parseBody<T>(schema: { parse: (value: unknown) => T }, body: unknown): T {
   try {
     return schema.parse(body);
@@ -36,7 +45,7 @@ function parseBody<T>(schema: { parse: (value: unknown) => T }, body: unknown): 
   }
 }
 
-router.post("/register/client", catchAsync(async (request, response) => {
+router.post("/register/client", registrationLimiter, catchAsync(async (request, response) => {
   const payload = parseBody(registerSchema, request.body);
   const result = await authService.register({
     role: "CLIENT",
@@ -70,7 +79,7 @@ router.post("/register/client", catchAsync(async (request, response) => {
   );
 }));
 
-router.post("/verify-registration-otp", catchAsync(async (request, response) => {
+router.post("/verify-registration-otp", otpLimiter, catchAsync(async (request, response) => {
   const payload = parseBody(z.object({
     email: z.string().email("البريد الإلكتروني غير صالح"),
     code: z.string().length(6, "رمز التحقق يجب أن يكون 6 أرقام")
@@ -89,7 +98,7 @@ router.post("/verify-registration-otp", catchAsync(async (request, response) => 
   );
 }));
 
-router.post("/register/worker", catchAsync(async (request, response) => {
+router.post("/register/worker", registrationLimiter, catchAsync(async (request, response) => {
   const payload = parseBody(registerSchema, request.body);
   const result = (await authService.register({
     role: "WORKER",
@@ -120,7 +129,7 @@ router.post("/register/worker", catchAsync(async (request, response) => {
   );
 }));
 
-router.post("/register/vendor", catchAsync(async (request, response) => {
+router.post("/register/vendor", registrationLimiter, catchAsync(async (request, response) => {
   const payload = parseBody(registerSchema, request.body);
   const result = (await authService.register({
     role: "VENDOR",
@@ -151,7 +160,7 @@ router.post("/register/vendor", catchAsync(async (request, response) => {
   );
 }));
 
-router.post("/login", catchAsync(async (request, response) => {
+router.post("/login", loginLimiter, catchAsync(async (request, response) => {
   const payload = parseBody(loginSchema, request.body);
   const result = await authService.login({
     phone: payload.phone,
@@ -169,7 +178,7 @@ router.post("/login", catchAsync(async (request, response) => {
   );
 }));
 
-router.post("/verify-otp", catchAsync(async (request, response) => {
+router.post("/verify-otp", otpLimiter, catchAsync(async (request, response) => {
   const payload = parseBody(verifyOtpSchema, request.body);
   const result = await authService.verifyOtp(payload.phone, payload.code, payload.type);
 
@@ -198,13 +207,13 @@ router.post("/refresh-token", catchAsync(async (request, response) => {
   response.status(200).json(successResponse(result, "Tokens refreshed"));
 }));
 
-router.post("/forgot-password", catchAsync(async (request, response) => {
+router.post("/forgot-password", passwordResetLimiter, catchAsync(async (request, response) => {
   const payload = parseBody(forgotPasswordSchema, request.body);
   const result = await authService.forgotPassword(payload.email);
   response.status(200).json(successResponse(result, "Reset code sent to your email"));
 }));
 
-router.post("/reset-password", catchAsync(async (request, response) => {
+router.post("/reset-password", passwordResetLimiter, catchAsync(async (request, response) => {
   const payload = parseBody(resetPasswordSchema, request.body);
   const result = await authService.resetPassword(payload.email, payload.code, payload.password);
   response.status(200).json(successResponse(result, "Password reset successful"));

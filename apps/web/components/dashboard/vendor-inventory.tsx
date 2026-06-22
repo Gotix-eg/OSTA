@@ -21,7 +21,6 @@ import {
 import { fetchApiData, postApiData, patchApiData } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
-import * as XLSX from "xlsx";
 import ExcelJS from "exceljs";
 
 type VendorProduct = {
@@ -455,17 +454,30 @@ function BulkExcelModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Dynamic Excel template generator and downloader
-  function handleDownloadTemplate() {
+  async function handleDownloadTemplate() {
     const wsData = [
       ["اسم المنتج بالعربي (مطلوب)", "الاسم بالإنجليزي (اختياري)", "الوصف (اختياري)", "السعر بالجنيه (مطلوب)", "الكمية بالمخزن (اختياري)", "صورة المنتج (اسحب الصورة هنا)"],
       ["مساعدين أمامية تويوتا كورولا", "Front Shock Absorbers Corolla", "مساعدين غاز ياباني أصلي جودة عالية", "3400", "10", ""],
       ["طقم بوجيهات ليزر بلاتينيوم NGK", "NGK Laser Platinum Spark Plugs", "طقم 4 بوجيهات لعمر افتراضي أطول وأداء رياضي", "1200", "25", ""],
       ["فلتر هواء محرك هيونداي إلنترا", "Hyundai Elantra Engine Air Filter", "فلتر هواء أصلي يمنع دخول الأتربة لغرفة الاحتراق", "350", "40", ""]
     ];
-    const ws = XLSX.utils.aoa_to_sheet(wsData);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Ostafy Template");
-    XLSX.writeFile(wb, "Ostafy_Bulk_Products_Template.xlsx");
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Ostafy Template");
+    worksheet.addRows(wsData);
+    worksheet.columns.forEach((column) => {
+      column.width = 26;
+    });
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "Ostafy_Bulk_Products_Template.xlsx";
+    link.click();
+    URL.revokeObjectURL(url);
   }
 
   // Parse Uploaded Excel File using ExcelJS to support embedded images!
