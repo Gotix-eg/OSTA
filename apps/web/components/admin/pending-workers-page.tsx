@@ -10,8 +10,7 @@ import {
   MiniMetric,
   SoftBadge,
   SoftCard,
-  SplitInfo,
-  SubpageHero
+  SplitInfo
 } from "@/components/dashboard/dashboard-subpage-primitives";
 import { useLiveApiData } from "@/hooks/use-live-api-data";
 import { patchApiData } from "@/lib/api";
@@ -73,16 +72,7 @@ export function PendingWorkersPage({ locale, initialData }: { locale: Locale; in
 
   return (
     <div>
-      <SubpageHero
-        eyebrow={isArabic ? "مسار التوثيق" : "Verification rail"}
-        title={isArabic ? "توثيقات العمال المعلقة" : "Pending worker verification"}
-        subtitle={
-          isArabic
-            ? "راجع قائمة الانتظار ذات الأولوية، تحقق من جاهزية المستندات، واتخذ قرار القبول أو الرفض من لوحة التحكم."
-            : "Review the priority queue, inspect document readiness, and take faster verify or reject decisions from a stronger control view."
-        }
-        tone="sun"
-      />
+
 
       <div className="mb-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <MiniMetric label={isArabic ? "إجمالي المعلق" : "Total pending"} value={formatNumber(locale, data.summary.totalPending)} note={isArabic ? "كامل قائمة الانتظار" : "full queue"} icon={Users} tone="sun" />

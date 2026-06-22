@@ -12,8 +12,7 @@ import {
   MiniMetric,
   SoftBadge,
   SoftCard,
-  SplitInfo,
-  SubpageHero
+  SplitInfo
 } from "@/components/dashboard/dashboard-subpage-primitives";
 import { useLiveApiData } from "@/hooks/use-live-api-data";
 import type { Locale } from "@/lib/locales";
@@ -104,16 +103,7 @@ export function AdminClientsPage({ locale, initialData }: { locale: Locale; init
 
   return (
     <div>
-      <SubpageHero
-        eyebrow={isArabic ? "قاعدة العملاء" : "Client base"}
-        title={isArabic ? "العملاء" : "Clients"}
-        subtitle={
-          isArabic
-            ? "راجع كثافة العملاء والنشاط الحالي وصورة المحفظة والتقسيم من مساحة إدارية أوضح."
-            : "Review client density, activity, wallet signals, and segmentation from a cleaner admin layer."
-        }
-        tone="accent"
-      />
+
 
       <div className="mb-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <MiniMetric label={isArabic ? "إجمالي العملاء" : "Total clients"} value={formatNumber(locale, data.summary.totalClients)} note={isArabic ? "إجمالي القاعدة" : "full base"} icon={Users} tone="dark" />
@@ -307,16 +297,7 @@ export function AdminRequestsPage({ locale, initialData }: { locale: Locale; ini
 
   return (
     <div>
-      <SubpageHero
-        eyebrow={isArabic ? "حركة التشغيل" : "Ops traffic"}
-        title={isArabic ? "الطلبات" : "Requests"}
-        subtitle={
-          isArabic
-            ? "تابع الطلبات النشطة وحالات النزاع ومتوسط قيمة التذكرة من لوحة تشغيل أوضح."
-            : "Track active requests, disputes, and ticket size from a stronger operational board."
-        }
-        tone="primary"
-      />
+
 
       <div className="mb-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <MiniMetric label={isArabic ? "نشط الآن" : "Active"} value={formatNumber(locale, data.summary.active)} note={isArabic ? "طلبات حية" : "live jobs"} icon={Wrench} tone="primary" />
@@ -353,16 +334,7 @@ export function AdminFinancePage({ locale, initialData }: { locale: Locale; init
 
   return (
     <div>
-      <SubpageHero
-        eyebrow={isArabic ? "التحكم المالي" : "Finance control"}
-        title={isArabic ? "المالية" : "Finance"}
-        subtitle={
-          isArabic
-            ? "راجع الإيراد والعمولات والأموال المحجوزة ومسار التحويل من مساحة مالية أوضح."
-            : "Review revenue, commissions, escrow, and payout flow from a cleaner finance cockpit."
-        }
-        tone="sun"
-      />
+
 
       <div className="mb-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <MiniMetric label={isArabic ? "الإيراد" : "Revenue"} value={formatCurrency(locale, data.summary.totalRevenue)} note={isArabic ? "إجمالي الحجم" : "gross volume"} icon={Wallet} tone="dark" />
@@ -422,16 +394,7 @@ export function AdminSettingsPage({ locale, initialData }: { locale: Locale; ini
 
   return (
     <div>
-      <SubpageHero
-        eyebrow={isArabic ? "إعدادات المنصة" : "Platform controls"}
-        title={isArabic ? "الإعدادات" : "Settings"}
-        subtitle={
-          isArabic
-            ? "تحكم في المنصة والتشغيل والإشراف والدعم من صفحة واحدة أوضح وأكثر تنظيمًا."
-            : "Tune platform, operations, moderation, and support settings from one control page."
-        }
-        tone="dark"
-      />
+
 
       {saved ? <div className="mb-4 rounded-[1.2rem] border border-success/20 bg-success/10 px-4 py-3 text-sm text-success">{isArabic ? "تم الحفظ محليًا" : "Saved locally"}</div> : null}
 
