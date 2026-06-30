@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-import { CheckCircle2, Clock3, Loader2, ShieldCheck, ShieldQuestion, Star, Users, XCircle } from "lucide-react";
+import { CheckCircle2, Clock3, Loader2, ShieldCheck, ShieldQuestion, Star, Users, XCircle, Eye, EyeOff, FileText, X } from "lucide-react";
 
 import {
   DashboardBlock,
@@ -35,6 +35,11 @@ function formatNumber(locale: Locale, value: number) {
   return new Intl.NumberFormat(locale === "ar" ? "ar-EG" : "en-US", { maximumFractionDigits: 0 }).format(value);
 }
 
+function cleanImageUrl(url: string): string {
+  if (!url) return "";
+  return url;
+}
+
 export function PendingWorkersPage({ locale, initialData }: { locale: Locale; initialData: PendingWorkersData }) {
   const isArabic = locale === "ar";
   const liveData = useLiveApiData("/admin/workers/pending", initialData);
@@ -42,6 +47,7 @@ export function PendingWorkersPage({ locale, initialData }: { locale: Locale; in
   const [activeFilter, setActiveFilter] = useState<DashboardVerificationStatus | "ALL">("ALL");
   const [busyId, setBusyId] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
+  const [selectedWorker, setSelectedWorker] = useState<PendingWorkersData["workers"][number] | null>(null);
 
   useEffect(() => {
     setData(liveData);
@@ -142,6 +148,14 @@ export function PendingWorkersPage({ locale, initialData }: { locale: Locale; in
                   <div className="flex flex-wrap gap-3 xl:w-[15rem] xl:justify-end">
                     <button
                       type="button"
+                      onClick={() => setSelectedWorker(worker)}
+                      className="inline-flex items-center gap-2 rounded-full border border-onyx-700 bg-onyx-800/50 px-4 py-2.5 text-sm font-semibold text-gold-500 shadow-soft"
+                    >
+                      <Eye className="h-4 w-4" />
+                      {isArabic ? "عرض المستندات" : "View Docs"}
+                    </button>
+                    <button
+                      type="button"
                       onClick={() => void handleDecision(worker.id, "REJECTED")}
                       disabled={busyId === worker.id}
                       className="inline-flex items-center gap-2 rounded-full border border-onyx-700 bg-onyx-800/50 px-4 py-2.5 text-sm font-semibold text-onyx-200 shadow-soft disabled:opacity-60"
@@ -165,6 +179,154 @@ export function PendingWorkersPage({ locale, initialData }: { locale: Locale; in
           </div>
         )}
       </DashboardBlock>
+
+      {/* Worker Details & Documents Modal */}
+      {selectedWorker && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fadeIn">
+          <div className="bg-onyx-900 border border-white/5 rounded-[2rem] w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl p-8 space-y-8 text-start relative">
+            <button
+              onClick={() => setSelectedWorker(null)}
+              className="absolute top-6 end-6 text-onyx-400 hover:text-white transition-colors"
+            >
+              <X className="h-6 w-6" />
+            </button>
+
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-widest text-gold-500">
+                {isArabic ? "بيانات ومستندات التوثيق" : "Verification Data & Documents"}
+              </span>
+              <h2 className="text-3xl font-black text-white mt-1">
+                {selectedWorker.name}
+              </h2>
+              <p className="text-onyx-400 text-sm mt-1">
+                {specialtyLabels[selectedWorker.specialty][locale]} - {selectedWorker.area}
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* Profile Details */}
+              <div className="space-y-6 bg-onyx-950/40 p-6 rounded-3xl border border-white/5">
+                <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                  <div className="h-4 w-1 bg-gold-500 rounded-full" />
+                  {isArabic ? "المعلومات الشخصية والضامن" : "Personal Info & Guarantor"}
+                </h3>
+                
+                <div className="space-y-4 text-sm">
+                  <div className="flex justify-between py-2.5 border-b border-white/5">
+                    <span className="text-onyx-400">{isArabic ? "الرقم القومي" : "National ID Number"}</span>
+                    <span className="text-white font-bold">{selectedWorker.nationalIdNumber || (isArabic ? "غير متوفر" : "N/A")}</span>
+                  </div>
+                  <div className="flex justify-between py-2.5 border-b border-white/5">
+                    <span className="text-onyx-400">{isArabic ? "سنوات الخبرة" : "Years of Experience"}</span>
+                    <span className="text-white font-bold">{selectedWorker.experienceYears} {isArabic ? "سنوات" : "years"}</span>
+                  </div>
+                  <div className="flex justify-between py-2.5 border-b border-white/5">
+                    <span className="text-onyx-400">{isArabic ? "اسم الضامن" : "Guarantor Name"}</span>
+                    <span className="text-white font-bold">{selectedWorker.guarantorName || (isArabic ? "غير متوفر" : "N/A")}</span>
+                  </div>
+                  <div className="flex justify-between py-2.5">
+                    <span className="text-onyx-400">{isArabic ? "تليفون الضامن" : "Guarantor Phone"}</span>
+                    <span className="text-white font-bold">{selectedWorker.guarantorPhone || (isArabic ? "غير متوفر" : "N/A")}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action shortcuts */}
+              <div className="flex flex-col justify-between p-6 bg-onyx-950/40 rounded-3xl border border-white/5">
+                <div>
+                  <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                    <div className="h-4 w-1 bg-gold-500 rounded-full" />
+                    {isArabic ? "اتخاذ القرار" : "Decision Panel"}
+                  </h3>
+                  <p className="text-xs text-onyx-400 mt-2 leading-relaxed">
+                    {isArabic 
+                      ? "يرجى التحقق من صحة المستندات المرفقة وصلاحية الرقم القومي والفيش الجنائي قبل الموافقة." 
+                      : "Please verify all documents are correct and the national ID is valid before approving."}
+                  </p>
+                </div>
+
+                <div className="flex gap-4 mt-6">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      void handleDecision(selectedWorker.id, "REJECTED");
+                      setSelectedWorker(null);
+                    }}
+                    disabled={busyId === selectedWorker.id}
+                    className="flex-1 inline-flex items-center justify-center gap-2 rounded-2xl border border-onyx-700 bg-onyx-800/50 py-3 text-sm font-semibold text-white shadow-soft disabled:opacity-60"
+                  >
+                    <XCircle className="h-4 w-4 text-red-500" />
+                    {isArabic ? "رفض الطلب" : "Reject"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      void handleDecision(selectedWorker.id, "VERIFIED");
+                      setSelectedWorker(null);
+                    }}
+                    disabled={busyId === selectedWorker.id}
+                    className="flex-1 inline-flex items-center justify-center gap-2 rounded-2xl bg-gold-500 py-3 text-sm font-black text-onyx-950 shadow-lg hover:bg-gold-400 transition-colors disabled:opacity-60"
+                  >
+                    <CheckCircle2 className="h-4 w-4" />
+                    {isArabic ? "توثيق وتفعيل" : "Verify & Approve"}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Documents Section */}
+            <div className="space-y-6">
+              <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                <div className="h-4 w-1.5 bg-gold-500 rounded-full" />
+                {isArabic ? "المستندات والملفات المرفوعة" : "Uploaded Files & Documents"}
+              </h3>
+
+              <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
+                {[
+                  { label: isArabic ? "صورة البطاقة (الأمام)" : "National ID Front", url: selectedWorker.nationalIdFront },
+                  { label: isArabic ? "صورة البطاقة (الخلف)" : "National ID Back", url: selectedWorker.nationalIdBack },
+                  { label: isArabic ? "سيلفي مع البطاقة" : "Selfie with ID", url: selectedWorker.selfieWithId },
+                  { label: isArabic ? "الفيش والتشبيه" : "Criminal Record (Fish)", url: selectedWorker.criminalRecord },
+                  { label: isArabic ? "إيصال المرافق" : "Utility Bill", url: selectedWorker.utilityBillUrl }
+                ].map((doc, idx) => (
+                  <div key={idx} className="onyx-card p-4 flex flex-col justify-between min-h-[160px] bg-onyx-950/20 border-white/5">
+                    <div>
+                      <span className="text-xs font-bold text-onyx-400 uppercase">{doc.label}</span>
+                      <p className="text-[10px] text-onyx-600 mt-0.5">
+                        {doc.url ? (isArabic ? "ملف مرفوع" : "Uploaded") : (isArabic ? "لم يرفع بعد" : "Not uploaded")}
+                      </p>
+                    </div>
+
+                    {doc.url ? (
+                      <div className="mt-4 space-y-2">
+                        {doc.url.match(/\.(jpeg|jpg|gif|png|webp)/i) || doc.url.startsWith("data:image") ? (
+                          <div className="h-20 w-full rounded-xl overflow-hidden border border-white/5 bg-onyx-900 flex items-center justify-center">
+                            <img src={cleanImageUrl(doc.url)} alt={doc.label} className="h-full w-full object-cover" />
+                          </div>
+                        ) : null}
+                        
+                        <a
+                          href={doc.url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-bold text-gold-500 bg-gold-500/10 border border-gold-500/20 rounded-xl hover:bg-gold-500 hover:text-onyx-950 transition-colors"
+                        >
+                          <Eye className="h-3.5 w-3.5" />
+                          {isArabic ? "عرض بالحجم الكامل" : "View Fullscreen"}
+                        </a>
+                      </div>
+                    ) : (
+                      <div className="mt-4 py-3 text-center text-xs text-onyx-600 border border-dashed border-white/5 rounded-xl">
+                        {isArabic ? "مستند فارغ" : "Empty document"}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

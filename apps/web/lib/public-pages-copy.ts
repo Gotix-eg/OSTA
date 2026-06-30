@@ -113,39 +113,39 @@ export const publicPageCopy = {
       },
       terms: {
         eyebrow: "شروط الخدمة",
-        title: "اتفاقية الاستخدام وشروط الخدمة",
-        description: "شروط وقواعد استخدام منصة أُسطفاي لحفظ حقوق العملاء والفنيين.",
+        title: "طبيعة الخدمة وإخلاء المسؤولية",
+        description: "شروط وقواعد استخدام منصة أُسطفاي والحدود التنظيمية للتعامل بين العملاء والفنيين.",
         sections: [
           {
-            title: "١) القواعد العامة",
-            body: "تلتزم منصة أُسطفاي بتوفير آلية ربط آمنة وشفافة بين العملاء ومقدمي الخدمات (الفنيين والمتاجر)."
+            title: "١) طبيعة الخدمة والربط",
+            body: "منصة أُسطفاي هي مجرد وسيط لتوفير وتسهيل الربط بين العملاء والصنايعية (مقدمي الخدمات) فقط. وليس للمنصة أي سلطة إدارية، أو رقابة، أو علاقة عمل مباشرة مع أي من الطرفين، ولا تتدخل في توجيه العمل."
           },
           {
-            title: "٢) حماية المدفوعات والضمان",
-            body: "يتم الاحتفاظ بمدفوعات العملاء بشكل آمن ولا يتم تحريرها للفني إلا بعد تأكيد تنفيذ الخدمة وضمان جودتها."
+            title: "٢) الضمان الأمني والتحقق من الهوية",
+            body: "ينحصر دور المنصة في توفير الضمان الأمني للعملاء من خلال التحقق من مستندات الصنايعية والاحتفاظ بنسخة من هوياتهم الرسمية (مثل صورة بطاقة الرقم القومي). وتلتزم المنصة بتقديم هذه البيانات للعميل عند الطلب لمساعدته في التوصل للفني وحل أي مشكلة قد تطرأ قانونياً أو شخصياً."
           },
           {
-            title: "٣) سياسة إلغاء الطلبات والنزاعات",
-            body: "تخضع جميع الطلبات والنزاعات لسياسة إلغاء واضحة مع إمكانية فتح شكوى وتدخل الإدارة للفصل وحماية حقوق الطرفين."
+            title: "٣) إخلاء المسؤولية عن المدفوعات والتعاملات",
+            body: "المنصة والموقع غير مسؤولين تماماً عن عمليات الدفع، أو الاتفاقات المالية، أو جودة الخدمات المؤداة، أو أي نزاعات تنشأ عن التعامل المباشر بين العميل والصنايعي خارج نطاق البيانات الموثقة التي يتم تقديمها للضمان الأمني."
           }
         ]
       },
       privacy: {
         eyebrow: "سياسة الخصوصية",
-        title: "سياسة الخصوصية وحماية البيانات",
-        description: "نلتزم في أُسطفاي بحماية خصوصية بياناتك ومعلوماتك الشخصية وتأمينها بالكامل.",
+        title: "سياسة الخصوصية وحماية البيانات والأمان",
+        description: "نلتزم في أُسطفاي بجمع البيانات اللازمة فقط لضمان الأمان والربط بين العملاء والفنيين.",
         sections: [
           {
-            title: "١) جمع البيانات",
-            body: "نقوم بجمع المعلومات اللازمة فقط لتقديم خدمات التوثيق والتطابق والصيانة بشكل آمن."
+            title: "١) جمع هويات الفنيين للأمان",
+            body: "نقوم بجمع بيانات التحقق الرسمية الخاصة بالفنيين (مثل صورة بطاقة الرقم القومي) بهدف توفير ضمان أمني للعملاء وتسهيل الوصول إليهم عند الحاجة."
           },
           {
-            title: "٢) حماية المعلومات",
-            body: "نستخدم تقنيات تشفير متطورة لحماية بيانات الدفع والبيانات الشخصية من أي وصول غير مصرح به."
+            title: "٢) مشاركة البيانات عند حدوث مشكلات",
+            body: "يتم تخزين بيانات الهوية بشكل آمن، ولكن تحتفظ المنصة بالحق الكامل في مشاركة صورة بطاقة الفني أو بياناته الموثقة مع العميل المتضرر في حال حدوث أي مشكلة أو نزاع لتسهيل الوصول للفني قانونياً أو ودياً."
           },
           {
-            title: "٣) مشاركة البيانات",
-            body: "لا نقوم ببيع بياناتك الشخصية لأي طرف ثالث، ويتم مشاركتها فقط مع الفني المحدد لتنفيذ طلبك."
+            title: "٣) عدم جمع البيانات المالية",
+            body: "لا تقوم المنصة بجمع أو تخزين أي بيانات دفع أو بطاقات ائتمانية خاصة بالعملاء أو الفنيين، حيث يقتصر دورنا على تسهيل التواصل وتقديم الضمانات الأمنية الرسمية المذكورة فقط."
           }
         ]
       },
@@ -307,39 +307,39 @@ export const publicPageCopy = {
       },
       terms: {
         eyebrow: "Terms of Service",
-        title: "Terms of Service Agreement",
-        description: "Rules and guidelines for using the Ostafy platform to protect both clients and service providers.",
+        title: "Nature of Service & Disclaimer",
+        description: "Rules and guidelines governing the relationship between clients and craftsmen on the Ostafy platform.",
         sections: [
           {
-            title: "1) General Rules",
-            body: "Ostafy connects clients and verified service providers (workers/vendors) in a secure, transparent manner."
+            title: "1) Nature of Service & Matching",
+            body: "Ostafy acts solely as a facilitator/broker to match clients with independent craftsmen. The platform holds no authority, direct management, control, or employment relationship over either the client or the craftsman."
           },
           {
-            title: "2) Payment Protection & Warranty",
-            body: "Payments are held securely and only released to the worker once service completion is confirmed and verified."
+            title: "2) Security Guarantee & Verification Data",
+            body: "The platform's role is limited to performing identity checks on craftsmen and retaining secure copies of their official documents (such as national ID card images) for security. In case of any dispute or issue, Ostafy will provide this data to the client to assist them in contacting and locating the craftsman."
           },
           {
-            title: "3) Cancellation & Disputes",
-            body: "All requests and disputes are subject to our cancellation policy, with active admin review to protect user rights."
+            title: "3) Financial & Operational Disclaimer",
+            body: "The website and platform are entirely exempt from any responsibility or liability regarding payments, pricing agreements, the quality of services performed, or any disputes resulting from direct interactions between the client and the craftsman."
           }
         ]
       },
       privacy: {
         eyebrow: "Privacy Policy",
-        title: "Privacy Policy & Data Protection",
-        description: "At Ostafy, we are fully committed to protecting and securing your privacy and personal data.",
+        title: "Privacy Policy & Security Guarantees",
+        description: "At Ostafy, we only collect data essential for verification, security, and connecting clients with craftsmen.",
         sections: [
           {
-            title: "1) Data Collection",
-            body: "We only collect information necessary to securely provide verification, matching, and maintenance services."
+            title: "1) Verification Data Collection",
+            body: "We collect official identity verification files from craftsmen (such as national ID card images) to provide security guarantees for clients and enable reliable contact details."
           },
           {
-            title: "2) Information Security",
-            body: "We use advanced encryption technologies to protect payment details and personal data from unauthorized access."
+            title: "2) Data Sharing for Security and Disputes",
+            body: "Identity data is stored securely. However, the platform retains the right to share the craftsman's national ID copy and details with the affected client in case of any dispute, facilitating legal or personal resolution."
           },
           {
-            title: "3) Data Sharing",
-            body: "We do not sell your personal data to third parties, and it is only shared with the selected technician to complete your order."
+            title: "3) No Financial Data Storage",
+            body: "The platform does not collect, store, or process any payment credentials or credit card details. Our scope is strictly limited to connection facilitation and verification tracking."
           }
         ]
       },

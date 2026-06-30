@@ -7,7 +7,8 @@ import {
   ChevronRight, ArrowLeft, Star, ShieldCheck, MapPin,
   Store, Users, CheckCircle2, Menu, X,
   Facebook, Instagram, Phone, Mail,
-  Droplets, Wrench, PaintBucket, Network, Settings
+  Droplets, Wrench, PaintBucket, Network, Settings,
+  Megaphone
 } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect, useMemo } from "react";
@@ -152,6 +153,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [slides, setSlides] = useState<any[]>(DEFAULT_SLIDES);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+  const [campaigns, setCampaigns] = useState<any[]>([]);
 
   const [selectedSpecialty, setSelectedSpecialty] = useState<string>("");
   const [selectedGov, setSelectedGov] = useState<string>("");
@@ -200,6 +202,15 @@ export function LandingPage({ locale }: { locale: Locale }) {
         }
       })
       .catch(() => setSlides(DEFAULT_SLIDES));
+
+    fetch(`${baseUrl}/public/campaigns`)
+      .then(r => r.json())
+      .then(payload => {
+        if (payload.success && Array.isArray(payload.data)) {
+          setCampaigns(payload.data);
+        }
+      })
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -886,6 +897,67 @@ export function LandingPage({ locale }: { locale: Locale }) {
           </motion.div>
         </div>
       </section>
+
+      {/* Sponsored Campaigns Section */}
+      {campaigns.length > 0 && (
+        <section className="py-20 px-4 bg-onyx-950/40 relative border-t border-b border-white/5">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex items-center justify-between mb-12">
+              <div className="flex items-center gap-4">
+                <div className="h-12 w-12 rounded-2xl bg-gold-500/10 border border-gold-500/20 flex items-center justify-center text-gold-500 shrink-0 shadow-lg">
+                  <Megaphone className="h-6 w-6 animate-pulse" />
+                </div>
+                <div>
+                  <h2 className="text-2xl md:text-4xl font-black text-white tracking-tight">
+                    {isArabic ? "شركاء أُسطفاي والعروض المميزة" : "Sponsored Deals & Partners"}
+                  </h2>
+                  <p className="text-onyx-400 text-sm mt-1">
+                    {isArabic ? "عروض حصرية وخصومات من المتاجر والشركاء المعتمدين لدينا" : "Exclusive deals and services from our trusted sponsors"}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+              {campaigns.map((camp) => (
+                <Link
+                  key={camp.id}
+                  href={camp.link.startsWith("http") ? camp.link : `/${locale}${camp.link.startsWith("/") ? "" : "/"}${camp.link}`}
+                  className="group relative rounded-[2rem] overflow-hidden min-h-[300px] flex items-end p-6 border border-white/5 hover:border-gold-500/30 transition-all duration-500 shadow-xl bg-onyx-900"
+                >
+                  {camp.imageUrl ? (
+                    <img
+                      src={cleanImageUrl(camp.imageUrl)}
+                      alt=""
+                      className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                  ) : null}
+                  <div className="absolute inset-0 bg-gradient-to-t from-onyx-950 via-onyx-950/75 to-transparent" />
+                  
+                  <div className="absolute top-4 end-4">
+                    <span className="inline-block px-2.5 py-1 rounded bg-gold-500 text-onyx-950 text-[9px] font-black uppercase tracking-wider shadow-md">
+                      {isArabic ? "ممول" : "Ad"}
+                    </span>
+                  </div>
+
+                  <div className="relative z-10 space-y-2 text-start">
+                    <h3 className="text-xl font-black text-white leading-tight group-hover:text-gold-500 transition-colors">
+                      {isArabic ? camp.titleAr : camp.titleEn}
+                    </h3>
+                    <p className="text-onyx-300 text-xs leading-relaxed line-clamp-2 font-light">
+                      {isArabic ? camp.descAr : camp.descEn}
+                    </p>
+                    <div className="flex items-center gap-1.5 text-xs text-gold-500 font-bold pt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      {isArabic ? "عرض التفاصيل" : "Explore Offer"}
+                      <ChevronRight className="h-3 w-3 rtl:rotate-180" />
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Features */}
       <section className="py-24 px-4 relative overflow-hidden">

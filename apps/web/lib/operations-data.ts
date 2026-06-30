@@ -149,6 +149,14 @@ export interface PendingWorkersData {
     documentsReady: number;
     submittedAt: string;
     status: DashboardVerificationStatus;
+    nationalIdFront?: string | null;
+    nationalIdBack?: string | null;
+    selfieWithId?: string | null;
+    criminalRecord?: string | null;
+    utilityBillUrl?: string | null;
+    nationalIdNumber?: string | null;
+    guarantorName?: string | null;
+    guarantorPhone?: string | null;
   }>;
 }
 

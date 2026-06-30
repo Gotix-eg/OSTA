@@ -378,6 +378,17 @@ router.get("/public/slides", async (_req, response) => {
   }
 });
 
+// GET /api/public/campaigns — Public sponsored campaigns (no auth required)
+router.get("/public/campaigns", async (_req, response) => {
+  try {
+    const setting = await prisma.systemSetting.findUnique({ where: { key: "sponsored_campaigns" } });
+    const campaigns = setting ? JSON.parse(setting.value) : [];
+    response.json({ success: true, data: campaigns.filter((c: any) => c.isActive !== false) });
+  } catch (e: any) {
+    response.json({ success: true, data: [] });
+  }
+});
+
 router.use("/auth", authRouter);
 router.use("/clients", clientsRouter);
 router.use("/workers", workersRouter);

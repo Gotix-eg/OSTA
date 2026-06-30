@@ -66,3 +66,16 @@ export async function normalizeHeroSlidesForStorage(slides: HeroSlide[]) {
 
   return { slides: normalized, uploadedCount };
 }
+
+export async function normalizeCampaignsForStorage(campaigns: any[]) {
+  const normalized = await Promise.all(
+    campaigns.map(async (camp, index) => {
+      if (!isDataImage(camp.imageUrl)) return camp;
+
+      const imageUrl = await uploadDataImageToBlob(camp.imageUrl, camp.id ?? `campaign-${index + 1}`);
+      return { ...camp, imageUrl };
+    })
+  );
+
+  return { campaigns: normalized };
+}

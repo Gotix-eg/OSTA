@@ -8,7 +8,7 @@ import { successResponse } from "../../utils/ApiResponse.js";
 import { prisma } from "../../lib/prisma.js";
 import { catchAsync } from "../../utils/catchAsync.js";
 import { ApiError } from "../../utils/ApiError.js";
-import { normalizeHeroSlidesForStorage } from "./hero-slides.storage.js";
+import { normalizeHeroSlidesForStorage, normalizeCampaignsForStorage } from "./hero-slides.storage.js";
 
 const router = Router();
 
@@ -26,6 +26,14 @@ type PendingWorkerRecord = {
   documentsReady: number;
   submittedAt: string;
   status: VerificationStatus;
+  nationalIdFront?: string | null;
+  nationalIdBack?: string | null;
+  selfieWithId?: string | null;
+  criminalRecord?: string | null;
+  utilityBillUrl?: string | null;
+  nationalIdNumber?: string | null;
+  guarantorName?: string | null;
+  guarantorPhone?: string | null;
 };
 
 const verifyWorkerSchema = z.object({
@@ -125,7 +133,15 @@ async function getPendingWorkersData() {
       rating: worker.rating,
       documentsReady,
       submittedAt: worker.createdAt.toISOString().split("T")[0] ?? "",
-      status: mapPendingWorkerStatus(worker.verificationStatus)
+      status: mapPendingWorkerStatus(worker.verificationStatus),
+      nationalIdFront: worker.nationalIdFront,
+      nationalIdBack: worker.nationalIdBack,
+      selfieWithId: worker.selfieWithId,
+      criminalRecord: worker.criminalRecord,
+      utilityBillUrl: worker.utilityBillUrl,
+      nationalIdNumber: worker.nationalIdNumber,
+      guarantorName: worker.guarantorName,
+      guarantorPhone: worker.guarantorPhone
     };
   });
 
@@ -936,6 +952,30 @@ router.put("/slides", authenticate, requireRoles(UserRole.ADMIN), catchAsync(asy
   });
 
   res.json(successResponse(normalized.slides, "Hero slides saved"));
+}));
+
+const CAMPAIGNS_KEY = "sponsored_campaigns";
+
+// GET /api/admin/campaigns — Get current sponsored campaigns
+router.get("/campaigns", authenticate, requireRoles(UserRole.ADMIN), catchAsync(async (_req, res) => {
+  const setting = await prisma.systemSetting.findUnique({ where: { key: CAMPAIGNS_KEY } });
+  const campaigns = setting ? JSON.parse(setting.value) : [];
+  res.json(successResponse(campaigns, "Sponsored campaigns fetched"));
+}));
+
+// PUT /api/admin/campaigns — Save sponsored campaigns
+router.put("/campaigns", authenticate, requireRoles(UserRole.ADMIN), catchAsync(async (req, res) => {
+  const { campaigns } = req.body;
+  if (!Array.isArray(campaigns)) throw new ApiError(400, "campaigns must be an array");
+  const normalized = await normalizeCampaignsForStorage(campaigns);
+
+  await prisma.systemSetting.upsert({
+    where: { key: CAMPAIGNS_KEY },
+    update: { value: JSON.stringify(normalized.campaigns), type: "json" },
+    create: { key: CAMPAIGNS_KEY, value: JSON.stringify(normalized.campaigns), type: "json" }
+  });
+
+  res.json(successResponse(normalized.campaigns, "Sponsored campaigns saved"));
 }));
 
 export const adminRouter = router;

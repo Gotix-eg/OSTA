@@ -471,6 +471,18 @@ export function AdminAdsPage({ locale }: { locale: Locale }) {
     isActive: true
   });
 
+  // Campaigns state
+  const [campaigns, setCampaigns] = useState<any[]>([]);
+  const [isEditingCampaign, setIsEditingCampaign] = useState(false);
+  const [editingCampaignId, setEditingCampaignId] = useState<string | null>(null);
+  const [campaignFormData, setCampaignFormData] = useState({
+    titleAr: "", titleEn: "",
+    descAr: "", descEn: "",
+    imageUrl: "",
+    link: "",
+    isActive: true
+  });
+
 
 
   const DEFAULT_SLIDES = [
@@ -512,9 +524,10 @@ export function AdminAdsPage({ locale }: { locale: Locale }) {
 
 
   useEffect(() => {
-    // Load slides from database API
+    // Load slides and campaigns from database API
     const token = window.localStorage.getItem("osta_access_token") || window.sessionStorage.getItem("osta_access_token") || "";
     const baseUrl = (process.env.NEXT_PUBLIC_OSTA_API_URL ?? "/api");
+    
     fetch(`${baseUrl}/admin/slides`, {
       headers: { Authorization: `Bearer ${token}` }
     })
@@ -527,7 +540,130 @@ export function AdminAdsPage({ locale }: { locale: Locale }) {
         }
       })
       .catch(() => setSlides(DEFAULT_SLIDES));
+
+    fetch(`${baseUrl}/admin/campaigns`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(r => r.json())
+      .then(payload => {
+        if (payload.success && Array.isArray(payload.data)) {
+          setCampaigns(payload.data);
+        }
+      })
+      .catch(() => {});
   }, []);
+
+  const saveCampaigns = async (updated: any[]) => {
+    setCampaigns(updated);
+    try {
+      const token = window.localStorage.getItem("osta_access_token") || window.sessionStorage.getItem("osta_access_token") || "";
+      const baseUrl = (process.env.NEXT_PUBLIC_OSTA_API_URL ?? "/api");
+      await fetch(`${baseUrl}/admin/campaigns`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ campaigns: updated })
+      });
+    } catch (err) {
+      console.error("Failed to save campaigns to DB:", err);
+    }
+  };
+
+  const handleCreateNewCampaign = () => {
+    setEditingCampaignId(null);
+    setCampaignFormData({
+      titleAr: isArabic ? "حملة ترويجية جديدة للمتاجر" : "New Sponsored Vendor Campaign",
+      titleEn: "New Sponsored Vendor Campaign",
+      descAr: isArabic ? "وصف ترويجي مميز للمتجر يظهر على الصفحة الرئيسية..." : "Premium promo description of this store highlighted on the homepage...",
+      descEn: "Premium promo description of this store highlighted on the homepage...",
+      imageUrl: "https://images.unsplash.com/photo-1542744094-3a31f103e35f?q=80&w=1000",
+      link: "/vendors",
+      isActive: true
+    });
+    setIsEditingCampaign(true);
+  };
+
+  const handleEditCampaignClick = (camp: any) => {
+    setEditingCampaignId(camp.id);
+    setCampaignFormData({
+      titleAr: camp.titleAr || "",
+      titleEn: camp.titleEn || "",
+      descAr: camp.descAr || "",
+      descEn: camp.descEn || "",
+      imageUrl: camp.imageUrl || "",
+      link: camp.link || "",
+      isActive: camp.isActive !== false
+    });
+    setIsEditingCampaign(true);
+  };
+
+  const handleDeleteCampaign = (id: string) => {
+    if (confirm(isArabic ? "هل أنت متأكد من رغبتك في حذف هذه الحملة؟" : "Are you sure you want to delete this campaign?")) {
+      const updated = campaigns.filter(c => c.id !== id);
+      saveCampaigns(updated);
+    }
+  };
+
+  const handleToggleCampaignActive = (id: string) => {
+    const updated = campaigns.map(c => c.id === id ? { ...c, isActive: !c.isActive } : c);
+    saveCampaigns(updated);
+  };
+
+  const handleCampaignImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new window.Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return;
+
+        const MAX_WIDTH = 1200;
+        const MAX_HEIGHT = 800;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width *= MAX_HEIGHT / height;
+            height = MAX_HEIGHT;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const compressedBase64 = canvas.toDataURL("image/jpeg", 0.7);
+        setCampaignFormData(prev => ({ ...prev, imageUrl: compressedBase64 }));
+      };
+      img.src = event.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSaveCampaign = (e: React.FormEvent) => {
+    e.preventDefault();
+    let updated;
+    if (editingCampaignId) {
+      updated = campaigns.map(c => c.id === editingCampaignId ? { ...c, ...campaignFormData } : c);
+    } else {
+      updated = [...campaigns, { id: `camp-${Date.now()}`, ...campaignFormData }];
+    }
+    saveCampaigns(updated);
+    setIsEditingCampaign(false);
+    setEditingCampaignId(null);
+  };
 
   const saveSlides = async (updated: any[]) => {
     setSlides(updated);
@@ -689,7 +825,298 @@ export function AdminAdsPage({ locale }: { locale: Locale }) {
       </div>
 
       {activeTab === "ads" ? (
-        <EmptyNotice message={isArabic ? "لا توجد حملات إعلانية نشطة حالياً." : "No active ad campaigns at the moment."} />
+        <>
+          {/* Main Toggle Action */}
+          {!isEditingCampaign && (
+            <div className="flex justify-between items-center bg-onyx-900/50 p-6 rounded-2xl border border-white/5">
+              <div>
+                <h3 className="font-bold text-white mb-1">{isArabic ? "حملات الموردين النشطة" : "Active Sponsored Ads"}</h3>
+                <p className="text-xs text-onyx-400">{isArabic ? `لديك إجمالي ${campaigns.length} حملات مسجلة.` : `Total ${campaigns.length} campaigns configured.`}</p>
+              </div>
+              <button
+                onClick={handleCreateNewCampaign}
+                className="btn-gold flex items-center gap-2 px-5 py-3 text-sm font-bold shadow-lg"
+              >
+                <Plus className="h-4 w-4" />
+                {isArabic ? "إضافة حملة جديدة" : "Add New Campaign"}
+              </button>
+            </div>
+          )}
+
+          {isEditingCampaign ? (
+            <div className="grid lg:grid-cols-[1.2fr_0.8fr] gap-8">
+              {/* Form Card */}
+              <div className="onyx-card p-8 border-gold-500/10">
+                <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
+                  <div className="h-6 w-1 bg-gold-500 rounded-full" />
+                  {editingCampaignId ? (isArabic ? "تعديل الحملة الإعلانية" : "Edit Campaign") : (isArabic ? "إنشاء حملة إعلانية جديدة" : "Create New Campaign")}
+                </h3>
+
+                <form onSubmit={handleSaveCampaign} className="space-y-6">
+                  {/* Image URL */}
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-onyx-400 mb-2">
+                      {isArabic ? "رابط صورة الإعلان" : "Campaign Image URL"}
+                    </label>
+                    <div className="flex flex-col sm:flex-row gap-3 mb-3">
+                      <div className="flex-1 flex gap-3">
+                        <div className="h-12 w-12 bg-onyx-800 rounded-xl flex items-center justify-center text-gold-500 overflow-hidden border border-white/5 shrink-0">
+                          {campaignFormData.imageUrl ? (
+                            <img src={cleanImageUrl(campaignFormData.imageUrl)} className="h-full w-full object-cover" onError={(e) => { (e.target as HTMLElement).style.display='none'; }} />
+                          ) : (
+                            <ImageIcon className="h-5 w-5" />
+                          )}
+                        </div>
+                        <input
+                          type="text"
+                          required
+                          value={campaignFormData.imageUrl}
+                          onChange={(e) => setCampaignFormData({ ...campaignFormData, imageUrl: e.target.value })}
+                          placeholder="https://images.unsplash.com/..."
+                          className="flex-1 bg-onyx-950 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold-500"
+                        />
+                      </div>
+
+                      {/* File Upload Button */}
+                      <div className="relative shrink-0">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleCampaignImageUpload}
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                        />
+                        <button
+                          type="button"
+                          className="h-full w-full sm:w-auto px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white text-sm font-bold flex items-center justify-center gap-2 hover:bg-white/10 transition-colors"
+                        >
+                          <ImageIcon className="h-4 w-4 text-gold-500" />
+                          {isArabic ? "رفع صورة" : "Upload Image"}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <hr className="border-white/5" />
+
+                  {/* Dual Language Text Grid */}
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {/* Arabic Text Content */}
+                    <div className="space-y-4">
+                      <h4 className="text-xs font-bold text-gold-500 uppercase tracking-widest">{isArabic ? "المحتوى باللغة العربية" : "Arabic Version Content"}</h4>
+                      <div>
+                        <label className="block text-[10px] uppercase font-bold text-onyx-400 mb-1.5">{isArabic ? "العنوان الرئيسي" : "Main Headline"}</label>
+                        <input
+                          type="text"
+                          required
+                          value={campaignFormData.titleAr}
+                          onChange={(e) => setCampaignFormData({ ...campaignFormData, titleAr: e.target.value })}
+                          className="w-full bg-onyx-950 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold-500 font-bold"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] uppercase font-bold text-onyx-400 mb-1.5">{isArabic ? "الوصف التوضيحي" : "Subtitle Description"}</label>
+                        <textarea
+                          rows={3}
+                          required
+                          value={campaignFormData.descAr}
+                          onChange={(e) => setCampaignFormData({ ...campaignFormData, descAr: e.target.value })}
+                          className="w-full bg-onyx-950 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold-500 leading-relaxed"
+                        />
+                      </div>
+                    </div>
+
+                    {/* English Text Content */}
+                    <div className="space-y-4">
+                      <h4 className="text-xs font-bold text-gold-500 uppercase tracking-widest">{isArabic ? "المحتوى باللغة الانجليزية" : "English Version Content"}</h4>
+                      <div>
+                        <label className="block text-[10px] uppercase font-bold text-onyx-400 mb-1.5">Headline (EN)</label>
+                        <input
+                          type="text"
+                          required
+                          value={campaignFormData.titleEn}
+                          onChange={(e) => setCampaignFormData({ ...campaignFormData, titleEn: e.target.value })}
+                          className="w-full bg-onyx-950 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold-500 font-bold"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] uppercase font-bold text-onyx-400 mb-1.5">Description (EN)</label>
+                        <textarea
+                          rows={3}
+                          required
+                          value={campaignFormData.descEn}
+                          onChange={(e) => setCampaignFormData({ ...campaignFormData, descEn: e.target.value })}
+                          className="w-full bg-onyx-950 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold-500 leading-relaxed"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <hr className="border-white/5" />
+
+                  {/* Link Target */}
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-onyx-400 mb-2">
+                      {isArabic ? "رابط توجيه الإعلان عند الضغط عليه (مثال: /vendors أو رابط المتجر)" : "Target Link on click (e.g. /vendors or store URL)"}
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={campaignFormData.link}
+                      onChange={(e) => setCampaignFormData({ ...campaignFormData, link: e.target.value })}
+                      placeholder="/vendors"
+                      className="w-full bg-onyx-950 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold-500"
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-4 bg-onyx-950/60 p-4 rounded-xl border border-white/5">
+                    <input
+                      type="checkbox"
+                      id="isCampaignActive"
+                      checked={campaignFormData.isActive}
+                      onChange={(e) => setCampaignFormData({ ...campaignFormData, isActive: e.target.checked })}
+                      className="accent-gold-500 h-4 w-4"
+                    />
+                    <label htmlFor="isCampaignActive" className="text-sm font-bold text-white cursor-pointer select-none">
+                      {isArabic ? "تفعيل ونشر الإعلان فوراً في الصفحة الرئيسية" : "Activate and publish this campaign immediately on homepage"}
+                    </label>
+                  </div>
+
+                  {/* Form Submit buttons */}
+                  <div className="flex justify-end gap-4 mt-8">
+                    <button
+                      type="button"
+                      onClick={() => setIsEditingCampaign(false)}
+                      className="px-6 py-3 rounded-xl border border-white/10 text-white font-bold text-sm hover:bg-white/5 transition-colors"
+                    >
+                      {isArabic ? "إلغاء التعديل" : "Cancel"}
+                    </button>
+                    <button
+                      type="submit"
+                      className="btn-gold px-8 py-3 text-sm font-bold shadow-lg"
+                    >
+                      {isArabic ? "حفظ التغييرات" : "Save Changes"}
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              {/* Live Preview */}
+              <div className="space-y-6">
+                <div className="sticky top-28">
+                  <h4 className="text-xs font-bold uppercase tracking-widest text-gold-500 mb-3">{isArabic ? "معاينة تصميم الإعلان لايف" : "Real-time Live Preview"}</h4>
+                  <div className="relative rounded-[2rem] overflow-hidden min-h-[360px] flex items-end p-8 border border-white/10 shadow-2xl bg-onyx-950">
+                    {campaignFormData.imageUrl ? (
+                      <div
+                        className="absolute inset-0 bg-cover bg-center transition-all duration-500"
+                        style={{ backgroundImage: `url('${cleanImageUrl(campaignFormData.imageUrl)}')` }}
+                      />
+                    ) : null}
+                    {/* Dark gradient overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-onyx-950 via-onyx-950/70 to-transparent" />
+
+                    <div className="relative z-10 space-y-2 text-start">
+                      <span className="inline-block px-2 py-0.5 rounded bg-gold-500 text-onyx-950 text-[9px] font-black uppercase tracking-wider">
+                        {isArabic ? "إعلان ممول" : "Sponsored"}
+                      </span>
+                      {/* Title */}
+                      <h2 className="text-xl font-black text-white leading-tight">
+                        {isArabic ? (campaignFormData.titleAr || "حملة إعلانية مميزة") : (campaignFormData.titleEn || "Featured Campaign")}
+                      </h2>
+                      {/* Description */}
+                      <p className="text-onyx-300 text-xs leading-relaxed max-w-xs font-light">
+                        {isArabic ? (campaignFormData.descAr || "وصف الإعلان التمويلي هنا...") : (campaignFormData.descEn || "Campaign description goes here...")}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="grid gap-6 md:grid-cols-2">
+              {campaigns.map((camp) => (
+                <div
+                  key={camp.id}
+                  className="onyx-card overflow-hidden group hover:border-gold-500/30 flex flex-col relative border-white/5"
+                >
+                  {/* Background Image preview with overlay */}
+                  <div className="relative h-44 w-full bg-onyx-900 overflow-hidden border-b border-white/5">
+                    {camp.imageUrl ? (
+                      <img src={cleanImageUrl(camp.imageUrl)} alt="" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                    ) : (
+                      <div className="h-full w-full flex items-center justify-center text-onyx-600"><ImageIcon className="h-8 w-8" /></div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-onyx-950 via-onyx-950/60 to-transparent" />
+                    
+                    <div className="absolute top-4 start-4 flex items-center gap-2">
+                      <span className={cn(
+                        "px-2.5 py-1 rounded-full text-[10px] font-bold border",
+                        camp.isActive !== false 
+                          ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400"
+                          : "bg-onyx-800 border-white/5 text-onyx-400"
+                      )}>
+                        {camp.isActive !== false ? (isArabic ? "نشط" : "Active") : (isArabic ? "مخفي" : "Inactive")}
+                      </span>
+                    </div>
+
+                    <div className="absolute bottom-4 start-4 end-4">
+                      <span className="inline-block px-1.5 py-0.5 rounded bg-gold-500 text-onyx-950 text-[8px] font-black uppercase tracking-wider mb-1">
+                        {isArabic ? "إعلان ممول" : "Sponsored"}
+                      </span>
+                      <h4 className="text-lg font-black text-white mt-0.5 line-clamp-1">{isArabic ? camp.titleAr : camp.titleEn}</h4>
+                    </div>
+                  </div>
+
+                  {/* Body Content */}
+                  <div className="p-6 flex-1 flex flex-col justify-between">
+                    <p className="text-xs text-onyx-400 leading-relaxed line-clamp-2 mb-6 font-light">
+                      {isArabic ? camp.descAr : camp.descEn}
+                    </p>
+
+                    <div className="flex items-center justify-between border-t border-white/5 pt-4">
+                      {/* Active toggle */}
+                      <button
+                        onClick={() => handleToggleCampaignActive(camp.id)}
+                        className={cn(
+                          "p-2 rounded-xl border transition-colors",
+                          camp.isActive !== false 
+                            ? "border-emerald-500/10 bg-emerald-500/5 text-emerald-400 hover:bg-emerald-500/10" 
+                            : "border-white/5 bg-white/5 text-onyx-500 hover:text-white"
+                        )}
+                        title={camp.isActive !== false ? (isArabic ? "إخفاء الإعلان" : "Deactivate") : (isArabic ? "تفعيل الإعلان" : "Activate")}
+                      >
+                        {camp.isActive !== false ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                      </button>
+
+                      {/* Edit / Delete actions */}
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleEditCampaignClick(camp)}
+                          className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-white/10 bg-white/5 text-white text-xs font-bold hover:bg-white/10 transition-colors"
+                        >
+                          <Edit3 className="h-3.5 w-3.5" />
+                          {isArabic ? "تعديل" : "Edit"}
+                        </button>
+                        <button
+                          onClick={() => handleDeleteCampaign(camp.id)}
+                          className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-error/10 bg-error/5 text-error text-xs font-bold hover:bg-white/10 transition-colors"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                          {isArabic ? "حذف" : "Delete"}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              {campaigns.length === 0 && (
+                <div className="col-span-full">
+                  <EmptyNotice message={isArabic ? "لا توجد أي حملات إعلانية ممولة حالياً. ابدأ بإنشاء حملة جديدة!" : "No sponsored campaigns found. Create your first ad now!"} />
+                </div>
+              )}
+            </div>
+          )}
+        </>
       ) : (
         <>
           {/* Main Toggle Action */}
