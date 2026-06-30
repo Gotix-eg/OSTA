@@ -31,6 +31,60 @@ router.get("/public/workers", async (request, response) => {
   };
 
   try {
+    // Auto-fix any verified workers missing specializations or workAreas so they immediately appear on homepage
+    try {
+      const brokenWorkers = await prisma.workerProfile.findMany({
+        where: {
+          verificationStatus: "VERIFIED",
+          OR: [
+            { specializations: { none: {} } },
+            { workAreas: { none: {} } }
+          ]
+        },
+        include: {
+          user: { include: { addresses: { take: 1 } } }
+        }
+      });
+
+      for (const w of brokenWorkers) {
+        // Create specialization if missing
+        const hasSpec = await prisma.workerSpecialization.count({ where: { workerId: w.id } });
+        if (hasSpec === 0) {
+          const prof = (w.profession || "").toLowerCase();
+          let catSlug = "electricity";
+          if (prof.includes("سبا") || prof.includes("plumb")) catSlug = "plumbing";
+          else if (prof.includes("تكييف") || prof.includes("ac")) catSlug = "ac";
+          else if (prof.includes("نجار") || prof.includes("carp")) catSlug = "carpentry";
+
+          const service = await prisma.service.findFirst({
+            where: { category: { slug: catSlug } }
+          });
+
+          if (service) {
+            await prisma.workerSpecialization.create({
+              data: { workerId: w.id, serviceId: service.id }
+            }).catch(() => {});
+          }
+        }
+
+        // Create workArea if missing
+        const hasArea = await prisma.workerArea.count({ where: { workerId: w.id } });
+        if (hasArea === 0) {
+          const address = w.user.addresses[0];
+          await prisma.workerArea.create({
+            data: {
+              workerId: w.id,
+              governorate: address?.governorate || "cairo",
+              city: address?.city || "new-cairo",
+              area: address?.area || "5th-settlement"
+            }
+          }).catch(() => {});
+        }
+      }
+    } catch (fixErr) {
+      console.error("Auto-fix workers failed:", fixErr);
+    }
+
     let workers: any[] = [];
     let isFallback = false;
 

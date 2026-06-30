@@ -256,7 +256,7 @@ router.patch("/workers/:id/verify", catchAsync(async (request, response) => {
   const now = new Date();
   const trialExpiresAt = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
 
-  await prisma.workerProfile.update({
+  const updatedWorker = await prisma.workerProfile.update({
     where: { id: workerId },
     data: payload.status === "VERIFIED"
       ? {
@@ -266,8 +266,51 @@ router.patch("/workers/:id/verify", catchAsync(async (request, response) => {
         }
       : {
           verificationStatus: "REJECTED"
-        }
+        },
+    include: {
+      user: { include: { addresses: { take: 1 } } }
+    }
   });
+
+  if (payload.status === "VERIFIED") {
+    try {
+      // 1. Create specialization if missing
+      const hasSpec = await prisma.workerSpecialization.count({ where: { workerId: updatedWorker.id } });
+      if (hasSpec === 0) {
+        const prof = (updatedWorker.profession || "").toLowerCase();
+        let catSlug = "electricity";
+        if (prof.includes("سبا") || prof.includes("plumb")) catSlug = "plumbing";
+        else if (prof.includes("تكييف") || prof.includes("ac")) catSlug = "ac";
+        else if (prof.includes("نجار") || prof.includes("carp")) catSlug = "carpentry";
+
+        const service = await prisma.service.findFirst({
+          where: { category: { slug: catSlug } }
+        });
+
+        if (service) {
+          await prisma.workerSpecialization.create({
+            data: { workerId: updatedWorker.id, serviceId: service.id }
+          }).catch(() => {});
+        }
+      }
+
+      // 2. Create workArea if missing
+      const hasArea = await prisma.workerArea.count({ where: { workerId: updatedWorker.id } });
+      if (hasArea === 0) {
+        const address = updatedWorker.user.addresses[0];
+        await prisma.workerArea.create({
+          data: {
+            workerId: updatedWorker.id,
+            governorate: address?.governorate || "cairo",
+            city: address?.city || "new-cairo",
+            area: address?.area || "5th-settlement"
+          }
+        }).catch(() => {});
+      }
+    } catch (e) {
+      console.error("Failed to seed worker spec/area on verify:", e);
+    }
+  }
 
   response.status(200).json(
     successResponse(
@@ -503,8 +546,49 @@ router.post("/workers/:id/verify", catchAsync(async (request, response) => {
       verificationStatus: "VERIFIED",
       verifiedAt: now,
       trialExpiresAt
+    },
+    include: {
+      user: { include: { addresses: { take: 1 } } }
     }
   });
+
+  try {
+    // 1. Create specialization if missing
+    const hasSpec = await prisma.workerSpecialization.count({ where: { workerId: updated.id } });
+    if (hasSpec === 0) {
+      const prof = (updated.profession || "").toLowerCase();
+      let catSlug = "electricity";
+      if (prof.includes("سبا") || prof.includes("plumb")) catSlug = "plumbing";
+      else if (prof.includes("تكييف") || prof.includes("ac")) catSlug = "ac";
+      else if (prof.includes("نجار") || prof.includes("carp")) catSlug = "carpentry";
+
+      const service = await prisma.service.findFirst({
+        where: { category: { slug: catSlug } }
+      });
+
+      if (service) {
+        await prisma.workerSpecialization.create({
+          data: { workerId: updated.id, serviceId: service.id }
+        }).catch(() => {});
+      }
+    }
+
+    // 2. Create workArea if missing
+    const hasArea = await prisma.workerArea.count({ where: { workerId: updated.id } });
+    if (hasArea === 0) {
+      const address = updated.user.addresses[0];
+      await prisma.workerArea.create({
+        data: {
+          workerId: updated.id,
+          governorate: address?.governorate || "cairo",
+          city: address?.city || "new-cairo",
+          area: address?.area || "5th-settlement"
+        }
+      }).catch(() => {});
+    }
+  } catch (e) {
+    console.error("Failed to seed worker spec/area on POST verify:", e);
+  }
   
   response.json(successResponse(updated, "Worker verified and 30-day trial started successfully"));
 }));
