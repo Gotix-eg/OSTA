@@ -122,16 +122,16 @@ function estimateFallbackDistance(requestAddress: { governorate: string; city: s
 function getCategorySlugsForProfession(profession: string | null | undefined): string[] {
   if (!profession) return [];
   const p = profession.toLowerCase().trim();
-  if (p === "carpenter" || p === "نجار" || p.includes("نجار")) return ["carpentry"];
-  if (p === "plumber" || p === "سباك" || p.includes("سبا")) return ["plumbing"];
-  if (p === "electrician" || p === "كهربائي" || p.includes("كهرب")) return ["electricity", "electrical"];
-  if (p === "ac-technician" || p === "تكييف" || p.includes("تكيي")) return ["ac", "ac-technician"];
-  if (p === "painter" || p === "نقاش" || p.includes("نقاش") || p.includes("دهان")) return ["painting"];
-  if (p === "aluminum" || p === "الوميتال" || p.includes("الوم")) return ["aluminum"];
-  if (p === "networks" || p === "شبكات" || p.includes("شبك")) return ["networks", "computer-networks"];
-  if (p === "computer" || p === "كمبيوتر" || p.includes("كمبيو")) return ["computer", "computer-repair"];
-  if (p === "cctv" || p === "كاميرات" || p.includes("كامير")) return ["cctv", "camera-installation"];
-  if (p === "appliances" || p === "أجهزة" || p.includes("جهز")) return ["appliances", "home-appliances"];
+  if (p === "carpenter" || p === "نجار" || p.includes("نجار") || p.includes("carpentry")) return ["carpentry"];
+  if (p === "plumber" || p === "سباك" || p.includes("سبا") || p.includes("plumb")) return ["plumbing"];
+  if (p === "electrician" || p === "كهربائي" || p.includes("كهرب") || p.includes("elec")) return ["electricity", "electrical"];
+  if (p === "ac-technician" || p === "تكييف" || p.includes("تكيي") || p.includes("ac")) return ["ac", "ac-technician"];
+  if (p === "painter" || p === "نقاش" || p.includes("نقاش") || p.includes("دهان") || p.includes("paint")) return ["painting"];
+  if (p === "aluminum" || p === "الوميتال" || p.includes("الوم") || p.includes("aluminum")) return ["aluminum"];
+  if (p === "networks" || p === "شبكات" || p.includes("شبك") || p.includes("network")) return ["networks", "computer-networks"];
+  if (p === "computer" || p === "كمبيوتر" || p.includes("كمبيو") || p.includes("computer")) return ["computer", "computer-repair"];
+  if (p === "cctv" || p === "كاميرات" || p.includes("كامير") || p.includes("cctv")) return ["cctv", "camera-installation"];
+  if (p === "appliances" || p === "أجهزة" || p.includes("جهز") || p.includes("appliance")) return ["appliances", "home-appliances"];
   return [];
 }
 

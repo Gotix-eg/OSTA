@@ -276,14 +276,17 @@ export const vendorCategories: GeoOption[] = [
   { value: "furniture", labelEn: "Furniture & Carpentry", labelAr: "أثاث ونجارة" }
 ];
 export const workerProfessions: GeoOption[] = [
-  { value: "plumber", labelEn: "Plumber", labelAr: "سباك" },
-  { value: "electrician", labelEn: "Electrician", labelAr: "كهربائي" },
-  { value: "carpenter", labelEn: "Carpenter", labelAr: "نجار" },
-  { value: "painter", labelEn: "Painter", labelAr: "نقاش" },
-  { value: "ac-technician", labelEn: "AC Technician", labelAr: "فني تكييف" },
+  { value: "plumber", labelEn: "Plumber (Plumbing)", labelAr: "سباكة" },
+  { value: "electrician", labelEn: "Electrician (Electrical)", labelAr: "كهرباء" },
+  { value: "carpenter", labelEn: "Carpenter (Carpentry)", labelAr: "نجارة" },
+  { value: "painter", labelEn: "Painter (Painting & Decor)", labelAr: "دهانات وديكور" },
+  { value: "ac-technician", labelEn: "AC Technician (AC & Cooling)", labelAr: "تكييف وتبريد" },
   { value: "appliance-repair", labelEn: "Appliance Repair", labelAr: "صيانة أجهزة منزلية" },
+  { value: "aluminum", labelEn: "Aluminum Worker (Aluminum)", labelAr: "ألوميتال" },
+  { value: "computer-repair", labelEn: "Computer Repair", labelAr: "صيانة كمبيوتر" },
+  { value: "networks", labelEn: "Computer Networks", labelAr: "شبكات كمبيوتر" },
+  { value: "cctv", labelEn: "Camera Installation (CCTV)", labelAr: "تركيب كاميرات" },
   { value: "cleaning", labelEn: "Cleaning Worker", labelAr: "عامل نظافة" },
   { value: "gypsum", labelEn: "Gypsum Worker", labelAr: "فني جبس" },
-  { value: "ceramic", labelEn: "Ceramic Installer", labelAr: "مبلط سيراميك" },
-  { value: "networks-cameras", labelEn: "Networks & Cameras", labelAr: "شبكات وكاميرات" }
+  { value: "ceramic", labelEn: "Ceramic Installer", labelAr: "مبلط سيراميك" }
 ];

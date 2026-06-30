@@ -13,7 +13,20 @@ export type DashboardServiceCode =
 
 export type DashboardAreaCode = "newCairo" | "nasrCity" | "maadi";
 
-export type DashboardWorkerSpecialtyCode = "acTechnician" | "electrician" | "plumber";
+export type DashboardWorkerSpecialtyCode =
+  | "acTechnician"
+  | "electrician"
+  | "plumber"
+  | "carpenter"
+  | "painter"
+  | "aluminum"
+  | "computerRepair"
+  | "networks"
+  | "cctv"
+  | "applianceRepair"
+  | "cleaning"
+  | "gypsum"
+  | "ceramic";
 
 export type DashboardRequestStatus = "WORKER_EN_ROUTE" | "IN_PROGRESS";
 

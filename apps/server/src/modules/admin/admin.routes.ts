@@ -19,7 +19,20 @@ type VerificationStatus = "UNDER_REVIEW" | "DOCUMENTS_SUBMITTED" | "AWAITING_ID"
 type PendingWorkerRecord = {
   id: string;
   name: string;
-  specialty: "plumber" | "electrician" | "acTechnician";
+  specialty:
+    | "plumber"
+    | "electrician"
+    | "acTechnician"
+    | "carpenter"
+    | "painter"
+    | "aluminum"
+    | "computerRepair"
+    | "networks"
+    | "cctv"
+    | "applianceRepair"
+    | "cleaning"
+    | "gypsum"
+    | "ceramic";
   area: string;
   experienceYears: number;
   rating: number;
@@ -82,9 +95,19 @@ const adminSettings = {
 };
 
 function mapPendingWorkerSpecialty(profession?: string | null): PendingWorkerRecord["specialty"] {
-  const value = (profession || "").toLowerCase();
+  const value = (profession || "").toLowerCase().trim();
   if (value.includes("سبا") || value.includes("plumb")) return "plumber";
   if (value.includes("تكييف") || value.includes("ac")) return "acTechnician";
+  if (value.includes("نجار") || value.includes("carpenter")) return "carpenter";
+  if (value.includes("نقاش") || value.includes("دهان") || value.includes("paint")) return "painter";
+  if (value.includes("الوم") || value.includes("aluminum")) return "aluminum";
+  if (value.includes("كمبيوتر") || value.includes("computer")) return "computerRepair";
+  if (value.includes("شبك") || value.includes("network")) return "networks";
+  if (value.includes("كامير") || value.includes("cctv")) return "cctv";
+  if (value.includes("أجهز") || value.includes("appliance")) return "applianceRepair";
+  if (value.includes("نظاف") || value.includes("clean")) return "cleaning";
+  if (value.includes("جبس") || value.includes("gypsum")) return "gypsum";
+  if (value.includes("سيراميك") || value.includes("ceramic")) return "ceramic";
   return "electrician";
 }
 

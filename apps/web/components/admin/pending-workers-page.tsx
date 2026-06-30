@@ -20,9 +20,19 @@ import type { PendingWorkersData } from "@/lib/operations-data";
 import { cn } from "@/lib/utils";
 
 const specialtyLabels: Record<DashboardWorkerSpecialtyCode, Record<Locale, string>> = {
-  acTechnician: { ar: "فني تكييف", en: "AC Technician" },
-  electrician: { ar: "فني كهرباء", en: "Electrician" },
-  plumber: { ar: "سباك", en: "Plumber" }
+  acTechnician: { ar: "تكييف وتبريد", en: "AC & Cooling" },
+  electrician: { ar: "كهرباء", en: "Electricity" },
+  plumber: { ar: "سباكة", en: "Plumbing" },
+  carpenter: { ar: "نجارة", en: "Carpentry" },
+  painter: { ar: "دهانات وديكور", en: "Painting & Decor" },
+  aluminum: { ar: "ألوميتال", en: "Aluminum" },
+  computerRepair: { ar: "صيانة كمبيوتر", en: "Computer Repair" },
+  networks: { ar: "شبكات كمبيوتر", en: "Computer Networks" },
+  cctv: { ar: "تركيب كاميرات", en: "Camera Installation" },
+  applianceRepair: { ar: "صيانة أجهزة منزلية", en: "Appliance Repair" },
+  cleaning: { ar: "عامل نظافة", en: "Cleaning Worker" },
+  gypsum: { ar: "فني جبس", en: "Gypsum Worker" },
+  ceramic: { ar: "مبلط سيراميك", en: "Ceramic Installer" }
 };
 
 const statusLabels: Record<DashboardVerificationStatus, Record<Locale, string>> = {
