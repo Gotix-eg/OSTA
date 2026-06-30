@@ -273,7 +273,17 @@ export const vendorCategories: GeoOption[] = [
   { value: "paints", labelEn: "Paints & Hardware", labelAr: "حدائد وبويات" },
   { value: "construction", labelEn: "Construction Materials", labelAr: "مواد بناء" },
   { value: "ac", labelEn: "AC & Heating Parts", labelAr: "قطع غيار تكييف" },
-  { value: "furniture", labelEn: "Furniture & Carpentry", labelAr: "أثاث ونجارة" }
+  { value: "furniture", labelEn: "Furniture & Carpentry", labelAr: "أثاث ونجارة" },
+  { value: "welding-workshop", labelEn: "Welding & Metalwork Workshop", labelAr: "ورشة حدادة ولحام" },
+  { value: "appliance-service-center", labelEn: "Home Appliance Service Center", labelAr: "مركز صيانة أجهزة منزلية" },
+  { value: "computer-mobile-repair", labelEn: "Computer & Mobile Repair Center", labelAr: "مركز صيانة كمبيوتر وموبايلات" },
+  { value: "ac-service-center", labelEn: "AC & Cooling Service Center", labelAr: "مركز صيانة تكييفات وتبريد" },
+  { value: "carpentry-workshop", labelEn: "Carpentry Workshop", labelAr: "ورشة نجارة" },
+  { value: "aluminum-workshop", labelEn: "Aluminum Workshop", labelAr: "ورشة ألوميتال" },
+  { value: "auto-repair", labelEn: "Auto Repair Center", labelAr: "مركز صيانة سيارات" },
+  { value: "plumbing-workshop", labelEn: "Plumbing Workshop", labelAr: "ورشة سباكة ومواسير" },
+  { value: "cctv-networks-center", labelEn: "CCTV & Networks Service Center", labelAr: "مركز تركيب وصيانة كاميرات وشبكات" },
+  { value: "electrical-service-center", labelEn: "Electrical Service Center", labelAr: "مركز صيانة كهرباء" }
 ];
 export const workerProfessions: GeoOption[] = [
   { value: "plumber", labelEn: "Plumber (Plumbing)", labelAr: "سباكة" },
