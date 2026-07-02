@@ -100,14 +100,16 @@ export async function middleware(request: NextRequest) {
   const token = request.cookies.get("osta_access_token")?.value;
 
   if (!token) {
-    return withNoStore(NextResponse.redirect(new URL(`/${locale}/login`, request.url)));
+    const loginTarget = segment === "admin" ? "login/admin" : "login";
+    return withNoStore(NextResponse.redirect(new URL(`/${locale}/${loginTarget}`, request.url)));
   }
 
   const payload = await verifyJwt(token);
   const role = payload?.role;
 
   if (!role) {
-    return withNoStore(NextResponse.redirect(new URL(`/${locale}/login`, request.url)));
+    const loginTarget = segment === "admin" ? "login/admin" : "login";
+    return withNoStore(NextResponse.redirect(new URL(`/${locale}/${loginTarget}`, request.url)));
   }
 
   const allowedRoles = protectedSegments[segment as keyof typeof protectedSegments] as readonly string[];

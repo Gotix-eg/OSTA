@@ -183,7 +183,7 @@ export const authService = {
         email: input.email,
         passwordHash,
         role: input.role,
-        status: (input.role === "CLIENT" && input.email) ? "INACTIVE" : "ACTIVE",
+        status: "ACTIVE",
         clientProfile:
           input.role === "CLIENT"
             ? {
@@ -249,30 +249,6 @@ export const authService = {
       }
     });
 
-    if (user.role === "CLIENT" && user.email) {
-      const code = generateOtpCode();
-      const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
-
-      await prisma.otpCode.create({
-        data: {
-          userId: user.id,
-          code: hashOtpCode(user.id, "EMAIL_VERIFICATION", code),
-          type: "EMAIL_VERIFICATION",
-          expiresAt
-        }
-      });
-
-      sendVerificationEmail(user.email!, user.firstName, code).catch(err =>
-        console.error("Failed to send verification email:", err)
-      );
-
-      return {
-        needsVerification: true,
-        userId: user.id,
-        phone: user.phone,
-        email: user.email
-      };
-    }
 
     const tokens = await createSession(user.id, user.role);
 

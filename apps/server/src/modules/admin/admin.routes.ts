@@ -8,7 +8,7 @@ import { successResponse } from "../../utils/ApiResponse.js";
 import { prisma } from "../../lib/prisma.js";
 import { catchAsync } from "../../utils/catchAsync.js";
 import { ApiError } from "../../utils/ApiError.js";
-import { normalizeHeroSlidesForStorage } from "./hero-slides.storage.js";
+import { normalizeHeroSlidesForStorage, normalizeCampaignsForStorage } from "./hero-slides.storage.js";
 
 const router = Router();
 
@@ -39,6 +39,14 @@ type PendingWorkerRecord = {
   documentsReady: number;
   submittedAt: string;
   status: VerificationStatus;
+  nationalIdFront?: string | null;
+  nationalIdBack?: string | null;
+  selfieWithId?: string | null;
+  criminalRecord?: string | null;
+  utilityBillUrl?: string | null;
+  nationalIdNumber?: string | null;
+  guarantorName?: string | null;
+  guarantorPhone?: string | null;
 };
 
 const verifyWorkerSchema = z.object({
@@ -148,7 +156,15 @@ async function getPendingWorkersData() {
       rating: worker.rating,
       documentsReady,
       submittedAt: worker.createdAt.toISOString().split("T")[0] ?? "",
-      status: mapPendingWorkerStatus(worker.verificationStatus)
+      status: mapPendingWorkerStatus(worker.verificationStatus),
+      nationalIdFront: worker.nationalIdFront,
+      nationalIdBack: worker.nationalIdBack,
+      selfieWithId: worker.selfieWithId,
+      criminalRecord: worker.criminalRecord,
+      utilityBillUrl: worker.utilityBillUrl,
+      nationalIdNumber: worker.nationalIdNumber,
+      guarantorName: worker.guarantorName,
+      guarantorPhone: worker.guarantorPhone
     };
   });
 
@@ -263,7 +279,7 @@ router.patch("/workers/:id/verify", catchAsync(async (request, response) => {
   const now = new Date();
   const trialExpiresAt = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
 
-  await prisma.workerProfile.update({
+  const updatedWorker = await prisma.workerProfile.update({
     where: { id: workerId },
     data: payload.status === "VERIFIED"
       ? {
@@ -273,8 +289,62 @@ router.patch("/workers/:id/verify", catchAsync(async (request, response) => {
         }
       : {
           verificationStatus: "REJECTED"
-        }
+        },
+    include: {
+      user: { include: { addresses: { take: 1 } } }
+    }
   });
+
+  if (payload.status === "VERIFIED") {
+    try {
+      // 1. Create specialization if missing
+      const hasSpec = await prisma.workerSpecialization.count({ where: { workerId: updatedWorker.id } });
+      if (hasSpec === 0) {
+        const prof = (updatedWorker.profession || "").toLowerCase().trim();
+        let catSlug = "electricity";
+        if (prof === "plumber" || prof === "ceramic") catSlug = "plumbing";
+        else if (prof === "electrician") catSlug = "electricity";
+        else if (prof === "carpenter" || prof === "gypsum") catSlug = "carpentry";
+        else if (prof === "ac-technician") catSlug = "ac";
+        else if (prof === "appliance-repair") catSlug = "appliances";
+        else if (prof === "painter") catSlug = "painting";
+        else if (prof === "networks-cameras") catSlug = "networks";
+        else if (prof.includes("سبا") || prof.includes("plumb") || prof.includes("سيراميك") || prof.includes("ceramic")) catSlug = "plumbing";
+        else if (prof.includes("كهرب") || prof.includes("electr")) catSlug = "electricity";
+        else if (prof.includes("تكييف") || prof.includes("ac")) catSlug = "ac";
+        else if (prof.includes("أجهز") || prof.includes("appliance")) catSlug = "appliances";
+        else if (prof.includes("نجار") || prof.includes("carp") || prof.includes("جبس")) catSlug = "carpentry";
+        else if (prof.includes("نقاش") || prof.includes("دهان") || prof.includes("paint")) catSlug = "painting";
+        else if (prof.includes("شبك") || prof.includes("كاميرات") || prof.includes("network") || prof.includes("camera")) catSlug = "networks";
+
+        const service = await prisma.service.findFirst({
+          where: { category: { slug: catSlug } }
+        });
+
+        if (service) {
+          await prisma.workerSpecialization.create({
+            data: { workerId: updatedWorker.id, serviceId: service.id }
+          }).catch(() => {});
+        }
+      }
+
+      // 2. Create workArea if missing
+      const hasArea = await prisma.workerArea.count({ where: { workerId: updatedWorker.id } });
+      if (hasArea === 0) {
+        const address = updatedWorker.user.addresses[0];
+        await prisma.workerArea.create({
+          data: {
+            workerId: updatedWorker.id,
+            governorate: address?.governorate || "cairo",
+            city: address?.city || "new-cairo",
+            area: address?.area || "5th-settlement"
+          }
+        }).catch(() => {});
+      }
+    } catch (e) {
+      console.error("Failed to seed worker spec/area on verify:", e);
+    }
+  }
 
   response.status(200).json(
     successResponse(
@@ -510,10 +580,150 @@ router.post("/workers/:id/verify", catchAsync(async (request, response) => {
       verificationStatus: "VERIFIED",
       verifiedAt: now,
       trialExpiresAt
+    },
+    include: {
+      user: { include: { addresses: { take: 1 } } }
     }
   });
+
+  try {
+    // 1. Create specialization if missing
+    const hasSpec = await prisma.workerSpecialization.count({ where: { workerId: updated.id } });
+    if (hasSpec === 0) {
+      const prof = (updated.profession || "").toLowerCase().trim();
+      let catSlug = "electricity";
+      if (prof === "plumber" || prof === "ceramic") catSlug = "plumbing";
+      else if (prof === "electrician") catSlug = "electricity";
+      else if (prof === "carpenter" || prof === "gypsum") catSlug = "carpentry";
+      else if (prof === "ac-technician") catSlug = "ac";
+      else if (prof === "appliance-repair") catSlug = "appliances";
+      else if (prof === "painter") catSlug = "painting";
+      else if (prof === "networks-cameras") catSlug = "networks";
+      else if (prof.includes("سبا") || prof.includes("plumb") || prof.includes("سيراميك") || prof.includes("ceramic")) catSlug = "plumbing";
+      else if (prof.includes("كهرب") || prof.includes("electr")) catSlug = "electricity";
+      else if (prof.includes("تكييف") || prof.includes("ac")) catSlug = "ac";
+      else if (prof.includes("أجهز") || prof.includes("appliance")) catSlug = "appliances";
+      else if (prof.includes("نجار") || prof.includes("carp") || prof.includes("جبس")) catSlug = "carpentry";
+      else if (prof.includes("نقاش") || prof.includes("دهان") || prof.includes("paint")) catSlug = "painting";
+      else if (prof.includes("شبك") || prof.includes("كاميرات") || prof.includes("network") || prof.includes("camera")) catSlug = "networks";
+
+      const service = await prisma.service.findFirst({
+        where: { category: { slug: catSlug } }
+      });
+
+      if (service) {
+        await prisma.workerSpecialization.create({
+          data: { workerId: updated.id, serviceId: service.id }
+        }).catch(() => {});
+      }
+    }
+
+    // 2. Create workArea if missing
+    const hasArea = await prisma.workerArea.count({ where: { workerId: updated.id } });
+    if (hasArea === 0) {
+      const address = updated.user.addresses[0];
+      await prisma.workerArea.create({
+        data: {
+          workerId: updated.id,
+          governorate: address?.governorate || "cairo",
+          city: address?.city || "new-cairo",
+          area: address?.area || "5th-settlement"
+        }
+      }).catch(() => {});
+    }
+  } catch (e) {
+    console.error("Failed to seed worker spec/area on POST verify:", e);
+  }
   
   response.json(successResponse(updated, "Worker verified and 30-day trial started successfully"));
+}));
+
+// PATCH /api/admin/workers/:id — Edit worker profile details (first/last name, phone, profession)
+router.patch("/workers/:id", catchAsync(async (request, response) => {
+  const id = request.params.id as string;
+  const { firstName, lastName, phone, profession } = request.body as {
+    firstName?: string;
+    lastName?: string;
+    phone?: string;
+    profession?: string;
+  };
+
+  const worker = await prisma.workerProfile.findUnique({
+    where: { id },
+    include: { user: true }
+  });
+  if (!worker) {
+    throw new ApiError(404, "Worker profile not found");
+  }
+
+  if (firstName || lastName || phone) {
+    await prisma.user.update({
+      where: { id: worker.userId },
+      data: {
+        firstName: firstName !== undefined ? firstName : undefined,
+        lastName: lastName !== undefined ? lastName : undefined,
+        phone: phone !== undefined ? phone : undefined,
+      }
+    });
+  }
+
+  const updatedWorker = await prisma.workerProfile.update({
+    where: { id },
+    data: {
+      profession: profession !== undefined ? profession : undefined
+    },
+    include: {
+      user: {
+        select: {
+          firstName: true,
+          lastName: true,
+          phone: true
+        }
+      }
+    }
+  });
+
+  if (profession) {
+    try {
+      await prisma.workerSpecialization.deleteMany({
+        where: { workerId: id }
+      });
+
+      const prof = profession.toLowerCase().trim();
+      let catSlug = "electricity";
+      if (prof === "plumber" || prof === "ceramic") catSlug = "plumbing";
+      else if (prof === "electrician") catSlug = "electricity";
+      else if (prof === "carpenter" || prof === "gypsum") catSlug = "carpentry";
+      else if (prof === "ac-technician") catSlug = "ac";
+      else if (prof === "appliance-repair") catSlug = "appliances";
+      else if (prof === "painter") catSlug = "painting";
+      else if (prof === "networks-cameras") catSlug = "networks";
+      else if (prof.includes("سبا") || prof.includes("plumb") || prof.includes("سيراميك") || prof.includes("ceramic")) catSlug = "plumbing";
+      else if (prof.includes("كهرب") || prof.includes("electr")) catSlug = "electricity";
+      else if (prof.includes("تكييف") || prof.includes("ac")) catSlug = "ac";
+      else if (prof.includes("أجهز") || prof.includes("appliance")) catSlug = "appliances";
+      else if (prof.includes("نجار") || prof.includes("carp") || prof.includes("جبس")) catSlug = "carpentry";
+      else if (prof.includes("نقاش") || prof.includes("دهان") || prof.includes("paint")) catSlug = "painting";
+      else if (prof.includes("شبك") || prof.includes("كاميرات") || prof.includes("network") || prof.includes("camera")) catSlug = "networks";
+
+      const service = await prisma.service.findFirst({
+        where: { category: { slug: catSlug } }
+      });
+
+      if (service) {
+        await prisma.workerSpecialization.create({
+          data: {
+            workerId: id,
+            serviceId: service.id
+          }
+        });
+      }
+    } catch (e) {
+      console.error("Failed to sync specialization on profession update:", e);
+    }
+  }
+
+  response.json(successResponse(updatedWorker, "Worker profile updated successfully"));
 }));
 
 // POST /api/admin/vendors/:id/verify — Mark vendor as VERIFIED and start 30-day trial
@@ -975,15 +1185,15 @@ router.get("/campaigns", authenticate, requireRoles(UserRole.ADMIN), catchAsync(
 router.put("/campaigns", authenticate, requireRoles(UserRole.ADMIN), catchAsync(async (req, res) => {
   const { campaigns } = req.body;
   if (!Array.isArray(campaigns)) throw new ApiError(400, "campaigns must be an array");
-  const normalized = await normalizeHeroSlidesForStorage(campaigns);
+  const normalized = await normalizeCampaignsForStorage(campaigns);
 
   await prisma.systemSetting.upsert({
     where: { key: CAMPAIGNS_KEY },
-    update: { value: JSON.stringify(normalized.slides), type: "json" },
-    create: { key: CAMPAIGNS_KEY, value: JSON.stringify(normalized.slides), type: "json" }
+    update: { value: JSON.stringify(normalized.campaigns), type: "json" },
+    create: { key: CAMPAIGNS_KEY, value: JSON.stringify(normalized.campaigns), type: "json" }
   });
 
-  res.json(successResponse(normalized.slides, "Sponsored campaigns saved"));
+  res.json(successResponse(normalized.campaigns, "Sponsored campaigns saved"));
 }));
 
 export const adminRouter = router;

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Search, Loader2, Store, Phone, User, ShieldCheck, RotateCcw, Plus, PackageCheck, Trash2, Wallet } from "lucide-react";
+import { Search, Loader2, Store, Phone, User, ShieldCheck, RotateCcw, Plus, PackageCheck, Trash2, Wallet, Eye, X } from "lucide-react";
 import { fetchApiData, postApiData, patchApiData, deleteApiData } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
@@ -16,6 +16,9 @@ type Vendor = {
   trialExpiresAt: string | null;
   verificationStatus: string;
   walletBalance: number;
+  taxCardUrl?: string | null;
+  commercialRegisterUrl?: string | null;
+  shopImageUrl?: string | null;
   user: {
     firstName: string;
     lastName: string;
@@ -34,6 +37,7 @@ export function AdminVendorsManagement({ locale }: { locale: Locale }) {
   const [walletModalOpen, setWalletModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedVendor, setSelectedVendor] = useState<Vendor | null>(null);
+  const [selectedVendorDocs, setSelectedVendorDocs] = useState<Vendor | null>(null);
   const [walletAmount, setWalletAmount] = useState("");
   const [walletAction, setWalletAction] = useState<"add" | "deduct" | "set">("add");
   const [actionLoading, setActionLoading] = useState(false);
@@ -217,6 +221,14 @@ export function AdminVendorsManagement({ locale }: { locale: Locale }) {
                     </div>
 
                     <div className="flex items-center gap-3">
+                       <button 
+                         onClick={() => setSelectedVendorDocs(vendor)}
+                         className="h-12 px-4 rounded-2xl bg-onyx-800 border border-onyx-700 flex items-center justify-center text-onyx-300 hover:text-white transition-all font-bold text-xs"
+                         title={isArabic ? "عرض المستندات" : "View Documents"}
+                       >
+                         <Eye className="h-4 w-4 mr-2" />
+                         {isArabic ? "المستندات" : "Docs"}
+                       </button>
                        {vendor.verificationStatus !== "VERIFIED" ? (
                          <button 
                            onClick={() => handleVerify(vendor.id)}
@@ -395,6 +407,88 @@ export function AdminVendorsManagement({ locale }: { locale: Locale }) {
                 {actionLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : (isArabic ? "حذف نهائي" : "Delete Permanently")}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Vendor Documents Modal */}
+      {selectedVendorDocs && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fadeIn">
+          <div className="bg-onyx-900 border border-white/5 rounded-[2rem] w-full max-w-3xl max-h-[90vh] overflow-y-auto shadow-2xl p-8 space-y-8 text-start relative">
+            <button
+              onClick={() => setSelectedVendorDocs(null)}
+              className="absolute top-6 end-6 text-onyx-400 hover:text-white transition-colors"
+            >
+              <X className="h-6 w-6" />
+            </button>
+
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-widest text-gold-500">
+                {isArabic ? "مستندات توثيق المتجر" : "Store Verification Documents"}
+              </span>
+              <h2 className="text-3xl font-black text-white mt-1">
+                {isArabic ? (selectedVendorDocs.shopNameAr || selectedVendorDocs.shopName) : selectedVendorDocs.shopName}
+              </h2>
+              <p className="text-onyx-400 text-sm mt-1">
+                {isArabic ? `المالك: ${selectedVendorDocs.user.firstName} ${selectedVendorDocs.user.lastName}` : `Owner: ${selectedVendorDocs.user.firstName} ${selectedVendorDocs.user.lastName}`}
+              </p>
+            </div>
+
+            <div className="grid sm:grid-cols-2 gap-6">
+              {[
+                { label: isArabic ? "البطاقة الضريبية" : "Tax Card Document", url: selectedVendorDocs.taxCardUrl },
+                { label: isArabic ? "السجل التجاري" : "Commercial Register Document", url: selectedVendorDocs.commercialRegisterUrl }
+              ].map((doc, idx) => (
+                <div key={idx} className="onyx-card p-6 flex flex-col justify-between min-h-[200px] bg-onyx-950/20 border-white/5">
+                  <div>
+                    <span className="text-xs font-bold text-onyx-400 uppercase">{doc.label}</span>
+                    <p className="text-[10px] text-onyx-600 mt-1">
+                      {doc.url ? (isArabic ? "ملف مرفوع" : "Uploaded") : (isArabic ? "لم يتم رفعه بعد" : "Not uploaded")}
+                    </p>
+                  </div>
+
+                  {doc.url ? (
+                    <div className="mt-6 space-y-3">
+                      {doc.url.match(/\.(jpeg|jpg|gif|png|webp)/i) || doc.url.startsWith("data:image") ? (
+                        <div className="h-32 w-full rounded-xl overflow-hidden border border-white/5 bg-onyx-900 flex items-center justify-center">
+                          <img src={doc.url} alt={doc.label} className="h-full w-full object-cover" />
+                        </div>
+                      ) : null}
+
+                      <a
+                        href={doc.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="w-full inline-flex items-center justify-center gap-1.5 px-4 py-2.5 text-xs font-bold text-gold-500 bg-gold-500/10 border border-gold-500/20 rounded-xl hover:bg-gold-500 hover:text-onyx-950 transition-colors"
+                      >
+                        <Eye className="h-4 w-4" />
+                        {isArabic ? "عرض بالحجم الكامل" : "View Fullscreen"}
+                      </a>
+                    </div>
+                  ) : (
+                    <div className="mt-6 py-6 text-center text-xs text-onyx-600 border border-dashed border-white/5 rounded-xl">
+                      {isArabic ? "مستند فارغ" : "Empty document"}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {selectedVendorDocs.verificationStatus !== "VERIFIED" && (
+              <div className="border-t border-white/5 pt-6 flex justify-end gap-4">
+                <button
+                  onClick={() => {
+                    handleVerify(selectedVendorDocs!.id);
+                    setSelectedVendorDocs(null);
+                  }}
+                  disabled={actionId === selectedVendorDocs.id}
+                  className="btn-gold py-3 px-8 text-sm font-black shadow-lg"
+                >
+                  <ShieldCheck className="h-4 w-4 mr-2" />
+                  {isArabic ? "توثيق المتجر وتفعيله" : "Verify Store"}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}

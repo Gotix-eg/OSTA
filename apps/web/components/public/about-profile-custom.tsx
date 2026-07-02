@@ -26,7 +26,7 @@ export function AboutProfileCustom({ locale }: { locale: Locale }) {
       title: "ملف أُسطفاي التعريفي",
       subtitle: (
         <>
-          ريادة مصرية متكاملة لتنظيم وتطوير قطاع الصيانة المنزلية والخدمات الفنية من خلال حلول تقنية مبتكرة وآمنة، تم تطويرها وإدارتها بواسطة <a href="https://www.gotix-eg.com" target="_blank" rel="noopener noreferrer" className="text-gold-500 hover:underline font-bold">شركة Gotix للبرمجة</a>.
+          ريادة مصرية متكاملة لتنظيم وتطوير قطاع الصيانة المنزلية والخدمات الفنية من خلال حلول تقنية مبتكرة وآمنة.
         </>
       ),
       
@@ -75,7 +75,7 @@ export function AboutProfileCustom({ locale }: { locale: Locale }) {
       title: "Ostafy Platform Profile",
       subtitle: (
         <>
-          Bilingual Egyptian leadership in organizing and developing the home maintenance and technical services sector, developed and managed by <a href="https://www.gotix-eg.com" target="_blank" rel="noopener noreferrer" className="text-gold-500 hover:underline font-bold">Gotix Software</a>.
+          Bilingual Egyptian leadership in organizing and developing the home maintenance and technical services sector.
         </>
       ),
       

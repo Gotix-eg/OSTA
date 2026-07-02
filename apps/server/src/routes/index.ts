@@ -31,6 +31,71 @@ router.get("/public/workers", async (request, response) => {
   };
 
   try {
+    // Auto-fix any verified workers missing specializations or workAreas so they immediately appear on homepage
+    try {
+      const brokenWorkers = await prisma.workerProfile.findMany({
+        where: {
+          verificationStatus: "VERIFIED",
+          OR: [
+            { specializations: { none: {} } },
+            { workAreas: { none: {} } }
+          ]
+        },
+        include: {
+          user: { include: { addresses: { take: 1 } } }
+        }
+      });
+
+      for (const w of brokenWorkers) {
+        // Create specialization if missing
+        const hasSpec = await prisma.workerSpecialization.count({ where: { workerId: w.id } });
+        if (hasSpec === 0) {
+          const prof = (w.profession || "").toLowerCase().trim();
+          let catSlug = "electricity";
+          if (prof === "plumber" || prof === "ceramic") catSlug = "plumbing";
+          else if (prof === "electrician") catSlug = "electricity";
+          else if (prof === "carpenter" || prof === "gypsum") catSlug = "carpentry";
+          else if (prof === "ac-technician") catSlug = "ac";
+          else if (prof === "appliance-repair") catSlug = "appliances";
+          else if (prof === "painter") catSlug = "painting";
+          else if (prof === "networks-cameras") catSlug = "networks";
+          else if (prof.includes("سبا") || prof.includes("plumb") || prof.includes("سيراميك") || prof.includes("ceramic")) catSlug = "plumbing";
+          else if (prof.includes("كهرب") || prof.includes("electr")) catSlug = "electricity";
+          else if (prof.includes("تكييف") || prof.includes("ac")) catSlug = "ac";
+          else if (prof.includes("أجهز") || prof.includes("appliance")) catSlug = "appliances";
+          else if (prof.includes("نجار") || prof.includes("carp") || prof.includes("جبس")) catSlug = "carpentry";
+          else if (prof.includes("نقاش") || prof.includes("دهان") || prof.includes("paint")) catSlug = "painting";
+          else if (prof.includes("شبك") || prof.includes("كاميرات") || prof.includes("network") || prof.includes("camera")) catSlug = "networks";
+
+          const service = await prisma.service.findFirst({
+            where: { category: { slug: catSlug } }
+          });
+
+          if (service) {
+            await prisma.workerSpecialization.create({
+              data: { workerId: w.id, serviceId: service.id }
+            }).catch(() => {});
+          }
+        }
+
+        // Create workArea if missing
+        const hasArea = await prisma.workerArea.count({ where: { workerId: w.id } });
+        if (hasArea === 0) {
+          const address = w.user.addresses[0];
+          await prisma.workerArea.create({
+            data: {
+              workerId: w.id,
+              governorate: address?.governorate || "cairo",
+              city: address?.city || "new-cairo",
+              area: address?.area || "5th-settlement"
+            }
+          }).catch(() => {});
+        }
+      }
+    } catch (fixErr) {
+      console.error("Auto-fix workers failed:", fixErr);
+    }
+
     let workers: any[] = [];
     let isFallback = false;
 
@@ -399,6 +464,60 @@ router.get("/public/slides", async (_req, response) => {
     response.json({ success: true, data: [...activeSlides, ...mappedCampaigns] });
   } catch (e: any) {
     response.json({ success: true, data: [] });
+  }
+});
+
+// GET /api/public/campaigns — Public sponsored campaigns (no auth required)
+router.get("/public/campaigns", async (_req, response) => {
+  try {
+    const setting = await prisma.systemSetting.findUnique({ where: { key: "sponsored_campaigns" } });
+    const campaigns = setting ? JSON.parse(setting.value) : [];
+    response.json({ success: true, data: campaigns.filter((c: any) => c.isActive !== false) });
+  } catch (e: any) {
+    response.json({ success: true, data: [] });
+  }
+});
+
+router.get("/test-email", async (request, response) => {
+  try {
+    const to = (request.query.to as string) || "info@ostafy.com";
+    console.log(`[TestEmail] Testing welcome email to ${to}...`);
+    const { transporter, sendWelcomeEmail } = await import("../utils/email.js");
+    await transporter.verify();
+    const info = await sendWelcomeEmail(to, "Test User");
+    response.json({
+      success: true,
+      message: "SMTP verified and email sent successfully!",
+      info,
+      env: {
+        SMTP_HOST: process.env.SMTP_HOST,
+        SMTP_PORT: process.env.SMTP_PORT,
+        SMTP_USER: process.env.SMTP_USER,
+        SMTP_FROM: process.env.SMTP_FROM,
+        SMTP_SECURE: process.env.SMTP_SECURE,
+        hasPass: !!process.env.SMTP_PASS
+      }
+    });
+  } catch (error: any) {
+    console.error("[TestEmail] SMTP verification/send failed:", error);
+    response.status(500).json({
+      success: false,
+      message: error.message || "Unknown error",
+      error: {
+        message: error.message,
+        code: error.code,
+        command: error.command,
+        stack: error.stack
+      },
+      env: {
+        SMTP_HOST: process.env.SMTP_HOST,
+        SMTP_PORT: process.env.SMTP_PORT,
+        SMTP_USER: process.env.SMTP_USER,
+        SMTP_FROM: process.env.SMTP_FROM,
+        SMTP_SECURE: process.env.SMTP_SECURE,
+        hasPass: !!process.env.SMTP_PASS
+      }
+    });
   }
 });
 
