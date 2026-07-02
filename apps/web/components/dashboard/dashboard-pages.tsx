@@ -513,10 +513,10 @@ export function AdminAdsPage({ locale }: { locale: Locale }) {
 
   useEffect(() => {
     // Load slides from database API
-    const token = window.localStorage.getItem("osta_access_token") || window.sessionStorage.getItem("osta_access_token") || "";
     const baseUrl = (process.env.NEXT_PUBLIC_OSTA_API_URL ?? "/api");
     fetch(`${baseUrl}/admin/slides`, {
-      headers: { Authorization: `Bearer ${token}` }
+      credentials: "include",
+      headers: { Accept: "application/json" }
     })
       .then(r => r.json())
       .then(payload => {
@@ -533,13 +533,12 @@ export function AdminAdsPage({ locale }: { locale: Locale }) {
     setSlides(updated);
     // Save to database API so ALL browsers/devices see the same slides
     try {
-      const token = window.localStorage.getItem("osta_access_token") || window.sessionStorage.getItem("osta_access_token") || "";
       const baseUrl = (process.env.NEXT_PUBLIC_OSTA_API_URL ?? "/api");
       await fetch(`${baseUrl}/admin/slides`, {
         method: "PUT",
+        credentials: "include",
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+          "Content-Type": "application/json"
         },
         body: JSON.stringify({ slides: updated })
       });

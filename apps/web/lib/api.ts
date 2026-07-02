@@ -18,22 +18,24 @@ export function resolveApiBaseUrl() {
   return getApiBaseUrl();
 }
 
+async function getServerAuthHeaders(): Promise<Record<string, string>> {
+  if (typeof window !== "undefined") {
+    return {};
+  }
+
+  const { cookies } = await import("next/headers");
+  const cookieStore = await cookies();
+  const token = cookieStore.get("osta_access_token")?.value;
+
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
 export async function fetchApiData<T>(path: string, fallback: T): Promise<T> {
   try {
     const headers: Record<string, string> = {
-      Accept: "application/json"
+      Accept: "application/json",
+      ...(await getServerAuthHeaders())
     };
-
-    if (typeof window !== "undefined") {
-      const token = window.localStorage.getItem("osta_access_token") || window.sessionStorage.getItem("osta_access_token");
-      if (token) headers["Authorization"] = `Bearer ${token}`;
-    } else {
-      // Server side: get token from cookies
-      const { cookies } = await import("next/headers");
-      const cookieStore = await cookies();
-      const token = cookieStore.get("osta_access_token")?.value;
-      if (token) headers["Authorization"] = `Bearer ${token}`;
-    }
 
     const response = await fetch(`${getApiBaseUrl()}${path}`, {
       next: { revalidate: 60 },
@@ -67,7 +69,7 @@ export async function postApiData<TResponse, TBody>(path: string, body: TBody) {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
-      Authorization: typeof window !== "undefined" ? `Bearer ${window.localStorage.getItem("osta_access_token") || window.sessionStorage.getItem("osta_access_token") || ""}` : ""
+      ...(await getServerAuthHeaders())
     },
     body: JSON.stringify(body)
   });
@@ -89,7 +91,7 @@ export async function patchApiData<TResponse, TBody>(path: string, body?: TBody)
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
-      Authorization: typeof window !== "undefined" ? `Bearer ${window.localStorage.getItem("osta_access_token") || window.sessionStorage.getItem("osta_access_token") || ""}` : ""
+      ...(await getServerAuthHeaders())
     },
     body: body === undefined ? undefined : JSON.stringify(body)
   });
@@ -110,7 +112,7 @@ export async function deleteApiData<TResponse>(path: string) {
     credentials: "include",
     headers: {
       Accept: "application/json",
-      Authorization: typeof window !== "undefined" ? `Bearer ${window.localStorage.getItem("osta_access_token") || window.sessionStorage.getItem("osta_access_token") || ""}` : ""
+      ...(await getServerAuthHeaders())
     }
   });
 
@@ -131,7 +133,7 @@ export async function putApiData<TResponse, TBody>(path: string, body?: TBody) {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
-      Authorization: typeof window !== "undefined" ? `Bearer ${window.localStorage.getItem("osta_access_token") || window.sessionStorage.getItem("osta_access_token") || ""}` : ""
+      ...(await getServerAuthHeaders())
     },
     body: body === undefined ? undefined : JSON.stringify(body)
   });

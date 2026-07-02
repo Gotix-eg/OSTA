@@ -179,8 +179,9 @@ export function WorkerIncomingRequestsPage({ locale, initialData }: { locale: Lo
                       <button
                         type="button"
                         onClick={() => {
-                          localStorage.setItem("osta_open_chat_user", JSON.stringify({ id: item.clientUserId, firstName: item.clientName || "", lastName: "" }));
-                          window.dispatchEvent(new Event("osta_open_chat"));
+                          window.dispatchEvent(new CustomEvent("osta_open_chat", {
+                            detail: { id: item.clientUserId, firstName: item.clientName || "", lastName: "" }
+                          }));
                         }}
                         className="rounded-full border border-onyx-700 bg-onyx-800/50 p-2.5 text-sm font-semibold text-onyx-200 shadow-soft hover:bg-white/5 transition-colors flex items-center justify-center mr-1"
                         title={isArabic ? "محادثة العميل قبل القبول" : "Chat with Client before accepting"}
@@ -343,8 +344,9 @@ export function WorkerActiveRequestsPage({ locale, initialData }: { locale: Loca
                     <button
                       type="button"
                       onClick={() => {
-                        localStorage.setItem("osta_open_chat_user", JSON.stringify({ id: item.clientUserId, firstName: item.clientName, lastName: "" }));
-                        window.dispatchEvent(new Event("osta_open_chat"));
+                        window.dispatchEvent(new CustomEvent("osta_open_chat", {
+                          detail: { id: item.clientUserId, firstName: item.clientName, lastName: "" }
+                        }));
                       }}
                       className="rounded-full border border-onyx-700 bg-onyx-800/50 p-2.5 text-sm font-semibold text-onyx-200 shadow-soft hover:bg-white/5 transition-colors flex items-center justify-center mr-1"
                       title={isArabic ? "محادثة العميل" : "Chat with Client"}

@@ -69,20 +69,12 @@ export function FloatingChatWidget() {
 
   // ─── External trigger (from request cards) ──────────────────────────────────
   useEffect(() => {
-    const handleOpenChat = () => {
-      const stored = localStorage.getItem("osta_open_chat_user");
-      if (stored) {
-        try {
-          const user = JSON.parse(stored);
-          setActiveChat(user);
-          setIsOpen(true);
-          localStorage.removeItem("osta_open_chat_user");
-        } catch { /* ignore */ }
-      } else {
-        setIsOpen(true);
+    const handleOpenChat = (event: Event) => {
+      if (event instanceof CustomEvent && event.detail?.id) {
+        setActiveChat(event.detail as ChatUser);
       }
+      setIsOpen(true);
     };
-    if (localStorage.getItem("osta_open_chat_user")) handleOpenChat();
     window.addEventListener("osta_open_chat", handleOpenChat);
     return () => window.removeEventListener("osta_open_chat", handleOpenChat);
   }, []);

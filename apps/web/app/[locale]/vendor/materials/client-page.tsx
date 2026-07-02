@@ -168,9 +168,9 @@ export default function VendorMaterialsClientPage({ locale }: { locale: Locale }
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_OSTA_API_URL ?? "/api"}/materials/vendor/orders/${orderId}/status`, {
         method: "PUT",
+        credentials: "include",
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${window.localStorage.getItem("osta_access_token") || window.sessionStorage.getItem("osta_access_token") || ""}`
+          "Content-Type": "application/json"
         },
         body: JSON.stringify({ status: newStatus })
       });

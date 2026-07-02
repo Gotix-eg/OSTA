@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { ToastNotification } from "@/components/shared/toast-notification";
+import { resolveApiBaseUrl } from "@/lib/api";
 
 interface SocketContextType {
   socket: Socket | null;
@@ -19,31 +20,38 @@ export const useSocket = () => useContext(SocketContext);
 export function SocketProvider({ children }: { children: React.ReactNode }) {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
-  const [token, setToken] = useState<string | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    const getCookie = (name: string) => {
-      const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${name}=`);
-      if (parts.length === 2) return parts.pop()?.split(';').shift();
-      return undefined;
-    };
+    let cancelled = false;
 
-    const checkToken = () => {
-      const currentToken = getCookie("osta_access_token") || 
-                    (typeof window !== "undefined" ? (window.localStorage.getItem("osta_access_token") || window.sessionStorage.getItem("osta_access_token")) : null) || null;
-      if (currentToken !== token) {
-        setToken(currentToken);
+    const checkSession = async () => {
+      try {
+        const response = await fetch(`${resolveApiBaseUrl()}/auth/me`, {
+          credentials: "include",
+          headers: { Accept: "application/json" }
+        });
+        if (!cancelled) {
+          setIsAuthenticated(response.ok);
+        }
+      } catch {
+        if (!cancelled) {
+          setIsAuthenticated(false);
+        }
       }
     };
 
-    checkToken();
-    const intervalId = setInterval(checkToken, 2000); // Check every 2 seconds for login/logout
-    return () => clearInterval(intervalId);
-  }, [token]);
+    void checkSession();
+    const intervalId = setInterval(checkSession, 30000);
+
+    return () => {
+      cancelled = true;
+      clearInterval(intervalId);
+    };
+  }, []);
 
   useEffect(() => {
-    if (!token) {
+    if (!isAuthenticated) {
       setSocket(null);
       setIsConnected(false);
       return;
@@ -55,7 +63,6 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
     console.log("Connecting to socket server at:", socketUrl);
 
     const socketInstance = io(socketUrl, {
-      auth: { token },
       withCredentials: true,
       transports: ["websocket", "polling"]
     });
@@ -75,7 +82,7 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
     return () => {
       socketInstance.disconnect();
     };
-  }, [token]);
+  }, [isAuthenticated]);
 
   return (
     <SocketContext.Provider value={{ socket, isConnected }}>

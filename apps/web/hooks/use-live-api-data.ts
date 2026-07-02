@@ -17,13 +17,10 @@ export function useLiveApiData<T>(path: string, initialData: T) {
 
     async function load() {
       try {
-        const token = window.localStorage.getItem("osta_access_token") || window.sessionStorage.getItem("osta_access_token") || "";
-        
         const response = await fetch(`${resolveApiBaseUrl()}${path}`, {
           credentials: "include",
           headers: {
-            "Accept": "application/json",
-            "Authorization": `Bearer ${token}`
+            "Accept": "application/json"
           },
           signal: controller.signal
         });

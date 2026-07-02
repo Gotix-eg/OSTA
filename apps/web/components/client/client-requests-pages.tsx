@@ -762,8 +762,9 @@ export function ClientRequestDetailPage({ locale, requestId, initialData }: { lo
               <button
                 onClick={() => {
                   if (data.worker) {
-                    localStorage.setItem("osta_open_chat_user", JSON.stringify({ id: data.worker.userId, firstName: data.worker.name, lastName: "" }));
-                    window.dispatchEvent(new Event("osta_open_chat"));
+                    window.dispatchEvent(new CustomEvent("osta_open_chat", {
+                      detail: { id: data.worker.userId, firstName: data.worker.name, lastName: "" }
+                    }));
                   }
                 }}
                 className="btn-gold py-3 px-6 text-sm font-black flex items-center justify-center gap-2 group/btn shadow-md shrink-0"

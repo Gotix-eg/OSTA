@@ -18,6 +18,7 @@ import { LocaleSwitcher } from "@/components/shared/locale-switcher";
 import { useLiveApiData } from "@/hooks/use-live-api-data";
 import { egyptianGovernorates, majorCities } from "@/lib/geo-data";
 import { resolveApiBaseUrl } from "@/lib/api";
+import { getBrowserAuthState } from "@/lib/auth-client";
 
 function getCategoryColor(slug: string): string {
   const colors: Record<string, string> = {
@@ -211,13 +212,11 @@ export function LandingPage({ locale }: { locale: Locale }) {
   }, [slides]);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const token = window.localStorage.getItem("osta_access_token") || window.sessionStorage.getItem("osta_access_token");
-      const role = window.localStorage.getItem("osta_user_role");
-      setIsLoggedIn(!!token);
+    getBrowserAuthState().then(({ isLoggedIn, role }) => {
+      setIsLoggedIn(isLoggedIn);
       setIsClient(role === "CLIENT");
       setIsWorker(role === "WORKER");
-    }
+    });
   }, []);
 
   const fetchWorkers = async () => {

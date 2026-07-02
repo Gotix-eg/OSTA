@@ -8,7 +8,69 @@ const protectedSegments = {
   admin: ["ADMIN", "SUPER_ADMIN"]
 } as const;
 
-export function middleware(request: NextRequest) {
+type VerifiedAccessToken = {
+  role?: string;
+  exp?: number;
+};
+
+function base64UrlToBytes(value: string) {
+  const base64 = value.replace(/-/g, "+").replace(/_/g, "/");
+  const padded = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), "=");
+  const binary = atob(padded);
+  const bytes = new Uint8Array(binary.length);
+
+  for (let index = 0; index < binary.length; index += 1) {
+    bytes[index] = binary.charCodeAt(index);
+  }
+
+  return bytes;
+}
+
+async function verifyJwt(token: string): Promise<VerifiedAccessToken | null> {
+  const [encodedHeader, encodedPayload, encodedSignature] = token.split(".");
+
+  if (!encodedHeader || !encodedPayload || !encodedSignature) {
+    return null;
+  }
+
+  try {
+    const header = JSON.parse(new TextDecoder().decode(base64UrlToBytes(encodedHeader))) as { alg?: string };
+    if (header.alg !== "HS256") {
+      return null;
+    }
+
+    const secret = process.env.JWT_SECRET ?? "change-me";
+    const key = await crypto.subtle.importKey(
+      "raw",
+      new TextEncoder().encode(secret),
+      { name: "HMAC", hash: "SHA-256" },
+      false,
+      ["verify"]
+    );
+
+    const isValid = await crypto.subtle.verify(
+      "HMAC",
+      key,
+      base64UrlToBytes(encodedSignature),
+      new TextEncoder().encode(`${encodedHeader}.${encodedPayload}`)
+    );
+
+    if (!isValid) {
+      return null;
+    }
+
+    const payload = JSON.parse(new TextDecoder().decode(base64UrlToBytes(encodedPayload))) as VerifiedAccessToken;
+    if (payload.exp && payload.exp * 1000 <= Date.now()) {
+      return null;
+    }
+
+    return payload;
+  } catch {
+    return null;
+  }
+}
+
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Handle legacy auth routes
@@ -28,16 +90,22 @@ export function middleware(request: NextRequest) {
 
   const [, locale, segment] = match;
   const token = request.cookies.get("osta_access_token")?.value;
-  const role = request.cookies.get("osta_user_role")?.value;
 
   if (!token) {
     return NextResponse.redirect(new URL(`/${locale}/login`, request.url));
   }
 
+  const payload = await verifyJwt(token);
+  const role = payload?.role;
+
+  if (!role) {
+    return NextResponse.redirect(new URL(`/${locale}/login`, request.url));
+  }
+
   const allowedRoles = protectedSegments[segment as keyof typeof protectedSegments] as readonly string[];
 
-  if (!role || !allowedRoles.includes(role as (typeof allowedRoles)[number])) {
-    const fallbackTarget = role ? role.toLowerCase() : "login";
+  if (!allowedRoles.includes(role as (typeof allowedRoles)[number])) {
+    const fallbackTarget = role.toLowerCase();
     return NextResponse.redirect(new URL(`/${locale}/${fallbackTarget}`, request.url));
   }
 

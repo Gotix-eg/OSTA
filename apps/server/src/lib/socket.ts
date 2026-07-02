@@ -32,9 +32,22 @@ class SocketService {
       }
     });
 
+    const getCookie = (cookieHeader: string | undefined, name: string) => {
+      if (!cookieHeader) return undefined;
+
+      return cookieHeader
+        .split(";")
+        .map((part) => part.trim())
+        .find((part) => part.startsWith(`${name}=`))
+        ?.slice(name.length + 1);
+    };
+
     // Socket.io middleware for JWT authentication
     this.io.use((socket: AuthenticatedSocket, next) => {
-      const token = socket.handshake.auth?.token || socket.handshake.headers?.authorization?.split(" ")[1];
+      const token =
+        socket.handshake.auth?.token ||
+        socket.handshake.headers?.authorization?.split(" ")[1] ||
+        getCookie(socket.handshake.headers?.cookie, "osta_access_token");
       
       if (!token) {
         return next(new Error("Authentication error: Token missing"));
@@ -43,7 +56,7 @@ class SocketService {
       try {
         const decoded = jwt.verify(token, env.JWT_SECRET) as any;
         socket.user = {
-          id: decoded.userId || decoded.id,
+          id: decoded.sub,
           role: decoded.role
         };
         next();

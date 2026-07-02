@@ -125,34 +125,9 @@ type AuthSuccessResponse = {
   };
 };
 
-function usePersistentState<T>(key: string, initialValue: T) {
+function useEphemeralState<T>(initialValue: T) {
   const [state, setState] = useState<T>(initialValue);
-  const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    const rawValue = window.localStorage.getItem(key);
-
-    if (rawValue) {
-      try {
-        const parsed = JSON.parse(rawValue) as Partial<T>;
-        setState({ ...initialValue, ...parsed });
-      } catch {
-        window.localStorage.removeItem(key);
-      }
-    }
-
-    setReady(true);
-  }, [key]);
-
-  useEffect(() => {
-    if (!ready) {
-      return;
-    }
-
-    window.localStorage.setItem(key, JSON.stringify(state));
-  }, [key, ready, state]);
-
-  return { ready, state, setState };
+  return { ready: true, state, setState };
 }
 
 function StepIndicator({ current, total }: { current: number; total: number }) {
@@ -603,7 +578,7 @@ function FormSkeleton({ locale }: { locale: Locale }) {
 export function ClientRegisterForm({ locale }: { locale: Locale }) {
   const copy = authCopy[locale];
   const isArabic = locale === "ar";
-  const { ready, state, setState } = usePersistentState("osta-client-register", clientRegisterDefaults);
+  const { ready, state, setState } = useEphemeralState(clientRegisterDefaults);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -657,7 +632,6 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
         setRegisteredEmail(payload.email);
         setNeedsOtpVerify(true);
       } else {
-        window.localStorage.removeItem("osta-client-register");
         setSubmitted(true);
         applyAuthSuccess(locale, payload, true);
       }
@@ -678,7 +652,6 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
         code: otpCode
       });
 
-      window.localStorage.removeItem("osta-client-register");
       setSubmitted(true);
       
       setTimeout(() => {
@@ -827,7 +800,7 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
 export function WorkerRegisterForm({ locale }: { locale: Locale }) {
   const copy = authCopy[locale];
   const isArabic = locale === "ar";
-  const { ready, state, setState } = usePersistentState("osta-worker-register", workerRegisterDefaults);
+  const { ready, state, setState } = useEphemeralState(workerRegisterDefaults);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -880,7 +853,6 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
 
     try {
       const payload = await postApiData<AuthSuccessResponse, any>("/auth/register/worker", { ...state });
-      window.localStorage.removeItem("osta-worker-register");
       setSubmitted(true);
       applyAuthSuccess(locale, payload, true);
     } catch (err) {
@@ -1009,7 +981,7 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
 export function VendorRegisterForm({ locale }: { locale: Locale }) {
   const copy = authCopy[locale];
   const isArabic = locale === "ar";
-  const { ready, state, setState } = usePersistentState("osta-vendor-register", vendorRegisterDefaults);
+  const { ready, state, setState } = useEphemeralState(vendorRegisterDefaults);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -1073,7 +1045,6 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
 
     try {
       const payload = await postApiData<AuthSuccessResponse, any>("/auth/register/vendor", { ...state });
-      window.localStorage.removeItem("osta-vendor-register");
       setSubmitted(true);
       applyAuthSuccess(locale, payload, true);
     } catch (err) {

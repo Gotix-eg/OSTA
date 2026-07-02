@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
 const RATE_LIMIT_MAX = 20;
 const uploadAttempts = new Map<string, { count: number; resetAt: number }>();
+const ALLOWED_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/gif", "image/webp"]);
 
 function getClientKey(request: NextRequest) {
   return (
@@ -38,9 +39,107 @@ function safeFilename(name: string) {
   return cleaned || fallback;
 }
 
+function base64UrlToBytes(value: string) {
+  const base64 = value.replace(/-/g, "+").replace(/_/g, "/");
+  const padded = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), "=");
+  const binary = atob(padded);
+  const bytes = new Uint8Array(binary.length);
+
+  for (let index = 0; index < binary.length; index += 1) {
+    bytes[index] = binary.charCodeAt(index);
+  }
+
+  return bytes;
+}
+
+async function verifyJwt(token: string) {
+  const [encodedHeader, encodedPayload, encodedSignature] = token.split(".");
+
+  if (!encodedHeader || !encodedPayload || !encodedSignature) {
+    return false;
+  }
+
+  try {
+    const header = JSON.parse(new TextDecoder().decode(base64UrlToBytes(encodedHeader))) as { alg?: string };
+    if (header.alg !== "HS256") {
+      return false;
+    }
+
+    const key = await crypto.subtle.importKey(
+      "raw",
+      new TextEncoder().encode(process.env.JWT_SECRET ?? "change-me"),
+      { name: "HMAC", hash: "SHA-256" },
+      false,
+      ["verify"]
+    );
+
+    const isValid = await crypto.subtle.verify(
+      "HMAC",
+      key,
+      base64UrlToBytes(encodedSignature),
+      new TextEncoder().encode(`${encodedHeader}.${encodedPayload}`)
+    );
+
+    if (!isValid) {
+      return false;
+    }
+
+    const payload = JSON.parse(new TextDecoder().decode(base64UrlToBytes(encodedPayload))) as { exp?: number };
+    return !payload.exp || payload.exp * 1000 > Date.now();
+  } catch {
+    return false;
+  }
+}
+
+async function isSupportedImage(file: File) {
+  if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
+    return false;
+  }
+
+  const bytes = new Uint8Array(await file.slice(0, 12).arrayBuffer());
+  const isJpeg = bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff;
+  const isPng =
+    bytes[0] === 0x89 &&
+    bytes[1] === 0x50 &&
+    bytes[2] === 0x4e &&
+    bytes[3] === 0x47 &&
+    bytes[4] === 0x0d &&
+    bytes[5] === 0x0a &&
+    bytes[6] === 0x1a &&
+    bytes[7] === 0x0a;
+  const isGif =
+    bytes[0] === 0x47 &&
+    bytes[1] === 0x49 &&
+    bytes[2] === 0x46 &&
+    bytes[3] === 0x38 &&
+    (bytes[4] === 0x37 || bytes[4] === 0x39) &&
+    bytes[5] === 0x61;
+  const isWebp =
+    bytes[0] === 0x52 &&
+    bytes[1] === 0x49 &&
+    bytes[2] === 0x46 &&
+    bytes[3] === 0x46 &&
+    bytes[8] === 0x57 &&
+    bytes[9] === 0x45 &&
+    bytes[10] === 0x42 &&
+    bytes[11] === 0x50;
+
+  return (
+    (file.type === "image/jpeg" && isJpeg) ||
+    (file.type === "image/png" && isPng) ||
+    (file.type === "image/gif" && isGif) ||
+    (file.type === "image/webp" && isWebp)
+  );
+}
+
 export async function POST(request: NextRequest) {
   if (isRateLimited(request)) {
     return NextResponse.json({ error: "Too many upload attempts" }, { status: 429 });
+  }
+
+  const token = request.cookies.get("osta_access_token")?.value;
+  if (!token || !(await verifyJwt(token))) {
+    return NextResponse.json({ error: "Authentication required" }, { status: 401 });
   }
 
   const formData = await request.formData();
@@ -50,9 +149,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "No file provided" }, { status: 400 });
   }
 
-  // Validate file type
-  if (!file.type.startsWith("image/")) {
-    return NextResponse.json({ error: "File must be an image" }, { status: 400 });
+  if (!(await isSupportedImage(file))) {
+    return NextResponse.json({ error: "File must be a valid JPG, PNG, GIF, or WebP image" }, { status: 400 });
   }
 
   // Validate file size (max 5MB)

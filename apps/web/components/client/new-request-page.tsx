@@ -34,8 +34,6 @@ import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
 import { MapPicker } from "@/components/shared/map-picker";
 
-const draftStorageKey = "osta-client-new-request";
-
 type CreatedRequest = {
   id: string;
   requestNumber: string;
@@ -134,30 +132,9 @@ function translateArea(area: string, locale: Locale) {
   return translations[area]?.[locale] || area;
 }
 
-function usePersistentDraft(key: string) {
+function useEphemeralDraft() {
   const [draft, setDraft] = useState<RequestDraft>(initialDraft);
-  const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    const rawValue = window.localStorage.getItem(key);
-
-    if (rawValue) {
-      try {
-        setDraft(JSON.parse(rawValue) as RequestDraft);
-      } catch {
-        window.localStorage.removeItem(key);
-      }
-    }
-
-    setReady(true);
-  }, [key]);
-
-  useEffect(() => {
-    if (!ready) return;
-    window.localStorage.setItem(key, JSON.stringify(draft));
-  }, [draft, key, ready]);
-
-  return { draft, ready, setDraft };
+  return { draft, ready: true, setDraft };
 }
 
 function Field({ label, children }: { label: string; children: ReactNode }) {
@@ -235,7 +212,7 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
   const queryCategoryId = searchParams?.get("categoryId");
   const queryServiceId = searchParams?.get("serviceId");
 
-  const { draft, ready, setDraft } = usePersistentDraft(draftStorageKey);
+  const { draft, ready, setDraft } = useEphemeralDraft();
   const [step, setStep] = useState(0);
   const [submittedRequest, setSubmittedRequest] =
     useState<CreatedRequest | null>(null);
@@ -263,13 +240,13 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
   const copy = useMemo(
     () => ({
       subtitle: isArabic
-        ? "ابنِ الطلب خطوة بخطوة مع حفظ تلقائي ومعاينة مباشرة توضح لك التقدم الحالي."
-        : "Build the request through a clearer step-by-step flow with autosave and a live summary rail.",
+        ? "ابنِ الطلب خطوة بخطوة مع معاينة مباشرة توضح لك التقدم الحالي."
+        : "Build the request through a clearer step-by-step flow with a live summary rail.",
       title: isArabic ? "طلب جديد" : "New service request",
       action: isArabic ? "إرسال الطلب" : "Submit request",
       next: isArabic ? "التالي" : "Next",
       back: isArabic ? "السابق" : "Back",
-      saved: isArabic ? "محفوظ تلقائيًا على هذا الجهاز" : "Auto-saved locally",
+      saved: isArabic ? "بياناتك لا تُحفظ على هذا الجهاز" : "Your draft is not saved on this device",
       successTitle: isArabic
         ? "تم تجهيز الطلب"
         : "Request prepared successfully",
@@ -346,7 +323,6 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
         videoUrl: draft.videoUrl,
       });
 
-      window.localStorage.removeItem(draftStorageKey);
       setDraft(initialDraft);
       setSubmittedRequest(createdRequest);
     } catch (error) {

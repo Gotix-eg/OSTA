@@ -20,6 +20,7 @@ import {
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
 import { resolveApiBaseUrl } from "@/lib/api";
+import { getBrowserAuthState } from "@/lib/auth-client";
 import { egyptianGovernorates, majorCities } from "@/lib/geo-data";
 
 const CRAFTS = [
@@ -96,12 +97,10 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
   };
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const token = window.localStorage.getItem("osta_access_token") || window.sessionStorage.getItem("osta_access_token");
-      const role = window.localStorage.getItem("osta_user_role");
-      setIsLoggedIn(!!token);
+    getBrowserAuthState().then(({ isLoggedIn, role }) => {
+      setIsLoggedIn(isLoggedIn);
       setIsClient(role === "CLIENT");
-    }
+    });
   }, []);
 
   const fetchWorkers = async (overrides?: { specialty?: string; gov?: string; city?: string; area?: string }) => {

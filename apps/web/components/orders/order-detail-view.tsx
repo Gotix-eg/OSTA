@@ -19,6 +19,7 @@ import {
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
 import { resolveApiBaseUrl } from "@/lib/api";
+import { getBrowserAuthState } from "@/lib/auth-client";
 
 interface OrderDetailData {
   id: string;
@@ -60,12 +61,10 @@ export function OrderDetailView({ locale, orderId }: { locale: Locale; orderId: 
   const [showWorkerAuthModal, setShowWorkerAuthModal] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const token = window.localStorage.getItem("osta_access_token") || window.sessionStorage.getItem("osta_access_token");
-      const role = window.localStorage.getItem("osta_user_role");
-      setIsLoggedIn(!!token);
+    getBrowserAuthState().then(({ isLoggedIn, role }) => {
+      setIsLoggedIn(isLoggedIn);
       setIsWorker(role === "WORKER");
-    }
+    });
   }, []);
 
   const fetchOrderDetail = async () => {
