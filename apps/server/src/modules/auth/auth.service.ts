@@ -148,10 +148,6 @@ export const authService = {
       throw new ApiError(409, "البريد الإلكتروني مسجل بالفعل", "EMAIL_EXISTS");
     }
 
-    if (input.role === "CLIENT" && !input.email) {
-      throw new ApiError(400, "البريد الإلكتروني مطلوب لتسجيل حساب عميل", "EMAIL_REQUIRED");
-    }
-
     if (input.role === "WORKER" && input.nationalIdNumber) {
       const existingWorker = await prisma.workerProfile.findUnique({
         where: { nationalIdNumber: input.nationalIdNumber }
@@ -187,7 +183,7 @@ export const authService = {
         email: input.email,
         passwordHash,
         role: input.role,
-        status: input.role === "CLIENT" ? "INACTIVE" : "ACTIVE",
+        status: (input.role === "CLIENT" && input.email) ? "INACTIVE" : "ACTIVE",
         clientProfile:
           input.role === "CLIENT"
             ? {
@@ -253,7 +249,7 @@ export const authService = {
       }
     });
 
-    if (user.role === "CLIENT") {
+    if (user.role === "CLIENT" && user.email) {
       const code = generateOtpCode();
       const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
 

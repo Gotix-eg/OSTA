@@ -630,17 +630,6 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
       setIsSubmitting(false);
       return;
     }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!state.email) {
-      setError(isArabic ? "البريد الإلكتروني مطلوب" : "Email is required");
-      setIsSubmitting(false);
-      return;
-    }
-    if (!emailRegex.test(state.email)) {
-      setError(isArabic ? "صيغة البريد الإلكتروني غير صحيحة" : "Invalid email format");
-      setIsSubmitting(false);
-      return;
-    }
     if (state.password.length < 8) {
       setError(isArabic ? "كلمة المرور يجب أن تكون 8 أحرف أو أرقام على الأقل" : "Password must be at least 8 characters");
       setIsSubmitting(false);
@@ -770,16 +759,6 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
               <InputField label={isArabic ? "الاسم الأول" : "First name"} value={state.firstName} onChange={(firstName) => setState({ ...state, firstName })} placeholder={isArabic ? "محمد" : "John"} />
               <InputField label={isArabic ? "اسم العائلة" : "Last name"} value={state.lastName} onChange={(lastName) => setState({ ...state, lastName })} placeholder={isArabic ? "أحمد" : "Doe"} />
             </div>
-            
-            <InputField 
-              label={isArabic ? "البريد الإلكتروني" : "Email"} 
-              value={state.email} 
-              onChange={(email) => setState({ ...state, email })} 
-              type="email" 
-              placeholder="example@mail.com"
-              helperText={isArabic ? "البريد الإلكتروني إلزامي ومطلوب لإكمال التسجيل" : "Email is required and mandatory to complete registration"}
-            />
-            
             <div className="grid gap-6 sm:grid-cols-2">
               <InputField 
                 label={isArabic ? "كلمة المرور" : "Password"} 

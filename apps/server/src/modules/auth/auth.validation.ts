@@ -8,7 +8,7 @@ export const registerSchema = z
     firstName: z.string().min(2, "الاسم الأول يجب أن يكون حرفين على الأقل").max(40, "الاسم الأول طويل جداً"),
     lastName: z.string().min(2, "الاسم الأخير يجب أن يكون حرفين على الأقل").max(40, "الاسم الأخير طويل جداً"),
     phone: phoneSchema,
-    email: z.string().email("البريد الإلكتروني غير صالح").optional(),
+    email: z.string().email("البريد الإلكتروني غير صالح").optional().or(z.literal("")),
     password: passwordSchema,
     confirmPassword: passwordSchema,
     governorate: z.string().optional(),
