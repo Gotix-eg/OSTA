@@ -277,11 +277,22 @@ router.patch("/workers/:id/verify", catchAsync(async (request, response) => {
       // 1. Create specialization if missing
       const hasSpec = await prisma.workerSpecialization.count({ where: { workerId: updatedWorker.id } });
       if (hasSpec === 0) {
-        const prof = (updatedWorker.profession || "").toLowerCase();
-        let catSlug = "electricity";
-        if (prof.includes("سبا") || prof.includes("plumb")) catSlug = "plumbing";
+        const prof = (updatedWorker.profession || "").toLowerCase().trim();
+        let catSlug = "electrical";
+        if (prof === "plumber" || prof === "ceramic") catSlug = "plumbing";
+        else if (prof === "electrician") catSlug = "electrical";
+        else if (prof === "carpenter" || prof === "gypsum") catSlug = "carpentry";
+        else if (prof === "ac-technician") catSlug = "ac";
+        else if (prof === "appliance-repair") catSlug = "appliances";
+        else if (prof === "painter") catSlug = "painting";
+        else if (prof === "networks-cameras") catSlug = "networks";
+        else if (prof.includes("سبا") || prof.includes("plumb") || prof.includes("سيراميك") || prof.includes("ceramic")) catSlug = "plumbing";
+        else if (prof.includes("كهرب") || prof.includes("electr")) catSlug = "electrical";
         else if (prof.includes("تكييف") || prof.includes("ac")) catSlug = "ac";
-        else if (prof.includes("نجار") || prof.includes("carp")) catSlug = "carpentry";
+        else if (prof.includes("أجهز") || prof.includes("appliance")) catSlug = "appliances";
+        else if (prof.includes("نجار") || prof.includes("carp") || prof.includes("جبس")) catSlug = "carpentry";
+        else if (prof.includes("نقاش") || prof.includes("دهان") || prof.includes("paint")) catSlug = "painting";
+        else if (prof.includes("شبك") || prof.includes("كاميرات") || prof.includes("network") || prof.includes("camera")) catSlug = "networks";
 
         const service = await prisma.service.findFirst({
           where: { category: { slug: catSlug } }
@@ -556,11 +567,22 @@ router.post("/workers/:id/verify", catchAsync(async (request, response) => {
     // 1. Create specialization if missing
     const hasSpec = await prisma.workerSpecialization.count({ where: { workerId: updated.id } });
     if (hasSpec === 0) {
-      const prof = (updated.profession || "").toLowerCase();
-      let catSlug = "electricity";
-      if (prof.includes("سبا") || prof.includes("plumb")) catSlug = "plumbing";
+      const prof = (updated.profession || "").toLowerCase().trim();
+      let catSlug = "electrical";
+      if (prof === "plumber" || prof === "ceramic") catSlug = "plumbing";
+      else if (prof === "electrician") catSlug = "electrical";
+      else if (prof === "carpenter" || prof === "gypsum") catSlug = "carpentry";
+      else if (prof === "ac-technician") catSlug = "ac";
+      else if (prof === "appliance-repair") catSlug = "appliances";
+      else if (prof === "painter") catSlug = "painting";
+      else if (prof === "networks-cameras") catSlug = "networks";
+      else if (prof.includes("سبا") || prof.includes("plumb") || prof.includes("سيراميك") || prof.includes("ceramic")) catSlug = "plumbing";
+      else if (prof.includes("كهرب") || prof.includes("electr")) catSlug = "electrical";
       else if (prof.includes("تكييف") || prof.includes("ac")) catSlug = "ac";
-      else if (prof.includes("نجار") || prof.includes("carp")) catSlug = "carpentry";
+      else if (prof.includes("أجهز") || prof.includes("appliance")) catSlug = "appliances";
+      else if (prof.includes("نجار") || prof.includes("carp") || prof.includes("جبس")) catSlug = "carpentry";
+      else if (prof.includes("نقاش") || prof.includes("دهان") || prof.includes("paint")) catSlug = "painting";
+      else if (prof.includes("شبك") || prof.includes("كاميرات") || prof.includes("network") || prof.includes("camera")) catSlug = "networks";
 
       const service = await prisma.service.findFirst({
         where: { category: { slug: catSlug } }
@@ -644,11 +666,22 @@ router.patch("/workers/:id", catchAsync(async (request, response) => {
         where: { workerId: id }
       });
 
-      const prof = profession.toLowerCase();
-      let catSlug = "electricity";
-      if (prof.includes("سبا") || prof.includes("plumb")) catSlug = "plumbing";
+      const prof = profession.toLowerCase().trim();
+      let catSlug = "electrical";
+      if (prof === "plumber" || prof === "ceramic") catSlug = "plumbing";
+      else if (prof === "electrician") catSlug = "electrical";
+      else if (prof === "carpenter" || prof === "gypsum") catSlug = "carpentry";
+      else if (prof === "ac-technician") catSlug = "ac";
+      else if (prof === "appliance-repair") catSlug = "appliances";
+      else if (prof === "painter") catSlug = "painting";
+      else if (prof === "networks-cameras") catSlug = "networks";
+      else if (prof.includes("سبا") || prof.includes("plumb") || prof.includes("سيراميك") || prof.includes("ceramic")) catSlug = "plumbing";
+      else if (prof.includes("كهرب") || prof.includes("electr")) catSlug = "electrical";
       else if (prof.includes("تكييف") || prof.includes("ac")) catSlug = "ac";
-      else if (prof.includes("نجار") || prof.includes("carp")) catSlug = "carpentry";
+      else if (prof.includes("أجهز") || prof.includes("appliance")) catSlug = "appliances";
+      else if (prof.includes("نجار") || prof.includes("carp") || prof.includes("جبس")) catSlug = "carpentry";
+      else if (prof.includes("نقاش") || prof.includes("دهان") || prof.includes("paint")) catSlug = "painting";
+      else if (prof.includes("شبك") || prof.includes("كاميرات") || prof.includes("network") || prof.includes("camera")) catSlug = "networks";
 
       const service = await prisma.service.findFirst({
         where: { category: { slug: catSlug } }
