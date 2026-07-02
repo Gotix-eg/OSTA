@@ -6,12 +6,14 @@ export function ImageUpload({
   label,
   value,
   onChange,
-  isArabic
+  isArabic,
+  purpose
 }: {
   label: string;
   value: string;
   onChange: (url: string) => void;
   isArabic: boolean;
+  purpose?: "registration-document";
 }) {
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -26,6 +28,9 @@ export function ImageUpload({
 
     const formData = new FormData();
     formData.append("file", file);
+    if (purpose) {
+      formData.append("purpose", purpose);
+    }
 
     try {
       const res = await fetch("/api/upload", {

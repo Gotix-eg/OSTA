@@ -910,8 +910,8 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
             </h3>
             
             <div className="grid gap-6 sm:grid-cols-2">
-              <ImageUpload isArabic={isArabic} label={isArabic ? "صورة البطاقة (أمام)" : "ID Front"} value={state.nationalIdFront} onChange={(url) => setState({ ...state, nationalIdFront: url })} />
-              <ImageUpload isArabic={isArabic} label={isArabic ? "صورة البطاقة (خلف)" : "ID Back"} value={state.nationalIdBack} onChange={(url) => setState({ ...state, nationalIdBack: url })} />
+              <ImageUpload isArabic={isArabic} purpose="registration-document" label={isArabic ? "صورة البطاقة (أمام)" : "ID Front"} value={state.nationalIdFront} onChange={(url) => setState({ ...state, nationalIdFront: url })} />
+              <ImageUpload isArabic={isArabic} purpose="registration-document" label={isArabic ? "صورة البطاقة (خلف)" : "ID Back"} value={state.nationalIdBack} onChange={(url) => setState({ ...state, nationalIdBack: url })} />
             </div>
 
             <div className="grid gap-6 sm:grid-cols-2">
@@ -1131,8 +1131,8 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
             </h3>
             
             <div className="grid gap-6 sm:grid-cols-2">
-              <ImageUpload isArabic={isArabic} label={isArabic ? "السجل التجاري" : "Commercial Record"} value={state.commercialRecord} onChange={(url) => setState({ ...state, commercialRecord: url })} />
-              <ImageUpload isArabic={isArabic} label={isArabic ? "البطاقة الضريبية" : "Tax Card"} value={state.taxCard} onChange={(url) => setState({ ...state, taxCard: url })} />
+              <ImageUpload isArabic={isArabic} purpose="registration-document" label={isArabic ? "السجل التجاري" : "Commercial Record"} value={state.commercialRecord} onChange={(url) => setState({ ...state, commercialRecord: url })} />
+              <ImageUpload isArabic={isArabic} purpose="registration-document" label={isArabic ? "البطاقة الضريبية" : "Tax Card"} value={state.taxCard} onChange={(url) => setState({ ...state, taxCard: url })} />
             </div>
 
             <div className="grid gap-6 sm:grid-cols-2">

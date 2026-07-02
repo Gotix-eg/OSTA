@@ -137,12 +137,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Too many upload attempts" }, { status: 429 });
   }
 
+  const formData = await request.formData();
+  const purpose = formData.get("purpose");
+  const isRegistrationDocumentUpload = purpose === "registration-document";
   const token = request.cookies.get("osta_access_token")?.value;
-  if (!token || !(await verifyJwt(token))) {
+  const isAuthenticated = Boolean(token && (await verifyJwt(token)));
+
+  if (!isAuthenticated && !isRegistrationDocumentUpload) {
     return NextResponse.json({ error: "Authentication required" }, { status: 401 });
   }
 
-  const formData = await request.formData();
   const file = formData.get("file") as File | null;
 
   if (!file) {
@@ -159,7 +163,8 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const blob = await put(`uploads/${Date.now()}-${safeFilename(file.name)}`, file, {
+    const folder = isRegistrationDocumentUpload ? "registration-documents" : "uploads";
+    const blob = await put(`${folder}/${Date.now()}-${safeFilename(file.name)}`, file, {
       access: "public",
       contentType: file.type,
       addRandomSuffix: true,
