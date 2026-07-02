@@ -22,15 +22,6 @@ jobs:
         with:
           node-version: 22
 
-      - name: 🏗 Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'zulu'
-          java-version: '17'
-
-      - name: 🏗 Setup Android SDK
-        uses: android-actions/setup-android@v3
-
       - name: 📦 Install dependencies (Workspace mode)
         run: npm install --workspace=mobile
 
@@ -40,8 +31,15 @@ jobs:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
 
-      - name: 🚀 Build Android AAB (Local Production)
-        run: eas build --platform android --profile production --local --non-interactive --output=./osta-release.aab
+      - name: 🚀 Build Android AAB (Production)
+        run: eas build --platform android --profile production --non-interactive
+        working-directory: ./apps/mobile
+
+      - name: 📥 Download AAB
+        run: |
+          BUILD_URL=$(eas build:list --platform android --status finished --limit 1 --json --non-interactive | jq -r '.[0].artifacts.buildUrl')
+          echo "Build URL: $BUILD_URL"
+          curl -L -o osta-release.aab "$BUILD_URL"
         working-directory: ./apps/mobile
 
       - name: 📤 Upload AAB as artifact
