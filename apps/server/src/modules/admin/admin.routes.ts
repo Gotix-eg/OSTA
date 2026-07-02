@@ -961,4 +961,30 @@ router.put("/slides", authenticate, requireRoles(UserRole.ADMIN), catchAsync(asy
   res.json(successResponse(normalized.slides, "Hero slides saved"));
 }));
 
+// Sponsored Campaigns — stored in SystemSetting table as JSON
+const CAMPAIGNS_KEY = "sponsored_campaigns";
+
+// GET /api/admin/campaigns — Get current sponsored campaigns
+router.get("/campaigns", authenticate, requireRoles(UserRole.ADMIN), catchAsync(async (_req, res) => {
+  const setting = await prisma.systemSetting.findUnique({ where: { key: CAMPAIGNS_KEY } });
+  const campaigns = setting ? JSON.parse(setting.value) : [];
+  res.json(successResponse(campaigns, "Sponsored campaigns fetched"));
+}));
+
+// PUT /api/admin/campaigns — Save sponsored campaigns
+router.put("/campaigns", authenticate, requireRoles(UserRole.ADMIN), catchAsync(async (req, res) => {
+  const { campaigns } = req.body;
+  if (!Array.isArray(campaigns)) throw new ApiError(400, "campaigns must be an array");
+  const normalized = await normalizeHeroSlidesForStorage(campaigns);
+
+  await prisma.systemSetting.upsert({
+    where: { key: CAMPAIGNS_KEY },
+    update: { value: JSON.stringify(normalized.slides), type: "json" },
+    create: { key: CAMPAIGNS_KEY, value: JSON.stringify(normalized.slides), type: "json" }
+  });
+
+  res.json(successResponse(normalized.slides, "Sponsored campaigns saved"));
+}));
+
 export const adminRouter = router;
+
