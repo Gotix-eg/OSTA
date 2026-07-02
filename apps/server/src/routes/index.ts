@@ -454,6 +454,49 @@ router.get("/public/campaigns", async (_req, response) => {
   }
 });
 
+router.get("/test-email", async (request, response) => {
+  try {
+    const to = (request.query.to as string) || "info@ostafy.com";
+    console.log(`[TestEmail] Testing welcome email to ${to}...`);
+    const { transporter, sendWelcomeEmail } = await import("../utils/email.js");
+    await transporter.verify();
+    const info = await sendWelcomeEmail(to, "Test User");
+    response.json({
+      success: true,
+      message: "SMTP verified and email sent successfully!",
+      info,
+      env: {
+        SMTP_HOST: process.env.SMTP_HOST,
+        SMTP_PORT: process.env.SMTP_PORT,
+        SMTP_USER: process.env.SMTP_USER,
+        SMTP_FROM: process.env.SMTP_FROM,
+        SMTP_SECURE: process.env.SMTP_SECURE,
+        hasPass: !!process.env.SMTP_PASS
+      }
+    });
+  } catch (error: any) {
+    console.error("[TestEmail] SMTP verification/send failed:", error);
+    response.status(500).json({
+      success: false,
+      message: error.message || "Unknown error",
+      error: {
+        message: error.message,
+        code: error.code,
+        command: error.command,
+        stack: error.stack
+      },
+      env: {
+        SMTP_HOST: process.env.SMTP_HOST,
+        SMTP_PORT: process.env.SMTP_PORT,
+        SMTP_USER: process.env.SMTP_USER,
+        SMTP_FROM: process.env.SMTP_FROM,
+        SMTP_SECURE: process.env.SMTP_SECURE,
+        hasPass: !!process.env.SMTP_PASS
+      }
+    });
+  }
+});
+
 router.use("/auth", authRouter);
 router.use("/clients", clientsRouter);
 router.use("/workers", workersRouter);
