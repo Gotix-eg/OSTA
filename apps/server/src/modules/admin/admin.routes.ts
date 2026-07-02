@@ -660,7 +660,7 @@ router.patch("/workers/:id", catchAsync(async (request, response) => {
     }
   });
 
-  if (profession && profession !== worker.profession) {
+  if (profession) {
     try {
       await prisma.workerSpecialization.deleteMany({
         where: { workerId: id }
