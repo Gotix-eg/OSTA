@@ -648,8 +648,9 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
     }
 
     try {
+      const { email, ...registerData } = state;
       const payload: any = await postApiData<any, any>("/auth/register/client", {
-        ...state
+        ...registerData
       });
 
       if (payload.needsVerification) {
