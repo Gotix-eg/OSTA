@@ -18,6 +18,7 @@ import {
 import { ApiError } from "../../utils/ApiError.js";
 import { successResponse } from "../../utils/ApiResponse.js";
 import { clearAuthCookies, setAuthCookies } from "../../utils/auth-cookies.js";
+import { verifyAccessToken } from "../../utils/tokens.js";
 import { authService } from "./auth.service.js";
 import {
   forgotPasswordSchema,
@@ -43,6 +44,17 @@ function parseBody<T>(schema: { parse: (value: unknown) => T }, body: unknown): 
 
     throw error;
   }
+}
+
+function getAccessToken(request: Request) {
+  const authHeader = request.headers.authorization;
+
+  if (authHeader?.startsWith("Bearer ")) {
+    return authHeader.slice(7);
+  }
+
+  const cookieToken = request.cookies?.osta_access_token;
+  return typeof cookieToken === "string" ? cookieToken : undefined;
 }
 
 router.post("/register/client", registrationLimiter, catchAsync(async (request, response) => {
@@ -219,9 +231,20 @@ router.post("/reset-password", passwordResetLimiter, catchAsync(async (request, 
   response.status(200).json(successResponse(result, "Password reset successful"));
 }));
 
-router.post("/logout", authenticate, catchAsync(async (request, response) => {
+router.post("/logout", catchAsync(async (request, response) => {
   clearAuthCookies(response);
-  response.status(200).json(successResponse(await authService.logout(request.auth!.sessionId), "Logged out"));
+
+  const token = getAccessToken(request);
+  if (token) {
+    try {
+      const payload = verifyAccessToken(token);
+      await authService.logout(payload.sessionId);
+    } catch {
+      // Cookies are cleared regardless; invalid/expired tokens should still log out locally.
+    }
+  }
+
+  response.status(200).json(successResponse({ cleared: true }, "Logged out"));
 }));
 
 router.get("/me", authenticate, catchAsync(async (request, response) => {

@@ -8,6 +8,14 @@ const protectedSegments = {
   admin: ["ADMIN", "SUPER_ADMIN"]
 } as const;
 
+function withNoStore(response: NextResponse) {
+  response.headers.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+  response.headers.set("Pragma", "no-cache");
+  response.headers.set("Expires", "0");
+  response.headers.set("Surrogate-Control", "no-store");
+  return response;
+}
+
 type VerifiedAccessToken = {
   role?: string;
   exp?: number;
@@ -92,24 +100,24 @@ export async function middleware(request: NextRequest) {
   const token = request.cookies.get("osta_access_token")?.value;
 
   if (!token) {
-    return NextResponse.redirect(new URL(`/${locale}/login`, request.url));
+    return withNoStore(NextResponse.redirect(new URL(`/${locale}/login`, request.url)));
   }
 
   const payload = await verifyJwt(token);
   const role = payload?.role;
 
   if (!role) {
-    return NextResponse.redirect(new URL(`/${locale}/login`, request.url));
+    return withNoStore(NextResponse.redirect(new URL(`/${locale}/login`, request.url)));
   }
 
   const allowedRoles = protectedSegments[segment as keyof typeof protectedSegments] as readonly string[];
 
   if (!allowedRoles.includes(role as (typeof allowedRoles)[number])) {
     const fallbackTarget = role.toLowerCase();
-    return NextResponse.redirect(new URL(`/${locale}/${fallbackTarget}`, request.url));
+    return withNoStore(NextResponse.redirect(new URL(`/${locale}/${fallbackTarget}`, request.url)));
   }
 
-  return NextResponse.next();
+  return withNoStore(NextResponse.next());
 }
 
 export const config = {

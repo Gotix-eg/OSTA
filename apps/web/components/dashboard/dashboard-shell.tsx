@@ -34,10 +34,10 @@ import {
   Grid3X3,
   X
 } from "lucide-react";
-import { fetchApiData } from "@/lib/api";
+import { fetchApiData, resolveApiBaseUrl } from "@/lib/api";
 import { VendorOnboarding } from "./vendor-onboarding";
 
-import { clearAuthSession } from "@/lib/auth-session";
+import { clearAuthSession, logoutAuthSession, type AuthRole } from "@/lib/auth-session";
 
 import { LocaleSwitcher } from "@/components/shared/locale-switcher";
 import { dashboardCopy } from "@/lib/dashboard-copy";
@@ -88,6 +88,13 @@ const roleThemes: Record<DashboardRole, { tag: string; accent: string; orb: stri
   }
 };
 
+const allowedAuthRoles: Record<DashboardRole, AuthRole[]> = {
+  client: ["CLIENT"],
+  worker: ["WORKER"],
+  vendor: ["VENDOR"],
+  admin: ["ADMIN", "SUPER_ADMIN"]
+};
+
 export function DashboardShell({
   locale,
   role,
@@ -104,6 +111,59 @@ export function DashboardShell({
   const copy = dashboardCopy[locale][role];
   const shared = dashboardCopy[locale].shared;
   const theme = roleThemes[role];
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function verifyDashboardSession() {
+      try {
+        const response = await fetch(`${resolveApiBaseUrl()}/auth/me`, {
+          credentials: "include",
+          cache: "no-store",
+          headers: {
+            Accept: "application/json"
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error("Session is not authenticated");
+        }
+
+        const payload = await response.json();
+        const user = payload?.data?.user ?? payload?.data;
+        const userRole = user?.role as AuthRole | undefined;
+
+        if (!userRole || !allowedAuthRoles[role].includes(userRole)) {
+          throw new Error("Session role is not allowed for this dashboard");
+        }
+      } catch {
+        if (!cancelled) {
+          clearAuthSession();
+          window.location.replace(`/${locale}/login`);
+        }
+      }
+    }
+
+    void verifyDashboardSession();
+
+    const handlePageShow = () => {
+      void verifyDashboardSession();
+    };
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        void verifyDashboardSession();
+      }
+    };
+
+    window.addEventListener("pageshow", handlePageShow);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      cancelled = true;
+      window.removeEventListener("pageshow", handlePageShow);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [locale, role]);
 
   useEffect(() => {
     async function checkCompleteness() {
@@ -325,9 +385,9 @@ function SidebarContent({
 
       <button
         type="button"
-        onClick={() => {
-          clearAuthSession();
-          window.location.assign(`/${locale}`);
+        onClick={async () => {
+          await logoutAuthSession();
+          window.location.replace(`/${locale}/login`);
         }}
         className="relative mt-auto inline-flex items-center justify-between rounded-2xl border border-error/10 bg-error/5 px-5 py-4 text-sm font-bold text-error transition-all duration-500 hover:bg-error/10"
       >

@@ -1,3 +1,5 @@
+import { resolveApiBaseUrl } from "@/lib/api";
+
 export type AuthRole = "CLIENT" | "WORKER" | "VENDOR" | "ADMIN" | "SUPER_ADMIN";
 
 type AuthSessionPayload = {
@@ -40,6 +42,27 @@ export function clearAuthSession() {
   document.cookie = `osta_access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC${path}`;
   document.cookie = `osta_user_role=; expires=Thu, 01 Jan 1970 00:00:00 UTC${path}`;
   document.cookie = `osta_refresh_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC${path}`;
+}
+
+export async function logoutAuthSession() {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    await fetch(`${resolveApiBaseUrl()}/auth/logout`, {
+      method: "POST",
+      credentials: "include",
+      cache: "no-store",
+      headers: {
+        Accept: "application/json"
+      }
+    });
+  } catch {
+    // Client-side cleanup and redirect still happen if the network request fails.
+  } finally {
+    clearAuthSession();
+  }
 }
 
 export function getDashboardRoute(locale: string, role: AuthRole) {
