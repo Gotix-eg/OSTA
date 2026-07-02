@@ -278,16 +278,16 @@ router.patch("/workers/:id/verify", catchAsync(async (request, response) => {
       const hasSpec = await prisma.workerSpecialization.count({ where: { workerId: updatedWorker.id } });
       if (hasSpec === 0) {
         const prof = (updatedWorker.profession || "").toLowerCase().trim();
-        let catSlug = "electrical";
+        let catSlug = "electricity";
         if (prof === "plumber" || prof === "ceramic") catSlug = "plumbing";
-        else if (prof === "electrician") catSlug = "electrical";
+        else if (prof === "electrician") catSlug = "electricity";
         else if (prof === "carpenter" || prof === "gypsum") catSlug = "carpentry";
         else if (prof === "ac-technician") catSlug = "ac";
         else if (prof === "appliance-repair") catSlug = "appliances";
         else if (prof === "painter") catSlug = "painting";
         else if (prof === "networks-cameras") catSlug = "networks";
         else if (prof.includes("سبا") || prof.includes("plumb") || prof.includes("سيراميك") || prof.includes("ceramic")) catSlug = "plumbing";
-        else if (prof.includes("كهرب") || prof.includes("electr")) catSlug = "electrical";
+        else if (prof.includes("كهرب") || prof.includes("electr")) catSlug = "electricity";
         else if (prof.includes("تكييف") || prof.includes("ac")) catSlug = "ac";
         else if (prof.includes("أجهز") || prof.includes("appliance")) catSlug = "appliances";
         else if (prof.includes("نجار") || prof.includes("carp") || prof.includes("جبس")) catSlug = "carpentry";
@@ -568,16 +568,16 @@ router.post("/workers/:id/verify", catchAsync(async (request, response) => {
     const hasSpec = await prisma.workerSpecialization.count({ where: { workerId: updated.id } });
     if (hasSpec === 0) {
       const prof = (updated.profession || "").toLowerCase().trim();
-      let catSlug = "electrical";
+      let catSlug = "electricity";
       if (prof === "plumber" || prof === "ceramic") catSlug = "plumbing";
-      else if (prof === "electrician") catSlug = "electrical";
+      else if (prof === "electrician") catSlug = "electricity";
       else if (prof === "carpenter" || prof === "gypsum") catSlug = "carpentry";
       else if (prof === "ac-technician") catSlug = "ac";
       else if (prof === "appliance-repair") catSlug = "appliances";
       else if (prof === "painter") catSlug = "painting";
       else if (prof === "networks-cameras") catSlug = "networks";
       else if (prof.includes("سبا") || prof.includes("plumb") || prof.includes("سيراميك") || prof.includes("ceramic")) catSlug = "plumbing";
-      else if (prof.includes("كهرب") || prof.includes("electr")) catSlug = "electrical";
+      else if (prof.includes("كهرب") || prof.includes("electr")) catSlug = "electricity";
       else if (prof.includes("تكييف") || prof.includes("ac")) catSlug = "ac";
       else if (prof.includes("أجهز") || prof.includes("appliance")) catSlug = "appliances";
       else if (prof.includes("نجار") || prof.includes("carp") || prof.includes("جبس")) catSlug = "carpentry";
@@ -667,16 +667,16 @@ router.patch("/workers/:id", catchAsync(async (request, response) => {
       });
 
       const prof = profession.toLowerCase().trim();
-      let catSlug = "electrical";
+      let catSlug = "electricity";
       if (prof === "plumber" || prof === "ceramic") catSlug = "plumbing";
-      else if (prof === "electrician") catSlug = "electrical";
+      else if (prof === "electrician") catSlug = "electricity";
       else if (prof === "carpenter" || prof === "gypsum") catSlug = "carpentry";
       else if (prof === "ac-technician") catSlug = "ac";
       else if (prof === "appliance-repair") catSlug = "appliances";
       else if (prof === "painter") catSlug = "painting";
       else if (prof === "networks-cameras") catSlug = "networks";
       else if (prof.includes("سبا") || prof.includes("plumb") || prof.includes("سيراميك") || prof.includes("ceramic")) catSlug = "plumbing";
-      else if (prof.includes("كهرب") || prof.includes("electr")) catSlug = "electrical";
+      else if (prof.includes("كهرب") || prof.includes("electr")) catSlug = "electricity";
       else if (prof.includes("تكييف") || prof.includes("ac")) catSlug = "ac";
       else if (prof.includes("أجهز") || prof.includes("appliance")) catSlug = "appliances";
       else if (prof.includes("نجار") || prof.includes("carp") || prof.includes("جبس")) catSlug = "carpentry";
