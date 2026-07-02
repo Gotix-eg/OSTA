@@ -31,7 +31,8 @@ export function middleware(request: NextRequest) {
   const role = request.cookies.get("osta_user_role")?.value;
 
   if (!token) {
-    return NextResponse.redirect(new URL(`/${locale}/login`, request.url));
+    const loginTarget = segment === "admin" ? "login/admin" : "login";
+    return NextResponse.redirect(new URL(`/${locale}/${loginTarget}`, request.url));
   }
 
   const allowedRoles = protectedSegments[segment as keyof typeof protectedSegments] as readonly string[];
