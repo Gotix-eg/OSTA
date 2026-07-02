@@ -137,7 +137,18 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Too many upload attempts" }, { status: 429 });
   }
 
-  const formData = await request.formData();
+  const contentType = request.headers.get("content-type") ?? "";
+  if (!contentType.toLowerCase().startsWith("multipart/form-data")) {
+    return NextResponse.json({ error: "Invalid upload request" }, { status: 400 });
+  }
+
+  let formData: FormData;
+  try {
+    formData = await request.formData();
+  } catch {
+    return NextResponse.json({ error: "Invalid upload request" }, { status: 400 });
+  }
+
   const purpose = formData.get("purpose");
   const isRegistrationDocumentUpload = purpose === "registration-document";
   const token = request.cookies.get("osta_access_token")?.value;
