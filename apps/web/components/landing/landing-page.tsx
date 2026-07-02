@@ -236,7 +236,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
     setError(null);
     try {
       const baseUrl = resolveApiBaseUrl();
-      const res = await fetch(`${baseUrl}/public/workers`);
+      const res = await fetch(`${baseUrl}/public/workers`, { cache: "no-store" });
       if (!res.ok) {
         throw new Error("Failed to fetch workers");
       }
