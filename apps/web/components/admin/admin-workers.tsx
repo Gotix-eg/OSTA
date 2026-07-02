@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, RotateCcw, User, Phone, Search, Loader2, Wrench, Star, ShieldCheck, Trash2, Wallet, Eye, X } from "lucide-react";
+import { Plus, RotateCcw, User, Phone, Search, Loader2, Wrench, Star, ShieldCheck, Trash2, Wallet, Eye, X, Edit } from "lucide-react";
 import { fetchApiData, postApiData, patchApiData, deleteApiData } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
@@ -43,6 +43,13 @@ export function AdminWorkersManagement({ locale }: { locale: Locale }) {
   const [walletAction, setWalletAction] = useState<"add" | "deduct" | "set">("add");
   const [actionLoading, setActionLoading] = useState(false);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
+
+  // Edit profile states
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editFirstName, setEditFirstName] = useState("");
+  const [editLastName, setEditLastName] = useState("");
+  const [editPhone, setEditPhone] = useState("");
+  const [editProfession, setEditProfession] = useState("");
 
   useEffect(() => {
     fetchApiData<{ data: Worker[] }>("/admin/workers", { data: [] }).then(res => {
@@ -181,13 +188,22 @@ export function AdminWorkersManagement({ locale }: { locale: Locale }) {
                       <h3 className="text-2xl font-black text-white group-hover:text-gold-500 transition-colors mb-2">
                         {worker.user.firstName} {worker.user.lastName}
                       </h3>
-                      <div className="flex flex-wrap items-center gap-y-2 gap-x-6 text-onyx-400 text-sm font-medium">
+                      <div className="flex flex-wrap items-center gap-y-2 gap-x-4 text-onyx-400 text-sm font-medium">
                         <span className="flex items-center gap-2"><Phone className="h-4 w-4 text-gold-500/60" /> {worker.user.phone}</span>
-                        <span className="flex items-center gap-2 bg-gold-500/10 px-3 py-1 rounded-full text-gold-500">
-                          <Star className="h-3.5 w-3.5 fill-current" /> {worker.rating}
+                        
+                        <span className="flex items-center gap-1.5 bg-gold-500/10 border border-gold-500/20 px-3 py-1 rounded-full text-gold-500 font-bold text-xs">
+                          <Wrench className="h-3.5 w-3.5" />
+                          {(() => {
+                            const prof = workerProfessions.find(p => p.value === worker.profession);
+                            return isArabic ? (prof?.labelAr || worker.profession || "غير محدد") : (prof?.labelEn || worker.profession || "Unassigned");
+                          })()}
                         </span>
+
+                        <span className="flex items-center gap-2 bg-onyx-900 border border-white/5 px-3 py-1 rounded-full text-onyx-300">
+                          <Star className="h-3.5 w-3.5 fill-gold-500 text-gold-500" /> {worker.rating}
+                        </span>
+                        
                         <span className="flex items-center gap-2 bg-onyx-800 px-3 py-1 rounded-full text-onyx-300">
-                          <Wrench className="h-3.5 w-3.5 text-gold-500/70" />
                           {worker.totalJobsCompleted} {isArabic ? "أوردر مكتمل" : "completed"}
                         </span>
                       </div>
@@ -235,6 +251,21 @@ export function AdminWorkersManagement({ locale }: { locale: Locale }) {
                          title={isArabic ? "عرض الملف والمستندات" : "View Profile & Docs"}
                        >
                          <Eye className="h-5 w-5" />
+                       </button>
+
+                       <button 
+                         onClick={() => {
+                           setSelectedWorker(worker);
+                           setEditFirstName(worker.user.firstName);
+                           setEditLastName(worker.user.lastName);
+                           setEditPhone(worker.user.phone);
+                           setEditProfession(worker.profession || "");
+                           setEditModalOpen(true);
+                         }}
+                         className="h-12 w-12 rounded-2xl bg-onyx-800 border border-onyx-700 flex items-center justify-center text-gold-500 hover:text-onyx-950 hover:bg-gold-500 transition-all shrink-0"
+                         title={isArabic ? "تعديل البيانات" : "Edit Profile"}
+                       >
+                         <Edit className="h-5 w-5" />
                        </button>
 
                        {worker.verificationStatus !== "VERIFIED" ? (
@@ -588,6 +619,138 @@ export function AdminWorkersManagement({ locale }: { locale: Locale }) {
                   {isArabic ? "توثيق الحساب الآن" : "Verify Account Now"}
                 </button>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Worker Profile Modal */}
+      {editModalOpen && selectedWorker && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm overflow-y-auto animate-fadeIn">
+          <div className="onyx-card max-w-md w-full p-8 border-gold-500/30 space-y-6">
+            <div className="flex items-center justify-between border-b border-white/5 pb-4">
+              <h3 className="text-2xl font-black text-white flex items-center gap-3">
+                <Edit className="h-6 w-6 text-gold-500" />
+                {isArabic ? "تعديل بيانات الفني" : "Edit Worker Profile"}
+              </h3>
+              <button
+                type="button"
+                onClick={() => {
+                  setEditModalOpen(false);
+                  setSelectedWorker(null);
+                }}
+                className="h-10 w-10 rounded-xl bg-onyx-800 border border-onyx-700 flex items-center justify-center text-onyx-400 hover:text-white transition-all"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="text-xs font-bold text-onyx-400 mb-2 block">
+                  {isArabic ? "الاسم الأول" : "First Name"}
+                </label>
+                <input
+                  type="text"
+                  className="w-full bg-onyx-900 border border-onyx-700 rounded-xl px-4 py-3 text-white focus:border-gold-500/50 outline-none"
+                  value={editFirstName}
+                  onChange={(e) => setEditFirstName(e.target.value)}
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-onyx-400 mb-2 block">
+                  {isArabic ? "الاسم الأخير" : "Last Name"}
+                </label>
+                <input
+                  type="text"
+                  className="w-full bg-onyx-900 border border-onyx-700 rounded-xl px-4 py-3 text-white focus:border-gold-500/50 outline-none"
+                  value={editLastName}
+                  onChange={(e) => setEditLastName(e.target.value)}
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-onyx-400 mb-2 block">
+                  {isArabic ? "رقم الهاتف" : "Phone Number"}
+                </label>
+                <input
+                  type="text"
+                  className="w-full bg-onyx-900 border border-onyx-700 rounded-xl px-4 py-3 text-white focus:border-gold-500/50 outline-none text-start"
+                  value={editPhone}
+                  onChange={(e) => setEditPhone(e.target.value)}
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-onyx-400 mb-2 block">
+                  {isArabic ? "المهنة / التخصص" : "Profession / Specialty"}
+                </label>
+                <select
+                  className="w-full bg-onyx-900 border border-onyx-700 rounded-xl px-4 py-3 text-white focus:border-gold-500/50 outline-none"
+                  value={editProfession}
+                  onChange={(e) => setEditProfession(e.target.value)}
+                >
+                  <option value="">{isArabic ? "اختر مهنة..." : "Select profession..."}</option>
+                  {workerProfessions.map(p => (
+                    <option key={p.value} value={p.value}>
+                      {isArabic ? p.labelAr : p.labelEn}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="flex gap-3 justify-end pt-4 border-t border-white/5">
+              <button
+                type="button"
+                onClick={() => {
+                  setEditModalOpen(false);
+                  setSelectedWorker(null);
+                }}
+                disabled={actionLoading}
+                className="btn-onyx py-3 px-6 text-sm font-bold"
+              >
+                {isArabic ? "إلغاء" : "Cancel"}
+              </button>
+              <button
+                type="button"
+                onClick={async () => {
+                  if (!editFirstName.trim() || !editLastName.trim() || !editPhone.trim()) {
+                    alert(isArabic ? "يرجى تعبئة كافة الحقول المطلوبة" : "Please fill out all required fields");
+                    return;
+                  }
+                  setActionLoading(true);
+                  try {
+                    const updated = await patchApiData<any, any>(`/admin/workers/${selectedWorker.id}`, {
+                      firstName: editFirstName,
+                      lastName: editLastName,
+                      phone: editPhone,
+                      profession: editProfession
+                    });
+                    setWorkers(prev => prev.map(w => w.id === selectedWorker.id ? {
+                      ...w,
+                      profession: updated.profession,
+                      user: {
+                        ...w.user,
+                        firstName: updated.user.firstName,
+                        lastName: updated.user.lastName,
+                        phone: updated.user.phone
+                      }
+                    } : w));
+                    setEditModalOpen(false);
+                    setSelectedWorker(null);
+                  } catch (err) {
+                    alert(isArabic ? "فشل تعديل البيانات" : "Failed to update profile data");
+                  } finally {
+                    setActionLoading(false);
+                  }
+                }}
+                disabled={actionLoading}
+                className="btn-gold py-3 px-6 text-sm font-bold"
+              >
+                {actionLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : (isArabic ? "حفظ التعديلات" : "Save Changes")}
+              </button>
             </div>
           </div>
         </div>

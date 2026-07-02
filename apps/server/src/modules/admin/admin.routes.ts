@@ -593,6 +593,83 @@ router.post("/workers/:id/verify", catchAsync(async (request, response) => {
   response.json(successResponse(updated, "Worker verified and 30-day trial started successfully"));
 }));
 
+// PATCH /api/admin/workers/:id — Edit worker profile details (first/last name, phone, profession)
+router.patch("/workers/:id", catchAsync(async (request, response) => {
+  const id = request.params.id as string;
+  const { firstName, lastName, phone, profession } = request.body as {
+    firstName?: string;
+    lastName?: string;
+    phone?: string;
+    profession?: string;
+  };
+
+  const worker = await prisma.workerProfile.findUnique({
+    where: { id },
+    include: { user: true }
+  });
+  if (!worker) {
+    throw new ApiError(404, "Worker profile not found");
+  }
+
+  if (firstName || lastName || phone) {
+    await prisma.user.update({
+      where: { id: worker.userId },
+      data: {
+        firstName: firstName !== undefined ? firstName : undefined,
+        lastName: lastName !== undefined ? lastName : undefined,
+        phone: phone !== undefined ? phone : undefined,
+      }
+    });
+  }
+
+  const updatedWorker = await prisma.workerProfile.update({
+    where: { id },
+    data: {
+      profession: profession !== undefined ? profession : undefined
+    },
+    include: {
+      user: {
+        select: {
+          firstName: true,
+          lastName: true,
+          phone: true
+        }
+      }
+    }
+  });
+
+  if (profession && profession !== worker.profession) {
+    try {
+      await prisma.workerSpecialization.deleteMany({
+        where: { workerId: id }
+      });
+
+      const prof = profession.toLowerCase();
+      let catSlug = "electricity";
+      if (prof.includes("سبا") || prof.includes("plumb")) catSlug = "plumbing";
+      else if (prof.includes("تكييف") || prof.includes("ac")) catSlug = "ac";
+      else if (prof.includes("نجار") || prof.includes("carp")) catSlug = "carpentry";
+
+      const service = await prisma.service.findFirst({
+        where: { category: { slug: catSlug } }
+      });
+
+      if (service) {
+        await prisma.workerSpecialization.create({
+          data: {
+            workerId: id,
+            serviceId: service.id
+          }
+        });
+      }
+    } catch (e) {
+      console.error("Failed to sync specialization on profession update:", e);
+    }
+  }
+
+  response.json(successResponse(updatedWorker, "Worker profile updated successfully"));
+}));
+
 // POST /api/admin/vendors/:id/verify — Mark vendor as VERIFIED and start 30-day trial
 router.post("/vendors/:id/verify", catchAsync(async (request, response) => {
   const id = request.params.id as string;
