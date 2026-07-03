@@ -39,19 +39,14 @@ jobs:
         run: ./gradlew bundleRelease
         working-directory: ./apps/mobile/android
 
-      # (اختياري) لتوقيع النسخة بالمفتاح الخاص بك تلقائياً باستخدام GitHub Secrets:
-      # 1. قم بتحويل ملف الـ keystore إلى Base64 وضعه في Secret باسم ANDROID_SIGNING_KEY
-      #    أمر التحويل في ويندوز: [Convert]::ToBase64String([IO.File]::ReadAllBytes("your_key.jks"))
-      # 2. أضف الـ Secrets الأخرى في مستودع الجيت هاب (Settings -> Secrets -> Actions)
-      # 
-      # - name: 🔏 Sign App Bundle
-      #   uses: r0adrunner/sign-android-release@v1
-      #   with:
-      #     releaseDirectory: apps/mobile/android/app/build/outputs/bundle/release
-      #     signingKeyBase64: ${{ secrets.ANDROID_SIGNING_KEY }}
-      #     alias: ${{ secrets.ANDROID_ALIAS }}
-      #     keyStorePassword: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-      #     keyPassword: ${{ secrets.ANDROID_KEY_PASSWORD }}
+      - name: 🔏 Sign App Bundle
+        uses: r0adrunner/sign-android-release@v1
+        with:
+          releaseDirectory: apps/mobile/android/app/build/outputs/bundle/release
+          signingKeyBase64: ${{ secrets.ANDROID_SIGNING_KEY }}
+          alias: ${{ secrets.ANDROID_ALIAS }}
+          keyStorePassword: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          keyPassword: ${{ secrets.ANDROID_KEY_PASSWORD }}
 
       - name: 📤 Upload Artifact
         uses: actions/upload-artifact@v4
