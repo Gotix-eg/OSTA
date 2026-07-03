@@ -485,7 +485,10 @@ export function AdminAdsPage({ locale }: { locale: Locale }) {
     isActive: true
   });
 
-
+  const [isDesktopSliderMediaOpen, setIsDesktopSliderMediaOpen] = useState(false);
+  const [isCampaignMediaOpen, setIsCampaignMediaOpen] = useState(false);
+  const [isUploadingDesktopSlider, setIsUploadingDesktopSlider] = useState(false);
+  const [isUploadingCampaign, setIsUploadingCampaign] = useState(false);
 
   const DEFAULT_SLIDES = [
     {
@@ -624,45 +627,34 @@ export function AdminAdsPage({ locale }: { locale: Locale }) {
     saveCampaigns(updated);
   };
 
-  const handleCampaignImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCampaignImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const img = new window.Image();
-      img.onload = () => {
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
-        if (!ctx) return;
+    setIsUploadingCampaign(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("purpose", "general");
 
-        const MAX_WIDTH = 1200;
-        const MAX_HEIGHT = 800;
-        let width = img.width;
-        let height = img.height;
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
 
-        if (width > height) {
-          if (width > MAX_WIDTH) {
-            height *= MAX_WIDTH / width;
-            width = MAX_WIDTH;
-          }
-        } else {
-          if (height > MAX_HEIGHT) {
-            width *= MAX_HEIGHT / height;
-            height = MAX_HEIGHT;
-          }
-        }
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Upload failed");
+      }
 
-        canvas.width = width;
-        canvas.height = height;
-        ctx.drawImage(img, 0, 0, width, height);
-
-        const compressedBase64 = canvas.toDataURL("image/jpeg", 0.7);
-        setCampaignFormData(prev => ({ ...prev, imageUrl: compressedBase64 }));
-      };
-      img.src = event.target?.result as string;
-    };
-    reader.readAsDataURL(file);
+      const data = await res.json();
+      setCampaignFormData((prev) => ({ ...prev, imageUrl: data.url }));
+    } catch (error) {
+      console.error("Campaign image upload error:", error);
+      alert(isArabic ? "فشل رفع الصورة على الخادم" : "Failed to upload image to server");
+    } finally {
+      setIsUploadingCampaign(false);
+    }
   };
 
   const handleSaveCampaign = (e: React.FormEvent) => {
@@ -751,45 +743,34 @@ export function AdminAdsPage({ locale }: { locale: Locale }) {
     saveSlides(updated);
   };
 
-  const handleLocalImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLocalImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const img = new window.Image();
-      img.onload = () => {
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
-        if (!ctx) return;
+    setIsUploadingDesktopSlider(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("purpose", "general");
 
-        const MAX_WIDTH = 1200;
-        const MAX_HEIGHT = 800;
-        let width = img.width;
-        let height = img.height;
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
 
-        if (width > height) {
-          if (width > MAX_WIDTH) {
-            height *= MAX_WIDTH / width;
-            width = MAX_WIDTH;
-          }
-        } else {
-          if (height > MAX_HEIGHT) {
-            width *= MAX_HEIGHT / height;
-            height = MAX_HEIGHT;
-          }
-        }
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Upload failed");
+      }
 
-        canvas.width = width;
-        canvas.height = height;
-        ctx.drawImage(img, 0, 0, width, height);
-
-        const compressedBase64 = canvas.toDataURL("image/jpeg", 0.7);
-        setFormData(prev => ({ ...prev, imageUrl: compressedBase64 }));
-      };
-      img.src = event.target?.result as string;
-    };
-    reader.readAsDataURL(file);
+      const data = await res.json();
+      setFormData((prev) => ({ ...prev, imageUrl: data.url }));
+    } catch (error) {
+      console.error("Desktop slider image upload error:", error);
+      alert(isArabic ? "فشل رفع الصورة على الخادم" : "Failed to upload image to server");
+    } finally {
+      setIsUploadingDesktopSlider(false);
+    }
   };
 
   const handleSave = (e: React.FormEvent) => {
@@ -921,21 +902,33 @@ export function AdminAdsPage({ locale }: { locale: Locale }) {
                         />
                       </div>
 
-                      {/* File Upload Button */}
-                      <div className="relative shrink-0">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={handleCampaignImageUpload}
-                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                        />
+                      <div className="flex gap-2">
+                        {/* Media Selector Button */}
                         <button
                           type="button"
-                          className="h-full w-full sm:w-auto px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white text-sm font-bold flex items-center justify-center gap-2 hover:bg-white/10 transition-colors"
+                          onClick={() => setIsCampaignMediaOpen(true)}
+                          className="px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white text-sm font-bold flex items-center justify-center gap-2 hover:bg-white/10 transition-colors"
                         >
-                          <ImageIcon className="h-4 w-4 text-gold-500" />
-                          {isArabic ? "رفع صورة" : "Upload Image"}
+                          <FolderOpen className="h-4 w-4 text-gold-500" />
+                          {isArabic ? "المعرض" : "Media"}
                         </button>
+
+                        {/* File Upload Button */}
+                        <div className="relative shrink-0">
+                          <input
+                            type="file"
+                            accept="image/*;capture=camera"
+                            onChange={handleCampaignImageUpload}
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                          />
+                          <button
+                            type="button"
+                            className="h-full w-full sm:w-auto px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white text-sm font-bold flex items-center justify-center gap-2 hover:bg-white/10 transition-colors"
+                          >
+                            <UploadCloud className="h-4 w-4 text-gold-500" />
+                            {isUploadingCampaign ? (isArabic ? "جاري..." : "Uploading...") : (isArabic ? "رفع" : "Upload")}
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -1214,21 +1207,33 @@ export function AdminAdsPage({ locale }: { locale: Locale }) {
                         />
                       </div>
 
-                      {/* File Upload Button */}
-                      <div className="relative shrink-0">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={handleLocalImageUpload}
-                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                        />
+                      <div className="flex gap-2">
+                        {/* Media Selector Button */}
                         <button
                           type="button"
-                          className="h-full w-full sm:w-auto px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white text-sm font-bold flex items-center justify-center gap-2 hover:bg-white/10 transition-colors"
+                          onClick={() => setIsDesktopSliderMediaOpen(true)}
+                          className="px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white text-sm font-bold flex items-center justify-center gap-2 hover:bg-white/10 transition-colors"
                         >
-                          <ImageIcon className="h-4 w-4 text-gold-500" />
-                          {isArabic ? "رفع صورة" : "Upload Image"}
+                          <FolderOpen className="h-4 w-4 text-gold-500" />
+                          {isArabic ? "المعرض" : "Media"}
                         </button>
+
+                        {/* File Upload Button */}
+                        <div className="relative shrink-0">
+                          <input
+                            type="file"
+                            accept="image/*;capture=camera"
+                            onChange={handleLocalImageUpload}
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                          />
+                          <button
+                            type="button"
+                            className="h-full w-full sm:w-auto px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white text-sm font-bold flex items-center justify-center gap-2 hover:bg-white/10 transition-colors"
+                          >
+                            <UploadCloud className="h-4 w-4 text-gold-500" />
+                            {isUploadingDesktopSlider ? (isArabic ? "جاري..." : "Uploading...") : (isArabic ? "رفع" : "Upload")}
+                          </button>
+                        </div>
                       </div>
                     </div>
 
@@ -1539,6 +1544,20 @@ export function AdminAdsPage({ locale }: { locale: Locale }) {
           )}
         </>
       )}
+
+      {/* Media Selector Modals */}
+      <MediaSelectorModal
+        isOpen={isDesktopSliderMediaOpen}
+        onClose={() => setIsDesktopSliderMediaOpen(false)}
+        onSelect={(url) => setFormData((prev) => ({ ...prev, imageUrl: url }))}
+        locale={locale}
+      />
+      <MediaSelectorModal
+        isOpen={isCampaignMediaOpen}
+        onClose={() => setIsCampaignMediaOpen(false)}
+        onSelect={(url) => setCampaignFormData((prev) => ({ ...prev, imageUrl: url }))}
+        locale={locale}
+      />
     </div>
   );
 }
@@ -1712,6 +1731,7 @@ function MobileSlidesEditor({
 
   if (editing) {
     return (
+      <>
       <div className="grid lg:grid-cols-[1.2fr_0.8fr] gap-8">
         <div className="onyx-card p-8 border-gold-700/15">
           <h3 className="text-xl font-bold text-onyx-950 mb-6 flex items-center gap-3">
@@ -1869,6 +1889,13 @@ function MobileSlidesEditor({
           </div>
         </div>
       </div>
+      <MediaSelectorModal
+        isOpen={isMediaOpen}
+        onClose={() => setIsMediaOpen(false)}
+        onSelect={(url) => setEditing((prev: any) => ({ ...prev, imageUrl: url }))}
+        locale={locale}
+      />
+      </>
     );
   }
 
