@@ -18,6 +18,34 @@ export function resolveApiBaseUrl() {
   return getApiBaseUrl();
 }
 
+function getErrorString(payload: any, status: number): string {
+  if (!payload) {
+    return `Request failed with ${status}`;
+  }
+  if (typeof payload.error === "string") {
+    return payload.error;
+  }
+  if (payload.error && typeof payload.error === "object") {
+    if (typeof payload.error.message === "string") {
+      return payload.error.message;
+    }
+    if (typeof payload.error.code === "string") {
+      return payload.error.code;
+    }
+    return JSON.stringify(payload.error);
+  }
+  if (typeof payload.message === "string") {
+    return payload.message;
+  }
+  if (payload.message && typeof payload.message === "object") {
+    if (typeof payload.message.message === "string") {
+      return payload.message.message;
+    }
+    return JSON.stringify(payload.message);
+  }
+  return `Request failed with ${status}`;
+}
+
 async function getServerAuthHeaders(): Promise<Record<string, string>> {
   if (typeof window !== "undefined") {
     return {};
@@ -53,7 +81,7 @@ export async function fetchApiData<T>(path: string, fallback: T): Promise<T> {
 
     if (!payload.success || payload.data === undefined) {
       console.error("API GET payload failed:", { path, payload });
-      throw new Error(payload.error ?? payload.message ?? "Missing data payload");
+      throw new Error(getErrorString(payload, response.status));
     }
 
     return payload.data;
@@ -78,7 +106,7 @@ export async function postApiData<TResponse, TBody>(path: string, body: TBody) {
 
   if (!response.ok || !payload.success || payload.data === undefined) {
     console.error("API POST request failed:", { path, status: response.status, payload });
-    throw new Error(payload.error ?? payload.message ?? `Request failed with ${response.status}`);
+    throw new Error(getErrorString(payload, response.status));
   }
 
   return payload.data;
@@ -100,7 +128,7 @@ export async function patchApiData<TResponse, TBody>(path: string, body?: TBody)
 
   if (!response.ok || !payload.success || payload.data === undefined) {
     console.error("API PATCH request failed:", { path, status: response.status, payload });
-    throw new Error(payload.error ?? payload.message ?? `Request failed with ${response.status}`);
+    throw new Error(getErrorString(payload, response.status));
   }
 
   return payload.data;
@@ -120,7 +148,7 @@ export async function deleteApiData<TResponse>(path: string) {
 
   if (!response.ok || !payload.success) {
     console.error("API DELETE request failed:", { path, status: response.status, payload });
-    throw new Error(payload.error ?? payload.message ?? `Request failed with ${response.status}`);
+    throw new Error(getErrorString(payload, response.status));
   }
 
   return payload.data;
@@ -141,7 +169,7 @@ export async function putApiData<TResponse, TBody>(path: string, body?: TBody) {
   const payload = (await response.json()) as ApiEnvelope<TResponse>;
 
   if (!response.ok || !payload.success || payload.data === undefined) {
-    throw new Error(payload.error ?? payload.message ?? `Request failed with ${response.status}`);
+    throw new Error(getErrorString(payload, response.status));
   }
 
   return payload.data;

@@ -167,7 +167,9 @@ function InputField({
   textarea,
   rows = 4,
   helperText,
-  errorText
+  errorText,
+  name,
+  autoComplete
 }: {
   label: string;
   value: string;
@@ -178,6 +180,8 @@ function InputField({
   rows?: number;
   helperText?: string;
   errorText?: string;
+  name?: string;
+  autoComplete?: string;
 }) {
   return (
     <label className="block space-y-2 text-start">
@@ -188,6 +192,8 @@ function InputField({
           rows={rows}
           onChange={(event) => onChange(event.target.value)}
           placeholder={placeholder}
+          name={name}
+          autoComplete={autoComplete}
           className={cn(
             "min-h-28 w-full rounded-2xl border bg-onyx-800/50 px-5 py-4 text-white transition-all placeholder:text-onyx-600 focus:ring-4 focus:ring-gold-500/10 outline-none",
             errorText ? "border-red-500/50 focus:border-red-500/50" : "border-onyx-700 focus:border-gold-500/50"
@@ -199,6 +205,8 @@ function InputField({
           value={value}
           onChange={(event) => onChange(event.target.value)}
           placeholder={placeholder}
+          name={name}
+          autoComplete={autoComplete}
           className={cn(
             "h-14 w-full rounded-2xl border bg-onyx-800/50 px-5 text-white transition-all placeholder:text-onyx-600 focus:ring-4 focus:ring-gold-500/10 outline-none",
             errorText ? "border-red-500/50 focus:border-red-500/50" : "border-onyx-700 focus:border-gold-500/50"
@@ -337,15 +345,16 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
 
       setSubmitted(true);
       applyAuthSuccess(locale, payload, remember);
-    } catch (loginError) {
-      setError(getLocalizedError(loginError instanceof Error ? loginError.message : "", locale));
+    } catch (loginError: any) {
+      const errorMsg = loginError instanceof Error ? loginError.message : (loginError?.message || String(loginError));
+      setError(getLocalizedError(errorMsg, locale));
     } finally {
       setIsSubmitting(false);
     }
   }
 
   return (
-    <div className="space-y-8 animate-fadeIn">
+    <form onSubmit={(e) => { e.preventDefault(); handleLogin(); }} className="space-y-8 animate-fadeIn">
       {!isAdmin && (
         <div className="grid grid-cols-3 gap-2 rounded-2xl bg-onyx-950 p-1.5 border border-onyx-800">
           {(["CLIENT", "WORKER", "VENDOR"] as const).map((role) => {
@@ -386,6 +395,8 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
           }}
           placeholder="01x xxxx xxxx"
           errorText={phoneError || undefined}
+          name="phone"
+          autoComplete="username"
         />
 
         <label className="block space-y-2 text-start">
@@ -398,6 +409,8 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
                 setPassword(event.target.value);
                 if (passwordError) setPasswordError(null);
               }}
+              name="password"
+              autoComplete="current-password"
               className={cn(
                 "h-14 w-full rounded-2xl border bg-onyx-800/50 px-5 pe-12 text-white transition-all placeholder:text-onyx-600 focus:ring-4 focus:ring-gold-500/10 outline-none",
                 passwordError ? "border-red-500/50 focus:border-red-500/50" : "border-onyx-700 focus:border-gold-500/50"
@@ -436,8 +449,7 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
         </div>
 
         <button
-          type="button"
-          onClick={() => void handleLogin()}
+          type="submit"
           disabled={isSubmitting}
           className="btn-gold h-14 text-lg"
         >
@@ -481,7 +493,7 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
           </>
         )}
       </div>
-    </div>
+    </form>
   );
 }
 

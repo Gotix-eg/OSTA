@@ -15,7 +15,7 @@ type RefreshPayload = {
 };
 
 export function signAccessToken(payload: AccessPayload) {
-  return jwt.sign(payload, env.JWT_SECRET, { expiresIn: "30m" });
+  return jwt.sign(payload, env.JWT_SECRET, { expiresIn: "30d" });
 }
 
 export function signRefreshToken(payload: RefreshPayload) {

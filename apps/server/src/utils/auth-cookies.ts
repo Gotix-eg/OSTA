@@ -15,7 +15,7 @@ export function setAuthCookies(
     sameSite: "strict",
     secure: isProduction,
     path: "/",
-    maxAge: 30 * 60 * 1000
+    maxAge: 30 * 24 * 60 * 60 * 1000
   });
 
   response.cookie("osta_refresh_token", payload.refreshToken, {
