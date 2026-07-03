@@ -461,7 +461,7 @@ router.get("/public/slides", async (_req, response) => {
       isActive: true
     }));
 
-    response.json({ success: true, data: [...activeSlides, ...mappedCampaigns] });
+    response.json({ success: true, data: activeSlides });
   } catch (e: any) {
     response.json({ success: true, data: [] });
   }
