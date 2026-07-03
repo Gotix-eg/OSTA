@@ -297,9 +297,7 @@ export function AdminRequestsPage({ locale, initialData }: { locale: Locale; ini
 
   return (
     <div>
-
-
-      <div className="mb-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="mb-6 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <MiniMetric label={isArabic ? "نشط الآن" : "Active"} value={formatNumber(locale, data.summary.active)} note={isArabic ? "طلبات حية" : "live jobs"} icon={Wrench} tone="primary" />
         <MiniMetric label={isArabic ? "المكتمل اليوم" : "Completed today"} value={formatNumber(locale, data.summary.completedToday)} note={isArabic ? "مخرجات التنفيذ" : "delivery output"} icon={ShieldCheck} tone="accent" />
         <MiniMetric label={isArabic ? "متنازع عليه" : "Disputed"} value={formatNumber(locale, data.summary.disputed)} note={isArabic ? "يحتاج انتباه" : "attention rail"} icon={Building2} tone="sun" />
@@ -309,16 +307,29 @@ export function AdminRequestsPage({ locale, initialData }: { locale: Locale; ini
       <DashboardBlock title={isArabic ? "تدفق الطلبات" : "Request stream"} eyebrow={isArabic ? "بطاقات التشغيل" : "ops deck"}>
         <div className="grid gap-4">
           {data.requests.map((request, index) => (
-            <div key={request.id} className={index % 2 === 0 ? "onyx-card p-5" : "onyx-card bg-onyx-800/80 p-5"}>
+            <div key={request.id} className={cn("onyx-card p-4 sm:p-5 transition-all duration-200 hover:border-gold-500/30", index % 2 === 0 ? "" : "bg-onyx-800/80")}>
               <div className="flex items-start justify-between gap-3">
-                <div>
-                  <h2 className="text-xl font-semibold text-white">{request.title}</h2>
-                  <p className="mt-2 text-onyx-400">{request.city}</p>
+                <div className="min-w-0 flex-1">
+                  <h2 className="text-base sm:text-xl font-bold text-white truncate sm:whitespace-normal">{request.title}</h2>
+                  <p className="mt-1 text-xs sm:text-sm text-onyx-400">{request.city}</p>
                 </div>
-                <SoftBadge label={isArabic ? (request.status === "PENDING" ? "قيد المراجعة" : request.status === "IN_PROGRESS" ? "قيد التنفيذ" : "في الطريق") : request.status} tone={request.status === "PENDING" ? "sun" : request.status === "IN_PROGRESS" ? "accent" : "primary"} />
+                <div className="shrink-0">
+                  <SoftBadge 
+                    label={isArabic ? (request.status === "PENDING" ? "قيد المراجعة" : request.status === "IN_PROGRESS" ? "قيد التنفيذ" : "في الطريق") : request.status} 
+                    tone={request.status === "PENDING" ? "sun" : request.status === "IN_PROGRESS" ? "accent" : "primary"} 
+                  />
+                </div>
               </div>
-              <div className="mt-4">
-                <SplitInfo items={[{ label: "ID", value: request.id }, { label: isArabic ? "القيمة" : "Amount", value: formatCurrency(locale, request.amount) }]} />
+              
+              <div className="mt-4 pt-3 border-t border-white/5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <span className="text-[10px] font-bold text-onyx-500 uppercase tracking-wider">ID:</span>
+                  <span className="font-mono text-[11px] sm:text-xs text-onyx-300 truncate select-all">{request.id}</span>
+                </div>
+                <div className="flex items-center gap-1.5 self-start sm:self-auto">
+                  <span className="text-[10px] font-bold text-onyx-500 uppercase tracking-wider">{isArabic ? "القيمة:" : "Amount:"}</span>
+                  <span className="text-sm sm:text-base font-black text-gold-400">{formatCurrency(locale, request.amount)}</span>
+                </div>
               </div>
             </div>
           ))}

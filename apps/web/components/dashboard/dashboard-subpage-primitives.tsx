@@ -116,23 +116,23 @@ export function MiniMetric({
   tone?: Tone;
 }) {
   return (
-    <article className={cn("onyx-card relative overflow-hidden p-6", tone === "dark" && "bg-onyx-950") }>
+    <article className={cn("onyx-card relative overflow-hidden p-4 sm:p-6", tone === "dark" && "bg-onyx-950") }>
       <div className={cn("absolute inset-0 bg-gradient-to-br opacity-30", toneClasses[tone])} />
-      <div className="relative flex items-start justify-between gap-4">
+      <div className="relative flex items-start justify-between gap-2 sm:gap-4">
         <div className="min-w-0">
-          <p className="text-eyebrow opacity-60">{label}</p>
+          <p className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-onyx-400 opacity-80">{label}</p>
           <p className={cn(
-            "mt-5 font-serif leading-none text-white transition-all duration-300",
+            "mt-2 sm:mt-5 font-serif leading-none text-white transition-all duration-300",
             value.length > 15
-              ? "text-sm sm:text-base"
+              ? "text-xs sm:text-base"
               : value.length > 8
-                ? "text-base sm:text-lg"
-                : "text-lg sm:text-xl lg:text-2xl"
+                ? "text-sm sm:text-lg"
+                : "text-base sm:text-xl lg:text-2xl"
           )}>{value}</p>
-          {note ? <p className="mt-5 max-w-xs text-metadata">{note}</p> : null}
+          {note ? <p className="mt-2 sm:mt-5 max-w-xs text-[10px] sm:text-xs text-onyx-500 truncate">{note}</p> : null}
         </div>
-        <div className={cn("flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl shadow-xl transition-transform duration-500 group-hover:scale-110", iconTones[tone])}>
-          <Icon className="h-5 w-5" />
+        <div className={cn("flex h-8 w-8 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl shadow-xl transition-transform duration-500 group-hover:scale-110", iconTones[tone])}>
+          <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
         </div>
       </div>
     </article>
