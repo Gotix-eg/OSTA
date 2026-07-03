@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mail, MessageSquare, X, Shield, Sparkles } from "lucide-react";
 import type { Locale } from "@/lib/locales";
+import { cn } from "@/lib/utils";
 
 export function FloatingSupport({ locale }: { locale: Locale }) {
   const isArabic = locale === "ar";
@@ -18,16 +19,27 @@ export function FloatingSupport({ locale }: { locale: Locale }) {
   const emailUrl = "mailto:info@ostafy.com?subject=Ostafy%20Support%20Request";
 
   return (
-    <div className="fixed bottom-6 end-6 z-[9999] flex flex-col items-end gap-4 font-sans">
+    <div className={cn(
+      "fixed z-[9999] flex flex-col gap-4 font-sans transition-all duration-300 ease-out",
+      "md:bottom-6 md:right-6 md:left-auto md:top-auto md:items-end md:translate-x-0",
+      isOpen 
+        ? "bottom-0 left-0 right-0 top-auto w-full items-center translate-x-0" 
+        : "bottom-auto top-[45%] right-0 left-auto items-end translate-x-[40%] hover:translate-x-0 focus:translate-x-0 active:translate-x-0"
+    )}>
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            initial={{ opacity: 0, y: "100%", scale: 1 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            transition={{ duration: 0.3 }}
-            className="w-80 rounded-[2rem] border border-white/10 bg-onyx-950/95 backdrop-blur-2xl p-6 shadow-2xl shadow-black/50"
+            exit={{ opacity: 0, y: "100%", scale: 1 }}
+            transition={{ type: "spring", damping: 25, stiffness: 220 }}
+            className="border border-white/10 bg-onyx-950/95 backdrop-blur-2xl p-6 shadow-2xl shadow-black/50
+              md:absolute md:bottom-20 md:right-0 md:left-auto md:w-80 md:rounded-[2rem]
+              fixed bottom-0 left-0 right-0 w-full rounded-t-[2.5rem] rounded-b-none"
           >
+            {/* Drag handle for mobile */}
+            <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-white/15 md:hidden" />
+
             {/* Header */}
             <div className="flex items-center justify-between mb-4 border-b border-white/5 pb-3">
               <div className="flex items-center gap-2">

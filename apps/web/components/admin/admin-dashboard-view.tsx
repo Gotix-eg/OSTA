@@ -67,7 +67,7 @@ export function AdminDashboardView() {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="rounded-2xl border border-white/10 bg-onyx-900 p-6 flex flex-col items-center justify-center relative overflow-hidden">
+        <div className="onyx-card p-6 flex flex-col items-center justify-center relative overflow-hidden">
           <div className="absolute top-0 right-0 p-4 opacity-10 text-gold-500">
             <DollarSign className="w-16 h-16" />
           </div>
@@ -77,7 +77,7 @@ export function AdminDashboardView() {
           </span>
         </div>
 
-        <div className="rounded-2xl border border-white/10 bg-onyx-900 p-6 flex flex-col items-center justify-center relative overflow-hidden">
+        <div className="onyx-card p-6 flex flex-col items-center justify-center relative overflow-hidden">
           <div className="absolute top-0 right-0 p-4 opacity-10 text-gold-500">
             <Users className="w-16 h-16" />
           </div>
@@ -87,7 +87,7 @@ export function AdminDashboardView() {
           </span>
         </div>
 
-        <div className="rounded-2xl border border-white/10 bg-onyx-900 p-6 flex flex-col items-center justify-center relative overflow-hidden">
+        <div className="onyx-card p-6 flex flex-col items-center justify-center relative overflow-hidden">
           <div className="absolute top-0 right-0 p-4 opacity-10 text-gold-500">
             <Activity className="w-16 h-16" />
           </div>
@@ -97,7 +97,7 @@ export function AdminDashboardView() {
           </span>
         </div>
 
-        <div className="rounded-2xl border border-white/10 bg-onyx-900 p-6 flex flex-col items-center justify-center relative overflow-hidden">
+        <div className="onyx-card p-6 flex flex-col items-center justify-center relative overflow-hidden">
           <div className="absolute top-0 right-0 p-4 opacity-10 text-error">
             <AlertTriangle className="w-16 h-16" />
           </div>
@@ -109,7 +109,7 @@ export function AdminDashboardView() {
       </div>
 
       {/* Pending Verifications */}
-      <div className="rounded-3xl border border-white/10 bg-onyx-900/50 p-6">
+      <div className="onyx-card p-6">
         <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
           <Users className="text-gold-500" /> الفنيين والموردين قيد الاعتماد
         </h2>

@@ -2,11 +2,13 @@
 
 import { useState, type ReactNode } from "react";
 import Link from "next/link";
-import { LogIn, Facebook, Instagram, Phone, Mail, Menu, X } from "lucide-react";
+import { LogIn, Facebook, Instagram, Phone, Mail, Menu, X, Home, Wrench, Store, HelpCircle, Info, PhoneCall, Compass } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { LocaleSwitcher } from "@/components/shared/locale-switcher";
 import { publicPageCopy } from "@/lib/public-pages-copy";
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
+import { BottomNav } from "@/components/shared/bottom-nav";
 
 export function PublicShell({ locale, pathname, children }: { locale: Locale; pathname: string; children: ReactNode }) {
   const copy = publicPageCopy[locale].nav;
@@ -24,10 +26,10 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
 
   return (
     <main className="onyx-shell-bg min-h-screen text-onyx-50 selection:bg-gold-500 selection:text-onyx-950">
-      <header className="sticky top-0 z-40 border-b border-white/5 bg-black/95 backdrop-blur-xl">
+      <header className="sticky top-0 z-40 border-b border-gold-700/10 md:bg-black/95 bg-background backdrop-blur-xl">
         <div className="section-shell flex h-24 items-center justify-between gap-4">
           <Link href={`/${locale}`} className="flex items-center gap-2 group">
-            <img src="/logo.svg" alt="Ostafy" className="h-12 w-auto" />
+            <img src="/logo.svg" alt="Ostafy" className="h-12 w-auto brightness-0 md:brightness-0 md:invert" />
           </Link>
 
           <nav className="hidden items-center gap-6 lg:flex">
@@ -75,41 +77,72 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
         </div>
 
         {/* Mobile Menu Dropdown */}
-        {isMobileMenuOpen && (
-          <div className="border-t border-white/5 bg-black/95 backdrop-blur-xl lg:hidden animate-fadeIn">
-            <nav className="section-shell flex flex-col gap-4 py-6">
-              {links.map((item) => {
-                const isActive = item.path === "/" 
-                  ? pathname === "/" || pathname === "" 
-                  : pathname.startsWith(item.path);
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href as `/${string}`}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className={cn(
-                      "text-base font-bold py-2 border-b border-white/[0.03] transition-colors",
-                      isActive 
-                        ? "text-gold-500 border-l-2 border-gold-500 pl-3 rtl:border-l-0 rtl:border-r-2 rtl:pr-3" 
-                        : "text-onyx-250 hover:text-gold-500"
-                    )}
-                  >
-                    {item.label}
-                  </Link>
-                );
-              })}
-              
-              <Link 
-                href={`/${locale}/login`}
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="btn-gold mt-4 flex items-center justify-center gap-2 py-3.5 text-sm font-black w-full"
-              >
-                <LogIn className="h-4.5 w-4.5" />
-                {copy.login}
-              </Link>
-            </nav>
-          </div>
-        )}
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="border-t border-gold-700/10 bg-gold-100 lg:hidden max-h-[calc(100vh-6.5rem)] overflow-y-auto"
+            >
+              <div className="section-shell pt-6 pb-28 space-y-4">
+                <div className="grid grid-cols-1 gap-3">
+                  {links.map((item, index) => {
+                    const enhanced = [
+                      { icon: Home, descAr: "الرئيسية والميزات الأساسية لأسطفاي", descEn: "Homepage & core platform features" },
+                      { icon: Wrench, descAr: "اطلب فني صيانة محترف ومعتمد لمشروعك", descEn: "Book verified maintenance craftsmen" },
+                      { icon: Store, descAr: "تسوق خامات ومواد صيانة من أقرب المتاجر", descEn: "Shop materials from local verified stores" },
+                      { icon: Compass, descAr: "دليلك لمعرفة كيفية عمل المنصة وضمان حقوقك", descEn: "How the platform works & safety guide" },
+                      { icon: Info, descAr: "قصتنا ورؤيتنا لتطوير وتسهيل الصيانة المنزلية", descEn: "Our story & vision for home services" },
+                      { icon: PhoneCall, descAr: "تواصل معنا لحلول الدعم والمساعدة السريعة", descEn: "Contact customer care & instant support" },
+                      { icon: HelpCircle, descAr: "الأسئلة الشائعة والإجابات عن الاستفسارات", descEn: "Frequently asked questions & answers" }
+                    ][index] || { icon: Compass, descAr: "", descEn: "" };
+
+                    const Icon = enhanced.icon;
+                    const isActive = item.path === "/" 
+                      ? pathname === "/" || pathname === "" 
+                      : pathname.startsWith(item.path);
+
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href as `/${string}`}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className={cn(
+                          "flex items-center gap-4 p-4 rounded-2xl border transition-all duration-300 active:scale-98 shadow-sm",
+                          isActive 
+                            ? "border-gold-500 bg-gold-700 text-onyx-950" 
+                            : "border-gold-700/10 bg-white/70 text-onyx-950 hover:bg-white"
+                        )}
+                      >
+                        <span className={cn(
+                          "flex h-12 w-12 shrink-0 items-center justify-center rounded-xl",
+                          isActive ? "bg-onyx-950/10 text-onyx-950" : "bg-gold-500/10 text-gold-800"
+                        )}>
+                          <Icon className="h-6 w-6" />
+                        </span>
+                        <div className="text-start min-w-0">
+                          <span className="block font-black text-sm text-onyx-950">{item.label}</span>
+                          <span className="block text-xs text-onyx-600 mt-1 leading-normal truncate">{locale === "ar" ? enhanced.descAr : enhanced.descEn}</span>
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </div>
+                
+                <Link 
+                  href={`/${locale}/login`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="btn-gold flex items-center justify-center gap-2 py-4 text-sm font-black w-full"
+                >
+                  <LogIn className="h-4.5 w-4.5" />
+                  {copy.login}
+                </Link>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
 
       <div className="min-h-[calc(100vh-80px-120px)]">{children}</div>
@@ -121,7 +154,7 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
             {/* Column 1: Brand Description & Contact Info */}
             <div className="flex flex-col gap-6 lg:col-span-2">
               <div className="w-fit">
-                <img src="/logo.svg" alt="Ostafy" className="h-16 w-auto opacity-95" />
+                <img src="/logo.svg" alt="Ostafy" className="h-16 w-auto opacity-95 brightness-0 md:brightness-0 md:invert" />
               </div>
               <p className="text-sm text-onyx-400 leading-relaxed max-w-sm">
                 {locale === "ar"
@@ -228,6 +261,7 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
           </div>
         </div>
       </footer>
+      <BottomNav />
     </main>
   );
 }

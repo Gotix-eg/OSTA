@@ -456,7 +456,8 @@ export function AdminAdsPage({ locale }: { locale: Locale }) {
   
   // Tab and Slider state
   const [slides, setSlides] = useState<any[]>([]);
-  const [activeTab, setActiveTab] = useState<"slider" | "ads">("slider");
+  const [mobileSlides, setMobileSlides] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState<"slider" | "mobile-slider" | "ads">("slider");
   
   // Form and Editor state
   const [isEditing, setIsEditing] = useState(false);
@@ -548,6 +549,17 @@ export function AdminAdsPage({ locale }: { locale: Locale }) {
       .then(payload => {
         if (payload.success && Array.isArray(payload.data)) {
           setCampaigns(payload.data);
+        }
+      })
+      .catch(() => {});
+
+    fetch(`${baseUrl}/admin/mobile-slides`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(r => r.json())
+      .then(payload => {
+        if (payload.success && Array.isArray(payload.data)) {
+          setMobileSlides(payload.data);
         }
       })
       .catch(() => {});
@@ -803,26 +815,57 @@ export function AdminAdsPage({ locale }: { locale: Locale }) {
       />
 
       {/* Tabs */}
-      <div className="flex border-b border-onyx-800 gap-4 mb-8">
+      <div className="flex border-b border-onyx-800 gap-4 mb-8 flex-wrap">
         <button
           onClick={() => { setActiveTab("slider"); setIsEditing(false); }}
           className={cn(
             "pb-4 text-sm font-bold transition-all relative",
-            activeTab === "slider" ? "text-gold-500 border-b-2 border-gold-500" : "text-onyx-400 hover:text-white"
+            activeTab === "slider" ? "text-gold-800 border-b-2 border-gold-500" : "text-onyx-600 hover:text-onyx-950 md:hover:text-white"
           )}
         >
-          {isArabic ? "شرائح السلايدر الرئيسي" : "Main Hero Slides"}
+          🖥️ {isArabic ? "سلايدر الديسكتوب" : "Desktop Slider"}
+        </button>
+        <button
+          onClick={() => { setActiveTab("mobile-slider"); setIsEditing(false); }}
+          className={cn(
+            "pb-4 text-sm font-bold transition-all relative",
+            activeTab === "mobile-slider" ? "text-gold-800 border-b-2 border-gold-500" : "text-onyx-600 hover:text-onyx-950 md:hover:text-white"
+          )}
+        >
+          📱 {isArabic ? "سلايدر الموبايل" : "Mobile Slider"}
         </button>
         <button
           onClick={() => { setActiveTab("ads"); setIsEditing(false); }}
           className={cn(
             "pb-4 text-sm font-bold transition-all relative",
-            activeTab === "ads" ? "text-gold-500 border-b-2 border-gold-500" : "text-onyx-400 hover:text-white"
+            activeTab === "ads" ? "text-gold-800 border-b-2 border-gold-500" : "text-onyx-600 hover:text-onyx-950 md:hover:text-white"
           )}
         >
           {isArabic ? "حملات الموردين الممولة" : "Sponsored Vendor Ads"}
         </button>
       </div>
+
+      {activeTab === "mobile-slider" && (
+        <MobileSlidesEditor
+          locale={locale}
+          slides={mobileSlides}
+          onSave={async (updated: any[]) => {
+            setMobileSlides(updated);
+            try {
+              const token = window.localStorage.getItem("osta_access_token") || window.sessionStorage.getItem("osta_access_token") || "";
+              const baseUrl = (process.env.NEXT_PUBLIC_OSTA_API_URL ?? "/api");
+              await fetch(`${baseUrl}/admin/mobile-slides`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                body: JSON.stringify({ slides: updated })
+              });
+            } catch (err) {
+              console.error("Failed to save mobile slides:", err);
+            }
+          }}
+          isArabic={isArabic}
+        />
+      )}
 
       {activeTab === "ads" ? (
         <>
@@ -1569,3 +1612,278 @@ export function AdminPricingPage({ locale }: { locale: Locale }) {
     </div>
   );
 }
+
+// ─── Mobile Slides Editor ──────────────────────────────────────────────────────
+function MobileSlidesEditor({
+  locale,
+  slides,
+  onSave,
+  isArabic,
+}: {
+  locale: Locale;
+  slides: any[];
+  onSave: (slides: any[]) => Promise<void>;
+  isArabic: boolean;
+}) {
+  const [editing, setEditing] = useState<any | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [localSlides, setLocalSlides] = useState<any[]>(slides);
+
+  useEffect(() => {
+    setLocalSlides(slides);
+  }, [slides]);
+
+  const DEFAULT_MOBILE_SLIDE = {
+    id: `m-slide-${Date.now()}`,
+    eyebrowAr: "علامة مميزة",
+    eyebrowEn: "Featured Tag",
+    titleAr: "عنوان السلايدر",
+    titleEn: "Slide Title",
+    descAr: "وصف مختصر للسلايدر",
+    descEn: "Short slide description",
+    imageUrl: "/mobile_slide_1.png",
+    btn1TextAr: "اطلب الآن",
+    btn1TextEn: "Order Now",
+    btn1Link: "/register/client",
+    btn2TextAr: "",
+    btn2TextEn: "",
+    btn2Link: "",
+    isActive: true,
+  };
+
+  const handleSave = async (slide: any) => {
+    setSaving(true);
+    const updated = localSlides.find((s) => s.id === slide.id)
+      ? localSlides.map((s) => (s.id === slide.id ? slide : s))
+      : [...localSlides, slide];
+    setLocalSlides(updated);
+    setEditing(null);
+    await onSave(updated);
+    setSaving(false);
+  };
+
+  const handleDelete = async (id: string) => {
+    const updated = localSlides.filter((s) => s.id !== id);
+    setLocalSlides(updated);
+    await onSave(updated);
+  };
+
+  const handleToggle = async (id: string) => {
+    const updated = localSlides.map((s) =>
+      s.id === id ? { ...s, isActive: !s.isActive } : s
+    );
+    setLocalSlides(updated);
+    await onSave(updated);
+  };
+
+  if (editing) {
+    return (
+      <div className="grid lg:grid-cols-[1.2fr_0.8fr] gap-8">
+        <div className="onyx-card p-8 border-gold-700/15">
+          <h3 className="text-xl font-bold text-onyx-950 mb-6 flex items-center gap-3">
+            <div className="h-6 w-1 bg-gold-800 rounded-full" />
+            📱 {editing.id === editing._isNew ? (isArabic ? "إضافة سلايدر موبايل" : "Add Mobile Slide") : (isArabic ? "تعديل سلايدر الموبايل" : "Edit Mobile Slide")}
+          </h3>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            {[
+              { ar: "eyebrowAr", en: "eyebrowEn", label: isArabic ? "الـ Eyebrow" : "Eyebrow Tag" },
+              { ar: "titleAr", en: "titleEn", label: isArabic ? "العنوان" : "Title" },
+              { ar: "descAr", en: "descEn", label: isArabic ? "الوصف" : "Description" },
+              { ar: "btn1TextAr", en: "btn1TextEn", label: isArabic ? "زر 1 نص" : "Button 1 Text" },
+              { ar: "btn2TextAr", en: "btn2TextEn", label: isArabic ? "زر 2 نص (اختياري)" : "Button 2 Text (optional)" },
+            ].map(({ ar, en, label }) => (
+              <div key={ar} className="md:col-span-2 grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-onyx-600 mb-1">{label} (AR)</label>
+                  <input
+                    value={editing[ar] || ""}
+                    onChange={(e) => setEditing({ ...editing, [ar]: e.target.value })}
+                    className="w-full rounded-xl border border-gold-700/20 bg-transparent px-4 py-2 text-sm text-onyx-950 focus:border-gold-700/50 outline-none"
+                    dir="rtl"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-onyx-600 mb-1">{label} (EN)</label>
+                  <input
+                    value={editing[en] || ""}
+                    onChange={(e) => setEditing({ ...editing, [en]: e.target.value })}
+                    className="w-full rounded-xl border border-gold-700/20 bg-transparent px-4 py-2 text-sm text-onyx-950 focus:border-gold-700/50 outline-none"
+                  />
+                </div>
+              </div>
+            ))}
+
+            <div className="md:col-span-2">
+              <label className="block text-xs font-bold text-onyx-600 mb-1">{isArabic ? "رابط الصورة (Portrait/Vertical)" : "Image URL (Portrait/Vertical)"}</label>
+              <input
+                value={editing.imageUrl || ""}
+                onChange={(e) => setEditing({ ...editing, imageUrl: e.target.value })}
+                className="w-full rounded-xl border border-gold-700/20 bg-transparent px-4 py-2 text-sm text-onyx-950 focus:border-gold-700/50 outline-none"
+                placeholder="https://... or /mobile_slide_1.png"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-onyx-600 mb-1">{isArabic ? "رابط زر 1" : "Button 1 Link"}</label>
+              <input
+                value={editing.btn1Link || ""}
+                onChange={(e) => setEditing({ ...editing, btn1Link: e.target.value })}
+                className="w-full rounded-xl border border-gold-700/20 bg-transparent px-4 py-2 text-sm text-onyx-950 focus:border-gold-700/50 outline-none"
+                placeholder="/register/client"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-onyx-600 mb-1">{isArabic ? "رابط زر 2 (اختياري)" : "Button 2 Link (optional)"}</label>
+              <input
+                value={editing.btn2Link || ""}
+                onChange={(e) => setEditing({ ...editing, btn2Link: e.target.value })}
+                className="w-full rounded-xl border border-gold-700/20 bg-transparent px-4 py-2 text-sm text-onyx-950 focus:border-gold-700/50 outline-none"
+                placeholder="/services"
+              />
+            </div>
+          </div>
+
+          <div className="flex gap-4 mt-8">
+            <button
+              onClick={() => handleSave(editing)}
+              disabled={saving}
+              className="btn-gold flex-1 text-center py-3 text-sm font-bold"
+            >
+              {saving ? "..." : (isArabic ? "حفظ التغييرات" : "Save Changes")}
+            </button>
+            <button
+              onClick={() => setEditing(null)}
+              className="btn-ghost flex-1 py-3 text-sm font-bold"
+            >
+              {isArabic ? "إلغاء" : "Cancel"}
+            </button>
+          </div>
+        </div>
+
+        {/* Preview */}
+        <div className="onyx-card p-6 border-gold-700/15">
+          <h4 className="text-sm font-bold text-onyx-600 mb-4 uppercase tracking-widest">
+            {isArabic ? "معاينة الموبايل" : "Mobile Preview"}
+          </h4>
+          <div
+            className="rounded-3xl overflow-hidden relative"
+            style={{
+              aspectRatio: "9/16",
+              maxHeight: "400px",
+              background: editing.imageUrl ? `url('${editing.imageUrl}') center/cover` : "oklch(93% 0.12 85)",
+            }}
+          >
+            <div
+              className="absolute inset-0"
+              style={{
+                background: "linear-gradient(to top, oklch(92% 0.10 85) 0%, oklch(92% 0.10 85 / 0.8) 35%, transparent 70%)",
+              }}
+            />
+            <div className="absolute bottom-0 left-0 right-0 p-4">
+              <span
+                className="inline-block mb-2 px-2 py-0.5 rounded-full text-xs font-black uppercase tracking-widest text-white"
+                style={{ background: "oklch(45% 0.11 85)" }}
+              >
+                {editing.eyebrowAr || "العنوان الفرعي"}
+              </span>
+              <p className="text-lg font-black text-onyx-950 leading-tight mb-1">
+                {editing.titleAr || "عنوان السلايددر"}
+              </p>
+              <p className="text-xs text-onyx-700 mb-3">
+                {editing.descAr || "وصف مختصر"}
+              </p>
+              <div
+                className="py-2 px-4 rounded-xl text-center text-xs font-bold text-white"
+                style={{ background: "oklch(10% 0.005 60)" }}
+              >
+                {editing.btn1TextAr || "الزر الأول"}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h3 className="font-bold text-onyx-950">
+            {isArabic ? "سلايدرات الموبايل" : "Mobile Slides"}
+          </h3>
+          <p className="text-xs text-onyx-600 mt-1">
+            {isArabic
+              ? "هذه الشرائح تظهر فقط على الموبايل بخلفية صفراء"
+              : "These slides appear only on mobile with yellow background"}
+          </p>
+        </div>
+        <button
+          onClick={() => setEditing({ ...DEFAULT_MOBILE_SLIDE, id: `m-slide-${Date.now()}`, _isNew: true })}
+          className="btn-gold flex items-center gap-2 px-5 py-3 text-sm font-bold"
+        >
+          <Plus className="h-4 w-4" />
+          {isArabic ? "إضافة سلايدر" : "Add Slide"}
+        </button>
+      </div>
+
+      {localSlides.length === 0 ? (
+        <div className="onyx-card p-12 text-center border-gold-700/10">
+          <div className="text-4xl mb-4">📱</div>
+          <p className="text-onyx-600 font-medium">
+            {isArabic ? "لا توجد شرائح موبايل بعد. أضف واحدة!" : "No mobile slides yet. Add one!"}
+          </p>
+        </div>
+      ) : (
+        <div className="grid gap-4">
+          {localSlides.map((slide) => (
+            <div
+              key={slide.id}
+              className="onyx-card p-5 border-gold-700/10 flex items-center gap-4"
+            >
+              <div
+                className="h-16 w-10 rounded-xl bg-cover bg-center shrink-0"
+                style={{
+                  backgroundImage: slide.imageUrl ? `url('${slide.imageUrl}')` : undefined,
+                  background: slide.imageUrl ? undefined : "oklch(93% 0.12 85)",
+                }}
+              />
+              <div className="flex-1 min-w-0">
+                <p className="font-bold text-onyx-950 truncate">{slide.titleAr || slide.titleEn}</p>
+                <p className="text-xs text-onyx-600 truncate">{slide.eyebrowAr || slide.eyebrowEn}</p>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  onClick={() => handleToggle(slide.id)}
+                  className={cn(
+                    "px-3 py-1 rounded-full text-xs font-bold transition-all",
+                    slide.isActive
+                      ? "bg-gold-700/20 text-gold-800"
+                      : "bg-onyx-800/20 text-onyx-600"
+                  )}
+                >
+                  {slide.isActive ? (isArabic ? "نشط" : "Active") : (isArabic ? "مخفي" : "Hidden")}
+                </button>
+                <button
+                  onClick={() => setEditing(slide)}
+                  className="p-2 rounded-xl text-onyx-600 hover:text-gold-800 hover:bg-gold-700/10 transition-all"
+                >
+                  <Edit3 className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => handleDelete(slide.id)}
+                  className="p-2 rounded-xl text-onyx-600 hover:text-red-500 hover:bg-red-500/10 transition-all"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+

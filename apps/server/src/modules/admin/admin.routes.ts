@@ -1171,6 +1171,35 @@ router.put("/slides", authenticate, requireRoles(UserRole.ADMIN), catchAsync(asy
   res.json(successResponse(normalized.slides, "Hero slides saved"));
 }));
 
+// ──────────────────────────────────────────────────────────────────────────────
+// Mobile Hero Slides — stored separately in SystemSetting as hero_slides_mobile
+// ──────────────────────────────────────────────────────────────────────────────
+
+const MOBILE_SLIDES_KEY = "hero_slides_mobile";
+
+// GET /api/admin/mobile-slides — Get current mobile hero slides
+router.get("/mobile-slides", authenticate, requireRoles(UserRole.ADMIN), catchAsync(async (_req, res) => {
+  const setting = await prisma.systemSetting.findUnique({ where: { key: MOBILE_SLIDES_KEY } });
+  const slides = setting ? JSON.parse(setting.value) : [];
+  res.json(successResponse(slides, "Mobile hero slides fetched"));
+}));
+
+// PUT /api/admin/mobile-slides — Save mobile hero slides
+router.put("/mobile-slides", authenticate, requireRoles(UserRole.ADMIN), catchAsync(async (req, res) => {
+  const { slides } = req.body;
+  if (!Array.isArray(slides)) throw new ApiError(400, "slides must be an array");
+  // Use same normalization helper as desktop slides
+  const normalized = await normalizeHeroSlidesForStorage(slides);
+
+  await prisma.systemSetting.upsert({
+    where: { key: MOBILE_SLIDES_KEY },
+    update: { value: JSON.stringify(normalized.slides), type: "json" },
+    create: { key: MOBILE_SLIDES_KEY, value: JSON.stringify(normalized.slides), type: "json" }
+  });
+
+  res.json(successResponse(normalized.slides, "Mobile hero slides saved"));
+}));
+
 // Sponsored Campaigns — stored in SystemSetting table as JSON
 const CAMPAIGNS_KEY = "sponsored_campaigns";
 

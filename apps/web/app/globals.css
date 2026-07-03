@@ -4,30 +4,55 @@
 
 @import "leaflet/dist/leaflet.css";
 
+/* ──────────────────────────────────────────────────────────────────────────────
+   DUAL THEME SYSTEM
+   Mobile (< 768px) : Yellow / Gold theme   — bright, warm, app-like
+   Desktop (≥ 768px): Onyx / Dark theme     — cinematic, premium, original
+   ────────────────────────────────────────────────────────────────────────────── */
+
 :root {
-  color-scheme: dark;
-  
-  /* ── Typography System (Modular Scale: 1.333 Perfect Fourth) ── */
+  /* Mobile-first: Yellow theme defaults */
+  --color-bg:       #FDE28A;
+  --color-fg:       oklch(12% 0.01 60);
+  --color-bg-card:  rgba(255, 255, 255, 0.75);
+  --color-border:   oklch(55% 0.13 85 / 0.2);
+  --color-muted:    oklch(35% 0.02 60);
+  --color-subtle:   oklch(50% 0.02 60);
+  --focus-ring:     oklch(55% 0.13 85 / 0.5);
+
+  /* ── Typography Scale ── */
   --text-2xs: 0.563rem;
-  --text-xs: 0.75rem;
-  --text-sm: 0.875rem;
+  --text-xs:  0.75rem;
+  --text-sm:  0.875rem;
   --text-base: 1rem;
-  --text-md: 1.125rem;
-  --text-lg: clamp(1.125rem, 1.5vw + 1rem, 1.333rem);
-  --text-xl: clamp(1.25rem, 2.5vw + 1rem, 1.777rem);
+  --text-md:  1.125rem;
+  --text-lg:  clamp(1.125rem, 1.5vw + 1rem, 1.333rem);
+  --text-xl:  clamp(1.25rem, 2.5vw + 1rem, 1.777rem);
   --text-2xl: clamp(1.5rem, 4vw + 1rem, 2.369rem);
   --text-3xl: clamp(2rem, 6vw + 1rem, 3.157rem);
   --text-4xl: clamp(2.5rem, 8vw + 1rem, 4.209rem);
-  
-  /* ── Line Heights (Vertical Rhythm) ── */
-  --leading-none: 1;
-  --leading-tight: 1.15;
-  --leading-snug: 1.3;
-  --leading-normal: 1.625;
+
+  /* ── Line Heights ── */
+  --leading-none:    1;
+  --leading-tight:   1.15;
+  --leading-snug:    1.3;
+  --leading-normal:  1.625;
   --leading-relaxed: 1.85;
-  
-  /* ── Spacing Rhythm ── */
-  --baseline: 1.5rem; /* 24px */
+
+  --baseline: 1.5rem;
+}
+
+/* Desktop: Onyx / Dark theme overrides */
+@media (min-width: 768px) {
+  :root {
+    --color-bg:       oklch(10% 0.005 60);
+    --color-fg:       oklch(93% 0.005 60);
+    --color-bg-card:  rgba(255, 255, 255, 0.05);
+    --color-border:   rgba(255, 255, 255, 0.1);
+    --color-muted:    oklch(72% 0.005 60);
+    --color-subtle:   oklch(58% 0.005 60);
+    --focus-ring:     oklch(65% 0.15 85 / 0.5);
+  }
 }
 
 html {
@@ -38,113 +63,255 @@ html {
 
 body {
   min-height: 100vh;
-  background: oklch(10% 0.01 60);
-  color: oklch(95% 0.01 60);
-  /* Pair Display Serif with Geometric Sans & Arabic */
+  background: var(--color-bg);
+  color: var(--color-fg);
   font-family: var(--font-serif), var(--font-sans), system-ui, sans-serif;
   line-height: var(--leading-normal);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-variant-numeric: tabular-nums;
   text-rendering: optimizeLegibility;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
+/* ──────────────────────────────────────────────────────────────────────────────
+   BASE LAYER — Typography
+   ────────────────────────────────────────────────────────────────────────────── */
 @layer base {
-  /* Display Headings (English: Fraunces, Arabic: Readex) */
-  h1, .h1 { 
+  h1, .h1 {
     font-family: var(--font-display), var(--font-serif), serif;
-    font-size: var(--text-3xl); 
-    line-height: var(--leading-tight); 
-    font-weight: 800; 
-    letter-spacing: -0.03em; 
+    font-size: var(--text-3xl);
+    line-height: var(--leading-tight);
+    font-weight: 800;
+    letter-spacing: -0.03em;
     text-wrap: balance;
-    @apply text-white; 
+    color: var(--color-fg);
   }
-  
-  h2, .h2 { 
+
+  h2, .h2 {
     font-family: var(--font-display), var(--font-serif), serif;
-    font-size: var(--text-2xl); 
-    line-height: var(--leading-tight); 
-    font-weight: 700; 
-    letter-spacing: -0.02em; 
+    font-size: var(--text-2xl);
+    line-height: var(--leading-tight);
+    font-weight: 700;
+    letter-spacing: -0.02em;
     text-wrap: balance;
-    @apply text-white; 
+    color: var(--color-fg);
   }
-  
-  h3, .h3 { 
+
+  h3, .h3 {
     font-family: var(--font-display), var(--font-serif), serif;
-    font-size: var(--text-xl); 
-    line-height: var(--leading-snug); 
-    font-weight: 600; 
-    @apply text-white; 
+    font-size: var(--text-xl);
+    line-height: var(--leading-snug);
+    font-weight: 600;
+    color: var(--color-fg);
   }
-  
-  p { 
-    @apply text-onyx-300; 
+
+  p {
+    color: var(--color-muted);
     text-wrap: pretty;
     max-width: 75ch;
   }
-  
+
   a, button, input, textarea, select {
     @apply outline-none transition-all duration-300;
   }
 
-  a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
-    box-shadow: 0 0 0 2px oklch(75% 0.15 85 / 0.5);
+  a:focus-visible, button:focus-visible, input:focus-visible,
+  textarea:focus-visible, select:focus-visible {
+    box-shadow: 0 0 0 2px var(--focus-ring);
   }
 }
 
+/* ──────────────────────────────────────────────────────────────────────────────
+   UTILITIES
+   ────────────────────────────────────────────────────────────────────────────── */
 @layer utilities {
   .section-shell {
     @apply mx-auto max-w-7xl px-6 lg:px-8;
   }
 
-  /* ── Onyx Cinematic Background ── */
+  /* ── Background Shell ── */
   .onyx-shell-bg {
-    background: 
-      radial-gradient(circle at 0% 0%, oklch(75% 0.15 85 / 0.05), transparent 50%),
-      radial-gradient(circle at 100% 100%, oklch(75% 0.15 85 / 0.03), transparent 50%),
-      oklch(10% 0.01 60);
+    /* Mobile: Warm gold radial on yellow */
+    background:
+      radial-gradient(circle at 0% 0%, oklch(75% 0.15 85 / 0.12), transparent 50%),
+      radial-gradient(circle at 100% 100%, oklch(75% 0.15 85 / 0.08), transparent 50%),
+      var(--color-bg);
   }
 
-  /* ── Luxury Cards ── */
+  @media (min-width: 768px) {
+    .onyx-shell-bg {
+      /* Desktop: Subtle gold glow on dark */
+      background:
+        radial-gradient(circle at 0% 0%, oklch(65% 0.15 85 / 0.06), transparent 50%),
+        radial-gradient(circle at 100% 100%, oklch(65% 0.15 85 / 0.04), transparent 50%),
+        var(--color-bg);
+    }
+  }
+
+  /* ── Cards ── */
   .onyx-card {
-    @apply rounded-[2rem] border border-white/5 bg-white/[0.02] backdrop-blur-2xl shadow-onyx transition-all duration-500 hover:bg-white/[0.04] hover:border-white/10;
+    @apply rounded-[2rem] border backdrop-blur-2xl shadow-lg transition-all duration-500;
+    background: var(--color-bg-card);
+    border-color: var(--color-border);
+  }
+  .onyx-card:hover {
+    border-color: oklch(65% 0.15 85 / 0.3);
+  }
+
+  @media (min-width: 768px) {
+    .onyx-card:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: oklch(65% 0.15 85 / 0.25);
+    }
   }
 
   .glass-card {
-    @apply rounded-[2.5rem] border border-white/10 bg-white/5 backdrop-blur-3xl shadow-2xl;
+    @apply rounded-[2.5rem] border backdrop-blur-3xl shadow-xl;
+    background: var(--color-bg-card);
+    border-color: var(--color-border);
   }
 
   /* ── Gold Accents ── */
   .text-gold-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-br from-gold-300 via-gold-500 to-gold-700;
+    @apply bg-clip-text text-transparent bg-gradient-to-br from-gold-600 via-gold-700 to-gold-900;
   }
 
   /* ── Buttons ── */
   .btn-gold {
-    @apply bg-gold-500 text-onyx-950 font-extrabold px-8 py-4 rounded-full transition-all duration-500 hover:bg-accent-gold hover:shadow-gold hover:-translate-y-0.5 active:scale-95;
+    @apply bg-gold-700 text-white font-extrabold px-8 py-4 rounded-full transition-all duration-500 hover:bg-gold-800 hover:shadow-gold hover:-translate-y-0.5 active:scale-95;
   }
 
   .btn-ghost {
-    @apply border border-white/10 bg-white/5 text-white font-extrabold px-8 py-4 rounded-full transition-all duration-500 hover:bg-white/10 hover:border-white/20;
+    @apply font-extrabold px-8 py-4 rounded-full border transition-all duration-500;
+    color: var(--color-fg);
+    border-color: var(--color-border);
+    background: transparent;
+  }
+  .btn-ghost:hover {
+    background: rgba(128, 128, 128, 0.1);
+    border-color: oklch(65% 0.15 85 / 0.4);
   }
 
   /* ── Typography Roles ── */
   .text-eyebrow {
-    @apply text-xs font-black uppercase tracking-[0.2em] text-gold-500 mb-2 block;
+    @apply text-xs font-black uppercase tracking-[0.2em] text-gold-700 mb-2 block;
   }
 
   .text-caption {
-    @apply text-xs font-medium text-onyx-500 tracking-wide;
+    @apply text-xs font-medium tracking-wide;
+    color: var(--color-subtle);
   }
 
   .text-metadata {
-    @apply text-sm font-semibold text-onyx-400;
+    @apply text-sm font-semibold;
+    color: var(--color-subtle);
   }
 
   /* ── Spacing Rhythm ── */
   .stack-sm { @apply space-y-4; }
   .stack-md { @apply space-y-8; }
   .stack-lg { @apply space-y-16; }
+
+  /* ── Theme-aware Text Helpers ── */
+  /* Use these in components for responsive text colors */
+  .theme-text-primary   { color: var(--color-fg); }
+  .theme-text-secondary { color: var(--color-muted); }
+  .theme-text-subtle    { color: var(--color-subtle); }
+  .theme-border         { border-color: var(--color-border); }
+  .theme-card           { background: var(--color-bg-card); }
+}
+
+/* ──────────────────────────────────────────────────────────────────────────────
+   DESKTOP DARK THEME — Override Tailwind classes that use explicit colors
+   This ensures text is readable on the dark desktop background
+   ────────────────────────────────────────────────────────────────────────────── */
+@media (min-width: 768px) {
+  /* Invert onyx text classes for dark background readability */
+  .text-onyx-950 { color: oklch(93% 0.005 60) !important; }
+  .text-onyx-900 { color: oklch(88% 0.005 60) !important; }
+  .text-onyx-800 { color: oklch(80% 0.005 60) !important; }
+  .text-onyx-700 { color: oklch(70% 0.005 60) !important; }
+  .text-onyx-600 { color: oklch(60% 0.005 60) !important; }
+
+  /* Background overrides for dark desktop */
+  .bg-background  { background-color: oklch(10% 0.005 60) !important; }
+  .bg-gold-100    { background-color: oklch(15% 0.005 60) !important; }
+  .bg-gold-50     { background-color: oklch(13% 0.005 60) !important; }
+  .bg-white\/5    { background-color: rgba(255,255,255,0.05) !important; }
+  .bg-white\/10   { background-color: rgba(255,255,255,0.08) !important; }
+
+  /* Border overrides */
+  .border-gold-700\/10 { border-color: rgba(255,255,255,0.08) !important; }
+  .border-gold-700\/20 { border-color: rgba(255,255,255,0.12) !important; }
+
+  /* Input/form fields on dark desktop */
+  input, textarea, select {
+    background: rgba(255, 255, 255, 0.06);
+    color: oklch(93% 0.005 60);
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+  input::placeholder, textarea::placeholder {
+    color: oklch(58% 0.005 60);
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────────────────────
+   MOBILE TOUCH TARGETS
+   ────────────────────────────────────────────────────────────────────────────── */
+@media (max-width: 767px) {
+  button, a, [role="button"] {
+    min-height: 48px;
+    min-width: 48px;
+  }
+
+  input, textarea, select {
+    font-size: 16px !important;
+  }
+
+  /* Dashboard mobile-first styling updates */
+  .dashboard-shell-bg {
+    background: var(--color-bg);
+  }
+
+  .dashboard-card {
+    background: var(--color-bg-card) !important;
+    border-color: var(--color-border) !important;
+  }
+
+  /* Override dark onyx backgrounds on mobile to use card background variables */
+  .bg-onyx-950,
+  .bg-onyx-900,
+  .bg-onyx-900\/50,
+  .bg-onyx-900\/35,
+  .bg-onyx-900\/20,
+  .bg-onyx-800,
+  .bg-onyx-800\/50 {
+    background-color: var(--color-bg-card) !important;
+    border-color: var(--color-border) !important;
+  }
+
+  /* Invert text-white inside cards, dashboard shell, and auth page shell on mobile for readability */
+  .onyx-card .text-white,
+  .glass-card .text-white,
+  .dashboard-card .text-white,
+  .dashboard-shell-bg .text-white:not(button):not(a):not(.btn-gold),
+  .onyx-shell-bg .text-white:not(button):not(a):not(.btn-gold) {
+    color: oklch(12% 0.01 60) !important;
+  }
+
+  /* Override btn-gold on mobile to use bright yellow background and dark text */
+  .btn-gold {
+    background: oklch(75% 0.15 85) !important; /* bg-gold-500 */
+    color: oklch(12% 0.01 60) !important; /* dark onyx */
+  }
+
+  /* Utility to hide native scrollbars */
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none !important;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none !important;  /* IE and Edge */
+    scrollbar-width: none !important;  /* Firefox */
+  }
 }

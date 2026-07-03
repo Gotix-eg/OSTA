@@ -238,59 +238,66 @@ export function FloatingChatWidget() {
   return (
     <>
       {/* Floating Button */}
-      <button
-        onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-gold-500 text-onyx-950 shadow-2xl hover:scale-105 active:scale-95 transition-transform"
-      >
-        <MessageSquare className="h-6 w-6" />
-        {unreadTotal > 0 && (
-          <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-error text-[10px] font-bold text-white">
-            {unreadTotal}
-          </span>
-        )}
-      </button>
+      {!isOpen && (
+        <button
+          onClick={() => setIsOpen(true)}
+          className="fixed z-50 flex items-center justify-center bg-gold-500 text-onyx-950 shadow-2xl transition-all duration-300 ease-out active:scale-95
+            md:bottom-6 md:right-6 md:top-auto md:left-auto md:w-14 md:h-14 md:rounded-full md:translate-x-0 md:translate-y-0
+            bottom-auto top-[45%] left-0 w-12 h-14 rounded-r-2xl rounded-l-none -translate-x-[40%] hover:translate-x-0 focus:translate-x-0 active:translate-x-0"
+        >
+          <MessageSquare className="h-6 w-6 md:mr-0 mr-1" />
+          {unreadTotal > 0 && (
+            <span className="absolute -top-1 -right-1 md:-top-1 md:-right-1 right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-error text-[10px] font-bold text-white">
+              {unreadTotal}
+            </span>
+          )}
+        </button>
+      )}
 
       {/* Chat Panel */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 50, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 50, scale: 0.95 }}
-            className="fixed bottom-24 right-6 z-50 flex h-[500px] w-[350px] flex-col overflow-hidden rounded-[2rem] border border-white/10 bg-onyx-950 shadow-2xl"
+            initial={{ opacity: 0, y: "100%" }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: "100%" }}
+            transition={{ type: "spring", damping: 25, stiffness: 220 }}
+            className="fixed z-50 flex flex-col overflow-hidden border border-gold-700/15 bg-gold-100 shadow-2xl
+              md:bottom-24 md:right-6 md:left-auto md:w-[350px] md:h-[500px] md:rounded-[2rem]
+              bottom-0 left-0 right-0 w-full h-[80vh] rounded-t-[2.5rem] rounded-b-none"
           >
-            {/* Header */}
-            <div className="flex h-16 shrink-0 items-center justify-between border-b border-white/10 bg-onyx-900/50 px-4">
+             {/* Header */}
+            <div className="flex h-16 shrink-0 items-center justify-between border-b border-gold-700/15 bg-onyx-900/5 px-4">
               <div className="flex items-center gap-3">
                 {activeChat && (
-                  <button onClick={() => setActiveChat(null)} className="rounded-full p-1.5 hover:bg-white/10 text-white transition-colors">
+                  <button onClick={() => setActiveChat(null)} className="rounded-full p-1.5 hover:bg-onyx-950/10 text-onyx-950 transition-colors">
                     <ChevronLeft className="h-5 w-5" />
                   </button>
                 )}
                 <div>
-                  <h3 className="font-bold text-white">
+                  <h3 className="font-bold text-onyx-950">
                     {activeChat ? `${activeChat.firstName} ${activeChat.lastName}` : "المحادثات"}
                   </h3>
                   {activeChat && (
                     <div className="flex items-center gap-1.5">
                       {isConnected
-                        ? <Wifi className="h-3 w-3 text-green-400" />
-                        : <WifiOff className="h-3 w-3 text-yellow-400" />
+                        ? <Wifi className="h-3 w-3 text-emerald-600" />
+                        : <WifiOff className="h-3 w-3 text-amber-600" />
                       }
-                      <span className={`text-[10px] ${isConnected ? "text-green-400" : "text-yellow-400"}`}>
+                      <span className={`text-[10px] ${isConnected ? "text-emerald-600" : "text-amber-600"}`}>
                         {isConnected ? "مباشر" : "متصل (تحديث كل 2ث)"}
                       </span>
                     </div>
                   )}
                 </div>
               </div>
-              <button onClick={() => setIsOpen(false)} className="rounded-full p-1.5 hover:bg-white/10 text-onyx-400 transition-colors">
+              <button onClick={() => setIsOpen(false)} className="rounded-full p-1.5 hover:bg-onyx-950/10 text-onyx-600 transition-colors">
                 <X className="h-5 w-5" />
               </button>
             </div>
 
             {/* Body */}
-            <div className="flex-1 overflow-y-auto bg-onyx-950/50 p-4">
+            <div className="flex-1 overflow-y-auto bg-gold-100 p-4">
               {!activeChat ? (
                 <div className="space-y-2">
                   {contacts.length === 0 ? (
@@ -335,10 +342,10 @@ export function FloatingChatWidget() {
                     const isTemp = msg.id.startsWith("temp-");
                     return (
                       <div key={msg.id} className={`flex max-w-[80%] flex-col ${isMe ? "self-end" : "self-start"}`}>
-                        <div className={`rounded-2xl p-3 text-sm transition-opacity ${isMe ? "bg-gold-500 text-onyx-950 rounded-br-sm" : "bg-onyx-800 text-white rounded-bl-sm border border-white/5"} ${isTemp ? "opacity-60" : "opacity-100"}`}>
+                        <div className={`rounded-2xl p-3 text-sm transition-opacity ${isMe ? "bg-gold-800 text-onyx-950 rounded-br-sm shadow-md" : "bg-white text-onyx-950 rounded-bl-sm border border-gold-700/10 shadow-sm"} ${isTemp ? "opacity-60" : "opacity-100"}`}>
                           {msg.content}
                         </div>
-                        <span className={`mt-1 text-[9px] text-onyx-500 ${isMe ? "text-right" : "text-left"}`}>
+                        <span className={`mt-1 text-[9px] text-onyx-600 ${isMe ? "text-right" : "text-left"}`}>
                           {isTemp ? "جاري الإرسال..." : new Date(msg.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                         </span>
                       </div>
@@ -351,18 +358,18 @@ export function FloatingChatWidget() {
 
             {/* Input */}
             {activeChat && (
-              <form onSubmit={sendMessage} className="shrink-0 border-t border-white/10 bg-onyx-900/50 p-3 flex gap-2">
+              <form onSubmit={sendMessage} className="shrink-0 border-t border-gold-700/15 bg-onyx-900/5 p-3 flex gap-2">
                 <input
                   type="text"
                   placeholder="اكتب رسالة..."
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  className="flex-1 rounded-xl bg-onyx-950 border border-white/10 px-4 text-sm text-white outline-none focus:border-gold-500/50 transition-colors"
+                  className="flex-1 rounded-xl bg-white border border-gold-700/15 px-4 text-sm text-onyx-950 placeholder-onyx-600 outline-none focus:border-gold-500 transition-colors"
                 />
                 <button
                   type="submit"
                   disabled={!input.trim()}
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gold-500 text-onyx-950 disabled:opacity-50"
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gold-800 text-onyx-950 disabled:opacity-50"
                 >
                   <Send className="h-4 w-4" />
                 </button>

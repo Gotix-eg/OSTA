@@ -20,6 +20,7 @@ import { useLiveApiData } from "@/hooks/use-live-api-data";
 import { egyptianGovernorates, majorCities } from "@/lib/geo-data";
 import { resolveApiBaseUrl } from "@/lib/api";
 import { getBrowserAuthState } from "@/lib/auth-client";
+import { MobileHeroSlider } from "@/components/landing/mobile-hero-slider";
 
 function getCategoryColor(slug: string): string {
   const colors: Record<string, string> = {
@@ -338,9 +339,12 @@ export function LandingPage({ locale }: { locale: Locale }) {
   };
 
   return (
-    <div className="bg-onyx-950 onyx-shell-bg selection:bg-gold-500 selection:text-onyx-950 overflow-x-hidden">
-      {/* Hero Section with Dynamic Background Slider */}
-      <section className="relative pt-24 pb-20 px-4 min-h-[90vh] flex items-center justify-center overflow-hidden">
+    <div className="bg-gold-100 onyx-shell-bg selection:bg-gold-500 selection:text-onyx-950 overflow-x-hidden">
+      {/* Mobile Hero Slider — shown ONLY on mobile (< 768px) */}
+      <MobileHeroSlider locale={locale} />
+
+      {/* Desktop Hero Section with Dynamic Background Slider — ONLY on md+ */}
+      <section className="hidden md:flex relative pt-24 pb-20 px-4 min-h-[90vh] items-center justify-center overflow-hidden">
         {/* Background Images with smooth cross-fade transition */}
         {slides.map((slide, idx) => (
           <div
@@ -422,18 +426,18 @@ export function LandingPage({ locale }: { locale: Locale }) {
 
       {/* Sponsored Campaigns Section */}
       {campaigns.length > 0 && (
-        <section className="py-20 px-4 bg-onyx-950/40 relative border-b border-white/5 animate-slideUp">
+        <section className="py-20 px-4 bg-onyx-950/40 relative border-b border-gold-700/10 animate-slideUp">
           <div className="max-w-7xl mx-auto">
             <div className="flex items-center justify-between mb-12">
               <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-2xl bg-gold-500/10 border border-gold-500/20 flex items-center justify-center text-gold-500 shrink-0 shadow-lg">
+                <div className="h-12 w-12 rounded-2xl bg-gold-700/10 border border-gold-700/25 flex items-center justify-center text-gold-800 shrink-0 shadow-lg">
                   <Megaphone className="h-6 w-6 animate-pulse" />
                 </div>
                 <div>
-                  <h2 className="text-2xl md:text-4xl font-black text-white tracking-tight">
+                  <h2 className="text-2xl md:text-4xl font-black text-onyx-950 tracking-tight">
                     {isArabic ? "شركاء أُسطفاي والعروض المميزة" : "Sponsored Deals & Partners"}
                   </h2>
-                  <p className="text-onyx-400 text-sm mt-1">
+                  <p className="text-onyx-600 text-sm mt-1">
                     {isArabic ? "عروض حصرية وخصومات من المتاجر والشركاء المعتمدين لدينا" : "Exclusive deals and services from our trusted sponsors"}
                   </p>
                 </div>
@@ -445,7 +449,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
                 <Link
                   key={camp.id}
                   href={camp.link.startsWith("http") ? camp.link : `/${locale}${camp.link.startsWith("/") ? "" : "/"}${camp.link}`}
-                  className="group relative rounded-[2rem] overflow-hidden min-h-[300px] flex items-end p-6 border border-white/5 hover:border-gold-500/30 transition-all duration-500 shadow-xl bg-onyx-900"
+                  className="group relative rounded-[2rem] overflow-hidden min-h-[300px] flex items-end p-6 border border-gold-700/10 hover:border-gold-500/30 transition-all duration-500 shadow-xl bg-gold-100"
                 >
                   {camp.imageUrl ? (
                     <img
@@ -454,22 +458,24 @@ export function LandingPage({ locale }: { locale: Locale }) {
                       className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                   ) : null}
-                  <div className="absolute inset-0 bg-gradient-to-t from-onyx-950 via-onyx-950/75 to-transparent" />
+                  {/* Desktop: Premium deep dark gradient overlay; Mobile: Yellow gradient overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-onyx-950 via-onyx-950/75 to-transparent hidden md:block" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent md:hidden block" />
                   
                   <div className="absolute top-4 end-4">
-                    <span className="inline-block px-2.5 py-1 rounded bg-gold-500 text-onyx-950 text-[9px] font-black uppercase tracking-wider shadow-md">
+                    <span className="inline-block px-2.5 py-1 rounded bg-gold-800 text-onyx-950 text-[9px] font-black uppercase tracking-wider shadow-md">
                       {isArabic ? "ممول" : "Ad"}
                     </span>
                   </div>
 
                   <div className="relative z-10 space-y-2 text-start">
-                    <h3 className="text-xl font-black text-white leading-tight group-hover:text-gold-500 transition-colors">
+                    <h3 className="text-xl font-black text-onyx-950 leading-tight group-hover:text-gold-500 transition-colors">
                       {isArabic ? camp.titleAr : camp.titleEn}
                     </h3>
-                    <p className="text-onyx-300 text-xs leading-relaxed line-clamp-2 font-light">
+                    <p className="text-onyx-600 text-xs leading-relaxed line-clamp-2 font-light">
                       {isArabic ? camp.descAr : camp.descEn}
                     </p>
-                    <div className="flex items-center gap-1.5 text-xs text-gold-500 font-bold pt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="flex items-center gap-1.5 text-xs text-gold-800 font-bold pt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       {isArabic ? "عرض التفاصيل" : "Explore Offer"}
                       <ChevronRight className="h-3 w-3 rtl:rotate-180" />
                     </div>
@@ -915,7 +921,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
       <section className="py-24 px-4 bg-onyx-900/50">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-black text-white mb-4">
+            <h2 className="text-3xl md:text-5xl font-black text-onyx-950 md:text-white mb-4">
               {isArabic ? "خدماتنا الأساسية" : "Our Core Services"}
             </h2>
             <div className="h-1 w-24 bg-gold-500 mx-auto rounded-full" />
@@ -926,7 +932,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6"
+            className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6"
           >
             {displayCrafts.map((craft) => (
               <motion.div key={craft.id} variants={itemVariants}>
@@ -944,7 +950,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-onyx-950/90 via-onyx-950/20 to-transparent" />
                   </div>
-                  <h3 className="text-lg font-bold text-white mb-2 group-hover:text-gold-500 transition-colors">
+                  <h3 className="text-lg font-bold text-onyx-950 md:text-white mb-2 group-hover:text-gold-500 transition-colors">
                     {isArabic ? craft.name.ar : craft.name.en}
                   </h3>
                   <div className="flex items-center gap-1 text-xs text-gold-500 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-[-4px] group-hover:translate-x-0">

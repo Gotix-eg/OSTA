@@ -54,9 +54,10 @@ export function VendorsDirectory({ locale }: { locale: Locale }) {
   const filteredVendors = useMemo(() => {
     return vendors.filter(vendor => {
       const name = isArabic ? (vendor.shopNameAr || vendor.shopName) : vendor.shopName;
+      const vendorCat = (vendor.category || "").toLowerCase();
       const matchesSearch = name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                            vendor.category.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesCategory = activeCategory === "all" || vendor.category.toLowerCase().includes(activeCategory.toLowerCase());
+                            vendorCat.includes(searchQuery.toLowerCase());
+      const matchesCategory = activeCategory === "all" || vendorCat.includes(activeCategory.toLowerCase());
       return matchesSearch && matchesCategory;
     });
   }, [searchQuery, locale, vendors, activeCategory, isArabic]);
@@ -84,16 +85,16 @@ export function VendorsDirectory({ locale }: { locale: Locale }) {
       {/* Search & Filter Bar */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between p-4 onyx-card border-white/5 bg-white/[0.01] backdrop-blur">
         <div className="relative flex-1">
-          <Search className="absolute start-4 top-1/2 h-5 w-5 -translate-y-1/2 text-onyx-500" />
+          <Search className="absolute start-4 top-1/2 h-5 w-5 -translate-y-1/2 text-onyx-600 md:text-onyx-550" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={isArabic ? "ابحث عن متجر، تخصص، أو منتج..." : "Search for a store, specialty, or product..."}
-            className="h-12 w-full rounded-xl bg-onyx-900 border border-white/10 ps-12 pe-4 text-white placeholder-onyx-500 text-sm focus:outline-none focus:border-gold-500/50 transition-colors"
+            className="h-12 w-full rounded-xl bg-white border border-gold-700/10 ps-12 pe-4 text-onyx-950 placeholder-onyx-400 text-sm focus:outline-none focus:border-gold-500/50 transition-colors md:bg-onyx-900 md:border-white/10 md:text-white md:placeholder-onyx-500"
           />
         </div>
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0 hide-scrollbar">
+        <div className="flex flex-wrap gap-2 md:flex-nowrap md:items-center md:overflow-x-auto pb-1 md:pb-0 hide-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           {categories.map(cat => (
             <button
               key={cat.id}
@@ -102,7 +103,7 @@ export function VendorsDirectory({ locale }: { locale: Locale }) {
                 "whitespace-nowrap rounded-full px-5 py-2 text-sm font-semibold border transition-all duration-300",
                 activeCategory === cat.id 
                   ? "bg-gold-500 text-onyx-950 border-gold-500 shadow-md" 
-                  : "bg-onyx-900 border-white/10 text-onyx-300 hover:text-white"
+                  : "bg-white border-gold-700/10 text-onyx-700 hover:text-onyx-950 md:bg-onyx-900 md:border-white/10 md:text-onyx-300 md:hover:text-white"
               )}
             >
               {cat.label[locale]}
@@ -171,7 +172,7 @@ export function VendorsDirectory({ locale }: { locale: Locale }) {
                       <Store className="h-3.5 w-3.5" />
                       {isArabic ? "زيارة المتجر" : "Visit Store"}
                     </Link>
-                    <Link href={`/${locale}/vendors/${vendor.id}/request`} className="flex-1 btn-onyx py-2.5 text-xs font-black flex items-center justify-center border-white/10 text-white hover:bg-white/5 rounded-xl">
+                    <Link href={`/${locale}/vendors/${vendor.id}/request`} className="flex-1 py-2.5 text-xs font-black flex items-center justify-center border border-onyx-950 bg-onyx-950 text-white hover:bg-onyx-900 rounded-xl md:border-white/10 md:bg-transparent md:text-white md:hover:bg-white/5">
                       {isArabic ? "طلب تسعير" : "Request Quote"}
                     </Link>
                   </div>

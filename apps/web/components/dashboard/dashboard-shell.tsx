@@ -207,9 +207,9 @@ export function DashboardShell({
   const currentPath = stripLocalePrefix(pathname || "/");
 
   return (
-    <div className="dashboard-shell-bg min-h-screen text-white">
-      <div className="pointer-events-none absolute inset-0 dashboard-grid-overlay opacity-50" />
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-[22rem] bg-dashboardGlow opacity-90" />
+    <div className="dashboard-shell-bg min-h-screen text-foreground">
+      <div className="pointer-events-none absolute inset-0 dashboard-grid-overlay opacity-50 hidden md:block" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[22rem] bg-dashboardGlow opacity-90 hidden md:block" />
 
       <div className="relative flex min-h-screen">
         <aside className="hidden w-[19.5rem] shrink-0 px-4 py-4 lg:block">
@@ -217,13 +217,69 @@ export function DashboardShell({
         </aside>
 
         {mobileOpen ? (
-          <div className="fixed inset-0 z-50 bg-dark-950/45 backdrop-blur-sm lg:hidden">
-            <aside className={cn("dashboard-card-dark relative h-full w-[19rem] overflow-hidden px-4 py-4", locale === "ar" ? "ms-auto" : "") }>
-              <button type="button" onClick={() => setMobileOpen(false)} className="absolute end-4 top-4 rounded-full border border-white/10 p-2 text-white/75">
-                <X className="h-4 w-4" />
+          <div className="fixed inset-0 z-50 flex flex-col justify-end bg-onyx-950/60 backdrop-blur-md lg:hidden animate-slideUp">
+            {/* Backdrop click to close */}
+            <div className="absolute inset-0 -z-10" onClick={() => setMobileOpen(false)} />
+            
+            <div className="relative w-full max-h-[85vh] overflow-y-auto rounded-t-[2.5rem] bg-gold-100 p-6 border-t border-gold-700/15 shadow-2xl flex flex-col">
+              {/* Drag indicator */}
+              <div className="mx-auto mb-5 h-1.5 w-12 rounded-full bg-onyx-950/15" />
+              
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h3 className="text-xl font-black text-onyx-950">{locale === "ar" ? "أقسام لوحة التحكم" : "Dashboard Sections"}</h3>
+                  <p className="text-xs text-onyx-600 mt-1">{locale === "ar" ? "تصفح الأقسام والخدمات بسهولة" : "Navigate pages easily"}</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setMobileOpen(false)}
+                  className="rounded-full border border-gold-700/15 bg-white/50 p-2 text-onyx-950"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
+              {/* Grid of section buttons */}
+              <div className="grid grid-cols-3 gap-3 mb-8">
+                {navItems.map((item) => {
+                  const Icon = item.icon;
+                  const itemPath = stripLocalePrefix(item.href);
+                  const active = currentPath === itemPath || currentPath.startsWith(`${itemPath}/`);
+
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href as `/${string}`}
+                      onClick={() => setMobileOpen(false)}
+                      className={cn(
+                        "flex flex-col items-center justify-center gap-3 rounded-2xl border p-4 text-center transition-all duration-300 active:scale-95",
+                        active
+                          ? "border-gold-500 bg-gold-500 text-onyx-950 shadow-md font-bold"
+                          : "border-gold-700/10 bg-white/60 text-onyx-950 hover:bg-white"
+                      )}
+                    >
+                      <span className={cn("flex h-10 w-10 items-center justify-center rounded-xl", active ? "bg-onyx-950/10 text-onyx-950" : "bg-gold-500/10 text-gold-800")}>
+                        <Icon className="h-5 w-5" />
+                      </span>
+                      <span className="text-xs font-semibold leading-tight line-clamp-1">{item.label}</span>
+                    </Link>
+                  );
+                })}
+              </div>
+
+              {/* Bottom logout action */}
+              <button
+                type="button"
+                onClick={async () => {
+                  await logoutAuthSession();
+                  window.location.replace(`/${locale}/login`);
+                }}
+                className="w-full inline-flex items-center justify-center gap-3 rounded-2xl border border-error/20 bg-error/10 py-4 text-sm font-bold text-error transition-all duration-300 active:scale-95"
+              >
+                <LogOut className="h-4 w-4" />
+                {locale === "ar" ? "تسجيل الخروج" : "Logout"}
               </button>
-              <SidebarContent locale={locale} role={role} roleLabel={copy.role} theme={theme} navItems={navItems} currentPath={currentPath} />
-            </aside>
+            </div>
           </div>
         ) : null}
 
@@ -234,19 +290,19 @@ export function DashboardShell({
               <button
                 type="button"
                 onClick={() => setMobileOpen(true)}
-                className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white lg:hidden"
+                className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-gold-700/15 bg-white/50 text-onyx-950 lg:hidden"
               >
                 <Menu className="h-5 w-5" />
               </button>
 
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-4">
-                  <div className="hidden h-12 w-12 items-center justify-center rounded-2xl bg-onyx-800/50 text-white shadow-xl sm:flex">
+                  <div className="hidden h-12 w-12 items-center justify-center rounded-2xl bg-onyx-800/50 text-foreground shadow-xl sm:flex">
                     <LayoutDashboard className="h-5 w-5" />
                   </div>
-                  <div className="min-w-0 flex-1 rounded-full border border-white/5 bg-white/5 px-5 py-3 text-sm text-onyx-300 shadow-inner">
+                  <div className="min-w-0 flex-1 rounded-full border border-gold-700/10 bg-white/50 px-5 py-3 text-sm text-onyx-600 shadow-inner">
                     <div className="flex items-center gap-3">
-                      <Search className="h-4 w-4 text-onyx-500" />
+                      <Search className="h-4 w-4 text-onyx-600" />
                       <span className="truncate opacity-60">{copy.search}</span>
                     </div>
                   </div>

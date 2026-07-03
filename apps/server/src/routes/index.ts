@@ -467,6 +467,19 @@ router.get("/public/slides", async (_req, response) => {
   }
 });
 
+// GET /api/public/mobile-slides — Public mobile hero slides (no auth required)
+router.get("/public/mobile-slides", async (_req, response) => {
+  try {
+    const setting = await prisma.systemSetting.findUnique({ where: { key: "hero_slides_mobile" } });
+    const slides = setting ? JSON.parse(setting.value) : [];
+    const activeSlides = Array.isArray(slides) ? slides.filter((s: any) => s.isActive !== false) : [];
+    response.json({ success: true, data: activeSlides });
+  } catch (e: any) {
+    response.json({ success: true, data: [] });
+  }
+});
+
+
 // GET /api/public/campaigns — Public sponsored campaigns (no auth required)
 router.get("/public/campaigns", async (_req, response) => {
   try {

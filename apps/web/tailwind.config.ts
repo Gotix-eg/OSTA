@@ -9,21 +9,21 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        /* ── ONYX: Deep Cinematic Black (Tinted with Gold) ── */
+        /* ── ONYX: Dark cinematic tones ── */
         onyx: {
-          50:  "oklch(97% 0.01 60)",
-          100: "oklch(90% 0.01 60)",
-          200: "oklch(80% 0.01 60)",
-          300: "oklch(70% 0.01 60)",
-          400: "oklch(60% 0.01 60)",
-          500: "oklch(50% 0.01 60)",
-          600: "oklch(40% 0.01 60)",
-          700: "oklch(30% 0.01 60)",
-          800: "oklch(20% 0.01 60)",
-          900: "oklch(14% 0.01 60)", // Deep tinted charcoal
-          950: "oklch(10% 0.01 60)"  // Near black tinted
+          50:  "oklch(97% 0.005 60)",   // Near white
+          100: "oklch(93% 0.005 60)",   // Soft white
+          200: "oklch(85% 0.005 60)",   // Light gray
+          300: "oklch(72% 0.005 60)",   // Medium light gray
+          400: "oklch(58% 0.005 60)",   // Medium gray
+          500: "oklch(45% 0.005 60)",   // Neutral gray
+          600: "oklch(35% 0.005 60)",   // Dark gray
+          700: "oklch(25% 0.005 60)",   // Darker gray
+          800: "oklch(18% 0.005 60)",   // Near black
+          900: "oklch(13% 0.005 60)",   // Off black
+          950: "oklch(9% 0.005 60)"     // Deep black
         },
-        /* ── GOLD: Sahara Luxury Accent ── */
+        /* ── GOLD: Primary accents ── */
         gold: {
           50:  "oklch(98% 0.02 85)",
           100: "oklch(95% 0.04 85)",
@@ -37,41 +37,47 @@ const config: Config = {
           900: "oklch(35% 0.09 85)"
         },
         primary: {
-          DEFAULT: "oklch(75% 0.15 85)",
-          foreground: "oklch(10% 0.01 60)"
+          DEFAULT: "oklch(65% 0.15 85)",        // Vibrant gold
+          foreground: "oklch(10% 0.005 60)"     // Dark text on gold
         },
         accent: {
-          DEFAULT: "oklch(70% 0.2 250)", // Premium Blue
-          gold: "oklch(85% 0.18 95)"     // Vibrant Gold
+          DEFAULT: "oklch(50% 0.2 250)",        // Deep premium blue
+          gold: "oklch(65% 0.18 85)"            // Vibrant gold
         },
-        success: "oklch(75% 0.15 150)",
-        warning: "oklch(80% 0.15 75)",
-        error:   "oklch(65% 0.2 25)",
-        background: "oklch(12% 0.01 60)",
-        foreground: "oklch(95% 0.01 60)",
+        success: "oklch(55% 0.15 150)",
+        warning: "oklch(65% 0.15 75)",
+        error:   "oklch(55% 0.2 25)",
+        /* background / foreground are resolved by CSS vars per breakpoint */
+        background: "var(--color-bg)",
+        foreground: "var(--color-fg)",
       },
       fontFamily: {
         sans:  ["var(--font-sans)", "ui-sans-serif", "system-ui"],
         serif: ["var(--font-serif)", "ui-serif", "Georgia"]
       },
       boxShadow: {
-        gold:  "0 10px 40px -10px oklch(75% 0.15 85 / 0.25)",
-        onyx:  "0 20px 60px -20px oklch(10% 0.01 60 / 0.8)",
-        glow:  "0 0 20px oklch(75% 0.15 85 / 0.15)",
+        gold:  "0 10px 40px -10px oklch(55% 0.13 85 / 0.4)",
+        onyx:  "0 20px 60px -20px oklch(0% 0 0 / 0.5)",
+        glow:  "0 0 30px oklch(65% 0.15 85 / 0.3)",
       },
       backgroundImage: {
-        "onyx-gradient": "linear-gradient(135deg, #1A1A1A 0%, #0A0A0B 100%)",
-        "gold-gradient": "linear-gradient(135deg, #D4AF37 0%, #B8860B 100%)",
-        "radial-onyx": "radial-gradient(circle at center, #1A1A1A 0%, #0A0A0B 100%)",
+        "onyx-gradient": "linear-gradient(135deg, oklch(12% 0.005 60) 0%, oklch(8% 0.005 60) 100%)",
+        "gold-gradient": "linear-gradient(135deg, oklch(75% 0.15 85) 0%, oklch(55% 0.13 85) 100%)",
+        "radial-onyx":   "radial-gradient(circle at center, oklch(15% 0.005 60) 0%, oklch(8% 0.005 60) 100%)",
       },
       keyframes: {
         "gold-pulse": {
           "0%, 100%": { opacity: "1", transform: "scale(1)" },
-          "50%": { opacity: "0.8", transform: "scale(1.02)" }
+          "50%": { opacity: "0.85", transform: "scale(1.02)" }
+        },
+        slideUp: {
+          "0%": { transform: "translateY(20px)", opacity: "0" },
+          "100%": { transform: "translateY(0)", opacity: "1" }
         }
       },
       animation: {
-        "gold-pulse": "gold-pulse 4s ease-in-out infinite"
+        "gold-pulse": "gold-pulse 4s ease-in-out infinite",
+        slideUp: "slideUp 0.5s ease-out forwards"
       }
     }
   },
