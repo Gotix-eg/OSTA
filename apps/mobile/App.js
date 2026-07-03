@@ -4,6 +4,7 @@ import { WebView } from 'react-native-webview';
 import { useRef, useState, useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 
+// Trigger build for local AAB workflow
 export default function App() {
   // يمكنك تغيير هذا الرابط إلى رابطك النهائي (مثل osta.eg) عندما تكون مستعداً
   const OSTA_URL = 'https://osta.vercel.app/';
