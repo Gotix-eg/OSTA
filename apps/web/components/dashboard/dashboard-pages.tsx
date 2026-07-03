@@ -8,13 +8,14 @@ import {
   CircleDollarSign, Clock3, MapPin, Route, ShieldAlert, ShieldCheck,
   Sparkles, Star, Store, TrendingUp, Users, Wallet, Wrench, Zap,
   MessageSquare, ChevronRight, SlidersHorizontal, Megaphone, Settings, User,
-  Plus, Trash2, Edit3, Eye, EyeOff, Image as ImageIcon
+  Plus, Trash2, Edit3, Eye, EyeOff, Image as ImageIcon, FolderOpen, UploadCloud
 } from "lucide-react";
 
 import { useLiveApiData } from "@/hooks/use-live-api-data";
 import { AdBanner } from "@/components/shared/ad-banner";
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
+import { MediaSelectorModal } from "@/components/admin/media-selector-modal";
 
 // --- Types & Helpers ---
 type CardTone = "gold" | "onyx" | "marble";
@@ -1629,6 +1630,39 @@ function MobileSlidesEditor({
   const [saving, setSaving] = useState(false);
   const [localSlides, setLocalSlides] = useState<any[]>(slides);
 
+  const [isMediaOpen, setIsMediaOpen] = useState(false);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+
+  const handleDirectImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploadingImage(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("purpose", "general");
+
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Upload failed");
+      }
+
+      const data = await res.json();
+      setEditing((prev: any) => ({ ...prev, imageUrl: data.url }));
+    } catch (error) {
+      console.error("Direct upload error:", error);
+      alert(isArabic ? "فشل رفع الصورة على الخادم" : "Failed to upload image to server");
+    } finally {
+      setIsUploadingImage(false);
+    }
+  };
+
   useEffect(() => {
     setLocalSlides(slides);
   }, [slides]);
@@ -1715,13 +1749,44 @@ function MobileSlidesEditor({
             ))}
 
             <div className="md:col-span-2">
-              <label className="block text-xs font-bold text-onyx-600 mb-1">{isArabic ? "رابط الصورة (Portrait/Vertical)" : "Image URL (Portrait/Vertical)"}</label>
-              <input
-                value={editing.imageUrl || ""}
-                onChange={(e) => setEditing({ ...editing, imageUrl: e.target.value })}
-                className="w-full rounded-xl border border-gold-700/20 bg-transparent px-4 py-2 text-sm text-onyx-950 focus:border-gold-700/50 outline-none"
-                placeholder="https://... or /mobile_slide_1.png"
-              />
+              <label className="block text-xs font-bold text-onyx-600 mb-1">
+                {isArabic ? "رابط الصورة (Portrait/Vertical)" : "Image URL (Portrait/Vertical)"}
+              </label>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <input
+                  value={editing.imageUrl || ""}
+                  onChange={(e) => setEditing({ ...editing, imageUrl: e.target.value })}
+                  className="flex-1 rounded-xl border border-gold-700/20 bg-transparent px-4 py-2 text-sm text-onyx-950 focus:border-gold-700/50 outline-none"
+                  placeholder="https://... or /mobile_slide_1.png"
+                />
+                
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsMediaOpen(true)}
+                    className="px-4 py-2 rounded-xl border border-gold-700/20 bg-gold-700/5 text-gold-800 text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-gold-700/10 transition-colors"
+                  >
+                    <FolderOpen className="h-3.5 w-3.5" />
+                    {isArabic ? "المعرض" : "Media"}
+                  </button>
+
+                  <div className="relative shrink-0">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleDirectImageUpload}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                    />
+                    <button
+                      type="button"
+                      className="h-full px-4 py-2 rounded-xl border border-gold-700/20 bg-transparent text-onyx-700 text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-gold-700/5 transition-colors"
+                    >
+                      <UploadCloud className="h-3.5 w-3.5" />
+                      {isUploadingImage ? (isArabic ? "جاري..." : "Uploading...") : (isArabic ? "رفع" : "Upload")}
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div>
@@ -1883,6 +1948,13 @@ function MobileSlidesEditor({
           ))}
         </div>
       )}
+
+      <MediaSelectorModal
+        isOpen={isMediaOpen}
+        onClose={() => setIsMediaOpen(false)}
+        onSelect={(url) => setEditing((prev: any) => ({ ...prev, imageUrl: url }))}
+        locale={locale}
+      />
     </div>
   );
 }
