@@ -11,3 +11,4 @@ apps/server/prisma/dev.db
 *.log
 
 .vercel
+*.aab
