@@ -1,13 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, SafeAreaView, Platform, BackHandler, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, SafeAreaView, Platform, BackHandler, TouchableOpacity, View, Linking } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { useRef, useState, useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 
 // Trigger build for local AAB workflow
 export default function App() {
-  // يمكنك تغيير هذا الرابط إلى رابطك النهائي (مثل osta.eg) عندما تكون مستعداً
-  const OSTA_URL = 'https://osta.vercel.app/';
+  // الرابط النهائي للمنصة
+  const OSTA_URL = 'https://www.ostafy.com/';
   const webViewRef = useRef(null);
   const [canGoBack, setCanGoBack] = useState(false);
 
@@ -28,6 +28,24 @@ export default function App() {
     return () => backHandler.remove();
   }, [canGoBack]);
 
+  const handleShouldStartLoad = (event) => {
+    const { url } = event;
+    
+    // Intercept external deep links / non-http schemes (WhatsApp, Phone call, Email, SMS)
+    const isExternalScheme = !url.startsWith('http://') && !url.startsWith('https://');
+    const isWhatsApp = url.includes('wa.me') || url.includes('whatsapp.com');
+    const isTelOrMail = url.startsWith('tel:') || url.startsWith('mailto:') || url.startsWith('sms:');
+
+    if (isExternalScheme || isWhatsApp || isTelOrMail) {
+      Linking.openURL(url).catch((err) => {
+        console.warn('Failed to open external link:', err);
+      });
+      return false; // Stop WebView from navigating to this url
+    }
+    
+    return true; // Allow WebView to load standard http/https links
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="light" backgroundColor="#000000" />
@@ -42,6 +60,7 @@ export default function App() {
           onNavigationStateChange={(navState) => {
             setCanGoBack(navState.canGoBack);
           }}
+          onShouldStartLoadWithRequest={handleShouldStartLoad}
         />
         
         {/* Floating Back Button (Appears only when you can go back) */}
