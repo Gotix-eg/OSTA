@@ -426,9 +426,9 @@ export function LandingPage({ locale }: { locale: Locale }) {
 
       {/* Sponsored Campaigns Section */}
       {campaigns.length > 0 && (
-        <section className="py-20 px-4 bg-onyx-950/40 relative border-b border-gold-700/10 animate-slideUp">
+        <section className="py-16 md:py-20 px-0 md:px-4 bg-onyx-950/40 relative border-b border-gold-700/10 animate-slideUp">
           <div className="max-w-7xl mx-auto">
-            <div className="flex items-center justify-between mb-12">
+            <div className="flex items-center justify-between mb-8 md:mb-12 px-4 md:px-0">
               <div className="flex items-center gap-4">
                 <div className="h-12 w-12 rounded-2xl bg-gold-700/10 border border-gold-700/25 flex items-center justify-center text-gold-800 shrink-0 shadow-lg">
                   <Megaphone className="h-6 w-6 animate-pulse" />
@@ -449,33 +449,40 @@ export function LandingPage({ locale }: { locale: Locale }) {
                 <Link
                   key={camp.id}
                   href={camp.link.startsWith("http") ? camp.link : `/${locale}${camp.link.startsWith("/") ? "" : "/"}${camp.link}`}
-                  className="group relative rounded-[2rem] overflow-hidden min-h-[300px] flex items-end p-6 border border-gold-700/10 hover:border-gold-500/30 transition-all duration-500 shadow-xl bg-gold-100"
+                  className="group w-full flex flex-col md:block md:relative md:rounded-[2rem] md:overflow-hidden md:min-h-[300px] border-b border-gold-700/10 md:border md:border-gold-700/10 md:hover:border-gold-500/30 transition-all duration-500 md:shadow-xl md:bg-gold-100 pb-6 md:pb-0"
                 >
                   {camp.imageUrl ? (
-                    <img
-                      src={cleanImageUrl(camp.imageUrl)}
-                      alt=""
-                      className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                    />
+                    <div className="relative w-full aspect-[16/10] md:absolute md:inset-0 md:h-full md:w-full md:aspect-auto overflow-hidden">
+                      <img
+                        src={cleanImageUrl(camp.imageUrl)}
+                        alt=""
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                      {/* Mobile-only "ممول" badge overlayed on the top-start of the image wrapper */}
+                      <div className="absolute top-4 start-4 md:hidden z-20">
+                        <span className="inline-block px-2.5 py-1 rounded bg-gold-800 text-onyx-950 text-[9px] font-black uppercase tracking-wider shadow-md">
+                          {isArabic ? "ممول" : "Ad"}
+                        </span>
+                      </div>
+                    </div>
                   ) : null}
-                  {/* Desktop: Premium deep dark gradient overlay; Mobile: Yellow gradient overlay */}
+                  {/* Desktop: Premium deep dark gradient overlay; No overlay on mobile */}
                   <div className="absolute inset-0 bg-gradient-to-t from-onyx-950 via-onyx-950/75 to-transparent hidden md:block" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent md:hidden block" />
                   
-                  <div className="absolute top-4 end-4">
+                  <div className="absolute top-4 end-4 hidden md:block">
                     <span className="inline-block px-2.5 py-1 rounded bg-gold-800 text-onyx-950 text-[9px] font-black uppercase tracking-wider shadow-md">
                       {isArabic ? "ممول" : "Ad"}
                     </span>
                   </div>
 
-                  <div className="relative z-10 space-y-2 text-start">
-                    <h3 className="text-xl font-black text-onyx-950 leading-tight group-hover:text-gold-500 transition-colors">
+                  <div className="w-full px-4 pt-4 text-start space-y-2 md:absolute md:inset-0 md:z-10 md:flex md:flex-col md:justify-end md:p-6 md:space-y-2 md:text-start">
+                    <h3 className="text-lg md:text-xl font-black text-onyx-950 md:text-white leading-tight group-hover:text-gold-500 transition-colors">
                       {isArabic ? camp.titleAr : camp.titleEn}
                     </h3>
-                    <p className="text-onyx-600 text-xs leading-relaxed line-clamp-2 font-light">
+                    <p className="text-onyx-700 md:text-onyx-300 text-xs leading-relaxed line-clamp-3 md:line-clamp-2 font-normal md:font-light">
                       {isArabic ? camp.descAr : camp.descEn}
                     </p>
-                    <div className="flex items-center gap-1.5 text-xs text-gold-800 font-bold pt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="flex items-center gap-1.5 text-xs font-bold pt-2 text-gold-800 md:text-gold-500 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all duration-300">
                       {isArabic ? "عرض التفاصيل" : "Explore Offer"}
                       <ChevronRight className="h-3 w-3 rtl:rotate-180" />
                     </div>
