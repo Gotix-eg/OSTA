@@ -465,13 +465,12 @@ export function LandingPage({ locale }: { locale: Locale }) {
                     href={camp.link.startsWith("http") ? camp.link : `/${locale}${camp.link.startsWith("/") ? "" : "/"}${camp.link}`}
                     className={cn(
                       "group w-full flex flex-col md:block md:relative md:rounded-[2rem] md:overflow-hidden border-b border-gold-700/10 md:border md:border-gold-700/10 md:hover:border-gold-500/30 transition-all duration-500 md:shadow-xl md:bg-gold-100 pb-6 md:pb-0",
-                      showLarge
-                        ? "md:col-span-2 md:min-h-[350px] lg:min-h-[400px]"
-                        : "md:min-h-[300px]"
+                      "md:aspect-[16/9] md:h-auto md:min-h-0",
+                      showLarge ? "md:col-span-2" : ""
                     )}
                   >
                     {camp.imageUrl ? (
-                      <div className="relative w-full aspect-[16/10] md:absolute md:inset-0 md:h-full md:w-full md:aspect-auto overflow-hidden">
+                      <div className="relative w-full aspect-[16/9] md:absolute md:inset-0 md:h-full md:w-full md:aspect-auto overflow-hidden">
                         <img
                           src={cleanImageUrl(camp.imageUrl)}
                           alt=""
