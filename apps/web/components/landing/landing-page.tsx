@@ -444,51 +444,79 @@ export function LandingPage({ locale }: { locale: Locale }) {
               </div>
             </div>
 
-            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-              {campaigns.map((camp) => (
-                <Link
-                  key={camp.id}
-                  href={camp.link.startsWith("http") ? camp.link : `/${locale}${camp.link.startsWith("/") ? "" : "/"}${camp.link}`}
-                  className="group w-full flex flex-col md:block md:relative md:rounded-[2rem] md:overflow-hidden md:min-h-[300px] border-b border-gold-700/10 md:border md:border-gold-700/10 md:hover:border-gold-500/30 transition-all duration-500 md:shadow-xl md:bg-gold-100 pb-6 md:pb-0"
-                >
-                  {camp.imageUrl ? (
-                    <div className="relative w-full aspect-[16/10] md:absolute md:inset-0 md:h-full md:w-full md:aspect-auto overflow-hidden">
-                      <img
-                        src={cleanImageUrl(camp.imageUrl)}
-                        alt=""
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                      />
-                      {/* Mobile-only "ممول" badge overlayed on the top-start of the image wrapper */}
-                      <div className="absolute top-4 start-4 md:hidden z-20">
-                        <span className="inline-block px-2.5 py-1 rounded bg-gold-800 text-onyx-950 text-[9px] font-black uppercase tracking-wider shadow-md">
-                          {isArabic ? "ممول" : "Ad"}
-                        </span>
+            {/* Dynamic Grid Columns based on campaigns count to showcase the last ad in large layout */}
+            <div className={cn(
+              "grid gap-8",
+              campaigns.length === 1
+                ? "grid-cols-1"
+                : campaigns.length === 2
+                ? "grid-cols-1 md:grid-cols-3"
+                : campaigns.length === 3
+                ? "grid-cols-1 md:grid-cols-3 lg:grid-cols-4"
+                : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+            )}>
+              {campaigns.map((camp, idx) => {
+                const isLast = idx === campaigns.length - 1;
+                const showLarge = isLast && campaigns.length > 1;
+                
+                return (
+                  <Link
+                    key={camp.id}
+                    href={camp.link.startsWith("http") ? camp.link : `/${locale}${camp.link.startsWith("/") ? "" : "/"}${camp.link}`}
+                    className={cn(
+                      "group w-full flex flex-col md:block md:relative md:rounded-[2rem] md:overflow-hidden border-b border-gold-700/10 md:border md:border-gold-700/10 md:hover:border-gold-500/30 transition-all duration-500 md:shadow-xl md:bg-gold-100 pb-6 md:pb-0",
+                      showLarge
+                        ? "md:col-span-2 md:min-h-[350px] lg:min-h-[400px]"
+                        : "md:min-h-[300px]"
+                    )}
+                  >
+                    {camp.imageUrl ? (
+                      <div className="relative w-full aspect-[16/10] md:absolute md:inset-0 md:h-full md:w-full md:aspect-auto overflow-hidden">
+                        <img
+                          src={cleanImageUrl(camp.imageUrl)}
+                          alt=""
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        />
+                        {/* Mobile-only "ممول" badge overlayed on the top-start of the image wrapper */}
+                        <div className="absolute top-4 start-4 md:hidden z-20">
+                          <span className="inline-block px-2.5 py-1 rounded bg-gold-800 text-onyx-950 text-[9px] font-black uppercase tracking-wider shadow-md">
+                            {isArabic ? "ممول" : "Ad"}
+                          </span>
+                        </div>
+                      </div>
+                    ) : null}
+                    {/* Desktop: Premium deep dark gradient overlay; No overlay on mobile */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-onyx-950 via-onyx-950/75 to-transparent hidden md:block" />
+                    
+                    <div className="absolute top-4 end-4 hidden md:block">
+                      <span className="inline-block px-2.5 py-1 rounded bg-gold-800 text-onyx-950 text-[9px] font-black uppercase tracking-wider shadow-md">
+                        {isArabic ? "ممول" : "Ad"}
+                      </span>
+                    </div>
+
+                    <div className="w-full px-4 pt-4 text-start space-y-2 md:absolute md:inset-0 md:z-10 md:flex md:flex-col md:justify-end md:p-6 md:space-y-2 md:text-start">
+                      <h3 className={cn(
+                        "font-black leading-tight transition-colors",
+                        "text-lg text-onyx-950 md:text-white group-hover:text-gold-500",
+                        showLarge ? "md:text-2xl lg:text-3xl" : "md:text-xl"
+                      )}>
+                        {isArabic ? camp.titleAr : camp.titleEn}
+                      </h3>
+                      <p className={cn(
+                        "leading-relaxed font-normal md:font-light",
+                        "text-xs text-onyx-700 md:text-onyx-300",
+                        showLarge ? "md:text-sm lg:text-base md:line-clamp-3 lg:line-clamp-4" : "line-clamp-3 md:line-clamp-2"
+                      )}>
+                        {isArabic ? camp.descAr : camp.descEn}
+                      </p>
+                      <div className="flex items-center gap-1.5 text-xs font-bold pt-2 text-gold-800 md:text-gold-500 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all duration-300">
+                        {isArabic ? "عرض التفاصيل" : "Explore Offer"}
+                        <ChevronRight className="h-3 w-3 rtl:rotate-180" />
                       </div>
                     </div>
-                  ) : null}
-                  {/* Desktop: Premium deep dark gradient overlay; No overlay on mobile */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-onyx-950 via-onyx-950/75 to-transparent hidden md:block" />
-                  
-                  <div className="absolute top-4 end-4 hidden md:block">
-                    <span className="inline-block px-2.5 py-1 rounded bg-gold-800 text-onyx-950 text-[9px] font-black uppercase tracking-wider shadow-md">
-                      {isArabic ? "ممول" : "Ad"}
-                    </span>
-                  </div>
-
-                  <div className="w-full px-4 pt-4 text-start space-y-2 md:absolute md:inset-0 md:z-10 md:flex md:flex-col md:justify-end md:p-6 md:space-y-2 md:text-start">
-                    <h3 className="text-lg md:text-xl font-black text-onyx-950 md:text-white leading-tight group-hover:text-gold-500 transition-colors">
-                      {isArabic ? camp.titleAr : camp.titleEn}
-                    </h3>
-                    <p className="text-onyx-700 md:text-onyx-300 text-xs leading-relaxed line-clamp-3 md:line-clamp-2 font-normal md:font-light">
-                      {isArabic ? camp.descAr : camp.descEn}
-                    </p>
-                    <div className="flex items-center gap-1.5 text-xs font-bold pt-2 text-gold-800 md:text-gold-500 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all duration-300">
-                      {isArabic ? "عرض التفاصيل" : "Explore Offer"}
-                      <ChevronRight className="h-3 w-3 rtl:rotate-180" />
-                    </div>
-                  </div>
-                </Link>
-              ))}
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </section>
