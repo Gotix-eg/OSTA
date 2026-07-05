@@ -54,6 +54,13 @@ jobs:
           ./gradlew bundleRelease
         working-directory: ./apps/mobile/android
 
+      - name: 🔍 Verify Signing Secrets
+        run: |
+          if [ -z "${{ secrets.ANDROID_SIGNING_KEY }}" ]; then echo "ANDROID_SIGNING_KEY is EMPTY"; else echo "ANDROID_SIGNING_KEY is set"; fi
+          if [ -z "${{ secrets.ANDROID_ALIAS }}" ]; then echo "ANDROID_ALIAS is EMPTY"; else echo "ANDROID_ALIAS is set"; fi
+          if [ -z "${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" ]; then echo "ANDROID_KEYSTORE_PASSWORD is EMPTY"; else echo "ANDROID_KEYSTORE_PASSWORD is set"; fi
+          if [ -z "${{ secrets.ANDROID_KEY_PASSWORD }}" ]; then echo "ANDROID_KEY_PASSWORD is EMPTY"; else echo "ANDROID_KEY_PASSWORD is set"; fi
+
       - name: 🔏 Sign App Bundle
         uses: r0adkll/sign-android-release@v1
         with:
