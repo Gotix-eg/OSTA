@@ -56,20 +56,13 @@ jobs:
 
       - name: 🔍 Verify Signing Secrets
         run: |
-          echo "=== SECRETS VERIFICATION ===" > secrets_status.txt
-          if [ -z "${{ secrets.ANDROID_SIGNING_KEY }}" ]; then echo "ANDROID_SIGNING_KEY is EMPTY" >> secrets_status.txt; else echo "ANDROID_SIGNING_KEY is set (length: ${#signingKey})" >> secrets_status.txt; fi
-          if [ -z "${{ secrets.ANDROID_ALIAS }}" ]; then echo "ANDROID_ALIAS is EMPTY" >> secrets_status.txt; else echo "ANDROID_ALIAS is set" >> secrets_status.txt; fi
-          if [ -z "${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" ]; then echo "ANDROID_KEYSTORE_PASSWORD is EMPTY" >> secrets_status.txt; else echo "ANDROID_KEYSTORE_PASSWORD is set" >> secrets_status.txt; fi
-          if [ -z "${{ secrets.ANDROID_KEY_PASSWORD }}" ]; then echo "ANDROID_KEY_PASSWORD is EMPTY" >> secrets_status.txt; else echo "ANDROID_KEY_PASSWORD is set" >> secrets_status.txt; fi
+          echo "### === SECRETS VERIFICATION ===" >> $GITHUB_STEP_SUMMARY
+          if [ -z "${{ secrets.ANDROID_SIGNING_KEY }}" ]; then echo "ANDROID_SIGNING_KEY is EMPTY" >> $GITHUB_STEP_SUMMARY; else echo "ANDROID_SIGNING_KEY is set (length: ${#signingKey})" >> $GITHUB_STEP_SUMMARY; fi
+          if [ -z "${{ secrets.ANDROID_ALIAS }}" ]; then echo "ANDROID_ALIAS is EMPTY" >> $GITHUB_STEP_SUMMARY; else echo "ANDROID_ALIAS is set" >> $GITHUB_STEP_SUMMARY; fi
+          if [ -z "${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" ]; then echo "ANDROID_KEYSTORE_PASSWORD is EMPTY" >> $GITHUB_STEP_SUMMARY; else echo "ANDROID_KEYSTORE_PASSWORD is set" >> $GITHUB_STEP_SUMMARY; fi
+          if [ -z "${{ secrets.ANDROID_KEY_PASSWORD }}" ]; then echo "ANDROID_KEY_PASSWORD is EMPTY" >> $GITHUB_STEP_SUMMARY; else echo "ANDROID_KEY_PASSWORD is set" >> $GITHUB_STEP_SUMMARY; fi
         env:
           signingKey: ${{ secrets.ANDROID_SIGNING_KEY }}
-
-      - name: 📤 Upload Verification Status
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: secrets-verification-status
-          path: secrets_status.txt
 
       - name: 🔏 Sign App Bundle
         uses: r0adkll/sign-android-release@v1

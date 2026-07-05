@@ -22,7 +22,7 @@
         "backgroundColor": "#1a0a0a"
       },
       "package": "ostafy.net",
-      "versionCode": 15,
+      "versionCode": 16,
       "edgeToEdgeEnabled": true,
       "permissions": [
         "android.permission.INTERNET",
