@@ -66,11 +66,15 @@ export function ServicesListing({ locale }: { locale: Locale }) {
       </section>
 
       {/* ── Grid ── */}
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid gap-6 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {categories.length === 0 ? (
           // Fallback placeholders if API is empty
           Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="onyx-card h-48 animate-pulse border-onyx-800 bg-onyx-800/20" />
+            <div key={i} className="flex flex-col gap-3 rounded-[1.5rem] border border-white/5 p-3 animate-pulse bg-onyx-800/20">
+              <div className="w-full aspect-square rounded-xl bg-onyx-800" />
+              <div className="h-4 w-2/3 bg-onyx-800 rounded px-1" />
+              <div className="h-3 w-1/3 bg-onyx-800 rounded px-1" />
+            </div>
           ))
         ) : (
           categories.map((cat) => {
@@ -79,25 +83,28 @@ export function ServicesListing({ locale }: { locale: Locale }) {
               <Link 
                 key={cat.id} 
                 href={`/${locale}/services/${cat.slug}`}
-                className="onyx-card p-0 group hover:-translate-y-2 hover:border-gold-500/30 transition-all duration-500 overflow-hidden min-h-[220px] relative"
+                className="group flex flex-col gap-3 rounded-[1.5rem] bg-onyx-900/40 border border-white/5 hover:border-gold-500/30 p-3 transition-all duration-500 overflow-hidden shadow-lg"
               >
-                <img 
-                  src={imgUrl} 
-                  alt=""
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  loading="lazy"
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none';
-                  }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-onyx-950 via-onyx-950/40 to-transparent" />
+                {/* 1:1 Aspect Ratio Image Container with NO overlay */}
+                <div className="relative w-full aspect-square rounded-xl overflow-hidden bg-onyx-800">
+                  <img 
+                    src={imgUrl} 
+                    alt=""
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    loading="lazy"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                </div>
                 
-                <div className="relative p-8 h-full flex flex-col justify-end">
-                  <h3 className="text-xl font-black text-white mb-2 group-hover:text-gold-500 transition-colors">
+                {/* Content Section below the image */}
+                <div className="flex flex-col gap-1.5 px-1 py-1 text-start">
+                  <h3 className="text-sm sm:text-base font-black text-white group-hover:text-gold-500 transition-colors line-clamp-1">
                     {isArabic ? cat.nameAr : cat.nameEn}
                   </h3>
                   
-                  <div className="flex items-center gap-2 text-xs font-black text-gold-500/80 group-hover:text-gold-500 transition-colors">
+                  <div className="flex items-center gap-1.5 text-[10px] sm:text-xs font-bold text-gold-500/80 group-hover:text-gold-500 transition-colors">
                     {isArabic ? "استكشف الخدمات" : "Explore Services"}
                     {isArabic ? <ArrowLeft className="h-3 w-3" /> : <ArrowRight className="h-3 w-3" />}
                   </div>
