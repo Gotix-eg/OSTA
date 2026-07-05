@@ -28,19 +28,43 @@ export default function App() {
     return () => backHandler.remove();
   }, [canGoBack]);
 
+  const handleOpenURL = async (url) => {
+    try {
+      let targetUrl = url;
+      
+      // Parse intent:// scheme for Android (common for WhatsApp/Facebook links)
+      if (Platform.OS === 'android' && url.startsWith('intent://')) {
+        const schemeMatch = url.match(/scheme=([^;]+)/);
+        if (schemeMatch && schemeMatch[1]) {
+          const scheme = schemeMatch[1];
+          const body = url.substring(9).split('#Intent;')[0];
+          targetUrl = `${scheme}://${body}`;
+        }
+      }
+      
+      const supported = await Linking.canOpenURL(targetUrl);
+      if (supported) {
+        await Linking.openURL(targetUrl);
+      } else {
+        // Fallback: try to open directly
+        await Linking.openURL(targetUrl);
+      }
+    } catch (err) {
+      console.warn('Failed to open custom URL: ' + url, err);
+    }
+  };
+
   const handleShouldStartLoad = (event) => {
     const { url } = event;
     
-    // Intercept external deep links / non-http schemes (WhatsApp, Phone call, Email, SMS)
+    // Intercept external deep links / non-http schemes (WhatsApp, Phone call, Email, SMS, intent)
+    const isWhatsAppWeb = url.includes('wa.me') || url.includes('whatsapp.com');
     const isExternalScheme = !url.startsWith('http://') && !url.startsWith('https://');
-    const isWhatsApp = url.includes('wa.me') || url.includes('whatsapp.com');
     const isTelOrMail = url.startsWith('tel:') || url.startsWith('mailto:') || url.startsWith('sms:');
 
-    if (isExternalScheme || isWhatsApp || isTelOrMail) {
-      Linking.openURL(url).catch((err) => {
-        console.warn('Failed to open external link:', err);
-      });
-      return false; // Stop WebView from navigating to this url
+    if (isExternalScheme || isWhatsAppWeb || isTelOrMail) {
+      handleOpenURL(url);
+      return false; // Stop WebView from navigating to this url (synchronously!)
     }
     
     return true; // Allow WebView to load standard http/https links
