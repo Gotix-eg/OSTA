@@ -1,5 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, SafeAreaView, Platform, BackHandler, TouchableOpacity, View, Linking, Alert } from 'react-native';
+import {
+  StyleSheet,
+  SafeAreaView,
+  Platform,
+  BackHandler,
+  TouchableOpacity,
+  View,
+  Linking,
+} from 'react-native';
 import { WebView } from 'react-native-webview';
 import { useRef, useState, useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
@@ -9,6 +17,9 @@ export default function App() {
   const webViewRef = useRef(null);
   const [canGoBack, setCanGoBack] = useState(false);
 
+  // =============================================
+  // معالجة زر الرجوع الخلفي في الأندرويد
+  // =============================================
   useEffect(() => {
     const backAction = () => {
       if (canGoBack && webViewRef.current) {
@@ -21,60 +32,58 @@ export default function App() {
     return () => backHandler.remove();
   }, [canGoBack]);
 
-  // فتح الروابط الخارجية في تطبيقاتها المخصصة
+  // =============================================
+  // فتح الروابط الخارجية في تطبيقاتها
+  // =============================================
   const openExternalURL = (url) => {
+    if (!url || url === 'about:blank') return;
     try {
-      // معالجة رابط intent:// الخاص بأندرويد
+      // معالجة intent:// (أندرويد)
       if (Platform.OS === 'android' && url.startsWith('intent://')) {
         const schemeMatch = url.match(/scheme=([^;#]+)/);
         const packageMatch = url.match(/package=([^;#]+)/);
-        if (schemeMatch && schemeMatch[1]) {
-          const scheme = schemeMatch[1];
+        if (schemeMatch?.[1]) {
           const body = url.substring('intent://'.length).split('#Intent;')[0];
-          const newUrl = `${scheme}://${body}`;
+          const newUrl = `${schemeMatch[1]}://${body}`;
           Linking.openURL(newUrl).catch(() => {
-            // إذا لم يكن التطبيق مثبتاً، افتح المتجر
-            if (packageMatch && packageMatch[1]) {
+            if (packageMatch?.[1]) {
               Linking.openURL(`market://details?id=${packageMatch[1]}`).catch(() => {});
             }
           });
         }
         return;
       }
-
-      // فتح الرابط مباشرة
-      Linking.openURL(url).catch((err) => {
-        console.warn('Cannot open URL:', url, err);
-      });
+      Linking.openURL(url).catch((e) => console.warn('Linking error:', e));
     } catch (e) {
       console.warn('openExternalURL error:', e);
     }
   };
 
-  // اعتراض أي رابط قبل تحميله في WebView
+  // =============================================
+  // اعتراض الروابط قبل تحميلها في WebView
+  // =============================================
   const handleShouldStartLoad = (request) => {
     const url = request.url;
+    if (!url || url === 'about:blank') return true;
 
-    // السماح بتحميل الصفحة الأولى دائماً
-    if (url === OSTA_URL || url === 'about:blank') return true;
+    const isHTTP = url.startsWith('http://') || url.startsWith('https://');
+    const isExternal =
+      url.includes('wa.me') ||
+      url.includes('api.whatsapp.com') ||
+      url.includes('whatsapp.com/send') ||
+      url.includes('t.me/') ||
+      url.includes('maps.google') ||
+      url.includes('goo.gl/maps') ||
+      url.includes('play.google.com');
 
-    // اعتراض الروابط غير HTTP
-    const isExternalScheme = !url.startsWith('http://') && !url.startsWith('https://');
+    // أي رابط مش http أو https → افتحه خارجياً
+    if (!isHTTP) {
+      openExternalURL(url);
+      return false;
+    }
 
-    // اعتراض روابط واتساب حتى لو بدأت بـ https
-    const isWhatsApp = url.includes('wa.me') || url.includes('api.whatsapp.com') || url.includes('whatsapp.com/send');
-
-    // اعتراض روابط مواقع التواصل الاجتماعي الخارجية
-    const isSocialMedia =
-      url.includes('facebook.com') ||
-      url.includes('instagram.com') ||
-      url.includes('twitter.com') ||
-      url.includes('youtube.com') ||
-      url.includes('t.me') || // تيليجرام
-      url.includes('maps.google.com') ||
-      url.includes('goo.gl/maps');
-
-    if (isExternalScheme || isWhatsApp || isSocialMedia) {
+    // روابط خارجية معروفة → افتحها خارجياً
+    if (isExternal) {
       openExternalURL(url);
       return false;
     }
@@ -82,79 +91,137 @@ export default function App() {
     return true;
   };
 
-  // JavaScript لاعتراض نوافذ target="_blank" داخل الصفحة
+  // =============================================
+  // JavaScript Bridge - الحل الجذري للمشكلة
+  // يعترض كل الـ clicks قبل أي شيء ويرسلها لـ RN
+  // =============================================
   const injectedJavaScript = `
     (function() {
-      // منع فتح نوافذ جديدة وتحويلها للنافذة الحالية
-      var originalOpen = window.open;
-      window.open = function(url, name, features) {
+      // اعتراض كل الـ clicks على أي رابط
+      document.addEventListener('click', function(e) {
+        var el = e.target;
+        // ابحث عن أقرب عنصر <a> حتى لو الضغط على عنصر داخله
+        for (var i = 0; i < 5; i++) {
+          if (!el) break;
+          if (el.tagName === 'A') {
+            var href = el.href || el.getAttribute('href');
+            if (href && href !== '' && !href.startsWith('javascript:')) {
+              var isHTTP = href.startsWith('http://') || href.startsWith('https://');
+              var isSameOrigin = href.startsWith(window.location.origin);
+              
+              // أي رابط مش في نفس الموقع → أرسله لـ React Native
+              if (!isHTTP || !isSameOrigin) {
+                e.preventDefault();
+                e.stopPropagation();
+                window.ReactNativeWebView.postMessage(JSON.stringify({
+                  type: 'OPEN_EXTERNAL',
+                  url: href
+                }));
+                return;
+              }
+              
+              // روابط واتساب وتليجرام ومواقع خارجية → أرسلها لـ RN
+              var externalPatterns = ['wa.me', 'api.whatsapp.com', 't.me/', 'maps.google', 'play.google'];
+              for (var j = 0; j < externalPatterns.length; j++) {
+                if (href.includes(externalPatterns[j])) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  window.ReactNativeWebView.postMessage(JSON.stringify({
+                    type: 'OPEN_EXTERNAL',
+                    url: href
+                  }));
+                  return;
+                }
+              }
+            }
+            break;
+          }
+          el = el.parentElement;
+        }
+      }, true);
+
+      // منع window.open من فتح نوافذ جديدة
+      window.open = function(url) {
         if (url && url !== 'about:blank') {
-          window.location.href = url;
+          window.ReactNativeWebView.postMessage(JSON.stringify({
+            type: 'OPEN_EXTERNAL',
+            url: url
+          }));
         }
         return null;
       };
 
-      // اعتراض روابط target="_blank"
-      document.addEventListener('click', function(e) {
-        var target = e.target;
-        while (target && target.tagName !== 'A') {
-          target = target.parentElement;
+      // إضافة padding في الأسفل لتجنب تغطية المنيو بأزرار الأندرويد
+      var style = document.createElement('style');
+      style.innerHTML = \`
+        /* padding للمنيو السفلي على الأجهزة التي فيها شريط تنقل */
+        body {
+          padding-bottom: env(safe-area-inset-bottom, 0px) !important;
         }
-        if (target && target.tagName === 'A') {
-          var href = target.getAttribute('href');
-          var targetAttr = target.getAttribute('target');
-          if (targetAttr === '_blank' && href) {
-            e.preventDefault();
-            window.location.href = href;
-          }
+        /* ضمان أن المنيو السفلي فوق شريط التنقل */
+        nav, [class*="bottom-nav"], [class*="bottomNav"], 
+        [class*="bottom-bar"], [class*="bottomBar"],
+        [class*="footer-nav"], [class*="tab-bar"],
+        [class*="navbar"][style*="bottom"],
+        .btm-nav, .bottom-navigation {
+          padding-bottom: env(safe-area-inset-bottom, 16px) !important;
+          margin-bottom: 0 !important;
         }
-      }, true);
+      \`;
+      document.head.appendChild(style);
+
+      true;
     })();
-    true;
   `;
+
+  // =============================================
+  // معالجة الرسائل من JavaScript Bridge
+  // =============================================
+  const handleMessage = (event) => {
+    try {
+      const data = JSON.parse(event.nativeEvent.data);
+      if (data.type === 'OPEN_EXTERNAL' && data.url) {
+        openExternalURL(data.url);
+      }
+    } catch (e) {
+      console.warn('handleMessage error:', e);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="light" backgroundColor="#000000" />
-      <View style={{ flex: 1 }}>
+      <View style={styles.webviewContainer}>
         <WebView
           ref={webViewRef}
           source={{ uri: OSTA_URL }}
           style={styles.webview}
-          // السماح بجميع الأصول لتفادي حجب أي محتوى
+          // السماح بجميع الأصول
           originWhitelist={['*']}
-          // اعتراض الروابط قبل تحميلها
+          // اعتراض الروابط
           onShouldStartLoadWithRequest={handleShouldStartLoad}
-          // تحديث حالة التنقل
+          // JavaScript Bridge
+          injectedJavaScript={injectedJavaScript}
+          onMessage={handleMessage}
+          // تتبع التنقل
           onNavigationStateChange={(navState) => {
             setCanGoBack(navState.canGoBack);
           }}
-          // JavaScript مُحقون لمعالجة target="_blank"
-          injectedJavaScript={injectedJavaScript}
-          // معالجة أخطاء التحميل بدلاً من تعطل التطبيق
-          onError={(syntheticEvent) => {
-            const { nativeEvent } = syntheticEvent;
-            console.warn('WebView error:', nativeEvent);
-            // إعادة تحميل الصفحة تلقائياً عند الخطأ
-            if (webViewRef.current) {
-              webViewRef.current.reload();
-            }
+          // معالجة الأخطاء بدلاً من التعطل
+          onError={() => {
+            setTimeout(() => webViewRef.current?.reload(), 1000);
           }}
-          onHttpError={(syntheticEvent) => {
-            const { nativeEvent } = syntheticEvent;
-            console.warn('WebView HTTP error:', nativeEvent.statusCode);
+          onHttpError={(e) => {
+            console.warn('HTTP Error:', e.nativeEvent.statusCode);
           }}
-          // إعدادات Android
+          // إعدادات أساسية
+          javaScriptEnabled={true}
+          domStorageEnabled={true}
+          cacheEnabled={true}
+          mixedContentMode="compatibility"
           allowsBackForwardNavigationGestures={true}
           bounces={false}
           showsVerticalScrollIndicator={false}
-          // السماح بمحتوى مختلط
-          mixedContentMode="compatibility"
-          // تحسين الأداء
-          cacheEnabled={true}
-          domStorageEnabled={true}
-          javaScriptEnabled={true}
-          // منع تكبير النص التلقائي
           textZoom={100}
         />
 
@@ -177,6 +244,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#000000',
     paddingTop: Platform.OS === 'android' ? 25 : 0,
+  },
+  webviewContainer: {
+    flex: 1,
+    // padding إضافي في الأسفل لتجنب تغطية المنيو بأزرار الأندرويد
+    paddingBottom: Platform.OS === 'android' ? 0 : 0,
   },
   webview: {
     flex: 1,
