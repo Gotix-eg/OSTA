@@ -13,14 +13,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 🏗 Setup repo
+      - name: 🏗 Checkout repo
         uses: actions/checkout@v4
 
       - name: 🏗 Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: 'npm'
+          node-version: 22
 
       - name: 🏗 Setup Java
         uses: actions/setup-java@v4
@@ -28,15 +27,31 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
 
-      - name: 📦 Install root dependencies
+      - name: 🏗 Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: 📦 Install dependencies
         run: npm install
 
+      - name: 📦 Install mobile dependencies
+        run: npm install
+        working-directory: ./apps/mobile
+
       - name: 🚀 Prebuild Android
-        run: npx expo prebuild --platform android --no-install
+        run: npx expo prebuild --platform android --clean --no-install
+        working-directory: ./apps/mobile
+
+      - name: 🔧 Ensure New Architecture is disabled
+        run: |
+          sed -i 's/newArchEnabled=true/newArchEnabled=false/g' android/gradle.properties
+          echo "gradle.properties after patch:"
+          grep "newArchEnabled" android/gradle.properties
         working-directory: ./apps/mobile
 
       - name: 🛠 Build AAB
-        run: ./gradlew bundleRelease
+        run: |
+          chmod +x ./gradlew
+          ./gradlew bundleRelease
         working-directory: ./apps/mobile/android
 
       - name: 🔏 Sign App Bundle
@@ -52,5 +67,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: osta-aab-release
-          path: apps/mobile/android/app/build/outputs/bundle/release/app-release.aab
-
+          path: apps/mobile/android/app/build/outputs/bundle/release/*.aab
+          retention-days: 30
