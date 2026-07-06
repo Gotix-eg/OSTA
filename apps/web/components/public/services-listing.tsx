@@ -29,7 +29,9 @@ const serviceImages: Record<string, string> = {
   computer: "https://images.unsplash.com/photo-1588508065123-287b28e013da?q=80&w=1000&auto=format&fit=crop&v=osta4",
   "computer-repair": "https://images.unsplash.com/photo-1588508065123-287b28e013da?q=80&w=1000&auto=format&fit=crop&v=osta4",
   cameras: "/images/services/cam.jpg",
-  cctv: "/images/services/cam.jpg"
+  cctv: "/images/services/cam.jpg",
+  tiling: "https://images.unsplash.com/photo-1502005229762-fc1b2b812ca5?q=80&w=1000&auto=format&fit=crop",
+  plastering: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=1000&auto=format&fit=crop"
 };
 
 

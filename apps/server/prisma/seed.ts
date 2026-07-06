@@ -15,6 +15,8 @@ const CORE_CATEGORIES = [
   { nameAr: "شبكات كمبيوتر", nameEn: "Computer Networks", slug: "networks", icon: "network" },
   { nameAr: "صيانة كمبيوتر", nameEn: "Computer Repair", slug: "computer-repair", icon: "monitor" },
   { nameAr: "تركيب كاميرات", nameEn: "Camera Installation", slug: "cctv", icon: "camera" },
+  { nameAr: "مبلط سيراميك", nameEn: "Ceramic Tiling", slug: "tiling", icon: "grid" },
+  { nameAr: "أعمال محارة", nameEn: "Plastering", slug: "plastering", icon: "layers" },
 ];
 
 async function main() {

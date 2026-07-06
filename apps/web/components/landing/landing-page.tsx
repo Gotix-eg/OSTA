@@ -8,7 +8,7 @@ import {
   Store, Users, CheckCircle2, Menu, X,
   Facebook, Instagram, Phone, Mail,
   Droplets, Wrench, PaintBucket, Network, Settings,
-  Megaphone
+  Megaphone, Grid, Layers
 } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect, useMemo } from "react";
@@ -38,12 +38,14 @@ function getCategoryColor(slug: string): string {
     "computer-repair": "from-emerald-400 to-emerald-600",
     cctv: "from-red-400 to-red-600",
     cameras: "from-red-400 to-red-600",
+    tiling: "from-cyan-600 to-cyan-800",
+    plastering: "from-orange-500 to-orange-700",
   };
   return colors[slug] || "from-gold-400 to-gold-600";
 }
 
 const iconMap: Record<string, any> = {
-  Zap, Waves, Hammer, Wind, Smartphone, Palette, Layout, Globe, Monitor, Camera, Droplets, Wrench, PaintBucket, Network, Settings
+  Zap, Waves, Hammer, Wind, Smartphone, Palette, Layout, Globe, Monitor, Camera, Droplets, Wrench, PaintBucket, Network, Settings, Grid, Layers
 };
 
 const CRAFTS = [
@@ -57,6 +59,8 @@ const CRAFTS = [
   { id: "networks", name: { ar: "الشبكات", en: "Networks" }, image: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?q=80&w=1000&auto=format&fit=crop&v=osta4", color: "from-indigo-400 to-indigo-600", icon: Network },
   { id: "computer-repair", name: { ar: "صيانة كمبيوتر", en: "Computer" }, image: "https://images.unsplash.com/photo-1588508065123-287b28e013da?q=80&w=1000&auto=format&fit=crop&v=osta4", color: "from-emerald-400 to-emerald-600", icon: Monitor },
   { id: "cctv", name: { ar: "تركيب كاميرات", en: "CCTV" }, image: "/images/services/cam.jpg", color: "from-red-400 to-red-600", icon: Camera },
+  { id: "tiling", name: { ar: "مبلط سيراميك", en: "Ceramic Tiling" }, image: "https://images.unsplash.com/photo-1502005229762-fc1b2b812ca5?q=80&w=1000&auto=format&fit=crop", color: "from-cyan-600 to-cyan-800", icon: Grid },
+  { id: "plastering", name: { ar: "أعمال محارة", en: "Plastering" }, image: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=1000&auto=format&fit=crop", color: "from-orange-500 to-orange-700", icon: Layers },
 ];
 
 const POPULAR_NEIGHBORHOODS: Record<string, { value: string; labelAr: string; labelEn: string }[]> = {

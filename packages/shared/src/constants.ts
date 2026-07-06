@@ -163,5 +163,49 @@ export const serviceCategories: ServiceCategory[] = [
         }
       }
     ]
+  },
+  {
+    id: "tiling",
+    slug: "tiling",
+    icon: "Grid",
+    workersAvailable: 310,
+    name: { ar: "مبلط سيراميك", en: "Ceramic Tiling" },
+    description: {
+      ar: "تركيب وتجديد أرضيات وحوائط السيراميك والبورسلين والرخام.",
+      en: "Installation and repair of ceramic, porcelain, and marble tiles."
+    },
+    services: [
+      {
+        id: "tile-install",
+        slug: "tile-install",
+        name: { ar: "تركيب سيراميك", en: "Tile Installation" },
+        description: {
+          ar: "تركيب وتجديد الأرضيات والحوائط للسيراميك والبورسلين.",
+          en: "Installation and repair of tile floors and walls."
+        }
+      }
+    ]
+  },
+  {
+    id: "plastering",
+    slug: "plastering",
+    icon: "Layers",
+    workersAvailable: 280,
+    name: { ar: "محارة", en: "Plastering" },
+    description: {
+      ar: "أعمال المحارة والتلييس وتجهيز الحوائط للدهانات.",
+      en: "Wall plastering, smoothing, and prep work for painting."
+    },
+    services: [
+      {
+        id: "plaster-wall",
+        slug: "plaster-wall",
+        name: { ar: "أعمال محارة", en: "Wall Plastering" },
+        description: {
+          ar: "أعمال محارة وتنعيم وتخشين للأسطح وتجهيزها للدهان.",
+          en: "Screeding, leveling, and smoothing plaster surfaces."
+        }
+      }
+    ]
   }
 ];
