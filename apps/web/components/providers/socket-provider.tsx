@@ -84,6 +84,74 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
     };
   }, [isAuthenticated]);
 
+  // ==============================================================
+  // تسجيل رمز التنبيهات (Expo Push Token) للخادم عند تسجيل الدخول
+  // ==============================================================
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const getPushTokenAndRegister = async () => {
+      const win = window as any;
+      const pushToken = win.EXPO_PUSH_TOKEN;
+      if (!pushToken) {
+        // Request the token from Native if not set yet
+        try {
+          if (win.ReactNativeWebView) {
+            win.ReactNativeWebView.postMessage(JSON.stringify({ type: "GET_PUSH_TOKEN" }));
+          }
+        } catch (e) {
+          // ignore
+        }
+        return;
+      }
+
+      const registeredKey = `osta_push_registered_${pushToken}`;
+      if (localStorage.getItem(registeredKey) === "true") {
+        return; // Registered in this session already
+      }
+
+      try {
+        const response = await fetch(`${resolveApiBaseUrl()}/notifications/register-push`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({ token: pushToken }),
+          credentials: "include",
+        });
+
+        if (response.ok) {
+          localStorage.setItem(registeredKey, "true");
+          console.log("Push token registered successfully:", pushToken);
+        }
+      } catch (error) {
+        console.error("Failed to register push token:", error);
+      }
+    };
+
+    // Try registering right away
+    void getPushTokenAndRegister();
+
+    // Listen for push token messages injected from Native WebView
+    const handleWebViewMessage = (event: MessageEvent) => {
+      try {
+        const data = JSON.parse(event.data);
+        if (data.type === "SET_PUSH_TOKEN" && data.token) {
+          (window as any).EXPO_PUSH_TOKEN = data.token;
+          void getPushTokenAndRegister();
+        }
+      } catch {
+        // Not JSON message
+      }
+    };
+
+    window.addEventListener("message", handleWebViewMessage);
+    return () => {
+      window.removeEventListener("message", handleWebViewMessage);
+    };
+  }, [isAuthenticated]);
+
   return (
     <SocketContext.Provider value={{ socket, isConnected }}>
       {children}

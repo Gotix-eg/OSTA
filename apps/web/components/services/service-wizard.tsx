@@ -131,6 +131,19 @@ const categoryOptions: Record<string, { ar: string; en: string }[]> = {
     { ar: "صيانة كاميرات أو جهاز التسجيل (DVR)", en: "Maintain cameras or DVR/NVR" },
     { ar: "ربط الكاميرات بالموبايل", en: "Connect cameras to mobile app" },
   ],
+  tiling: [
+    { ar: "تركيب سيراميك أرضيات", en: "Floor tile installation" },
+    { ar: "تركيب سيراميك حوائط (مطبخ / حمام)", en: "Wall tile installation" },
+    { ar: "تركيب بورسلين أو رخام", en: "Porcelain or marble installation" },
+    { ar: "ترميم وإصلاح بلاط وسيراميك تالف", en: "Repair cracked or damaged tiles" },
+    { ar: "عمل وزرات وسقيفة بلاط", en: "Skirting and thresholds" },
+  ],
+  plastering: [
+    { ar: "أعمال محارة شقة بالكامل", en: "Full apartment plastering" },
+    { ar: "محارة غرف فردية أو حوائط محددة", en: "Single room or specific wall plastering" },
+    { ar: "تلييس وترميم عيوب المحارة القديمة", en: "Repairing and patch plastering" },
+    { ar: "تنعيم وتخشين حوائط للدهان", en: "Smoothing/roughing surfaces for prep" },
+  ],
 };
 
 const whenOptions = [

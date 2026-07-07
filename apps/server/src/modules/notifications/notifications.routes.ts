@@ -92,4 +92,21 @@ router.delete("/push-token", catchAsync(async (request: Request, response: Respo
   response.json(successResponse({}, "تم حذف push token"));
 }));
 
+// POST /api/notifications/register-push — Register Expo push notification token for the user
+router.post("/register-push", catchAsync(async (request: Request, response: Response) => {
+  const userId = request.auth!.userId;
+  const { token } = request.body as { token: string };
+
+  if (!token) {
+    throw new ApiError(400, "رمز التنبيهات (token) مطلوب");
+  }
+
+  const updatedUser = await prisma.user.update({
+    where: { id: userId },
+    data: { expoPushToken: token },
+  });
+
+  response.json(successResponse({ pushToken: updatedUser.expoPushToken }, "تم تسجيل رمز التنبيهات بنجاح"));
+}));
+
 export const notificationsRouter = router;
