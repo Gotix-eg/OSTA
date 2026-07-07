@@ -8,6 +8,7 @@ export type CommonStackParamList = {
   Chat: undefined;
   RequestDetails: { requestId?: string } | undefined;
   Notifications: undefined;
+  WorkerProfile: { workerId: string };
   CreateRequest: {
     categoryId?: string;
     categorySlug?: string;

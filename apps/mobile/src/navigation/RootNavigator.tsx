@@ -15,6 +15,7 @@ import { MyRequestsScreen } from "../screens/client/MyRequestsScreen";
 import { MaterialsScreen } from "../screens/client/MaterialsScreen";
 import { AllServicesScreen } from "../screens/client/AllServicesScreen";
 import { VendorsScreen } from "../screens/client/VendorsScreen";
+import { WorkerProfileScreen } from "../screens/client/WorkerProfileScreen";
 import { WorkerDashboardScreen } from "../screens/worker/DashboardScreen";
 import { JobsFeedScreen } from "../screens/worker/JobsFeedScreen";
 import { ActiveJobScreen } from "../screens/worker/ActiveJobScreen";
@@ -28,7 +29,7 @@ import { RequestDetailsScreen } from "../screens/common/RequestDetailsScreen";
 import type { AuthStackParamList, CommonStackParamList } from "./types";
 
 const AuthStack = createNativeStackNavigator<AuthStackParamList>();
-const RootStack = createNativeStackNavigator<CommonStackParamList & { RoleTabs: undefined }>();
+const RootStack = createNativeStackNavigator<any>();
 const Tab = createBottomTabNavigator();
 
 function AuthNavigator() {
@@ -90,27 +91,24 @@ function VendorTabs() {
   );
 }
 
-function RoleTabs() {
-  const { role } = useAuth();
-  if (role === "WORKER") {
-    return <WorkerTabs />;
-  }
-  if (role === "VENDOR") {
-    return <VendorTabs />;
-  }
-  return <ClientTabs />;
-}
-
 function AppNavigator() {
   const { theme } = useTheme();
+  const { role } = useAuth();
 
   return (
     <RootStack.Navigator screenOptions={{
       headerShown: false,
       contentStyle: { backgroundColor: theme.background }
     }}>
-      <RootStack.Screen name="RoleTabs" component={RoleTabs} />
+      {role === "WORKER" ? (
+        <RootStack.Screen name="WorkerTabs" component={WorkerTabs} />
+      ) : role === "VENDOR" ? (
+        <RootStack.Screen name="VendorTabs" component={VendorTabs} />
+      ) : (
+        <RootStack.Screen name="ClientTabs" component={ClientTabs} />
+      )}
       <RootStack.Screen name="CreateRequest" component={CreateRequestScreen} />
+      <RootStack.Screen name="WorkerProfile" component={WorkerProfileScreen} />
       <RootStack.Screen name="Chat" component={ChatScreen} />
       <RootStack.Screen name="RequestDetails" component={RequestDetailsScreen} />
       <RootStack.Screen name="Notifications" component={NotificationsScreen} />

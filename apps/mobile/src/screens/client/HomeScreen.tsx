@@ -389,35 +389,40 @@ export function HomeScreen() {
               <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.workersContainer}>
                 {workers.data.map((worker) => (
                   <AppCard key={worker.id} style={styles.workerCard}>
-                    <View style={styles.workerHeader}>
-                      <View style={styles.workerInfo}>
-                        <Text style={styles.workerName} numberOfLines={1}>
-                          {worker.name}
-                        </Text>
-                        <Text style={styles.workerProfession} numberOfLines={1}>{worker.professionAr || "فني محترف"}</Text>
+                    <Pressable
+                      onPress={() => navigation.navigate("WorkerProfile", { workerId: worker.id })}
+                      style={{ gap: spacing.md }}
+                    >
+                      <View style={styles.workerHeader}>
+                        <View style={styles.workerInfo}>
+                          <Text style={styles.workerName} numberOfLines={1}>
+                            {worker.name}
+                          </Text>
+                          <Text style={styles.workerProfession} numberOfLines={1}>{worker.professionAr || "فني محترف"}</Text>
+                        </View>
+                        <View style={styles.workerAvatarWrapper}>
+                          {worker.avatarUrl ? (
+                            <Image source={worker.avatarUrl} style={styles.workerAvatar as any} />
+                          ) : (
+                            <View style={styles.workerAvatarPlaceholder}>
+                              <Ionicons name="person" size={24} color={theme.muted} />
+                            </View>
+                          )}
+                        </View>
                       </View>
-                      <View style={styles.workerAvatarWrapper}>
-                        {worker.avatarUrl ? (
-                          <Image source={worker.avatarUrl} style={styles.workerAvatar as any} />
-                        ) : (
-                          <View style={styles.workerAvatarPlaceholder}>
-                            <Ionicons name="person" size={24} color={theme.muted} />
-                          </View>
-                        )}
+                      
+                      <View style={styles.workerMeta}>
+                        <View style={styles.workerRating}>
+                          <Ionicons name="star" size={14} color="#D7A24D" />
+                          <Text style={styles.workerRatingText}>
+                            {worker.rating?.toFixed(1) ?? "5.0"} ({worker.ratingCount ?? 0})
+                          </Text>
+                        </View>
+                        <View style={styles.workerExp}>
+                          <Text style={styles.workerExpText}>{worker.totalJobs ?? 0} عملية</Text>
+                        </View>
                       </View>
-                    </View>
-                    
-                    <View style={styles.workerMeta}>
-                      <View style={styles.workerRating}>
-                        <Ionicons name="star" size={14} color="#D7A24D" />
-                        <Text style={styles.workerRatingText}>
-                          {worker.rating?.toFixed(1) ?? "5.0"} ({worker.ratingCount ?? 0})
-                        </Text>
-                      </View>
-                      <View style={styles.workerExp}>
-                        <Text style={styles.workerExpText}>{worker.totalJobs ?? 0} عملية</Text>
-                      </View>
-                    </View>
+                    </Pressable>
 
                     <Pressable 
                       style={styles.bookButton} 
