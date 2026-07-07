@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Image } from "expo-image";
-import { ScrollView, StyleSheet, Text, View, Pressable, ActivityIndicator, Linking } from "react-native";
+import { ScrollView, StyleSheet, Text, View, Pressable, ActivityIndicator, Linking, Animated } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
@@ -130,6 +130,38 @@ export function HomeScreen() {
 
   const greetings = `أهلاً، ${user?.firstName ?? "عميلنا العزيز"}`;
 
+  // ── Scroll-Driven Animation Values ──
+  const scrollY = useRef(new Animated.Value(0)).current;
+
+  // Parallax + Scale + Fade for Top Banner
+  const bannerTranslateY = scrollY.interpolate({
+    inputRange: [0, 180],
+    outputRange: [0, 75],
+    extrapolate: "clamp",
+  });
+  const bannerScale = scrollY.interpolate({
+    inputRange: [-150, 0],
+    outputRange: [1.3, 1],
+    extrapolate: "clamp",
+  });
+  const bannerOpacity = scrollY.interpolate({
+    inputRange: [0, 180],
+    outputRange: [1, 0],
+    extrapolate: "clamp",
+  });
+
+  // Sticky Header Collapsing Offset
+  const stickyHeaderTranslateY = scrollY.interpolate({
+    inputRange: [0, 60],
+    outputRange: [0, -42],
+    extrapolate: "clamp",
+  });
+  const headerRowOpacity = scrollY.interpolate({
+    inputRange: [0, 35],
+    outputRange: [1, 0],
+    extrapolate: "clamp",
+  });
+
   const handleAdPress = (link: string) => {
     if (!link) return;
     
@@ -162,19 +194,30 @@ export function HomeScreen() {
   return (
     <Screen scroll={false} style={{ flex: 1, padding: 0 }} showBack={false}>
       {/* 
-        Custom ScrollView with stickyHeaderIndices={1}.
+        Custom Animated.ScrollView with stickyHeaderIndices={1}.
         This will freeze the search bar container at the top of the screen when scrolling down.
       */}
-      <ScrollView 
+      <Animated.ScrollView 
         stickyHeaderIndices={[1]} 
         showsVerticalScrollIndicator={false} 
         keyboardShouldPersistTaps="handled"
         style={{ flex: 1 }}
         contentContainerStyle={{ flexGrow: 1 }}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: true }
+        )}
+        scrollEventThrottle={16}
       >
         
         {/* 1. TOP SINGLE AD CAROUSEL / SLIDER (Fills screen width, very top) */}
-        <View style={styles.topAdBanner}>
+        <Animated.View style={[styles.topAdBanner, {
+          opacity: bannerOpacity,
+          transform: [
+            { translateY: bannerTranslateY },
+            { scale: bannerScale }
+          ]
+        }]}>
           {topSlide.imageUrl || topSlide.image ? (
             <Image source={topSlide.imageUrl ?? topSlide.image} style={styles.slideImage as any} contentFit="cover" />
           ) : (
@@ -193,11 +236,13 @@ export function HomeScreen() {
               <Ionicons name="arrow-back" size={14} color="#15110D" style={{ transform: [{ rotate: "180deg" }] }} />
             </Pressable>
           </View>
-        </View>
+        </Animated.View>
 
         {/* 2. STICKY HEADER WRAPPER (LOGO + SEARCH BAR) - sticks when scrolled */}
-        <View style={styles.stickyHeaderWrapper}>
-          <View style={styles.headerRow}>
+        <Animated.View style={[styles.stickyHeaderWrapper, {
+          transform: [{ translateY: stickyHeaderTranslateY }],
+        }]}>
+          <Animated.View style={[styles.headerRow, { opacity: headerRowOpacity }]}>
             <View style={styles.headerLeft}>
               <Pressable style={styles.iconButton} onPress={() => navigation.navigate("Notifications")}>
                 <Ionicons name="notifications-outline" size={20} color={theme.text} />
@@ -207,13 +252,13 @@ export function HomeScreen() {
               <Text style={styles.greetingText}>{greetings}</Text>
               <Image source={require("../../../assets/logo.svg")} style={styles.logo as any} contentFit="contain" />
             </View>
-          </View>
+          </Animated.View>
 
           <Pressable style={styles.searchBar} onPress={() => navigation.navigate("AllServices")}>
             <Ionicons name="search-outline" size={20} color={theme.muted} />
             <Text style={styles.searchText}>ابحث عن خدمة أو صنايعي محترف...</Text>
           </Pressable>
-        </View>
+        </Animated.View>
 
         {/* 3. SCROLLABLE INNER BODY CONTENT */}
         <View style={styles.bodyContainer}>
@@ -525,7 +570,7 @@ export function HomeScreen() {
           </View>
 
         </View>
-      </ScrollView>
+      </Animated.ScrollView>
     </Screen>
   );
 }
