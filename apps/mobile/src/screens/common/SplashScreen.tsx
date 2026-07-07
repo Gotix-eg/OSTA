@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -6,81 +6,43 @@ import {
   Animated,
   Dimensions,
   Easing,
-  Platform,
 } from "react-native";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 
 const { width, height } = Dimensions.get("window");
 
-// Scanline rows
-const SCANLINES = Array.from({ length: 40 });
+const GOLD = "#f5bd18";
+const GOLD_DIM = "rgba(245,189,24,0.18)";
+const GOLD_MID = "rgba(245,189,24,0.55)";
 
-// Random glitch block
-function GlitchBlock({ delay }: { delay: number }) {
+// Single rising spark
+function Spark({ index }: { index: number }) {
+  const y = useRef(new Animated.Value(0)).current;
   const opacity = useRef(new Animated.Value(0)).current;
-  const x = useRef(new Animated.Value(0)).current;
+  const x = useRef(width * 0.2 + Math.random() * width * 0.6).current;
+  const size = 1.5 + Math.random() * 3;
+  const dur = 1400 + Math.random() * 1800;
+  const startDelay = index * 180 + Math.random() * 400;
 
   useEffect(() => {
-    const loop = () => {
-      const randomX = Math.random() * width * 0.4;
-      const randomY = Math.random() * height;
-      const randomW = 20 + Math.random() * 120;
-      const randomH = 2 + Math.random() * 8;
-
-      x.setValue(randomX);
-      Animated.sequence([
-        Animated.delay(delay + Math.random() * 2000),
-        Animated.timing(opacity, { toValue: 0.6 + Math.random() * 0.4, duration: 30, useNativeDriver: true }),
-        Animated.timing(opacity, { toValue: 0, duration: 60, useNativeDriver: true }),
-      ]).start(() => setTimeout(loop, Math.random() * 800));
-    };
-    loop();
-  }, []);
-
-  return (
-    <Animated.View
-      style={{
-        position: "absolute",
-        top: Math.random() * height,
-        left: Math.random() * width * 0.3,
-        width: 20 + Math.random() * 120,
-        height: 2 + Math.random() * 6,
-        backgroundColor: Math.random() > 0.5 ? "#00ffff" : "#ff00ff",
-        opacity,
-      }}
-    />
-  );
-}
-
-// Single neon particle
-function NeonParticle({ index }: { index: number }) {
-  const y = useRef(new Animated.Value(height + 20)).current;
-  const opacity = useRef(new Animated.Value(0)).current;
-  const x = useRef(Math.random() * width).current;
-  const color = ["#00ffff", "#ff00ff", "#f5bd18", "#00ff88"][Math.floor(Math.random() * 4)];
-  const size = 2 + Math.random() * 4;
-  const duration = 1800 + Math.random() * 2000;
-
-  useEffect(() => {
-    const delay = index * 120;
-    const loop = () => {
-      y.setValue(height + 20);
+    const run = () => {
+      y.setValue(height * 0.7);
       opacity.setValue(0);
       Animated.parallel([
         Animated.sequence([
-          Animated.delay(delay),
-          Animated.timing(y, { toValue: -20, duration, useNativeDriver: true, easing: Easing.linear }),
+          Animated.delay(startDelay),
+          Animated.timing(y, { toValue: height * 0.1, duration: dur, useNativeDriver: true, easing: Easing.linear }),
         ]),
         Animated.sequence([
-          Animated.delay(delay),
-          Animated.timing(opacity, { toValue: 1, duration: 300, useNativeDriver: true }),
-          Animated.timing(opacity, { toValue: 0.8, duration: duration - 600, useNativeDriver: true }),
-          Animated.timing(opacity, { toValue: 0, duration: 300, useNativeDriver: true }),
+          Animated.delay(startDelay),
+          Animated.timing(opacity, { toValue: 0.9, duration: 300, useNativeDriver: true }),
+          Animated.timing(opacity, { toValue: 0.6, duration: dur - 500, useNativeDriver: true }),
+          Animated.timing(opacity, { toValue: 0, duration: 200, useNativeDriver: true }),
         ]),
-      ]).start(() => setTimeout(loop, Math.random() * 500));
+      ]).start(() => setTimeout(run, Math.random() * 600 + 200));
     };
-    loop();
+    run();
   }, []);
 
   return (
@@ -88,16 +50,17 @@ function NeonParticle({ index }: { index: number }) {
       style={{
         position: "absolute",
         left: x,
+        top: 0,
         width: size,
-        height: size,
-        borderRadius: size / 2,
-        backgroundColor: color,
-        transform: [{ translateY: y }],
+        height: size * 3,
+        borderRadius: size,
+        backgroundColor: GOLD,
         opacity,
-        shadowColor: color,
+        transform: [{ translateY: y }],
+        shadowColor: GOLD,
         shadowOffset: { width: 0, height: 0 },
         shadowOpacity: 1,
-        shadowRadius: 6,
+        shadowRadius: 4,
       }}
     />
   );
@@ -108,336 +71,260 @@ interface SplashScreenProps {
 }
 
 export function SplashScreen({ onFinish }: SplashScreenProps) {
-  // Master timeline
-  const logoScale = useRef(new Animated.Value(0.3)).current;
-  const logoOpacity = useRef(new Animated.Value(0)).current;
-  const logoY = useRef(new Animated.Value(40)).current;
 
-  const glowOpacity = useRef(new Animated.Value(0)).current;
-  const ringScale = useRef(new Animated.Value(0.2)).current;
-  const ringOpacity = useRef(new Animated.Value(0)).current;
+  /* ── icon phase ── */
+  const iconScale   = useRef(new Animated.Value(0)).current;
+  const iconOpacity = useRef(new Animated.Value(0)).current;
+  const iconRotate  = useRef(new Animated.Value(0)).current;
 
-  const lineWidth = useRef(new Animated.Value(0)).current;
-  const taglineOpacity = useRef(new Animated.Value(0)).current;
-  const taglineX = useRef(new Animated.Value(30)).current;
+  /* ── glow rings ── */
+  const ring1Scale   = useRef(new Animated.Value(0.6)).current;
+  const ring1Opacity = useRef(new Animated.Value(0)).current;
+  const ring2Scale   = useRef(new Animated.Value(0.6)).current;
+  const ring2Opacity = useRef(new Animated.Value(0)).current;
+  const ring3Scale   = useRef(new Animated.Value(0.6)).current;
+  const ring3Opacity = useRef(new Animated.Value(0)).current;
 
-  const glitchShift = useRef(new Animated.Value(0)).current;
-  const exitOpacity = useRef(new Animated.Value(1)).current;
-  const exitScale = useRef(new Animated.Value(1)).current;
+  /* ── logo text reveal ── */
+  const logoOpacity  = useRef(new Animated.Value(0)).current;
+  const logoY        = useRef(new Animated.Value(20)).current;
 
-  const [showGlitch, setShowGlitch] = useState(false);
+  /* ── line + tagline ── */
+  const lineScale    = useRef(new Animated.Value(0)).current;
+  const tagOpacity   = useRef(new Animated.Value(0)).current;
+
+  /* ── exit ── */
+  const exitOpacity  = useRef(new Animated.Value(1)).current;
+  const exitScale    = useRef(new Animated.Value(1)).current;
+
+  /* ── glitch shift on icon ── */
+  const glitch       = useRef(new Animated.Value(0)).current;
+
+  const rotate = iconRotate.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["0deg", "360deg"],
+  });
 
   useEffect(() => {
-    // Phase 1: Logo appears with glitch burst
     Animated.sequence([
-      Animated.delay(300),
 
-      // Logo glitch-in
-      Animated.parallel([
-        Animated.spring(logoScale, { toValue: 1.08, useNativeDriver: true, tension: 120, friction: 6 }),
-        Animated.timing(logoOpacity, { toValue: 1, duration: 400, useNativeDriver: true }),
-        Animated.timing(logoY, { toValue: 0, duration: 400, useNativeDriver: true, easing: Easing.out(Easing.exp) }),
-        Animated.timing(glowOpacity, { toValue: 1, duration: 600, useNativeDriver: true }),
-        Animated.spring(ringScale, { toValue: 1, useNativeDriver: true, tension: 80, friction: 8 }),
-        Animated.timing(ringOpacity, { toValue: 0.6, duration: 500, useNativeDriver: true }),
-      ]),
-
-      // Slight overshoot correction
-      Animated.spring(logoScale, { toValue: 1, useNativeDriver: true, tension: 200, friction: 10 }),
-
+      // 1. Icon spins in + glow
       Animated.delay(200),
-
-      // Horizontal line reveal
-      Animated.timing(lineWidth, { toValue: 1, duration: 500, useNativeDriver: true, easing: Easing.inOut(Easing.quad) }),
-
-      // Tagline slides in
       Animated.parallel([
-        Animated.timing(taglineOpacity, { toValue: 1, duration: 400, useNativeDriver: true }),
-        Animated.timing(taglineX, { toValue: 0, duration: 400, useNativeDriver: true, easing: Easing.out(Easing.back(2)) }),
+        Animated.spring(iconScale,   { toValue: 1,   useNativeDriver: true, tension: 90, friction: 7 }),
+        Animated.timing(iconOpacity, { toValue: 1,   duration: 500, useNativeDriver: true }),
+        Animated.timing(iconRotate,  { toValue: 1,   duration: 900, useNativeDriver: true, easing: Easing.out(Easing.back(1.4)) }),
+        Animated.timing(ring1Opacity,{ toValue: 0.7, duration: 400, useNativeDriver: true }),
+        Animated.spring(ring1Scale,  { toValue: 1,   useNativeDriver: true, tension: 60, friction: 6 }),
+        Animated.timing(ring2Opacity,{ toValue: 0.4, duration: 600, useNativeDriver: true }),
+        Animated.spring(ring2Scale,  { toValue: 1.3, useNativeDriver: true, tension: 40, friction: 7 }),
+        Animated.timing(ring3Opacity,{ toValue: 0.2, duration: 800, useNativeDriver: true }),
+        Animated.spring(ring3Scale,  { toValue: 1.75,useNativeDriver: true, tension: 30, friction: 8 }),
       ]),
 
-      Animated.delay(600),
-
-      // Glitch effect before exit
+      // 2. Icon glitch burst
       Animated.sequence([
-        Animated.timing(glitchShift, { toValue: 6, duration: 60, useNativeDriver: true }),
-        Animated.timing(glitchShift, { toValue: -5, duration: 50, useNativeDriver: true }),
-        Animated.timing(glitchShift, { toValue: 4, duration: 40, useNativeDriver: true }),
-        Animated.timing(glitchShift, { toValue: 0, duration: 60, useNativeDriver: true }),
+        Animated.timing(glitch, { toValue: 8,  duration: 50,  useNativeDriver: true }),
+        Animated.timing(glitch, { toValue: -6, duration: 40,  useNativeDriver: true }),
+        Animated.timing(glitch, { toValue: 4,  duration: 35,  useNativeDriver: true }),
+        Animated.timing(glitch, { toValue: 0,  duration: 50,  useNativeDriver: true }),
       ]),
 
-      Animated.delay(100),
+      Animated.delay(120),
 
-      // Flash then fade exit
+      // 3. Full logo fades up
       Animated.parallel([
-        Animated.timing(exitOpacity, { toValue: 0, duration: 500, useNativeDriver: true, easing: Easing.in(Easing.exp) }),
-        Animated.timing(exitScale, { toValue: 1.1, duration: 500, useNativeDriver: true }),
+        Animated.timing(logoOpacity, { toValue: 1, duration: 500, useNativeDriver: true }),
+        Animated.timing(logoY, { toValue: 0, duration: 500, useNativeDriver: true, easing: Easing.out(Easing.cubic) }),
+        // Rings pulse out and fade
+        Animated.timing(ring1Opacity, { toValue: 0, duration: 400, useNativeDriver: true }),
+        Animated.timing(ring2Opacity, { toValue: 0, duration: 500, useNativeDriver: true }),
+        Animated.timing(ring3Opacity, { toValue: 0, duration: 600, useNativeDriver: true }),
       ]),
-    ]).start(() => {
-      onFinish();
-    });
 
-    // Trigger glitch blocks mid-animation
-    setTimeout(() => setShowGlitch(true), 200);
-    setTimeout(() => setShowGlitch(false), 900);
+      Animated.delay(150),
+
+      // 4. Line + tagline
+      Animated.parallel([
+        Animated.timing(lineScale,  { toValue: 1, duration: 500, useNativeDriver: true, easing: Easing.inOut(Easing.quad) }),
+        Animated.timing(tagOpacity, { toValue: 1, duration: 400, useNativeDriver: true }),
+      ]),
+
+      Animated.delay(800),
+
+      // 5. Final glitch then exit
+      Animated.sequence([
+        Animated.timing(glitch, { toValue: 10, duration: 55, useNativeDriver: true }),
+        Animated.timing(glitch, { toValue: -8, duration: 45, useNativeDriver: true }),
+        Animated.timing(glitch, { toValue: 0,  duration: 55, useNativeDriver: true }),
+      ]),
+
+      Animated.parallel([
+        Animated.timing(exitOpacity, { toValue: 0, duration: 550, useNativeDriver: true, easing: Easing.in(Easing.quad) }),
+        Animated.timing(exitScale,   { toValue: 1.08, duration: 550, useNativeDriver: true }),
+      ]),
+
+    ]).start(() => onFinish());
   }, []);
 
   return (
-    <Animated.View style={[styles.container, { opacity: exitOpacity, transform: [{ scale: exitScale }] }]}>
-      {/* Background gradient */}
+    <Animated.View style={[styles.root, { opacity: exitOpacity, transform: [{ scale: exitScale }] }]}>
+
+      {/* Background */}
       <LinearGradient
-        colors={["#050510", "#0a0a1a", "#080820"]}
+        colors={["#0c0900", "#110d00", "#0a0800"]}
         style={StyleSheet.absoluteFill}
       />
 
-      {/* Scanlines overlay */}
-      <View style={styles.scanlines} pointerEvents="none">
-        {SCANLINES.map((_, i) => (
-          <View key={i} style={styles.scanline} />
-        ))}
-      </View>
+      {/* Rising gold sparks */}
+      {Array.from({ length: 20 }).map((_, i) => <Spark key={i} index={i} />)}
 
-      {/* Neon rising particles */}
-      {Array.from({ length: 18 }).map((_, i) => (
-        <NeonParticle key={i} index={i} />
+      {/* ── Glow rings (behind icon) ── */}
+      {[{ scale: ring1Scale, opacity: ring1Opacity, size: 200, bw: 2 },
+        { scale: ring2Scale, opacity: ring2Opacity, size: 200, bw: 1.5 },
+        { scale: ring3Scale, opacity: ring3Opacity, size: 200, bw: 1 }].map((r, i) => (
+        <Animated.View key={i} style={[styles.ring, {
+          width: r.size, height: r.size, borderRadius: r.size / 2,
+          borderWidth: r.bw,
+          opacity: r.opacity,
+          transform: [{ scale: r.scale }],
+        }]} />
       ))}
 
-      {/* Random glitch blocks */}
-      {showGlitch && Array.from({ length: 8 }).map((_, i) => (
-        <GlitchBlock key={i} delay={i * 60} />
-      ))}
+      {/* ── CENTER ── */}
+      <View style={styles.center}>
 
-      {/* Neon ring behind logo */}
-      <Animated.View
-        style={[
-          styles.ring,
-          {
-            opacity: ringOpacity,
-            transform: [{ scale: ringScale }],
-          },
-        ]}
-      />
-      <Animated.View
-        style={[
-          styles.ring2,
-          {
-            opacity: ringOpacity,
-            transform: [{ scale: ringScale }],
-          },
-        ]}
-      />
-
-      {/* Logo center */}
-      <View style={styles.centerContent}>
-        {/* Neon glow behind logo */}
-        <Animated.View style={[styles.glowBlob, { opacity: glowOpacity }]} />
-
-        {/* Logo with glitch layers */}
-        <Animated.View
-          style={[
-            styles.logoWrapper,
-            {
-              transform: [
-                { scale: logoScale },
-                { translateY: logoY },
-              ],
-              opacity: logoOpacity,
-            },
-          ]}
-        >
-          {/* Cyan glitch copy */}
-          <Animated.View
-            style={[
-              styles.glitchLayer,
-              { transform: [{ translateX: glitchShift }] },
-            ]}
-          >
-            <Image
-              source={require("../../../assets/logo.svg")}
-              style={styles.logo}
-              contentFit="contain"
-              tintColor="rgba(0,255,255,0.55)"
-            />
+        {/* ICON — glitch layers + real */}
+        <Animated.View style={[styles.iconWrap, {
+          opacity: iconOpacity,
+          transform: [{ scale: iconScale }, { rotate }],
+        }]}>
+          {/* gold tint glitch shift */}
+          <Animated.View style={[StyleSheet.absoluteFill, styles.iconInner, {
+            transform: [{ translateX: glitch }],
+          }]}>
+            <Image source={require("../../../assets/icon-only.svg")}
+            style={styles.iconOnly} contentFit="contain"
+            tintColor={GOLD_MID} />
           </Animated.View>
-
-          {/* Magenta glitch copy */}
-          <Animated.View
-            style={[
-              styles.glitchLayer,
-              { transform: [{ translateX: Animated.multiply(glitchShift, new Animated.Value(-1)) }] },
-            ]}
-          >
-            <Image
-              source={require("../../../assets/logo.svg")}
-              style={styles.logo}
-              contentFit="contain"
-              tintColor="rgba(255,0,255,0.45)"
-            />
-          </Animated.View>
-
-          {/* Real logo on top */}
-          <Image
-            source={require("../../../assets/logo.svg")}
-            style={styles.logo}
-            contentFit="contain"
-          />
+          {/* Real icon */}
+          <Image source={require("../../../assets/icon-only.svg")}
+            style={styles.iconOnly} contentFit="contain"
+            tintColor={GOLD} />
         </Animated.View>
 
-        {/* Horizontal neon line */}
-        <Animated.View
-          style={[
-            styles.neonLine,
-            { transform: [{ scaleX: lineWidth }] },
-          ]}
-        />
+        {/* Full logo fades in below icon */}
+        <Animated.View style={[styles.logoWrap, {
+          opacity: logoOpacity,
+          transform: [{ translateY: logoY }],
+        }]}>
+          {/* Glitch copy */}
+          <Animated.View style={[StyleSheet.absoluteFill, styles.logoInner, {
+            transform: [{ translateX: glitch }],
+          }]}>
+            <Image source={require("../../../assets/logo.svg")}
+              style={styles.logo} contentFit="contain"
+              tintColor="rgba(245,189,24,0.35)" />
+          </Animated.View>
+          {/* Real logo */}
+          <Image source={require("../../../assets/logo.svg")}
+            style={styles.logo} contentFit="contain" />
+        </Animated.View>
+
+        {/* Divider line */}
+        <Animated.View style={[styles.line, { transform: [{ scaleX: lineScale }] }]} />
 
         {/* Tagline */}
-        <Animated.Text
-          style={[
-            styles.tagline,
-            {
-              opacity: taglineOpacity,
-              transform: [{ translateX: taglineX }],
-            },
-          ]}
-        >
+        <Animated.Text style={[styles.tagline, { opacity: tagOpacity }]}>
           BUILT ON TRUST. BACKED BY SKILL.
         </Animated.Text>
+
       </View>
 
-      {/* Corner decorations */}
-      <View style={[styles.corner, styles.cornerTL]} />
-      <View style={[styles.corner, styles.cornerTR]} />
-      <View style={[styles.corner, styles.cornerBL]} />
-      <View style={[styles.corner, styles.cornerBR]} />
+      {/* Corner brackets */}
+      {[styles.cTL, styles.cTR, styles.cBL, styles.cBR].map((c, i) => (
+        <View key={i} style={[styles.corner, c]} />
+      ))}
+
     </Animated.View>
   );
 }
 
-const NEON_CYAN = "#00ffff";
-const NEON_MAGENTA = "#ff00ff";
-const NEON_YELLOW = "#f5bd18";
-
 const styles = StyleSheet.create({
-  container: {
+  root: {
     ...StyleSheet.absoluteFillObject,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#050510",
-  },
-  scanlines: {
-    ...StyleSheet.absoluteFillObject,
-    flexDirection: "column",
-    overflow: "hidden",
-    opacity: 0.06,
-  },
-  scanline: {
-    flex: 1,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ffffff",
+    backgroundColor: "#0c0900",
   },
   ring: {
     position: "absolute",
-    width: 280,
-    height: 280,
-    borderRadius: 140,
-    borderWidth: 1,
-    borderColor: NEON_CYAN,
-    shadowColor: NEON_CYAN,
+    borderColor: GOLD,
+    shadowColor: GOLD,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 1,
-    shadowRadius: 20,
+    shadowRadius: 18,
   },
-  ring2: {
-    position: "absolute",
-    width: 360,
-    height: 360,
-    borderRadius: 180,
-    borderWidth: 0.5,
-    borderColor: NEON_MAGENTA,
-    shadowColor: NEON_MAGENTA,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.8,
-    shadowRadius: 30,
-  },
-  centerContent: {
+  center: {
     alignItems: "center",
-    gap: 20,
+    gap: 16,
     zIndex: 10,
   },
-  glowBlob: {
-    position: "absolute",
-    width: 320,
+  iconWrap: {
+    width: 120,
     height: 120,
-    borderRadius: 60,
-    backgroundColor: NEON_CYAN,
-    opacity: 0.07,
-    shadowColor: NEON_CYAN,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 1,
-    shadowRadius: 60,
-  },
-  logoWrapper: {
-    width: width * 0.72,
-    height: 90,
     alignItems: "center",
     justifyContent: "center",
   },
-  glitchLayer: {
-    ...StyleSheet.absoluteFillObject,
+  iconInner: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  iconOnly: {
+    width: 120,
+    height: 120,
+  },
+  logoWrap: {
+    width: width * 0.72,
+    height: 72,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 8,
+  },
+  logoInner: {
     alignItems: "center",
     justifyContent: "center",
   },
   logo: {
     width: "100%",
-    height: 90,
+    height: 72,
   },
-  neonLine: {
-    width: width * 0.65,
-    height: 1.5,
-    backgroundColor: NEON_CYAN,
-    shadowColor: NEON_CYAN,
+  line: {
+    width: width * 0.6,
+    height: 1,
+    backgroundColor: GOLD,
+    shadowColor: GOLD,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 1,
-    shadowRadius: 8,
+    shadowRadius: 10,
+    marginTop: 4,
   },
   tagline: {
-    fontSize: 10,
-    fontWeight: "600",
-    letterSpacing: 3,
-    color: "rgba(255,255,255,0.55)",
+    fontSize: 9,
+    fontWeight: "700",
+    letterSpacing: 3.5,
+    color: "rgba(245,189,24,0.6)",
     textAlign: "center",
   },
-  // Corner brackets
   corner: {
     position: "absolute",
-    width: 24,
-    height: 24,
-    borderColor: NEON_YELLOW,
-    opacity: 0.7,
+    width: 20,
+    height: 20,
+    borderColor: GOLD,
+    opacity: 0.5,
   },
-  cornerTL: {
-    top: 40,
-    left: 24,
-    borderTopWidth: 2,
-    borderLeftWidth: 2,
-  },
-  cornerTR: {
-    top: 40,
-    right: 24,
-    borderTopWidth: 2,
-    borderRightWidth: 2,
-  },
-  cornerBL: {
-    bottom: 40,
-    left: 24,
-    borderBottomWidth: 2,
-    borderLeftWidth: 2,
-  },
-  cornerBR: {
-    bottom: 40,
-    right: 24,
-    borderBottomWidth: 2,
-    borderRightWidth: 2,
-  },
+  cTL: { top: 44, left: 24, borderTopWidth: 1.5, borderLeftWidth: 1.5 },
+  cTR: { top: 44, right: 24, borderTopWidth: 1.5, borderRightWidth: 1.5 },
+  cBL: { bottom: 44, left: 24, borderBottomWidth: 1.5, borderLeftWidth: 1.5 },
+  cBR: { bottom: 44, right: 24, borderBottomWidth: 1.5, borderRightWidth: 1.5 },
 });
