@@ -28,7 +28,7 @@ export type AppTheme = {
 export const themes: Record<ThemeMode, AppTheme> = {
   light: {
     mode: "light",
-    background: "#FDE28A",
+    background: "#F0BB19",
     backgroundRaised: "#FEF4D5",
     surface: "#FFFFFF",
     surfaceAlt: "#FCD05F",
