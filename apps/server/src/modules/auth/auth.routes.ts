@@ -18,6 +18,7 @@ import {
 import { ApiError } from "../../utils/ApiError.js";
 import { successResponse } from "../../utils/ApiResponse.js";
 import { clearAuthCookies, setAuthCookies } from "../../utils/auth-cookies.js";
+import { prisma } from "../../lib/prisma.js";
 import { verifyAccessToken } from "../../utils/tokens.js";
 import { authService } from "./auth.service.js";
 import {
@@ -250,6 +251,35 @@ router.post("/logout", catchAsync(async (request, response) => {
 
 router.get("/me", authenticate, catchAsync(async (request, response) => {
   response.status(200).json(successResponse(await authService.me(request.auth!.userId), "Authenticated user"));
+}));
+
+router.patch("/profile", authenticate, catchAsync(async (request, response) => {
+  const { firstName, lastName, email, avatarUrl } = request.body;
+  const userId = request.auth!.userId;
+
+  const updatedUser = await prisma.user.update({
+    where: { id: userId },
+    data: {
+      firstName: firstName !== undefined ? firstName : undefined,
+      lastName: lastName !== undefined ? lastName : undefined,
+      email: email !== undefined ? email : undefined,
+      avatarUrl: avatarUrl !== undefined ? avatarUrl : undefined,
+    },
+    select: {
+      id: true,
+      role: true,
+      phone: true,
+      email: true,
+      firstName: true,
+      lastName: true,
+      avatarUrl: true,
+      status: true
+    }
+  });
+
+  response.status(200).json(
+    successResponse({ user: updatedUser }, "Profile updated successfully")
+  );
 }));
 
 export const authRouter = router;

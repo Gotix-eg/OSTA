@@ -10,6 +10,7 @@ export type PublicUser = {
   preferredLanguage?: string;
   status?: string;
   profile?: Record<string, unknown> | null;
+  avatarUrl?: string;
 };
 
 export type AuthPayload = {

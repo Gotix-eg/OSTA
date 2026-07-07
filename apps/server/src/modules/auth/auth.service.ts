@@ -470,6 +470,27 @@ export const authService = {
       throw new ApiError(404, "User not found", "USER_NOT_FOUND");
     }
 
+    // Auto-alert technicians who don't have a profile photo
+    if (user.role === "WORKER" && !user.avatarUrl) {
+      const existingNotification = await prisma.notification.findFirst({
+        where: {
+          userId: user.id,
+          title: "تنبيه: الصورة الشخصية مطلوبة"
+        }
+      });
+
+      if (!existingNotification) {
+        await prisma.notification.create({
+          data: {
+            userId: user.id,
+            type: "SYSTEM",
+            title: "تنبيه: الصورة الشخصية مطلوبة",
+            body: "من فضلك أضف صورتك الشخصية لتفعيل وتوثيق حساب الفني الخاص بك."
+          }
+        });
+      }
+    }
+
     return {
       user: toPublicUser(user)
     };
