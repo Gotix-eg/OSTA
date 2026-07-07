@@ -72,6 +72,7 @@ function toPublicUser(user: {
   email: string | null;
   firstName: string;
   lastName: string;
+  avatarUrl: string | null;
   preferredLanguage: string;
   status: string;
   clientProfile?: { totalRequests: number; walletBalance: number; isVip: boolean } | null;
@@ -85,6 +86,7 @@ function toPublicUser(user: {
     email: user.email,
     firstName: user.firstName,
     lastName: user.lastName,
+    avatarUrl: user.avatarUrl,
     preferredLanguage: user.preferredLanguage,
     status: user.status,
     profile:

@@ -44,7 +44,17 @@ export function Screen({ title, subtitle, scroll = true, showBack, children, sty
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      {scroll ? <ScrollView keyboardShouldPersistTaps="handled">{content}</ScrollView> : content}
+      {scroll ? (
+        <ScrollView 
+          style={{ flex: 1 }} 
+          contentContainerStyle={{ flexGrow: 1 }} 
+          keyboardShouldPersistTaps="handled"
+        >
+          {content}
+        </ScrollView>
+      ) : (
+        content
+      )}
     </SafeAreaView>
   );
 }

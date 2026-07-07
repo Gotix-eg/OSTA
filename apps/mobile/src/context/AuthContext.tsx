@@ -108,6 +108,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const response = await apiClient.get("/auth/me");
       const data = unwrapApiData<{ user: PublicUser }>(response.data);
       setUser(data.user);
+      setRole(data.user.role);
     } catch (error) {
       console.error("Failed to refresh user profile:", error);
     }
