@@ -2,6 +2,7 @@ import { useState } from "react";
 import { StyleSheet, Text, View, Pressable, ActivityIndicator, FlatList, TextInput } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
+import { useNavigation } from "@react-navigation/native";
 
 import { AppCard } from "../../components/AppCard";
 import { Screen } from "../../components/Screen";
@@ -27,6 +28,7 @@ interface VendorStore {
 export function VendorsScreen() {
   const { theme } = useTheme();
   const styles = makeStyles(theme);
+  const navigation = useNavigation<any>();
   const [searchQuery, setSearchQuery] = useState("");
 
   // Fetch the stores list from the server API matching the website
@@ -80,51 +82,53 @@ export function VendorsScreen() {
           }
           renderItem={({ item }) => (
             <AppCard style={styles.card}>
-              <View style={styles.storeRow}>
-                <View style={styles.storeDetails}>
-                  <View style={styles.storeTitleRow}>
-                    {item.isOpen ? (
-                      <View style={styles.openBadge}>
-                        <Text style={styles.openBadgeText}>مفتوح</Text>
+              <Pressable onPress={() => navigation.navigate("VendorProfile", { vendorId: item.id })}>
+                <View style={styles.storeRow}>
+                  <View style={styles.storeDetails}>
+                    <View style={styles.storeTitleRow}>
+                      {item.isOpen ? (
+                        <View style={styles.openBadge}>
+                          <Text style={styles.openBadgeText}>مفتوح</Text>
+                        </View>
+                      ) : (
+                        <View style={[styles.openBadge, { backgroundColor: theme.dangerSoft }]}>
+                          <Text style={[styles.openBadgeText, { color: theme.danger }]}>مغلق</Text>
+                        </View>
+                      )}
+                      <Text style={styles.shopName} numberOfLines={1}>{item.shopNameAr || item.shopName}</Text>
+                    </View>
+
+                    <Text style={styles.shopCategory} numberOfLines={1}>التخصص: {item.category || "مواد تشطيب"}</Text>
+                    {item.shopDescription ? (
+                      <Text style={styles.shopDesc} numberOfLines={2}>{item.shopDescription}</Text>
+                    ) : null}
+
+                    <View style={styles.storeMeta}>
+                      <View style={styles.storeLocation}>
+                        <Ionicons name="location-outline" size={14} color={theme.muted} />
+                        <Text style={styles.locationText} numberOfLines={1}>{item.city}، {item.governorate}</Text>
                       </View>
+                      
+                      <View style={styles.storeRating}>
+                        <Ionicons name="star" size={14} color="#D7A24D" />
+                        <Text style={styles.ratingText}>
+                          {item.rating?.toFixed(1) ?? "5.0"} ({item.ratingCount ?? 0})
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+
+                  <View style={styles.imageWrapper}>
+                    {item.shopImageUrl ? (
+                      <Image source={item.shopImageUrl} style={styles.shopImage as any} contentFit="cover" />
                     ) : (
-                      <View style={[styles.openBadge, { backgroundColor: theme.dangerSoft }]}>
-                        <Text style={[styles.openBadgeText, { color: theme.danger }]}>مغلق</Text>
+                      <View style={styles.imagePlaceholder}>
+                        <Ionicons name="storefront" size={28} color={theme.muted} />
                       </View>
                     )}
-                    <Text style={styles.shopName} numberOfLines={1}>{item.shopNameAr || item.shopName}</Text>
-                  </View>
-
-                  <Text style={styles.shopCategory} numberOfLines={1}>التخصص: {item.category || "مواد تشطيب"}</Text>
-                  {item.shopDescription ? (
-                    <Text style={styles.shopDesc} numberOfLines={2}>{item.shopDescription}</Text>
-                  ) : null}
-
-                  <View style={styles.storeMeta}>
-                    <View style={styles.storeLocation}>
-                      <Ionicons name="location-outline" size={14} color={theme.muted} />
-                      <Text style={styles.locationText} numberOfLines={1}>{item.city}، {item.governorate}</Text>
-                    </View>
-                    
-                    <View style={styles.storeRating}>
-                      <Ionicons name="star" size={14} color="#D7A24D" />
-                      <Text style={styles.ratingText}>
-                        {item.rating?.toFixed(1) ?? "5.0"} ({item.ratingCount ?? 0})
-                      </Text>
-                    </View>
                   </View>
                 </View>
-
-                <View style={styles.imageWrapper}>
-                  {item.shopImageUrl ? (
-                    <Image source={item.shopImageUrl} style={styles.shopImage as any} contentFit="cover" />
-                  ) : (
-                    <View style={styles.imagePlaceholder}>
-                      <Ionicons name="storefront" size={28} color={theme.muted} />
-                    </View>
-                  )}
-                </View>
-              </View>
+              </Pressable>
             </AppCard>
           )}
         />

@@ -456,40 +456,45 @@ export function HomeScreen() {
               <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.workersContainer}>
                 {vendorsList.data.map((vendor) => (
                   <AppCard key={vendor.id} style={styles.workerCard}>
-                    <View style={styles.workerHeader}>
-                      <View style={styles.workerInfo}>
-                        <Text style={styles.workerName} numberOfLines={1}>
-                          {vendor.shopNameAr || vendor.shopName}
-                        </Text>
-                        <Text style={styles.workerProfession} numberOfLines={1}>{vendor.category || "مورد خامات"}</Text>
+                    <Pressable
+                      onPress={() => navigation.navigate("VendorProfile", { vendorId: vendor.id })}
+                      style={{ gap: spacing.md }}
+                    >
+                      <View style={styles.workerHeader}>
+                        <View style={styles.workerInfo}>
+                          <Text style={styles.workerName} numberOfLines={1}>
+                            {vendor.shopNameAr || vendor.shopName}
+                          </Text>
+                          <Text style={styles.workerProfession} numberOfLines={1}>{vendor.category || "مورد خامات"}</Text>
+                        </View>
+                        <View style={styles.workerAvatarWrapper}>
+                          {vendor.shopImageUrl ? (
+                            <Image source={vendor.shopImageUrl} style={styles.workerAvatar as any} />
+                          ) : (
+                            <View style={styles.workerAvatarPlaceholder}>
+                              <Ionicons name="storefront" size={22} color={theme.muted} />
+                            </View>
+                          )}
+                        </View>
                       </View>
-                      <View style={styles.workerAvatarWrapper}>
-                        {vendor.shopImageUrl ? (
-                          <Image source={vendor.shopImageUrl} style={styles.workerAvatar as any} />
-                        ) : (
-                          <View style={styles.workerAvatarPlaceholder}>
-                            <Ionicons name="storefront" size={22} color={theme.muted} />
-                          </View>
-                        )}
+                      
+                      <View style={styles.workerMeta}>
+                        <View style={styles.workerRating}>
+                          <Ionicons name="star" size={14} color="#D7A24D" />
+                          <Text style={styles.workerRatingText}>
+                            {vendor.rating?.toFixed(1) ?? "5.0"} ({vendor.ratingCount ?? 0})
+                          </Text>
+                        </View>
+                        <View style={styles.workerExp}>
+                          <Text style={styles.workerExpText}>{vendor.totalOrders ?? 0} طلب</Text>
+                        </View>
                       </View>
-                    </View>
-                    
-                    <View style={styles.workerMeta}>
-                      <View style={styles.workerRating}>
-                        <Ionicons name="star" size={14} color="#D7A24D" />
-                        <Text style={styles.workerRatingText}>
-                          {vendor.rating?.toFixed(1) ?? "5.0"} ({vendor.ratingCount ?? 0})
-                        </Text>
-                      </View>
-                      <View style={styles.workerExp}>
-                        <Text style={styles.workerExpText}>{vendor.totalOrders ?? 0} طلب</Text>
-                      </View>
-                    </View>
+                    </Pressable>
 
                     <Pressable 
                       style={styles.bookButton} 
                       onPress={() => {
-                        navigation.navigate("Vendors");
+                        navigation.navigate("VendorProfile", { vendorId: vendor.id });
                       }}
                     >
                       <Text style={styles.bookButtonText}>تصفح المنتجات</Text>

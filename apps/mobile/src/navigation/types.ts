@@ -9,6 +9,7 @@ export type CommonStackParamList = {
   RequestDetails: { requestId?: string } | undefined;
   Notifications: undefined;
   WorkerProfile: { workerId: string };
+  VendorProfile: { vendorId: string };
   CreateRequest: {
     categoryId?: string;
     categorySlug?: string;

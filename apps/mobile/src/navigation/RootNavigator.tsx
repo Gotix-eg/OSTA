@@ -16,6 +16,7 @@ import { MaterialsScreen } from "../screens/client/MaterialsScreen";
 import { AllServicesScreen } from "../screens/client/AllServicesScreen";
 import { VendorsScreen } from "../screens/client/VendorsScreen";
 import { WorkerProfileScreen } from "../screens/client/WorkerProfileScreen";
+import { VendorProfileScreen } from "../screens/client/VendorProfileScreen";
 import { WorkerDashboardScreen } from "../screens/worker/DashboardScreen";
 import { JobsFeedScreen } from "../screens/worker/JobsFeedScreen";
 import { ActiveJobScreen } from "../screens/worker/ActiveJobScreen";
@@ -109,6 +110,7 @@ function AppNavigator() {
       )}
       <RootStack.Screen name="CreateRequest" component={CreateRequestScreen} />
       <RootStack.Screen name="WorkerProfile" component={WorkerProfileScreen} />
+      <RootStack.Screen name="VendorProfile" component={VendorProfileScreen} />
       <RootStack.Screen name="Chat" component={ChatScreen} />
       <RootStack.Screen name="RequestDetails" component={RequestDetailsScreen} />
       <RootStack.Screen name="Notifications" component={NotificationsScreen} />
