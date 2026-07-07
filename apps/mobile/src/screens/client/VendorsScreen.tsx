@@ -44,7 +44,7 @@ export function VendorsScreen() {
   });
 
   return (
-    <Screen title="دليل الموردين" subtitle="ابحث عن أفضل المحلات والموردين للخدمات ومواد التشطيب" scroll={false} style={{ flex: 1 }}>
+    <Screen title="دليل الموردين" subtitle="ابحث عن أفضل المحلات والموردين للخدمات ومواد التشطيب" scroll={false} style={{ flex: 1 }} showBack={false}>
       {/* Search Input */}
       <View style={styles.searchContainer}>
         <Ionicons name="search-outline" size={20} color={theme.muted} />

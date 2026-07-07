@@ -148,7 +148,7 @@ export function HomeScreen() {
   };
 
   return (
-    <Screen scroll={false} style={{ flex: 1, padding: 0 }}>
+    <Screen scroll={false} style={{ flex: 1, padding: 0 }} showBack={false}>
       {/* 
         Custom ScrollView with stickyHeaderIndices={1}.
         This will freeze the search bar container at the top of the screen when scrolling down.
