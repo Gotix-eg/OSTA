@@ -97,6 +97,8 @@ export function OrdersScreen() {
 
   // Handle navigating to chat
   const handleChat = (userId: string, name: string) => {
+    setSelectedDirectOrder(null);
+    setSelectedCustomRequest(null);
     navigation.navigate("Chat", {
       conversationId: userId,
       recipientName: name
