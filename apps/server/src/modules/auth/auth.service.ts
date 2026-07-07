@@ -143,6 +143,128 @@ export const authService = {
     });
 
     if (existingUser) {
+      if (input.role === "WORKER" && existingUser.role === "CLIENT") {
+        const isPasswordCorrect = await verifyPassword(input.password, existingUser.passwordHash);
+        if (!isPasswordCorrect) {
+          throw new ApiError(400, "رقم الهاتف مسجل بالفعل كعميل. يرجى إدخال كلمة المرور الصحيحة لربط حساب الفني الخاص بك.");
+        }
+
+        if (input.nationalIdNumber) {
+          const existingWorker = await prisma.workerProfile.findUnique({
+            where: { nationalIdNumber: input.nationalIdNumber }
+          });
+          if (existingWorker) {
+            throw new ApiError(409, "الرقم القومي مسجل بالفعل لحساب آخر.", "NATIONAL_ID_EXISTS");
+          }
+        }
+
+        const updatedUser = await prisma.user.update({
+          where: { id: existingUser.id },
+          data: {
+            role: "WORKER",
+            avatarUrl: input.avatarUrl || existingUser.avatarUrl,
+            workerProfile: {
+              create: {
+                nationalIdNumber: input.nationalIdNumber,
+                nationalIdFront: input.nationalIdFront,
+                nationalIdBack: input.nationalIdBack,
+                profession: input.profession,
+                yearsOfExperience: 0,
+                rating: 0,
+                ratingCount: 0,
+                isAvailable: false,
+                totalJobsCompleted: 0,
+                totalEarnings: 0,
+                walletBalance: 0,
+                orderQuota: 0,
+                subscriptionTier: "free",
+                verificationStatus: "PENDING"
+              }
+            },
+            ...(input.governorate && {
+              addresses: {
+                create: {
+                  governorate: input.governorate,
+                  city: input.city || "",
+                  area: (input as any).district || input.city || "",
+                  street: input.address || "",
+                  isDefault: true
+                }
+              }
+            })
+          },
+          include: {
+            clientProfile: true,
+            workerProfile: true,
+            vendorProfile: true
+          }
+        });
+
+        const tokens = await createSession(updatedUser.id, updatedUser.role);
+        return {
+          user: toPublicUser(updatedUser as any),
+          ...tokens
+        };
+      }
+
+      if (input.role === "VENDOR" && existingUser.role === "CLIENT") {
+        const isPasswordCorrect = await verifyPassword(input.password, existingUser.passwordHash);
+        if (!isPasswordCorrect) {
+          throw new ApiError(400, "رقم الهاتف مسجل بالفعل كعميل. يرجى إدخال كلمة المرور الصحيحة لربط حساب المتجر الخاص بك.");
+        }
+
+        const updatedUser = await prisma.user.update({
+          where: { id: existingUser.id },
+          data: {
+            role: "VENDOR",
+            avatarUrl: input.avatarUrl || existingUser.avatarUrl,
+            vendorProfile: {
+              create: {
+                shopName: input.shopName || (input.firstName + " " + input.lastName),
+                category: input.category || "",
+                governorate: input.governorate || "cairo",
+                city: input.city || "new-cairo",
+                address: input.address || "",
+                latitude: input.latitude || 30.0444,
+                longitude: input.longitude || 31.2357,
+                commercialRegisterUrl: input.commercialRecord,
+                taxCardUrl: input.taxCard,
+                rating: 0,
+                ratingCount: 0,
+                totalOrders: 0,
+                totalEarnings: 0,
+                walletBalance: 0,
+                orderQuota: 0,
+                isOpen: false,
+                verificationStatus: "PENDING"
+              }
+            },
+            ...(input.governorate && {
+              addresses: {
+                create: {
+                  governorate: input.governorate,
+                  city: input.city || "",
+                  area: (input as any).district || input.city || "",
+                  street: input.address || "",
+                  isDefault: true
+                }
+              }
+            })
+          },
+          include: {
+            clientProfile: true,
+            workerProfile: true,
+            vendorProfile: true
+          }
+        });
+
+        const tokens = await createSession(updatedUser.id, updatedUser.role);
+        return {
+          user: toPublicUser(updatedUser as any),
+          ...tokens
+        };
+      }
+
       if (existingUser.phone === input.phone) {
         throw new ApiError(409, "رقم الهاتف مسجل بالفعل", "PHONE_EXISTS");
       }
