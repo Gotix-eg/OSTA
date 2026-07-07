@@ -14,8 +14,10 @@ import { spacing } from "../../theme/spacing";
 type Slide = {
   id?: string;
   titleAr?: string;
+  descAr?: string;
   imageUrl?: string;
   image?: string;
+  btn1TextAr?: string;
 };
 
 type Campaign = {
@@ -35,6 +37,15 @@ type Worker = {
   rating: number;
   ratingCount: number;
   totalJobs: number;
+};
+
+type ClientRequest = {
+  id: string;
+  title: string;
+  serviceId: string;
+  serviceNameAr: string;
+  status: string;
+  createdAt: string;
 };
 
 function getIconName(slug: string): keyof typeof Ionicons.glyphMap {
@@ -57,236 +68,456 @@ function getIconName(slug: string): keyof typeof Ionicons.glyphMap {
   return mapping[slug] || "settings-outline";
 }
 
+function getStatusColor(status: string) {
+  switch (status.toUpperCase()) {
+    case "PENDING":
+      return "#A96500";
+    case "ACCEPTED":
+      return "#146D68";
+    case "COMPLETED":
+      return "#267348";
+    default:
+      return "#74675B";
+  }
+}
+
+function getStatusTextAr(status: string) {
+  switch (status.toUpperCase()) {
+    case "PENDING":
+      return "قيد الانتظار";
+    case "ACCEPTED":
+      return "تم القبول";
+    case "COMPLETED":
+      return "مكتمل";
+    default:
+      return status;
+  }
+}
+
 export function HomeScreen() {
   const { theme } = useTheme();
   const { user } = useAuth();
   const styles = makeStyles(theme);
   const navigation = useNavigation<any>();
 
-  // Fetch all live database resources matching the website configurations
+  // Fetch all live database resources matching the configurations
   const categories = useApiResource<Array<Record<string, any>>>("/services/categories", []);
   const slides = useApiResource<Slide[]>("/public/mobile-slides", []);
   const campaigns = useApiResource<Campaign[]>("/public/campaigns", []);
   const workers = useApiResource<Worker[]>("/public/workers", []);
+  
+  // Conditionally fetch recent client requests
+  const recentRequests = useApiResource<ClientRequest[]>(
+    user?.role === "CLIENT" ? "/clients/requests" : "",
+    []
+  );
 
   const greetings = `أهلاً، ${user?.firstName ?? "عميلنا العزيز"}`;
 
+  // Split campaigns into technician ads vs shop ads
+  const allCampaigns = campaigns.data;
+  const storeAds = allCampaigns.filter(c => c.link?.includes("vendor") || c.link?.includes("store") || c.link?.includes("shop"));
+  const technicianAds = allCampaigns.filter(c => !storeAds.includes(c));
+
+  // If one list is empty, split them by index to ensure both sections look rich
+  const displayTechAds = technicianAds.length > 0 ? technicianAds : allCampaigns.slice(0, Math.ceil(allCampaigns.length / 2));
+  const displayStoreAds = storeAds.length > 0 ? storeAds : allCampaigns.slice(Math.ceil(allCampaigns.length / 2));
+
+  // Get the first slide to display as the single top advertisement banner
+  const topSlide = slides.data[0] || {
+    id: "fallback-slide",
+    titleAr: "صنايعيك بنقرة واحدة في مصر",
+    descAr: "أمهر الفنيين الحرفيين الموثقين جاهزون لخدمتك في جميع التخصصات المنزلية والتقنية بضمان حقيقي ودفع آمن.",
+    btn1TextAr: "اطلب فني الآن"
+  };
+
   return (
-    <Screen scroll={true}>
-      {/* 1. Greeting & Brand Header */}
-      <View style={styles.headerRow}>
-        <View style={styles.headerLeft}>
-          <Pressable style={styles.iconButton} onPress={() => navigation.navigate("Notifications")}>
-            <Ionicons name="notifications-outline" size={24} color={theme.text} />
+    <Screen scroll={false} style={{ padding: 0 }}>
+      {/* 
+        Custom ScrollView with stickyHeaderIndices={1}.
+        This will freeze the search bar container at the top of the screen when scrolling down.
+      */}
+      <ScrollView stickyHeaderIndices={[1]} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+        
+        {/* 1. TOP SINGLE AD CAROUSEL / SLIDER (Fills screen width, very top) */}
+        <View style={styles.topAdBanner}>
+          {topSlide.imageUrl || topSlide.image ? (
+            <Image source={topSlide.imageUrl ?? topSlide.image} style={styles.slideImage as any} contentFit="cover" />
+          ) : (
+            <View style={styles.slideImagePlaceholder} />
+          )}
+          <View style={styles.slideGradient} />
+          <View style={styles.slideContent}>
+            <Text style={styles.slideTitle} numberOfLines={2}>{topSlide.titleAr}</Text>
+            {topSlide.descAr ? <Text style={styles.slideDesc} numberOfLines={2}>{topSlide.descAr}</Text> : null}
+            
+            <Pressable 
+              style={styles.slideCta}
+              onPress={() => navigation.navigate("CreateRequest")}
+            >
+              <Text style={styles.slideCtaText}>{topSlide.btn1TextAr || "اطلب فني الآن"}</Text>
+              <Ionicons name="arrow-back" size={14} color="#15110D" style={{ transform: [{ rotate: "180deg" }] }} />
+            </Pressable>
+          </View>
+        </View>
+
+        {/* 2. STICKY HEADER WRAPPER (LOGO + SEARCH BAR) - sticks when scrolled */}
+        <View style={styles.stickyHeaderWrapper}>
+          <View style={styles.headerRow}>
+            <View style={styles.headerLeft}>
+              <Pressable style={styles.iconButton} onPress={() => navigation.navigate("Notifications")}>
+                <Ionicons name="notifications-outline" size={20} color={theme.text} />
+              </Pressable>
+            </View>
+            <View style={styles.headerRight}>
+              <Text style={styles.greetingText}>{greetings}</Text>
+              <Image source={require("../../../assets/logo.svg")} style={styles.logo as any} contentFit="contain" />
+            </View>
+          </View>
+
+          <Pressable style={styles.searchBar} onPress={() => navigation.navigate("AllServices")}>
+            <Ionicons name="search-outline" size={20} color={theme.muted} />
+            <Text style={styles.searchText}>ابحث عن خدمة أو صنايعي محترف...</Text>
           </Pressable>
         </View>
-        <View style={styles.headerRight}>
-          <Text style={styles.greetingText}>{greetings}</Text>
-          <Image source={require("../../../assets/logo.svg")} style={styles.logo} contentFit="contain" />
-        </View>
-      </View>
 
-      {/* 2. Premium Search bar placeholder */}
-      <Pressable style={styles.searchBar} onPress={() => navigation.navigate("CreateRequest")}>
-        <Ionicons name="search-outline" size={20} color={theme.muted} />
-        <Text style={styles.searchText}>ابحث عن خدمة أو صنايعي محترف...</Text>
-      </Pressable>
+        {/* 3. SCROLLABLE INNER BODY CONTENT */}
+        <View style={styles.bodyContainer}>
 
-      {/* 3. Hero Slides Carousel */}
-      {slides.isLoading ? (
-        <ActivityIndicator color={theme.primary} style={{ marginVertical: spacing.md }} />
-      ) : slides.data.length > 0 ? (
-        <View>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.slidesContainer}>
-            {slides.data.map((slide, index) => {
-              const source = slide.imageUrl ?? slide.image;
-              return (
-                <View key={slide.id ?? index} style={styles.slideCard}>
-                  {source ? <Image source={source} style={styles.slideImage} contentFit="cover" /> : null}
-                  <View style={styles.slideGradient} />
-                  <Text style={styles.slideText} numberOfLines={2}>{slide.titleAr ?? "أُسطى"}</Text>
-                </View>
-              );
-            })}
-          </ScrollView>
-        </View>
-      ) : null}
-
-      {/* 4. Service Categories Section (Squared Grid/Layout matching website design) */}
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>أقسام الخدمات</Text>
-        <Text style={styles.sectionSubtitle}>اختر التخصص المطلوب لطلب الخدمة فوراً</Text>
-      </View>
-
-      {categories.isLoading ? (
-        <ActivityIndicator color={theme.primary} />
-      ) : (
-        <View style={styles.categoriesGrid}>
-          {categories.data.map((cat) => (
-            <Pressable
-              key={cat.id}
-              style={styles.categoryCard}
-              onPress={() => {
-                navigation.navigate("CreateRequest", {
-                  categoryId: cat.id,
-                  categorySlug: cat.slug,
-                  categoryNameAr: cat.nameAr
-                });
-              }}
-            >
-              <View style={styles.categoryIconWrapper}>
-                <Ionicons name={getIconName(cat.slug)} size={28} color={theme.primary} />
+          {/* 3.1. RECENT CLIENT REQUESTS (LAST 2 REQUESTS FOR QUICK REPEAT) */}
+          {user?.role === "CLIENT" && recentRequests.data.length > 0 && (
+            <View style={styles.sectionBlock}>
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>طلباتك الأخيرة</Text>
+                <Text style={styles.sectionSubtitle}>أعد تكرار طلباتك السابقة بضغطة زر واحدة</Text>
               </View>
-              <Text style={styles.categoryName} numberOfLines={1}>{cat.nameAr}</Text>
-            </Pressable>
-          ))}
-        </View>
-      )}
 
-      {/* 5. Sponsored Deals & Campaigns (Website Campaign cards adapted for native) */}
-      {campaigns.data.length > 0 && (
-        <View style={styles.sectionBlock}>
-          <View style={styles.sectionHeader}>
-            <View style={styles.sectionHeaderWithIcon}>
-              <Ionicons name="megaphone" size={20} color={theme.primary} />
-              <Text style={styles.sectionTitle}>العروض والشركاء المميزين</Text>
-            </View>
-            <Text style={styles.sectionSubtitle}>عروض حصرية وخصومات من الشركاء المعتمدين لدينا</Text>
-          </View>
-
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.campaignsContainer}>
-            {campaigns.data.map((camp) => (
-              <AppCard key={camp.id} style={styles.campaignCard}>
-                {camp.imageUrl ? (
-                  <View style={styles.campaignImageWrapper}>
-                    <Image source={camp.imageUrl} style={styles.campaignImage} contentFit="cover" />
-                    <View style={styles.adBadge}>
-                      <Text style={styles.adBadgeText}>ممول</Text>
-                    </View>
-                  </View>
-                ) : null}
-                <View style={styles.campaignDetails}>
-                  <Text style={styles.campaignTitle} numberOfLines={1}>{camp.titleAr}</Text>
-                  <Text style={styles.campaignDesc} numberOfLines={2}>{camp.descAr}</Text>
-                </View>
-              </AppCard>
-            ))}
-          </ScrollView>
-        </View>
-      )}
-
-      {/* 6. Featured/Top Verified Workers */}
-      {workers.data.length > 0 && (
-        <View style={styles.sectionBlock}>
-          <View style={styles.sectionHeader}>
-            <View style={styles.sectionHeaderWithIcon}>
-              <Ionicons name="ribbon-outline" size={20} color={theme.primary} />
-              <Text style={styles.sectionTitle}>أفضل الفنيين الموثقين</Text>
-            </View>
-            <Text style={styles.sectionSubtitle}>صنايعية معتمدين ذوي تقييم عالي جاهزون لخدمتك</Text>
-          </View>
-
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.workersContainer}>
-            {workers.data.map((worker) => (
-              <AppCard key={worker.id} style={styles.workerCard}>
-                <View style={styles.workerHeader}>
-                  <View style={styles.workerInfo}>
-                    <Text style={styles.workerName} numberOfLines={1}>
-                      {worker.name}
-                    </Text>
-                    <Text style={styles.workerProfession} numberOfLines={1}>{worker.professionAr || "فني محترف"}</Text>
-                  </View>
-                  <View style={styles.workerAvatarWrapper}>
-                    {worker.avatarUrl ? (
-                      <Image source={worker.avatarUrl} style={styles.workerAvatar} />
-                    ) : (
-                      <View style={styles.workerAvatarPlaceholder}>
-                        <Ionicons name="person" size={24} color={theme.muted} />
+              <View style={styles.recentRequestsRow}>
+                {recentRequests.data.slice(0, 2).map((req) => (
+                  <AppCard key={req.id} style={styles.recentRequestCard}>
+                    <View style={styles.recentHeader}>
+                      <View style={[styles.statusIndicator, { backgroundColor: getStatusColor(req.status) }]}>
+                        <Text style={styles.statusText}>{getStatusTextAr(req.status)}</Text>
                       </View>
-                    )}
-                  </View>
-                </View>
-                
-                <View style={styles.workerMeta}>
-                  <View style={styles.workerRating}>
-                    <Ionicons name="star" size={14} color="#D7A24D" />
-                    <Text style={styles.workerRatingText}>
-                      {worker.rating?.toFixed(1) ?? "5.0"} ({worker.ratingCount ?? 0})
-                    </Text>
-                  </View>
-                  <View style={styles.workerExp}>
-                    <Text style={styles.workerExpText}>{worker.totalJobs ?? 0} عملية</Text>
-                  </View>
-                </View>
+                      <Text style={styles.recentTitle} numberOfLines={1}>{req.title || req.serviceNameAr}</Text>
+                    </View>
+                    <Text style={styles.recentService} numberOfLines={1}>نوع الخدمة: {req.serviceNameAr}</Text>
+                    
+                    <Pressable 
+                      style={styles.repeatButton}
+                      onPress={() => {
+                        navigation.navigate("CreateRequest", {
+                          categoryId: req.serviceId, // In API mapping, serviceId maps to categoryId or category relationship
+                          title: req.title,
+                          description: `تكرار للطلب السابق: ${req.title}`
+                        });
+                      }}
+                    >
+                      <Ionicons name="refresh-outline" size={13} color={theme.primary} />
+                      <Text style={styles.repeatButtonText}>تكرار الطلب</Text>
+                    </Pressable>
+                  </AppCard>
+                ))}
+              </View>
+            </View>
+          )}
 
-                <Pressable 
-                  style={styles.bookButton} 
-                  onPress={() => {
-                    navigation.navigate("CreateRequest", {
-                      workerId: worker.id,
-                      workerName: worker.name
-                    });
-                  }}
+          {/* 3.2. SERVICE CATEGORIES (4 ITEMS + MORE BUTTON NAVIGATING TO ALL SERVICES PAGE) */}
+          <View style={styles.sectionBlock}>
+            <View style={styles.sectionHeaderWithLink}>
+              <Pressable 
+                style={styles.viewAllLink}
+                onPress={() => navigation.navigate("AllServices")}
+              >
+                <Text style={styles.viewAllLinkText}>كل الخدمات</Text>
+                <Ionicons name="chevron-back" size={14} color={theme.primary} />
+              </Pressable>
+              <Text style={styles.sectionTitle}>أقسام الخدمات</Text>
+            </View>
+
+            {categories.isLoading ? (
+              <ActivityIndicator color={theme.primary} style={{ paddingVertical: spacing.md }} />
+            ) : (
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalCategoriesContainer}>
+                {/* Display exactly up to 4 categories */}
+                {categories.data.slice(0, 4).map((cat) => (
+                  <Pressable
+                    key={cat.id}
+                    style={styles.categoryCard}
+                    onPress={() => {
+                      navigation.navigate("CreateRequest", {
+                        categoryId: cat.id,
+                        categorySlug: cat.slug,
+                        categoryNameAr: cat.nameAr
+                      });
+                    }}
+                  >
+                    <View style={styles.categoryIconWrapper}>
+                      <Ionicons name={getIconName(cat.slug)} size={26} color={theme.primary} />
+                    </View>
+                    <Text style={styles.categoryName} numberOfLines={1}>{cat.nameAr}</Text>
+                  </Pressable>
+                ))}
+
+                {/* More / All Services Card at the end of the row */}
+                <Pressable
+                  style={[styles.categoryCard, { backgroundColor: theme.primarySoft, borderColor: theme.primary }]}
+                  onPress={() => navigation.navigate("AllServices")}
                 >
-                  <Text style={styles.bookButtonText}>اطلب الفني الآن</Text>
-                  <Ionicons name="arrow-back" size={14} color={theme.primaryText} style={{ transform: [{ rotate: "180deg" }] }} />
+                  <View style={[styles.categoryIconWrapper, { backgroundColor: theme.surface }]}>
+                    <Ionicons name="grid-outline" size={26} color={theme.primary} />
+                  </View>
+                  <Text style={[styles.categoryName, { color: theme.primary }]} numberOfLines={1}>المزيد</Text>
                 </Pressable>
-              </AppCard>
-            ))}
-          </ScrollView>
-        </View>
-      )}
+              </ScrollView>
+            )}
+          </View>
 
-      {/* 7. Service Zone Info Card */}
-      <AppCard style={styles.infoCard}>
-        <View style={styles.infoIconWrapper}>
-          <Ionicons name="location-outline" size={24} color={theme.primary} />
+          {/* 3.3. TECHNICIAN ADS / CAMPAIGNS */}
+          {displayTechAds.length > 0 && (
+            <View style={styles.sectionBlock}>
+              <View style={styles.sectionHeader}>
+                <View style={styles.sectionHeaderWithIcon}>
+                  <Ionicons name="people-circle-outline" size={20} color={theme.primary} />
+                  <Text style={styles.sectionTitle}>إعلانات الفنيين الحرفيين</Text>
+                </View>
+                <Text style={styles.sectionSubtitle}>خدمات وعروض مقدمة مباشرة من أمهر صنايعية أُسطى</Text>
+              </View>
+
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.campaignsContainer}>
+                {displayTechAds.map((camp) => (
+                  <AppCard key={camp.id} style={styles.campaignCard}>
+                    {camp.imageUrl ? (
+                      <View style={styles.campaignImageWrapper}>
+                        <Image source={camp.imageUrl} style={styles.campaignImage as any} contentFit="cover" />
+                        <View style={styles.adBadge}>
+                          <Text style={styles.adBadgeText}>ممول</Text>
+                        </View>
+                      </View>
+                    ) : null}
+                    <View style={styles.campaignDetails}>
+                      <Text style={styles.campaignTitle} numberOfLines={1}>{camp.titleAr}</Text>
+                      <Text style={styles.campaignDesc} numberOfLines={2}>{camp.descAr}</Text>
+                    </View>
+                  </AppCard>
+                ))}
+              </ScrollView>
+            </View>
+          )}
+
+          {/* 3.4. VENDOR / SHOP ADS / CAMPAIGNS */}
+          {displayStoreAds.length > 0 && (
+            <View style={styles.sectionBlock}>
+              <View style={styles.sectionHeader}>
+                <View style={styles.sectionHeaderWithIcon}>
+                  <Ionicons name="storefront-outline" size={18} color={theme.primary} />
+                  <Text style={styles.sectionTitle}>إعلانات المتاجر والشركاء</Text>
+                </View>
+                <Text style={styles.sectionSubtitle}>أفضل أسعار خامات ومعدات ومواد تشطيب من متاجر معتمدة</Text>
+              </View>
+
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.campaignsContainer}>
+                {displayStoreAds.map((camp) => (
+                  <AppCard key={camp.id} style={styles.campaignCard}>
+                    {camp.imageUrl ? (
+                      <View style={styles.campaignImageWrapper}>
+                        <Image source={camp.imageUrl} style={styles.campaignImage as any} contentFit="cover" />
+                        <View style={styles.adBadge}>
+                          <Text style={styles.adBadgeText}>متجر شريك</Text>
+                        </View>
+                      </View>
+                    ) : null}
+                    <View style={styles.campaignDetails}>
+                      <Text style={styles.campaignTitle} numberOfLines={1}>{camp.titleAr}</Text>
+                      <Text style={styles.campaignDesc} numberOfLines={2}>{camp.descAr}</Text>
+                    </View>
+                  </AppCard>
+                ))}
+              </ScrollView>
+            </View>
+          )}
+
+          {/* 3.5. FEATURED / TOP VERIFIED WORKERS */}
+          {workers.data.length > 0 && (
+            <View style={styles.sectionBlock}>
+              <View style={styles.sectionHeader}>
+                <View style={styles.sectionHeaderWithIcon}>
+                  <Ionicons name="ribbon-outline" size={20} color={theme.primary} />
+                  <Text style={styles.sectionTitle}>أفضل الفنيين الموثقين</Text>
+                </View>
+                <Text style={styles.sectionSubtitle}>صنايعية معتمدين ذوي تقييم عالي جاهزون لخدمتك</Text>
+              </View>
+
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.workersContainer}>
+                {workers.data.map((worker) => (
+                  <AppCard key={worker.id} style={styles.workerCard}>
+                    <View style={styles.workerHeader}>
+                      <View style={styles.workerInfo}>
+                        <Text style={styles.workerName} numberOfLines={1}>
+                          {worker.name}
+                        </Text>
+                        <Text style={styles.workerProfession} numberOfLines={1}>{worker.professionAr || "فني محترف"}</Text>
+                      </View>
+                      <View style={styles.workerAvatarWrapper}>
+                        {worker.avatarUrl ? (
+                          <Image source={worker.avatarUrl} style={styles.workerAvatar as any} />
+                        ) : (
+                          <View style={styles.workerAvatarPlaceholder}>
+                            <Ionicons name="person" size={24} color={theme.muted} />
+                          </View>
+                        )}
+                      </View>
+                    </View>
+                    
+                    <View style={styles.workerMeta}>
+                      <View style={styles.workerRating}>
+                        <Ionicons name="star" size={14} color="#D7A24D" />
+                        <Text style={styles.workerRatingText}>
+                          {worker.rating?.toFixed(1) ?? "5.0"} ({worker.ratingCount ?? 0})
+                        </Text>
+                      </View>
+                      <View style={styles.workerExp}>
+                        <Text style={styles.workerExpText}>{worker.totalJobs ?? 0} عملية</Text>
+                      </View>
+                    </View>
+
+                    <Pressable 
+                      style={styles.bookButton} 
+                      onPress={() => {
+                        navigation.navigate("CreateRequest", {
+                          workerId: worker.id,
+                          workerName: worker.name
+                        });
+                      }}
+                    >
+                      <Text style={styles.bookButtonText}>اطلب الفني الآن</Text>
+                      <Ionicons name="arrow-back" size={14} color={theme.primaryText} style={{ transform: [{ rotate: "180deg" }] }} />
+                    </Pressable>
+                  </AppCard>
+                ))}
+              </ScrollView>
+            </View>
+          )}
+
+          {/* 3.6. ADVERTISEMENT PLACEHOLDER SPACE (Mesa7a E3lanya) */}
+          <View style={[styles.sectionBlock, { marginBottom: spacing.xl }]}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>مساحة إعلانية مميزة</Text>
+            </View>
+            <AppCard style={styles.infoCard}>
+              <View style={styles.infoIconWrapper}>
+                <Ionicons name="location-outline" size={24} color={theme.primary} />
+              </View>
+              <View style={styles.infoTextWrapper}>
+                <Text style={styles.infoTitle}>تغطية الخدمة ومواقع الفنيين</Text>
+                <Text style={styles.infoBody}>
+                  عند إنشاء أي طلب خدمة، يتم رصد موقعك تلقائياً لعرض طلبك فوراً لأقرب الفنيين والمحترفين المتواجدين في نطاق منطقتك السكنية لضمان سرعة الوصول والاستجابة.
+                </Text>
+              </View>
+            </AppCard>
+          </View>
+
         </View>
-        <View style={styles.infoTextWrapper}>
-          <Text style={styles.infoTitle}>تغطية الخدمة ومواقع الفنيين</Text>
-          <Text style={styles.infoBody}>
-            عند إنشاء أي طلب خدمة، يتم رصد موقعك تلقائياً لعرض طلبك فوراً لأقرب الفنيين والمحترفين المتواجدين في نطاق منطقتك السكنية لضمان سرعة الوصول والاستجابة.
-          </Text>
-        </View>
-      </AppCard>
+      </ScrollView>
     </Screen>
   );
 }
 
 const makeStyles = (theme: ReturnType<typeof useTheme>["theme"]) => StyleSheet.create({
+  topAdBanner: {
+    width: "100%",
+    height: 180,
+    position: "relative",
+    backgroundColor: theme.primarySoft
+  },
+  slideImagePlaceholder: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "#15110D"
+  },
+  slideImage: {
+    ...StyleSheet.absoluteFillObject
+  },
+  slideGradient: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.55)"
+  },
+  slideContent: {
+    position: "absolute",
+    bottom: spacing.md,
+    left: spacing.lg,
+    right: spacing.lg,
+    alignItems: "flex-end",
+    gap: spacing.xs
+  },
+  slideTitle: {
+    color: "#FFFFFF",
+    fontSize: 20,
+    fontWeight: "900",
+    textAlign: "right",
+    lineHeight: 28
+  },
+  slideDesc: {
+    color: "rgba(255,255,255,0.8)",
+    fontSize: 12,
+    textAlign: "right",
+    lineHeight: 18,
+    marginBottom: spacing.xs
+  },
+  slideCta: {
+    flexDirection: "row-reverse",
+    backgroundColor: theme.primary,
+    borderRadius: 8,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    alignItems: "center",
+    gap: spacing.xs
+  },
+  slideCtaText: {
+    color: "#15110D",
+    fontSize: 12,
+    fontWeight: "900"
+  },
+  stickyHeaderWrapper: {
+    backgroundColor: theme.background,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.sm,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.border,
+    zIndex: 100,
+    elevation: 4
+  },
   headerRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingBottom: spacing.sm,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.border
+    marginBottom: spacing.sm
   },
   headerLeft: {
     flexDirection: "row",
     gap: spacing.sm
   },
   headerRight: {
-    alignItems: "flex-end"
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    gap: spacing.sm
   },
   iconButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     backgroundColor: theme.surfaceAlt,
     alignItems: "center",
     justifyContent: "center"
   },
   greetingText: {
     color: theme.muted,
-    fontSize: 14,
-    fontWeight: "600",
-    textAlign: "right"
+    fontSize: 12,
+    fontWeight: "700"
   },
   logo: {
-    width: 90,
-    height: 32,
-    marginTop: 2
+    width: 80,
+    height: 28
   },
   searchBar: {
     flexDirection: "row-reverse",
@@ -297,107 +528,156 @@ const makeStyles = (theme: ReturnType<typeof useTheme>["theme"]) => StyleSheet.c
     borderRadius: 24,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
-    gap: spacing.sm,
-    marginVertical: spacing.xs
+    gap: spacing.sm
   },
   searchText: {
     color: theme.muted,
-    fontSize: 14,
+    fontSize: 13,
     flex: 1,
     textAlign: "right"
   },
-  slidesContainer: {
-    gap: spacing.md,
-    paddingVertical: spacing.xs
-  },
-  slideCard: {
-    width: 290,
-    height: 140,
-    borderRadius: 16,
-    overflow: "hidden",
-    backgroundColor: theme.primarySoft,
-    justifyContent: "flex-end"
-  },
-  slideImage: {
-    ...StyleSheet.absoluteFillObject
-  },
-  slideGradient: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.4)"
-  },
-  slideText: {
-    color: "#FFFFFF",
-    fontSize: 18,
-    fontWeight: "900",
-    padding: spacing.md,
-    textAlign: "right",
-    lineHeight: 24
+  bodyContainer: {
+    padding: spacing.lg,
+    gap: spacing.lg
   },
   sectionBlock: {
-    marginTop: spacing.md
+    gap: spacing.sm
   },
   sectionHeader: {
-    gap: spacing.xs,
-    marginBottom: spacing.sm
+    gap: spacing.xs
   },
   sectionHeaderWithIcon: {
     flexDirection: "row-reverse",
     alignItems: "center",
     gap: spacing.xs
   },
+  sectionHeaderWithLink: {
+    flexDirection: "row-reverse",
+    justifyContent: "space-between",
+    alignItems: "center"
+  },
+  viewAllLink: {
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    gap: 2
+  },
+  viewAllLinkText: {
+    color: theme.primary,
+    fontSize: 13,
+    fontWeight: "700"
+  },
   sectionTitle: {
     color: theme.text,
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: "900",
     textAlign: "right"
   },
   sectionSubtitle: {
     color: theme.muted,
-    fontSize: 13,
+    fontSize: 12,
     textAlign: "right"
   },
-  categoriesGrid: {
+  recentRequestsRow: {
     flexDirection: "row-reverse",
-    flexWrap: "wrap",
+    justifyContent: "space-between",
+    gap: spacing.md
+  },
+  recentRequestCard: {
+    flex: 1,
+    padding: spacing.md,
+    gap: spacing.xs,
+    borderWidth: 1,
+    borderColor: theme.border
+  },
+  recentHeader: {
+    flexDirection: "row-reverse",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 4
+  },
+  recentTitle: {
+    color: theme.text,
+    fontSize: 13,
+    fontWeight: "800",
+    flex: 1,
+    marginRight: 4,
+    textAlign: "right"
+  },
+  statusIndicator: {
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6
+  },
+  statusText: {
+    color: "#FFFFFF",
+    fontSize: 9,
+    fontWeight: "700"
+  },
+  recentService: {
+    color: theme.muted,
+    fontSize: 11,
+    textAlign: "right"
+  },
+  repeatButton: {
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 4,
+    borderWidth: 1,
+    borderColor: theme.border,
+    borderRadius: 8,
+    paddingVertical: 5,
+    marginTop: spacing.xs,
+    backgroundColor: theme.backgroundRaised
+  },
+  repeatButtonText: {
+    color: theme.text,
+    fontSize: 11,
+    fontWeight: "800"
+  },
+  horizontalCategoriesContainer: {
     gap: spacing.md,
-    justifyContent: "space-between"
+    paddingVertical: spacing.xs,
+    flexDirection: "row-reverse"
   },
   categoryCard: {
-    width: "30%",
+    width: 90,
     backgroundColor: theme.surface,
     borderWidth: 1,
     borderColor: theme.border,
     borderRadius: 16,
-    padding: spacing.sm,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.xs,
     alignItems: "center",
     gap: spacing.xs
   },
   categoryIconWrapper: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     backgroundColor: theme.primarySoft,
     alignItems: "center",
     justifyContent: "center"
   },
   categoryName: {
     color: theme.text,
-    fontSize: 13,
-    fontWeight: "800",
+    fontSize: 12,
+    fontWeight: "bold",
     textAlign: "center"
   },
   campaignsContainer: {
     gap: spacing.md,
-    paddingVertical: spacing.xs
+    paddingVertical: spacing.xs,
+    flexDirection: "row-reverse"
   },
   campaignCard: {
-    width: 260,
+    width: 250,
     padding: 0,
     overflow: "hidden"
   },
   campaignImageWrapper: {
     width: "100%",
-    height: 120,
+    height: 110,
     position: "relative"
   },
   campaignImage: {
@@ -424,22 +704,23 @@ const makeStyles = (theme: ReturnType<typeof useTheme>["theme"]) => StyleSheet.c
   },
   campaignTitle: {
     color: theme.text,
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: "900",
     textAlign: "right"
   },
   campaignDesc: {
     color: theme.muted,
-    fontSize: 12,
-    lineHeight: 18,
+    fontSize: 11,
+    lineHeight: 16,
     textAlign: "right"
   },
   workersContainer: {
     gap: spacing.md,
-    paddingVertical: spacing.xs
+    paddingVertical: spacing.xs,
+    flexDirection: "row-reverse"
   },
   workerCard: {
-    width: 240,
+    width: 230,
     padding: spacing.md,
     gap: spacing.sm
   },
@@ -454,21 +735,21 @@ const makeStyles = (theme: ReturnType<typeof useTheme>["theme"]) => StyleSheet.c
   },
   workerName: {
     color: theme.text,
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: "800",
     textAlign: "right"
   },
   workerProfession: {
     color: theme.primary,
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: "700",
     textAlign: "right",
     marginTop: 2
   },
   workerAvatarWrapper: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     overflow: "hidden",
     borderWidth: 1,
     borderColor: theme.border
@@ -496,7 +777,7 @@ const makeStyles = (theme: ReturnType<typeof useTheme>["theme"]) => StyleSheet.c
   },
   workerRatingText: {
     color: theme.text,
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: "700"
   },
   workerExp: {
@@ -507,7 +788,7 @@ const makeStyles = (theme: ReturnType<typeof useTheme>["theme"]) => StyleSheet.c
   },
   workerExpText: {
     color: theme.muted,
-    fontSize: 10,
+    fontSize: 9,
     fontWeight: "700"
   },
   bookButton: {
@@ -522,15 +803,14 @@ const makeStyles = (theme: ReturnType<typeof useTheme>["theme"]) => StyleSheet.c
   },
   bookButtonText: {
     color: theme.primaryText,
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: "800"
   },
   infoCard: {
     flexDirection: "row-reverse",
     padding: spacing.md,
     gap: spacing.md,
-    backgroundColor: theme.backgroundRaised,
-    marginTop: spacing.sm
+    backgroundColor: theme.backgroundRaised
   },
   infoIconWrapper: {
     width: 44,
@@ -545,15 +825,15 @@ const makeStyles = (theme: ReturnType<typeof useTheme>["theme"]) => StyleSheet.c
   },
   infoTitle: {
     color: theme.text,
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: "800",
     textAlign: "right",
     marginBottom: 4
   },
   infoBody: {
     color: theme.muted,
-    fontSize: 12,
-    lineHeight: 18,
+    fontSize: 11,
+    lineHeight: 16,
     textAlign: "right"
   }
 });
