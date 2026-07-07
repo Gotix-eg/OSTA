@@ -36,7 +36,7 @@ export const themes: Record<ThemeMode, AppTheme> = {
     muted: "#5A4C3E",
     subtle: "#7E6E5E",
     border: "#E9D29A",
-    primary: "#9C6720",
+    primary: "#000000",
     primaryText: "#FFF8EA",
     primarySoft: "#FEF2CF",
     accent: "#146D68",
