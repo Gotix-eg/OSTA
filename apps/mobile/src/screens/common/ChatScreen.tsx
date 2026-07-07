@@ -8,6 +8,7 @@ import { Screen } from "../../components/Screen";
 import { useTheme } from "../../context/ThemeContext";
 import { spacing } from "../../theme/spacing";
 import { useAuth } from "../../context/AuthContext";
+import { activeChatRef } from "../../context/NotificationContext";
 
 type Message = {
   id: string;
@@ -34,6 +35,16 @@ export function ChatScreen() {
 
   const flatListRef = useRef<FlatList>(null);
   const lastFetchedTimeRef = useRef<string | null>(null);
+
+  // Set current active chat user ID globally to suppress in-app notifications
+  useEffect(() => {
+    if (conversationId) {
+      activeChatRef.currentUserId = conversationId;
+    }
+    return () => {
+      activeChatRef.currentUserId = null;
+    };
+  }, [conversationId]);
 
   // Load message history on mount
   useEffect(() => {
