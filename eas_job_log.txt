@@ -1,0 +1,568 @@
+﻿2026-07-05T20:27:56.7539698Z Current runner version: '2.335.1'
+2026-07-05T20:27:56.7565977Z ##[group]Runner Image Provisioner
+2026-07-05T20:27:56.7567338Z Hosted Compute Agent
+2026-07-05T20:27:56.7568078Z Version: 20260624.560
+2026-07-05T20:27:56.7568718Z Commit: 925d229a51159bc391ae97e54a2dd1fe20af789d
+2026-07-05T20:27:56.7569488Z Build Date: 2026-06-24T18:26:47Z
+2026-07-05T20:27:56.7570179Z Worker ID: {21edd0da-390c-4829-9e97-6f06a423e64e}
+2026-07-05T20:27:56.7570893Z Azure Region: westus
+2026-07-05T20:27:56.7571546Z ##[endgroup]
+2026-07-05T20:27:56.7573055Z ##[group]Operating System
+2026-07-05T20:27:56.7573686Z Ubuntu
+2026-07-05T20:27:56.7574315Z 24.04.4
+2026-07-05T20:27:56.7574840Z LTS
+2026-07-05T20:27:56.7575406Z ##[endgroup]
+2026-07-05T20:27:56.7576010Z ##[group]Runner Image
+2026-07-05T20:27:56.7576859Z Image: ubuntu-24.04
+2026-07-05T20:27:56.7577498Z Version: 20260628.225.1
+2026-07-05T20:27:56.7578754Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260628.225/images/ubuntu/Ubuntu2404-Readme.md
+2026-07-05T20:27:56.7580371Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260628.225
+2026-07-05T20:27:56.7581346Z ##[endgroup]
+2026-07-05T20:27:56.7583021Z ##[group]GITHUB_TOKEN Permissions
+2026-07-05T20:27:56.7585260Z Contents: read
+2026-07-05T20:27:56.7586002Z Metadata: read
+2026-07-05T20:27:56.7586847Z Packages: read
+2026-07-05T20:27:56.7587428Z ##[endgroup]
+2026-07-05T20:27:56.7589684Z Secret source: Actions
+2026-07-05T20:27:56.7590745Z Prepare workflow directory
+2026-07-05T20:27:56.7987130Z Prepare all required actions
+2026-07-05T20:27:56.8042592Z Getting action download info
+2026-07-05T20:27:57.1686916Z Download action repository 'actions/checkout@v4' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)
+2026-07-05T20:27:57.2497598Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+2026-07-05T20:27:57.3357205Z Download action repository 'expo/expo-github-action@v8' (SHA:c7b66a9c327a43a8fa7c0158e7f30d6040d2481e)
+2026-07-05T20:27:58.0079979Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-07-05T20:27:58.2382684Z Complete job name: Build Android AAB for Google Play
+2026-07-05T20:27:58.3189021Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-07-05T20:27:58.3198007Z ##[group]Run actions/checkout@v4
+2026-07-05T20:27:58.3198942Z with:
+2026-07-05T20:27:58.3199400Z   repository: Gotix-eg/OSTA
+2026-07-05T20:27:58.3203415Z   token: ***
+2026-07-05T20:27:58.3203853Z   ssh-strict: true
+2026-07-05T20:27:58.3204285Z   ssh-user: git
+2026-07-05T20:27:58.3204723Z   persist-credentials: true
+2026-07-05T20:27:58.3205203Z   clean: true
+2026-07-05T20:27:58.3205646Z   sparse-checkout-cone-mode: true
+2026-07-05T20:27:58.3206151Z   fetch-depth: 1
+2026-07-05T20:27:58.3206837Z   fetch-tags: false
+2026-07-05T20:27:58.3207358Z   show-progress: true
+2026-07-05T20:27:58.3207873Z   lfs: false
+2026-07-05T20:27:58.3208392Z   submodules: false
+2026-07-05T20:27:58.3208906Z   set-safe-directory: true
+2026-07-05T20:27:58.3209780Z ##[endgroup]
+2026-07-05T20:27:58.4244378Z Syncing repository: Gotix-eg/OSTA
+2026-07-05T20:27:58.4249748Z ##[group]Getting Git version info
+2026-07-05T20:27:58.4250956Z Working directory is '/home/runner/work/OSTA/OSTA'
+2026-07-05T20:27:58.4252821Z [command]/usr/bin/git version
+2026-07-05T20:27:58.4365215Z git version 2.54.0
+2026-07-05T20:27:58.4390106Z ##[endgroup]
+2026-07-05T20:27:58.4407283Z Temporarily overriding HOME='/home/runner/work/_temp/bac66f64-c785-45ca-a198-ecd34a025c60' before making global git config changes
+2026-07-05T20:27:58.4409861Z Adding repository directory to the temporary git global config as a safe directory
+2026-07-05T20:27:58.4413178Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/OSTA/OSTA
+2026-07-05T20:27:58.4470748Z Deleting the contents of '/home/runner/work/OSTA/OSTA'
+2026-07-05T20:27:58.4475698Z ##[group]Initializing the repository
+2026-07-05T20:27:58.4481775Z [command]/usr/bin/git init /home/runner/work/OSTA/OSTA
+2026-07-05T20:27:58.4615843Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-07-05T20:27:58.4618014Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-07-05T20:27:58.4621211Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-07-05T20:27:58.4622430Z hint: call:
+2026-07-05T20:27:58.4623056Z hint:
+2026-07-05T20:27:58.4623958Z hint: 	git config --global init.defaultBranch <name>
+2026-07-05T20:27:58.4625001Z hint:
+2026-07-05T20:27:58.4625911Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-07-05T20:27:58.4627691Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-07-05T20:27:58.4628933Z hint:
+2026-07-05T20:27:58.4629687Z hint: 	git branch -m <name>
+2026-07-05T20:27:58.4630584Z hint:
+2026-07-05T20:27:58.4631688Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-07-05T20:27:58.4633396Z Initialized empty Git repository in /home/runner/work/OSTA/OSTA/.git/
+2026-07-05T20:27:58.4661253Z [command]/usr/bin/git remote add origin https://github.com/Gotix-eg/OSTA
+2026-07-05T20:27:58.4728565Z ##[endgroup]
+2026-07-05T20:27:58.4729879Z ##[group]Disabling automatic garbage collection
+2026-07-05T20:27:58.4739328Z [command]/usr/bin/git config --local gc.auto 0
+2026-07-05T20:27:58.4793009Z ##[endgroup]
+2026-07-05T20:27:58.4794510Z ##[group]Setting up auth
+2026-07-05T20:27:58.4801682Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-07-05T20:27:58.4854676Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-07-05T20:27:58.5272630Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-07-05T20:27:58.5311034Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-07-05T20:27:58.5550569Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-07-05T20:27:58.5591917Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-07-05T20:27:58.5830281Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-07-05T20:27:58.5872945Z ##[endgroup]
+2026-07-05T20:27:58.5873876Z ##[group]Fetching the repository
+2026-07-05T20:27:58.5883791Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +bcd38af0699277bd4d0587d2df550548cbd2df7d:refs/remotes/origin/main
+2026-07-05T20:28:00.9168845Z From https://github.com/Gotix-eg/OSTA
+2026-07-05T20:28:00.9171901Z  * [new ref]         bcd38af0699277bd4d0587d2df550548cbd2df7d -> origin/main
+2026-07-05T20:28:00.9210160Z ##[endgroup]
+2026-07-05T20:28:00.9212133Z ##[group]Determining the checkout info
+2026-07-05T20:28:00.9218645Z ##[endgroup]
+2026-07-05T20:28:00.9220171Z [command]/usr/bin/git sparse-checkout disable
+2026-07-05T20:28:00.9272217Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-07-05T20:28:00.9305857Z ##[group]Checking out the ref
+2026-07-05T20:28:00.9310337Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+2026-07-05T20:28:01.2219356Z Switched to a new branch 'main'
+2026-07-05T20:28:01.2221718Z branch 'main' set up to track 'origin/main'.
+2026-07-05T20:28:01.2257660Z ##[endgroup]
+2026-07-05T20:28:01.2323241Z [command]/usr/bin/git log -1 --format=%H
+2026-07-05T20:28:01.2357679Z bcd38af0699277bd4d0587d2df550548cbd2df7d
+2026-07-05T20:28:01.2719553Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-07-05T20:28:01.2721455Z ##[group]Run actions/setup-node@v4
+2026-07-05T20:28:01.2721769Z with:
+2026-07-05T20:28:01.2722018Z   node-version: 22
+2026-07-05T20:28:01.2722290Z   always-auth: false
+2026-07-05T20:28:01.2722564Z   check-latest: false
+2026-07-05T20:28:01.2725385Z   token: ***
+2026-07-05T20:28:01.2725640Z ##[endgroup]
+2026-07-05T20:28:01.4258497Z Found in cache @ /opt/hostedtoolcache/node/22.23.1/x64
+2026-07-05T20:28:01.4263614Z (node:2298) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-07-05T20:28:01.4264862Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-07-05T20:28:01.4267220Z ##[group]Environment details
+2026-07-05T20:28:01.8755638Z node: v22.23.1
+2026-07-05T20:28:01.8756101Z npm: 10.9.8
+2026-07-05T20:28:01.8757566Z yarn: 1.22.22
+2026-07-05T20:28:01.8758422Z ##[endgroup]
+2026-07-05T20:28:01.8911169Z ##[group]Run npm install --workspace=mobile
+2026-07-05T20:28:01.8911623Z [36;1mnpm install --workspace=mobile[0m
+2026-07-05T20:28:01.9118946Z shell: /usr/bin/bash -e {0}
+2026-07-05T20:28:01.9119311Z ##[endgroup]
+2026-07-05T20:28:06.0593516Z npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-07-05T20:28:06.1726446Z npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-07-05T20:28:06.4769716Z npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-07-05T20:28:07.5571777Z npm warn deprecated uuid@7.0.3: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
+2026-07-05T20:28:14.7942017Z 
+2026-07-05T20:28:14.7943064Z added 649 packages, and audited 651 packages in 13s
+2026-07-05T20:28:14.7943537Z 
+2026-07-05T20:28:14.7943810Z 56 packages are looking for funding
+2026-07-05T20:28:14.7944301Z   run `npm fund` for details
+2026-07-05T20:28:14.8717989Z 
+2026-07-05T20:28:14.8719019Z 13 vulnerabilities (12 moderate, 1 high)
+2026-07-05T20:28:14.8721589Z 
+2026-07-05T20:28:14.8722522Z To address issues that do not require attention, run:
+2026-07-05T20:28:14.8723483Z   npm audit fix
+2026-07-05T20:28:14.8723866Z 
+2026-07-05T20:28:14.8724546Z To address all issues (including breaking changes), run:
+2026-07-05T20:28:14.8725715Z   npm audit fix --force
+2026-07-05T20:28:14.8726107Z 
+2026-07-05T20:28:14.8726781Z Run `npm audit` for details.
+2026-07-05T20:28:14.9399472Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-07-05T20:28:14.9400787Z ##[group]Run expo/expo-github-action@v8
+2026-07-05T20:28:14.9401061Z with:
+2026-07-05T20:28:14.9401259Z   eas-version: latest
+2026-07-05T20:28:14.9401636Z   token: ***
+2026-07-05T20:28:14.9401829Z   expo-cache: true
+2026-07-05T20:28:14.9402031Z   eas-cache: true
+2026-07-05T20:28:14.9402471Z   packager: yarn
+2026-07-05T20:28:14.9402680Z   patch-watchers: true
+2026-07-05T20:28:14.9402907Z ##[endgroup]
+2026-07-05T20:28:15.0683390Z Skipped installing expo-cli: 'expo-version' not provided.
+2026-07-05T20:28:15.0700195Z (node:2348) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-07-05T20:28:15.0701315Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-07-05T20:28:15.4838456Z ##[group]Installing eas-cli (20.5.1) from cache or with yarn
+2026-07-05T20:28:15.5794951Z ##[warning]Failed to restore: Cache service responded with 400
+2026-07-05T20:28:15.5807903Z [command]/usr/local/bin/yarn add eas-cli@20.5.1
+2026-07-05T20:28:15.7056961Z yarn add v1.22.22
+2026-07-05T20:28:15.7193179Z info No lockfile found.
+2026-07-05T20:28:15.7349246Z [1/4] Resolving packages...
+2026-07-05T20:28:15.9169185Z warning eas-cli > uuid@9.0.1: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
+2026-07-05T20:28:15.9322248Z warning eas-cli > tar@7.5.7: Old versions of tar are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-07-05T20:28:16.1095718Z warning eas-cli > @expo/steps > uuid@9.0.1: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
+2026-07-05T20:28:16.3405366Z warning eas-cli > @expo/rudder-sdk-node > uuid@8.3.2: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
+2026-07-05T20:28:16.5658168Z warning eas-cli > @expo/steps > lodash.get@4.4.2: This package is deprecated. Use the optional chaining (?.) operator instead.
+2026-07-05T20:28:16.5688172Z warning eas-cli > @expo/prebuild-config > @expo/config > glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-07-05T20:28:16.5691445Z warning eas-cli > @expo/prebuild-config > @expo/config-plugins > glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-07-05T20:28:16.5694402Z warning eas-cli > minizlib > rimraf > glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-07-05T20:28:16.5827919Z warning eas-cli > @expo/plist > @xmldom/xmldom@0.7.13: this version has critical issues, please update to the latest version
+2026-07-05T20:28:16.5830080Z warning eas-cli > @expo/prebuild-config > @expo/config-plugins > @expo/plist > @xmldom/xmldom@0.7.13: this version has critical issues, please update to the latest version
+2026-07-05T20:28:16.7596009Z warning eas-cli > @expo/prebuild-config > @expo/config > sucrase > glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-07-05T20:28:16.8094588Z warning eas-cli > @expo/config-plugins > xcode > uuid@7.0.3: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
+2026-07-05T20:28:16.8193314Z warning eas-cli > @expo/rudder-sdk-node > @expo/bunyan > uuid@8.3.2: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
+2026-07-05T20:28:16.9887240Z warning eas-cli > @expo/logger > bunyan > mv > rimraf@2.4.5: Rimraf versions prior to v4 are no longer supported
+2026-07-05T20:28:16.9892197Z warning eas-cli > @expo/logger > bunyan > mv > rimraf > glob@6.0.4: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-07-05T20:28:17.2224708Z warning eas-cli > @expo/logger > bunyan > mv > rimraf > glob > inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+2026-07-05T20:28:17.4777761Z [2/4] Fetching packages...
+2026-07-05T20:28:23.9324337Z [3/4] Linking dependencies...
+2026-07-05T20:28:23.9342182Z warning "eas-cli > @expo/plugin-help > @oclif/core > ts-node@10.9.2" has unmet peer dependency "@types/node@*".
+2026-07-05T20:28:23.9344040Z warning "eas-cli > @expo/plugin-help > @oclif/core > ts-node@10.9.2" has unmet peer dependency "typescript@>=2.7".
+2026-07-05T20:28:26.9916197Z [4/4] Building fresh packages...
+2026-07-05T20:28:31.1537875Z success Saved lockfile.
+2026-07-05T20:28:31.1799256Z success Saved 308 new dependencies.
+2026-07-05T20:28:31.1800139Z info Direct dependencies
+2026-07-05T20:28:31.1802214Z └─ eas-cli@20.5.1
+2026-07-05T20:28:31.1802666Z info All dependencies
+2026-07-05T20:28:31.1806659Z ├─ @0no-co/graphql.web@1.3.2
+2026-07-05T20:28:31.1807268Z ├─ @babel/compat-data@7.29.7
+2026-07-05T20:28:31.1808027Z ├─ @babel/core@7.29.7
+2026-07-05T20:28:31.1808883Z ├─ @babel/helper-compilation-targets@7.29.7
+2026-07-05T20:28:31.1809788Z ├─ @babel/helper-globals@7.29.7
+2026-07-05T20:28:31.1810590Z ├─ @babel/helper-module-imports@7.29.7
+2026-07-05T20:28:31.1811426Z ├─ @babel/helper-plugin-utils@7.29.7
+2026-07-05T20:28:31.1812230Z ├─ @babel/helper-string-parser@7.29.7
+2026-07-05T20:28:31.1813076Z ├─ @babel/helper-validator-option@7.29.7
+2026-07-05T20:28:31.1813834Z ├─ @babel/helpers@7.29.7
+2026-07-05T20:28:31.1814613Z ├─ @babel/highlight@7.25.9
+2026-07-05T20:28:31.1815517Z ├─ @babel/plugin-transform-modules-commonjs@7.29.7
+2026-07-05T20:28:31.1835805Z ├─ @cspotcode/source-map-support@0.8.1
+2026-07-05T20:28:31.1836559Z ├─ @expo/apple-utils@2.1.22
+2026-07-05T20:28:31.1837075Z ├─ @expo/bunyan@4.0.1
+2026-07-05T20:28:31.1837883Z ├─ @expo/code-signing-certificates@0.0.5
+2026-07-05T20:28:31.1838603Z ├─ @expo/config-plugins@9.0.17
+2026-07-05T20:28:31.1839166Z ├─ @expo/config@55.0.10
+2026-07-05T20:28:31.1839658Z ├─ @expo/eas-json@20.5.1
+2026-07-05T20:28:31.1840111Z ├─ @expo/env@1.0.7
+2026-07-05T20:28:31.1840617Z ├─ @expo/image-utils@0.6.5
+2026-07-05T20:28:31.1841268Z ├─ @expo/multipart-body-parser@2.0.0
+2026-07-05T20:28:31.1841885Z ├─ @expo/osascript@2.1.4
+2026-07-05T20:28:31.1842483Z ├─ @expo/package-manager@1.9.10
+2026-07-05T20:28:31.1843035Z ├─ @expo/pkcs12@0.1.3
+2026-07-05T20:28:31.1843537Z ├─ @expo/plist@0.5.4
+2026-07-05T20:28:31.1844438Z ├─ @expo/plugin-help@5.1.23
+2026-07-05T20:28:31.1845118Z ├─ @expo/plugin-warn-if-update-available@2.5.1
+2026-07-05T20:28:31.1845798Z ├─ @expo/prebuild-config@8.0.17
+2026-07-05T20:28:31.1846575Z ├─ @expo/require-utils@55.0.5
+2026-07-05T20:28:31.1847150Z ├─ @expo/rudder-sdk-node@1.1.1
+2026-07-05T20:28:31.1847652Z ├─ @expo/steps@20.5.1
+2026-07-05T20:28:31.1847933Z ├─ @expo/timeago.js@1.0.0
+2026-07-05T20:28:31.1848237Z ├─ @expo/turtle-spawn@20.0.0
+2026-07-05T20:28:31.1848511Z ├─ @hapi/topo@5.1.0
+2026-07-05T20:28:31.1848757Z ├─ @isaacs/cliui@8.0.2
+2026-07-05T20:28:31.1849026Z ├─ @isaacs/fs-minipass@4.0.1
+2026-07-05T20:28:31.1849346Z ├─ @jridgewell/gen-mapping@0.3.13
+2026-07-05T20:28:31.1849907Z ├─ @jridgewell/remapping@2.3.5
+2026-07-05T20:28:31.1850230Z ├─ @jridgewell/resolve-uri@3.1.2
+2026-07-05T20:28:31.1850568Z ├─ @jridgewell/sourcemap-codec@1.5.5
+2026-07-05T20:28:31.1850928Z ├─ @jridgewell/trace-mapping@0.3.31
+2026-07-05T20:28:31.1851248Z ├─ @nodelib/fs.scandir@2.1.5
+2026-07-05T20:28:31.1851539Z ├─ @nodelib/fs.stat@2.0.5
+2026-07-05T20:28:31.1851886Z ├─ @oclif/plugin-autocomplete@3.2.53
+2026-07-05T20:28:31.1852206Z ├─ @pkgjs/parseargs@0.11.0
+2026-07-05T20:28:31.1852544Z ├─ @react-native/normalize-colors@0.76.2
+2026-07-05T20:28:31.1852910Z ├─ @segment/ajv-human-errors@2.16.0
+2026-07-05T20:28:31.1853264Z ├─ @segment/loosely-validate-event@2.0.0
+2026-07-05T20:28:31.1853629Z ├─ @sentry-internal/tracing@7.77.0
+2026-07-05T20:28:31.1853933Z ├─ @sentry/node@7.77.0
+2026-07-05T20:28:31.1854199Z ├─ @sideway/address@4.1.5
+2026-07-05T20:28:31.1854469Z ├─ @tsconfig/node10@1.0.12
+2026-07-05T20:28:31.1854741Z ├─ @tsconfig/node12@1.0.11
+2026-07-05T20:28:31.1855011Z ├─ @tsconfig/node14@1.0.3
+2026-07-05T20:28:31.1855293Z ├─ @tsconfig/node16@1.0.4
+2026-07-05T20:28:31.1855558Z ├─ @types/bunyan@1.8.11
+2026-07-05T20:28:31.1855862Z ├─ @types/cli-progress@3.11.6
+2026-07-05T20:28:31.1856144Z ├─ @urql/core@4.0.11
+2026-07-05T20:28:31.1857064Z ├─ @urql/exchange-retry@1.2.0
+2026-07-05T20:28:31.1857652Z ├─ acorn-walk@8.3.5
+2026-07-05T20:28:31.1857979Z ├─ acorn@8.17.0
+2026-07-05T20:28:31.1858255Z ├─ agent-base@6.0.2
+2026-07-05T20:28:31.1858507Z ├─ ajv-formats@2.1.1
+2026-07-05T20:28:31.1858738Z ├─ ajv@8.11.0
+2026-07-05T20:28:31.1858966Z ├─ ansicolors@0.3.2
+2026-07-05T20:28:31.1859190Z ├─ ansis@3.17.0
+2026-07-05T20:28:31.1859399Z ├─ arg@4.1.3
+2026-07-05T20:28:31.1859625Z ├─ argparse@1.0.10
+2026-07-05T20:28:31.1859859Z ├─ array-union@2.1.0
+2026-07-05T20:28:31.1860081Z ├─ asn1@0.2.6
+2026-07-05T20:28:31.1860307Z ├─ astral-regex@2.0.0
+2026-07-05T20:28:31.1860544Z ├─ async@3.2.6
+2026-07-05T20:28:31.1860771Z ├─ asynckit@0.4.0
+2026-07-05T20:28:31.1861014Z ├─ balanced-match@1.0.2
+2026-07-05T20:28:31.1861377Z ├─ bare-events@2.9.1
+2026-07-05T20:28:31.1861699Z ├─ baseline-browser-mapping@2.10.42
+2026-07-05T20:28:31.1862004Z ├─ better-opn@3.0.2
+2026-07-05T20:28:31.1862257Z ├─ bplist-creator@0.1.0
+2026-07-05T20:28:31.1862521Z ├─ bplist-parser@0.3.2
+2026-07-05T20:28:31.1862758Z ├─ braces@3.0.3
+2026-07-05T20:28:31.1862994Z ├─ browserslist@4.28.4
+2026-07-05T20:28:31.1863243Z ├─ bunyan@1.8.15
+2026-07-05T20:28:31.1863528Z ├─ call-bind-apply-helpers@1.0.2
+2026-07-05T20:28:31.1863828Z ├─ caniuse-lite@1.0.30001800
+2026-07-05T20:28:31.1864094Z ├─ cardinal@2.1.1
+2026-07-05T20:28:31.1864313Z ├─ charenc@0.0.2
+2026-07-05T20:28:31.1864527Z ├─ chownr@3.0.0
+2026-07-05T20:28:31.1864755Z ├─ cli-cursor@3.1.0
+2026-07-05T20:28:31.1865001Z ├─ cli-progress@3.12.0
+2026-07-05T20:28:31.1865255Z ├─ cli-spinners@2.9.2
+2026-07-05T20:28:31.1865495Z ├─ clone@1.0.4
+2026-07-05T20:28:31.1865730Z ├─ color-convert@2.0.1
+2026-07-05T20:28:31.1865973Z ├─ color-name@1.1.4
+2026-07-05T20:28:31.1866219Z ├─ combined-stream@1.0.8
+2026-07-05T20:28:31.1866815Z ├─ commander@4.1.1
+2026-07-05T20:28:31.1867089Z ├─ component-type@1.2.2
+2026-07-05T20:28:31.1867365Z ├─ concat-map@0.0.1
+2026-07-05T20:28:31.1867620Z ├─ content-type@1.0.5
+2026-07-05T20:28:31.1867898Z ├─ convert-source-map@2.0.0
+2026-07-05T20:28:31.1868183Z ├─ create-require@1.1.1
+2026-07-05T20:28:31.1868426Z ├─ crypt@0.0.2
+2026-07-05T20:28:31.1868879Z ├─ crypto-random-string@2.0.0
+2026-07-05T20:28:31.1869177Z ├─ dateformat@4.6.3
+2026-07-05T20:28:31.1869412Z ├─ defaults@1.0.4
+2026-07-05T20:28:31.1869662Z ├─ define-lazy-prop@2.0.0
+2026-07-05T20:28:31.1869935Z ├─ delayed-stream@1.0.0
+2026-07-05T20:28:31.1870162Z ├─ diff@7.0.0
+2026-07-05T20:28:31.1870380Z ├─ dir-glob@3.0.1
+2026-07-05T20:28:31.1870594Z ├─ domino@2.1.7
+2026-07-05T20:28:31.1870832Z ├─ dotenv-expand@11.0.7
+2026-07-05T20:28:31.1871065Z ├─ dotenv@16.3.1
+2026-07-05T20:28:31.1871308Z ├─ dtrace-provider@0.8.8
+2026-07-05T20:28:31.1871569Z ├─ dunder-proto@1.0.1
+2026-07-05T20:28:31.1871810Z ├─ eas-cli@20.5.1
+2026-07-05T20:28:31.1872049Z ├─ eastasianwidth@0.2.0
+2026-07-05T20:28:31.1872429Z ├─ ejs@3.1.10
+2026-07-05T20:28:31.1872703Z ├─ electron-to-chromium@1.5.387
+2026-07-05T20:28:31.1872982Z ├─ env-paths@2.2.0
+2026-07-05T20:28:31.1873215Z ├─ env-string@1.0.1
+2026-07-05T20:28:31.1873456Z ├─ envinfo@7.11.0
+2026-07-05T20:28:31.1873680Z ├─ err-code@2.0.3
+2026-07-05T20:28:31.1873903Z ├─ error-ex@1.3.4
+2026-07-05T20:28:31.1874163Z ├─ es-define-property@1.0.1
+2026-07-05T20:28:31.1874440Z ├─ es-object-atoms@1.1.2
+2026-07-05T20:28:31.1874713Z ├─ es-set-tostringtag@2.1.0
+2026-07-05T20:28:31.1874977Z ├─ escalade@3.2.0
+2026-07-05T20:28:31.1875191Z ├─ esprima@4.0.1
+2026-07-05T20:28:31.1875439Z ├─ events-universal@1.0.1
+2026-07-05T20:28:31.1875717Z ├─ exec-async@2.2.0
+2026-07-05T20:28:31.1875978Z ├─ fast-deep-equal@3.1.3
+2026-07-05T20:28:31.1876237Z ├─ fast-fifo@1.3.2
+2026-07-05T20:28:31.1876709Z ├─ fast-glob@3.3.2
+2026-07-05T20:28:31.1877124Z ├─ fast-uri@3.1.3
+2026-07-05T20:28:31.1877618Z ├─ fastq@1.20.1
+2026-07-05T20:28:31.1878081Z ├─ fdir@6.5.0
+2026-07-05T20:28:31.1878614Z ├─ fetch-retry@4.1.1
+2026-07-05T20:28:31.1879166Z ├─ figures@3.2.0
+2026-07-05T20:28:31.1879602Z ├─ filelist@1.0.6
+2026-07-05T20:28:31.1880065Z ├─ fill-range@7.1.1
+2026-07-05T20:28:31.1880539Z ├─ find-up@4.1.0
+2026-07-05T20:28:31.1881094Z ├─ foreground-child@3.3.1
+2026-07-05T20:28:31.1881685Z ├─ form-data@4.0.6
+2026-07-05T20:28:31.1882217Z ├─ gensync@1.0.0-beta.2
+2026-07-05T20:28:31.1882830Z ├─ get-intrinsic@1.3.0
+2026-07-05T20:28:31.1883338Z ├─ get-proto@1.0.1
+2026-07-05T20:28:31.1883727Z ├─ glob@10.5.0
+2026-07-05T20:28:31.1884149Z ├─ globby@11.1.0
+2026-07-05T20:28:31.1884635Z ├─ golden-fleece@1.0.9
+2026-07-05T20:28:31.1885142Z ├─ gradle-to-js@2.0.1
+2026-07-05T20:28:31.1885666Z ├─ graphql-tag@2.12.6
+2026-07-05T20:28:31.1886190Z ├─ graphql@16.8.1
+2026-07-05T20:28:31.1886922Z ├─ has-symbols@1.1.0
+2026-07-05T20:28:31.1887432Z ├─ has-tostringtag@1.0.2
+2026-07-05T20:28:31.1887978Z ├─ hosted-git-info@7.0.2
+2026-07-05T20:28:31.1888469Z ├─ http-call@5.3.0
+2026-07-05T20:28:31.1888965Z ├─ https-proxy-agent@5.0.1
+2026-07-05T20:28:31.1889531Z ├─ hyperlinker@1.0.0
+2026-07-05T20:28:31.1889971Z ├─ ignore@5.3.0
+2026-07-05T20:28:31.1890433Z ├─ imurmurhash@0.1.4
+2026-07-05T20:28:31.1890918Z ├─ inflight@1.0.6
+2026-07-05T20:28:31.1891366Z ├─ inherits@2.0.4
+2026-07-05T20:28:31.1891789Z ├─ invariant@2.2.4
+2026-07-05T20:28:31.1892215Z ├─ is-arrayish@0.2.1
+2026-07-05T20:28:31.1892639Z ├─ is-buffer@1.1.6
+2026-07-05T20:28:31.1893078Z ├─ is-docker@2.2.1
+2026-07-05T20:28:31.1893491Z ├─ is-extglob@2.1.1
+2026-07-05T20:28:31.1893882Z ├─ is-glob@4.0.3
+2026-07-05T20:28:31.1894314Z ├─ is-interactive@1.0.0
+2026-07-05T20:28:31.1894764Z ├─ is-number@7.0.0
+2026-07-05T20:28:31.1895212Z ├─ is-retry-allowed@1.2.0
+2026-07-05T20:28:31.1895687Z ├─ is-stream@2.0.1
+2026-07-05T20:28:31.1896170Z ├─ is-unicode-supported@0.1.0
+2026-07-05T20:28:31.1896902Z ├─ isexe@2.0.0
+2026-07-05T20:28:31.1897328Z ├─ jackspeak@3.4.3
+2026-07-05T20:28:31.1897730Z ├─ jake@10.9.4
+2026-07-05T20:28:31.1898156Z ├─ jimp-compact@0.16.1
+2026-07-05T20:28:31.1898588Z ├─ jks-js@1.1.0
+2026-07-05T20:28:31.1899054Z ├─ join-component@1.1.0
+2026-07-05T20:28:31.1899503Z ├─ js-yaml@3.15.0
+2026-07-05T20:28:31.1899902Z ├─ jsep@1.4.0
+2026-07-05T20:28:31.1900284Z ├─ jsesc@3.1.0
+2026-07-05T20:28:31.1900801Z ├─ json-parse-better-errors@1.0.2
+2026-07-05T20:28:31.1901328Z ├─ keychain@1.5.0
+2026-07-05T20:28:31.1901723Z ├─ kleur@3.0.3
+2026-07-05T20:28:31.1902131Z ├─ lilconfig@3.1.3
+2026-07-05T20:28:31.1902859Z ├─ lines-and-columns@1.2.4
+2026-07-05T20:28:31.1903435Z ├─ locate-path@5.0.0
+2026-07-05T20:28:31.1903977Z ├─ lodash.clonedeep@4.5.0
+2026-07-05T20:28:31.1904491Z ├─ lodash.get@4.4.2
+2026-07-05T20:28:31.1904942Z ├─ lodash.merge@4.6.2
+2026-07-05T20:28:31.1905438Z ├─ loose-envify@1.4.0
+2026-07-05T20:28:31.1905934Z ├─ lru-cache@10.4.3
+2026-07-05T20:28:31.1906541Z ├─ make-error@1.3.6
+2026-07-05T20:28:31.1906988Z ├─ math-intrinsics@1.1.0
+2026-07-05T20:28:31.1907394Z ├─ md5@2.3.0
+2026-07-05T20:28:31.1907789Z ├─ micromatch@4.0.8
+2026-07-05T20:28:31.1908230Z ├─ mime-db@1.52.0
+2026-07-05T20:28:31.1908692Z ├─ mime-types@2.1.35
+2026-07-05T20:28:31.1909458Z ├─ mime@3.0.0
+2026-07-05T20:28:31.1909839Z ├─ mimic-fn@2.1.0
+2026-07-05T20:28:31.1910228Z ├─ minimatch@10.2.5
+2026-07-05T20:28:31.1910630Z ├─ minimist@1.2.8
+2026-07-05T20:28:31.1911024Z ├─ minipass@7.1.3
+2026-07-05T20:28:31.1911419Z ├─ minizlib@3.0.1
+2026-07-05T20:28:31.1911790Z ├─ mkdirp@0.5.6
+2026-07-05T20:28:31.1912161Z ├─ moment@2.30.1
+2026-07-05T20:28:31.1912538Z ├─ ms@2.1.3
+2026-07-05T20:28:31.1912921Z ├─ multipasta@0.2.7
+2026-07-05T20:28:31.1913402Z ├─ mute-stream@0.0.8
+2026-07-05T20:28:31.1913866Z ├─ mv@2.1.1
+2026-07-05T20:28:31.1914273Z ├─ mz@2.7.0
+2026-07-05T20:28:31.1914625Z ├─ nan@2.28.0
+2026-07-05T20:28:31.1915010Z ├─ nanoid@3.3.8
+2026-07-05T20:28:31.1915449Z ├─ natural-orderby@2.0.3
+2026-07-05T20:28:31.1915873Z ├─ ncp@2.0.0
+2026-07-05T20:28:31.1916504Z ├─ node-fetch@2.6.7
+2026-07-05T20:28:31.1916951Z ├─ node-int64@0.4.0
+2026-07-05T20:28:31.1917387Z ├─ node-releases@2.0.50
+2026-07-05T20:28:31.1917875Z ├─ node-rsa@1.1.1
+2026-07-05T20:28:31.1918361Z ├─ node-stream-zip@1.15.0
+2026-07-05T20:28:31.1918953Z ├─ npm-package-arg@11.0.3
+2026-07-05T20:28:31.1919488Z ├─ nullthrows@1.1.1
+2026-07-05T20:28:31.1919984Z ├─ object-assign@4.1.1
+2026-07-05T20:28:31.1920511Z ├─ object-treeify@1.1.33
+2026-07-05T20:28:31.1920950Z ├─ onetime@5.1.2
+2026-07-05T20:28:31.1921312Z ├─ open@8.4.2
+2026-07-05T20:28:31.1921666Z ├─ ora@5.1.0
+2026-07-05T20:28:31.1922080Z ├─ p-limit@2.3.0
+2026-07-05T20:28:31.1922514Z ├─ p-locate@4.1.0
+2026-07-05T20:28:31.1922927Z ├─ p-try@2.2.0
+2026-07-05T20:28:31.1923469Z ├─ package-json-from-dist@1.0.1
+2026-07-05T20:28:31.1923973Z ├─ parse-json@4.0.0
+2026-07-05T20:28:31.1924432Z ├─ parse-png@2.1.0
+2026-07-05T20:28:31.1924867Z ├─ password-prompt@1.1.3
+2026-07-05T20:28:31.1925314Z ├─ path-exists@4.0.0
+2026-07-05T20:28:31.1925754Z ├─ path-is-absolute@1.0.1
+2026-07-05T20:28:31.1926190Z ├─ path-key@3.1.1
+2026-07-05T20:28:31.1926869Z ├─ path-scurry@1.11.1
+2026-07-05T20:28:31.1927294Z ├─ path-type@4.0.0
+2026-07-05T20:28:31.1927691Z ├─ picomatch@4.0.5
+2026-07-05T20:28:31.1928129Z ├─ pirates@4.0.7
+2026-07-05T20:28:31.1928511Z ├─ pkg-dir@4.2.0
+2026-07-05T20:28:31.1928905Z ├─ plist@3.1.1
+2026-07-05T20:28:31.1929262Z ├─ pngjs@7.0.0
+2026-07-05T20:28:31.1929638Z ├─ proc-log@4.2.0
+2026-07-05T20:28:31.1930048Z ├─ promise-limit@2.7.0
+2026-07-05T20:28:31.1930483Z ├─ promise-retry@2.0.1
+2026-07-05T20:28:31.1930872Z ├─ prompts@2.4.2
+2026-07-05T20:28:31.1931265Z ├─ punycode@2.3.1
+2026-07-05T20:28:31.1931748Z ├─ qrcode-terminal@0.12.0
+2026-07-05T20:28:31.1932191Z ├─ queue-microtask@1.2.3
+2026-07-05T20:28:31.1932578Z ├─ redeyed@2.1.1
+2026-07-05T20:28:31.1933018Z ├─ remove-trailing-slash@0.1.1
+2026-07-05T20:28:31.1933473Z ├─ restore-cursor@3.1.0
+2026-07-05T20:28:31.1933842Z ├─ retry@0.12.0
+2026-07-05T20:28:31.1934181Z ├─ reusify@1.1.0
+2026-07-05T20:28:31.1934531Z ├─ rimraf@5.0.10
+2026-07-05T20:28:31.1934909Z ├─ run-parallel@1.2.0
+2026-07-05T20:28:31.1963695Z ├─ safe-buffer@5.2.1
+2026-07-05T20:28:31.1964309Z ├─ safe-json-stringify@1.2.0
+2026-07-05T20:28:31.1964830Z ├─ safer-buffer@2.1.2
+2026-07-05T20:28:31.1965496Z ├─ sax@1.6.0
+2026-07-05T20:28:31.1965909Z ├─ set-interval-async@3.0.3
+2026-07-05T20:28:31.1966578Z ├─ shebang-command@2.0.0
+2026-07-05T20:28:31.1967030Z ├─ shebang-regex@3.0.0
+2026-07-05T20:28:31.1967453Z ├─ simple-plist@1.3.1
+2026-07-05T20:28:31.1967864Z ├─ sisteransi@1.0.5
+2026-07-05T20:28:31.1968258Z ├─ slice-ansi@4.0.0
+2026-07-05T20:28:31.1968852Z ├─ sprintf-js@1.0.3
+2026-07-05T20:28:31.1969277Z ├─ stream-buffers@2.2.0
+2026-07-05T20:28:31.1969687Z ├─ streamx@2.28.0
+2026-07-05T20:28:31.1970099Z ├─ string-width-cjs@4.2.3
+2026-07-05T20:28:31.1970537Z ├─ strip-ansi-cjs@6.0.1
+2026-07-05T20:28:31.1970948Z ├─ sucrase@3.35.0
+2026-07-05T20:28:31.1971346Z ├─ supports-color@7.2.0
+2026-07-05T20:28:31.1971793Z ├─ supports-hyperlinks@2.3.0
+2026-07-05T20:28:31.1972257Z ├─ tar-stream@3.1.7
+2026-07-05T20:28:31.1972617Z ├─ tar@7.5.7
+2026-07-05T20:28:31.1972978Z ├─ temp-dir@2.0.0
+2026-07-05T20:28:31.1973360Z ├─ text-decoder@1.2.7
+2026-07-05T20:28:31.1973765Z ├─ thenify-all@1.6.0
+2026-07-05T20:28:31.1974162Z ├─ thenify@3.3.1
+2026-07-05T20:28:31.1974549Z ├─ tinyglobby@0.2.17
+2026-07-05T20:28:31.1974958Z ├─ to-regex-range@5.0.1
+2026-07-05T20:28:31.1975336Z ├─ tr46@0.0.3
+2026-07-05T20:28:31.1975720Z ├─ ts-deepmerge@6.2.0
+2026-07-05T20:28:31.1976222Z ├─ ts-interface-checker@0.1.13
+2026-07-05T20:28:31.1976905Z ├─ ts-node@10.9.2
+2026-07-05T20:28:31.1977259Z ├─ tslib@2.8.1
+2026-07-05T20:28:31.1977664Z ├─ tunnel-agent@0.6.0
+2026-07-05T20:28:31.1978045Z ├─ turndown@7.1.2
+2026-07-05T20:28:31.1978401Z ├─ type-fest@0.21.3
+2026-07-05T20:28:31.1978782Z ├─ undici-types@8.3.0
+2026-07-05T20:28:31.1979270Z ├─ unique-string@2.0.0
+2026-07-05T20:28:31.1979738Z ├─ untildify@4.0.0
+2026-07-05T20:28:31.1980275Z ├─ update-browserslist-db@1.2.3
+2026-07-05T20:28:31.1980812Z ├─ uri-js@4.4.1
+2026-07-05T20:28:31.1981205Z ├─ uuid@8.3.2
+2026-07-05T20:28:31.1981682Z ├─ v8-compile-cache-lib@3.0.1
+2026-07-05T20:28:31.1982353Z ├─ validate-npm-package-name@5.0.1
+2026-07-05T20:28:31.1982985Z ├─ webidl-conversions@3.0.1
+2026-07-05T20:28:31.1983510Z ├─ which@2.0.2
+2026-07-05T20:28:31.1983966Z ├─ wrap-ansi-cjs@7.0.0
+2026-07-05T20:28:31.1984457Z ├─ yallist@5.0.0
+2026-07-05T20:28:31.1984875Z ├─ yaml@2.6.0
+2026-07-05T20:28:31.1985286Z ├─ yn@3.1.1
+2026-07-05T20:28:31.1985682Z └─ zod@4.4.3
+2026-07-05T20:28:31.1986034Z Done in 15.49s.
+2026-07-05T20:28:37.3623904Z [command]/usr/bin/tar --posix -cf cache.tzst --exclude cache.tzst -P -C /home/runner/work/OSTA/OSTA --files-from manifest.txt --use-compress-program zstdmt
+2026-07-05T20:28:38.1553067Z ##[warning]Failed to save: <h2>Our services aren't available right now</h2><p>We're working to restore all services as soon as possible. Please check back soon.</p>0dr5KagAAAAAgi6s/KLujRb38zaR8BFYnTEFYRURHRTE5MjEARWRnZQ==
+2026-07-05T20:28:38.1576334Z ##[endgroup]
+2026-07-05T20:28:38.1577062Z ##[group]Validating authenticated account
+2026-07-05T20:28:38.1594539Z [command]/opt/hostedtoolcache/eas-cli/20.5.1/x64/node_modules/.bin/eas whoami
+2026-07-05T20:28:38.9485792Z hgomaa (authenticated using EXPO_TOKEN)
+2026-07-05T20:28:38.9486786Z hgomaa0@gmail.com
+2026-07-05T20:28:39.2802409Z ##[endgroup]
+2026-07-05T20:28:39.2803093Z ##[group]Patching system watchers for the 'ENOSPC' error
+2026-07-05T20:28:39.2820431Z [command]/usr/bin/sudo sysctl fs.inotify.max_user_instances=524288
+2026-07-05T20:28:39.2908017Z fs.inotify.max_user_instances = 524288
+2026-07-05T20:28:39.2932062Z [command]/usr/bin/sudo sysctl fs.inotify.max_user_watches=524288
+2026-07-05T20:28:39.3010030Z fs.inotify.max_user_watches = 524288
+2026-07-05T20:28:39.3031156Z [command]/usr/bin/sudo sysctl fs.inotify.max_queued_events=524288
+2026-07-05T20:28:39.3105433Z fs.inotify.max_queued_events = 524288
+2026-07-05T20:28:39.3127736Z [command]/usr/bin/sudo sysctl -p
+2026-07-05T20:28:39.3203086Z vm.max_map_count = 262144
+2026-07-05T20:28:39.3203429Z fs.inotify.max_user_watches = 655360
+2026-07-05T20:28:39.3203758Z fs.inotify.max_user_instances = 1280
+2026-07-05T20:28:39.3204064Z vm.mmap_rnd_bits = 28
+2026-07-05T20:28:39.3213990Z Patched system watchers for the `ENOSPC` error.
+2026-07-05T20:28:39.3214758Z ##[endgroup]
+2026-07-05T20:28:39.3401275Z ##[group]Run eas build --platform android --profile production --non-interactive
+2026-07-05T20:28:39.3401889Z [36;1meas build --platform android --profile production --non-interactive[0m
+2026-07-05T20:28:39.3437015Z shell: /usr/bin/bash -e {0}
+2026-07-05T20:28:39.3437256Z env:
+2026-07-05T20:28:39.3437601Z   EXPO_TOKEN: ***
+2026-07-05T20:28:39.3437806Z ##[endgroup]
+2026-07-05T20:28:40.7459691Z 
+2026-07-05T20:28:40.7462766Z ⚠️ Detected that your app uses Expo Go for development, this is not recommended when building production apps.
+2026-07-05T20:28:40.7464443Z Learn more: https://expo.fyi/why-not-build-expo-go-for-production
+2026-07-05T20:28:40.7465181Z To suppress this warning, set EAS_BUILD_NO_EXPO_GO_WARNING=true.
+2026-07-05T20:28:40.7465527Z 
+2026-07-05T20:28:41.3798764Z Resolved "production" environment for the build. Learn more: https://docs.expo.dev/eas/environment-variables/#setting-the-environment-for-your-builds
+2026-07-05T20:28:41.4691180Z No environment variables with visibility "Plain text" and "Sensitive" found for the "production" environment on EAS.
+2026-07-05T20:28:41.4692264Z 
+2026-07-05T20:28:43.0042572Z 
+2026-07-05T20:28:43.0878439Z 
+2026-07-05T20:28:43.0882195Z android.versionCode field in app config is ignored when version source is set to remote, but this value will still be in the manifest available via expo-constants. It's recommended to remove this value from app config.
+2026-07-05T20:28:43.3664971Z ✔ Using remote Android credentials (Expo server)
+2026-07-05T20:28:43.5127447Z ✔ Using Keystore from configuration: Build Credentials KJjmDZLfwG (default)
+2026-07-05T20:28:43.5151026Z 
+2026-07-05T20:28:43.5152061Z Compressing project files and uploading to EAS Build. Learn more: https://expo.fyi/eas-build-archive
+2026-07-05T20:28:44.5167571Z - Compressing project files
+2026-07-05T20:28:48.3611758Z - Uploading to EAS Build (0 / 65.6 MB)
+2026-07-05T20:28:49.2009203Z ✔ Uploaded to EAS 
+2026-07-05T20:28:49.2138535Z - Computing project fingerprint
+2026-07-05T20:28:50.1057684Z ✔ Computed project fingerprint
+2026-07-05T20:28:50.6232981Z This account has used its Android builds from the Free plan this month, which will reset in 26 days (on Sat Aug 01 2026). Upgrade your plan for more builds with shorter wait times and longer timeouts, and to run more builds concurrently with a subscription plan. https://expo.dev/accounts/hgomaa/settings/billing
+2026-07-05T20:28:50.7236378Z     Error: build command failed.
+2026-07-05T20:28:50.7435022Z ##[error]Process completed with exit code 1.
+2026-07-05T20:28:50.7542058Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-07-05T20:28:50.7543321Z Post job cleanup.
+2026-07-05T20:28:50.8389977Z [command]/usr/bin/git version
+2026-07-05T20:28:50.8408533Z git version 2.54.0
+2026-07-05T20:28:50.8484470Z Temporarily overriding HOME='/home/runner/work/_temp/d3cc23d2-bdba-4942-90a3-3ab8d2d0b612' before making global git config changes
+2026-07-05T20:28:50.8486048Z Adding repository directory to the temporary git global config as a safe directory
+2026-07-05T20:28:50.8490942Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/OSTA/OSTA
+2026-07-05T20:28:50.8529290Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-07-05T20:28:50.8567246Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-07-05T20:28:50.8813017Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-07-05T20:28:50.8841670Z http.https://github.com/.extraheader
+2026-07-05T20:28:50.8854045Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-07-05T20:28:50.8898193Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-07-05T20:28:50.9164978Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-07-05T20:28:50.9203135Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-07-05T20:28:50.9596165Z Cleaning up orphan processes
+2026-07-05T20:28:50.9895026Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4, expo/expo-github-action@v8. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

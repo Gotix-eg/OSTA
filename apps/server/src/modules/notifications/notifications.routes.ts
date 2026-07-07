@@ -62,4 +62,21 @@ router.patch("/read-all", catchAsync(async (request: Request, response: Response
   response.json(successResponse({}, "تم تحديد جميع الإشعارات كمقروءة"));
 }));
 
+// POST /api/notifications/register-push — Register Expo push notification token for the user
+router.post("/register-push", catchAsync(async (request: Request, response: Response) => {
+  const userId = request.auth!.userId;
+  const { token } = request.body as { token: string };
+
+  if (!token) {
+    throw new ApiError(400, "رمز التنبيهات (token) مطلوب");
+  }
+
+  const updatedUser = await prisma.user.update({
+    where: { id: userId },
+    data: { pushToken: token },
+  });
+
+  response.json(successResponse({ pushToken: updatedUser.pushToken }, "تم تسجيل رمز التنبيهات بنجاح"));
+}));
+
 export const notificationsRouter = router;
