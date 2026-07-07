@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Alert, StyleSheet, Text, View, Pressable, ActivityIndicator, TextInput } from "react-native";
+import { Alert, StyleSheet, Text, View, Pressable, ActivityIndicator, TextInput, Platform } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
@@ -56,6 +56,14 @@ export function RegisterScreen({ navigation }: Props) {
   const { theme } = useTheme();
   const styles = makeStyles(theme);
   
+  function showAlert(title: string, message: string) {
+    if (Platform.OS === "web") {
+      alert(`${title}: ${message}`);
+    } else {
+      Alert.alert(title, message);
+    }
+  }
+  
   const [role, setRole] = useState<RegisterRole>("CLIENT");
   
   // Basic Fields
@@ -102,7 +110,7 @@ export function RegisterScreen({ navigation }: Props) {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (permissionResult.granted === false) {
-      Alert.alert("الإذن مطلوب", "يجب السماح بالوصول لمعرض الصور لاختيار المستندات.");
+      showAlert("الإذن مطلوب", "يجب السماح بالوصول لمعرض الصور لاختيار المستندات.");
       return;
     }
 
@@ -128,7 +136,7 @@ export function RegisterScreen({ navigation }: Props) {
 
     // Validate Basic Fields
     if (!firstName.trim() || !lastName.trim() || !phone.trim() || !password.trim()) {
-      Alert.alert("بيانات ناقصة", "يرجى ملء الاسم، رقم الهاتف، وكلمة المرور.");
+      showAlert("بيانات ناقصة", "يرجى ملء الاسم، رقم الهاتف، وكلمة المرور.");
       setIsSubmitting(false);
       return;
     }
@@ -136,28 +144,28 @@ export function RegisterScreen({ navigation }: Props) {
     // Role-specific validation
     if (role === "WORKER") {
       if (!avatarUri) {
-        Alert.alert("صورة شخصية مطلوبة", "يجب رفع صورة شخصية واضحة لوجهك لإكمال تسجيل الفني.");
+        showAlert("صورة شخصية مطلوبة", "يجب رفع صورة شخصية واضحة لوجهك لإكمال تسجيل الفني.");
         setIsSubmitting(false);
         return;
       }
       if (!nationalIdNumber.trim() || nationalIdNumber.trim().length !== 14) {
-        Alert.alert("الرقم القومي غير صالح", "يجب إدخال الرقم القومي المكون من 14 رقماً.");
+        showAlert("الرقم القومي غير صالح", "يجب إدخال الرقم القومي المكون من 14 رقماً.");
         setIsSubmitting(false);
         return;
       }
       if (!nidFrontUri || !nidBackUri) {
-        Alert.alert("مستندات مطلوبة", "يجب إرفاق صورة وجه البطاقة وظهر البطاقة القومية للتوثيق.");
+        showAlert("مستندات مطلوبة", "يجب إرفاق صورة وجه البطاقة وظهر البطاقة القومية للتوثيق.");
         setIsSubmitting(false);
         return;
       }
     } else if (role === "VENDOR") {
       if (!shopName.trim()) {
-        Alert.alert("اسم المتجر مطلوب", "يرجى إدخال اسم المحل أو المتجر الخاص بك.");
+        showAlert("اسم المتجر مطلوب", "يرجى إدخال اسم المحل أو المتجر الخاص بك.");
         setIsSubmitting(false);
         return;
       }
       if (!commRecordUri || !taxCardUri) {
-        Alert.alert("أوراق مطلوبة", "يجب إرفاق صورة السجل التجاري والبطاقة الضريبية لتوثيق المتجر.");
+        showAlert("أوراق مطلوبة", "يجب إرفاق صورة السجل التجاري والبطاقة الضريبية لتوثيق المتجر.");
         setIsSubmitting(false);
         return;
       }
@@ -188,7 +196,7 @@ export function RegisterScreen({ navigation }: Props) {
       }
     } catch (error) {
       const msg = error instanceof Error ? error.message : "تعذر رفع المستندات المرفقة";
-      Alert.alert("فشل تحميل الملفات", msg);
+      showAlert("فشل تحميل الملفات", msg);
       setUploadProgressMsg("");
       setIsSubmitting(false);
       return;
@@ -228,7 +236,7 @@ export function RegisterScreen({ navigation }: Props) {
     } catch (error) {
       const message = error instanceof Error ? error.message : "حاول مرة أخرى";
       setErrorMessage(message);
-      Alert.alert("تعذر إنشاء الحساب", message);
+      showAlert("تعذر إنشاء الحساب", message);
     } finally {
       setUploadProgressMsg("");
       setIsSubmitting(false);
