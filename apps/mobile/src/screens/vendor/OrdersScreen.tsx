@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { StyleSheet, Text, View, ActivityIndicator, FlatList, Pressable, Modal, ScrollView, Alert, Platform, TextInput } from "react-native";
+import { StyleSheet, Text, View, ActivityIndicator, FlatList, Pressable, Modal, ScrollView, Alert, Platform, TextInput, Linking } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
-import { apiClient, unwrapApiData } from "../../api/client";
+import { apiClient } from "../../api/client";
 import { AppButton } from "../../components/AppButton";
 import { AppCard } from "../../components/AppCard";
 import { Screen } from "../../components/Screen";
@@ -31,6 +32,10 @@ type DirectOrder = {
   deliveryNotes?: string;
   createdAt: string;
   items: DirectOrderItem[];
+  client?: {
+    name: string;
+    phone?: string;
+  } | null;
 };
 
 type CustomRequest = {
@@ -44,11 +49,14 @@ type CustomRequest = {
   status: "PENDING" | "REPLIED" | "ACCEPTED" | "REJECTED" | "PREPARING" | "SHIPPED" | "COMPLETED" | "CLOSED";
   vendorReply?: string;
   createdAt: string;
+  clientName: string;
+  clientPhone?: string;
 };
 
 export function OrdersScreen() {
   const { theme } = useTheme();
   const styles = makeStyles(theme);
+  const navigation = useNavigation<any>();
 
   // Api Resources
   const directOrders = useApiResource<DirectOrder[]>("/vendors/direct-orders", []);
@@ -79,6 +87,21 @@ export function OrdersScreen() {
       }
     }
   }
+
+  // Handle call dialer
+  const handleCall = (phone: string) => {
+    Linking.openURL(`tel:${phone}`).catch(() => {
+      showAlert("تعذر الاتصال", "لا يمكن فتح تطبيق الاتصال الهاتفي.");
+    });
+  };
+
+  // Handle navigating to chat
+  const handleChat = (userId: string, name: string) => {
+    navigation.navigate("Chat", {
+      conversationId: userId,
+      recipientName: name
+    });
+  };
 
   // Update Status of Direct Order
   const handleUpdateDirectOrderStatus = async (orderId: string, newStatus: string) => {
@@ -344,6 +367,32 @@ export function OrdersScreen() {
                   </Text>
                 </View>
 
+                {/* Client Details Section */}
+                <View style={styles.clientDetailsCard}>
+                  <Text style={styles.clientDetailsTitle}>بيانات التواصل مع العميل</Text>
+                  <View style={styles.clientDetailsContent}>
+                    <Text style={styles.clientText}>اسم العميل: {selectedDirectOrder.client?.name || "عميل أُسطى"}</Text>
+                    {selectedDirectOrder.client?.phone ? (
+                      <Text style={styles.clientText}>رقم الجوال: {selectedDirectOrder.client.phone}</Text>
+                    ) : null}
+                  </View>
+                  <View style={styles.clientActionsRow}>
+                    {selectedDirectOrder.client?.phone ? (
+                      <Pressable style={styles.clientCallBtn} onPress={() => handleCall(selectedDirectOrder.client!.phone!)}>
+                        <Ionicons name="call" size={16} color={theme.primary} />
+                        <Text style={styles.clientCallBtnText}>اتصال هاتفي</Text>
+                      </Pressable>
+                    ) : null}
+                    <Pressable 
+                      style={styles.clientChatBtn} 
+                      onPress={() => handleChat(selectedDirectOrder.clientId, selectedDirectOrder.client?.name || "عميل أُسطى")}
+                    >
+                      <Ionicons name="chatbubble-ellipses" size={16} color={theme.primaryText} />
+                      <Text style={styles.clientChatBtnText}>محادثة فورية</Text>
+                    </Pressable>
+                  </View>
+                </View>
+
                 {/* Items Section */}
                 <Text style={styles.sectionTitle}>المنتجات المطلوبة</Text>
                 <View style={styles.itemsWrapper}>
@@ -452,6 +501,32 @@ export function OrdersScreen() {
                       {getCustomStatusConfig(selectedCustomRequest.status).text}
                     </Text>
                   </Text>
+                </View>
+
+                {/* Client Details Section */}
+                <View style={styles.clientDetailsCard}>
+                  <Text style={styles.clientDetailsTitle}>بيانات التواصل مع العميل</Text>
+                  <View style={styles.clientDetailsContent}>
+                    <Text style={styles.clientText}>اسم العميل: {selectedCustomRequest.clientName || "عميل أُسطى"}</Text>
+                    {selectedCustomRequest.clientPhone ? (
+                      <Text style={styles.clientText}>رقم الجوال: {selectedCustomRequest.clientPhone}</Text>
+                    ) : null}
+                  </View>
+                  <View style={styles.clientActionsRow}>
+                    {selectedCustomRequest.clientPhone ? (
+                      <Pressable style={styles.clientCallBtn} onPress={() => handleCall(selectedCustomRequest.clientPhone!)}>
+                        <Ionicons name="call" size={16} color={theme.primary} />
+                        <Text style={styles.clientCallBtnText}>اتصال هاتفي</Text>
+                      </Pressable>
+                    ) : null}
+                    <Pressable 
+                      style={styles.clientChatBtn} 
+                      onPress={() => handleChat(selectedCustomRequest.clientId, selectedCustomRequest.clientName || "عميل أُسطى")}
+                    >
+                      <Ionicons name="chatbubble-ellipses" size={16} color={theme.primaryText} />
+                      <Text style={styles.clientChatBtnText}>محادثة فورية</Text>
+                    </Pressable>
+                  </View>
                 </View>
 
                 {/* Description */}
@@ -729,6 +804,69 @@ const makeStyles = (theme: ReturnType<typeof useTheme>["theme"]) => StyleSheet.c
     fontSize: 13,
     color: theme.text,
     textAlign: "right"
+  },
+  clientDetailsCard: {
+    backgroundColor: theme.surface,
+    padding: spacing.md,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: theme.border,
+    gap: spacing.sm
+  },
+  clientDetailsTitle: {
+    fontSize: 13,
+    fontWeight: "800",
+    color: theme.text,
+    textAlign: "right",
+    borderBottomWidth: 1,
+    borderBottomColor: theme.border,
+    paddingBottom: 4
+  },
+  clientDetailsContent: {
+    alignItems: "flex-end",
+    gap: spacing.xs
+  },
+  clientText: {
+    fontSize: 13,
+    color: theme.text,
+    textAlign: "right"
+  },
+  clientActionsRow: {
+    flexDirection: "row-reverse",
+    gap: spacing.sm,
+    marginTop: 4
+  },
+  clientCallBtn: {
+    flex: 1,
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: spacing.xs,
+    height: 38,
+    borderRadius: 19,
+    borderWidth: 1.5,
+    borderColor: theme.primary,
+    backgroundColor: "transparent"
+  },
+  clientCallBtnText: {
+    color: theme.primary,
+    fontSize: 12,
+    fontWeight: "bold"
+  },
+  clientChatBtn: {
+    flex: 1,
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: spacing.xs,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: theme.primary
+  },
+  clientChatBtnText: {
+    color: theme.primaryText,
+    fontSize: 12,
+    fontWeight: "bold"
   },
   sectionTitle: {
     fontSize: 15,
