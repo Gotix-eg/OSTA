@@ -13,21 +13,20 @@ import { LinearGradient } from "expo-linear-gradient";
 const { width, height } = Dimensions.get("window");
 
 const GOLD = "#f5bd18";
-const GOLD_DIM = "rgba(245,189,24,0.18)";
 const GOLD_MID = "rgba(245,189,24,0.55)";
 
 // Single rising spark
 function Spark({ index }: { index: number }) {
   const y = useRef(new Animated.Value(0)).current;
   const opacity = useRef(new Animated.Value(0)).current;
-  const x = useRef(width * 0.2 + Math.random() * width * 0.6).current;
-  const size = 1.5 + Math.random() * 3;
-  const dur = 1400 + Math.random() * 1800;
-  const startDelay = index * 180 + Math.random() * 400;
+  const x = useRef(width * 0.1 + Math.random() * width * 0.8).current;
+  const size = 1 + Math.random() * 3;
+  const dur = 1200 + Math.random() * 1500;
+  const startDelay = index * 100 + Math.random() * 200;
 
   useEffect(() => {
     const run = () => {
-      y.setValue(height * 0.7);
+      y.setValue(height * 0.8);
       opacity.setValue(0);
       Animated.parallel([
         Animated.sequence([
@@ -36,11 +35,11 @@ function Spark({ index }: { index: number }) {
         ]),
         Animated.sequence([
           Animated.delay(startDelay),
-          Animated.timing(opacity, { toValue: 0.9, duration: 300, useNativeDriver: true }),
-          Animated.timing(opacity, { toValue: 0.6, duration: dur - 500, useNativeDriver: true }),
-          Animated.timing(opacity, { toValue: 0, duration: 200, useNativeDriver: true }),
+          Animated.timing(opacity, { toValue: 0.8, duration: 250, useNativeDriver: true }),
+          Animated.timing(opacity, { toValue: 0.5, duration: dur - 400, useNativeDriver: true }),
+          Animated.timing(opacity, { toValue: 0, duration: 150, useNativeDriver: true }),
         ]),
-      ]).start(() => setTimeout(run, Math.random() * 600 + 200));
+      ]).start(() => setTimeout(run, Math.random() * 500));
     };
     run();
   }, []);
@@ -72,100 +71,110 @@ interface SplashScreenProps {
 
 export function SplashScreen({ onFinish }: SplashScreenProps) {
 
-  /* ── icon phase ── */
-  const iconScale   = useRef(new Animated.Value(0)).current;
-  const iconOpacity = useRef(new Animated.Value(0)).current;
-  const iconRotate  = useRef(new Animated.Value(0)).current;
+  /* ── World Cup Logo Phase ── */
+  const wcLogoScale   = useRef(new Animated.Value(0)).current;
+  const wcLogoOpacity = useRef(new Animated.Value(0)).current;
 
-  /* ── glow rings ── */
-  const ring1Scale   = useRef(new Animated.Value(0.6)).current;
-  const ring1Opacity = useRef(new Animated.Value(0)).current;
-  const ring2Scale   = useRef(new Animated.Value(0.6)).current;
-  const ring2Opacity = useRef(new Animated.Value(0)).current;
+  /* ── World Cup Ball (Kicked) ── */
+  const ballTranslateX = useRef(new Animated.Value(-width * 0.6)).current;
+  const ballTranslateY = useRef(new Animated.Value(height * 0.3)).current;
+  const ballScale      = useRef(new Animated.Value(0.1)).current;
+  const ballRotate     = useRef(new Animated.Value(0)).current;
+  const ballOpacity    = useRef(new Animated.Value(0)).current;
 
-  /* ── logo text reveal ── */
-  const logoOpacity  = useRef(new Animated.Value(0)).current;
-  const logoScale    = useRef(new Animated.Value(0.9)).current;
-  const logoY        = useRef(new Animated.Value(15)).current;
+  /* ── Impact Ring ── */
+  const impactScale    = useRef(new Animated.Value(0.2)).current;
+  const impactOpacity  = useRef(new Animated.Value(0)).current;
 
-  /* ── line + tagline + promo ── */
-  const lineScale    = useRef(new Animated.Value(0)).current;
-  const tagOpacity   = useRef(new Animated.Value(0)).current;
-  const promoOpacity = useRef(new Animated.Value(0)).current;
-  const promoY       = useRef(new Animated.Value(10)).current;
+  /* ── Ostafy Logo Reveal ── */
+  const logoOpacity    = useRef(new Animated.Value(0)).current;
+  const logoScale      = useRef(new Animated.Value(0.85)).current;
+  const logoY          = useRef(new Animated.Value(15)).current;
 
-  /* ── exit ── */
-  const exitOpacity  = useRef(new Animated.Value(1)).current;
-  const exitScale    = useRef(new Animated.Value(1)).current;
+  /* ── Line + Tagline ── */
+  const lineScale      = useRef(new Animated.Value(0)).current;
+  const tagOpacity     = useRef(new Animated.Value(0)).current;
 
-  /* ── glitch shift ── */
-  const glitch       = useRef(new Animated.Value(0)).current;
+  /* ── Exit ── */
+  const exitOpacity    = useRef(new Animated.Value(1)).current;
+  const exitScale      = useRef(new Animated.Value(1)).current;
 
-  const rotate = iconRotate.interpolate({
+  /* ── Glitch Shift ── */
+  const glitch         = useRef(new Animated.Value(0)).current;
+
+  const ballRotation = ballRotate.interpolate({
     inputRange: [0, 1],
-    outputRange: ["0deg", "360deg"],
+    outputRange: ["0deg", "720deg"],
   });
 
   useEffect(() => {
     Animated.sequence([
-      Animated.delay(150),
+      Animated.delay(100),
 
-      // 1. Icon spins and scales in with glow rings
+      // 1. World Cup Logo springs in at the center-right
       Animated.parallel([
-        Animated.spring(iconScale,   { toValue: 1,   useNativeDriver: true, tension: 100, friction: 8 }),
-        Animated.timing(iconOpacity, { toValue: 1,   duration: 450, useNativeDriver: true }),
-        Animated.timing(iconRotate,  { toValue: 1,   duration: 800, useNativeDriver: true, easing: Easing.out(Easing.back(1.2)) }),
-        Animated.timing(ring1Opacity,{ toValue: 0.6, duration: 400, useNativeDriver: true }),
-        Animated.spring(ring1Scale,  { toValue: 1,   useNativeDriver: true, tension: 70, friction: 6 }),
-        Animated.timing(ring2Opacity,{ toValue: 0.3, duration: 600, useNativeDriver: true }),
-        Animated.spring(ring2Scale,  { toValue: 1.35,useNativeDriver: true, tension: 50, friction: 7 }),
-      ]),
-
-      // Brief pause to show the icon
-      Animated.delay(500),
-
-      // 2. Icon glitches, shrinks slightly, and disappears
-      Animated.sequence([
-        Animated.parallel([
-          Animated.timing(glitch, { toValue: 6, duration: 50, useNativeDriver: true }),
-          Animated.timing(iconScale, { toValue: 0.9, duration: 150, useNativeDriver: true }),
-        ]),
-        Animated.parallel([
-          Animated.timing(glitch, { toValue: -6, duration: 50, useNativeDriver: true }),
-          Animated.timing(iconOpacity, { toValue: 0, duration: 200, useNativeDriver: true }),
-          Animated.timing(ring1Opacity, { toValue: 0, duration: 200, useNativeDriver: true }),
-          Animated.timing(ring2Opacity, { toValue: 0, duration: 200, useNativeDriver: true }),
-        ]),
-        Animated.timing(glitch, { toValue: 0, duration: 10, useNativeDriver: true }),
+        Animated.spring(wcLogoScale,   { toValue: 1.1, useNativeDriver: true, tension: 70, friction: 6 }),
+        Animated.timing(wcLogoOpacity, { toValue: 1, duration: 400, useNativeDriver: true }),
       ]),
 
       Animated.delay(100),
 
-      // 3. Full logo fades in, and tagline/divider reveals
+      // 2. The Ostafy Ball is kicked in from bottom-left, spins, scale-up, and collides with WC Logo
+      Animated.parallel([
+        Animated.timing(ballOpacity, { toValue: 1, duration: 150, useNativeDriver: true }),
+        Animated.timing(ballTranslateX, { toValue: -15, duration: 650, useNativeDriver: true, easing: Easing.out(Easing.quad) }),
+        Animated.timing(ballTranslateY, { toValue: -20, duration: 650, useNativeDriver: true, easing: Easing.out(Easing.quad) }),
+        Animated.timing(ballScale, { toValue: 1, duration: 650, useNativeDriver: true }),
+        Animated.timing(ballRotate, { toValue: 1, duration: 650, useNativeDriver: true, easing: Easing.out(Easing.quad) }),
+      ]),
+
+      // 3. Impact effect triggers: Energy ring expands, WC logo shakes slightly
+      Animated.parallel([
+        Animated.sequence([
+          Animated.timing(impactOpacity, { toValue: 0.9, duration: 50, useNativeDriver: true }),
+          Animated.timing(impactOpacity, { toValue: 0, duration: 350, useNativeDriver: true }),
+        ]),
+        Animated.timing(impactScale, { toValue: 2.2, duration: 400, useNativeDriver: true, easing: Easing.out(Easing.ease) }),
+        Animated.sequence([
+          Animated.timing(glitch, { toValue: 8, duration: 40, useNativeDriver: true }),
+          Animated.timing(glitch, { toValue: -6, duration: 40, useNativeDriver: true }),
+          Animated.timing(glitch, { toValue: 0, duration: 40, useNativeDriver: true }),
+        ]),
+      ]),
+
+      Animated.delay(400),
+
+      // 4. Glitch burst: Ball and World Cup logo disappear together
+      Animated.parallel([
+        Animated.timing(ballOpacity, { toValue: 0, duration: 250, useNativeDriver: true }),
+        Animated.timing(wcLogoOpacity, { toValue: 0, duration: 250, useNativeDriver: true }),
+        Animated.timing(ballScale, { toValue: 0.75, duration: 250, useNativeDriver: true }),
+        Animated.timing(wcLogoScale, { toValue: 0.75, duration: 250, useNativeDriver: true }),
+        Animated.sequence([
+          Animated.timing(glitch, { toValue: 12, duration: 50, useNativeDriver: true }),
+          Animated.timing(glitch, { toValue: -10, duration: 50, useNativeDriver: true }),
+          Animated.timing(glitch, { toValue: 0, duration: 50, useNativeDriver: true }),
+        ]),
+      ]),
+
+      Animated.delay(150),
+
+      // 5. Full Ostafy Logo fades in and settles at the center
       Animated.parallel([
         Animated.timing(logoOpacity, { toValue: 1, duration: 600, useNativeDriver: true }),
         Animated.spring(logoScale,   { toValue: 1, useNativeDriver: true, tension: 80, friction: 8 }),
         Animated.timing(logoY,       { toValue: 0, duration: 600, useNativeDriver: true, easing: Easing.out(Easing.quad) }),
       ]),
 
-      // 4. Divider line, Tagline and World Cup Promo reveal
+      // 6. Divider line + Tagline reveal
       Animated.parallel([
-        Animated.timing(lineScale,    { toValue: 1, duration: 500, useNativeDriver: true, easing: Easing.inOut(Easing.quad) }),
-        Animated.timing(tagOpacity,   { toValue: 1, duration: 500, useNativeDriver: true }),
-        Animated.timing(promoOpacity, { toValue: 1, duration: 700, useNativeDriver: true }),
-        Animated.timing(promoY,       { toValue: 0, duration: 700, useNativeDriver: true, easing: Easing.out(Easing.back(1.5)) }),
+        Animated.timing(lineScale,  { toValue: 1, duration: 500, useNativeDriver: true, easing: Easing.inOut(Easing.quad) }),
+        Animated.timing(tagOpacity, { toValue: 1, duration: 500, useNativeDriver: true }),
       ]),
 
-      // Hold on the complete design
-      Animated.delay(2000),
+      Animated.delay(1800),
 
-      // 5. Glitch and exit fade out
-      Animated.sequence([
-        Animated.timing(glitch, { toValue: 8, duration: 60, useNativeDriver: true }),
-        Animated.timing(glitch, { toValue: -6, duration: 50, useNativeDriver: true }),
-        Animated.timing(glitch, { toValue: 0, duration: 50, useNativeDriver: true }),
-      ]),
-
+      // 7. Exit animation
       Animated.parallel([
         Animated.timing(exitOpacity, { toValue: 0, duration: 500, useNativeDriver: true, easing: Easing.in(Easing.quad) }),
         Animated.timing(exitScale,   { toValue: 1.06, duration: 500, useNativeDriver: true }),
@@ -179,66 +188,66 @@ export function SplashScreen({ onFinish }: SplashScreenProps) {
 
       {/* Background */}
       <LinearGradient
-        colors={["#0a0800", "#120e02", "#070500"]}
+        colors={["#080600", "#100d02", "#050400"]}
         style={StyleSheet.absoluteFill}
       />
 
       {/* Rising gold sparks */}
       {Array.from({ length: 22 }).map((_, i) => <Spark key={i} index={i} />)}
 
-      {/* ── Glow rings (behind icon) ── */}
-      {[{ scale: ring1Scale, opacity: ring1Opacity, size: 220, bw: 2 },
-        { scale: ring2Scale, opacity: ring2Opacity, size: 220, bw: 1 }].map((r, i) => (
-        <Animated.View key={i} style={[styles.ring, {
-          width: r.size, height: r.size, borderRadius: r.size / 2,
-          borderWidth: r.bw,
-          opacity: r.opacity,
-          transform: [{ scale: r.scale }],
-        }]} />
-      ))}
-
-      {/* ── CENTER CONTENT ── */}
+      {/* ── CENTER SCENE ── */}
       <View style={styles.center}>
 
-        {/* CONTAINER FOR LOGO & ICON OVERLAY */}
-        <View style={styles.mediaContainer}>
-          {/* ICON (Phased out) */}
-          <Animated.View style={[styles.iconAbsolute, {
-            opacity: iconOpacity,
-            transform: [{ scale: iconScale }, { rotate }],
+        {/* WORLD CUP ANIME STAGE (Overlay Container) */}
+        <View style={styles.animeStage}>
+
+          {/* World Cup 2026 Logo */}
+          <Animated.View style={[styles.wcLogoWrap, {
+            opacity: wcLogoOpacity,
+            transform: [{ scale: wcLogoScale }, { translateX: glitch }],
           }]}>
-            {/* glitch offset copy */}
-            <Animated.View style={[StyleSheet.absoluteFill, styles.iconInner, {
-              transform: [{ translateX: glitch }],
-            }]}>
-              <Image source={require("../../../assets/icon-only.svg")}
-                style={styles.iconOnly} contentFit="contain"
-                tintColor={GOLD_MID} />
-            </Animated.View>
-            {/* Real icon */}
-            <Image source={require("../../../assets/icon-only.svg")}
-              style={styles.iconOnly} contentFit="contain"
-              tintColor={GOLD} />
+            <Image source={require("../../../assets/wc-logo.png")}
+              style={styles.wcLogo} contentFit="contain" />
           </Animated.View>
 
-          {/* FULL LOGO (Phased in) */}
-          <Animated.View style={[styles.logoAbsolute, {
-            opacity: logoOpacity,
-            transform: [{ scale: logoScale }, { translateY: logoY }],
+          {/* Ostafy World Cup Match Ball */}
+          <Animated.View style={[styles.ballWrap, {
+            opacity: ballOpacity,
+            transform: [
+              { translateX: ballTranslateX },
+              { translateY: ballTranslateY },
+              { scale: ballScale },
+              { rotate: ballRotation },
+            ],
           }]}>
-            {/* Glitch copy */}
-            <Animated.View style={[StyleSheet.absoluteFill, styles.logoInner, {
-              transform: [{ translateX: glitch }],
-            }]}>
-              <Image source={require("../../../assets/logo.svg")}
-                style={styles.logo} contentFit="contain"
-                tintColor="rgba(245,189,24,0.35)" />
-            </Animated.View>
-            {/* Real logo */}
-            <Image source={require("../../../assets/logo.svg")}
-              style={styles.logo} contentFit="contain" />
+            <Image source={require("../../../assets/wc-ball.png")}
+              style={styles.ball} contentFit="contain" />
           </Animated.View>
+
+          {/* Impact Energy Ring */}
+          <Animated.View style={[styles.impactRing, {
+            opacity: impactOpacity,
+            transform: [{ scale: impactScale }],
+          }]} />
         </View>
+
+        {/* FULL OSTAFY LOGO (Revealed after glitch exit of WC scene) */}
+        <Animated.View style={[styles.logoAbsolute, {
+          opacity: logoOpacity,
+          transform: [{ scale: logoScale }, { translateY: logoY }],
+        }]}>
+          {/* Glitch copy */}
+          <Animated.View style={[StyleSheet.absoluteFill, styles.logoInner, {
+            transform: [{ translateX: glitch }],
+          }]}>
+            <Image source={require("../../../assets/logo.svg")}
+              style={styles.logo} contentFit="contain"
+              tintColor="rgba(245,189,24,0.35)" />
+          </Animated.View>
+          {/* Real logo */}
+          <Image source={require("../../../assets/logo.svg")}
+            style={styles.logo} contentFit="contain" />
+        </Animated.View>
 
         {/* Divider line */}
         <Animated.View style={[styles.line, { transform: [{ scaleX: lineScale }] }]} />
@@ -247,19 +256,6 @@ export function SplashScreen({ onFinish }: SplashScreenProps) {
         <Animated.Text style={[styles.tagline, { opacity: tagOpacity }]}>
           BUILT ON TRUST. BACKED BY SKILL.
         </Animated.Text>
-
-        {/* 🏆 World Cup 2026 Promotion Banner */}
-        <Animated.View style={[styles.promoContainer, {
-          opacity: promoOpacity,
-          transform: [{ translateY: promoY }],
-        }]}>
-          <View style={styles.promoBadge}>
-            <Text style={styles.promoBadgeText}>مستجدات 2026</Text>
-          </View>
-          <Text style={styles.promoText}>
-            الراعي الرقمي لخدمات الصيانة والتشغيل لكأس العالم 2026 🏆⚽
-          </Text>
-        </Animated.View>
 
       </View>
 
@@ -279,47 +275,64 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "#0a0800",
   },
-  ring: {
-    position: "absolute",
-    borderColor: GOLD,
-    shadowColor: GOLD,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 1,
-    shadowRadius: 18,
-  },
   center: {
     alignItems: "center",
     gap: 16,
     zIndex: 10,
     width: "100%",
   },
-  mediaContainer: {
-    width: width * 0.75,
-    height: 120,
+  animeStage: {
+    width: width * 0.85,
+    height: 180,
     alignItems: "center",
     justifyContent: "center",
+    position: "relative",
   },
-  iconAbsolute: {
+  wcLogoWrap: {
     position: "absolute",
-    width: 120,
-    height: 120,
+    right: width * 0.1,
+    width: 130,
+    height: 150,
     alignItems: "center",
     justifyContent: "center",
   },
-  iconInner: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  iconOnly: {
-    width: 110,
-    height: 110,
-  },
-  logoAbsolute: {
-    position: "absolute",
+  wcLogo: {
     width: "100%",
+    height: "100%",
+  },
+  ballWrap: {
+    position: "absolute",
+    width: 80,
     height: 80,
     alignItems: "center",
     justifyContent: "center",
+  },
+  ball: {
+    width: "100%",
+    height: "100%",
+    shadowColor: GOLD,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 10,
+  },
+  impactRing: {
+    position: "absolute",
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    borderWidth: 2,
+    borderColor: GOLD,
+    shadowColor: GOLD,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 1,
+    shadowRadius: 15,
+  },
+  logoAbsolute: {
+    width: width * 0.75,
+    height: 80,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 10,
   },
   logoInner: {
     alignItems: "center",
@@ -345,41 +358,6 @@ const styles = StyleSheet.create({
     letterSpacing: 3.5,
     color: "rgba(245,189,24,0.6)",
     textAlign: "center",
-  },
-  promoContainer: {
-    marginTop: 24,
-    alignItems: "center",
-    gap: 8,
-    paddingHorizontal: 20,
-  },
-  promoBadge: {
-    backgroundColor: "rgba(245,189,24,0.12)",
-    borderColor: GOLD,
-    borderWidth: 1,
-    paddingHorizontal: 12,
-    paddingVertical: 3,
-    borderRadius: 12,
-    shadowColor: GOLD,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.6,
-    shadowRadius: 4,
-  },
-  promoBadgeText: {
-    color: GOLD,
-    fontSize: 9,
-    fontWeight: "700",
-    letterSpacing: 1,
-  },
-  promoText: {
-    color: "#ffffff",
-    fontSize: 11,
-    fontWeight: "600",
-    textAlign: "center",
-    opacity: 0.85,
-    lineHeight: 18,
-    textShadowColor: "rgba(245,189,24,0.3)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
   },
   corner: {
     position: "absolute",
