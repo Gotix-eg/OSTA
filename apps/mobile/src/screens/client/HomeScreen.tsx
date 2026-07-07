@@ -28,15 +28,13 @@ type Campaign = {
 
 type Worker = {
   id: string;
-  user: {
-    firstName: string;
-    lastName: string;
-    avatarUrl?: string;
-  };
-  profession: string;
+  name: string;
+  avatarUrl?: string;
+  professionAr: string;
+  professionEn: string;
   rating: number;
   ratingCount: number;
-  yearsOfExperience: number;
+  totalJobs: number;
 };
 
 function getIconName(slug: string): keyof typeof Ionicons.glyphMap {
@@ -194,13 +192,13 @@ export function HomeScreen() {
                 <View style={styles.workerHeader}>
                   <View style={styles.workerInfo}>
                     <Text style={styles.workerName} numberOfLines={1}>
-                      {worker.user?.firstName} {worker.user?.lastName}
+                      {worker.name}
                     </Text>
-                    <Text style={styles.workerProfession} numberOfLines={1}>{worker.profession}</Text>
+                    <Text style={styles.workerProfession} numberOfLines={1}>{worker.professionAr || "فني محترف"}</Text>
                   </View>
                   <View style={styles.workerAvatarWrapper}>
-                    {worker.user?.avatarUrl ? (
-                      <Image source={worker.user.avatarUrl} style={styles.workerAvatar} />
+                    {worker.avatarUrl ? (
+                      <Image source={worker.avatarUrl} style={styles.workerAvatar} />
                     ) : (
                       <View style={styles.workerAvatarPlaceholder}>
                         <Ionicons name="person" size={24} color={theme.muted} />
@@ -217,7 +215,7 @@ export function HomeScreen() {
                     </Text>
                   </View>
                   <View style={styles.workerExp}>
-                    <Text style={styles.workerExpText}>خبرة {worker.yearsOfExperience ?? 3} سنوات</Text>
+                    <Text style={styles.workerExpText}>{worker.totalJobs ?? 0} عملية</Text>
                   </View>
                 </View>
 
@@ -226,7 +224,7 @@ export function HomeScreen() {
                   onPress={() => {
                     navigation.navigate("CreateRequest", {
                       workerId: worker.id,
-                      workerName: `${worker.user?.firstName} ${worker.user?.lastName}`
+                      workerName: worker.name
                     });
                   }}
                 >
