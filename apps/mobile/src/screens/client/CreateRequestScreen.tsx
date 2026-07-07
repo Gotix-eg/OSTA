@@ -1,6 +1,6 @@
-import { Alert, StyleSheet, Text, View } from "react-native";
+import { Alert, StyleSheet, Text, View, Platform } from "react-native";
 import { useMemo, useState, useEffect } from "react";
-import { useRoute } from "@react-navigation/native";
+import { useRoute, useNavigation } from "@react-navigation/native";
 
 import { apiClient, unwrapApiData } from "../../api/client";
 import { AppButton } from "../../components/AppButton";
@@ -28,6 +28,7 @@ export function CreateRequestScreen() {
   const { theme } = useTheme();
   const styles = makeStyles(theme);
   const route = useRoute<any>();
+  const navigation = useNavigation<any>();
   const categories = useApiResource<Category[]>("/services/categories", []);
 
   // Parse parameters from route
@@ -59,9 +60,22 @@ export function CreateRequestScreen() {
 
   const selectedService = useMemo(() => selectedCategory?.services?.[0], [selectedCategory]);
 
+  function showAlert(title: string, message: string, onConfirm?: () => void) {
+    if (Platform.OS === "web") {
+      alert(`${title}: ${message}`);
+      if (onConfirm) onConfirm();
+    } else {
+      if (onConfirm) {
+        Alert.alert(title, message, [{ text: "حسناً", onPress: onConfirm }]);
+      } else {
+        Alert.alert(title, message);
+      }
+    }
+  }
+
   async function submitRequest() {
     if (!selectedCategory || !selectedService) {
-      Alert.alert("لا توجد خدمة", "لا يمكن إنشاء طلب قبل تحميل الخدمات من الداتا بيز.");
+      showAlert("لا توجد خدمة", "لا يمكن إنشاء طلب قبل تحميل الخدمات من الداتا بيز.");
       return;
     }
 
@@ -88,9 +102,11 @@ export function CreateRequestScreen() {
       setTitle("");
       setDescription("");
       setStreet("");
-      Alert.alert("تم إرسال الطلب", "سيظهر الطلب للفنيين المتاحين.");
+      showAlert("تم إرسال الطلب", "سيظهر الطلب للفنيين المتاحين.", () => {
+        navigation.goBack();
+      });
     } catch (error) {
-      Alert.alert("تعذر إرسال الطلب", error instanceof Error ? error.message : "حاول مرة أخرى");
+      showAlert("تعذر إرسال الطلب", error instanceof Error ? error.message : "حاول مرة أخرى");
     } finally {
       setIsSubmitting(false);
     }
