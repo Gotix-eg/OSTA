@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Alert, StyleSheet, Text, View } from "react-native";
+import { Alert, StyleSheet, View } from "react-native";
+import { Image } from "expo-image";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import { AppButton } from "../../components/AppButton";
@@ -16,7 +17,7 @@ type Props = NativeStackScreenProps<AuthStackParamList, "Login">;
 
 export function LoginScreen({ navigation }: Props) {
   const { login } = useAuth();
-  const { theme } = useTheme();
+  const { theme, mode } = useTheme();
   const styles = makeStyles(theme);
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
@@ -33,19 +34,26 @@ export function LoginScreen({ navigation }: Props) {
     }
   }
 
+  // Dark mode → white text logo (original SVG), Light mode → black text logo
+  const logoSource = mode === "dark"
+    ? require("../../../assets/logo.svg")
+    : require("../../../assets/logo-light.svg");
+
   return (
     <Screen>
       <View style={styles.brandHeader}>
         <ThemeToggle />
-        <Text style={styles.brand}>أُسطى</Text>
-        <Text style={styles.tagline}>خدمات وصيانة وطلبات متاجر في تطبيق Native واحد</Text>
+        <Image
+          source={logoSource}
+          style={styles.logo}
+          contentFit="contain"
+        />
       </View>
       <AppCard style={styles.form}>
         <TextField label="رقم الهاتف" keyboardType="phone-pad" value={phone} onChangeText={setPhone} />
         <TextField label="كلمة المرور" secureTextEntry value={password} onChangeText={setPassword} />
         <AppButton title="تسجيل الدخول" isLoading={isSubmitting} onPress={handleLogin} />
         <AppButton title="إنشاء حساب" variant="ghost" onPress={() => navigation.navigate("Register")} />
-        <Text style={styles.help}>الجلسة تحفظ بأمان على الجهاز، والبيانات تأتي من API أُسطى المتصل بالداتا بيز.</Text>
       </AppCard>
     </Screen>
   );
@@ -55,28 +63,14 @@ const makeStyles = (theme: ReturnType<typeof useTheme>["theme"]) => StyleSheet.c
   brandHeader: {
     gap: spacing.sm,
     paddingTop: spacing.xl,
-    paddingBottom: spacing.md
+    paddingBottom: spacing.md,
+    alignItems: "flex-end",
   },
-  brand: {
-    color: theme.text,
-    fontSize: 42,
-    lineHeight: 48,
-    fontWeight: "900",
-    textAlign: "right"
-  },
-  tagline: {
-    color: theme.muted,
-    fontSize: 16,
-    lineHeight: 24,
-    textAlign: "right"
+  logo: {
+    width: "100%",
+    height: 80,
   },
   form: {
     gap: spacing.md
   },
-  help: {
-    color: theme.muted,
-    fontSize: 13,
-    lineHeight: 20,
-    textAlign: "right"
-  }
 });
