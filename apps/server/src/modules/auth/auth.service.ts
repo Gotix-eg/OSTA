@@ -27,6 +27,7 @@ export type RegisterInput = {
   commercialRecord?: string;
   taxCard?: string;
   profession?: string;
+  avatarUrl?: string;
 };
 
 type LoginInput = {
@@ -184,6 +185,7 @@ export const authService = {
         passwordHash,
         role: input.role,
         status: "ACTIVE",
+        avatarUrl: input.avatarUrl,
         clientProfile:
           input.role === "CLIENT"
             ? {

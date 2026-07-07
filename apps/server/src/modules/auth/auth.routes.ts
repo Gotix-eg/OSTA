@@ -70,7 +70,8 @@ router.post("/register/client", registrationLimiter, catchAsync(async (request, 
     city: payload.city,
     address: payload.address,
     latitude: payload.latitude,
-    longitude: payload.longitude
+    longitude: payload.longitude,
+    avatarUrl: payload.avatarUrl
   });
 
   if ("needsVerification" in result) {
@@ -127,7 +128,8 @@ router.post("/register/worker", registrationLimiter, catchAsync(async (request, 
     nationalIdNumber: payload.nationalIdNumber,
     nationalIdFront: payload.nationalIdFront,
     nationalIdBack: payload.nationalIdBack,
-    profession: payload.profession
+    profession: payload.profession,
+    avatarUrl: payload.avatarUrl
   })) as any;
 
   setAuthCookies(response, {
@@ -193,7 +195,6 @@ router.post("/login", loginLimiter, catchAsync(async (request, response) => {
 router.post("/verify-otp", otpLimiter, catchAsync(async (request, response) => {
   const payload = parseBody(verifyOtpSchema, request.body);
   const result = await authService.verifyOtp(payload.phone, payload.code, payload.type);
-
   setAuthCookies(response, {
     accessToken: result.accessToken,
     refreshToken: result.refreshToken,
