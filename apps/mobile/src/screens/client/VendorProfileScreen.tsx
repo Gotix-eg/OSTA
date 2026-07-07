@@ -151,7 +151,7 @@ export function VendorProfileScreen() {
       await apiClient.post(`/vendors/stores/${vendorId}/order`, {
         items: cartItemsArray.map(item => ({ productId: item.productId, qty: item.qty })),
         deliveryNotes: deliveryNotes || undefined,
-        paymentMethod: "COD" // Cash on delivery
+        paymentMethod: "CASH_ON_DELIVERY" // Cash on delivery
       });
 
       showAlert(
