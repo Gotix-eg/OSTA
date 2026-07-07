@@ -82,7 +82,7 @@ export function HomeScreen() {
         </View>
         <View style={styles.headerRight}>
           <Text style={styles.greetingText}>{greetings}</Text>
-          <Text style={styles.brandTitle}>أُسطى OSTA</Text>
+          <Image source={require("../../../assets/logo.png")} style={styles.logo} contentFit="contain" />
         </View>
       </View>
 
@@ -283,11 +283,10 @@ const makeStyles = (theme: ReturnType<typeof useTheme>["theme"]) => StyleSheet.c
     fontWeight: "600",
     textAlign: "right"
   },
-  brandTitle: {
-    color: theme.text,
-    fontSize: 22,
-    fontWeight: "900",
-    textAlign: "right"
+  logo: {
+    width: 90,
+    height: 32,
+    marginTop: 2
   },
   searchBar: {
     flexDirection: "row-reverse",
