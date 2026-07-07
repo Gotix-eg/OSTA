@@ -18,16 +18,10 @@ class SocketService {
   private connectedUsers: Map<string, Set<string>> = new Map();
 
   public init(server: HttpServer): void {
-    const ALLOWED_ORIGINS = [
-      "http://localhost:3000",
-      "http://localhost:3001",
-      env.APP_URL,
-      "https://web-gold-nu-39.vercel.app",
-    ].filter(Boolean) as string[];
-
     this.io = new Server(server, {
       cors: {
-        origin: ALLOWED_ORIGINS,
+        // Allow all origins — mobile clients (React Native / Expo) don't send a browser Origin header
+        origin: true,
         credentials: true
       }
     });

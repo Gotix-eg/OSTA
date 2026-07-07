@@ -121,13 +121,18 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
           console.log("Socket.io connected on mobile client for user", user.id);
         });
 
-        // Listen for new system/general notifications
+        // Listen for new system/general notifications (including chat notifications saved to DB)
         socket.on("new_notification", (data: any) => {
           console.log("Received new notification via socket:", data);
+          // For chat notifications, data.data contains { senderId, type, senderName }
+          const notifData = data.data || {};
+          const isChatNotif = data.type === "CHAT_MESSAGE" || notifData.type === "CHAT_MESSAGE";
           showToast({
             title: data.title || "إشعار جديد",
             body: data.body || "",
-            type: data.type || "SYSTEM"
+            type: isChatNotif ? "CHAT_MESSAGE" : (data.type || "SYSTEM"),
+            senderId: isChatNotif ? (notifData.senderId || data.senderId) : undefined,
+            senderName: isChatNotif ? (notifData.senderName || data.senderName) : undefined,
           });
         });
 

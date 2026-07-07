@@ -195,15 +195,15 @@ router.post("/:receiverId", catchAsync(async (request: Request, response: Respon
   // Also emit back to sender so their other open tabs/devices get updated
   socketService.sendMessage(senderId, message);
 
-  // Save notification to database (Prisma hook will automatically broadcast it via Socket.io)
+  // Save notification to database so client sees it in their notifications list
   try {
     await prisma.notification.create({
       data: {
         userId: receiverId,
-        type: "SYSTEM",
+        type: "CHAT_MESSAGE",
         title: `رسالة جديدة من ${message.sender?.firstName || 'مستخدم'}`,
         body: data.content.substring(0, 50),
-        data: { senderId, type: "CHAT_MESSAGE", requestId: data.requestId }
+        data: { senderId, type: "CHAT_MESSAGE", requestId: data.requestId, senderName: `${message.sender?.firstName || ''} ${message.sender?.lastName || ''}`.trim() }
       }
     });
   } catch (e) {
