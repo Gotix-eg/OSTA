@@ -52,7 +52,7 @@ function tabIcon(name: keyof typeof Ionicons.glyphMap) {
 
 function ClientTabs() {
   const tabOptions = useTabOptions();
-
+ 
   return (
     <Tab.Navigator screenOptions={tabOptions}>
       <Tab.Screen name="ClientHome" component={HomeScreen} options={{ title: "الرئيسية", tabBarIcon: tabIcon("home-outline") }} />
@@ -63,10 +63,10 @@ function ClientTabs() {
     </Tab.Navigator>
   );
 }
-
+ 
 function WorkerTabs() {
   const tabOptions = useTabOptions();
-
+ 
   return (
     <Tab.Navigator screenOptions={tabOptions}>
       <Tab.Screen name="WorkerDashboard" component={WorkerDashboardScreen} options={{ title: "لوحة العمل", tabBarIcon: tabIcon("speedometer-outline") }} />
@@ -76,10 +76,10 @@ function WorkerTabs() {
     </Tab.Navigator>
   );
 }
-
+ 
 function VendorTabs() {
   const tabOptions = useTabOptions();
-
+ 
   return (
     <Tab.Navigator screenOptions={tabOptions}>
       <Tab.Screen name="VendorDashboard" component={VendorDashboardScreen} options={{ title: "المبيعات", tabBarIcon: tabIcon("storefront-outline") }} />
@@ -135,6 +135,9 @@ function useTabOptions() {
     tabBarLabelStyle: {
       fontSize: 12,
       fontWeight: "700" as const
+    },
+    sceneStyle: {
+      backgroundColor: theme.background
     }
   };
 }
