@@ -82,22 +82,23 @@ export function SplashScreen({ onFinish }: SplashScreenProps) {
   const ring1Opacity = useRef(new Animated.Value(0)).current;
   const ring2Scale   = useRef(new Animated.Value(0.6)).current;
   const ring2Opacity = useRef(new Animated.Value(0)).current;
-  const ring3Scale   = useRef(new Animated.Value(0.6)).current;
-  const ring3Opacity = useRef(new Animated.Value(0)).current;
 
   /* ── logo text reveal ── */
   const logoOpacity  = useRef(new Animated.Value(0)).current;
-  const logoY        = useRef(new Animated.Value(20)).current;
+  const logoScale    = useRef(new Animated.Value(0.9)).current;
+  const logoY        = useRef(new Animated.Value(15)).current;
 
-  /* ── line + tagline ── */
+  /* ── line + tagline + promo ── */
   const lineScale    = useRef(new Animated.Value(0)).current;
   const tagOpacity   = useRef(new Animated.Value(0)).current;
+  const promoOpacity = useRef(new Animated.Value(0)).current;
+  const promoY       = useRef(new Animated.Value(10)).current;
 
   /* ── exit ── */
   const exitOpacity  = useRef(new Animated.Value(1)).current;
   const exitScale    = useRef(new Animated.Value(1)).current;
 
-  /* ── glitch shift on icon ── */
+  /* ── glitch shift ── */
   const glitch       = useRef(new Animated.Value(0)).current;
 
   const rotate = iconRotate.interpolate({
@@ -107,61 +108,67 @@ export function SplashScreen({ onFinish }: SplashScreenProps) {
 
   useEffect(() => {
     Animated.sequence([
-
-      // 1. Icon spins in + glow
-      Animated.delay(200),
-      Animated.parallel([
-        Animated.spring(iconScale,   { toValue: 1,   useNativeDriver: true, tension: 90, friction: 7 }),
-        Animated.timing(iconOpacity, { toValue: 1,   duration: 500, useNativeDriver: true }),
-        Animated.timing(iconRotate,  { toValue: 1,   duration: 900, useNativeDriver: true, easing: Easing.out(Easing.back(1.4)) }),
-        Animated.timing(ring1Opacity,{ toValue: 0.7, duration: 400, useNativeDriver: true }),
-        Animated.spring(ring1Scale,  { toValue: 1,   useNativeDriver: true, tension: 60, friction: 6 }),
-        Animated.timing(ring2Opacity,{ toValue: 0.4, duration: 600, useNativeDriver: true }),
-        Animated.spring(ring2Scale,  { toValue: 1.3, useNativeDriver: true, tension: 40, friction: 7 }),
-        Animated.timing(ring3Opacity,{ toValue: 0.2, duration: 800, useNativeDriver: true }),
-        Animated.spring(ring3Scale,  { toValue: 1.75,useNativeDriver: true, tension: 30, friction: 8 }),
-      ]),
-
-      // 2. Icon glitch burst
-      Animated.sequence([
-        Animated.timing(glitch, { toValue: 8,  duration: 50,  useNativeDriver: true }),
-        Animated.timing(glitch, { toValue: -6, duration: 40,  useNativeDriver: true }),
-        Animated.timing(glitch, { toValue: 4,  duration: 35,  useNativeDriver: true }),
-        Animated.timing(glitch, { toValue: 0,  duration: 50,  useNativeDriver: true }),
-      ]),
-
-      Animated.delay(120),
-
-      // 3. Full logo fades up
-      Animated.parallel([
-        Animated.timing(logoOpacity, { toValue: 1, duration: 500, useNativeDriver: true }),
-        Animated.timing(logoY, { toValue: 0, duration: 500, useNativeDriver: true, easing: Easing.out(Easing.cubic) }),
-        // Rings pulse out and fade
-        Animated.timing(ring1Opacity, { toValue: 0, duration: 400, useNativeDriver: true }),
-        Animated.timing(ring2Opacity, { toValue: 0, duration: 500, useNativeDriver: true }),
-        Animated.timing(ring3Opacity, { toValue: 0, duration: 600, useNativeDriver: true }),
-      ]),
-
       Animated.delay(150),
 
-      // 4. Line + tagline
+      // 1. Icon spins and scales in with glow rings
       Animated.parallel([
-        Animated.timing(lineScale,  { toValue: 1, duration: 500, useNativeDriver: true, easing: Easing.inOut(Easing.quad) }),
-        Animated.timing(tagOpacity, { toValue: 1, duration: 400, useNativeDriver: true }),
+        Animated.spring(iconScale,   { toValue: 1,   useNativeDriver: true, tension: 100, friction: 8 }),
+        Animated.timing(iconOpacity, { toValue: 1,   duration: 450, useNativeDriver: true }),
+        Animated.timing(iconRotate,  { toValue: 1,   duration: 800, useNativeDriver: true, easing: Easing.out(Easing.back(1.2)) }),
+        Animated.timing(ring1Opacity,{ toValue: 0.6, duration: 400, useNativeDriver: true }),
+        Animated.spring(ring1Scale,  { toValue: 1,   useNativeDriver: true, tension: 70, friction: 6 }),
+        Animated.timing(ring2Opacity,{ toValue: 0.3, duration: 600, useNativeDriver: true }),
+        Animated.spring(ring2Scale,  { toValue: 1.35,useNativeDriver: true, tension: 50, friction: 7 }),
       ]),
 
-      Animated.delay(800),
+      // Brief pause to show the icon
+      Animated.delay(500),
 
-      // 5. Final glitch then exit
+      // 2. Icon glitches, shrinks slightly, and disappears
       Animated.sequence([
-        Animated.timing(glitch, { toValue: 10, duration: 55, useNativeDriver: true }),
-        Animated.timing(glitch, { toValue: -8, duration: 45, useNativeDriver: true }),
-        Animated.timing(glitch, { toValue: 0,  duration: 55, useNativeDriver: true }),
+        Animated.parallel([
+          Animated.timing(glitch, { toValue: 6, duration: 50, useNativeDriver: true }),
+          Animated.timing(iconScale, { toValue: 0.9, duration: 150, useNativeDriver: true }),
+        ]),
+        Animated.parallel([
+          Animated.timing(glitch, { toValue: -6, duration: 50, useNativeDriver: true }),
+          Animated.timing(iconOpacity, { toValue: 0, duration: 200, useNativeDriver: true }),
+          Animated.timing(ring1Opacity, { toValue: 0, duration: 200, useNativeDriver: true }),
+          Animated.timing(ring2Opacity, { toValue: 0, duration: 200, useNativeDriver: true }),
+        ]),
+        Animated.timing(glitch, { toValue: 0, duration: 10, useNativeDriver: true }),
+      ]),
+
+      Animated.delay(100),
+
+      // 3. Full logo fades in, and tagline/divider reveals
+      Animated.parallel([
+        Animated.timing(logoOpacity, { toValue: 1, duration: 600, useNativeDriver: true }),
+        Animated.spring(logoScale,   { toValue: 1, useNativeDriver: true, tension: 80, friction: 8 }),
+        Animated.timing(logoY,       { toValue: 0, duration: 600, useNativeDriver: true, easing: Easing.out(Easing.quad) }),
+      ]),
+
+      // 4. Divider line, Tagline and World Cup Promo reveal
+      Animated.parallel([
+        Animated.timing(lineScale,    { toValue: 1, duration: 500, useNativeDriver: true, easing: Easing.inOut(Easing.quad) }),
+        Animated.timing(tagOpacity,   { toValue: 1, duration: 500, useNativeDriver: true }),
+        Animated.timing(promoOpacity, { toValue: 1, duration: 700, useNativeDriver: true }),
+        Animated.timing(promoY,       { toValue: 0, duration: 700, useNativeDriver: true, easing: Easing.out(Easing.back(1.5)) }),
+      ]),
+
+      // Hold on the complete design
+      Animated.delay(2000),
+
+      // 5. Glitch and exit fade out
+      Animated.sequence([
+        Animated.timing(glitch, { toValue: 8, duration: 60, useNativeDriver: true }),
+        Animated.timing(glitch, { toValue: -6, duration: 50, useNativeDriver: true }),
+        Animated.timing(glitch, { toValue: 0, duration: 50, useNativeDriver: true }),
       ]),
 
       Animated.parallel([
-        Animated.timing(exitOpacity, { toValue: 0, duration: 550, useNativeDriver: true, easing: Easing.in(Easing.quad) }),
-        Animated.timing(exitScale,   { toValue: 1.08, duration: 550, useNativeDriver: true }),
+        Animated.timing(exitOpacity, { toValue: 0, duration: 500, useNativeDriver: true, easing: Easing.in(Easing.quad) }),
+        Animated.timing(exitScale,   { toValue: 1.06, duration: 500, useNativeDriver: true }),
       ]),
 
     ]).start(() => onFinish());
@@ -172,17 +179,16 @@ export function SplashScreen({ onFinish }: SplashScreenProps) {
 
       {/* Background */}
       <LinearGradient
-        colors={["#0c0900", "#110d00", "#0a0800"]}
+        colors={["#0a0800", "#120e02", "#070500"]}
         style={StyleSheet.absoluteFill}
       />
 
       {/* Rising gold sparks */}
-      {Array.from({ length: 20 }).map((_, i) => <Spark key={i} index={i} />)}
+      {Array.from({ length: 22 }).map((_, i) => <Spark key={i} index={i} />)}
 
       {/* ── Glow rings (behind icon) ── */}
-      {[{ scale: ring1Scale, opacity: ring1Opacity, size: 200, bw: 2 },
-        { scale: ring2Scale, opacity: ring2Opacity, size: 200, bw: 1.5 },
-        { scale: ring3Scale, opacity: ring3Opacity, size: 200, bw: 1 }].map((r, i) => (
+      {[{ scale: ring1Scale, opacity: ring1Opacity, size: 220, bw: 2 },
+        { scale: ring2Scale, opacity: ring2Opacity, size: 220, bw: 1 }].map((r, i) => (
         <Animated.View key={i} style={[styles.ring, {
           width: r.size, height: r.size, borderRadius: r.size / 2,
           borderWidth: r.bw,
@@ -191,45 +197,48 @@ export function SplashScreen({ onFinish }: SplashScreenProps) {
         }]} />
       ))}
 
-      {/* ── CENTER ── */}
+      {/* ── CENTER CONTENT ── */}
       <View style={styles.center}>
 
-        {/* ICON — glitch layers + real */}
-        <Animated.View style={[styles.iconWrap, {
-          opacity: iconOpacity,
-          transform: [{ scale: iconScale }, { rotate }],
-        }]}>
-          {/* gold tint glitch shift */}
-          <Animated.View style={[StyleSheet.absoluteFill, styles.iconInner, {
-            transform: [{ translateX: glitch }],
+        {/* CONTAINER FOR LOGO & ICON OVERLAY */}
+        <View style={styles.mediaContainer}>
+          {/* ICON (Phased out) */}
+          <Animated.View style={[styles.iconAbsolute, {
+            opacity: iconOpacity,
+            transform: [{ scale: iconScale }, { rotate }],
           }]}>
+            {/* glitch offset copy */}
+            <Animated.View style={[StyleSheet.absoluteFill, styles.iconInner, {
+              transform: [{ translateX: glitch }],
+            }]}>
+              <Image source={require("../../../assets/icon-only.svg")}
+                style={styles.iconOnly} contentFit="contain"
+                tintColor={GOLD_MID} />
+            </Animated.View>
+            {/* Real icon */}
             <Image source={require("../../../assets/icon-only.svg")}
-            style={styles.iconOnly} contentFit="contain"
-            tintColor={GOLD_MID} />
+              style={styles.iconOnly} contentFit="contain"
+              tintColor={GOLD} />
           </Animated.View>
-          {/* Real icon */}
-          <Image source={require("../../../assets/icon-only.svg")}
-            style={styles.iconOnly} contentFit="contain"
-            tintColor={GOLD} />
-        </Animated.View>
 
-        {/* Full logo fades in below icon */}
-        <Animated.View style={[styles.logoWrap, {
-          opacity: logoOpacity,
-          transform: [{ translateY: logoY }],
-        }]}>
-          {/* Glitch copy */}
-          <Animated.View style={[StyleSheet.absoluteFill, styles.logoInner, {
-            transform: [{ translateX: glitch }],
+          {/* FULL LOGO (Phased in) */}
+          <Animated.View style={[styles.logoAbsolute, {
+            opacity: logoOpacity,
+            transform: [{ scale: logoScale }, { translateY: logoY }],
           }]}>
+            {/* Glitch copy */}
+            <Animated.View style={[StyleSheet.absoluteFill, styles.logoInner, {
+              transform: [{ translateX: glitch }],
+            }]}>
+              <Image source={require("../../../assets/logo.svg")}
+                style={styles.logo} contentFit="contain"
+                tintColor="rgba(245,189,24,0.35)" />
+            </Animated.View>
+            {/* Real logo */}
             <Image source={require("../../../assets/logo.svg")}
-              style={styles.logo} contentFit="contain"
-              tintColor="rgba(245,189,24,0.35)" />
+              style={styles.logo} contentFit="contain" />
           </Animated.View>
-          {/* Real logo */}
-          <Image source={require("../../../assets/logo.svg")}
-            style={styles.logo} contentFit="contain" />
-        </Animated.View>
+        </View>
 
         {/* Divider line */}
         <Animated.View style={[styles.line, { transform: [{ scaleX: lineScale }] }]} />
@@ -238,6 +247,19 @@ export function SplashScreen({ onFinish }: SplashScreenProps) {
         <Animated.Text style={[styles.tagline, { opacity: tagOpacity }]}>
           BUILT ON TRUST. BACKED BY SKILL.
         </Animated.Text>
+
+        {/* 🏆 World Cup 2026 Promotion Banner */}
+        <Animated.View style={[styles.promoContainer, {
+          opacity: promoOpacity,
+          transform: [{ translateY: promoY }],
+        }]}>
+          <View style={styles.promoBadge}>
+            <Text style={styles.promoBadgeText}>مستجدات 2026</Text>
+          </View>
+          <Text style={styles.promoText}>
+            الراعي الرقمي لخدمات الصيانة والتشغيل لكأس العالم 2026 🏆⚽
+          </Text>
+        </Animated.View>
 
       </View>
 
@@ -255,7 +277,7 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#0c0900",
+    backgroundColor: "#0a0800",
   },
   ring: {
     position: "absolute",
@@ -269,8 +291,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 16,
     zIndex: 10,
+    width: "100%",
   },
-  iconWrap: {
+  mediaContainer: {
+    width: width * 0.75,
+    height: 120,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  iconAbsolute: {
+    position: "absolute",
     width: 120,
     height: 120,
     alignItems: "center",
@@ -281,15 +311,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   iconOnly: {
-    width: 120,
-    height: 120,
+    width: 110,
+    height: 110,
   },
-  logoWrap: {
-    width: width * 0.72,
-    height: 72,
+  logoAbsolute: {
+    position: "absolute",
+    width: "100%",
+    height: 80,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 8,
   },
   logoInner: {
     alignItems: "center",
@@ -297,16 +327,16 @@ const styles = StyleSheet.create({
   },
   logo: {
     width: "100%",
-    height: 72,
+    height: 80,
   },
   line: {
-    width: width * 0.6,
+    width: width * 0.55,
     height: 1,
     backgroundColor: GOLD,
     shadowColor: GOLD,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 1,
-    shadowRadius: 10,
+    shadowRadius: 8,
     marginTop: 4,
   },
   tagline: {
@@ -316,12 +346,47 @@ const styles = StyleSheet.create({
     color: "rgba(245,189,24,0.6)",
     textAlign: "center",
   },
+  promoContainer: {
+    marginTop: 24,
+    alignItems: "center",
+    gap: 8,
+    paddingHorizontal: 20,
+  },
+  promoBadge: {
+    backgroundColor: "rgba(245,189,24,0.12)",
+    borderColor: GOLD,
+    borderWidth: 1,
+    paddingHorizontal: 12,
+    paddingVertical: 3,
+    borderRadius: 12,
+    shadowColor: GOLD,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.6,
+    shadowRadius: 4,
+  },
+  promoBadgeText: {
+    color: GOLD,
+    fontSize: 9,
+    fontWeight: "700",
+    letterSpacing: 1,
+  },
+  promoText: {
+    color: "#ffffff",
+    fontSize: 11,
+    fontWeight: "600",
+    textAlign: "center",
+    opacity: 0.85,
+    lineHeight: 18,
+    textShadowColor: "rgba(245,189,24,0.3)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
+  },
   corner: {
     position: "absolute",
     width: 20,
     height: 20,
     borderColor: GOLD,
-    opacity: 0.5,
+    opacity: 0.4,
   },
   cTL: { top: 44, left: 24, borderTopWidth: 1.5, borderLeftWidth: 1.5 },
   cTR: { top: 44, right: 24, borderTopWidth: 1.5, borderRightWidth: 1.5 },
