@@ -132,12 +132,18 @@ export function HomeScreen() {
   };
 
   return (
-    <Screen scroll={false} style={{ padding: 0 }}>
+    <Screen scroll={false} style={{ flex: 1, padding: 0 }}>
       {/* 
         Custom ScrollView with stickyHeaderIndices={1}.
         This will freeze the search bar container at the top of the screen when scrolling down.
       */}
-      <ScrollView stickyHeaderIndices={[1]} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+      <ScrollView 
+        stickyHeaderIndices={[1]} 
+        showsVerticalScrollIndicator={false} 
+        keyboardShouldPersistTaps="handled"
+        style={{ flex: 1 }}
+        contentContainerStyle={{ flexGrow: 1 }}
+      >
         
         {/* 1. TOP SINGLE AD CAROUSEL / SLIDER (Fills screen width, very top) */}
         <View style={styles.topAdBanner}>
