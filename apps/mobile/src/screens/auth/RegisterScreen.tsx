@@ -13,6 +13,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
 import { spacing } from "../../theme/spacing";
 import { uploadMedia } from "../../api/upload";
+import { useApiResource } from "../../hooks/useApiResource";
 import type { AuthStackParamList } from "../../navigation/types";
 import type { RegisterPayload } from "../../types/auth";
 
@@ -69,8 +70,11 @@ export function RegisterScreen({ navigation }: Props) {
   const [city, setCity] = useState<string>("مصر الجديدة");
   const [address, setAddress] = useState("");
   
+  // Dynamic Categories Hook
+  const categories = useApiResource<Array<{ id: string; nameAr: string; slug: string }>>("/services/categories", []);
+
   // Technician Fields
-  const [profession, setProfession] = useState(PROFESSIONS[0]);
+  const [profession, setProfession] = useState("");
   const [nationalIdNumber, setNationalIdNumber] = useState("");
   
   // Store (Vendor) Fields
@@ -207,7 +211,7 @@ export function RegisterScreen({ navigation }: Props) {
         city: city,
         address: address || undefined,
         // Worker Fields
-        profession: role === "WORKER" ? profession : undefined,
+        profession: role === "WORKER" ? (profession || (categories.data[0] ? categories.data[0].nameAr : "")) : undefined,
         nationalIdNumber: role === "WORKER" ? nationalIdNumber : undefined,
         nationalIdFront: role === "WORKER" ? uploadedNidFront : undefined,
         nationalIdBack: role === "WORKER" ? uploadedNidBack : undefined,
@@ -333,21 +337,23 @@ export function RegisterScreen({ navigation }: Props) {
             <View style={styles.selectorWrapper}>
               <Text style={styles.selectorLabel}>تخصصك الرئيسي</Text>
               <Pressable style={styles.selectorButton} onPress={() => setShowProfessionDropdown(!showProfessionDropdown)}>
-                <Text style={styles.selectorButtonText}>{profession}</Text>
+                <Text style={styles.selectorButtonText}>
+                  {profession || (categories.data[0] ? categories.data[0].nameAr : "اختر التخصص")}
+                </Text>
                 <Ionicons name={showProfessionDropdown ? "chevron-up" : "chevron-down"} size={16} color={theme.text} />
               </Pressable>
               {showProfessionDropdown && (
                 <View style={styles.dropdown}>
-                  {PROFESSIONS.map((p) => (
+                  {categories.data.map((cat) => (
                     <Pressable
-                      key={p}
+                      key={cat.id}
                       style={styles.dropdownItem}
                       onPress={() => {
-                        setProfession(p);
+                        setProfession(cat.nameAr);
                         setShowProfessionDropdown(false);
                       }}
                     >
-                      <Text style={styles.dropdownItemText}>{p}</Text>
+                      <Text style={styles.dropdownItemText}>{cat.nameAr}</Text>
                     </Pressable>
                   ))}
                 </View>
