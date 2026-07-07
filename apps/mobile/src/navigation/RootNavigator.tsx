@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { NavigationContainer } from "@react-navigation/native";
+import { navigationRef } from "../context/NotificationContext";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
@@ -151,7 +152,7 @@ export function RootNavigator() {
   }
 
   return (
-    <NavigationContainer theme={{
+    <NavigationContainer ref={navigationRef} theme={{
       dark: mode === "dark",
       colors: {
         primary: theme.primary,

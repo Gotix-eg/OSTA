@@ -1,8 +1,8 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from "react";
 import { StyleSheet, Text, View, Pressable, Animated, Dimensions, Platform } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { createNavigationContainerRef } from "@react-navigation/native";
 import { io, Socket } from "socket.io-client";
-import { useNavigation } from "@react-navigation/native";
 
 import { useAuth } from "./AuthContext";
 import { API_BASE_URL, getStoredAccessToken } from "../api/client";
@@ -13,6 +13,9 @@ import { spacing } from "../theme/spacing";
 export const activeChatRef = {
   currentUserId: null as string | null
 };
+
+// Global navigation container ref to navigate from outside the NavigationContainer
+export const navigationRef = createNavigationContainerRef<any>();
 
 type NotificationToast = {
   id: string;
@@ -41,7 +44,6 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   const { user } = useAuth();
   const { theme } = useTheme();
   const styles = makeStyles(theme);
-  const navigation = useNavigation<any>();
 
   const [toast, setToast] = useState<NotificationToast | null>(null);
   const socketRef = useRef<Socket | null>(null);
@@ -166,13 +168,15 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     hideToast();
 
     // Navigate to Chat screen if message, otherwise navigate to Notifications list
-    if (toast.type === "CHAT_MESSAGE" && toast.senderId) {
-      navigation.navigate("Chat", {
-        conversationId: toast.senderId,
-        recipientName: toast.senderName || "محادثة"
-      });
-    } else {
-      navigation.navigate("Notifications");
+    if (navigationRef.isReady()) {
+      if (toast.type === "CHAT_MESSAGE" && toast.senderId) {
+        navigationRef.navigate("Chat", {
+          conversationId: toast.senderId,
+          recipientName: toast.senderName || "محادثة"
+        });
+      } else {
+        navigationRef.navigate("Notifications");
+      }
     }
   };
 
