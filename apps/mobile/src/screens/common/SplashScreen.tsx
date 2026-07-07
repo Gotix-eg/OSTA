@@ -32,6 +32,7 @@ export function SplashScreen({ onFinish }: SplashScreenProps) {
 
   // Stadium & Goal Animations
   const stadiumScale = useRef(new Animated.Value(1)).current;
+  const stadiumOpacity = useRef(new Animated.Value(1)).current;
   const goalTextScale = useRef(new Animated.Value(0)).current;
   const goalTextOpacity = useRef(new Animated.Value(0)).current;
 
@@ -64,16 +65,16 @@ export function SplashScreen({ onFinish }: SplashScreenProps) {
     Animated.sequence([
       Animated.parallel([
         Animated.spring(ballScale, { toValue: 0, useNativeDriver: true, tension: 80, friction: 5 }),
-        Animated.spring(stadiumScale, { toValue: 1.25, useNativeDriver: true, tension: 120, friction: 3 }),
-        Animated.timing(goalTextOpacity, { toValue: 1, duration: 200, useNativeDriver: true }),
-        Animated.spring(goalTextScale, { toValue: 1.5, useNativeDriver: true, tension: 150, friction: 5 }),
+        Animated.timing(stadiumScale, { toValue: 1.4, duration: 250, useNativeDriver: true }),
+        Animated.timing(stadiumOpacity, { toValue: 0, duration: 250, useNativeDriver: true }),
+        Animated.timing(goalTextOpacity, { toValue: 1, duration: 250, useNativeDriver: true }),
+        Animated.spring(goalTextScale, { toValue: 1.3, useNativeDriver: true, tension: 120, friction: 6 }),
       ]),
+      Animated.delay(1200),
       Animated.parallel([
-        Animated.spring(stadiumScale, { toValue: 0.8, useNativeDriver: true, tension: 100, friction: 6 }),
-        Animated.timing(goalTextOpacity, { toValue: 0, duration: 400, useNativeDriver: true }),
-        Animated.timing(goalTextScale, { toValue: 2, duration: 400, useNativeDriver: true }),
+        Animated.timing(goalTextOpacity, { toValue: 0, duration: 300, useNativeDriver: true }),
+        Animated.timing(goalTextScale, { toValue: 1.6, duration: 300, useNativeDriver: true }),
       ]),
-      Animated.delay(100),
     ]).start(() => {
       setGameState("resolving");
       // Fade in the full Ostafy logo
@@ -203,6 +204,7 @@ export function SplashScreen({ onFinish }: SplashScreenProps) {
           {/* Goal Stadium Circle */}
           <Animated.View style={[styles.stadium, {
             transform: [{ scale: stadiumScale }],
+            opacity: stadiumOpacity,
             top: height * 0.35, // match the GOAL_Y offset calculation
           }]}>
             <View style={styles.stadiumGoalRing} />
@@ -243,9 +245,11 @@ export function SplashScreen({ onFinish }: SplashScreenProps) {
           </Animated.View>
 
           {/* Bottom Hint Banner */}
-          <View style={styles.hintContainer}>
-            <Text style={styles.hintText}>{hintText}</Text>
-          </View>
+          {gameState === "playing" && (
+            <View style={styles.hintContainer}>
+              <Text style={styles.hintText}>{hintText}</Text>
+            </View>
+          )}
         </View>
       )}
 
