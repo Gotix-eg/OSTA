@@ -1,6 +1,6 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useState } from "react";
-import { StyleSheet, Text, View, ActivityIndicator, Pressable, FlatList, Alert } from "react-native";
+import { StyleSheet, Text, View, ActivityIndicator, Pressable, FlatList, Alert, Platform } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 
@@ -122,14 +122,27 @@ export function VendorProfileScreen() {
 
   const cartTotal = cartItemsArray.reduce((acc, item) => acc + item.price * item.qty, 0);
 
+  const showAlert = (title: string, message: string, onConfirm?: () => void) => {
+    if (Platform.OS === "web") {
+      alert(`${title}: ${message}`);
+      if (onConfirm) onConfirm();
+    } else {
+      if (onConfirm) {
+        Alert.alert(title, message, [{ text: "حسناً", onPress: onConfirm }]);
+      } else {
+        Alert.alert(title, message);
+      }
+    }
+  };
+
   // Submit Direct Order
   const handlePlaceOrder = async () => {
     if (cartItemsArray.length === 0) {
-      Alert.alert("السلة فارغة", "برجاء إضافة منتج واحد على الأقل لإجراء الطلب.");
+      showAlert("السلة فارغة", "برجاء إضافة منتج واحد على الأقل لإجراء الطلب.");
       return;
     }
     if (!vendor.isOpen) {
-      Alert.alert("عذراً", "هذا المتجر مغلق حالياً ولا يستقبل طلبات جديدة.");
+      showAlert("عذراً", "هذا المتجر مغلق حالياً ولا يستقبل طلبات جديدة.");
       return;
     }
 
@@ -141,11 +154,14 @@ export function VendorProfileScreen() {
         paymentMethod: "COD" // Cash on delivery
       });
 
-      Alert.alert("تم إرسال الطلب بنجاح", "تم إرسال طلبك المباشر للمتجر، وسيتم التواصل معك لتأكيد التوصيل.", [
-        { text: "حسناً", onPress: () => navigation.goBack() }
-      ]);
+      showAlert(
+        "تم إرسال الطلب بنجاح", 
+        "تم إرسال طلبك المباشر للمتجر، وسيتم التواصل معك لتأكيد التوصيل.", 
+        () => navigation.goBack()
+      );
     } catch (err: any) {
-      Alert.alert("تعذر تقديم الطلب", err instanceof Error ? err.message : "حدث خطأ ما، يرجى المحاولة لاحقاً.");
+      const msg = err.response?.data?.message || err.message || "حدث خطأ ما، يرجى المحاولة لاحقاً.";
+      showAlert("تعذر تقديم الطلب", msg);
     } finally {
       setIsSubmitting(false);
     }
