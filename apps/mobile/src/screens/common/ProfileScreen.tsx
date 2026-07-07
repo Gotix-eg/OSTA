@@ -13,7 +13,7 @@ import { useTheme } from "../../context/ThemeContext";
 import { spacing } from "../../theme/spacing";
 import { formatUserName } from "../../utils/formatters";
 import { uploadMedia } from "../../api/upload";
-import { apiClient } from "../../api/client";
+import { apiClient, unwrapApiData } from "../../api/client";
 
 export function ProfileScreen() {
   const { user, logout, refreshUser } = useAuth();
@@ -54,6 +54,24 @@ export function ProfileScreen() {
     }
   }
 
+  const [isSwitching, setIsSwitching] = useState(false);
+
+  async function handleSwitchRole() {
+    setIsSwitching(true);
+    try {
+      const response = await apiClient.post("/auth/switch-role");
+      const data = unwrapApiData<{ user: any; role: string }>(response.data);
+      // Sync auth context state
+      await refreshUser();
+      Alert.alert("تم التبديل بنجاح", `أنت الآن في وضع ${data.role === "WORKER" ? "الفني" : "العميل"}.`);
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : "فشل تبديل نوع الحساب";
+      Alert.alert("تعذر التبديل", msg);
+    } finally {
+      setIsSwitching(false);
+    }
+  }
+
   return (
     <Screen title="الملف الشخصي" subtitle={user?.role ? `نوع الحساب: ${user.role}` : undefined} showBack={false}>
       <ThemeToggle />
@@ -87,6 +105,16 @@ export function ProfileScreen() {
         </View>
       </AppCard>
       
+      {user?.role !== "VENDOR" && (
+        <AppButton 
+          title={user?.role === "WORKER" ? "التبديل إلى وضع العميل" : "التبديل إلى وضع الفني"} 
+          variant="primary" 
+          isLoading={isSwitching}
+          onPress={handleSwitchRole}
+          style={{ marginBottom: spacing.sm }}
+        />
+      )}
+
       <AppButton title="تسجيل الخروج" variant="secondary" onPress={logout} />
     </Screen>
   );

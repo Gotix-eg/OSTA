@@ -282,4 +282,56 @@ router.patch("/profile", authenticate, catchAsync(async (request, response) => {
   );
 }));
 
+router.post("/switch-role", authenticate, catchAsync(async (request, response) => {
+  const userId = request.auth!.userId;
+  
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    include: {
+      clientProfile: true,
+      workerProfile: true
+    }
+  });
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  // Toggle role between WORKER and CLIENT
+  const targetRole = user.role === "WORKER" ? "CLIENT" : "WORKER";
+
+  // Ensure target profile exists
+  if (targetRole === "CLIENT" && !user.clientProfile) {
+    await prisma.clientProfile.create({
+      data: {
+        userId: user.id,
+        totalRequests: 0,
+        walletBalance: 0,
+        isVip: false
+      }
+    });
+  } else if (targetRole === "WORKER" && !user.workerProfile) {
+    throw new ApiError(400, "يجب التسجيل كفني أولاً وتوثيق المستندات لتفعيل وضع الفني");
+  }
+
+  const updatedUser = await prisma.user.update({
+    where: { id: userId },
+    data: { role: targetRole },
+    select: {
+      id: true,
+      role: true,
+      phone: true,
+      email: true,
+      firstName: true,
+      lastName: true,
+      avatarUrl: true,
+      status: true
+    }
+  });
+
+  response.status(200).json(
+    successResponse({ user: updatedUser, role: targetRole }, "Role switched successfully")
+  );
+}));
+
 export const authRouter = router;
