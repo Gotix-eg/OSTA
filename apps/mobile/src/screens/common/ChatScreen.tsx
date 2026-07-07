@@ -37,7 +37,10 @@ export function ChatScreen() {
 
   // Load message history on mount
   useEffect(() => {
-    if (!conversationId) return;
+    if (!conversationId) {
+      setIsLoading(false);
+      return;
+    }
     const otherUserId = conversationId;
 
     const fetchHistory = async () => {
