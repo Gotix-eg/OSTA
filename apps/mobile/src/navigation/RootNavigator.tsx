@@ -14,6 +14,7 @@ import { CreateRequestScreen } from "../screens/client/CreateRequestScreen";
 import { MyRequestsScreen } from "../screens/client/MyRequestsScreen";
 import { MaterialsScreen } from "../screens/client/MaterialsScreen";
 import { AllServicesScreen } from "../screens/client/AllServicesScreen";
+import { VendorsScreen } from "../screens/client/VendorsScreen";
 import { WorkerDashboardScreen } from "../screens/worker/DashboardScreen";
 import { JobsFeedScreen } from "../screens/worker/JobsFeedScreen";
 import { ActiveJobScreen } from "../screens/worker/ActiveJobScreen";
@@ -56,7 +57,7 @@ function ClientTabs() {
     <Tab.Navigator screenOptions={tabOptions}>
       <Tab.Screen name="ClientHome" component={HomeScreen} options={{ title: "الرئيسية", tabBarIcon: tabIcon("home-outline") }} />
       <Tab.Screen name="AllServices" component={AllServicesScreen} options={{ title: "الخدمات", tabBarIcon: tabIcon("grid-outline") }} />
-      <Tab.Screen name="CreateRequest" component={CreateRequestScreen} options={{ title: "طلب", tabBarIcon: tabIcon("add-circle-outline") }} />
+      <Tab.Screen name="Vendors" component={VendorsScreen} options={{ title: "الموردين", tabBarIcon: tabIcon("storefront-outline") }} />
       <Tab.Screen name="MyRequests" component={MyRequestsScreen} options={{ title: "طلباتي", tabBarIcon: tabIcon("list-outline") }} />
       <Tab.Screen name="Profile" component={ProfileScreen} options={{ title: "حسابي", tabBarIcon: tabIcon("person-outline") }} />
     </Tab.Navigator>
