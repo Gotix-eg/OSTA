@@ -13,6 +13,7 @@ type AuthContextValue = {
   verifyOtp: (code: string, phone?: string, type?: "registration" | "login" | "reset") => Promise<void>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
+  switchRole: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -114,6 +115,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  const switchRole = useCallback(async () => {
+    const response = await apiClient.post("/auth/switch-role");
+    const data = unwrapApiData<AuthPayload>(response.data);
+    await applyAuthPayload(data);
+  }, [applyAuthPayload]);
+
   const value = useMemo<AuthContextValue>(() => ({
     user,
     token,
@@ -123,8 +130,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     register,
     verifyOtp,
     logout,
-    refreshUser
-  }), [isLoading, login, logout, register, role, token, user, verifyOtp, refreshUser]);
+    refreshUser,
+    switchRole
+  }), [isLoading, login, logout, register, role, token, user, verifyOtp, refreshUser, switchRole]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

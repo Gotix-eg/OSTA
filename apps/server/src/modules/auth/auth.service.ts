@@ -572,6 +572,10 @@ export const authService = {
     };
   },
 
+  async switchRoleSession(userId: string, targetRole: UserRole) {
+    return createSession(userId, targetRole);
+  },
+
   async logout(sessionId: string) {
     await prisma.session.deleteMany({
       where: { id: sessionId }

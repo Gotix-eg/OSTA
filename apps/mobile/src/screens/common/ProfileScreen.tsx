@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Text, View, StyleSheet, Pressable, Alert, ActivityIndicator } from "react-native";
+import { Text, View, StyleSheet, Pressable, Alert, ActivityIndicator, Platform } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
@@ -16,7 +16,7 @@ import { uploadMedia } from "../../api/upload";
 import { apiClient, unwrapApiData } from "../../api/client";
 
 export function ProfileScreen() {
-  const { user, logout, refreshUser } = useAuth();
+  const { user, logout, refreshUser, switchRole } = useAuth();
   const { theme } = useTheme();
   const styles = makeStyles(theme);
   const [isUploading, setIsUploading] = useState(false);
@@ -44,13 +44,21 @@ export function ProfileScreen() {
         await apiClient.patch("/auth/profile", { avatarUrl: uploadedUrl });
         // Sync context
         await refreshUser();
-        Alert.alert("تمت العملية بنجاح", "تم تحديث صورتك الشخصية بنجاح.");
+        showAlert("تمت العملية بنجاح", "تم تحديث صورتك الشخصية بنجاح.");
       } catch (error) {
         const msg = error instanceof Error ? error.message : "تعذر تحديث الصورة";
-        Alert.alert("فشل تحديث الصورة", msg);
+        showAlert("فشل تحديث الصورة", msg);
       } finally {
         setIsUploading(false);
       }
+    }
+  }
+
+  function showAlert(title: string, message: string) {
+    if (Platform.OS === "web") {
+      alert(`${title}: ${message}`);
+    } else {
+      Alert.alert(title, message);
     }
   }
 
@@ -59,14 +67,11 @@ export function ProfileScreen() {
   async function handleSwitchRole() {
     setIsSwitching(true);
     try {
-      const response = await apiClient.post("/auth/switch-role");
-      const data = unwrapApiData<{ user: any; role: string }>(response.data);
-      // Sync auth context state
-      await refreshUser();
-      Alert.alert("تم التبديل بنجاح", `أنت الآن في وضع ${data.role === "WORKER" ? "الفني" : "العميل"}.`);
+      await switchRole();
+      showAlert("تم التبديل بنجاح", `تم الانتقال لوضع الحساب الآخر بنجاح.`);
     } catch (error) {
       const msg = error instanceof Error ? error.message : "فشل تبديل نوع الحساب";
-      Alert.alert("تعذر التبديل", msg);
+      showAlert("تعذر التبديل", msg);
     } finally {
       setIsSwitching(false);
     }

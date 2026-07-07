@@ -329,8 +329,21 @@ router.post("/switch-role", authenticate, catchAsync(async (request, response) =
     }
   });
 
+  const tokens = await authService.switchRoleSession(userId, targetRole);
+
+  setAuthCookies(response, {
+    accessToken: tokens.accessToken,
+    refreshToken: tokens.refreshToken,
+    role: targetRole
+  });
+
   response.status(200).json(
-    successResponse({ user: updatedUser, role: targetRole }, "Role switched successfully")
+    successResponse({ 
+      user: updatedUser, 
+      role: targetRole,
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken
+    }, "Role switched successfully")
   );
 }));
 
