@@ -13,7 +13,7 @@ type AuthContextValue = {
   verifyOtp: (code: string, phone?: string, type?: "registration" | "login" | "reset") => Promise<void>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
-  switchRole: () => Promise<void>;
+  switchRole: (targetRole?: "CLIENT" | "WORKER" | "VENDOR") => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -115,8 +115,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const switchRole = useCallback(async () => {
-    const response = await apiClient.post("/auth/switch-role");
+  const switchRole = useCallback(async (targetRole?: "CLIENT" | "WORKER" | "VENDOR") => {
+    const response = await apiClient.post("/auth/switch-role", { targetRole });
     const data = unwrapApiData<AuthPayload>(response.data);
     await applyAuthPayload(data);
   }, [applyAuthPayload]);
