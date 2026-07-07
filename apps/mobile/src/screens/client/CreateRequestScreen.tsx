@@ -481,7 +481,7 @@ const makeStyles = (theme: ReturnType<typeof useTheme>["theme"]) => StyleSheet.c
   stepTitle: {
     fontSize: 16,
     fontWeight: "800",
-    color: theme.primaryText,
+    color: theme.text,
     textAlign: "right",
     marginBottom: spacing.xs,
     borderBottomWidth: 1,
@@ -491,7 +491,7 @@ const makeStyles = (theme: ReturnType<typeof useTheme>["theme"]) => StyleSheet.c
   fieldLabel: {
     fontSize: 13,
     fontWeight: "bold",
-    color: theme.primaryText,
+    color: theme.text,
     textAlign: "right",
     marginTop: spacing.xs
   },
@@ -593,7 +593,7 @@ const makeStyles = (theme: ReturnType<typeof useTheme>["theme"]) => StyleSheet.c
   },
   reviewValue: {
     fontSize: 14,
-    color: theme.primaryText,
+    color: theme.text,
     textAlign: "right",
     fontWeight: "700"
   },
