@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Image } from "expo-image";
-import { ScrollView, StyleSheet, Text, View, Pressable, ActivityIndicator } from "react-native";
+import { ScrollView, StyleSheet, Text, View, Pressable, ActivityIndicator, Linking } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
@@ -129,6 +129,18 @@ export function HomeScreen() {
   );
 
   const greetings = `أهلاً، ${user?.firstName ?? "عميلنا العزيز"}`;
+
+  const handleAdPress = (link: string) => {
+    if (!link) return;
+    
+    let targetUrl = link;
+    if (!link.startsWith("http://") && !link.startsWith("https://")) {
+      const cleanLink = link.startsWith("/") ? link : `/${link}`;
+      targetUrl = `https://www.ostafy.com${cleanLink}`;
+    }
+    
+    Linking.openURL(targetUrl).catch((err) => console.error("Failed to open URL:", err));
+  };
 
   // Split campaigns into technician ads vs shop ads
   const allCampaigns = campaigns.data;
@@ -308,20 +320,22 @@ export function HomeScreen() {
 
               <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.campaignsContainer}>
                 {displayTechAds.map((camp) => (
-                  <AppCard key={camp.id} style={styles.campaignCard}>
-                    {camp.imageUrl ? (
-                      <View style={styles.campaignImageWrapper}>
-                        <Image source={camp.imageUrl} style={styles.campaignImage as any} contentFit="cover" />
-                        <View style={styles.adBadge}>
-                          <Text style={styles.adBadgeText}>ممول</Text>
+                  <Pressable key={camp.id} onPress={() => handleAdPress(camp.link)}>
+                    <AppCard style={styles.campaignCard}>
+                      {camp.imageUrl ? (
+                        <View style={styles.campaignImageWrapper}>
+                          <Image source={camp.imageUrl} style={styles.campaignImage as any} contentFit="cover" />
+                          <View style={styles.adBadge}>
+                            <Text style={styles.adBadgeText}>ممول</Text>
+                          </View>
                         </View>
+                      ) : null}
+                      <View style={styles.campaignDetails}>
+                        <Text style={styles.campaignTitle} numberOfLines={1}>{camp.titleAr}</Text>
+                        <Text style={styles.campaignDesc} numberOfLines={2}>{camp.descAr}</Text>
                       </View>
-                    ) : null}
-                    <View style={styles.campaignDetails}>
-                      <Text style={styles.campaignTitle} numberOfLines={1}>{camp.titleAr}</Text>
-                      <Text style={styles.campaignDesc} numberOfLines={2}>{camp.descAr}</Text>
-                    </View>
-                  </AppCard>
+                    </AppCard>
+                  </Pressable>
                 ))}
               </ScrollView>
             </View>
@@ -340,20 +354,22 @@ export function HomeScreen() {
 
               <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.campaignsContainer}>
                 {displayStoreAds.map((camp) => (
-                  <AppCard key={camp.id} style={styles.campaignCard}>
-                    {camp.imageUrl ? (
-                      <View style={styles.campaignImageWrapper}>
-                        <Image source={camp.imageUrl} style={styles.campaignImage as any} contentFit="cover" />
-                        <View style={styles.adBadge}>
-                          <Text style={styles.adBadgeText}>متجر شريك</Text>
+                  <Pressable key={camp.id} onPress={() => handleAdPress(camp.link)}>
+                    <AppCard style={styles.campaignCard}>
+                      {camp.imageUrl ? (
+                        <View style={styles.campaignImageWrapper}>
+                          <Image source={camp.imageUrl} style={styles.campaignImage as any} contentFit="cover" />
+                          <View style={styles.adBadge}>
+                            <Text style={styles.adBadgeText}>متجر شريك</Text>
+                          </View>
                         </View>
+                      ) : null}
+                      <View style={styles.campaignDetails}>
+                        <Text style={styles.campaignTitle} numberOfLines={1}>{camp.titleAr}</Text>
+                        <Text style={styles.campaignDesc} numberOfLines={2}>{camp.descAr}</Text>
                       </View>
-                    ) : null}
-                    <View style={styles.campaignDetails}>
-                      <Text style={styles.campaignTitle} numberOfLines={1}>{camp.titleAr}</Text>
-                      <Text style={styles.campaignDesc} numberOfLines={2}>{camp.descAr}</Text>
-                    </View>
-                  </AppCard>
+                    </AppCard>
+                  </Pressable>
                 ))}
               </ScrollView>
             </View>
