@@ -82,7 +82,7 @@ export function HomeScreen() {
         </View>
         <View style={styles.headerRight}>
           <Text style={styles.greetingText}>{greetings}</Text>
-          <Image source={require("../../../assets/logo.png")} style={styles.logo} contentFit="contain" />
+          <Image source={require("../../../assets/logo.svg")} style={styles.logo} contentFit="contain" />
         </View>
       </View>
 
