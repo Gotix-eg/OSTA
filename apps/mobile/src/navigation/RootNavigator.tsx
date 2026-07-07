@@ -110,6 +110,7 @@ function AppNavigator() {
       contentStyle: { backgroundColor: theme.background }
     }}>
       <RootStack.Screen name="RoleTabs" component={RoleTabs} />
+      <RootStack.Screen name="CreateRequest" component={CreateRequestScreen} />
       <RootStack.Screen name="Chat" component={ChatScreen} />
       <RootStack.Screen name="RequestDetails" component={RequestDetailsScreen} />
       <RootStack.Screen name="Notifications" component={NotificationsScreen} />
