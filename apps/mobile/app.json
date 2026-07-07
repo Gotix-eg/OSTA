@@ -47,6 +47,15 @@
             "minSdkVersion": 24
           }
         }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#C0392B",
+          "defaultChannel": "default",
+          "sounds": []
+        }
       ]
     ],
     "extra": {

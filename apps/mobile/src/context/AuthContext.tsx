@@ -95,6 +95,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(async () => {
     try {
+      // Remove push token from server first so no more push notifications after logout
+      await apiClient.delete("/notifications/push-token").catch(() => {});
       await apiClient.post("/auth/logout");
     } finally {
       await clearAuthTokens();

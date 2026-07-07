@@ -284,12 +284,14 @@ router.patch("/profile", authenticate, catchAsync(async (request, response) => {
 
 router.post("/switch-role", authenticate, catchAsync(async (request, response) => {
   const userId = request.auth!.userId;
+  const { targetRole: bodyTargetRole } = request.body as { targetRole?: string };
   
   const user = await prisma.user.findUnique({
     where: { id: userId },
     include: {
       clientProfile: true,
-      workerProfile: true
+      workerProfile: true,
+      vendorProfile: true
     }
   });
 
@@ -297,8 +299,29 @@ router.post("/switch-role", authenticate, catchAsync(async (request, response) =
     throw new ApiError(404, "User not found");
   }
 
-  // Toggle role between WORKER and CLIENT
-  const targetRole = user.role === "WORKER" ? "CLIENT" : "WORKER";
+  let targetRole: "CLIENT" | "WORKER" | "VENDOR";
+  if (bodyTargetRole) {
+    if (!["CLIENT", "WORKER", "VENDOR"].includes(bodyTargetRole)) {
+      throw new ApiError(400, "Invalid target role");
+    }
+    targetRole = bodyTargetRole as "CLIENT" | "WORKER" | "VENDOR";
+  } else {
+    // Default fallback toggle logic
+    if (user.role === "WORKER") {
+      targetRole = "CLIENT";
+    } else if (user.role === "VENDOR") {
+      targetRole = "CLIENT";
+    } else {
+      // Current is CLIENT: check if they have a worker profile first, then vendor, default to worker
+      if (user.workerProfile) {
+        targetRole = "WORKER";
+      } else if (user.vendorProfile) {
+        targetRole = "VENDOR";
+      } else {
+        targetRole = "WORKER"; // will throw correct message below
+      }
+    }
+  }
 
   // Ensure target profile exists
   if (targetRole === "CLIENT" && !user.clientProfile) {
@@ -312,6 +335,8 @@ router.post("/switch-role", authenticate, catchAsync(async (request, response) =
     });
   } else if (targetRole === "WORKER" && !user.workerProfile) {
     throw new ApiError(400, "يجب التسجيل كفني أولاً وتوثيق المستندات لتفعيل وضع الفني");
+  } else if (targetRole === "VENDOR" && !user.vendorProfile) {
+    throw new ApiError(400, "يجب التسجيل كمورد أولاً وتوثيق المستندات لتفعيل وضع المورد");
   }
 
   const updatedUser = await prisma.user.update({

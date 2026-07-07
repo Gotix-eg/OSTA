@@ -211,6 +211,7 @@ model User {
   walletTransactions WalletTransaction[]
   materialRequests   MaterialRequest[]
   adCampaigns        AdCampaign[]
+  expoPushToken      String?             // Expo push notification token for mobile devices
 
   @@index([phone])
   @@index([email])

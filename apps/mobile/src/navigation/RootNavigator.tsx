@@ -3,9 +3,12 @@ import { NavigationContainer } from "@react-navigation/native";
 import { navigationRef } from "../context/NotificationContext";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { View, Text, StyleSheet } from "react-native";
 
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
+import { useNotifications } from "../context/NotificationContext";
+import { usePushNotifications } from "../hooks/usePushNotifications";
 import { LoadingScreen } from "../screens/common/LoadingScreen";
 import { LoginScreen } from "../screens/auth/LoginScreen";
 import { RegisterScreen } from "../screens/auth/RegisterScreen";
@@ -28,7 +31,7 @@ import { ProfileScreen } from "../screens/common/ProfileScreen";
 import { ChatScreen } from "../screens/common/ChatScreen";
 import { NotificationsScreen } from "../screens/common/NotificationsScreen";
 import { RequestDetailsScreen } from "../screens/common/RequestDetailsScreen";
-import type { AuthStackParamList, CommonStackParamList } from "./types";
+import type { AuthStackParamList } from "./types";
 
 const AuthStack = createNativeStackNavigator<AuthStackParamList>();
 const RootStack = createNativeStackNavigator<any>();
@@ -49,48 +52,115 @@ function AuthNavigator() {
   );
 }
 
-function tabIcon(name: keyof typeof Ionicons.glyphMap) {
-  return ({ color, size }: { color: string; size: number }) => <Ionicons name={name} color={color} size={size} />;
+// Badge component for notification count
+function NotifBadge({ count, color }: { count: number; color: string }) {
+  if (count === 0) return null;
+  return (
+    <View style={[badgeStyles.badge, { backgroundColor: color }]}>
+      <Text style={badgeStyles.badgeText}>{count > 99 ? "99+" : count}</Text>
+    </View>
+  );
+}
+
+const badgeStyles = StyleSheet.create({
+  badge: {
+    position: "absolute",
+    top: -4,
+    right: -8,
+    minWidth: 18,
+    height: 18,
+    borderRadius: 9,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 4,
+  },
+  badgeText: {
+    color: "#fff",
+    fontSize: 10,
+    fontWeight: "700",
+  },
+});
+
+function NotifTabIcon({ color, size, focused }: { color: string; size: number; focused: boolean }) {
+  const { unreadCount } = useNotifications();
+  const { theme } = useTheme();
+  return (
+    <View>
+      <Ionicons name={focused ? "notifications" : "notifications-outline"} color={color} size={size} />
+      <NotifBadge count={unreadCount} color="#ef4444" />
+    </View>
+  );
 }
 
 function ClientTabs() {
   const tabOptions = useTabOptions();
- 
+
   return (
     <Tab.Navigator screenOptions={tabOptions}>
-      <Tab.Screen name="ClientHome" component={HomeScreen} options={{ title: "الرئيسية", tabBarIcon: tabIcon("home-outline") }} />
-      <Tab.Screen name="AllServices" component={AllServicesScreen} options={{ title: "الخدمات", tabBarIcon: tabIcon("grid-outline") }} />
-      <Tab.Screen name="Vendors" component={VendorsScreen} options={{ title: "الموردين", tabBarIcon: tabIcon("storefront-outline") }} />
-      <Tab.Screen name="MyRequests" component={MyRequestsScreen} options={{ title: "طلباتي", tabBarIcon: tabIcon("list-outline") }} />
-      <Tab.Screen name="Profile" component={ProfileScreen} options={{ title: "حسابي", tabBarIcon: tabIcon("person-outline") }} />
+      <Tab.Screen name="ClientHome" component={HomeScreen} options={{ title: "الرئيسية", tabBarIcon: tabIcon("home-outline", "home") }} />
+      <Tab.Screen name="AllServices" component={AllServicesScreen} options={{ title: "الخدمات", tabBarIcon: tabIcon("grid-outline", "grid") }} />
+      <Tab.Screen name="Vendors" component={VendorsScreen} options={{ title: "الموردين", tabBarIcon: tabIcon("storefront-outline", "storefront") }} />
+      <Tab.Screen name="MyRequests" component={MyRequestsScreen} options={{ title: "طلباتي", tabBarIcon: tabIcon("list-outline", "list") }} />
+      <Tab.Screen
+        name="NotificationsTab"
+        component={NotificationsScreen}
+        options={{
+          title: "الإشعارات",
+          tabBarIcon: ({ color, size, focused }) => <NotifTabIcon color={color} size={size} focused={focused} />,
+        }}
+      />
+      <Tab.Screen name="Profile" component={ProfileScreen} options={{ title: "حسابي", tabBarIcon: tabIcon("person-outline", "person") }} />
     </Tab.Navigator>
   );
 }
- 
+
 function WorkerTabs() {
   const tabOptions = useTabOptions();
- 
+
   return (
     <Tab.Navigator screenOptions={tabOptions}>
-      <Tab.Screen name="WorkerDashboard" component={WorkerDashboardScreen} options={{ title: "لوحة العمل", tabBarIcon: tabIcon("speedometer-outline") }} />
-      <Tab.Screen name="JobsFeed" component={JobsFeedScreen} options={{ title: "الطلبات", tabBarIcon: tabIcon("briefcase-outline") }} />
-      <Tab.Screen name="ActiveJobs" component={ActiveJobScreen} options={{ title: "النشطة", tabBarIcon: tabIcon("navigate-outline") }} />
-      <Tab.Screen name="Profile" component={ProfileScreen} options={{ title: "حسابي", tabBarIcon: tabIcon("person-outline") }} />
+      <Tab.Screen name="WorkerDashboard" component={WorkerDashboardScreen} options={{ title: "لوحة العمل", tabBarIcon: tabIcon("speedometer-outline", "speedometer") }} />
+      <Tab.Screen name="JobsFeed" component={JobsFeedScreen} options={{ title: "الطلبات", tabBarIcon: tabIcon("briefcase-outline", "briefcase") }} />
+      <Tab.Screen name="ActiveJobs" component={ActiveJobScreen} options={{ title: "النشطة", tabBarIcon: tabIcon("navigate-outline", "navigate") }} />
+      <Tab.Screen
+        name="NotificationsTab"
+        component={NotificationsScreen}
+        options={{
+          title: "الإشعارات",
+          tabBarIcon: ({ color, size, focused }) => <NotifTabIcon color={color} size={size} focused={focused} />,
+        }}
+      />
+      <Tab.Screen name="Profile" component={ProfileScreen} options={{ title: "حسابي", tabBarIcon: tabIcon("person-outline", "person") }} />
     </Tab.Navigator>
   );
 }
- 
+
 function VendorTabs() {
   const tabOptions = useTabOptions();
- 
+
   return (
     <Tab.Navigator screenOptions={tabOptions}>
-      <Tab.Screen name="VendorDashboard" component={VendorDashboardScreen} options={{ title: "المبيعات", tabBarIcon: tabIcon("storefront-outline") }} />
-      <Tab.Screen name="Inventory" component={InventoryScreen} options={{ title: "المخزون", tabBarIcon: tabIcon("albums-outline") }} />
-      <Tab.Screen name="Orders" component={OrdersScreen} options={{ title: "الطلبات", tabBarIcon: tabIcon("receipt-outline") }} />
-      <Tab.Screen name="Profile" component={ProfileScreen} options={{ title: "حسابي", tabBarIcon: tabIcon("person-outline") }} />
+      <Tab.Screen name="VendorDashboard" component={VendorDashboardScreen} options={{ title: "المبيعات", tabBarIcon: tabIcon("storefront-outline", "storefront") }} />
+      <Tab.Screen name="Inventory" component={InventoryScreen} options={{ title: "المخزون", tabBarIcon: tabIcon("albums-outline", "albums") }} />
+      <Tab.Screen name="Orders" component={OrdersScreen} options={{ title: "الطلبات", tabBarIcon: tabIcon("receipt-outline", "receipt") }} />
+      <Tab.Screen
+        name="NotificationsTab"
+        component={NotificationsScreen}
+        options={{
+          title: "الإشعارات",
+          tabBarIcon: ({ color, size, focused }) => <NotifTabIcon color={color} size={size} focused={focused} />,
+        }}
+      />
+      <Tab.Screen name="Profile" component={ProfileScreen} options={{ title: "حسابي", tabBarIcon: tabIcon("person-outline", "person") }} />
     </Tab.Navigator>
   );
+}
+
+// Registers device push token and handles push notification taps
+// Must be inside NavigationContainer and AuthProvider
+function PushNotificationsSetup() {
+  usePushNotifications();
+  return null;
 }
 
 function AppNavigator() {
@@ -98,10 +168,12 @@ function AppNavigator() {
   const { role } = useAuth();
 
   return (
-    <RootStack.Navigator screenOptions={{
-      headerShown: false,
-      contentStyle: { backgroundColor: theme.background }
-    }}>
+    <>
+      <PushNotificationsSetup />
+      <RootStack.Navigator screenOptions={{
+        headerShown: false,
+        contentStyle: { backgroundColor: theme.background }
+      }}>
       {role === "WORKER" ? (
         <RootStack.Screen name="WorkerTabs" component={WorkerTabs} />
       ) : role === "VENDOR" ? (
@@ -114,8 +186,16 @@ function AppNavigator() {
       <RootStack.Screen name="VendorProfile" component={VendorProfileScreen} />
       <RootStack.Screen name="Chat" component={ChatScreen} />
       <RootStack.Screen name="RequestDetails" component={RequestDetailsScreen} />
+      {/* Notifications is also a tab screen — keep in stack for toast navigation */}
       <RootStack.Screen name="Notifications" component={NotificationsScreen} />
-    </RootStack.Navigator>
+      </RootStack.Navigator>
+    </>
+  );
+}
+
+function tabIcon(outlineName: string, filledName: string) {
+  return ({ color, size, focused }: { color: string; size: number; focused: boolean }) => (
+    <Ionicons name={focused ? (filledName as any) : (outlineName as any)} color={color} size={size} />
   );
 }
 

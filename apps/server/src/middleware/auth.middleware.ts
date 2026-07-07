@@ -45,6 +45,7 @@ export function requireRoles(...roles: UserRole[]) {
       return;
     }
 
+    console.log("REQUIRE ROLES AUTH:", (request as any).auth, "EXPECTED ROLES:", roles);
     if (!roles.includes((request as any).auth.role)) {
       next(new ApiError(403, "You do not have access to this resource", "FORBIDDEN"));
       return;

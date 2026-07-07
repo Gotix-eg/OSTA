@@ -64,10 +64,10 @@ export function ProfileScreen() {
 
   const [isSwitching, setIsSwitching] = useState(false);
 
-  async function handleSwitchRole() {
+  async function handleSwitchRole(targetRole: "CLIENT" | "WORKER" | "VENDOR") {
     setIsSwitching(true);
     try {
-      await switchRole();
+      await switchRole(targetRole);
       showAlert("تم التبديل بنجاح", `تم الانتقال لوضع الحساب الآخر بنجاح.`);
     } catch (error) {
       const msg = error instanceof Error ? error.message : "فشل تبديل نوع الحساب";
@@ -110,12 +110,32 @@ export function ProfileScreen() {
         </View>
       </AppCard>
       
-      {user?.role !== "VENDOR" && (
+      {user?.role !== "CLIENT" && (
         <AppButton 
-          title={user?.role === "WORKER" ? "التبديل إلى وضع العميل" : "التبديل إلى وضع الفني"} 
+          title="التبديل إلى وضع العميل" 
           variant="primary" 
           isLoading={isSwitching}
-          onPress={handleSwitchRole}
+          onPress={() => handleSwitchRole("CLIENT")}
+          style={{ marginBottom: spacing.sm }}
+        />
+      )}
+
+      {user?.role !== "WORKER" && (
+        <AppButton 
+          title="التبديل إلى وضع الفني" 
+          variant="primary" 
+          isLoading={isSwitching}
+          onPress={() => handleSwitchRole("WORKER")}
+          style={{ marginBottom: spacing.sm }}
+        />
+      )}
+
+      {user?.role !== "VENDOR" && (
+        <AppButton 
+          title="التبديل إلى وضع المورد" 
+          variant="primary" 
+          isLoading={isSwitching}
+          onPress={() => handleSwitchRole("VENDOR")}
           style={{ marginBottom: spacing.sm }}
         />
       )}

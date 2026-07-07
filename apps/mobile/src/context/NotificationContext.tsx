@@ -1,11 +1,11 @@
-import React, { createContext, useContext, useState, useEffect, useRef } from "react";
+import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from "react";
 import { StyleSheet, Text, View, Pressable, Animated, Dimensions, Platform } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { createNavigationContainerRef } from "@react-navigation/native";
 import { io, Socket } from "socket.io-client";
 
 import { useAuth } from "./AuthContext";
-import { API_BASE_URL, getStoredAccessToken } from "../api/client";
+import { API_BASE_URL, apiClient, getStoredAccessToken } from "../api/client";
 import { useTheme } from "./ThemeContext";
 import { spacing } from "../theme/spacing";
 
@@ -24,10 +24,14 @@ type NotificationToast = {
   type: "CHAT_MESSAGE" | "SYSTEM" | string;
   senderId?: string;
   senderName?: string;
+  notificationId?: string;
 };
 
 type NotificationContextValue = {
   showToast: (toast: Omit<NotificationToast, "id">) => void;
+  unreadCount: number;
+  resetUnreadCount: () => void;
+  refreshUnreadCount: () => void;
 };
 
 const NotificationContext = createContext<NotificationContextValue | null>(null);
@@ -46,6 +50,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   const styles = makeStyles(theme);
 
   const [toast, setToast] = useState<NotificationToast | null>(null);
+  const [unreadCount, setUnreadCount] = useState(0);
   const socketRef = useRef<Socket | null>(null);
 
   // Animated values for sliding down toast
@@ -55,11 +60,45 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   // Extract socket base URL (e.g., http://localhost:4000)
   const socketUrl = API_BASE_URL.replace("/api", "");
 
+  // Fetch unread count from server
+  const refreshUnreadCount = useCallback(async () => {
+    if (!user) return;
+    try {
+      const res = await apiClient.get("/notifications/unread-count");
+      const count = res.data?.data?.unreadCount ?? 0;
+      setUnreadCount(count);
+    } catch {
+      // silently fail
+    }
+  }, [user]);
+
+  // Reset unread count (call when user opens notifications screen)
+  const resetUnreadCount = useCallback(async () => {
+    setUnreadCount(0);
+    try {
+      await apiClient.patch("/notifications/read-all");
+    } catch {
+      // silently fail
+    }
+  }, []);
+
+  // Fetch initial unread count on login
+  useEffect(() => {
+    if (user) {
+      refreshUnreadCount();
+    } else {
+      setUnreadCount(0);
+    }
+  }, [user]);
+
   const showToast = (newToast: Omit<NotificationToast, "id">) => {
     // Suppress chat toast if user is already chatting with the sender
     if (newToast.type === "CHAT_MESSAGE" && newToast.senderId === activeChatRef.currentUserId) {
       return;
     }
+
+    // Increment unread badge
+    setUnreadCount((prev) => prev + 1);
 
     // Cancel existing timeout
     if (timeoutRef.current) {
@@ -77,7 +116,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       friction: 8
     }).start();
 
-    // Slide out after 4 seconds
+    // Slide out after 4.5 seconds
     timeoutRef.current = setTimeout(() => {
       hideToast();
     }, 4500);
@@ -96,7 +135,6 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   // Socket Connection setup
   useEffect(() => {
     if (!user) {
-      // Disconnect socket if user logs out
       if (socketRef.current) {
         socketRef.current.disconnect();
         socketRef.current = null;
@@ -133,12 +171,15 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
             type: isChatNotif ? "CHAT_MESSAGE" : (data.type || "SYSTEM"),
             senderId: isChatNotif ? (notifData.senderId || data.senderId) : undefined,
             senderName: isChatNotif ? (notifData.senderName || data.senderName) : undefined,
+            notificationId: data.id,
           });
         });
 
-        // Listen for new chat messages
+        // Listen for new chat messages (real-time, no DB write on sender's side)
         socket.on("new_message", (msg: any) => {
           console.log("Received new message via socket:", msg);
+          // Only show toast if this message is FROM someone else (not our own echo)
+          if (msg.senderId === user.id) return;
           showToast({
             title: `رسالة جديدة من ${msg.sender?.firstName || "مستخدم"}`,
             body: msg.content || "",
@@ -169,24 +210,25 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 
   const handleToastPress = () => {
     if (!toast) return;
-    
     hideToast();
 
-    // Navigate to Chat screen if message, otherwise navigate to Notifications list
-    if (navigationRef.isReady()) {
-      if (toast.type === "CHAT_MESSAGE" && toast.senderId) {
-        navigationRef.navigate("Chat", {
-          conversationId: toast.senderId,
-          recipientName: toast.senderName || "محادثة"
-        });
-      } else {
-        navigationRef.navigate("Notifications");
-      }
+    if (!navigationRef.isReady()) return;
+
+    if (toast.type === "CHAT_MESSAGE" && toast.senderId) {
+      // Navigate to Chat screen
+      navigationRef.navigate("Chat", {
+        conversationId: toast.senderId,
+        recipientName: toast.senderName || "محادثة"
+      });
+    } else {
+      // Navigate to Notifications list and mark all as read
+      resetUnreadCount();
+      navigationRef.navigate("Notifications");
     }
   };
 
   return (
-    <NotificationContext.Provider value={{ showToast }}>
+    <NotificationContext.Provider value={{ showToast, unreadCount, resetUnreadCount, refreshUnreadCount }}>
       {children}
 
       {/* Global In-app Toast Banner */}
@@ -194,17 +236,17 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
         <Animated.View style={[styles.toastContainer, { transform: [{ translateY: slideAnim }] }]}>
           <Pressable style={styles.toastContent} onPress={handleToastPress}>
             <View style={styles.toastIconWrapper}>
-              <Ionicons 
-                name={toast.type === "CHAT_MESSAGE" ? "chatbubbles" : "notifications"} 
-                size={22} 
-                color="#FFFFFF" 
+              <Ionicons
+                name={toast.type === "CHAT_MESSAGE" ? "chatbubbles" : "notifications"}
+                size={22}
+                color="#FFFFFF"
               />
             </View>
             <View style={styles.toastTextWrapper}>
               <Text style={styles.toastTitle} numberOfLines={1}>{toast.title}</Text>
               <Text style={styles.toastBody} numberOfLines={2}>{toast.body}</Text>
             </View>
-            <Pressable style={styles.closeBtn} onPress={hideToast}>
+            <Pressable style={styles.closeBtn} onPress={hideToast} hitSlop={8}>
               <Ionicons name="close" size={18} color={theme.muted} />
             </Pressable>
           </Pressable>
@@ -217,6 +259,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 const makeStyles = (theme: ReturnType<typeof useTheme>["theme"]) => StyleSheet.create({
   toastContainer: {
     position: "absolute",
+    top: 0,
     left: "5%",
     right: "5%",
     width: "90%",
