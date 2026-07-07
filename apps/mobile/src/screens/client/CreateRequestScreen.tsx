@@ -25,6 +25,7 @@ type Category = {
   id: string;
   nameAr?: string;
   nameEn?: string;
+  slug?: string;
   services?: Service[];
 };
 
@@ -39,7 +40,7 @@ export function CreateRequestScreen() {
   const [step, setStep] = useState(0);
 
   // Parse parameters from route
-  const { categoryId, title: routeTitle, description: routeDescription, workerId, workerName } = route.params ?? {};
+  const { categoryId, title: routeTitle, description: routeDescription, workerId, workerName, categorySlug } = route.params ?? {};
 
   // Form Fields State
   const [title, setTitle] = useState("");
@@ -57,6 +58,11 @@ export function CreateRequestScreen() {
   const [customWindow, setCustomWindow] = useState("");
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Success / Matchmaking State
+  const [submittedRequest, setSubmittedRequest] = useState<any>(null);
+  const [matchingWorkers, setMatchingWorkers] = useState<any[]>([]);
+  const [isLoadingWorkers, setIsLoadingWorkers] = useState(false);
 
   // Set initial states when route params change (e.g. on repeat request)
   useEffect(() => {
@@ -87,6 +93,21 @@ export function CreateRequestScreen() {
       }
     }
   }
+
+  // Load matching workers
+  const loadMatchingWorkers = async () => {
+    setIsLoadingWorkers(true);
+    try {
+      const slug = categorySlug || selectedCategory?.slug || "plumbing";
+      const response = await apiClient.get(`/public/workers?specialty=${slug}&governorate=${governorate}&city=${city}`);
+      const workersList = unwrapApiData<any[]>(response.data);
+      setMatchingWorkers(workersList);
+    } catch (err) {
+      console.error("Failed to load matching workers:", err);
+    } finally {
+      setIsLoadingWorkers(false);
+    }
+  };
 
   // Handle image picking and uploading
   const handleAddPhoto = async () => {
@@ -178,15 +199,106 @@ export function CreateRequestScreen() {
         images,
         ...(workerId && { workerId })
       });
-      unwrapApiData(response.data);
-      showAlert("تم إرسال الطلب بنجاح", "تم تسجيل طلب الخدمة وسيقوم الفنيين بتقديم عروضهم قريباً.", () => {
-        navigation.goBack();
-      });
+      const createdRequest = unwrapApiData<any>(response.data);
+      
+      // Save submitted request info
+      setSubmittedRequest(createdRequest);
+      
+      // Load matching workers
+      await loadMatchingWorkers();
     } catch (error: any) {
       showAlert("تعذر إرسال الطلب", error.message || "حدث خطأ ما أثناء إرسال الطلب.");
     } finally {
       setIsSubmitting(false);
     }
+  }
+
+  // 4. Success View showing matching workers
+  if (submittedRequest) {
+    return (
+      <Screen title="تم تقديم الطلب" showBack={false}>
+        <AppCard style={styles.successCard}>
+          <View style={styles.successIconWrapper}>
+            <Ionicons name="checkmark-circle" size={70} color={theme.success} />
+          </View>
+          <Text style={styles.successTitle}>تم إرسال طلبك بنجاح!</Text>
+          <Text style={styles.successSubtitle}>
+            رقم الطلب الخاص بك هو: #{submittedRequest.requestNumber || submittedRequest.id}
+          </Text>
+          <Text style={styles.successDesc}>
+            تم نشر طلبك بنجاح وإخطار الفنيين المتخصصين في منطقتك. سيصلك عروض أسعار منهم قريباً.
+          </Text>
+        </AppCard>
+
+        <Text style={styles.sectionHeader}>الفنيون المتاحون في منطقتك حالياً</Text>
+
+        {isLoadingWorkers ? (
+          <ActivityIndicator size="large" color={theme.primary} style={{ marginVertical: spacing.lg }} />
+        ) : matchingWorkers.length === 0 ? (
+          <AppCard style={styles.emptyWorkersCard}>
+            <Ionicons name="people-outline" size={40} color={theme.muted} />
+            <Text style={styles.emptyWorkersText}>
+              لا يوجد فنيين متصلين حالياً في منطقتك لهذه الخدمة. تم إرسال الطلب لهم وسيقومون بتقديم عروضهم فور اتصالهم بالإنترنت.
+            </Text>
+          </AppCard>
+        ) : (
+          <View style={styles.workersList}>
+            {matchingWorkers.map((worker) => (
+              <AppCard key={worker.id} style={styles.workerCard}>
+                <Pressable 
+                  style={styles.workerRow} 
+                  onPress={() => navigation.navigate("WorkerProfile", { workerId: worker.id })}
+                >
+                  <View style={styles.workerImageWrapper}>
+                    {worker.avatarUrl ? (
+                      <Image source={worker.avatarUrl} style={styles.workerAvatar as any} />
+                    ) : (
+                      <View style={styles.workerPlaceholder}>
+                        <Ionicons name="person" size={24} color={theme.muted} />
+                      </View>
+                    )}
+                    {worker.isOnline && <View style={styles.onlineBadge} />}
+                  </View>
+                  
+                  <View style={styles.workerDetails}>
+                    <Text style={styles.workerName}>{worker.name}</Text>
+                    <Text style={styles.workerSpecialty}>{worker.professionAr || "فني صيانة"}</Text>
+                    <View style={styles.workerMeta}>
+                      <Ionicons name="star" size={14} color="#D7A24D" />
+                      <Text style={styles.workerRating}>{worker.rating?.toFixed(1) ?? "5.0"}</Text>
+                      <Text style={styles.workerJobs}>({worker.totalJobs ?? 0} عملية)</Text>
+                    </View>
+                  </View>
+
+                  <Ionicons name="chevron-back" size={20} color={theme.muted} />
+                </Pressable>
+              </AppCard>
+            ))}
+          </View>
+        )}
+
+        <View style={styles.successButtons}>
+          <AppButton 
+            title="الذهاب لطلباتي لمتابعة العروض" 
+            onPress={() => {
+              setSubmittedRequest(null);
+              setStep(0);
+              navigation.navigate("MyRequests");
+            }} 
+          />
+          <AppButton 
+            title="العودة للرئيسية" 
+            variant="secondary" 
+            style={{ marginTop: spacing.sm }}
+            onPress={() => {
+              setSubmittedRequest(null);
+              setStep(0);
+              navigation.navigate("Home");
+            }} 
+          />
+        </View>
+      </Screen>
+    );
   }
 
   return (
@@ -606,5 +718,127 @@ const makeStyles = (theme: ReturnType<typeof useTheme>["theme"]) => StyleSheet.c
     height: 60,
     borderRadius: spacing.xs,
     marginLeft: spacing.sm
+  },
+  
+  // Success & Matchmaking View Styles
+  successCard: {
+    alignItems: "center",
+    paddingVertical: spacing.lg,
+    gap: spacing.sm
+  },
+  successIconWrapper: {
+    marginBottom: spacing.xs
+  },
+  successTitle: {
+    fontSize: 18,
+    fontWeight: "900",
+    color: theme.success,
+    textAlign: "center"
+  },
+  successSubtitle: {
+    fontSize: 13,
+    fontWeight: "bold",
+    color: theme.muted,
+    textAlign: "center"
+  },
+  successDesc: {
+    fontSize: 12,
+    color: theme.subtle,
+    textAlign: "center",
+    lineHeight: 20,
+    paddingHorizontal: spacing.sm
+  },
+  sectionHeader: {
+    fontSize: 14,
+    fontWeight: "800",
+    color: theme.text,
+    textAlign: "right",
+    marginTop: spacing.md,
+    marginBottom: spacing.xs,
+    paddingHorizontal: spacing.xs
+  },
+  emptyWorkersCard: {
+    alignItems: "center",
+    padding: spacing.md,
+    gap: spacing.sm,
+    backgroundColor: theme.backgroundRaised
+  },
+  emptyWorkersText: {
+    fontSize: 12,
+    color: theme.muted,
+    textAlign: "center",
+    lineHeight: 18
+  },
+  workersList: {
+    gap: spacing.xs
+  },
+  workerCard: {
+    padding: spacing.sm,
+    backgroundColor: theme.surface
+  },
+  workerRow: {
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    justifyContent: "space-between"
+  },
+  workerImageWrapper: {
+    position: "relative"
+  },
+  workerAvatar: {
+    width: 44,
+    height: 44,
+    borderRadius: 22
+  },
+  workerPlaceholder: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: theme.primarySoft,
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  onlineBadge: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: "#2ECC71",
+    borderWidth: 2,
+    borderColor: theme.surface
+  },
+  workerDetails: {
+    flex: 1,
+    marginHorizontal: spacing.sm,
+    alignItems: "flex-end",
+    gap: 2
+  },
+  workerName: {
+    fontSize: 14,
+    fontWeight: "800",
+    color: theme.text
+  },
+  workerSpecialty: {
+    fontSize: 11,
+    color: theme.muted
+  },
+  workerMeta: {
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    gap: 4
+  },
+  workerRating: {
+    fontSize: 11,
+    fontWeight: "bold",
+    color: theme.text
+  },
+  workerJobs: {
+    fontSize: 10,
+    color: theme.subtle
+  },
+  successButtons: {
+    marginTop: spacing.lg,
+    paddingBottom: spacing.lg
   }
 });
