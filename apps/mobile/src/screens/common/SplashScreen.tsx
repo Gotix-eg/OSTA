@@ -1,10 +1,12 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
   Animated,
   Dimensions,
+  PanResponder,
+  Vibration,
   Easing,
 } from "react-native";
 import { Image } from "expo-image";
@@ -13,251 +15,263 @@ import { LinearGradient } from "expo-linear-gradient";
 const { width, height } = Dimensions.get("window");
 
 const GOLD = "#f5bd18";
-const GOLD_MID = "rgba(245,189,24,0.55)";
-
-// Single rising spark
-function Spark({ index }: { index: number }) {
-  const y = useRef(new Animated.Value(0)).current;
-  const opacity = useRef(new Animated.Value(0)).current;
-  const x = useRef(width * 0.1 + Math.random() * width * 0.8).current;
-  const size = 1 + Math.random() * 3;
-  const dur = 1200 + Math.random() * 1500;
-  const startDelay = index * 100 + Math.random() * 200;
-
-  useEffect(() => {
-    const run = () => {
-      y.setValue(height * 0.8);
-      opacity.setValue(0);
-      Animated.parallel([
-        Animated.sequence([
-          Animated.delay(startDelay),
-          Animated.timing(y, { toValue: height * 0.1, duration: dur, useNativeDriver: true, easing: Easing.linear }),
-        ]),
-        Animated.sequence([
-          Animated.delay(startDelay),
-          Animated.timing(opacity, { toValue: 0.8, duration: 250, useNativeDriver: true }),
-          Animated.timing(opacity, { toValue: 0.5, duration: dur - 400, useNativeDriver: true }),
-          Animated.timing(opacity, { toValue: 0, duration: 150, useNativeDriver: true }),
-        ]),
-      ]).start(() => setTimeout(run, Math.random() * 500));
-    };
-    run();
-  }, []);
-
-  return (
-    <Animated.View
-      style={{
-        position: "absolute",
-        left: x,
-        top: 0,
-        width: size,
-        height: size * 3,
-        borderRadius: size,
-        backgroundColor: GOLD,
-        opacity,
-        transform: [{ translateY: y }],
-        shadowColor: GOLD,
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 1,
-        shadowRadius: 4,
-      }}
-    />
-  );
-}
+const GREEN_DARK = "#051a0b";
+const GREEN_LIGHT = "#0d471d";
 
 interface SplashScreenProps {
   onFinish: () => void;
 }
 
 export function SplashScreen({ onFinish }: SplashScreenProps) {
+  const [gameState, setGameState] = useState<"playing" | "goal" | "resolving">("playing");
+  const [hintText, setHintText] = useState("اسحب الكرة إلى وسط الملعب لتبدأ! ⚽");
 
-  /* ── World Cup Logo Phase ── */
-  const wcLogoScale   = useRef(new Animated.Value(0)).current;
-  const wcLogoOpacity = useRef(new Animated.Value(0)).current;
+  // Draggable ball animation values
+  const pan = useRef(new Animated.ValueXY({ x: 0, y: height * 0.25 })).current;
+  const ballScale = useRef(new Animated.Value(1)).current;
 
-  /* ── World Cup Ball (Kicked) ── */
-  const ballTranslateX = useRef(new Animated.Value(-width * 0.6)).current;
-  const ballTranslateY = useRef(new Animated.Value(height * 0.3)).current;
-  const ballScale      = useRef(new Animated.Value(0.1)).current;
-  const ballRotate     = useRef(new Animated.Value(0)).current;
-  const ballOpacity    = useRef(new Animated.Value(0)).current;
+  // Stadium & Goal Animations
+  const stadiumScale = useRef(new Animated.Value(1)).current;
+  const goalTextScale = useRef(new Animated.Value(0)).current;
+  const goalTextOpacity = useRef(new Animated.Value(0)).current;
 
-  /* ── Impact Ring ── */
-  const impactScale    = useRef(new Animated.Value(0.2)).current;
-  const impactOpacity  = useRef(new Animated.Value(0)).current;
+  // Ostafy Logo Transition
+  const logoOpacity = useRef(new Animated.Value(0)).current;
+  const logoScale = useRef(new Animated.Value(0.85)).current;
+  const logoY = useRef(new Animated.Value(20)).current;
+  const lineScale = useRef(new Animated.Value(0)).current;
+  const taglineOpacity = useRef(new Animated.Value(0)).current;
 
-  /* ── Ostafy Logo Reveal ── */
-  const logoOpacity    = useRef(new Animated.Value(0)).current;
-  const logoScale      = useRef(new Animated.Value(0.85)).current;
-  const logoY          = useRef(new Animated.Value(15)).current;
+  // Exit Animation
+  const exitOpacity = useRef(new Animated.Value(1)).current;
+  const exitScale = useRef(new Animated.Value(1)).current;
 
-  /* ── Line + Tagline ── */
-  const lineScale      = useRef(new Animated.Value(0)).current;
-  const tagOpacity     = useRef(new Animated.Value(0)).current;
+  // Target Goal position: center of the screen (0, 0 in offset space)
+  const GOAL_X = 0;
+  const GOAL_Y = -height * 0.15; // Center of the stadium circle
+  const COLLISION_RADIUS = 65;
 
-  /* ── Exit ── */
-  const exitOpacity    = useRef(new Animated.Value(1)).current;
-  const exitScale      = useRef(new Animated.Value(1)).current;
+  // Auto-play timer if user is inactive
+  const idleTimeout = useRef<any>(null);
 
-  /* ── Glitch Shift ── */
-  const glitch         = useRef(new Animated.Value(0)).current;
+  const startGoalAnimation = () => {
+    if (idleTimeout.current) clearTimeout(idleTimeout.current);
+    setGameState("goal");
+    setHintText("جووووووول! 🎉");
+    Vibration.vibrate([0, 100, 50, 150]);
 
-  const ballRotation = ballRotate.interpolate({
-    inputRange: [0, 1],
-    outputRange: ["0deg", "720deg"],
-  });
+    // Animate ball entering/colliding with stadium
+    Animated.sequence([
+      Animated.parallel([
+        Animated.spring(ballScale, { toValue: 0, useNativeDriver: true, tension: 80, friction: 5 }),
+        Animated.spring(stadiumScale, { toValue: 1.25, useNativeDriver: true, tension: 120, friction: 3 }),
+        Animated.timing(goalTextOpacity, { toValue: 1, duration: 200, useNativeDriver: true }),
+        Animated.spring(goalTextScale, { toValue: 1.5, useNativeDriver: true, tension: 150, friction: 5 }),
+      ]),
+      Animated.parallel([
+        Animated.spring(stadiumScale, { toValue: 0.8, useNativeDriver: true, tension: 100, friction: 6 }),
+        Animated.timing(goalTextOpacity, { toValue: 0, duration: 400, useNativeDriver: true }),
+        Animated.timing(goalTextScale, { toValue: 2, duration: 400, useNativeDriver: true }),
+      ]),
+      Animated.delay(100),
+    ]).start(() => {
+      setGameState("resolving");
+      // Fade in the full Ostafy logo
+      Animated.sequence([
+        Animated.parallel([
+          Animated.timing(logoOpacity, { toValue: 1, duration: 600, useNativeDriver: true }),
+          Animated.spring(logoScale, { toValue: 1, useNativeDriver: true, tension: 80, friction: 8 }),
+          Animated.timing(logoY, { toValue: 0, duration: 600, useNativeDriver: true }),
+        ]),
+        Animated.parallel([
+          Animated.timing(lineScale, { toValue: 1, duration: 500, useNativeDriver: true }),
+          Animated.timing(taglineOpacity, { toValue: 1, duration: 500, useNativeDriver: true }),
+        ]),
+        Animated.delay(1800),
+        // Final exit
+        Animated.parallel([
+          Animated.timing(exitOpacity, { toValue: 0, duration: 500, useNativeDriver: true }),
+          Animated.timing(exitScale, { toValue: 1.08, duration: 500, useNativeDriver: true }),
+        ]),
+      ]).start(() => onFinish());
+    });
+  };
+
+  // Configure drag gesture
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => gameState === "playing",
+      onPanResponderGrant: () => {
+        if (idleTimeout.current) clearTimeout(idleTimeout.current);
+        Animated.spring(ballScale, { toValue: 1.15, useNativeDriver: true }).start();
+      },
+      onPanResponderMove: (_, gestureState) => {
+        if (gameState !== "playing") return;
+        pan.setValue({ x: gestureState.dx, y: height * 0.25 + gestureState.dy });
+
+        // Real-time distance check to highlight the goal area
+        const currentY = height * 0.25 + gestureState.dy;
+        const currentX = gestureState.dx;
+        const dist = Math.sqrt(Math.pow(currentX - GOAL_X, 2) + Math.pow(currentY - GOAL_Y, 2));
+        if (dist < COLLISION_RADIUS + 20) {
+          stadiumScale.setValue(1.1);
+        } else {
+          stadiumScale.setValue(1);
+        }
+      },
+      onPanResponderRelease: (_, gestureState) => {
+        if (gameState !== "playing") return;
+
+        const finalX = gestureState.dx;
+        const finalY = height * 0.25 + gestureState.dy;
+
+        // Check if ball is inside the stadium/goal
+        const distance = Math.sqrt(Math.pow(finalX - GOAL_X, 2) + Math.pow(finalY - GOAL_Y, 2));
+
+        if (distance < COLLISION_RADIUS) {
+          // Snap directly to goal center and trigger goal
+          Animated.parallel([
+            Animated.spring(pan, { toValue: { x: GOAL_X, y: GOAL_Y }, useNativeDriver: true }),
+            Animated.spring(ballScale, { toValue: 1, useNativeDriver: true }),
+          ]).start(() => {
+            startGoalAnimation();
+          });
+        } else {
+          // Snap back to starting point
+          Animated.parallel([
+            Animated.spring(pan, { toValue: { x: 0, y: height * 0.25 }, useNativeDriver: true, tension: 60, friction: 7 }),
+            Animated.spring(ballScale, { toValue: 1, useNativeDriver: true }),
+            Animated.spring(stadiumScale, { toValue: 1, useNativeDriver: true }),
+          ]).start();
+
+          // Reset idle timeout
+          resetIdleTimeout();
+        }
+      },
+    })
+  ).current;
+
+  const resetIdleTimeout = () => {
+    if (idleTimeout.current) clearTimeout(idleTimeout.current);
+    idleTimeout.current = setTimeout(() => {
+      // Auto-kick animation: ball automatically shoots into the goal
+      setHintText("ركلة تلقائية.. ⚽💥");
+      Animated.sequence([
+        Animated.parallel([
+          Animated.timing(pan, { toValue: { x: GOAL_X, y: GOAL_Y }, duration: 800, useNativeDriver: true, easing: Easing.out(Easing.quad) }),
+          Animated.timing(ballScale, { toValue: 1.1, duration: 300, useNativeDriver: true }),
+        ]),
+      ]).start(() => {
+        startGoalAnimation();
+      });
+    }, 5500);
+  };
 
   useEffect(() => {
-    Animated.sequence([
-      Animated.delay(100),
-
-      // 1. World Cup Logo springs in at the center-right
-      Animated.parallel([
-        Animated.spring(wcLogoScale,   { toValue: 1.1, useNativeDriver: true, tension: 70, friction: 6 }),
-        Animated.timing(wcLogoOpacity, { toValue: 1, duration: 400, useNativeDriver: true }),
-      ]),
-
-      Animated.delay(100),
-
-      // 2. The Ostafy Ball is kicked in from bottom-left, spins, scale-up, and collides with WC Logo
-      Animated.parallel([
-        Animated.timing(ballOpacity, { toValue: 1, duration: 150, useNativeDriver: true }),
-        Animated.timing(ballTranslateX, { toValue: -15, duration: 650, useNativeDriver: true, easing: Easing.out(Easing.quad) }),
-        Animated.timing(ballTranslateY, { toValue: -20, duration: 650, useNativeDriver: true, easing: Easing.out(Easing.quad) }),
-        Animated.timing(ballScale, { toValue: 1, duration: 650, useNativeDriver: true }),
-        Animated.timing(ballRotate, { toValue: 1, duration: 650, useNativeDriver: true, easing: Easing.out(Easing.quad) }),
-      ]),
-
-      // 3. Impact effect triggers: Energy ring expands, WC logo shakes slightly
-      Animated.parallel([
-        Animated.sequence([
-          Animated.timing(impactOpacity, { toValue: 0.9, duration: 50, useNativeDriver: true }),
-          Animated.timing(impactOpacity, { toValue: 0, duration: 350, useNativeDriver: true }),
-        ]),
-        Animated.timing(impactScale, { toValue: 2.2, duration: 400, useNativeDriver: true, easing: Easing.out(Easing.ease) }),
-        Animated.sequence([
-          Animated.timing(glitch, { toValue: 8, duration: 40, useNativeDriver: true }),
-          Animated.timing(glitch, { toValue: -6, duration: 40, useNativeDriver: true }),
-          Animated.timing(glitch, { toValue: 0, duration: 40, useNativeDriver: true }),
-        ]),
-      ]),
-
-      Animated.delay(400),
-
-      // 4. Glitch burst: Ball and World Cup logo disappear together
-      Animated.parallel([
-        Animated.timing(ballOpacity, { toValue: 0, duration: 250, useNativeDriver: true }),
-        Animated.timing(wcLogoOpacity, { toValue: 0, duration: 250, useNativeDriver: true }),
-        Animated.timing(ballScale, { toValue: 0.75, duration: 250, useNativeDriver: true }),
-        Animated.timing(wcLogoScale, { toValue: 0.75, duration: 250, useNativeDriver: true }),
-        Animated.sequence([
-          Animated.timing(glitch, { toValue: 12, duration: 50, useNativeDriver: true }),
-          Animated.timing(glitch, { toValue: -10, duration: 50, useNativeDriver: true }),
-          Animated.timing(glitch, { toValue: 0, duration: 50, useNativeDriver: true }),
-        ]),
-      ]),
-
-      Animated.delay(150),
-
-      // 5. Full Ostafy Logo fades in and settles at the center
-      Animated.parallel([
-        Animated.timing(logoOpacity, { toValue: 1, duration: 600, useNativeDriver: true }),
-        Animated.spring(logoScale,   { toValue: 1, useNativeDriver: true, tension: 80, friction: 8 }),
-        Animated.timing(logoY,       { toValue: 0, duration: 600, useNativeDriver: true, easing: Easing.out(Easing.quad) }),
-      ]),
-
-      // 6. Divider line + Tagline reveal
-      Animated.parallel([
-        Animated.timing(lineScale,  { toValue: 1, duration: 500, useNativeDriver: true, easing: Easing.inOut(Easing.quad) }),
-        Animated.timing(tagOpacity, { toValue: 1, duration: 500, useNativeDriver: true }),
-      ]),
-
-      Animated.delay(1800),
-
-      // 7. Exit animation
-      Animated.parallel([
-        Animated.timing(exitOpacity, { toValue: 0, duration: 500, useNativeDriver: true, easing: Easing.in(Easing.quad) }),
-        Animated.timing(exitScale,   { toValue: 1.06, duration: 500, useNativeDriver: true }),
-      ]),
-
-    ]).start(() => onFinish());
-  }, []);
+    resetIdleTimeout();
+    return () => {
+      if (idleTimeout.current) clearTimeout(idleTimeout.current);
+    };
+  }, [gameState]);
 
   return (
     <Animated.View style={[styles.root, { opacity: exitOpacity, transform: [{ scale: exitScale }] }]}>
 
-      {/* Background */}
+      {/* Field Background */}
       <LinearGradient
-        colors={["#080600", "#100d02", "#050400"]}
+        colors={[GREEN_DARK, GREEN_LIGHT]}
         style={StyleSheet.absoluteFill}
       />
 
-      {/* Rising gold sparks */}
-      {Array.from({ length: 22 }).map((_, i) => <Spark key={i} index={i} />)}
-
-      {/* ── CENTER SCENE ── */}
-      <View style={styles.center}>
-
-        {/* WORLD CUP ANIME STAGE (Overlay Container) */}
-        <View style={styles.animeStage}>
-
-          {/* World Cup 2026 Logo */}
-          <Animated.View style={[styles.wcLogoWrap, {
-            opacity: wcLogoOpacity,
-            transform: [{ scale: wcLogoScale }, { translateX: glitch }],
-          }]}>
-            <Image source={require("../../../assets/wc-logo.png")}
-              style={styles.wcLogo} contentFit="contain" />
-          </Animated.View>
-
-          {/* Ostafy World Cup Match Ball */}
-          <Animated.View style={[styles.ballWrap, {
-            opacity: ballOpacity,
-            transform: [
-              { translateX: ballTranslateX },
-              { translateY: ballTranslateY },
-              { scale: ballScale },
-              { rotate: ballRotation },
-            ],
-          }]}>
-            <Image source={require("../../../assets/wc-ball.png")}
-              style={styles.ball} contentFit="contain" />
-          </Animated.View>
-
-          {/* Impact Energy Ring */}
-          <Animated.View style={[styles.impactRing, {
-            opacity: impactOpacity,
-            transform: [{ scale: impactScale }],
-          }]} />
+      {/* ── Stadium lines (CSS drawn soccer pitch) ── */}
+      {gameState !== "resolving" && (
+        <View style={styles.pitchLines} pointerEvents="none">
+          {/* Halfway line */}
+          <View style={styles.halfwayLine} />
+          {/* Center circle */}
+          <View style={styles.centerCircle} />
+          {/* Penalty box outlines */}
+          <View style={styles.penaltyAreaTop} />
+          <View style={styles.penaltyAreaBottom} />
         </View>
+      )}
 
-        {/* FULL OSTAFY LOGO (Revealed after glitch exit of WC scene) */}
-        <Animated.View style={[styles.logoAbsolute, {
-          opacity: logoOpacity,
-          transform: [{ scale: logoScale }, { translateY: logoY }],
-        }]}>
-          {/* Glitch copy */}
-          <Animated.View style={[StyleSheet.absoluteFill, styles.logoInner, {
-            transform: [{ translateX: glitch }],
+      {/* ── Game elements ── */}
+      {gameState !== "resolving" && (
+        <View style={styles.gameContainer}>
+
+          {/* Goal Stadium Circle */}
+          <Animated.View style={[styles.stadium, {
+            transform: [{ scale: stadiumScale }],
+            top: height * 0.35, // match the GOAL_Y offset calculation
           }]}>
-            <Image source={require("../../../assets/logo.svg")}
-              style={styles.logo} contentFit="contain"
-              tintColor="rgba(245,189,24,0.35)" />
+            <View style={styles.stadiumGoalRing} />
+            <Text style={styles.stadiumText}>الـمـلـعـب 🏆</Text>
           </Animated.View>
-          {/* Real logo */}
-          <Image source={require("../../../assets/logo.svg")}
-            style={styles.logo} contentFit="contain" />
-        </Animated.View>
 
-        {/* Divider line */}
-        <Animated.View style={[styles.line, { transform: [{ scaleX: lineScale }] }]} />
+          {/* Draggable Ball */}
+          <Animated.View
+            style={[styles.ballContainer, {
+              transform: [
+                { translateX: pan.x },
+                { translateY: pan.y },
+                { scale: ballScale }
+              ]
+            }]}
+            {...panResponder.panHandlers}
+          >
+            {/* Soccer ball pattern custom drawn */}
+            <View style={styles.ball}>
+              <View style={styles.ballInnerBorder}>
+                <Image
+                  source={require("../../../assets/icon-only.svg")}
+                  style={styles.ballIcon}
+                  contentFit="contain"
+                  tintColor={GOLD}
+                />
+              </View>
+            </View>
+          </Animated.View>
 
-        {/* Tagline */}
-        <Animated.Text style={[styles.tagline, { opacity: tagOpacity }]}>
-          BUILT ON TRUST. BACKED BY SKILL.
-        </Animated.Text>
+          {/* Goal Neon Text Alert */}
+          <Animated.View style={[styles.goalTextWrap, {
+            opacity: goalTextOpacity,
+            transform: [{ scale: goalTextScale }],
+          }]}>
+            <Text style={styles.goalText}>جووووووول!</Text>
+            <Text style={styles.goalTextSub}>أُسطى بيبدأ اللقاء ⚽</Text>
+          </Animated.View>
 
-      </View>
+          {/* Bottom Hint Banner */}
+          <View style={styles.hintContainer}>
+            <Text style={styles.hintText}>{hintText}</Text>
+          </View>
+        </View>
+      )}
+
+      {/* ── Ostafy Logo Resolving Screen (fades in after game finishes) ── */}
+      {gameState === "resolving" && (
+        <View style={styles.logoStage}>
+          <Animated.View style={[styles.logoWrap, {
+            opacity: logoOpacity,
+            transform: [{ scale: logoScale }, { translateY: logoY }],
+          }]}>
+            <Image
+              source={require("../../../assets/logo.svg")}
+              style={styles.logo}
+              contentFit="contain"
+            />
+          </Animated.View>
+
+          {/* Divider line */}
+          <Animated.View style={[styles.line, { transform: [{ scaleX: lineScale }] }]} />
+
+          {/* Tagline */}
+          <Animated.Text style={[styles.tagline, { opacity: taglineOpacity }]}>
+            BUILT ON TRUST. BACKED BY SKILL.
+          </Animated.Text>
+        </View>
+      )}
 
       {/* Corner brackets */}
       {[styles.cTL, styles.cTR, styles.cBL, styles.cBR].map((c, i) => (
@@ -273,68 +287,180 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#0a0800",
+    backgroundColor: GREEN_DARK,
   },
-  center: {
-    alignItems: "center",
-    gap: 16,
-    zIndex: 10,
-    width: "100%",
+  pitchLines: {
+    ...StyleSheet.absoluteFillObject,
+    borderWidth: 3,
+    borderColor: "rgba(255,255,255,0.06)",
+    margin: 20,
+    borderRadius: 8,
   },
-  animeStage: {
-    width: width * 0.85,
-    height: 180,
-    alignItems: "center",
-    justifyContent: "center",
-    position: "relative",
-  },
-  wcLogoWrap: {
+  halfwayLine: {
     position: "absolute",
-    right: width * 0.1,
-    width: 130,
-    height: 150,
-    alignItems: "center",
-    justifyContent: "center",
+    top: "50%",
+    left: 0,
+    right: 0,
+    height: 2,
+    backgroundColor: "rgba(255,255,255,0.06)",
   },
-  wcLogo: {
-    width: "100%",
-    height: "100%",
-  },
-  ballWrap: {
+  centerCircle: {
     position: "absolute",
-    width: 80,
-    height: 80,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  ball: {
-    width: "100%",
-    height: "100%",
-    shadowColor: GOLD,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.8,
-    shadowRadius: 10,
-  },
-  impactRing: {
-    position: "absolute",
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+    top: "50%",
+    left: "50%",
+    width: 140,
+    height: 140,
+    borderRadius: 70,
     borderWidth: 2,
+    borderColor: "rgba(255,255,255,0.06)",
+    marginLeft: -70,
+    marginTop: -70,
+  },
+  penaltyAreaTop: {
+    position: "absolute",
+    top: 0,
+    left: "50%",
+    width: 200,
+    height: 100,
+    borderBottomWidth: 2,
+    borderLeftWidth: 2,
+    borderRightWidth: 2,
+    borderColor: "rgba(255,255,255,0.05)",
+    marginLeft: -100,
+  },
+  penaltyAreaBottom: {
+    position: "absolute",
+    bottom: 0,
+    left: "50%",
+    width: 200,
+    height: 100,
+    borderTopWidth: 2,
+    borderLeftWidth: 2,
+    borderRightWidth: 2,
+    borderColor: "rgba(255,255,255,0.05)",
+    marginLeft: -100,
+  },
+  gameContainer: {
+    ...StyleSheet.absoluteFillObject,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  stadium: {
+    position: "absolute",
+    width: 130,
+    height: 130,
+    borderRadius: 65,
+    borderWidth: 3,
     borderColor: GOLD,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(245,189,24,0.08)",
     shadowColor: GOLD,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 1,
     shadowRadius: 15,
   },
-  logoAbsolute: {
-    width: width * 0.75,
-    height: 80,
+  stadiumGoalRing: {
+    position: "absolute",
+    width: 110,
+    height: 110,
+    borderRadius: 55,
+    borderWidth: 1,
+    borderStyle: "dashed",
+    borderColor: GOLD,
+    opacity: 0.6,
+  },
+  stadiumText: {
+    color: GOLD,
+    fontSize: 12,
+    fontWeight: "800",
+    letterSpacing: 2,
+    textShadowColor: "rgba(245,189,24,0.5)",
+    textShadowRadius: 4,
+  },
+  ballContainer: {
+    position: "absolute",
+    width: 70,
+    height: 70,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 10,
+    zIndex: 20,
   },
-  logoInner: {
+  ball: {
+    width: 66,
+    height: 66,
+    borderRadius: 33,
+    backgroundColor: "#ffffff",
+    borderWidth: 3,
+    borderColor: GOLD,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.35,
+    shadowRadius: 6,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  ballInnerBorder: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    borderWidth: 1,
+    borderColor: "rgba(0,0,0,0.15)",
+    backgroundColor: "#ffffff",
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
+  },
+  ballIcon: {
+    width: 32,
+    height: 32,
+  },
+  goalTextWrap: {
+    position: "absolute",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 30,
+  },
+  goalText: {
+    fontSize: 48,
+    fontWeight: "900",
+    color: GOLD,
+    textShadowColor: GOLD,
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 20,
+  },
+  goalTextSub: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#ffffff",
+    marginTop: 8,
+    textShadowColor: "#000",
+    textShadowRadius: 4,
+  },
+  hintContainer: {
+    position: "absolute",
+    bottom: 50,
+    backgroundColor: "rgba(0,0,0,0.65)",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.1)",
+  },
+  hintText: {
+    color: "#ffffff",
+    fontSize: 13,
+    fontWeight: "700",
+    textAlign: "center",
+  },
+  logoStage: {
+    alignItems: "center",
+    gap: 16,
+    width: "100%",
+  },
+  logoWrap: {
+    width: width * 0.75,
+    height: 80,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -364,7 +490,7 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderColor: GOLD,
-    opacity: 0.4,
+    opacity: 0.35,
   },
   cTL: { top: 44, left: 24, borderTopWidth: 1.5, borderLeftWidth: 1.5 },
   cTR: { top: 44, right: 24, borderTopWidth: 1.5, borderRightWidth: 1.5 },
