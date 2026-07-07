@@ -9,11 +9,15 @@ const REFRESH_TOKEN_KEY = "osta_refresh_token";
 const ROLE_KEY = "osta_role";
 
 const productionApiUrl = "https://www.ostafy.com/api";
+const localApiUrl = Platform.select({
+  android: "http://10.0.2.2:4000/api",
+  default: "http://localhost:4000/api"
+});
 
 const configuredApiUrl = process.env.EXPO_PUBLIC_OSTA_API_URL;
 
-// Always default to production API (online database) unless EXPO_PUBLIC_OSTA_API_URL is explicitly configured.
-export const API_BASE_URL = configuredApiUrl ?? productionApiUrl;
+// During development, we connect to the local server (which connects to the online database) to bypass browser CORS restrictions.
+export const API_BASE_URL = configuredApiUrl ?? (__DEV__ ? localApiUrl : productionApiUrl);
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
