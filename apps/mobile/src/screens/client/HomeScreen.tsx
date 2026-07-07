@@ -39,6 +39,21 @@ type Worker = {
   totalJobs: number;
 };
 
+type VendorStore = {
+  id: string;
+  shopName: string;
+  shopNameAr: string;
+  category: string;
+  shopDescription: string | null;
+  shopImageUrl: string | null;
+  governorate: string;
+  city: string;
+  rating: number;
+  ratingCount: number;
+  totalOrders: number;
+  isOpen: boolean;
+};
+
 type ClientRequest = {
   id: string;
   title: string;
@@ -105,6 +120,7 @@ export function HomeScreen() {
   const slides = useApiResource<Slide[]>("/public/mobile-slides", []);
   const campaigns = useApiResource<Campaign[]>("/public/campaigns", []);
   const workers = useApiResource<Worker[]>("/public/workers", []);
+  const vendorsList = useApiResource<VendorStore[]>("/vendors/stores", []);
   
   // Conditionally fetch recent client requests
   const recentRequests = useApiResource<ClientRequest[]>(
@@ -397,6 +413,65 @@ export function HomeScreen() {
                       }}
                     >
                       <Text style={styles.bookButtonText}>اطلب الفني الآن</Text>
+                      <Ionicons name="arrow-back" size={14} color={theme.primaryText} style={{ transform: [{ rotate: "180deg" }] }} />
+                    </Pressable>
+                  </AppCard>
+                ))}
+              </ScrollView>
+            </View>
+          )}
+
+          {/* 3.6. TOP REGISTERED VENDORS/SUPPLIERS */}
+          {vendorsList.data.length > 0 && (
+            <View style={styles.sectionBlock}>
+              <View style={styles.sectionHeader}>
+                <View style={styles.sectionHeaderWithIcon}>
+                  <Ionicons name="storefront-outline" size={20} color={theme.primary} />
+                  <Text style={styles.sectionTitle}>أفضل الموردين والمتاجر</Text>
+                </View>
+                <Text style={styles.sectionSubtitle}>متاجر معتمدة لتوفير الخامات ومواد التشطيب بضمان المنصة</Text>
+              </View>
+
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.workersContainer}>
+                {vendorsList.data.map((vendor) => (
+                  <AppCard key={vendor.id} style={styles.workerCard}>
+                    <View style={styles.workerHeader}>
+                      <View style={styles.workerInfo}>
+                        <Text style={styles.workerName} numberOfLines={1}>
+                          {vendor.shopNameAr || vendor.shopName}
+                        </Text>
+                        <Text style={styles.workerProfession} numberOfLines={1}>{vendor.category || "مورد خامات"}</Text>
+                      </View>
+                      <View style={styles.workerAvatarWrapper}>
+                        {vendor.shopImageUrl ? (
+                          <Image source={vendor.shopImageUrl} style={styles.workerAvatar as any} />
+                        ) : (
+                          <View style={styles.workerAvatarPlaceholder}>
+                            <Ionicons name="storefront" size={22} color={theme.muted} />
+                          </View>
+                        )}
+                      </View>
+                    </View>
+                    
+                    <View style={styles.workerMeta}>
+                      <View style={styles.workerRating}>
+                        <Ionicons name="star" size={14} color="#D7A24D" />
+                        <Text style={styles.workerRatingText}>
+                          {vendor.rating?.toFixed(1) ?? "5.0"} ({vendor.ratingCount ?? 0})
+                        </Text>
+                      </View>
+                      <View style={styles.workerExp}>
+                        <Text style={styles.workerExpText}>{vendor.totalOrders ?? 0} طلب</Text>
+                      </View>
+                    </View>
+
+                    <Pressable 
+                      style={styles.bookButton} 
+                      onPress={() => {
+                        navigation.navigate("Vendors");
+                      }}
+                    >
+                      <Text style={styles.bookButtonText}>تصفح المنتجات</Text>
                       <Ionicons name="arrow-back" size={14} color={theme.primaryText} style={{ transform: [{ rotate: "180deg" }] }} />
                     </Pressable>
                   </AppCard>
