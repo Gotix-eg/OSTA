@@ -122,6 +122,7 @@ enum NotificationType {
   MATERIAL_PICKED_UP
   CUSTOM_REQUEST_ACCEPTED
   CUSTOM_REQUEST_STATUS_CHANGE
+  CHAT_MESSAGE
 }
 
 enum MaterialRequestStatus {
