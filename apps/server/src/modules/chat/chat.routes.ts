@@ -195,17 +195,19 @@ router.post("/:receiverId", catchAsync(async (request: Request, response: Respon
   // Also emit back to sender so their other open tabs/devices get updated
   socketService.sendMessage(senderId, message);
 
-  // Send a system notification as fallback if they are offline
+  // Save notification to database so client sees it in their notifications list
   try {
-    socketService.sendNotification(receiverId, {
-      id: Math.random().toString(),
-      title: `رسالة جديدة من ${message.sender?.firstName || 'مستخدم'}`,
-      body: data.content.substring(0, 50),
-      type: "CHAT_MESSAGE",
-      data: { senderId, requestId: data.requestId }
+    await prisma.notification.create({
+      data: {
+        userId: receiverId,
+        type: "CHAT_MESSAGE",
+        title: `رسالة جديدة من ${message.sender?.firstName || 'مستخدم'}`,
+        body: data.content.substring(0, 50),
+        data: { senderId, type: "CHAT_MESSAGE", requestId: data.requestId, senderName: `${message.sender?.firstName || ''} ${message.sender?.lastName || ''}`.trim() }
+      }
     });
   } catch (e) {
-    // Ignore notification error
+    console.error("Failed to save chat notification:", e);
   }
 
   response.status(201).json(successResponse(message, "Message sent successfully"));

@@ -48,13 +48,22 @@
             "minSdkVersion": 24
           }
         }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#C0392B",
+          "defaultChannel": "default",
+          "sounds": []
+        }
       ]
     ],
     "extra": {
       "eas": {
-        "projectId": "69b907c6-1b86-4a22-ad06-7833c6800262"
+        "projectId": "b1f5f560-b5a3-423e-8f1a-79b2a359fa24"
       }
     },
-    "owner": "hgomaa"
+    "owner": "tammam666"
   }
 }

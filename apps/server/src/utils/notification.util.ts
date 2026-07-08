@@ -30,10 +30,10 @@ export async function sendAppNotification(params: SendNotificationParams) {
     try {
       const user = await prisma.user.findUnique({
         where: { id: params.userId },
-        select: { pushToken: true }
+        select: { expoPushToken: true }
       });
 
-      if (user?.pushToken) {
+      if (user?.expoPushToken) {
         const expoResponse = await fetch("https://exp.host/--/api/v2/push/send", {
           method: "POST",
           headers: {
@@ -41,7 +41,7 @@ export async function sendAppNotification(params: SendNotificationParams) {
             Accept: "application/json",
           },
           body: JSON.stringify({
-            to: user.pushToken,
+            to: user.expoPushToken,
             sound: "default",
             title: params.title,
             body: params.body,

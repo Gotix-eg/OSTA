@@ -190,7 +190,31 @@ router.get("/direct-orders", authenticate, requireRoles("VENDOR"), catchAsync(as
     include: { items: { include: { product: true } } },
     orderBy: { createdAt: "desc" },
   });
-  response.json(successResponse(orders, "الطلبات المباشرة"));
+
+  // Fetch client details for each order
+  const clientIds = [...new Set(orders.map(o => o.clientId))];
+  const clients = await prisma.user.findMany({
+    where: { id: { in: clientIds } },
+    select: {
+      id: true,
+      firstName: true,
+      lastName: true,
+      phone: true,
+    }
+  });
+
+  const ordersWithClients = orders.map(order => {
+    const client = clients.find(c => c.id === order.clientId);
+    return {
+      ...order,
+      client: client ? {
+        name: `${client.firstName} ${client.lastName}`.trim(),
+        phone: client.phone,
+      } : null
+    };
+  });
+
+  response.json(successResponse(ordersWithClients, "الطلبات المباشرة"));
 }));
 
 // PUT /api/vendors/direct-orders/:id/status
@@ -230,7 +254,8 @@ router.get("/dashboard", authenticate, requireRoles("VENDOR"), catchAsync(async 
       trialExpiresAt: vendor.trialExpiresAt,
       monthlySales: monthlySales._sum.totalAmount || 0,
       activeOrders: await prisma.directOrder.count({ where: { vendorId: vendor.id, status: { in: ["PENDING", "PREPARING", "IN_TRANSIT"] } } }),
-      walletBalance: vendor.walletBalance
+      walletBalance: vendor.walletBalance,
+      isOpen: vendor.isOpen
     },
     recentRequests
   }, "Vendor dashboard data"));
@@ -342,7 +367,7 @@ router.get("/my-orders", authenticate, requireRoles("CLIENT", "WORKER"), catchAs
     where: { clientId: request.auth!.userId },
     include: {
       items: { include: { product: true } },
-      vendor: { select: { shopName: true, shopNameAr: true, shopImageUrl: true } },
+      vendor: { select: { shopName: true, shopNameAr: true, shopImageUrl: true, userId: true } },
     },
     orderBy: { createdAt: "desc" },
   });

@@ -33,10 +33,12 @@ export function createApp() {
   app.use(
     cors({
       origin: (origin, callback) => {
-        // allow requests with no origin or from the same domain
+        // allow requests with no origin, from allowed origins, or from local development ports
+        const isLocal = origin && (origin.startsWith("http://localhost:") || origin.startsWith("http://127.0.0.1:"));
         if (
           !origin ||
           ALLOWED_ORIGINS.includes(origin) ||
+          isLocal ||
           (allowVercelPreviews && VERCEL_PREVIEW_REGEX.test(origin))
         ) {
           return callback(null, true);

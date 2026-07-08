@@ -122,6 +122,7 @@ enum NotificationType {
   MATERIAL_PICKED_UP
   CUSTOM_REQUEST_ACCEPTED
   CUSTOM_REQUEST_STATUS_CHANGE
+  CHAT_MESSAGE
 }
 
 enum MaterialRequestStatus {
@@ -211,7 +212,7 @@ model User {
   walletTransactions WalletTransaction[]
   materialRequests   MaterialRequest[]
   adCampaigns        AdCampaign[]
-  pushToken          String?
+  expoPushToken      String?             // Expo push notification token for mobile devices
 
   @@index([phone])
   @@index([email])

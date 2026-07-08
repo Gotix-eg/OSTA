@@ -534,6 +534,42 @@ router.get("/test-email", async (request, response) => {
   }
 });
 
+router.post("/upload", async (request, response) => {
+  try {
+    const { file, name } = request.body;
+    if (!file || !name) {
+      return response.status(400).json({ error: "Missing file or name" });
+    }
+
+    const matches = file.match(/^data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+);base64,(.+)$/);
+    if (!matches || matches.length !== 3) {
+      return response.status(400).json({ error: "Invalid base64 image data" });
+    }
+
+    const contentType = matches[2] ? matches[1] : "image/jpeg";
+    const base64Data = matches[2] || matches[1];
+    const buffer = Buffer.from(base64Data, "base64");
+
+    const { put } = await import("@vercel/blob");
+
+    const folder = name.includes("nid") || name.includes("record") || name.includes("tax")
+      ? "registration-documents"
+      : "uploads";
+
+    const filename = `${folder}/${Date.now()}-${name}`;
+    const blob = await put(filename, buffer, {
+      access: "public",
+      contentType,
+      token: process.env.BLOB_READ_WRITE_TOKEN
+    });
+
+    response.status(200).json(successResponse({ url: blob.url }, "File uploaded successfully"));
+  } catch (error: any) {
+    console.error("Express upload error:", error);
+    response.status(500).json({ error: error.message || "Upload failed" });
+  }
+});
+
 router.use("/auth", authRouter);
 router.use("/clients", clientsRouter);
 router.use("/workers", workersRouter);

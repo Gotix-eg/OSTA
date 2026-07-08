@@ -11,6 +11,7 @@ export const registerSchema = z
     email: z.string().email("البريد الإلكتروني غير صالح").optional().or(z.literal("")),
     password: passwordSchema,
     confirmPassword: passwordSchema,
+    avatarUrl: z.string().optional(),
     governorate: z.string().optional(),
     city: z.string().optional(),
     address: z.string().optional(),

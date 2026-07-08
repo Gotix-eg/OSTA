@@ -18,6 +18,7 @@ import {
 import { ApiError } from "../../utils/ApiError.js";
 import { successResponse } from "../../utils/ApiResponse.js";
 import { clearAuthCookies, setAuthCookies } from "../../utils/auth-cookies.js";
+import { prisma } from "../../lib/prisma.js";
 import { verifyAccessToken } from "../../utils/tokens.js";
 import { authService } from "./auth.service.js";
 import {
@@ -70,7 +71,8 @@ router.post("/register/client", registrationLimiter, catchAsync(async (request, 
     city: payload.city,
     address: payload.address,
     latitude: payload.latitude,
-    longitude: payload.longitude
+    longitude: payload.longitude,
+    avatarUrl: payload.avatarUrl
   });
 
   if ("needsVerification" in result) {
@@ -127,7 +129,8 @@ router.post("/register/worker", registrationLimiter, catchAsync(async (request, 
     nationalIdNumber: payload.nationalIdNumber,
     nationalIdFront: payload.nationalIdFront,
     nationalIdBack: payload.nationalIdBack,
-    profession: payload.profession
+    profession: payload.profession,
+    avatarUrl: payload.avatarUrl
   })) as any;
 
   setAuthCookies(response, {
@@ -193,7 +196,6 @@ router.post("/login", loginLimiter, catchAsync(async (request, response) => {
 router.post("/verify-otp", otpLimiter, catchAsync(async (request, response) => {
   const payload = parseBody(verifyOtpSchema, request.body);
   const result = await authService.verifyOtp(payload.phone, payload.code, payload.type);
-
   setAuthCookies(response, {
     accessToken: result.accessToken,
     refreshToken: result.refreshToken,
@@ -249,6 +251,125 @@ router.post("/logout", catchAsync(async (request, response) => {
 
 router.get("/me", authenticate, catchAsync(async (request, response) => {
   response.status(200).json(successResponse(await authService.me(request.auth!.userId), "Authenticated user"));
+}));
+
+router.patch("/profile", authenticate, catchAsync(async (request, response) => {
+  const { firstName, lastName, email, avatarUrl } = request.body;
+  const userId = request.auth!.userId;
+
+  const updatedUser = await prisma.user.update({
+    where: { id: userId },
+    data: {
+      firstName: firstName !== undefined ? firstName : undefined,
+      lastName: lastName !== undefined ? lastName : undefined,
+      email: email !== undefined ? email : undefined,
+      avatarUrl: avatarUrl !== undefined ? avatarUrl : undefined,
+    },
+    select: {
+      id: true,
+      role: true,
+      phone: true,
+      email: true,
+      firstName: true,
+      lastName: true,
+      avatarUrl: true,
+      status: true
+    }
+  });
+
+  response.status(200).json(
+    successResponse({ user: updatedUser }, "Profile updated successfully")
+  );
+}));
+
+router.post("/switch-role", authenticate, catchAsync(async (request, response) => {
+  const userId = request.auth!.userId;
+  const { targetRole: bodyTargetRole } = request.body as { targetRole?: string };
+  
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    include: {
+      clientProfile: true,
+      workerProfile: true,
+      vendorProfile: true
+    }
+  });
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  let targetRole: "CLIENT" | "WORKER" | "VENDOR";
+  if (bodyTargetRole) {
+    if (!["CLIENT", "WORKER", "VENDOR"].includes(bodyTargetRole)) {
+      throw new ApiError(400, "Invalid target role");
+    }
+    targetRole = bodyTargetRole as "CLIENT" | "WORKER" | "VENDOR";
+  } else {
+    // Default fallback toggle logic
+    if (user.role === "WORKER") {
+      targetRole = "CLIENT";
+    } else if (user.role === "VENDOR") {
+      targetRole = "CLIENT";
+    } else {
+      // Current is CLIENT: check if they have a worker profile first, then vendor, default to worker
+      if (user.workerProfile) {
+        targetRole = "WORKER";
+      } else if (user.vendorProfile) {
+        targetRole = "VENDOR";
+      } else {
+        targetRole = "WORKER"; // will throw correct message below
+      }
+    }
+  }
+
+  // Ensure target profile exists
+  if (targetRole === "CLIENT" && !user.clientProfile) {
+    await prisma.clientProfile.create({
+      data: {
+        userId: user.id,
+        totalRequests: 0,
+        walletBalance: 0,
+        isVip: false
+      }
+    });
+  } else if (targetRole === "WORKER" && !user.workerProfile) {
+    throw new ApiError(400, "يجب التسجيل كفني أولاً وتوثيق المستندات لتفعيل وضع الفني");
+  } else if (targetRole === "VENDOR" && !user.vendorProfile) {
+    throw new ApiError(400, "يجب التسجيل كمورد أولاً وتوثيق المستندات لتفعيل وضع المورد");
+  }
+
+  const updatedUser = await prisma.user.update({
+    where: { id: userId },
+    data: { role: targetRole },
+    select: {
+      id: true,
+      role: true,
+      phone: true,
+      email: true,
+      firstName: true,
+      lastName: true,
+      avatarUrl: true,
+      status: true
+    }
+  });
+
+  const tokens = await authService.switchRoleSession(userId, targetRole);
+
+  setAuthCookies(response, {
+    accessToken: tokens.accessToken,
+    refreshToken: tokens.refreshToken,
+    role: targetRole
+  });
+
+  response.status(200).json(
+    successResponse({ 
+      user: updatedUser, 
+      role: targetRole,
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken
+    }, "Role switched successfully")
+  );
 }));
 
 export const authRouter = router;
