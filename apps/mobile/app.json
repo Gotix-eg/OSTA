@@ -14,15 +14,15 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "ostafy.com"
+      "bundleIdentifier": "com.ostafy"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#1a0a0a"
       },
-      "package": "ostafy.com",
-      "versionCode": 3,
+      "package": "com.ostafy",
+      "versionCode": 10,
       "edgeToEdgeEnabled": true,
       "permissions": [
         "android.permission.INTERNET",
