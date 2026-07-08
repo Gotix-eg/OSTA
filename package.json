@@ -20,5 +20,8 @@
     "prisma:generate": "npm run prisma:generate --workspace server",
     "prisma:push": "npm run prisma:push --workspace server",
     "seed": "npm run seed --workspace server"
+  },
+  "devDependencies": {
+    "jks-js": "^1.1.7"
   }
 }
