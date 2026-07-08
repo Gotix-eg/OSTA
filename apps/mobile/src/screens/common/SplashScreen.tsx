@@ -9,8 +9,9 @@ import {
   Vibration,
   Easing,
 } from "react-native";
-import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
+import IconOnlyLogo from "../../../assets/icon-only.svg";
+import FullLogo from "../../../assets/logo.svg";
 
 const { width, height } = Dimensions.get("window");
 
@@ -225,12 +226,7 @@ export function SplashScreen({ onFinish }: SplashScreenProps) {
             {/* Soccer ball pattern custom drawn */}
             <View style={styles.ball}>
               <View style={styles.ballInnerBorder}>
-                <Image
-                  source={require("../../../assets/icon-only.svg")}
-                  style={styles.ballIcon}
-                  contentFit="contain"
-                  tintColor={GOLD}
-                />
+                <IconOnlyLogo width="100%" height="100%" style={styles.ballIcon} />
               </View>
             </View>
           </Animated.View>
@@ -260,11 +256,7 @@ export function SplashScreen({ onFinish }: SplashScreenProps) {
             opacity: logoOpacity,
             transform: [{ scale: logoScale }, { translateY: logoY }],
           }]}>
-            <Image
-              source={require("../../../assets/logo.svg")}
-              style={styles.logo}
-              contentFit="contain"
-            />
+            <FullLogo width="100%" height="100%" style={styles.logo} />
           </Animated.View>
 
           {/* Divider line */}

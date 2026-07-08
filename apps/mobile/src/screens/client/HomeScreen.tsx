@@ -10,6 +10,7 @@ import { useApiResource } from "../../hooks/useApiResource";
 import { useTheme } from "../../context/ThemeContext";
 import { useAuth } from "../../context/AuthContext";
 import { spacing } from "../../theme/spacing";
+import HeaderLogo from "../../../assets/logo.svg";
 
 type Slide = {
   id?: string;
@@ -250,7 +251,9 @@ export function HomeScreen() {
             </View>
             <View style={styles.headerRight}>
               <Text style={styles.greetingText}>{greetings}</Text>
-              <Image source={require("../../../assets/logo.svg")} style={styles.logo as any} contentFit="contain" />
+              <View style={styles.logo}>
+                <HeaderLogo width="100%" height="100%" />
+              </View>
             </View>
           </Animated.View>
 

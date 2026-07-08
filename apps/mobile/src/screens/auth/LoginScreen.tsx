@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Alert, StyleSheet, View } from "react-native";
-import { Image } from "expo-image";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import { AppButton } from "../../components/AppButton";
@@ -12,6 +11,8 @@ import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
 import { spacing } from "../../theme/spacing";
 import type { AuthStackParamList } from "../../navigation/types";
+import DarkLogo from "../../../assets/logo.svg";
+import LightLogo from "../../../assets/logo-light.svg";
 
 type Props = NativeStackScreenProps<AuthStackParamList, "Login">;
 
@@ -34,20 +35,15 @@ export function LoginScreen({ navigation }: Props) {
     }
   }
 
-  // Dark mode → white text logo (original SVG), Light mode → black text logo
-  const logoSource = mode === "dark"
-    ? require("../../../assets/logo.svg")
-    : require("../../../assets/logo-light.svg");
+  const Logo = mode === "dark" ? DarkLogo : LightLogo;
 
   return (
     <Screen>
       <View style={styles.brandHeader}>
         <ThemeToggle />
-        <Image
-          source={logoSource}
-          style={styles.logo}
-          contentFit="contain"
-        />
+        <View style={styles.logo}>
+          <Logo width="100%" height="100%" />
+        </View>
       </View>
       <AppCard style={styles.form}>
         <TextField label="رقم الهاتف" keyboardType="phone-pad" value={phone} onChangeText={setPhone} />
