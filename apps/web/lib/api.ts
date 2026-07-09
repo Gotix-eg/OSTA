@@ -73,7 +73,9 @@ export async function fetchApiData<T>(path: string, fallback: T): Promise<T> {
     });
 
     if (!response.ok) {
-      console.error("API GET request failed:", { path, status: response.status });
+      if (response.status !== 401) {
+        console.error("API GET request failed:", { path, status: response.status });
+      }
       throw new Error(`Request failed with ${response.status}`);
     }
 
