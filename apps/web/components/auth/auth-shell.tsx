@@ -26,7 +26,7 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
           <Link href={`/${locale}`} className="flex items-center gap-2 group">
             <img src="/logo.svg" alt="Ostafy" className="h-12 w-auto brightness-0 md:brightness-0 md:invert" />
           </Link>
-          <LocaleSwitcher locale={locale} pathname={pathname} className="rounded-xl border border-onyx-700 bg-onyx-800 px-4 py-2 text-sm font-semibold text-onyx-200 hover:border-onyx-600 transition" />
+          <LocaleSwitcher locale={locale} pathname={pathname} className="rounded-xl border border-onyx-700 bg-onyx-800 px-4 py-2 text-sm font-semibold text-onyx-950 md:text-onyx-200 hover:border-onyx-600 transition" />
         </div>
       </header>
 

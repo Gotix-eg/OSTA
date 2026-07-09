@@ -55,7 +55,7 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
           </nav>
 
           <div className="flex items-center gap-3">
-            <LocaleSwitcher locale={locale} pathname={pathname} className="rounded-xl border border-onyx-700 bg-onyx-800 px-4 py-2 text-sm font-semibold text-onyx-200 hover:border-onyx-600 transition" />
+            <LocaleSwitcher locale={locale} pathname={pathname} className="rounded-xl border border-onyx-700 bg-onyx-800 px-4 py-2 text-sm font-semibold text-onyx-950 md:text-onyx-200 hover:border-onyx-600 transition" />
             <Link href={`/${locale}/login`} className="btn-gold hidden sm:flex items-center gap-2 px-5 py-2.5 text-sm">
               <LogIn className="h-4 w-4" />
               {copy.login}
