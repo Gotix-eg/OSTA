@@ -178,5 +178,35 @@ export const serviceCategories = [
       { id: "plaster-wall", slug: "plaster-wall", name: { ar: "أعمال محارة", en: "Wall Plastering" } },
       { id: "plaster-repair", slug: "plaster-repair", name: { ar: "ترميم محارة حوائط", en: "Plaster Repair" } }
     ]
+  },
+  {
+    id: "ironwork",
+    slug: "ironwork",
+    icon: "Hammer",
+    workersAvailable: 150,
+    name: { ar: "حدادة", en: "Ironwork" },
+    description: {
+      ar: "تصنيع وتركيب وصيانة البوابات الحديدية وحمايات النوافذ والشبابيك.",
+      en: "Fabrication, installation, and repair of iron gates and window guards."
+    },
+    services: [
+      { id: "iron-gates", slug: "iron-gates", name: { ar: "تركيب وصيانة بوابات حديد", en: "Iron Gates Installation" } },
+      { id: "window-grills", slug: "window-grills", name: { ar: "حمايات وشبابيك حديد", en: "Window & Balcony Grills" } }
+    ]
+  },
+  {
+    id: "finishing",
+    slug: "finishing",
+    icon: "Layers",
+    workersAvailable: 120,
+    name: { ar: "تشطيبات شاملة", en: "Comprehensive Finishing" },
+    description: {
+      ar: "تشطيب متكامل للشقق والفيلات والمحلات من الطوب الأحمر للتسليم على المفتاح.",
+      en: "Turnkey apartment and villa finishing from masonry to final handover."
+    },
+    services: [
+      { id: "turnkey-finishing", slug: "turnkey-finishing", name: { ar: "تشطيب على المفتاح", en: "Turnkey Finishing" } },
+      { id: "renovation-remodeling", slug: "renovation-remodeling", name: { ar: "تجديد وتطوير منازل", en: "Home Renovation & Remodeling" } }
+    ]
   }
 ] as const;

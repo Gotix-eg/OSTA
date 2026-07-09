@@ -178,10 +178,19 @@ export const serviceCategories: ServiceCategory[] = [
       {
         id: "tile-install",
         slug: "tile-install",
-        name: { ar: "تركيب سيراميك", en: "Tile Installation" },
+        name: { ar: "تركيب سيراميك وبورسلين", en: "Tile Installation" },
         description: {
           ar: "تركيب وتجديد الأرضيات والحوائط للسيراميك والبورسلين.",
           en: "Installation and repair of tile floors and walls."
+        }
+      },
+      {
+        id: "tile-repair",
+        slug: "tile-repair",
+        name: { ar: "ترميم وإصلاح سيراميك", en: "Tile Repair" },
+        description: {
+          ar: "إصلاح البلاط المكسور والترميمات البسيطة للأرضيات والحوائط.",
+          en: "Repairing cracked or damaged tiles on floors and walls."
         }
       }
     ]
@@ -200,10 +209,81 @@ export const serviceCategories: ServiceCategory[] = [
       {
         id: "plaster-wall",
         slug: "plaster-wall",
-        name: { ar: "أعمال محارة", en: "Wall Plastering" },
+        name: { ar: "أعمال محارة وتنعيم", en: "Wall Plastering" },
         description: {
           ar: "أعمال محارة وتنعيم وتخشين للأسطح وتجهيزها للدهان.",
           en: "Screeding, leveling, and smoothing plaster surfaces."
+        }
+      },
+      {
+        id: "plaster-repair",
+        slug: "plaster-repair",
+        name: { ar: "ترميم وإصلاح محارة", en: "Plaster Repair" },
+        description: {
+          ar: "معالجة الرطوبة والتشققات وترميم عيوب المحارة القديمة.",
+          en: "Repairing damp, cracks, and old plaster issues."
+        }
+      }
+    ]
+  },
+  {
+    id: "ironwork",
+    slug: "ironwork",
+    icon: "Hammer",
+    workersAvailable: 150,
+    name: { ar: "حدادة", en: "Ironwork" },
+    description: {
+      ar: "تصنيع وتركيب وصيانة البوابات الحديدية وحمايات النوافذ والشبابيك.",
+      en: "Fabrication, installation, and repair of iron gates and window guards."
+    },
+    services: [
+      {
+        id: "iron-gates",
+        slug: "iron-gates",
+        name: { ar: "تركيب وصيانة بوابات حديد", en: "Iron Gates Installation" },
+        description: {
+          ar: "تصنيع وتركيب وصيانة البوابات الحديدية ومداخل العقارات.",
+          en: "Fabricating, installing, and repairing iron gates and entryways."
+        }
+      },
+      {
+        id: "window-grills",
+        slug: "window-grills",
+        name: { ar: "حمايات وشبابيك حديد", en: "Window & Balcony Grills" },
+        description: {
+          ar: "تصنيع وتركيب حمايات حديدية للنوافذ والبلكونات لزيادة الأمان.",
+          en: "Fabrication and installation of iron security grills for windows and balconies."
+        }
+      }
+    ]
+  },
+  {
+    id: "finishing",
+    slug: "finishing",
+    icon: "Layers",
+    workersAvailable: 120,
+    name: { ar: "تشطيبات شاملة", en: "Comprehensive Finishing" },
+    description: {
+      ar: "تشطيب متكامل للشقق والفيلات والمحلات من الطوب الأحمر للتسليم على المفتاح.",
+      en: "Turnkey apartment and villa finishing from masonry to final handover."
+    },
+    services: [
+      {
+        id: "turnkey-finishing",
+        slug: "turnkey-finishing",
+        name: { ar: "تشطيب على المفتاح", en: "Turnkey Finishing" },
+        description: {
+          ar: "تشطيب شقق وفيلات بالكامل شامل الخامات والمصنعيات.",
+          en: "Complete apartment and villa finishing including materials and labor."
+        }
+      },
+      {
+        id: "renovation-remodeling",
+        slug: "renovation-remodeling",
+        name: { ar: "تجديد وتطوير منازل", en: "Home Renovation & Remodeling" },
+        description: {
+          ar: "تجديد الحمامات والمطابخ وتعديل الديكورات والجدران.",
+          en: "Renovating bathrooms, kitchens, and modifying layouts or decor."
         }
       }
     ]

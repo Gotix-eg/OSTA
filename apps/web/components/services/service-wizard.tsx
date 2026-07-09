@@ -144,6 +144,18 @@ const categoryOptions: Record<string, { ar: string; en: string }[]> = {
     { ar: "تلييس وترميم عيوب المحارة القديمة", en: "Repairing and patch plastering" },
     { ar: "تنعيم وتخشين حوائط للدهان", en: "Smoothing/roughing surfaces for prep" },
   ],
+  ironwork: [
+    { ar: "تصنيع وتركيب بوابات حديد", en: "Fabricating & installing iron gates" },
+    { ar: "تصنيع وتركيب شبابيك وحمايات حديد", en: "Fabricating & installing window guards" },
+    { ar: "تصنيع وتركيب درابزين حديد (سلم / بلكونة)", en: "Fabricating & installing iron railings" },
+    { ar: "صيانة وإصلاح أعمال حدادة قديمة", en: "Maintaining & repairing old ironwork" },
+  ],
+  finishing: [
+    { ar: "تشطيب شقة / فيلا بالكامل (على المفتاح)", en: "Full apartment/villa turnkey finishing" },
+    { ar: "تشطيب حمام ومطبخ بالكامل", en: "Complete bathroom & kitchen finishing" },
+    { ar: "تعديل جدران وهدم وبناء داخلي", en: "Modifying walls, internal demolition/building" },
+    { ar: "تركيب ديكورات وأسقف معلقة (جبس بورد)", en: "Installing decor & suspended ceilings (gypsum board)" },
+  ],
 };
 
 const whenOptions = [

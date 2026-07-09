@@ -34,6 +34,10 @@ const CRAFTS = [
   { id: "networks", name: { ar: "الشبكات", en: "Networks" } },
   { id: "computer-repair", name: { ar: "صيانة كمبيوتر", en: "Computer" } },
   { id: "cctv", name: { ar: "تركيب كاميرات", en: "CCTV" } },
+  { id: "tiling", name: { ar: "مبلط سيراميك", en: "Ceramic Tiling" } },
+  { id: "plastering", name: { ar: "أعمال محارة", en: "Plastering" } },
+  { id: "ironwork", name: { ar: "حدادة", en: "Ironwork" } },
+  { id: "finishing", name: { ar: "تشطيبات شاملة", en: "Finishing" } },
 ];
 
 const POPULAR_NEIGHBORHOODS: Record<string, { value: string; labelAr: string; labelEn: string }[]> = {

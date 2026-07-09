@@ -17,6 +17,8 @@ const CORE_CATEGORIES = [
   { nameAr: "تركيب كاميرات", nameEn: "Camera Installation", slug: "cctv", icon: "camera" },
   { nameAr: "مبلط سيراميك", nameEn: "Ceramic Tiling", slug: "tiling", icon: "grid" },
   { nameAr: "أعمال محارة", nameEn: "Plastering", slug: "plastering", icon: "layers" },
+  { nameAr: "حدادة", nameEn: "Ironwork", slug: "ironwork", icon: "hammer" },
+  { nameAr: "تشطيبات شاملة", nameEn: "Comprehensive Finishing", slug: "finishing", icon: "layers" },
 ];
 
 async function main() {

@@ -31,7 +31,9 @@ const serviceImages: Record<string, string> = {
   cameras: "/images/services/cam.jpg",
   cctv: "/images/services/cam.jpg",
   tiling: "https://images.unsplash.com/photo-1502005229762-fc1b2b812ca5?q=80&w=1000&auto=format&fit=crop",
-  plastering: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=1000&auto=format&fit=crop"
+  plastering: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=1000&auto=format&fit=crop",
+  ironwork: "https://images.unsplash.com/photo-1534224039826-c7a0eda0e6b3?q=80&w=1000&auto=format&fit=crop",
+  finishing: "https://images.unsplash.com/photo-1581858726788-75bc0f6a952d?q=80&w=1000&auto=format&fit=crop"
 };
 
 
