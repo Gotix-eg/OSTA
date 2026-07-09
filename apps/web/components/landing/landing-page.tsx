@@ -493,24 +493,16 @@ export function LandingPage({ locale }: { locale: Locale }) {
                           alt=""
                           className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
                         />
-                        {/* Mobile-only "ممول" badge overlayed on the top-start of the image wrapper */}
-                        <div className="absolute top-4 start-4 md:hidden z-20">
-                          <span className="inline-block px-2.5 py-1 rounded bg-gold-800 text-onyx-950 text-[9px] font-black uppercase tracking-wider shadow-md">
-                            {isArabic ? "ممول" : "Ad"}
-                          </span>
-                        </div>
                       </div>
                     ) : null}
                     {/* Desktop: Premium deep dark gradient overlay; No overlay on mobile */}
                     <div className="absolute inset-0 bg-gradient-to-t from-onyx-950 via-onyx-950/75 to-transparent hidden md:block" />
-                    
-                    <div className="absolute top-4 end-4 hidden md:block">
-                      <span className="inline-block px-2.5 py-1 rounded bg-gold-800 text-onyx-950 text-[9px] font-black uppercase tracking-wider shadow-md">
-                        {isArabic ? "ممول" : "Ad"}
-                      </span>
-                    </div>
 
                     <div className="w-full px-4 pt-4 text-start space-y-2 md:absolute md:inset-0 md:z-10 md:flex md:flex-col md:justify-end md:p-6 md:space-y-2 md:text-start">
+                      {/* "ممول"/"Ad" label lives in the text zone, never over the photo, so it can never collide with baked-in creative content */}
+                      <span className="inline-block px-2.5 py-1 rounded bg-gold-800 text-onyx-950 text-[9px] font-black uppercase tracking-wider shadow-md w-fit">
+                        {isArabic ? "ممول" : "Ad"}
+                      </span>
                       <h3 className={cn(
                         "font-black leading-tight transition-colors",
                         "text-lg text-onyx-950 md:text-white group-hover:text-gold-500",
