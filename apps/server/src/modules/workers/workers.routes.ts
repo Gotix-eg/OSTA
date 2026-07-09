@@ -132,6 +132,13 @@ function getCategorySlugsForProfession(profession: string | null | undefined): s
   if (p === "computer" || p === "كمبيوتر" || p.includes("كمبيو") || p.includes("computer")) return ["computer", "computer-repair"];
   if (p === "cctv" || p === "كاميرات" || p.includes("كامير") || p.includes("cctv")) return ["cctv", "camera-installation"];
   if (p === "appliances" || p === "أجهزة" || p.includes("جهز") || p.includes("appliance")) return ["appliances", "home-appliances"];
+  if (p === "tiling" || p === "مبلط" || p.includes("مبلط") || p.includes("tile") || p.includes("tiling")) return ["tiling"];
+  if (p === "plastering" || p === "محارة" || p.includes("محارة") || p.includes("plaster") || p.includes("plastering")) return ["plastering"];
+  if (p === "ironwork" || p === "حداد" || p.includes("حداد") || p.includes("iron") || p.includes("ironwork")) return ["ironwork"];
+  if (p === "finishing" || p === "تشطيب" || p.includes("تشطيب") || p.includes("finish") || p.includes("finishing")) return ["finishing"];
+  if (p === "gypsum" || p === "جبس" || p.includes("جبس") || p.includes("gypsum")) return ["gypsum"];
+  if (p === "moving" || p === "نقل" || p.includes("نقل") || p.includes("move") || p.includes("moving")) return ["moving"];
+  if (p === "cleaning" || p === "نظافة" || p.includes("نظاف") || p.includes("clean") || p.includes("cleaning")) return ["cleaning"];
   return [];
 }
 

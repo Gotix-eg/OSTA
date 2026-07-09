@@ -26,7 +26,11 @@ export type DashboardWorkerSpecialtyCode =
   | "applianceRepair"
   | "cleaning"
   | "gypsum"
-  | "ceramic";
+  | "ceramic"
+  | "plastering"
+  | "ironwork"
+  | "finishing"
+  | "moving";
 
 export type DashboardRequestStatus = "WORKER_EN_ROUTE" | "IN_PROGRESS";
 
