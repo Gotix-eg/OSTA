@@ -150,13 +150,16 @@ export function LandingPage({ locale }: { locale: Locale }) {
   const liveCategories = useLiveApiData<any[]>("/services/categories", []);
 
   const displayCrafts = liveCategories.length > 0
-    ? liveCategories.map((cat) => ({
-        id: cat.slug,
-        name: { ar: cat.nameAr, en: cat.nameEn },
-        image: cat.imageUrl || "https://images.unsplash.com/photo-1581092160562-40aa08e78837?q=80&w=800&auto=format&fit=crop",
-        color: getCategoryColor(cat.slug),
-        icon: iconMap[cat.icon] || Settings,
-      }))
+    ? liveCategories.map((cat) => {
+        const localCraft = CRAFTS.find((c) => c.id === cat.slug || (c.id === "electricity" && cat.slug === "electrical"));
+        return {
+          id: cat.slug,
+          name: { ar: cat.nameAr, en: cat.nameEn },
+          image: cat.imageUrl || localCraft?.image || "https://images.unsplash.com/photo-1581092160562-40aa08e78837?q=80&w=800&auto=format&fit=crop",
+          color: getCategoryColor(cat.slug),
+          icon: iconMap[cat.icon] || Settings,
+        };
+      })
     : CRAFTS;
 
   const pathname = usePathname() || "";
