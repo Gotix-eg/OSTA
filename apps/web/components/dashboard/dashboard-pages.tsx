@@ -1694,7 +1694,7 @@ function MobileSlidesEditor({
     titleEn: "Slide Title",
     descAr: "وصف مختصر للسلايدر",
     descEn: "Short slide description",
-    imageUrl: "/mobile_slide_1.png",
+    imageUrl: "",
     btn1TextAr: "اطلب الآن",
     btn1TextEn: "Order Now",
     btn1Link: "/register/client",
