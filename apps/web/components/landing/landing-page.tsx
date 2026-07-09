@@ -482,16 +482,16 @@ export function LandingPage({ locale }: { locale: Locale }) {
                     href={camp.link.startsWith("http") ? camp.link : `/${locale}${camp.link.startsWith("/") ? "" : "/"}${camp.link}`}
                     className={cn(
                       "group w-full flex flex-col md:block md:relative md:rounded-[2rem] md:overflow-hidden border-b border-gold-700/10 md:border md:border-gold-700/10 md:hover:border-gold-500/30 transition-all duration-500 md:shadow-xl md:bg-gold-100 pb-6 md:pb-0",
-                      "md:aspect-[16/9] md:h-auto md:min-h-0",
+                      "md:aspect-[2/1] md:h-auto md:min-h-0",
                       showLarge ? "md:col-span-2" : ""
                     )}
                   >
                     {camp.imageUrl ? (
-                      <div className="relative w-full aspect-[16/9] md:absolute md:inset-0 md:h-full md:w-full md:aspect-auto overflow-hidden">
+                      <div className="relative w-full aspect-[2/1] md:absolute md:inset-0 md:h-full md:w-full md:aspect-auto overflow-hidden">
                         <img
                           src={cleanImageUrl(camp.imageUrl)}
                           alt=""
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                          className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
                         />
                         {/* Mobile-only "ممول" badge overlayed on the top-start of the image wrapper */}
                         <div className="absolute top-4 start-4 md:hidden z-20">
