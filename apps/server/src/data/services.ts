@@ -208,5 +208,51 @@ export const serviceCategories = [
       { id: "turnkey-finishing", slug: "turnkey-finishing", name: { ar: "تشطيب على المفتاح", en: "Turnkey Finishing" } },
       { id: "renovation-remodeling", slug: "renovation-remodeling", name: { ar: "تجديد وتطوير منازل", en: "Home Renovation & Remodeling" } }
     ]
+  },
+  {
+    id: "gypsum",
+    slug: "gypsum",
+    icon: "Layout",
+    workersAvailable: 195,
+    name: { ar: "جبس بورد وديكور", en: "Gypsum Board" },
+    description: {
+      ar: "أعمال الجبس بورد والأسقف المعلقة والديكورات الجبسية الحديثة بكفاءة عالية.",
+      en: "Gypsum board installation, suspended ceilings, and modern drywall decoration."
+    },
+    services: [
+      { id: "gyp-install", slug: "gyp-install", name: { ar: "تركيب جبس بورد", en: "Gypsum Board Installation" } },
+      { id: "gyp-decor", slug: "gyp-decor", name: { ar: "ديكورات جبسية أسقف", en: "Gypsum Ceiling Decoration" } }
+    ]
+  },
+  {
+    id: "moving",
+    slug: "moving",
+    icon: "Truck",
+    workersAvailable: 340,
+    name: { ar: "نقل عفش وتغليف", en: "Furniture Moving" },
+    description: {
+      ar: "خدمات نقل الأثاث وتغليفه وفكه وتركيبه بأيدي فنيين محترفين وسيارات مجهزة.",
+      en: "Furniture moving, packaging, disassembly, and assembly by specialists."
+    },
+    services: [
+      { id: "move-furniture", slug: "move-furniture", name: { ar: "نقل أثاث", en: "Furniture Moving" } },
+      { id: "pack-furniture", slug: "pack-furniture", name: { ar: "تغليف عفش", en: "Furniture Packaging" } }
+    ]
+  },
+  {
+    id: "cleaning",
+    slug: "cleaning",
+    icon: "Sparkles",
+    workersAvailable: 610,
+    name: { ar: "تنظيف وتعقيم منازل", en: "Home Cleaning" },
+    description: {
+      ar: "تنظيف شامل للمنازل والفلل والمكاتب والتعقيم ومكافحة الحشرات بأفضل المواد.",
+      en: "Comprehensive cleaning, sanitization, and pest control for homes and offices."
+    },
+    services: [
+      { id: "clean-home", slug: "clean-home", name: { ar: "تنظيف شقق وفلل", en: "Home & Villa Cleaning" } },
+      { id: "pest-control", slug: "pest-control", name: { ar: "رش مبيدات ومكافحة حشرات", en: "Pest Control Services" } }
+    ]
   }
 ] as const;
+

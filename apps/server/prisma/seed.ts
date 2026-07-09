@@ -19,6 +19,9 @@ const CORE_CATEGORIES = [
   { nameAr: "أعمال محارة", nameEn: "Plastering", slug: "plastering", icon: "layers", imageUrl: "/images/services/plastering.png" },
   { nameAr: "حدادة", nameEn: "Ironwork", slug: "ironwork", icon: "hammer", imageUrl: "/images/services/ironwork.png" },
   { nameAr: "تشطيبات شاملة", nameEn: "Comprehensive Finishing", slug: "finishing", icon: "layers", imageUrl: "/images/services/finishing.png" },
+  { nameAr: "جبس بورد وديكور", nameEn: "Gypsum Board", slug: "gypsum", icon: "layout", imageUrl: "/images/services/gypsum.png" },
+  { nameAr: "نقل عفش وتغليف", nameEn: "Furniture Moving", slug: "moving", icon: "truck", imageUrl: "/images/services/moving.png" },
+  { nameAr: "تنظيف وتعقيم منازل", nameEn: "Home Cleaning", slug: "cleaning", icon: "sparkles", imageUrl: "/images/services/cleaning.png" },
 ];
 
 async function main() {

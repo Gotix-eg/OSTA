@@ -8,7 +8,7 @@ import {
   Store, Users, CheckCircle2, Menu, X,
   Facebook, Instagram, Phone, Mail,
   Droplets, Wrench, PaintBucket, Network, Settings,
-  Megaphone, Grid, Layers
+  Megaphone, Grid, Layers, Truck, Sparkles
 } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect, useMemo } from "react";
@@ -42,6 +42,9 @@ function getCategoryColor(slug: string): string {
     plastering: "from-orange-500 to-orange-700",
     ironwork: "from-neutral-600 to-neutral-800",
     finishing: "from-teal-600 to-teal-800",
+    gypsum: "from-amber-500 to-amber-700",
+    moving: "from-sky-500 to-sky-700",
+    cleaning: "from-green-500 to-green-700",
   };
   return colors[slug] || "from-gold-400 to-gold-600";
 }
@@ -65,6 +68,9 @@ const CRAFTS = [
   { id: "plastering", name: { ar: "أعمال محارة", en: "Plastering" }, image: "/images/services/plastering.png", color: "from-orange-500 to-orange-700", icon: Layers },
   { id: "ironwork", name: { ar: "حدادة", en: "Ironwork" }, image: "/images/services/ironwork.png", color: "from-neutral-600 to-neutral-800", icon: Hammer },
   { id: "finishing", name: { ar: "تشطيبات شاملة", en: "Finishing" }, image: "/images/services/finishing.png", color: "from-teal-600 to-teal-800", icon: Layers },
+  { id: "gypsum", name: { ar: "جبس بورد وديكور", en: "Gypsum Board" }, image: "/images/services/gypsum.png", color: "from-amber-500 to-amber-700", icon: Layout },
+  { id: "moving", name: { ar: "نقل عفش وتغليف", en: "Furniture Moving" }, image: "/images/services/moving.png", color: "from-sky-500 to-sky-700", icon: Truck },
+  { id: "cleaning", name: { ar: "تنظيف وتعقيم منازل", en: "Home Cleaning" }, image: "/images/services/cleaning.png", color: "from-green-500 to-green-700", icon: Sparkles },
 ];
 
 const POPULAR_NEIGHBORHOODS: Record<string, { value: string; labelAr: string; labelEn: string }[]> = {

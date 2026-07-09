@@ -33,7 +33,10 @@ const serviceImages: Record<string, string> = {
   tiling: "/images/services/tiling.png",
   plastering: "/images/services/plastering.png",
   ironwork: "/images/services/ironwork.png",
-  finishing: "/images/services/finishing.png"
+  finishing: "/images/services/finishing.png",
+  gypsum: "/images/services/gypsum.png",
+  moving: "/images/services/moving.png",
+  cleaning: "/images/services/cleaning.png"
 };
 
 
