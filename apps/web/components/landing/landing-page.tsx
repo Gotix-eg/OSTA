@@ -61,10 +61,10 @@ const CRAFTS = [
   { id: "networks", name: { ar: "الشبكات", en: "Networks" }, image: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?q=80&w=1000&auto=format&fit=crop&v=osta4", color: "from-indigo-400 to-indigo-600", icon: Network },
   { id: "computer-repair", name: { ar: "صيانة كمبيوتر", en: "Computer" }, image: "https://images.unsplash.com/photo-1588508065123-287b28e013da?q=80&w=1000&auto=format&fit=crop&v=osta4", color: "from-emerald-400 to-emerald-600", icon: Monitor },
   { id: "cctv", name: { ar: "تركيب كاميرات", en: "CCTV" }, image: "/images/services/cam.jpg", color: "from-red-400 to-red-600", icon: Camera },
-  { id: "tiling", name: { ar: "مبلط سيراميك", en: "Ceramic Tiling" }, image: "https://images.unsplash.com/photo-1502005229762-fc1b2b812ca5?q=80&w=1000&auto=format&fit=crop", color: "from-cyan-600 to-cyan-800", icon: Grid },
-  { id: "plastering", name: { ar: "أعمال محارة", en: "Plastering" }, image: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=1000&auto=format&fit=crop", color: "from-orange-500 to-orange-700", icon: Layers },
-  { id: "ironwork", name: { ar: "حدادة", en: "Ironwork" }, image: "https://images.unsplash.com/photo-1534224039826-c7a0eda0e6b3?q=80&w=1000&auto=format&fit=crop", color: "from-neutral-600 to-neutral-800", icon: Hammer },
-  { id: "finishing", name: { ar: "تشطيبات شاملة", en: "Finishing" }, image: "https://images.unsplash.com/photo-1581858726788-75bc0f6a952d?q=80&w=1000&auto=format&fit=crop", color: "from-teal-600 to-teal-800", icon: Layers },
+  { id: "tiling", name: { ar: "مبلط سيراميك", en: "Ceramic Tiling" }, image: "/images/services/tiling.png", color: "from-cyan-600 to-cyan-800", icon: Grid },
+  { id: "plastering", name: { ar: "أعمال محارة", en: "Plastering" }, image: "/images/services/plastering.png", color: "from-orange-500 to-orange-700", icon: Layers },
+  { id: "ironwork", name: { ar: "حدادة", en: "Ironwork" }, image: "/images/services/ironwork.png", color: "from-neutral-600 to-neutral-800", icon: Hammer },
+  { id: "finishing", name: { ar: "تشطيبات شاملة", en: "Finishing" }, image: "/images/services/finishing.png", color: "from-teal-600 to-teal-800", icon: Layers },
 ];
 
 const POPULAR_NEIGHBORHOODS: Record<string, { value: string; labelAr: string; labelEn: string }[]> = {
@@ -155,7 +155,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
         return {
           id: cat.slug,
           name: { ar: cat.nameAr, en: cat.nameEn },
-          image: cat.imageUrl || localCraft?.image || "https://images.unsplash.com/photo-1581092160562-40aa08e78837?q=80&w=800&auto=format&fit=crop",
+          image: localCraft?.image || cat.imageUrl || "https://images.unsplash.com/photo-1581092160562-40aa08e78837?q=80&w=800&auto=format&fit=crop",
           color: getCategoryColor(cat.slug),
           icon: iconMap[cat.icon] || Settings,
         };

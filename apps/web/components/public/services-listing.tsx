@@ -30,10 +30,10 @@ const serviceImages: Record<string, string> = {
   "computer-repair": "https://images.unsplash.com/photo-1588508065123-287b28e013da?q=80&w=1000&auto=format&fit=crop&v=osta4",
   cameras: "/images/services/cam.jpg",
   cctv: "/images/services/cam.jpg",
-  tiling: "https://images.unsplash.com/photo-1502005229762-fc1b2b812ca5?q=80&w=1000&auto=format&fit=crop",
-  plastering: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=1000&auto=format&fit=crop",
-  ironwork: "https://images.unsplash.com/photo-1534224039826-c7a0eda0e6b3?q=80&w=1000&auto=format&fit=crop",
-  finishing: "https://images.unsplash.com/photo-1581858726788-75bc0f6a952d?q=80&w=1000&auto=format&fit=crop"
+  tiling: "/images/services/tiling.png",
+  plastering: "/images/services/plastering.png",
+  ironwork: "/images/services/ironwork.png",
+  finishing: "/images/services/finishing.png"
 };
 
 
@@ -82,7 +82,7 @@ export function ServicesListing({ locale }: { locale: Locale }) {
           ))
         ) : (
           categories.map((cat) => {
-            const imgUrl = cat.imageUrl || serviceImages[cat.slug] || serviceImages[cat.icon] || "https://images.unsplash.com/photo-1581092160562-40aa08e78837?q=80&w=800&auto=format&fit=crop";
+            const imgUrl = serviceImages[cat.slug] || serviceImages[cat.icon] || cat.imageUrl || "https://images.unsplash.com/photo-1581092160562-40aa08e78837?q=80&w=800&auto=format&fit=crop";
             return (
               <Link 
                 key={cat.id} 
