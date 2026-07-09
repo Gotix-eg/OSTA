@@ -2,7 +2,7 @@
   "expo": {
     "name": "OSTA - أُسطى",
     "slug": "osta-mobile",
-    "version": "1.0.0",
+    "version": "1.0.12",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -22,7 +22,7 @@
         "backgroundColor": "#1a0a0a"
       },
       "package": "com.ostafy",
-      "versionCode": 10,
+      "versionCode": 12,
       "edgeToEdgeEnabled": true,
       "permissions": [
         "android.permission.INTERNET",
