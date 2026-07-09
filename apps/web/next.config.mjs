@@ -22,6 +22,11 @@ const nextConfig = {
     return config;
   },
   async headers() {
+    const isDev = process.env.NODE_ENV !== "production";
+    const connectSrc = isDev
+      ? "connect-src 'self' https: wss: http://localhost:* ws://localhost:*"
+      : "connect-src 'self' https: wss:";
+
     return [
       {
         source: "/(.*)",
@@ -40,7 +45,7 @@ const nextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob: https:",
               "font-src 'self' data:",
-              "connect-src 'self' https: wss:",
+              connectSrc,
               "frame-ancestors 'self'",
               "base-uri 'self'",
               "form-action 'self'",
