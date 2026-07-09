@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "61289354438",
+    "project_id": "osta-mobile",
+    "storage_bucket": "osta-mobile.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:61289354438:android:95f83d9c9b09c9779c73c7",
+        "android_client_info": {
+          "package_name": "com.ostafy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsCtbAf5KE-a36xKB5JRpToMdaa9tWZ4o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
