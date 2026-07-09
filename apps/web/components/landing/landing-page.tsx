@@ -51,15 +51,15 @@ const iconMap: Record<string, any> = {
 };
 
 const CRAFTS = [
-  { id: "electricity", name: { ar: "الكهرباء", en: "Electrical" }, image: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=1000&auto=format&fit=crop&v=osta4", color: "from-yellow-400 to-gold-600", icon: Zap },
-  { id: "plumbing", name: { ar: "السباكة", en: "Plumbing" }, image: "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?q=80&w=1000&auto=format&fit=crop&v=osta5", color: "from-blue-400 to-blue-600", icon: Droplets },
-  { id: "carpentry", name: { ar: "النجارة", en: "Carpentry" }, image: "https://images.unsplash.com/photo-1601058268499-e52658b8bb88?q=80&w=1000&auto=format&fit=crop&v=osta4", color: "from-amber-600 to-amber-800", icon: Hammer },
+  { id: "electricity", name: { ar: "الكهرباء", en: "Electrical" }, image: "/services/electrical.png", color: "from-yellow-400 to-gold-600", icon: Zap },
+  { id: "plumbing", name: { ar: "السباكة", en: "Plumbing" }, image: "/services/plumbing.png", color: "from-blue-400 to-blue-600", icon: Droplets },
+  { id: "carpentry", name: { ar: "النجارة", en: "Carpentry" }, image: "/services/carpentry.png", color: "from-amber-600 to-amber-800", icon: Hammer },
   { id: "ac", name: { ar: "التكييفات", en: "AC Maintenance" }, image: "/images/services/ac.jpg", color: "from-cyan-400 to-cyan-600", icon: Wind },
-  { id: "appliances", name: { ar: "صيانة أجهزة", en: "Home Appliances" }, image: "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?q=80&w=1000&auto=format&fit=crop&v=osta4", color: "from-purple-400 to-purple-600", icon: Wrench },
-  { id: "painting", name: { ar: "الدهانات", en: "Painting" }, image: "https://images.unsplash.com/photo-1562259949-e8e7689d7828?q=80&w=1000&auto=format&fit=crop&v=osta4", color: "from-rose-400 to-rose-600", icon: PaintBucket },
+  { id: "appliances", name: { ar: "صيانة أجهزة", en: "Home Appliances" }, image: "/services/ac-appliances.png", color: "from-purple-400 to-purple-600", icon: Wrench },
+  { id: "painting", name: { ar: "الدهانات", en: "Painting" }, image: "/services/painting.png", color: "from-rose-400 to-rose-600", icon: PaintBucket },
   { id: "aluminum", name: { ar: "الوميتال", en: "Aluminum" }, image: "/images/services/aluminum.jpg", color: "from-slate-400 to-slate-600", icon: Layout },
-  { id: "networks", name: { ar: "الشبكات", en: "Networks" }, image: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?q=80&w=1000&auto=format&fit=crop&v=osta4", color: "from-indigo-400 to-indigo-600", icon: Network },
-  { id: "computer-repair", name: { ar: "صيانة كمبيوتر", en: "Computer" }, image: "https://images.unsplash.com/photo-1588508065123-287b28e013da?q=80&w=1000&auto=format&fit=crop&v=osta4", color: "from-emerald-400 to-emerald-600", icon: Monitor },
+  { id: "networks", name: { ar: "الشبكات", en: "Networks" }, image: "/services/general-services.png", color: "from-indigo-400 to-indigo-600", icon: Network },
+  { id: "computer-repair", name: { ar: "صيانة كمبيوتر", en: "Computer" }, image: "/services/electrical.png", color: "from-emerald-400 to-emerald-600", icon: Monitor },
   { id: "cctv", name: { ar: "تركيب كاميرات", en: "CCTV" }, image: "/images/services/cam.jpg", color: "from-red-400 to-red-600", icon: Camera },
   { id: "tiling", name: { ar: "مبلط سيراميك", en: "Ceramic Tiling" }, image: "/images/services/tiling.png", color: "from-cyan-600 to-cyan-800", icon: Grid },
   { id: "plastering", name: { ar: "أعمال محارة", en: "Plastering" }, image: "/images/services/plastering.png", color: "from-orange-500 to-orange-700", icon: Layers },

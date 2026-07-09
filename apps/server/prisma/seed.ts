@@ -5,15 +5,15 @@ import { hashPassword } from "../src/utils/password.js";
 const prisma = new PrismaClient();
 
 const CORE_CATEGORIES = [
-  { nameAr: "نجارة", nameEn: "Carpentry", slug: "carpentry", icon: "hammer", imageUrl: "https://images.unsplash.com/photo-1601058268499-e52658b8bb88?q=80&w=1000&auto=format&fit=crop&v=osta4" },
-  { nameAr: "سباكة", nameEn: "Plumbing", slug: "plumbing", icon: "droplets", imageUrl: "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?q=80&w=1000&auto=format&fit=crop&v=osta5" },
-  { nameAr: "كهرباء", nameEn: "Electricity", slug: "electricity", icon: "zap", imageUrl: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=1000&auto=format&fit=crop&v=osta4" },
+  { nameAr: "نجارة", nameEn: "Carpentry", slug: "carpentry", icon: "hammer", imageUrl: "/services/carpentry.png" },
+  { nameAr: "سباكة", nameEn: "Plumbing", slug: "plumbing", icon: "droplets", imageUrl: "/services/plumbing.png" },
+  { nameAr: "كهرباء", nameEn: "Electricity", slug: "electricity", icon: "zap", imageUrl: "/services/electrical.png" },
   { nameAr: "تكييف وتبريد", nameEn: "Air Conditioning", slug: "ac", icon: "wind", imageUrl: "/images/services/ac.jpg" },
-  { nameAr: "صيانة أجهزة منزلية", nameEn: "Appliance Repair", slug: "appliances", icon: "settings", imageUrl: "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?q=80&w=1000&auto=format&fit=crop&v=osta4" },
-  { nameAr: "دهانات وديكور", nameEn: "Painting", slug: "painting", icon: "paint-bucket", imageUrl: "https://images.unsplash.com/photo-1562259949-e8e7689d7828?q=80&w=1000&auto=format&fit=crop&v=osta4" },
+  { nameAr: "صيانة أجهزة منزلية", nameEn: "Appliance Repair", slug: "appliances", icon: "settings", imageUrl: "/services/ac-appliances.png" },
+  { nameAr: "دهانات وديكور", nameEn: "Painting", slug: "painting", icon: "paint-bucket", imageUrl: "/services/painting.png" },
   { nameAr: "ألوميتال", nameEn: "Aluminum Work", slug: "aluminum", icon: "layout", imageUrl: "/images/services/aluminum.jpg" },
-  { nameAr: "شبكات كمبيوتر", nameEn: "Computer Networks", slug: "networks", icon: "network", imageUrl: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?q=80&w=1000&auto=format&fit=crop&v=osta4" },
-  { nameAr: "صيانة كمبيوتر", nameEn: "Computer Repair", slug: "computer-repair", icon: "monitor", imageUrl: "https://images.unsplash.com/photo-1588508065123-287b28e013da?q=80&w=1000&auto=format&fit=crop&v=osta4" },
+  { nameAr: "شبكات كمبيوتر", nameEn: "Computer Networks", slug: "networks", icon: "network", imageUrl: "/services/general-services.png" },
+  { nameAr: "صيانة كمبيوتر", nameEn: "Computer Repair", slug: "computer-repair", icon: "monitor", imageUrl: "/services/electrical.png" },
   { nameAr: "تركيب كاميرات", nameEn: "Camera Installation", slug: "cctv", icon: "camera", imageUrl: "/images/services/cam.jpg" },
   { nameAr: "مبلط سيراميك", nameEn: "Ceramic Tiling", slug: "tiling", icon: "grid", imageUrl: "/images/services/tiling.png" },
   { nameAr: "أعمال محارة", nameEn: "Plastering", slug: "plastering", icon: "layers", imageUrl: "/images/services/plastering.png" },
