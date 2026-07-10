@@ -374,7 +374,8 @@ export function LandingPage({ locale }: { locale: Locale }) {
           const slideBg = (
             <div
               className={cn(
-                "absolute inset-0 bg-cover bg-center transition-all duration-1000 ease-in-out z-0",
+                "absolute inset-0 bg-center transition-all duration-1000 ease-in-out z-0",
+                isCampaign ? "bg-contain bg-no-repeat bg-onyx-950" : "bg-cover",
                 idx === currentSlideIndex ? "opacity-100 scale-100 blur-none" : "opacity-0 scale-105"
               )}
               style={{ backgroundImage: `url('${cleanImageUrl(slide.imageUrl)}')` }}

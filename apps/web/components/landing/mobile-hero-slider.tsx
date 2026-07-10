@@ -142,7 +142,7 @@ export function MobileHeroSlider({ locale }: MobileHeroSliderProps) {
             <div
               key={slide.id}
               className={cn(
-                "absolute inset-0 bg-cover bg-center transition-opacity duration-700",
+                "absolute inset-0 bg-contain bg-no-repeat bg-center bg-onyx-950 transition-opacity duration-700",
                 idx === currentIndex ? "opacity-100" : "opacity-0"
               )}
               style={{
