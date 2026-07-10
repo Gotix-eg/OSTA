@@ -9,44 +9,44 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        /* ── ONYX: Dark cinematic tones ── */
+        /* ── ONYX: Clear hex tones for max compatibility ── */
         onyx: {
-          50:  "oklch(97% 0.005 60)",   // Near white
-          100: "oklch(93% 0.005 60)",   // Soft white
-          200: "oklch(85% 0.005 60)",   // Light gray
-          300: "oklch(72% 0.005 60)",   // Medium light gray
-          400: "oklch(58% 0.005 60)",   // Medium gray
-          500: "oklch(45% 0.005 60)",   // Neutral gray
-          600: "oklch(35% 0.015 85)",   // Dark warm charcoal
-          700: "oklch(25% 0.015 85)",   // Darker warm charcoal
-          800: "oklch(18% 0.015 85)",   // Near black warm charcoal
-          900: "oklch(13% 0.015 85)",   // Off black warm charcoal
-          950: "oklch(9% 0.015 85)"     // Deep black warm charcoal
+          50:  "#faf9f7",   // Near white warm
+          100: "#f3f0ea",   // Soft warm white
+          200: "#e0dbd0",   // Light warm gray
+          300: "#c5bdb0",   // Medium light gray
+          400: "#9e9488",   // Medium warm gray
+          500: "#7a7060",   // Neutral warm gray
+          600: "#5a5248",   // Dark warm gray
+          700: "#3d3830",   // Darker warm brown
+          800: "#2a2520",   // Near black warm
+          900: "#1a1610",   // Off black warm
+          950: "#100e08"    // Deep black warm
         },
         /* ── GOLD: Primary accents ── */
         gold: {
-          50:  "oklch(98% 0.02 85)",
-          100: "oklch(95% 0.04 85)",
-          200: "oklch(90% 0.08 85)",
-          300: "oklch(85% 0.12 85)",
-          400: "oklch(80% 0.16 85)",
-          500: "oklch(75% 0.15 85)", // Primary Gold
-          600: "oklch(65% 0.14 85)",
-          700: "oklch(55% 0.13 85)",
-          800: "oklch(45% 0.11 85)",
-          900: "oklch(35% 0.09 85)"
+          50:  "#fffde8",
+          100: "#fff9c4",
+          200: "#fff176",
+          300: "#ffe740",
+          400: "#f0d020",
+          500: "#e8b800", // Primary Gold - slightly darker for contrast
+          600: "#c9930a",
+          700: "#a67205",
+          800: "#7d5204",
+          900: "#573803"
         },
         primary: {
-          DEFAULT: "oklch(65% 0.15 85)",        // Vibrant gold
-          foreground: "oklch(10% 0.005 60)"     // Dark text on gold
+          DEFAULT: "#c9930a",          // Vibrant gold
+          foreground: "#100e08"        // Dark text on gold
         },
         accent: {
-          DEFAULT: "oklch(50% 0.2 250)",        // Deep premium blue
-          gold: "oklch(65% 0.18 85)"            // Vibrant gold
+          DEFAULT: "#3b6fd4",          // Deep premium blue
+          gold: "#c9930a"              // Vibrant gold
         },
-        success: "oklch(55% 0.15 150)",
-        warning: "oklch(65% 0.15 75)",
-        error:   "oklch(55% 0.2 25)",
+        success: "#22a85a",
+        warning: "#d4880a",
+        error:   "#d44422",
         /* background / foreground are resolved by CSS vars per breakpoint */
         background: "var(--color-bg)",
         foreground: "var(--color-fg)",
@@ -56,14 +56,14 @@ const config: Config = {
         serif: ["var(--font-serif)", "ui-serif", "Georgia"]
       },
       boxShadow: {
-        gold:  "0 10px 40px -10px oklch(55% 0.13 85 / 0.4)",
-        onyx:  "0 20px 60px -20px oklch(0% 0 0 / 0.5)",
-        glow:  "0 0 30px oklch(65% 0.15 85 / 0.3)",
+        gold:  "0 10px 40px -10px rgba(200, 147, 10, 0.4)",
+        onyx:  "0 20px 60px -20px rgba(0, 0, 0, 0.5)",
+        glow:  "0 0 30px rgba(200, 147, 10, 0.3)",
       },
       backgroundImage: {
-        "onyx-gradient": "linear-gradient(135deg, oklch(12% 0.015 85) 0%, oklch(8% 0.015 85) 100%)",
-        "gold-gradient": "linear-gradient(135deg, oklch(75% 0.15 85) 0%, oklch(55% 0.13 85) 100%)",
-        "radial-onyx":   "radial-gradient(circle at center, oklch(15% 0.015 85) 0%, oklch(8% 0.015 85) 100%)",
+        "onyx-gradient": "linear-gradient(135deg, #1a1610 0%, #100e08 100%)",
+        "gold-gradient": "linear-gradient(135deg, #f0bb19 0%, #c9930a 100%)",
+        "radial-onyx":   "radial-gradient(circle at center, #2a2520 0%, #100e08 100%)",
       },
       keyframes: {
         "gold-pulse": {

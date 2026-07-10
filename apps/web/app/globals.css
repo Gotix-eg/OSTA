@@ -13,12 +13,12 @@
 :root {
   /* Yellow theme defaults for both mobile and desktop */
   --color-bg:       #f0bb19; /* Exact brand golden-yellow shade requested by user */
-  --color-fg:       oklch(12% 0.01 60);
-  --color-bg-card:  rgba(255, 255, 255, 0.85); /* Highly readable white cards on yellow background */
-  --color-border:   oklch(55% 0.13 85 / 0.2);
-  --color-muted:    oklch(35% 0.02 60);
-  --color-subtle:   oklch(50% 0.02 60);
-  --focus-ring:     oklch(55% 0.13 85 / 0.5);
+  --color-fg:       #100e08; /* Deep dark for max readability on yellow */
+  --color-bg-card:  #ffffff; /* Pure white cards for best contrast */
+  --color-border:   rgba(0, 0, 0, 0.12);
+  --color-muted:    #3d3830;
+  --color-subtle:   #5a5248;
+  --focus-ring:     rgba(200, 147, 10, 0.5);
 
   /* ── Typography Scale ── */
   --text-2xs: 0.563rem;
@@ -72,7 +72,7 @@ body {
     font-weight: 800;
     letter-spacing: -0.03em;
     text-wrap: balance;
-    color: var(--color-fg);
+    color: #100e08;
   }
 
   h2, .h2 {
@@ -121,8 +121,8 @@ body {
   .onyx-shell-bg {
     /* Warm gold radial on yellow background for both mobile and desktop */
     background:
-      radial-gradient(circle at 0% 0%, oklch(75% 0.15 85 / 0.15), transparent 60%),
-      radial-gradient(circle at 100% 100%, oklch(75% 0.15 85 / 0.10), transparent 60%),
+      radial-gradient(circle at 0% 0%, rgba(240, 187, 25, 0.25), transparent 60%),
+      radial-gradient(circle at 100% 100%, rgba(200, 147, 10, 0.15), transparent 60%),
       var(--color-bg);
   }
 
@@ -133,8 +133,8 @@ body {
     border-color: var(--color-border);
   }
   .onyx-card:hover {
-    border-color: oklch(75% 0.15 85 / 0.6);
-    box-shadow: 0 15px 30px -10px oklch(75% 0.15 85 / 0.2);
+    border-color: rgba(200, 147, 10, 0.5);
+    box-shadow: 0 15px 30px -10px rgba(200, 147, 10, 0.2);
     @apply -translate-y-1;
   }
 
@@ -161,8 +161,8 @@ body {
     background: transparent;
   }
   .btn-ghost:hover {
-    background: rgba(128, 128, 128, 0.1);
-    border-color: oklch(65% 0.15 85 / 0.4);
+    background: rgba(0, 0, 0, 0.08);
+    border-color: rgba(200, 147, 10, 0.5);
   }
 
   /* ── Typography Roles ── */
@@ -195,37 +195,16 @@ body {
 }
 
 /* ──────────────────────────────────────────────────────────────────────────────
-   DESKTOP DARK THEME — Override Tailwind classes that use explicit colors
-   This ensures text is readable on the dark desktop background
+   YELLOW THEME — Light background with dark readable text everywhere
    ────────────────────────────────────────────────────────────────────────────── */
-@media (min-width: 768px) {
-  /* Invert onyx text classes for dark background readability */
-  .text-onyx-950 { color: oklch(93% 0.005 60) !important; }
-  .text-onyx-900 { color: oklch(88% 0.005 60) !important; }
-  .text-onyx-800 { color: oklch(80% 0.005 60) !important; }
-  .text-onyx-700 { color: oklch(70% 0.005 60) !important; }
-  .text-onyx-600 { color: oklch(60% 0.005 60) !important; }
-
-  /* Background overrides for dark desktop */
-  .bg-background  { background-color: oklch(10% 0.005 60) !important; }
-  .bg-gold-100    { background-color: oklch(15% 0.005 60) !important; }
-  .bg-gold-50     { background-color: oklch(13% 0.005 60) !important; }
-  .bg-white\/5    { background-color: rgba(255,255,255,0.05) !important; }
-  .bg-white\/10   { background-color: rgba(255,255,255,0.08) !important; }
-
-  /* Border overrides */
-  .border-gold-700\/10 { border-color: rgba(255,255,255,0.08) !important; }
-  .border-gold-700\/20 { border-color: rgba(255,255,255,0.12) !important; }
-
-  /* Input/form fields on dark desktop */
-  input, textarea, select {
-    background: rgba(255, 255, 255, 0.06);
-    color: oklch(93% 0.005 60);
-    border-color: rgba(255, 255, 255, 0.12);
-  }
-  input::placeholder, textarea::placeholder {
-    color: oklch(58% 0.005 60);
-  }
+/* Input/form fields on yellow background */
+input, textarea, select {
+  background: rgba(255, 255, 255, 0.7);
+  color: #100e08;
+  border-color: rgba(0, 0, 0, 0.15);
+}
+input::placeholder, textarea::placeholder {
+  color: #7a7060;
 }
 
 /* ──────────────────────────────────────────────────────────────────────────────
@@ -269,13 +248,13 @@ body {
   .dashboard-card .text-white,
   .dashboard-shell-bg .text-white:not(button):not(a):not(.btn-gold),
   .onyx-shell-bg .text-white:not(button):not(a):not(.btn-gold) {
-    color: oklch(12% 0.01 60) !important;
+    color: #100e08 !important;
   }
 
-  /* Override btn-gold on mobile to use bright yellow background and dark text */
+  /* Override btn-gold to use bright yellow background and dark text */
   .btn-gold {
-    background: oklch(75% 0.15 85) !important; /* bg-gold-500 */
-    color: oklch(12% 0.01 60) !important; /* dark onyx */
+    background: #f0bb19 !important;
+    color: #100e08 !important;
   }
 
   /* Utility to hide native scrollbars */
