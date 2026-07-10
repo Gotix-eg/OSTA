@@ -11,10 +11,10 @@
    ────────────────────────────────────────────────────────────────────────────── */
 
 :root {
-  /* Mobile-first: Yellow theme defaults */
-  --color-bg:       #FDE28A;
+  /* Yellow theme defaults for both mobile and desktop */
+  --color-bg:       #f0bb19; /* Exact brand golden-yellow shade requested by user */
   --color-fg:       oklch(12% 0.01 60);
-  --color-bg-card:  rgba(255, 255, 255, 0.75);
+  --color-bg-card:  rgba(255, 255, 255, 0.85); /* Highly readable white cards on yellow background */
   --color-border:   oklch(55% 0.13 85 / 0.2);
   --color-muted:    oklch(35% 0.02 60);
   --color-subtle:   oklch(50% 0.02 60);
@@ -40,19 +40,6 @@
   --leading-relaxed: 1.85;
 
   --baseline: 1.5rem;
-}
-
-/* Desktop: Onyx / Dark theme overrides */
-@media (min-width: 768px) {
-  :root {
-    --color-bg:       oklch(11% 0.015 85); /* Warm gold-tinted dark charcoal */
-    --color-fg:       oklch(93% 0.005 60);
-    --color-bg-card:  rgba(255, 255, 255, 0.03);
-    --color-border:   rgba(245, 189, 24, 0.12); /* Warm gold border */
-    --color-muted:    oklch(75% 0.01 85);
-    --color-subtle:   oklch(62% 0.01 85);
-    --focus-ring:     oklch(75% 0.15 85 / 0.5);
-  }
 }
 
 html {
@@ -132,40 +119,23 @@ body {
 
   /* ── Background Shell ── */
   .onyx-shell-bg {
-    /* Mobile: Warm gold radial on yellow */
+    /* Warm gold radial on yellow background for both mobile and desktop */
     background:
-      radial-gradient(circle at 0% 0%, oklch(75% 0.15 85 / 0.12), transparent 50%),
-      radial-gradient(circle at 100% 100%, oklch(75% 0.15 85 / 0.08), transparent 50%),
+      radial-gradient(circle at 0% 0%, oklch(75% 0.15 85 / 0.15), transparent 60%),
+      radial-gradient(circle at 100% 100%, oklch(75% 0.15 85 / 0.10), transparent 60%),
       var(--color-bg);
-  }
-
-  @media (min-width: 768px) {
-    .onyx-shell-bg {
-      /* Desktop: Luxurious gold glow on dark background */
-      background:
-        radial-gradient(circle at 5% 5%, oklch(75% 0.15 85 / 0.15), transparent 65%),
-        radial-gradient(circle at 95% 95%, oklch(75% 0.15 85 / 0.12), transparent 65%),
-        radial-gradient(circle at 50% 50%, oklch(75% 0.15 85 / 0.03), transparent 75%),
-        var(--color-bg);
-    }
   }
 
   /* ── Cards ── */
   .onyx-card {
-    @apply rounded-[2rem] border backdrop-blur-2xl shadow-lg transition-all duration-500;
+    @apply rounded-[2rem] border backdrop-blur-2xl shadow-md transition-all duration-500;
     background: var(--color-bg-card);
     border-color: var(--color-border);
   }
   .onyx-card:hover {
-    border-color: oklch(65% 0.15 85 / 0.3);
-  }
-
-  @media (min-width: 768px) {
-    .onyx-card:hover {
-      background: rgba(245, 189, 24, 0.04);
-      border-color: oklch(75% 0.15 85 / 0.4);
-      box-shadow: 0 20px 40px -15px oklch(75% 0.15 85 / 0.15);
-    }
+    border-color: oklch(75% 0.15 85 / 0.6);
+    box-shadow: 0 15px 30px -10px oklch(75% 0.15 85 / 0.2);
+    @apply -translate-y-1;
   }
 
   .glass-card {

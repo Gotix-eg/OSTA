@@ -25,11 +25,11 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
   ];
 
   return (
-    <main className="onyx-shell-bg min-h-screen text-onyx-50 selection:bg-gold-500 selection:text-onyx-950">
-      <header className="sticky top-0 z-40 border-b border-gold-700/10 bg-black/95 backdrop-blur-xl">
+    <main className="onyx-shell-bg min-h-screen text-onyx-950 selection:bg-gold-500 selection:text-onyx-950">
+      <header className="sticky top-0 z-40 border-b border-black/5 bg-background/90 backdrop-blur-xl">
         <div className="section-shell flex h-24 items-center justify-between gap-4">
           <Link href={`/${locale}`} className="flex items-center gap-2 group">
-            <img src="/logo.svg" alt="Ostafy" className="h-12 w-auto" />
+            <img src="/logo.svg" alt="Ostafy" className="h-12 w-auto brightness-0" />
           </Link>
 
           <nav className="hidden items-center gap-6 lg:flex">
@@ -42,10 +42,10 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
                   key={item.href} 
                   href={item.href as `/${string}`} 
                   className={cn(
-                    "text-sm font-semibold transition-colors relative py-1",
+                    "text-sm font-bold transition-colors relative py-1",
                     isActive 
-                      ? "text-gold-500 after:absolute after:-bottom-1 after:left-0 after:right-0 after:h-0.5 after:bg-gold-500 after:rounded-full"
-                      : "text-onyx-300 hover:text-gold-500"
+                      ? "text-onyx-950 after:absolute after:-bottom-1 after:left-0 after:right-0 after:h-0.5 after:bg-onyx-950 after:rounded-full"
+                      : "text-onyx-700 hover:text-onyx-950"
                   )}
                 >
                   {item.label}
