@@ -25,7 +25,7 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
   ];
 
   return (
-    <main className="onyx-shell-bg min-h-screen text-onyx-950 selection:bg-gold-500 selection:text-onyx-950">
+    <main className="onyx-shell-bg bg-[#f0bb19] min-h-screen text-onyx-950 selection:bg-gold-500 selection:text-onyx-950">
       <header className="sticky top-0 z-40 border-b border-black/5 bg-background/90 backdrop-blur-xl">
         <div className="section-shell flex h-24 items-center justify-between gap-4">
           <Link href={`/${locale}`} className="flex items-center gap-2 group">

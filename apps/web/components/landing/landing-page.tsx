@@ -362,7 +362,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
   };
 
   return (
-    <div className="bg-gold-100 onyx-shell-bg selection:bg-gold-500 selection:text-onyx-950 overflow-x-hidden">
+    <div className="bg-[#f0bb19] onyx-shell-bg selection:bg-gold-500 selection:text-onyx-950 overflow-x-hidden">
       {/* Mobile Hero Slider — shown ONLY on mobile (< 768px) */}
       <MobileHeroSlider locale={locale} />
 
@@ -535,7 +535,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-onyx-950/90 via-onyx-950/20 to-transparent" />
                   </div>
-                  <h3 className="text-lg font-bold text-onyx-950 md:text-white mb-2 group-hover:text-gold-500 transition-colors">
+                  <h3 className="text-lg font-bold text-onyx-950 mb-2 group-hover:text-gold-500 transition-colors">
                     {isArabic ? craft.name.ar : craft.name.en}
                   </h3>
                   <div className="flex items-center gap-1 text-xs text-gold-500 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-[-4px] group-hover:translate-x-0">
@@ -578,12 +578,12 @@ export function LandingPage({ locale }: { locale: Locale }) {
               {error}
             </div>
           ) : sponsoredWorkers.length === 0 ? (
-            <div className="text-center py-16 onyx-card border-white/5 bg-white/[0.01] rounded-3xl">
-              <Users className="h-16 w-16 text-onyx-600 mx-auto mb-4" />
-              <h4 className="text-xl font-bold text-white mb-2">
+            <div className="text-center py-16 onyx-card rounded-3xl">
+              <Users className="h-16 w-16 text-onyx-500 mx-auto mb-4" />
+              <h4 className="text-xl font-bold text-onyx-950 mb-2">
                 {isArabic ? "لم نجد أي فنيين" : "No Technicians Found"}
               </h4>
-              <p className="text-onyx-400 text-sm max-w-md mx-auto">
+              <p className="text-onyx-700 text-sm max-w-md mx-auto">
                 {isArabic ? "لا يوجد فنيين مسجلين حالياً." : "There are no registered pros at the moment."}
               </p>
             </div>
@@ -593,7 +593,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
                 {sponsoredWorkers.map((worker) => (
                 <div 
                   key={worker.id}
-                  className="onyx-card border-white/5 bg-white/[0.02] hover:border-gold-500/30 transition-all duration-300 rounded-3xl p-6 flex flex-col justify-between group"
+                  className="onyx-card transition-all duration-300 rounded-3xl p-6 flex flex-col justify-between group"
                 >
                   <div>
                     {/* Header: Status and Badges */}
@@ -640,38 +640,38 @@ export function LandingPage({ locale }: { locale: Locale }) {
                       {/* Name & Specialty */}
                       <div className="min-w-0 flex-1">
                         <Link href={`/${locale}/workers/${worker.id}`}>
-                          <h4 className="text-lg font-black text-white truncate hover:text-gold-500 transition-colors cursor-pointer">
+                          <h4 className="text-lg font-black text-onyx-950 truncate hover:text-gold-700 transition-colors cursor-pointer">
                             {worker.name}
                           </h4>
                         </Link>
-                        <p className="text-sm text-gold-500/90 font-medium mt-0.5">
+                        <p className="text-sm text-gold-700 font-bold mt-0.5">
                           {isArabic ? worker.professionAr : worker.professionEn}
                         </p>
                         
                         {/* Rating */}
                         <div className="flex items-center gap-1.5 mt-2">
                           <Star className="h-4 w-4 text-gold-500 fill-current" />
-                          <span className="text-sm font-bold text-white">{worker.rating > 0 ? worker.rating.toFixed(1) : "5.0"}</span>
+                          <span className="text-sm font-bold text-onyx-900">{worker.rating > 0 ? worker.rating.toFixed(1) : "5.0"}</span>
                           <span className="text-xs text-onyx-500">({worker.ratingCount || 1})</span>
                           <span className="text-onyx-700 mx-1">|</span>
-                          <span className="text-xs text-onyx-400 font-semibold">{worker.totalJobs || 0} {isArabic ? "عملية ناجحة" : "jobs"}</span>
+                          <span className="text-xs text-onyx-600 font-semibold">{worker.totalJobs || 0} {isArabic ? "عملية ناجحة" : "jobs"}</span>
                         </div>
                       </div>
                     </div>
 
                     {/* Locations */}
-                    <div className="border-t border-white/5 pt-4 mb-6">
+                    <div className="border-t border-black/5 pt-4 mb-6">
                       <p className="text-xs text-onyx-500 font-bold mb-2 uppercase tracking-wide">
                         {isArabic ? "مناطق التغطية" : "Service Coverage"}
                       </p>
                       <div className="flex flex-wrap gap-1.5">
                         {worker.areas.slice(0, 3).map((a: string, idx: number) => (
-                          <span key={idx} className="text-xs bg-onyx-800/80 text-onyx-300 px-2.5 py-1 rounded-lg border border-white/[0.03]">
+                          <span key={idx} className="text-xs bg-gold-500/10 text-onyx-800 px-2.5 py-1 rounded-lg border border-gold-500/20">
                             {a}
                           </span>
                         ))}
                         {worker.areas.length > 3 && (
-                          <span className="text-xs bg-onyx-800/80 text-onyx-400 px-2.5 py-1 rounded-lg border border-white/[0.03]">
+                          <span className="text-xs bg-gold-500/10 text-onyx-800 px-2.5 py-1 rounded-lg border border-gold-500/20">
                             +{worker.areas.length - 3}
                           </span>
                         )}
@@ -808,7 +808,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
                 {publicRequests.slice(0, 6).map((req) => (
                 <div
                   key={req.id}
-                  className="onyx-card border-white/5 bg-white/[0.02] hover:border-gold-500/30 transition-all duration-300 rounded-3xl p-6 flex flex-col justify-between group"
+                  className="onyx-card transition-all duration-300 rounded-3xl p-6 flex flex-col justify-between group"
                 >
                   <div>
                     {/* Badge and Location */}
@@ -817,7 +817,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
                         "text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md",
                         req.urgency === "EMERGENCY" 
                           ? "bg-red-500/10 text-red-500 border border-red-500/20" 
-                          : "bg-onyx-800 text-onyx-300 border border-white/5"
+                          : "bg-gold-500/10 text-onyx-800 border border-gold-500/20"
                       )}>
                         {req.urgency === "EMERGENCY" 
                           ? (isArabic ? "حالة طوارئ" : "Emergency") 
@@ -832,22 +832,22 @@ export function LandingPage({ locale }: { locale: Locale }) {
                       </span>
                     </div>
 
-                    <h4 className="text-lg font-black text-white mb-1.5 line-clamp-1 group-hover:text-gold-500 transition-colors">
+                    <h4 className="text-lg font-black text-onyx-950 mb-1.5 line-clamp-1 group-hover:text-gold-700 transition-colors">
                       {req.title}
                     </h4>
 
-                    <p className="text-xs text-gold-500 font-bold mb-3 uppercase tracking-wider">
+                    <p className="text-xs text-gold-700 font-bold mb-3 uppercase tracking-wider">
                       {isArabic ? req.categoryNameAr : req.categoryNameEn}
                     </p>
 
-                    <p className="text-sm text-onyx-400 line-clamp-3 leading-relaxed mb-6">
+                    <p className="text-sm text-onyx-700 line-clamp-3 leading-relaxed mb-6">
                       {req.description}
                     </p>
                   </div>
 
                   {/* Footer & Action */}
-                  <div className="border-t border-white/5 pt-4 mt-auto">
-                    <div className="flex items-center gap-2 text-xs text-onyx-400 mb-4 font-semibold">
+                  <div className="border-t border-black/5 pt-4 mt-auto">
+                    <div className="flex items-center gap-2 text-xs text-onyx-600 mb-4 font-semibold">
                       <MapPin className="h-4 w-4 text-gold-500 flex-shrink-0" />
                       <span>{isArabic ? `${req.governorate}، ${req.city}` : `${req.governorate}, ${req.city}`}</span>
                     </div>
