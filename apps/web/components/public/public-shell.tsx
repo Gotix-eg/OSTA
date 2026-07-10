@@ -26,10 +26,10 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
 
   return (
     <main className="onyx-shell-bg min-h-screen text-onyx-50 selection:bg-gold-500 selection:text-onyx-950">
-      <header className="sticky top-0 z-40 border-b border-gold-700/10 md:bg-black/95 bg-background backdrop-blur-xl">
+      <header className="sticky top-0 z-40 border-b border-gold-700/10 bg-black/95 backdrop-blur-xl">
         <div className="section-shell flex h-24 items-center justify-between gap-4">
           <Link href={`/${locale}`} className="flex items-center gap-2 group">
-            <img src="/logo.svg" alt="Ostafy" className="h-12 w-auto brightness-0 md:brightness-0 md:invert" />
+            <img src="/logo.svg" alt="Ostafy" className="h-12 w-auto" />
           </Link>
 
           <nav className="hidden items-center gap-6 lg:flex">
@@ -151,10 +151,9 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
         <div className="section-shell flex flex-col gap-12">
           {/* Main Footer Grid */}
           <div className="grid gap-10 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 border-b border-white/5 pb-12">
-            {/* Column 1: Brand Description & Contact Info */}
             <div className="flex flex-col gap-6 lg:col-span-2">
               <div className="w-fit">
-                <img src="/logo.svg" alt="Ostafy" className="h-16 w-auto opacity-95 brightness-0 md:brightness-0 md:invert" />
+                <img src="/logo.svg" alt="Ostafy" className="h-16 w-auto opacity-95" />
               </div>
               <p className="text-sm text-onyx-400 leading-relaxed max-w-sm">
                 {locale === "ar"
