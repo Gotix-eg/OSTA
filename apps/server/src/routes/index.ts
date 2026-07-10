@@ -32,7 +32,7 @@ export function getCategorySlugFromProfession(profession: string | null | undefi
   if (p === "painter" || p === "نقاش" || p.includes("نقاش") || p.includes("دهان") || p.includes("paint")) return "painting";
   if (p === "aluminum" || p === "الوميتال" || p.includes("الوم") || p.includes("aluminum")) return "aluminum";
   if (p === "networks" || p === "شبكات" || p.includes("شبك") || p.includes("network")) return "networks";
-  if (p === "computer" || p === "컴퓨터" || p === "كمبيوتر" || p.includes("كمبيو") || p.includes("comput") || p.includes("pc")) return "computer";
+  if (p === "computer" || p === "컴퓨터" || p === "كمبيوتر" || p.includes("كمبيو") || p.includes("comput") || p.includes("pc")) return "computer-repair";
   if (p === "cctv" || p === "كاميرات" || p.includes("كامير") || p.includes("cctv")) return "cctv";
   if (p === "appliances" || p === "أجهزة" || p.includes("جهز") || p.includes("appliance")) return "appliances";
   if (p === "tiling" || p === "سيراميك" || p === "رخام" || p === "مبلط" || p.includes("مبلط") || p.includes("سيراميك") || p.includes("رخام") || p.includes("tile") || p.includes("tiling")) return "tiling";
@@ -42,9 +42,9 @@ export function getCategorySlugFromProfession(profession: string | null | undefi
   if (p === "gypsum" || p === "جبس" || p.includes("جبس") || p.includes("gypsum")) return "gypsum";
   if (p === "moving" || p === "نقل" || p.includes("نقل") || p.includes("move")) return "moving";
   if (p === "cleaning" || p === "نظافة" || p.includes("نظاف") || p.includes("clean")) return "cleaning";
-  if (p === "car-mechanic" || p === "سيارات" || p.includes("سيار") || p.includes("car")) return "car_mechanic";
-  if (p === "bike-mechanic" || p === "موتوسيكلات" || p.includes("موتوسيك") || p.includes("bike")) return "bike_mechanic";
-  if (p === "engine-repair" || p === "مواتير" || p.includes("موتور") || p.includes("engine")) return "engine_repair";
+  if (p === "car-mechanic" || p === "سيارات" || p.includes("سيار") || p.includes("car")) return "car-mechanic";
+  if (p === "bike-mechanic" || p === "موتوسيكلات" || p.includes("موتوسيك") || p.includes("bike")) return "bike-mechanic";
+  if (p === "engine-repair" || p === "مواتير" || p.includes("موتور") || p.includes("engine")) return "engine-repair";
   return "electricity";
 }
 
