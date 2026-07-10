@@ -163,37 +163,7 @@ export function HomeScreen() {
 
   const greetings = `أهلاً، ${user?.firstName ?? "عميلنا العزيز"}`;
 
-  // ── Scroll-Driven Animation Values ──
-  const scrollY = useRef(new Animated.Value(0)).current;
 
-  // Parallax + Scale + Fade for Top Banner
-  const bannerTranslateY = scrollY.interpolate({
-    inputRange: [0, 180],
-    outputRange: [0, 75],
-    extrapolate: "clamp",
-  });
-  const bannerScale = scrollY.interpolate({
-    inputRange: [-150, 0],
-    outputRange: [1.3, 1],
-    extrapolate: "clamp",
-  });
-  const bannerOpacity = scrollY.interpolate({
-    inputRange: [0, 180],
-    outputRange: [1, 0],
-    extrapolate: "clamp",
-  });
-
-  // Sticky Header Collapsing Offset
-  const stickyHeaderTranslateY = scrollY.interpolate({
-    inputRange: [0, 60],
-    outputRange: [0, -42],
-    extrapolate: "clamp",
-  });
-  const headerRowOpacity = scrollY.interpolate({
-    inputRange: [0, 35],
-    outputRange: [1, 0],
-    extrapolate: "clamp",
-  });
 
   const handleAdPress = (link: string) => {
     if (!link) return;
@@ -602,7 +572,7 @@ export function HomeScreen() {
           </View>
 
         </View>
-      </Animated.ScrollView>
+      </ScrollView>
     </Screen>
   );
 }
