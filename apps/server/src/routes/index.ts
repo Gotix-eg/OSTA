@@ -461,7 +461,7 @@ router.get("/public/slides", async (_req, response) => {
       isActive: true
     }));
 
-    response.json({ success: true, data: activeSlides });
+    response.json({ success: true, data: [...activeSlides, ...mappedCampaigns] });
   } catch (e: any) {
     response.json({ success: true, data: [] });
   }
@@ -473,7 +473,30 @@ router.get("/public/mobile-slides", async (_req, response) => {
     const setting = await prisma.systemSetting.findUnique({ where: { key: "hero_slides_mobile" } });
     const slides = setting ? JSON.parse(setting.value) : [];
     const activeSlides = Array.isArray(slides) ? slides.filter((s: any) => s.isActive !== false) : [];
-    response.json({ success: true, data: activeSlides });
+
+    const campaignsSetting = await prisma.systemSetting.findUnique({ where: { key: "sponsored_campaigns" } });
+    const rawCampaigns = campaignsSetting ? JSON.parse(campaignsSetting.value) : [];
+    const activeCampaigns = Array.isArray(rawCampaigns) ? rawCampaigns.filter((c: any) => c.isActive !== false) : [];
+
+    const mappedCampaigns = activeCampaigns.map((c: any) => ({
+      id: c.id,
+      eyebrowAr: "إعلان ممول",
+      eyebrowEn: "Sponsored Ad",
+      titleAr: c.titleAr || "",
+      titleEn: c.titleEn || "",
+      descAr: c.descAr || "",
+      descEn: c.descEn || "",
+      imageUrl: c.imageUrl || "",
+      btn1TextAr: "عرض التفاصيل",
+      btn1TextEn: "View Details",
+      btn1Link: c.link || "",
+      btn2TextAr: "",
+      btn2TextEn: "",
+      btn2Link: "",
+      isActive: true
+    }));
+
+    response.json({ success: true, data: [...activeSlides, ...mappedCampaigns] });
   } catch (e: any) {
     response.json({ success: true, data: [] });
   }

@@ -214,7 +214,7 @@ export function MobileHeroSlider({ locale }: MobileHeroSliderProps) {
               className="flex flex-col gap-3"
             >
               <Link
-                href={`/${locale}${current.btn1Link}`}
+                href={current.btn1Link ? (current.btn1Link.startsWith("http") ? current.btn1Link : `/${locale}${current.btn1Link.startsWith("/") ? "" : "/"}${current.btn1Link}`) : "#"}
                 className="block w-full text-center py-4 px-6 rounded-2xl text-base font-extrabold shadow-lg transition-all active:scale-95"
                 style={{
                   background: "oklch(10% 0.005 60)",
@@ -226,7 +226,7 @@ export function MobileHeroSlider({ locale }: MobileHeroSliderProps) {
 
               {(current.btn2Link) && (
                 <Link
-                  href={`/${locale}${current.btn2Link}`}
+                  href={current.btn2Link.startsWith("http") ? current.btn2Link : `/${locale}${current.btn2Link.startsWith("/") ? "" : "/"}${current.btn2Link}`}
                   className="block w-full text-center py-4 px-6 rounded-2xl text-base font-extrabold border-2 transition-all active:scale-95"
                   style={{
                     borderColor: "oklch(10% 0.005 60 / 0.25)",

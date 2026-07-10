@@ -390,6 +390,11 @@ export function LandingPage({ locale }: { locale: Locale }) {
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
             >
+              { (currentSlide.eyebrowAr || currentSlide.eyebrowEn) && (
+                <span className="inline-block mb-4 px-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-widest bg-gold-500 text-onyx-950 shadow-md">
+                  {isArabic ? currentSlide.eyebrowAr : currentSlide.eyebrowEn}
+                </span>
+              )}
               <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-[1.15] mb-6 tracking-tight">
                 {isArabic ? currentSlide.titleAr : currentSlide.titleEn}
               </h1>
@@ -398,15 +403,36 @@ export function LandingPage({ locale }: { locale: Locale }) {
               </p>
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Link href={`/${locale}/register/client`} className="w-full sm:w-auto btn-gold text-center py-4 px-8 text-lg shadow-lg shadow-gold-500/20">
-                  {isArabic ? "اطلب صنايعي" : "Order a Pro"}
-                </Link>
-                <Link href={`/${locale}/register/worker`} className="w-full sm:w-auto btn-ghost text-center py-4 px-8 text-lg shadow-lg">
-                  {isArabic ? "انضم كصنايعي" : "Join as Pro"}
-                </Link>
-                <Link href={`/${locale}/register/vendor`} className="w-full sm:w-auto btn-ghost text-center py-4 px-8 text-lg shadow-lg">
-                  {isArabic ? "انضم كمتجر" : "Join as Vendor"}
-                </Link>
+                {currentSlide.btn1Link ? (
+                  <>
+                    <Link
+                      href={currentSlide.btn1Link.startsWith("http") ? currentSlide.btn1Link : `/${locale}${currentSlide.btn1Link.startsWith("/") ? "" : "/"}${currentSlide.btn1Link}`}
+                      className="w-full sm:w-auto btn-gold text-center py-4 px-8 text-lg shadow-lg shadow-gold-500/20"
+                    >
+                      {isArabic ? currentSlide.btn1TextAr || currentSlide.btn1Text : currentSlide.btn1TextEn || currentSlide.btn1Text}
+                    </Link>
+                    {currentSlide.btn2Link && (
+                      <Link
+                        href={currentSlide.btn2Link.startsWith("http") ? currentSlide.btn2Link : `/${locale}${currentSlide.btn2Link.startsWith("/") ? "" : "/"}${currentSlide.btn2Link}`}
+                        className="w-full sm:w-auto btn-ghost text-center py-4 px-8 text-lg shadow-lg"
+                      >
+                        {isArabic ? currentSlide.btn2TextAr || currentSlide.btn2Text : currentSlide.btn2TextEn || currentSlide.btn2Text}
+                      </Link>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <Link href={`/${locale}/register/client`} className="w-full sm:w-auto btn-gold text-center py-4 px-8 text-lg shadow-lg shadow-gold-500/20">
+                      {isArabic ? "اطلب صنايعي" : "Order a Pro"}
+                    </Link>
+                    <Link href={`/${locale}/register/worker`} className="w-full sm:w-auto btn-ghost text-center py-4 px-8 text-lg shadow-lg">
+                      {isArabic ? "انضم كصنايعي" : "Join as Pro"}
+                    </Link>
+                    <Link href={`/${locale}/register/vendor`} className="w-full sm:w-auto btn-ghost text-center py-4 px-8 text-lg shadow-lg">
+                      {isArabic ? "انضم كمتجر" : "Join as Vendor"}
+                    </Link>
+                  </>
+                )}
               </div>
 
               <div className="mt-12 flex items-center justify-center gap-6">
@@ -446,95 +472,6 @@ export function LandingPage({ locale }: { locale: Locale }) {
           </div>
         )}
       </section>
-
-      {/* Sponsored Campaigns Section */}
-      {campaigns.length > 0 && (
-        <section className="py-16 md:py-20 px-0 md:px-4 bg-onyx-950/40 relative border-b border-gold-700/10 animate-slideUp">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex items-center justify-between mb-8 md:mb-12 px-4 md:px-0">
-              <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-2xl bg-gold-700/10 border border-gold-700/25 flex items-center justify-center text-gold-800 shrink-0 shadow-lg">
-                  <Megaphone className="h-6 w-6 animate-pulse" />
-                </div>
-                <div>
-                  <h2 className="text-2xl md:text-4xl font-black text-onyx-950 tracking-tight">
-                    {isArabic ? "شركاء أُسطفاي والعروض المميزة" : "Sponsored Deals & Partners"}
-                  </h2>
-                  <p className="text-onyx-600 text-sm mt-1">
-                    {isArabic ? "عروض حصرية وخصومات من المتاجر والشركاء المعتمدين لدينا" : "Exclusive deals and services from our trusted sponsors"}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Dynamic Grid Columns based on campaigns count to showcase the last ad in large layout */}
-            <div className={cn(
-              "grid gap-8",
-              campaigns.length === 1
-                ? "grid-cols-1"
-                : campaigns.length === 2
-                ? "grid-cols-1 md:grid-cols-3"
-                : campaigns.length === 3
-                ? "grid-cols-1 md:grid-cols-3 lg:grid-cols-4"
-                : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
-            )}>
-              {campaigns.map((camp, idx) => {
-                const isLast = idx === campaigns.length - 1;
-                const showLarge = isLast && campaigns.length > 1;
-                
-                return (
-                  <Link
-                    key={camp.id}
-                    href={camp.link.startsWith("http") ? camp.link : `/${locale}${camp.link.startsWith("/") ? "" : "/"}${camp.link}`}
-                    className={cn(
-                      "group w-full flex flex-col md:block md:relative md:rounded-[2rem] md:overflow-hidden border-b border-gold-700/10 md:border md:border-gold-700/10 md:hover:border-gold-500/30 transition-all duration-500 md:shadow-xl md:bg-gold-100 pb-6 md:pb-0",
-                      "md:aspect-[2/1] md:h-auto md:min-h-0",
-                      showLarge ? "md:col-span-2" : ""
-                    )}
-                  >
-                    {camp.imageUrl ? (
-                      <div className="relative w-full aspect-[2/1] md:absolute md:inset-0 md:h-full md:w-full md:aspect-auto overflow-hidden">
-                        <img
-                          src={cleanImageUrl(camp.imageUrl)}
-                          alt=""
-                          className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
-                        />
-                      </div>
-                    ) : null}
-                    {/* Desktop: Premium deep dark gradient overlay; No overlay on mobile */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-onyx-950 via-onyx-950/75 to-transparent hidden md:block" />
-
-                    <div className="w-full px-4 pt-4 text-start space-y-2 md:absolute md:inset-0 md:z-10 md:flex md:flex-col md:justify-end md:p-6 md:space-y-2 md:text-start">
-                      {/* "ممول"/"Ad" label lives in the text zone, never over the photo, so it can never collide with baked-in creative content */}
-                      <span className="inline-block px-2.5 py-1 rounded bg-gold-800 text-onyx-950 text-[9px] font-black uppercase tracking-wider shadow-md w-fit">
-                        {isArabic ? "ممول" : "Ad"}
-                      </span>
-                      <h3 className={cn(
-                        "font-black leading-tight transition-colors",
-                        "text-lg text-onyx-950 md:text-white group-hover:text-gold-500",
-                        showLarge ? "md:text-2xl lg:text-3xl" : "md:text-xl"
-                      )}>
-                        {isArabic ? camp.titleAr : camp.titleEn}
-                      </h3>
-                      <p className={cn(
-                        "leading-relaxed font-normal md:font-light",
-                        "text-xs text-onyx-700 md:text-onyx-300",
-                        showLarge ? "md:text-sm lg:text-base md:line-clamp-3 lg:line-clamp-4" : "line-clamp-3 md:line-clamp-2"
-                      )}>
-                        {isArabic ? camp.descAr : camp.descEn}
-                      </p>
-                      <div className="flex items-center gap-1.5 text-xs font-bold pt-2 text-gold-800 md:text-gold-500 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all duration-300">
-                        {isArabic ? "عرض التفاصيل" : "Explore Offer"}
-                        <ChevronRight className="h-3 w-3 rtl:rotate-180" />
-                      </div>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* Worker Exploration Section */}
       <section className="py-20 px-4 bg-onyx-950 relative border-b border-white/5">
