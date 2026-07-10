@@ -521,10 +521,8 @@ export function LandingPage({ locale }: { locale: Locale }) {
           >
             {displayCrafts.map((craft) => (
               <motion.div key={craft.id} variants={itemVariants}>
-                <Link href={`/${locale}/services/${craft.id}`} className="group block p-6 onyx-card hover:border-gold-500/50 transition-all duration-500 hover:-translate-y-2">
-                  <div className={cn(
-                    "h-48 w-full rounded-2xl overflow-hidden mb-6 transition-transform duration-500 group-hover:scale-105 group-hover:rotate-1 relative shadow-lg bg-onyx-800 border border-white/5",
-                  )}>
+                <Link href={`/${locale}/services/${craft.id}`} className="group block p-4 rounded-[2rem] bg-[#111111] border border-white/10 hover:border-gold-500/60 hover:shadow-gold transition-all duration-500 hover:-translate-y-2">
+                  <div className="h-48 w-full rounded-xl overflow-hidden mb-4 transition-transform duration-500 group-hover:scale-105 relative shadow-md">
                     <img 
                       src={craft.image} 
                       alt="" 
@@ -533,12 +531,11 @@ export function LandingPage({ locale }: { locale: Locale }) {
                         e.currentTarget.style.display = 'none';
                       }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-onyx-950/90 via-onyx-950/20 to-transparent" />
                   </div>
-                  <h3 className="text-lg font-bold text-onyx-950 mb-2 group-hover:text-gold-500 transition-colors">
+                  <h3 className="text-base font-bold text-white mb-1 group-hover:text-gold-400 transition-colors px-1">
                     {isArabic ? craft.name.ar : craft.name.en}
                   </h3>
-                  <div className="flex items-center gap-1 text-xs text-gold-500 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-[-4px] group-hover:translate-x-0">
+                  <div className="flex items-center gap-1 text-xs text-gold-500 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-[-4px] group-hover:translate-x-0 px-1">
                     {isArabic ? "اطلب الآن" : "Book Now"}
                     <ChevronRight className="h-3 w-3 rtl:rotate-180" />
                   </div>
