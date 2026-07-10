@@ -2,6 +2,7 @@ import { useState } from "react";
 import { StyleSheet, Text, View, Pressable, ActivityIndicator, FlatList, TextInput } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { Image } from "expo-image";
 
 import { Screen } from "../../components/Screen";
 import { useApiResource } from "../../hooks/useApiResource";
@@ -13,6 +14,7 @@ type Category = {
   nameAr: string;
   nameEn: string;
   slug: string;
+  imageUrl?: string;
 };
 
 function getIconName(slug: string): keyof typeof Ionicons.glyphMap {
@@ -97,7 +99,11 @@ export function AllServicesScreen() {
               }}
             >
               <View style={styles.iconWrapper}>
-                <Ionicons name={getIconName(item.slug)} size={32} color={theme.primary} />
+                {item.imageUrl ? (
+                  <Image source={{ uri: item.imageUrl }} style={styles.iconImage} contentFit="cover" />
+                ) : (
+                  <Ionicons name={getIconName(item.slug)} size={32} color={theme.primary} />
+                )}
               </View>
               <Text style={styles.nameAr} numberOfLines={1}>{item.nameAr}</Text>
               <Text style={styles.nameEn} numberOfLines={1}>{item.nameEn}</Text>
@@ -159,7 +165,12 @@ const makeStyles = (theme: ReturnType<typeof useTheme>["theme"]) => StyleSheet.c
     backgroundColor: theme.primarySoft,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: spacing.xs
+    marginBottom: spacing.xs,
+    overflow: "hidden"
+  },
+  iconImage: {
+    width: "100%",
+    height: "100%"
   },
   nameAr: {
     color: theme.text,

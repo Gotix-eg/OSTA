@@ -335,7 +335,11 @@ export function HomeScreen() {
                     }}
                   >
                     <View style={styles.categoryIconWrapper}>
-                      <Ionicons name={getIconName(cat.slug)} size={26} color={theme.primary} />
+                      {cat.imageUrl ? (
+                        <Image source={{ uri: cat.imageUrl }} style={styles.categoryIconImage} contentFit="cover" />
+                      ) : (
+                        <Ionicons name={getIconName(cat.slug)} size={26} color={theme.primary} />
+                      )}
                     </View>
                     <Text style={styles.categoryName} numberOfLines={1}>{cat.nameAr}</Text>
                   </Pressable>
@@ -812,7 +816,12 @@ const makeStyles = (theme: ReturnType<typeof useTheme>["theme"]) => StyleSheet.c
     borderRadius: 24,
     backgroundColor: theme.primarySoft,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+    overflow: "hidden"
+  },
+  categoryIconImage: {
+    width: "100%",
+    height: "100%"
   },
   categoryName: {
     color: theme.text,
