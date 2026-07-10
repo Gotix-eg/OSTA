@@ -10,6 +10,9 @@ import { useTheme } from "../../context/ThemeContext";
 import { useNotifications } from "../../context/NotificationContext";
 import { apiClient } from "../../api/client";
 import { spacing } from "../../theme/spacing";
+import { useAuth } from "../../context/AuthContext";
+import { GuestGate } from "../../components/GuestGate";
+import { Screen } from "../../components/Screen";
 
 type Notification = {
   id: string;
@@ -58,6 +61,7 @@ function notifColor(type: string, primary: string) {
 
 export function NotificationsScreen() {
   const { theme } = useTheme();
+  const { token } = useAuth();
   const { resetUnreadCount } = useNotifications();
   const navigation = useNavigation<any>();
   const styles = makeStyles(theme);
@@ -67,6 +71,7 @@ export function NotificationsScreen() {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const fetchNotifications = useCallback(async () => {
+    if (!token) return;
     try {
       const res = await apiClient.get("/notifications");
       setNotifications(res.data?.data || []);
@@ -76,18 +81,30 @@ export function NotificationsScreen() {
       setIsLoading(false);
       setIsRefreshing(false);
     }
-  }, []);
+  }, [token]);
 
   useEffect(() => {
+    if (!token) {
+      setIsLoading(false);
+      return;
+    }
     fetchNotifications();
     // Mark all as read when screen opens
     resetUnreadCount();
-  }, []);
+  }, [token, fetchNotifications]);
 
   const handleRefresh = () => {
     setIsRefreshing(true);
     fetchNotifications();
   };
+
+  if (!token) {
+    return (
+      <Screen title="الإشعارات" showBack={false}>
+        <GuestGate message="يرجى تسجيل الدخول لمتابعة عروض الفنيين والإشعارات الفورية لطلباتك." />
+      </Screen>
+    );
+  }
 
   const handleNotifPress = async (notif: Notification) => {
     // Mark as read locally

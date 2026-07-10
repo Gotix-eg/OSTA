@@ -14,6 +14,8 @@ import { useTheme } from "../../context/ThemeContext";
 import { useApiResource } from "../../hooks/useApiResource";
 import { spacing } from "../../theme/spacing";
 import { uploadMedia } from "../../api/upload";
+import { useAuth } from "../../context/AuthContext";
+import { GuestGate } from "../../components/GuestGate";
 
 type Service = {
   id: string;
@@ -31,10 +33,11 @@ type Category = {
 
 export function CreateRequestScreen() {
   const { theme } = useTheme();
+  const { token } = useAuth();
   const styles = makeStyles(theme);
   const route = useRoute<any>();
   const navigation = useNavigation<any>();
-  const categories = useApiResource<Category[]>("/services/categories", []);
+  const categories = useApiResource<Category[]>(token ? "/services/categories" : "", []);
 
   // Wizard state: 0 = Describe Issue, 1 = Location & Timing, 2 = Review & Confirm
   const [step, setStep] = useState(0);
@@ -80,6 +83,14 @@ export function CreateRequestScreen() {
   }, [categories.data, categoryId]);
 
   const selectedService = useMemo(() => selectedCategory?.services?.[0], [selectedCategory]);
+
+  if (!token) {
+    return (
+      <Screen title="طلب خدمة" showBack={true}>
+        <GuestGate message="يرجى تسجيل الدخول لتتمكن من طلب خدمة وصيانة منزلية." />
+      </Screen>
+    );
+  }
 
   function showAlert(title: string, message: string, onConfirm?: () => void) {
     if (Platform.OS === "web") {

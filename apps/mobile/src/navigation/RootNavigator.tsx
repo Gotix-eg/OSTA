@@ -159,6 +159,12 @@ function VendorTabs() {
 // Registers device push token and handles push notification taps
 // Must be inside NavigationContainer and AuthProvider
 function PushNotificationsSetup() {
+  const { token } = useAuth();
+  if (!token) return null;
+  return <PushNotificationsSetupInner />;
+}
+
+function PushNotificationsSetupInner() {
   usePushNotifications();
   return null;
 }
@@ -188,6 +194,7 @@ function AppNavigator() {
       <RootStack.Screen name="RequestDetails" component={RequestDetailsScreen} />
       {/* Notifications is also a tab screen — keep in stack for toast navigation */}
       <RootStack.Screen name="Notifications" component={NotificationsScreen} />
+      <RootStack.Screen name="Auth" component={AuthNavigator} />
       </RootStack.Navigator>
     </>
   );
@@ -249,7 +256,7 @@ export function RootNavigator() {
         heavy: { fontFamily: "System", fontWeight: "900" }
       }
     }}>
-      {token ? <AppNavigator /> : <AuthNavigator />}
+      <AppNavigator />
     </NavigationContainer>
   );
 }

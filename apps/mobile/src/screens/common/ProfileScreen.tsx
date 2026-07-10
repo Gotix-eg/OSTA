@@ -14,12 +14,21 @@ import { spacing } from "../../theme/spacing";
 import { formatUserName } from "../../utils/formatters";
 import { uploadMedia } from "../../api/upload";
 import { apiClient, unwrapApiData } from "../../api/client";
+import { GuestGate } from "../../components/GuestGate";
 
 export function ProfileScreen() {
-  const { user, logout, refreshUser, switchRole } = useAuth();
+  const { user, logout, refreshUser, switchRole, token } = useAuth();
   const { theme } = useTheme();
   const styles = makeStyles(theme);
   const [isUploading, setIsUploading] = useState(false);
+
+  if (!token) {
+    return (
+      <Screen title="حسابي" showBack={false}>
+        <GuestGate message="يرجى تسجيل الدخول لعرض حسابك الشخصي وإدارة طلباتك وبياناتك." />
+      </Screen>
+    );
+  }
 
   async function handleChangeAvatar() {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();

@@ -10,6 +10,8 @@ import { useApiResource } from "../../hooks/useApiResource";
 import { useTheme } from "../../context/ThemeContext";
 import { spacing } from "../../theme/spacing";
 import { apiClient } from "../../api/client";
+import { useAuth } from "../../context/AuthContext";
+import { GuestGate } from "../../components/GuestGate";
 
 // Maintenance Request type
 type RequestItem = {
@@ -70,6 +72,7 @@ type CustomRequest = {
 
 export function MyRequestsScreen() {
   const { theme } = useTheme();
+  const { token } = useAuth();
   const styles = makeStyles(theme);
   const navigation = useNavigation<any>();
 
@@ -80,14 +83,22 @@ export function MyRequestsScreen() {
   const [storeSubTab, setStoreSubTab] = useState<"direct" | "custom">("direct");
 
   // Fetch Resources
-  const serviceRequests = useApiResource<RequestItem[]>("/clients/requests", []);
-  const directOrders = useApiResource<DirectOrder[]>("/vendors/my-orders", []);
-  const customRequests = useApiResource<CustomRequest[]>("/vendors/my-custom-requests", []);
+  const serviceRequests = useApiResource<RequestItem[]>(token ? "/clients/requests" : "", []);
+  const directOrders = useApiResource<DirectOrder[]>(token ? "/vendors/my-orders" : "", []);
+  const customRequests = useApiResource<CustomRequest[]>(token ? "/vendors/my-custom-requests" : "", []);
 
   // Modal detail states
   const [selectedDirectOrder, setSelectedDirectOrder] = useState<DirectOrder | null>(null);
   const [selectedCustomRequest, setSelectedCustomRequest] = useState<CustomRequest | null>(null);
   const [isAcceptingOffer, setIsAcceptingOffer] = useState(false);
+
+  if (!token) {
+    return (
+      <Screen title="طلباتي" showBack={false}>
+        <GuestGate message="يرجى تسجيل الدخول لعرض وإدارة طلبات الصيانة وطلبات الشراء الخاصة بك." />
+      </Screen>
+    );
+  }
 
   function showAlert(title: string, message: string) {
     if (Platform.OS === "web") {
