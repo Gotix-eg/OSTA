@@ -502,6 +502,53 @@ export function LandingPage({ locale }: { locale: Locale }) {
         )}
       </section>
 
+      {/* Categories Grid */}
+      <section className="py-24 px-4 bg-onyx-900/50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-black text-onyx-950 md:text-white mb-4">
+              {isArabic ? "خدماتنا الأساسية" : "Our Core Services"}
+            </h2>
+            <div className="h-1 w-24 bg-gold-500 mx-auto rounded-full" />
+          </div>
+
+          <motion.div 
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6"
+          >
+            {displayCrafts.map((craft) => (
+              <motion.div key={craft.id} variants={itemVariants}>
+                <Link href={`/${locale}/services/${craft.id}`} className="group block p-6 onyx-card hover:border-gold-500/50 transition-all duration-500 hover:-translate-y-2">
+                  <div className={cn(
+                    "h-48 w-full rounded-2xl overflow-hidden mb-6 transition-transform duration-500 group-hover:scale-105 group-hover:rotate-1 relative shadow-lg bg-onyx-800 border border-white/5",
+                  )}>
+                    <img 
+                      src={craft.image} 
+                      alt="" 
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-onyx-950/90 via-onyx-950/20 to-transparent" />
+                  </div>
+                  <h3 className="text-lg font-bold text-onyx-950 md:text-white mb-2 group-hover:text-gold-500 transition-colors">
+                    {isArabic ? craft.name.ar : craft.name.en}
+                  </h3>
+                  <div className="flex items-center gap-1 text-xs text-gold-500 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-[-4px] group-hover:translate-x-0">
+                    {isArabic ? "اطلب الآن" : "Book Now"}
+                    <ChevronRight className="h-3 w-3 rtl:rotate-180" />
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
       {/* Worker Exploration Section */}
       <section className="py-20 px-4 bg-onyx-950 relative border-b border-white/5">
         <div className="max-w-7xl mx-auto">
@@ -932,52 +979,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
       )}
 
 
-      {/* Categories Grid */}
-      <section className="py-24 px-4 bg-onyx-900/50">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-black text-onyx-950 md:text-white mb-4">
-              {isArabic ? "خدماتنا الأساسية" : "Our Core Services"}
-            </h2>
-            <div className="h-1 w-24 bg-gold-500 mx-auto rounded-full" />
-          </div>
 
-          <motion.div 
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6"
-          >
-            {displayCrafts.map((craft) => (
-              <motion.div key={craft.id} variants={itemVariants}>
-                <Link href={`/${locale}/services/${craft.id}`} className="group block p-6 onyx-card hover:border-gold-500/50 transition-all duration-500 hover:-translate-y-2">
-                  <div className={cn(
-                    "h-48 w-full rounded-2xl overflow-hidden mb-6 transition-transform duration-500 group-hover:scale-105 group-hover:rotate-1 relative shadow-lg bg-onyx-800 border border-white/5",
-                  )}>
-                    <img 
-                      src={craft.image} 
-                      alt="" 
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        e.currentTarget.style.display = 'none';
-                      }}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-onyx-950/90 via-onyx-950/20 to-transparent" />
-                  </div>
-                  <h3 className="text-lg font-bold text-onyx-950 md:text-white mb-2 group-hover:text-gold-500 transition-colors">
-                    {isArabic ? craft.name.ar : craft.name.en}
-                  </h3>
-                  <div className="flex items-center gap-1 text-xs text-gold-500 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-[-4px] group-hover:translate-x-0">
-                    {isArabic ? "اطلب الآن" : "Book Now"}
-                    <ChevronRight className="h-3 w-3 rtl:rotate-180" />
-                  </div>
-                </Link>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
 
       {/* Features */}
       <section className="py-24 px-4 relative overflow-hidden">
