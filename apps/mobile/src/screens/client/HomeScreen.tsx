@@ -226,56 +226,39 @@ export function HomeScreen() {
 
   return (
     <Screen scroll={false} style={{ flex: 1, padding: 0 }} showBack={false}>
-      {/* 
-        Custom Animated.ScrollView with stickyHeaderIndices={1}.
-        This will freeze the search bar container at the top of the screen when scrolling down.
-      */}
-      <Animated.ScrollView 
+      <ScrollView 
         stickyHeaderIndices={[1]} 
         showsVerticalScrollIndicator={false} 
         keyboardShouldPersistTaps="handled"
         style={{ flex: 1 }}
         contentContainerStyle={{ flexGrow: 1 }}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          { useNativeDriver: true }
-        )}
-        scrollEventThrottle={16}
       >
         
-        {/* 1. TOP SINGLE AD CAROUSEL / SLIDER (Fills screen width, very top) */}
-        <Animated.View style={[styles.topAdBanner, {
-          opacity: bannerOpacity,
-          transform: [
-            { translateY: bannerTranslateY },
-            { scale: bannerScale }
-          ]
-        }]}>
-          {topSlide.imageUrl || topSlide.image ? (
-            <Image source={topSlide.imageUrl ?? topSlide.image} style={styles.slideImage as any} contentFit="cover" />
-          ) : (
-            <View style={styles.slideImagePlaceholder} />
-          )}
-          <View style={styles.slideGradient} />
-          <View style={styles.slideContent}>
-            <Text style={styles.slideTitle} numberOfLines={2}>{topSlide.titleAr}</Text>
-            {topSlide.descAr ? <Text style={styles.slideDesc} numberOfLines={2}>{topSlide.descAr}</Text> : null}
-            
-            <Pressable 
-              style={styles.slideCta}
-              onPress={() => navigation.navigate("CreateRequest")}
-            >
-              <Text style={styles.slideCtaText}>{topSlide.btn1TextAr || "اطلب فني الآن"}</Text>
-              <Ionicons name="arrow-back" size={14} color="#15110D" style={{ transform: [{ rotate: "180deg" }] }} />
-            </Pressable>
+        {/* 1. TOP SINGLE AD CAROUSEL / SLIDER & GREETINGS HEADER */}
+        <View style={styles.topContainer}>
+          <View style={styles.topAdBanner}>
+            {topSlide.imageUrl || topSlide.image ? (
+              <Image source={topSlide.imageUrl ?? topSlide.image} style={styles.slideImage as any} contentFit="cover" />
+            ) : (
+              <View style={styles.slideImagePlaceholder} />
+            )}
+            <View style={styles.slideGradient} />
+            <View style={styles.slideContent}>
+              <Text style={styles.slideTitle} numberOfLines={2}>{topSlide.titleAr}</Text>
+              {topSlide.descAr ? <Text style={styles.slideDesc} numberOfLines={2}>{topSlide.descAr}</Text> : null}
+              
+              <Pressable 
+                style={styles.slideCta}
+                onPress={() => navigation.navigate("CreateRequest")}
+              >
+                <Text style={styles.slideCtaText}>{topSlide.btn1TextAr || "اطلب فني الآن"}</Text>
+                <Ionicons name="arrow-back" size={14} color="#15110D" style={{ transform: [{ rotate: "180deg" }] }} />
+              </Pressable>
+            </View>
           </View>
-        </Animated.View>
 
-        {/* 2. STICKY HEADER WRAPPER (LOGO + SEARCH BAR) - sticks when scrolled */}
-        <Animated.View style={[styles.stickyHeaderWrapper, {
-          transform: [{ translateY: stickyHeaderTranslateY }],
-        }]}>
-          <Animated.View style={[styles.headerRow, { opacity: headerRowOpacity }]}>
+          {/* Logo & Greetings Row */}
+          <View style={styles.headerRow}>
             <View style={styles.headerLeft}>
               <Pressable style={styles.iconButton} onPress={() => navigation.navigate("Support")}>
                 <Ionicons name="help-circle-outline" size={22} color={theme.text} />
@@ -290,13 +273,16 @@ export function HomeScreen() {
                 <HeaderLogo width="100%" height="100%" />
               </View>
             </View>
-          </Animated.View>
+          </View>
+        </View>
 
+        {/* 2. STICKY HEADER WRAPPER (ONLY SEARCH BAR) - sticks when scrolled */}
+        <View style={styles.stickyHeaderWrapper}>
           <Pressable style={styles.searchBar} onPress={() => navigation.navigate("AllServices")}>
             <Ionicons name="search-outline" size={20} color={theme.muted} />
             <Text style={styles.searchText}>ابحث عن خدمة أو صنايعي محترف...</Text>
           </Pressable>
-        </Animated.View>
+        </View>
 
         {/* 3. SCROLLABLE INNER BODY CONTENT */}
         <View style={styles.bodyContainer}>
@@ -622,9 +608,12 @@ export function HomeScreen() {
 }
 
 const makeStyles = (theme: ReturnType<typeof useTheme>["theme"]) => StyleSheet.create({
+  topContainer: {
+    backgroundColor: theme.background
+  },
   topAdBanner: {
     width: "100%",
-    height: 180,
+    height: 150,
     position: "relative",
     backgroundColor: theme.primarySoft
   },
@@ -649,16 +638,16 @@ const makeStyles = (theme: ReturnType<typeof useTheme>["theme"]) => StyleSheet.c
   },
   slideTitle: {
     color: "#FFFFFF",
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "900",
     textAlign: "right",
-    lineHeight: 28
+    lineHeight: 24
   },
   slideDesc: {
     color: "rgba(255,255,255,0.8)",
-    fontSize: 12,
+    fontSize: 11,
     textAlign: "right",
-    lineHeight: 18,
+    lineHeight: 16,
     marginBottom: spacing.xs
   },
   slideCta: {
@@ -678,8 +667,8 @@ const makeStyles = (theme: ReturnType<typeof useTheme>["theme"]) => StyleSheet.c
   stickyHeaderWrapper: {
     backgroundColor: theme.background,
     paddingHorizontal: spacing.lg,
-    paddingTop: spacing.md,
-    paddingBottom: spacing.sm,
+    paddingTop: spacing.xs,
+    paddingBottom: spacing.md,
     borderBottomWidth: 1,
     borderBottomColor: theme.border,
     zIndex: 100,
@@ -689,7 +678,9 @@ const makeStyles = (theme: ReturnType<typeof useTheme>["theme"]) => StyleSheet.c
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: spacing.sm
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.sm
   },
   headerLeft: {
     flexDirection: "row",
@@ -736,6 +727,7 @@ const makeStyles = (theme: ReturnType<typeof useTheme>["theme"]) => StyleSheet.c
   },
   bodyContainer: {
     padding: spacing.lg,
+    paddingTop: spacing.xs,
     gap: spacing.lg
   },
   sectionBlock: {
