@@ -36,7 +36,10 @@ type PendingWorkerRecord = {
     | "plastering"
     | "ironwork"
     | "finishing"
-    | "moving";
+    | "moving"
+    | "carMechanic"
+    | "bikeMechanic"
+    | "engineRepair";
   area: string;
   experienceYears: number;
   rating: number;
@@ -124,6 +127,9 @@ function mapPendingWorkerSpecialty(profession?: string | null): PendingWorkerRec
   if (value.includes("حداد") || value.includes("iron")) return "ironwork";
   if (value.includes("تشطيب") || value.includes("finish")) return "finishing";
   if (value.includes("نقل") || value.includes("move")) return "moving";
+  if (value.includes("سيار") || value.includes("car")) return "carMechanic";
+  if (value.includes("موتوسيك") || value.includes("motorcycl") || value.includes("bike")) return "bikeMechanic";
+  if (value.includes("موتور") || value.includes("engine")) return "engineRepair";
   return "electrician";
 }
 

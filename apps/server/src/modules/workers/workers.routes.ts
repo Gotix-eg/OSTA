@@ -139,6 +139,9 @@ function getCategorySlugsForProfession(profession: string | null | undefined): s
   if (p === "gypsum" || p === "جبس" || p.includes("جبس") || p.includes("gypsum")) return ["gypsum"];
   if (p === "moving" || p === "نقل" || p.includes("نقل") || p.includes("move") || p.includes("moving")) return ["moving"];
   if (p === "cleaning" || p === "نظافة" || p.includes("نظاف") || p.includes("clean") || p.includes("cleaning")) return ["cleaning"];
+  if (p === "car-mechanic" || p === "سيارات" || p.includes("سيار") || p.includes("car")) return ["car-mechanic"];
+  if (p === "bike-mechanic" || p === "موتوسيكلات" || p.includes("موتوسيك") || p.includes("bike")) return ["bike-mechanic"];
+  if (p === "engine-repair" || p === "مواتير" || p.includes("موتور") || p.includes("engine")) return ["engine-repair"];
   return [];
 }
 

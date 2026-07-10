@@ -45,6 +45,9 @@ function getCategoryColor(slug: string): string {
     gypsum: "from-amber-500 to-amber-700",
     moving: "from-sky-500 to-sky-700",
     cleaning: "from-green-500 to-green-700",
+    "car-mechanic": "from-red-500 to-red-700",
+    "bike-mechanic": "from-orange-500 to-orange-700",
+    "engine-repair": "from-blue-500 to-blue-700",
   };
   return colors[slug] || "from-gold-400 to-gold-600";
 }
@@ -71,6 +74,9 @@ const CRAFTS = [
   { id: "gypsum", name: { ar: "جبس بورد وديكور", en: "Gypsum Board" }, image: "/images/services/gypsum.png", color: "from-amber-500 to-amber-700", icon: Layout },
   { id: "moving", name: { ar: "نقل عفش وتغليف", en: "Furniture Moving" }, image: "/images/services/moving.png", color: "from-sky-500 to-sky-700", icon: Truck },
   { id: "cleaning", name: { ar: "تنظيف وتعقيم منازل", en: "Home Cleaning" }, image: "/images/services/cleaning.png", color: "from-green-500 to-green-700", icon: Sparkles },
+  { id: "car-mechanic", name: { ar: "ميكانيكي سيارات", en: "Car Mechanic" }, image: "/images/services/car-mechanic.png", color: "from-red-500 to-red-700", icon: Settings },
+  { id: "bike-mechanic", name: { ar: "ميكانيكي موتوسيكلات", en: "Motorcycle Mechanic" }, image: "/images/services/bike-mechanic.png", color: "from-orange-500 to-orange-700", icon: Settings },
+  { id: "engine-repair", name: { ar: "صيانة مواتير", en: "Engine Repair" }, image: "/images/services/engine-repair.png", color: "from-blue-500 to-blue-700", icon: Hammer },
 ];
 
 const POPULAR_NEIGHBORHOODS: Record<string, { value: string; labelAr: string; labelEn: string }[]> = {

@@ -30,7 +30,10 @@ export type DashboardWorkerSpecialtyCode =
   | "plastering"
   | "ironwork"
   | "finishing"
-  | "moving";
+  | "moving"
+  | "carMechanic"
+  | "bikeMechanic"
+  | "engineRepair";
 
 export type DashboardRequestStatus = "WORKER_EN_ROUTE" | "IN_PROGRESS";
 

@@ -253,6 +253,51 @@ export const serviceCategories = [
       { id: "clean-home", slug: "clean-home", name: { ar: "تنظيف شقق وفلل", en: "Home & Villa Cleaning" } },
       { id: "pest-control", slug: "pest-control", name: { ar: "رش مبيدات ومكافحة حشرات", en: "Pest Control Services" } }
     ]
+  },
+  {
+    id: "car-mechanic",
+    slug: "car-mechanic",
+    icon: "Settings",
+    workersAvailable: 480,
+    name: { ar: "ميكانيكي سيارات", en: "Car Mechanic" },
+    description: {
+      ar: "صيانة وإصلاح أعطال السيارات، الكشف بالكمبيوتر، صيانة الفرامل والمحركات.",
+      en: "Car repairs, computer diagnostics, brake servicing, and engine maintenance."
+    },
+    services: [
+      { id: "car-repair", slug: "car-repair", name: { ar: "صيانة وإصلاح سيارات", en: "Car Repair" } },
+      { id: "car-diagnostics", slug: "car-diagnostics", name: { ar: "كشف كمبيوتر وأعطال", en: "Car Diagnostics" } }
+    ]
+  },
+  {
+    id: "bike-mechanic",
+    slug: "bike-mechanic",
+    icon: "Settings",
+    workersAvailable: 290,
+    name: { ar: "ميكانيكي موتوسيكلات", en: "Motorcycle Mechanic" },
+    description: {
+      ar: "صيانة وإصلاح كافة أنواع الموتوسيكلات والاسكوتر وتوفير قطع الغيار.",
+      en: "Maintenance and repair of all motorcycles, scooters, and spare parts."
+    },
+    services: [
+      { id: "bike-repair", slug: "bike-repair", name: { ar: "صيانة موتوسيكلات", en: "Motorcycle Repair" } },
+      { id: "bike-tuning", slug: "bike-tuning", name: { ar: "ضبط وتعديل موتوسيكلات", en: "Motorcycle Tuning" } }
+    ]
+  },
+  {
+    id: "engine-repair",
+    slug: "engine-repair",
+    icon: "Hammer",
+    workersAvailable: 310,
+    name: { ar: "صيانة مواتير", en: "Engine Repair" },
+    description: {
+      ar: "لف وصيانة مواتير المياه، مواتير المصاعد، والمولدات الكهربائية بمختلف القدرات.",
+      en: "Rewinding and repair of water pump motors, elevator motors, and generators."
+    },
+    services: [
+      { id: "motor-rewind", slug: "motor-rewind", name: { ar: "لف مواتير مياه وكهرباء", en: "Motor Rewinding" } },
+      { id: "pump-repair", slug: "pump-repair", name: { ar: "صيانة مضخات ومواتير", en: "Pump & Motor Maintenance" } }
+    ]
   }
 ] as const;
 

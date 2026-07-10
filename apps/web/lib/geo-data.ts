@@ -302,5 +302,8 @@ export const workerProfessions: GeoOption[] = [
   { value: "plastering", labelEn: "Plasterer (Plastering)", labelAr: "أعمال محارة" },
   { value: "ironwork", labelEn: "Ironworker (Ironwork)", labelAr: "حدادة" },
   { value: "finishing", labelEn: "Finishing Specialist", labelAr: "تشطيبات شاملة" },
-  { value: "moving", labelEn: "Furniture Mover", labelAr: "نقل عفش وتغليف" }
+  { value: "moving", labelEn: "Furniture Mover", labelAr: "نقل عفش وتغليف" },
+  { value: "car-mechanic", labelEn: "Car Mechanic", labelAr: "ميكانيكي سيارات" },
+  { value: "bike-mechanic", labelEn: "Motorcycle Mechanic", labelAr: "ميكانيكي موتوسيكلات" },
+  { value: "engine-repair", labelEn: "Engine Repair Specialist", labelAr: "صيانة مواتير" }
 ];

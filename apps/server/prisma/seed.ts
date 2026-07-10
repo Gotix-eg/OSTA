@@ -22,6 +22,9 @@ const CORE_CATEGORIES = [
   { nameAr: "جبس بورد وديكور", nameEn: "Gypsum Board", slug: "gypsum", icon: "layout", imageUrl: "/images/services/gypsum.png" },
   { nameAr: "نقل عفش وتغليف", nameEn: "Furniture Moving", slug: "moving", icon: "truck", imageUrl: "/images/services/moving.png" },
   { nameAr: "تنظيف وتعقيم منازل", nameEn: "Home Cleaning", slug: "cleaning", icon: "sparkles", imageUrl: "/images/services/cleaning.png" },
+  { nameAr: "ميكانيكي سيارات", nameEn: "Car Mechanic", slug: "car-mechanic", icon: "settings", imageUrl: "/images/services/car-mechanic.png" },
+  { nameAr: "ميكانيكي موتوسيكلات", nameEn: "Motorcycle Mechanic", slug: "bike-mechanic", icon: "settings", imageUrl: "/images/services/bike-mechanic.png" },
+  { nameAr: "صيانة مواتير", nameEn: "Engine Repair", slug: "engine-repair", icon: "hammer", imageUrl: "/images/services/engine-repair.png" },
 ];
 
 async function main() {
