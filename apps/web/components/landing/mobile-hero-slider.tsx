@@ -130,6 +130,91 @@ export function MobileHeroSlider({ locale }: MobileHeroSliderProps) {
     }),
   };
 
+  const isCampaign = current?.eyebrowAr === "إعلان ممول" || current?.eyebrowEn === "Sponsored Ad";
+
+  if (isCampaign) {
+    const linkUrl = current.btn1Link ? (current.btn1Link.startsWith("http") ? current.btn1Link : `/${locale}${current.btn1Link.startsWith("/") ? "" : "/"}${current.btn1Link}`) : "#";
+    return (
+      <div className="relative w-full overflow-hidden md:hidden" style={{ minHeight: "88svh" }}>
+        <Link href={linkUrl} className="absolute inset-0 z-30 cursor-pointer">
+          {/* Background Image with cross-fade */}
+          {slides.map((slide, idx) => (
+            <div
+              key={slide.id}
+              className={cn(
+                "absolute inset-0 bg-cover bg-center transition-opacity duration-700",
+                idx === currentIndex ? "opacity-100" : "opacity-0"
+              )}
+              style={{
+                backgroundImage: slide.imageUrl
+                  ? `url('${cleanImageUrl(slide.imageUrl)}')`
+                  : "none",
+                backgroundColor: "oklch(93% 0.12 85)",
+              }}
+            />
+          ))}
+          {/* Small elegant Ad badge in the corner */}
+          <div className="absolute top-24 right-4 z-40">
+            <span className="px-2 py-0.5 rounded bg-black/60 backdrop-blur-sm border border-white/10 text-gold-500 text-[9px] font-black uppercase tracking-wider shadow-md">
+              {isArabic ? "ممول" : "Sponsored"}
+            </span>
+          </div>
+        </Link>
+
+        {/* Dots + nav overlaid on the bottom */}
+        {slides.length > 1 && (
+          <div className="absolute bottom-6 left-0 right-0 z-40 flex items-center justify-between px-6">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                goPrev();
+              }}
+              className="h-10 w-10 rounded-full flex items-center justify-center transition-all active:scale-90 bg-black/30 text-white"
+              aria-label="Previous slide"
+            >
+              {isArabic ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
+            </button>
+
+            <div className="flex gap-2">
+              {slides.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    goTo(idx);
+                  }}
+                  className="h-2 rounded-full transition-all duration-300"
+                  style={{
+                    width: idx === currentIndex ? "2rem" : "0.5rem",
+                    background:
+                      idx === currentIndex
+                        ? "white"
+                        : "white/40",
+                  }}
+                  aria-label={`Go to slide ${idx + 1}`}
+                />
+              ))}
+            </div>
+
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                goNext();
+              }}
+              className="h-10 w-10 rounded-full flex items-center justify-center transition-all active:scale-90 bg-black/30 text-white"
+              aria-label="Next slide"
+            >
+              {isArabic ? <ChevronLeft className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="relative w-full overflow-hidden md:hidden" style={{ minHeight: "88svh" }}>
       {/* Background Image with cross-fade */}

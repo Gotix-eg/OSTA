@@ -369,20 +369,48 @@ export function LandingPage({ locale }: { locale: Locale }) {
       {/* Desktop Hero Section with Dynamic Background Slider — ONLY on md+ */}
       <section className="hidden md:flex relative pt-24 pb-20 px-4 min-h-[90vh] items-center justify-center overflow-hidden">
         {/* Background Images with smooth cross-fade transition */}
-        {slides.map((slide, idx) => (
-          <div
-            key={slide.id}
-            className={cn(
-              "absolute inset-0 bg-cover bg-center transition-all duration-1000 ease-in-out z-0",
-              idx === currentSlideIndex ? "opacity-100 scale-100 blur-none" : "opacity-0 scale-105"
-            )}
-            style={{ backgroundImage: `url('${cleanImageUrl(slide.imageUrl)}')` }}
-          />
-        ))}
-        {/* Premium deep dark gradient overlay for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-onyx-950 via-onyx-950/85 to-onyx-950/60 z-10" />
+        {slides.map((slide, idx) => {
+          const isCampaign = slide.eyebrowAr === "إعلان ممول" || slide.eyebrowEn === "Sponsored Ad";
+          const slideBg = (
+            <div
+              className={cn(
+                "absolute inset-0 bg-cover bg-center transition-all duration-1000 ease-in-out z-0",
+                idx === currentSlideIndex ? "opacity-100 scale-100 blur-none" : "opacity-0 scale-105"
+              )}
+              style={{ backgroundImage: `url('${cleanImageUrl(slide.imageUrl)}')` }}
+            />
+          );
 
-        {slides.length > 0 && (
+          if (isCampaign) {
+            const linkUrl = slide.btn1Link ? (slide.btn1Link.startsWith("http") ? slide.btn1Link : `/${locale}${slide.btn1Link.startsWith("/") ? "" : "/"}${slide.btn1Link}`) : "#";
+            return (
+              <Link
+                key={slide.id}
+                href={linkUrl}
+                className={cn(
+                  "absolute inset-0 transition-opacity duration-1000 z-10",
+                  idx === currentSlideIndex ? "opacity-100 cursor-pointer pointer-events-auto" : "opacity-0 pointer-events-none"
+                )}
+              >
+                {slideBg}
+                {/* Small elegant Ad badge in the corner */}
+                <div className="absolute top-28 right-8 z-40">
+                  <span className="px-3 py-1 rounded bg-black/60 backdrop-blur-sm border border-white/10 text-gold-500 text-[10px] font-black uppercase tracking-wider shadow-md">
+                    {isArabic ? "ممول" : "Sponsored"}
+                  </span>
+                </div>
+              </Link>
+            );
+          }
+
+          return slideBg;
+        })}
+        {/* Premium deep dark gradient overlay for text readability - ONLY for non-campaign slides */}
+        {!(currentSlide.eyebrowAr === "إعلان ممول" || currentSlide.eyebrowEn === "Sponsored Ad") && (
+          <div className="absolute inset-0 bg-gradient-to-t from-onyx-950 via-onyx-950/85 to-onyx-950/60 z-10" />
+        )}
+
+        {slides.length > 0 && !(currentSlide.eyebrowAr === "إعلان ممول" || currentSlide.eyebrowEn === "Sponsored Ad") && (
           <div className="max-w-5xl mx-auto text-center relative z-20 w-full">
             <motion.div 
               key={currentSlideIndex} // Triggers re-animation automatically on slide switch!
@@ -453,22 +481,22 @@ export function LandingPage({ locale }: { locale: Locale }) {
                 </div>
               </div>
             </motion.div>
+          </div>
+        )}
 
-            {/* Slider Dots indicators */}
-            {slides.length > 1 && (
-              <div className="flex justify-center items-center gap-3 mt-12">
-                {slides.map((_, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setCurrentSlideIndex(idx)}
-                    className={cn(
-                      "h-2 rounded-full transition-all duration-300",
-                      idx === currentSlideIndex ? "bg-gold-500 w-8" : "bg-white/20 w-2 hover:bg-white/45"
-                    )}
-                  />
-                ))}
-              </div>
-            )}
+        {/* Slider Dots indicators */}
+        {slides.length > 1 && (
+          <div className="absolute bottom-6 left-0 right-0 z-40 flex justify-center items-center gap-3">
+            {slides.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setCurrentSlideIndex(idx)}
+                className={cn(
+                  "h-2 rounded-full transition-all duration-300",
+                  idx === currentSlideIndex ? "bg-gold-500 w-8" : "bg-white/20 w-2 hover:bg-white/45"
+                )}
+              />
+            ))}
           </div>
         )}
       </section>
