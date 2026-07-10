@@ -10,6 +10,7 @@ import { useApiResource } from "../../hooks/useApiResource";
 import { useTheme } from "../../context/ThemeContext";
 import { useAuth } from "../../context/AuthContext";
 import { spacing } from "../../theme/spacing";
+import { LinearGradient } from "expo-linear-gradient";
 import HeaderLogo from "../../../assets/logo.svg";
 
 type Slide = {
@@ -82,6 +83,21 @@ function getIconName(slug: string): keyof typeof Ionicons.glyphMap {
     cameras: "videocam-outline"
   };
   return mapping[slug] || "settings-outline";
+}
+
+function getServiceImageUrl(slug: string): string {
+  const baseUrl = "https://www.ostafy.com/services";
+  const mapping: Record<string, string> = {
+    electricity: `${baseUrl}/electrical.png`,
+    electrical: `${baseUrl}/electrical.png`,
+    plumbing: `${baseUrl}/plumbing.png`,
+    carpentry: `${baseUrl}/carpentry.png`,
+    ac: `${baseUrl}/ac-appliances.png`,
+    appliances: `${baseUrl}/ac-appliances.png`,
+    painting: `${baseUrl}/painting.png`,
+    aluminum: `${baseUrl}/aluminum-welding.png`,
+  };
+  return mapping[slug] || `${baseUrl}/general-services.png`;
 }
 
 function getStatusColor(status: string) {
@@ -334,14 +350,18 @@ export function HomeScreen() {
                       });
                     }}
                   >
-                    <View style={styles.categoryIconWrapper}>
-                      {cat.imageUrl ? (
-                        <Image source={{ uri: cat.imageUrl }} style={styles.categoryIconImage} contentFit="cover" />
-                      ) : (
-                        <Ionicons name={getIconName(cat.slug)} size={26} color={theme.primary} />
-                      )}
+                    <Image 
+                      source={{ uri: getServiceImageUrl(cat.slug) }} 
+                      style={StyleSheet.absoluteFillObject} 
+                      contentFit="cover" 
+                    />
+                    <LinearGradient
+                      colors={["transparent", "rgba(0, 0, 0, 0.85)"]}
+                      style={StyleSheet.absoluteFillObject}
+                    />
+                    <View style={styles.categoryCardContent}>
+                      <Text style={styles.categoryName} numberOfLines={1}>{cat.nameAr}</Text>
                     </View>
-                    <Text style={styles.categoryName} numberOfLines={1}>{cat.nameAr}</Text>
                   </Pressable>
                 ))}
 
@@ -801,14 +821,17 @@ const makeStyles = (theme: ReturnType<typeof useTheme>["theme"]) => StyleSheet.c
   },
   categoryCard: {
     width: 90,
-    backgroundColor: theme.surface,
-    borderWidth: 1,
-    borderColor: theme.border,
+    height: 90,
     borderRadius: 16,
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.xs,
+    overflow: "hidden",
+    justifyContent: "flex-end",
+    alignItems: "center"
+  },
+  categoryCardContent: {
+    padding: spacing.xs,
     alignItems: "center",
-    gap: spacing.xs
+    width: "100%",
+    zIndex: 1
   },
   categoryIconWrapper: {
     width: 48,
@@ -824,10 +847,13 @@ const makeStyles = (theme: ReturnType<typeof useTheme>["theme"]) => StyleSheet.c
     height: "100%"
   },
   categoryName: {
-    color: theme.text,
+    color: "#FFFFFF",
     fontSize: 12,
     fontWeight: "bold",
-    textAlign: "center"
+    textAlign: "center",
+    textShadowColor: "rgba(0,0,0,0.5)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2
   },
   campaignsContainer: {
     gap: spacing.md,

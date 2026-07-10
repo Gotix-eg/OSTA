@@ -8,6 +8,7 @@ import { Screen } from "../../components/Screen";
 import { useApiResource } from "../../hooks/useApiResource";
 import { useTheme } from "../../context/ThemeContext";
 import { spacing } from "../../theme/spacing";
+import { LinearGradient } from "expo-linear-gradient";
 
 type Category = {
   id: string;
@@ -35,6 +36,21 @@ function getIconName(slug: string): keyof typeof Ionicons.glyphMap {
     cameras: "videocam-outline"
   };
   return mapping[slug] || "settings-outline";
+}
+
+function getServiceImageUrl(slug: string): string {
+  const baseUrl = "https://www.ostafy.com/services";
+  const mapping: Record<string, string> = {
+    electricity: `${baseUrl}/electrical.png`,
+    electrical: `${baseUrl}/electrical.png`,
+    plumbing: `${baseUrl}/plumbing.png`,
+    carpentry: `${baseUrl}/carpentry.png`,
+    ac: `${baseUrl}/ac-appliances.png`,
+    appliances: `${baseUrl}/ac-appliances.png`,
+    painting: `${baseUrl}/painting.png`,
+    aluminum: `${baseUrl}/aluminum-welding.png`,
+  };
+  return mapping[slug] || `${baseUrl}/general-services.png`;
 }
 
 export function AllServicesScreen() {
@@ -98,15 +114,19 @@ export function AllServicesScreen() {
                 });
               }}
             >
-              <View style={styles.iconWrapper}>
-                {item.imageUrl ? (
-                  <Image source={{ uri: item.imageUrl }} style={styles.iconImage} contentFit="cover" />
-                ) : (
-                  <Ionicons name={getIconName(item.slug)} size={32} color={theme.primary} />
-                )}
+              <Image 
+                source={{ uri: getServiceImageUrl(item.slug) }} 
+                style={StyleSheet.absoluteFillObject} 
+                contentFit="cover" 
+              />
+              <LinearGradient
+                colors={["transparent", "rgba(0, 0, 0, 0.85)"]}
+                style={StyleSheet.absoluteFillObject}
+              />
+              <View style={styles.cardContent}>
+                <Text style={styles.nameAr} numberOfLines={1}>{item.nameAr}</Text>
+                <Text style={styles.nameEn} numberOfLines={1}>{item.nameEn}</Text>
               </View>
-              <Text style={styles.nameAr} numberOfLines={1}>{item.nameAr}</Text>
-              <Text style={styles.nameEn} numberOfLines={1}>{item.nameEn}</Text>
             </Pressable>
           )}
         />
@@ -150,36 +170,28 @@ const makeStyles = (theme: ReturnType<typeof useTheme>["theme"]) => StyleSheet.c
   },
   card: {
     width: "48%",
-    backgroundColor: theme.surface,
-    borderWidth: 1,
-    borderColor: theme.border,
+    height: 120,
     borderRadius: 16,
-    padding: spacing.md,
-    alignItems: "center",
-    gap: spacing.xs
+    overflow: "hidden",
+    justifyContent: "flex-end"
   },
-  iconWrapper: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: theme.primarySoft,
+  cardContent: {
+    padding: spacing.sm,
     alignItems: "center",
-    justifyContent: "center",
-    marginBottom: spacing.xs,
-    overflow: "hidden"
-  },
-  iconImage: {
     width: "100%",
-    height: "100%"
+    zIndex: 1
   },
   nameAr: {
-    color: theme.text,
+    color: "#FFFFFF",
     fontSize: 15,
     fontWeight: "800",
-    textAlign: "center"
+    textAlign: "center",
+    textShadowColor: "rgba(0,0,0,0.6)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3
   },
   nameEn: {
-    color: theme.muted,
+    color: "rgba(255, 255, 255, 0.75)",
     fontSize: 11,
     textAlign: "center"
   },
