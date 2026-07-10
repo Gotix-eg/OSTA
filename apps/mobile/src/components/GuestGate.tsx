@@ -20,6 +20,10 @@ export function GuestGate({ message = "يرجى تسجيل الدخول للوص
       <Pressable style={styles.button} onPress={() => navigation.navigate("Auth")}>
         <Text style={styles.buttonText}>تسجيل الدخول / تسجيل جديد</Text>
       </Pressable>
+
+      <Pressable style={styles.supportLink} onPress={() => navigation.navigate("Support")}>
+        <Text style={styles.supportLinkText}>تصفح شروط الخدمة، سياسة الخصوصية والدعم الفني</Text>
+      </Pressable>
     </View>
   );
 }
@@ -67,5 +71,16 @@ const makeStyles = (theme: any) => StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 15,
     fontWeight: "bold"
+  },
+  supportLink: {
+    marginTop: spacing.lg,
+    paddingVertical: spacing.sm
+  },
+  supportLinkText: {
+    color: theme.primary,
+    fontSize: 12,
+    fontWeight: "600",
+    textDecorationLine: "underline",
+    textAlign: "center"
   }
 });

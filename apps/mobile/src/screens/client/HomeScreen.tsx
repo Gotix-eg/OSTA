@@ -277,6 +277,9 @@ export function HomeScreen() {
         }]}>
           <Animated.View style={[styles.headerRow, { opacity: headerRowOpacity }]}>
             <View style={styles.headerLeft}>
+              <Pressable style={styles.iconButton} onPress={() => navigation.navigate("Support")}>
+                <Ionicons name="help-circle-outline" size={22} color={theme.text} />
+              </Pressable>
               <Pressable style={styles.iconButton} onPress={() => navigation.navigate("Notifications")}>
                 <Ionicons name="notifications-outline" size={20} color={theme.text} />
               </Pressable>

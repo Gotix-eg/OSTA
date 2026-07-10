@@ -19,4 +19,5 @@ export type CommonStackParamList = {
     title?: string;
     description?: string;
   } | undefined;
+  Support: undefined;
 };

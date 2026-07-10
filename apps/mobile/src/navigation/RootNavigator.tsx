@@ -31,6 +31,7 @@ import { ProfileScreen } from "../screens/common/ProfileScreen";
 import { ChatScreen } from "../screens/common/ChatScreen";
 import { NotificationsScreen } from "../screens/common/NotificationsScreen";
 import { RequestDetailsScreen } from "../screens/common/RequestDetailsScreen";
+import { SupportScreen } from "../screens/common/SupportScreen";
 import type { AuthStackParamList } from "./types";
 
 const AuthStack = createNativeStackNavigator<AuthStackParamList>();
@@ -195,6 +196,7 @@ function AppNavigator() {
       {/* Notifications is also a tab screen — keep in stack for toast navigation */}
       <RootStack.Screen name="Notifications" component={NotificationsScreen} />
       <RootStack.Screen name="Auth" component={AuthNavigator} />
+      <RootStack.Screen name="Support" component={SupportScreen} />
       </RootStack.Navigator>
     </>
   );

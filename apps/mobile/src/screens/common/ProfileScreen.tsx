@@ -3,6 +3,7 @@ import { Text, View, StyleSheet, Pressable, Alert, ActivityIndicator, Platform }
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
+import { useNavigation } from "@react-navigation/native";
 
 import { AppButton } from "../../components/AppButton";
 import { AppCard } from "../../components/AppCard";
@@ -20,6 +21,7 @@ export function ProfileScreen() {
   const { user, logout, refreshUser, switchRole, token } = useAuth();
   const { theme } = useTheme();
   const styles = makeStyles(theme);
+  const navigation = useNavigation<any>();
   const [isUploading, setIsUploading] = useState(false);
 
   if (!token) {
@@ -148,6 +150,13 @@ export function ProfileScreen() {
           style={{ marginBottom: spacing.sm }}
         />
       )}
+
+      <AppButton 
+        title="الدعم والسياسات" 
+        variant="primary" 
+        onPress={() => navigation.navigate("Support")}
+        style={{ marginBottom: spacing.md }}
+      />
 
       <AppButton title="تسجيل الخروج" variant="secondary" onPress={logout} />
     </Screen>
