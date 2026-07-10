@@ -45,13 +45,13 @@
 /* Desktop: Onyx / Dark theme overrides */
 @media (min-width: 768px) {
   :root {
-    --color-bg:       oklch(10% 0.005 60);
+    --color-bg:       oklch(11% 0.015 85); /* Warm gold-tinted dark charcoal */
     --color-fg:       oklch(93% 0.005 60);
-    --color-bg-card:  rgba(255, 255, 255, 0.05);
-    --color-border:   rgba(255, 255, 255, 0.1);
-    --color-muted:    oklch(72% 0.005 60);
-    --color-subtle:   oklch(58% 0.005 60);
-    --focus-ring:     oklch(65% 0.15 85 / 0.5);
+    --color-bg-card:  rgba(255, 255, 255, 0.03);
+    --color-border:   rgba(245, 189, 24, 0.12); /* Warm gold border */
+    --color-muted:    oklch(75% 0.01 85);
+    --color-subtle:   oklch(62% 0.01 85);
+    --focus-ring:     oklch(75% 0.15 85 / 0.5);
   }
 }
 
@@ -141,10 +141,11 @@ body {
 
   @media (min-width: 768px) {
     .onyx-shell-bg {
-      /* Desktop: Subtle gold glow on dark */
+      /* Desktop: Luxurious gold glow on dark background */
       background:
-        radial-gradient(circle at 0% 0%, oklch(65% 0.15 85 / 0.06), transparent 50%),
-        radial-gradient(circle at 100% 100%, oklch(65% 0.15 85 / 0.04), transparent 50%),
+        radial-gradient(circle at 5% 5%, oklch(75% 0.15 85 / 0.15), transparent 65%),
+        radial-gradient(circle at 95% 95%, oklch(75% 0.15 85 / 0.12), transparent 65%),
+        radial-gradient(circle at 50% 50%, oklch(75% 0.15 85 / 0.03), transparent 75%),
         var(--color-bg);
     }
   }
@@ -161,8 +162,9 @@ body {
 
   @media (min-width: 768px) {
     .onyx-card:hover {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: oklch(65% 0.15 85 / 0.25);
+      background: rgba(245, 189, 24, 0.04);
+      border-color: oklch(75% 0.15 85 / 0.4);
+      box-shadow: 0 20px 40px -15px oklch(75% 0.15 85 / 0.15);
     }
   }
 

@@ -503,10 +503,10 @@ export function LandingPage({ locale }: { locale: Locale }) {
       </section>
 
       {/* Categories Grid */}
-      <section className="py-24 px-4 bg-onyx-900/50">
+      <section className="py-24 px-4 bg-transparent">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-black text-onyx-950 md:text-white mb-4">
+            <h2 className="text-3xl md:text-5xl font-black text-onyx-950 md:text-transparent md:bg-clip-text md:bg-gradient-to-r md:from-gold-400 md:to-white mb-4">
               {isArabic ? "خدماتنا الأساسية" : "Our Core Services"}
             </h2>
             <div className="h-1 w-24 bg-gold-500 mx-auto rounded-full" />
@@ -550,13 +550,13 @@ export function LandingPage({ locale }: { locale: Locale }) {
       </section>
 
       {/* Worker Exploration Section */}
-      <section className="py-20 px-4 bg-onyx-950 relative border-b border-white/5">
+      <section className="py-20 px-4 bg-transparent relative border-b border-white/5">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <span className="text-xs font-bold uppercase tracking-wider text-gold-500 px-3 py-1 rounded-full bg-gold-500/10 border border-gold-500/25">
               {isArabic ? "الفنيين المميزين" : "Featured Pros"}
             </span>
-            <h2 className="text-3xl md:text-5xl font-black text-white mt-4 mb-4">
+            <h2 className="text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-gold-400 to-white mt-4 mb-4">
               {isArabic ? "أفضل فنيين وصنايعية موثقين ورعاة" : "Top Sponsored & Featured Pros"}
             </h2>
             <p className="text-onyx-400 max-w-2xl mx-auto text-base md:text-lg">
@@ -767,13 +767,13 @@ export function LandingPage({ locale }: { locale: Locale }) {
       )}
 
       {/* Public Open Requests Job Board Section */}
-      <section className="py-20 px-4 bg-onyx-900/30 border-b border-white/5">
+      <section className="py-20 px-4 bg-transparent border-b border-white/5">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <span className="text-xs font-bold uppercase tracking-wider text-gold-500 px-3 py-1 rounded-full bg-gold-500/10 border border-gold-500/25">
               {isArabic ? "فرص العمل المتاحة" : "Open Opportunities"}
             </span>
-            <h2 className="text-3xl md:text-5xl font-black text-white mt-4 mb-4">
+            <h2 className="text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-gold-400 to-white mt-4 mb-4">
               {isArabic ? "طلبات صيانة مفتوحة تنتظر فنيين" : "Active Home Maintenance Jobs"}
             </h2>
             <p className="text-onyx-400 max-w-2xl mx-auto text-base md:text-lg">
@@ -877,11 +877,10 @@ export function LandingPage({ locale }: { locale: Locale }) {
         </div>
       </section>
 
-      {/* 3-Step How It Works Row */}
-      <section className="py-16 px-4 bg-onyx-950/40 border-b border-white/5">
+      <section className="py-16 px-4 bg-transparent border-b border-white/5">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-2xl md:text-3xl font-black text-white">
+            <h2 className="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-gold-400 to-white">
               {isArabic ? "خطوات بسيطة لبدء الصيانة" : "How OSTA Works"}
             </h2>
             <div className="h-1 w-16 bg-gold-500 mx-auto rounded-full mt-4" />
@@ -1020,7 +1019,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
         <div className="max-w-5xl mx-auto onyx-card p-12 text-center relative overflow-hidden group">
           <div className="absolute inset-0 bg-gold-gradient opacity-0 group-hover:opacity-5 transition-opacity pointer-events-none" />
           <div className="relative z-10">
-            <h2 className="text-4xl md:text-6xl font-black text-white mb-8">
+            <h2 className="text-4xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-gold-400 to-white mb-8">
               {isArabic ? "جاهز لتجربة أُسطفاي؟" : "Ready for Ostafy Experience?"}
             </h2>
             <p className="text-gold-100 text-xl mb-12 max-w-2xl mx-auto">

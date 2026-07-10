@@ -17,11 +17,11 @@ const config: Config = {
           300: "oklch(72% 0.005 60)",   // Medium light gray
           400: "oklch(58% 0.005 60)",   // Medium gray
           500: "oklch(45% 0.005 60)",   // Neutral gray
-          600: "oklch(35% 0.005 60)",   // Dark gray
-          700: "oklch(25% 0.005 60)",   // Darker gray
-          800: "oklch(18% 0.005 60)",   // Near black
-          900: "oklch(13% 0.005 60)",   // Off black
-          950: "oklch(9% 0.005 60)"     // Deep black
+          600: "oklch(35% 0.015 85)",   // Dark warm charcoal
+          700: "oklch(25% 0.015 85)",   // Darker warm charcoal
+          800: "oklch(18% 0.015 85)",   // Near black warm charcoal
+          900: "oklch(13% 0.015 85)",   // Off black warm charcoal
+          950: "oklch(9% 0.015 85)"     // Deep black warm charcoal
         },
         /* ── GOLD: Primary accents ── */
         gold: {
@@ -61,9 +61,9 @@ const config: Config = {
         glow:  "0 0 30px oklch(65% 0.15 85 / 0.3)",
       },
       backgroundImage: {
-        "onyx-gradient": "linear-gradient(135deg, oklch(12% 0.005 60) 0%, oklch(8% 0.005 60) 100%)",
+        "onyx-gradient": "linear-gradient(135deg, oklch(12% 0.015 85) 0%, oklch(8% 0.015 85) 100%)",
         "gold-gradient": "linear-gradient(135deg, oklch(75% 0.15 85) 0%, oklch(55% 0.13 85) 100%)",
-        "radial-onyx":   "radial-gradient(circle at center, oklch(15% 0.005 60) 0%, oklch(8% 0.005 60) 100%)",
+        "radial-onyx":   "radial-gradient(circle at center, oklch(15% 0.015 85) 0%, oklch(8% 0.015 85) 100%)",
       },
       keyframes: {
         "gold-pulse": {
