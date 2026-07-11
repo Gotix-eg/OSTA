@@ -7,7 +7,7 @@ const catchAsync = (fn: (req: Request, res: Response, next: NextFunction) => Pro
   };
 };
 
-import { authenticate } from "../../middleware/auth.middleware.js";
+import { authenticate, getToken } from "../../middleware/auth.middleware.js";
 import {
   authLimiter,
   loginLimiter,
@@ -249,8 +249,20 @@ router.post("/logout", catchAsync(async (request, response) => {
   response.status(200).json(successResponse({ cleared: true }, "Logged out"));
 }));
 
-router.get("/me", authenticate, catchAsync(async (request, response) => {
-  response.status(200).json(successResponse(await authService.me(request.auth!.userId), "Authenticated user"));
+router.get("/me", catchAsync(async (request, response) => {
+  const token = getToken(request);
+
+  if (!token) {
+    response.status(200).json(successResponse(null, "Not authenticated"));
+    return;
+  }
+
+  try {
+    const payload = verifyAccessToken(token);
+    response.status(200).json(successResponse(await authService.me(payload.sub), "Authenticated user"));
+  } catch {
+    response.status(200).json(successResponse(null, "Not authenticated"));
+  }
 }));
 
 router.patch("/profile", authenticate, catchAsync(async (request, response) => {

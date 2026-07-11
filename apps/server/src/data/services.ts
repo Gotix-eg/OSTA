@@ -178,5 +178,126 @@ export const serviceCategories = [
       { id: "plaster-wall", slug: "plaster-wall", name: { ar: "أعمال محارة", en: "Wall Plastering" } },
       { id: "plaster-repair", slug: "plaster-repair", name: { ar: "ترميم محارة حوائط", en: "Plaster Repair" } }
     ]
+  },
+  {
+    id: "ironwork",
+    slug: "ironwork",
+    icon: "Hammer",
+    workersAvailable: 150,
+    name: { ar: "حدادة", en: "Ironwork" },
+    description: {
+      ar: "تصنيع وتركيب وصيانة البوابات الحديدية وحمايات النوافذ والشبابيك.",
+      en: "Fabrication, installation, and repair of iron gates and window guards."
+    },
+    services: [
+      { id: "iron-gates", slug: "iron-gates", name: { ar: "تركيب وصيانة بوابات حديد", en: "Iron Gates Installation" } },
+      { id: "window-grills", slug: "window-grills", name: { ar: "حمايات وشبابيك حديد", en: "Window & Balcony Grills" } }
+    ]
+  },
+  {
+    id: "finishing",
+    slug: "finishing",
+    icon: "Layers",
+    workersAvailable: 120,
+    name: { ar: "تشطيبات شاملة", en: "Comprehensive Finishing" },
+    description: {
+      ar: "تشطيب متكامل للشقق والفيلات والمحلات من الطوب الأحمر للتسليم على المفتاح.",
+      en: "Turnkey apartment and villa finishing from masonry to final handover."
+    },
+    services: [
+      { id: "turnkey-finishing", slug: "turnkey-finishing", name: { ar: "تشطيب على المفتاح", en: "Turnkey Finishing" } },
+      { id: "renovation-remodeling", slug: "renovation-remodeling", name: { ar: "تجديد وتطوير منازل", en: "Home Renovation & Remodeling" } }
+    ]
+  },
+  {
+    id: "gypsum",
+    slug: "gypsum",
+    icon: "Layout",
+    workersAvailable: 195,
+    name: { ar: "جبس بورد وديكور", en: "Gypsum Board" },
+    description: {
+      ar: "أعمال الجبس بورد والأسقف المعلقة والديكورات الجبسية الحديثة بكفاءة عالية.",
+      en: "Gypsum board installation, suspended ceilings, and modern drywall decoration."
+    },
+    services: [
+      { id: "gyp-install", slug: "gyp-install", name: { ar: "تركيب جبس بورد", en: "Gypsum Board Installation" } },
+      { id: "gyp-decor", slug: "gyp-decor", name: { ar: "ديكورات جبسية أسقف", en: "Gypsum Ceiling Decoration" } }
+    ]
+  },
+  {
+    id: "moving",
+    slug: "moving",
+    icon: "Truck",
+    workersAvailable: 340,
+    name: { ar: "نقل عفش وتغليف", en: "Furniture Moving" },
+    description: {
+      ar: "خدمات نقل الأثاث وتغليفه وفكه وتركيبه بأيدي فنيين محترفين وسيارات مجهزة.",
+      en: "Furniture moving, packaging, disassembly, and assembly by specialists."
+    },
+    services: [
+      { id: "move-furniture", slug: "move-furniture", name: { ar: "نقل أثاث", en: "Furniture Moving" } },
+      { id: "pack-furniture", slug: "pack-furniture", name: { ar: "تغليف عفش", en: "Furniture Packaging" } }
+    ]
+  },
+  {
+    id: "cleaning",
+    slug: "cleaning",
+    icon: "Sparkles",
+    workersAvailable: 610,
+    name: { ar: "تنظيف وتعقيم منازل", en: "Home Cleaning" },
+    description: {
+      ar: "تنظيف شامل للمنازل والفلل والمكاتب والتعقيم ومكافحة الحشرات بأفضل المواد.",
+      en: "Comprehensive cleaning, sanitization, and pest control for homes and offices."
+    },
+    services: [
+      { id: "clean-home", slug: "clean-home", name: { ar: "تنظيف شقق وفلل", en: "Home & Villa Cleaning" } },
+      { id: "pest-control", slug: "pest-control", name: { ar: "رش مبيدات ومكافحة حشرات", en: "Pest Control Services" } }
+    ]
+  },
+  {
+    id: "car-mechanic",
+    slug: "car-mechanic",
+    icon: "Settings",
+    workersAvailable: 480,
+    name: { ar: "ميكانيكي سيارات", en: "Car Mechanic" },
+    description: {
+      ar: "صيانة وإصلاح أعطال السيارات، الكشف بالكمبيوتر، صيانة الفرامل والمحركات.",
+      en: "Car repairs, computer diagnostics, brake servicing, and engine maintenance."
+    },
+    services: [
+      { id: "car-repair", slug: "car-repair", name: { ar: "صيانة وإصلاح سيارات", en: "Car Repair" } },
+      { id: "car-diagnostics", slug: "car-diagnostics", name: { ar: "كشف كمبيوتر وأعطال", en: "Car Diagnostics" } }
+    ]
+  },
+  {
+    id: "bike-mechanic",
+    slug: "bike-mechanic",
+    icon: "Settings",
+    workersAvailable: 290,
+    name: { ar: "ميكانيكي موتوسيكلات", en: "Motorcycle Mechanic" },
+    description: {
+      ar: "صيانة وإصلاح كافة أنواع الموتوسيكلات والاسكوتر وتوفير قطع الغيار.",
+      en: "Maintenance and repair of all motorcycles, scooters, and spare parts."
+    },
+    services: [
+      { id: "bike-repair", slug: "bike-repair", name: { ar: "صيانة موتوسيكلات", en: "Motorcycle Repair" } },
+      { id: "bike-tuning", slug: "bike-tuning", name: { ar: "ضبط وتعديل موتوسيكلات", en: "Motorcycle Tuning" } }
+    ]
+  },
+  {
+    id: "engine-repair",
+    slug: "engine-repair",
+    icon: "Hammer",
+    workersAvailable: 310,
+    name: { ar: "صيانة مواتير", en: "Engine Repair" },
+    description: {
+      ar: "لف وصيانة مواتير المياه، مواتير المصاعد، والمولدات الكهربائية بمختلف القدرات.",
+      en: "Rewinding and repair of water pump motors, elevator motors, and generators."
+    },
+    services: [
+      { id: "motor-rewind", slug: "motor-rewind", name: { ar: "لف مواتير مياه وكهرباء", en: "Motor Rewinding" } },
+      { id: "pump-repair", slug: "pump-repair", name: { ar: "صيانة مضخات ومواتير", en: "Pump & Motor Maintenance" } }
+    ]
   }
 ] as const;
+

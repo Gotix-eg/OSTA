@@ -8,7 +8,7 @@ import {
   Store, Users, CheckCircle2, Menu, X,
   Facebook, Instagram, Phone, Mail,
   Droplets, Wrench, PaintBucket, Network, Settings,
-  Megaphone, Grid, Layers
+  Megaphone, Grid, Layers, Truck, Sparkles
 } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect, useMemo } from "react";
@@ -40,6 +40,14 @@ function getCategoryColor(slug: string): string {
     cameras: "from-red-400 to-red-600",
     tiling: "from-cyan-600 to-cyan-800",
     plastering: "from-orange-500 to-orange-700",
+    ironwork: "from-neutral-600 to-neutral-800",
+    finishing: "from-teal-600 to-teal-800",
+    gypsum: "from-amber-500 to-amber-700",
+    moving: "from-sky-500 to-sky-700",
+    cleaning: "from-green-500 to-green-700",
+    "car-mechanic": "from-red-500 to-red-700",
+    "bike-mechanic": "from-orange-500 to-orange-700",
+    "engine-repair": "from-blue-500 to-blue-700",
   };
   return colors[slug] || "from-gold-400 to-gold-600";
 }
@@ -49,18 +57,26 @@ const iconMap: Record<string, any> = {
 };
 
 const CRAFTS = [
-  { id: "electricity", name: { ar: "الكهرباء", en: "Electrical" }, image: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=1000&auto=format&fit=crop&v=osta4", color: "from-yellow-400 to-gold-600", icon: Zap },
-  { id: "plumbing", name: { ar: "السباكة", en: "Plumbing" }, image: "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?q=80&w=1000&auto=format&fit=crop&v=osta5", color: "from-blue-400 to-blue-600", icon: Droplets },
-  { id: "carpentry", name: { ar: "النجارة", en: "Carpentry" }, image: "https://images.unsplash.com/photo-1601058268499-e52658b8bb88?q=80&w=1000&auto=format&fit=crop&v=osta4", color: "from-amber-600 to-amber-800", icon: Hammer },
-  { id: "ac", name: { ar: "التكييفات", en: "AC Maintenance" }, image: "/images/services/ac.jpg", color: "from-cyan-400 to-cyan-600", icon: Wind },
-  { id: "appliances", name: { ar: "صيانة أجهزة", en: "Home Appliances" }, image: "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?q=80&w=1000&auto=format&fit=crop&v=osta4", color: "from-purple-400 to-purple-600", icon: Wrench },
-  { id: "painting", name: { ar: "الدهانات", en: "Painting" }, image: "https://images.unsplash.com/photo-1562259949-e8e7689d7828?q=80&w=1000&auto=format&fit=crop&v=osta4", color: "from-rose-400 to-rose-600", icon: PaintBucket },
-  { id: "aluminum", name: { ar: "الوميتال", en: "Aluminum" }, image: "/images/services/aluminum.jpg", color: "from-slate-400 to-slate-600", icon: Layout },
-  { id: "networks", name: { ar: "الشبكات", en: "Networks" }, image: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?q=80&w=1000&auto=format&fit=crop&v=osta4", color: "from-indigo-400 to-indigo-600", icon: Network },
-  { id: "computer-repair", name: { ar: "صيانة كمبيوتر", en: "Computer" }, image: "https://images.unsplash.com/photo-1588508065123-287b28e013da?q=80&w=1000&auto=format&fit=crop&v=osta4", color: "from-emerald-400 to-emerald-600", icon: Monitor },
-  { id: "cctv", name: { ar: "تركيب كاميرات", en: "CCTV" }, image: "/images/services/cam.jpg", color: "from-red-400 to-red-600", icon: Camera },
-  { id: "tiling", name: { ar: "مبلط سيراميك", en: "Ceramic Tiling" }, image: "https://images.unsplash.com/photo-1502005229762-fc1b2b812ca5?q=80&w=1000&auto=format&fit=crop", color: "from-cyan-600 to-cyan-800", icon: Grid },
-  { id: "plastering", name: { ar: "أعمال محارة", en: "Plastering" }, image: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=1000&auto=format&fit=crop", color: "from-orange-500 to-orange-700", icon: Layers },
+  { id: "electricity", name: { ar: "الكهرباء", en: "Electrical" }, image: "/images/services/electrical.png", color: "from-yellow-400 to-gold-600", icon: Zap },
+  { id: "plumbing", name: { ar: "السباكة", en: "Plumbing" }, image: "/images/services/plumbing.png", color: "from-blue-400 to-blue-600", icon: Droplets },
+  { id: "carpentry", name: { ar: "النجارة", en: "Carpentry" }, image: "/images/services/carpentry.png", color: "from-amber-600 to-amber-800", icon: Hammer },
+  { id: "ac", name: { ar: "التكييفات", en: "AC Maintenance" }, image: "/images/services/ac.png", color: "from-cyan-400 to-cyan-600", icon: Wind },
+  { id: "appliances", name: { ar: "صيانة أجهزة", en: "Home Appliances" }, image: "/images/services/appliances.png", color: "from-purple-400 to-purple-600", icon: Wrench },
+  { id: "painting", name: { ar: "الدهانات", en: "Painting" }, image: "/images/services/painting.png", color: "from-rose-400 to-rose-600", icon: PaintBucket },
+  { id: "aluminum", name: { ar: "الوميتال", en: "Aluminum" }, image: "/images/services/aluminum.png", color: "from-slate-400 to-slate-600", icon: Layout },
+  { id: "networks", name: { ar: "الشبكات", en: "Networks" }, image: "/images/services/networks.png", color: "from-indigo-400 to-indigo-600", icon: Network },
+  { id: "computer-repair", name: { ar: "صيانة كمبيوتر", en: "Computer" }, image: "/images/services/computer.png", color: "from-emerald-400 to-emerald-600", icon: Monitor },
+  { id: "cctv", name: { ar: "تركيب كاميرات", en: "CCTV" }, image: "/images/services/cctv.png", color: "from-red-400 to-red-600", icon: Camera },
+  { id: "tiling", name: { ar: "مبلط سيراميك", en: "Ceramic Tiling" }, image: "/images/services/tiling.png", color: "from-cyan-600 to-cyan-800", icon: Grid },
+  { id: "plastering", name: { ar: "أعمال محارة", en: "Plastering" }, image: "/images/services/plastering.png", color: "from-orange-500 to-orange-700", icon: Layers },
+  { id: "ironwork", name: { ar: "حدادة", en: "Ironwork" }, image: "/images/services/ironwork.png", color: "from-neutral-600 to-neutral-800", icon: Hammer },
+  { id: "finishing", name: { ar: "تشطيبات شاملة", en: "Finishing" }, image: "/images/services/finishing.png", color: "from-teal-600 to-teal-800", icon: Layers },
+  { id: "gypsum", name: { ar: "جبس بورد وديكور", en: "Gypsum Board" }, image: "/images/services/gypsum.png", color: "from-amber-500 to-amber-700", icon: Layout },
+  { id: "moving", name: { ar: "نقل عفش وتغليف", en: "Furniture Moving" }, image: "/images/services/moving.png", color: "from-sky-500 to-sky-700", icon: Truck },
+  { id: "cleaning", name: { ar: "تنظيف وتعقيم منازل", en: "Home Cleaning" }, image: "/images/services/cleaning.png", color: "from-green-500 to-green-700", icon: Sparkles },
+  { id: "car-mechanic", name: { ar: "ميكانيكي سيارات", en: "Car Mechanic" }, image: "/images/services/car-mechanic.png", color: "from-red-500 to-red-700", icon: Settings },
+  { id: "bike-mechanic", name: { ar: "ميكانيكي موتوسيكلات", en: "Motorcycle Mechanic" }, image: "/images/services/bike-mechanic.png", color: "from-orange-500 to-orange-700", icon: Settings },
+  { id: "engine-repair", name: { ar: "صيانة مواتير", en: "Engine Repair" }, image: "/images/services/engine-repair.png", color: "from-blue-500 to-blue-700", icon: Hammer },
 ];
 
 const POPULAR_NEIGHBORHOODS: Record<string, { value: string; labelAr: string; labelEn: string }[]> = {
@@ -146,13 +162,16 @@ export function LandingPage({ locale }: { locale: Locale }) {
   const liveCategories = useLiveApiData<any[]>("/services/categories", []);
 
   const displayCrafts = liveCategories.length > 0
-    ? liveCategories.map((cat) => ({
-        id: cat.slug,
-        name: { ar: cat.nameAr, en: cat.nameEn },
-        image: cat.imageUrl || "https://images.unsplash.com/photo-1581092160562-40aa08e78837?q=80&w=800&auto=format&fit=crop",
-        color: getCategoryColor(cat.slug),
-        icon: iconMap[cat.icon] || Settings,
-      }))
+    ? liveCategories.map((cat) => {
+        const localCraft = CRAFTS.find((c) => c.id === cat.slug || (c.id === "electricity" && cat.slug === "electrical"));
+        return {
+          id: cat.slug,
+          name: { ar: cat.nameAr, en: cat.nameEn },
+          image: localCraft?.image || cat.imageUrl || "https://images.unsplash.com/photo-1581092160562-40aa08e78837?q=80&w=800&auto=format&fit=crop",
+          color: getCategoryColor(cat.slug),
+          icon: iconMap[cat.icon] || Settings,
+        };
+      })
     : CRAFTS;
 
   const pathname = usePathname() || "";
@@ -343,27 +362,56 @@ export function LandingPage({ locale }: { locale: Locale }) {
   };
 
   return (
-    <div className="bg-gold-100 onyx-shell-bg selection:bg-gold-500 selection:text-onyx-950 overflow-x-hidden">
+    <div className="bg-[#f0bb19] onyx-shell-bg selection:bg-gold-500 selection:text-onyx-950 overflow-x-hidden">
       {/* Mobile Hero Slider — shown ONLY on mobile (< 768px) */}
       <MobileHeroSlider locale={locale} />
 
       {/* Desktop Hero Section with Dynamic Background Slider — ONLY on md+ */}
       <section className="hidden md:flex relative pt-24 pb-20 px-4 min-h-[90vh] items-center justify-center overflow-hidden">
         {/* Background Images with smooth cross-fade transition */}
-        {slides.map((slide, idx) => (
-          <div
-            key={slide.id}
-            className={cn(
-              "absolute inset-0 bg-cover bg-center transition-all duration-1000 ease-in-out z-0",
-              idx === currentSlideIndex ? "opacity-100 scale-100 blur-none" : "opacity-0 scale-105"
-            )}
-            style={{ backgroundImage: `url('${cleanImageUrl(slide.imageUrl)}')` }}
-          />
-        ))}
-        {/* Premium deep dark gradient overlay for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-onyx-950 via-onyx-950/85 to-onyx-950/60 z-10" />
+        {slides.map((slide, idx) => {
+          const isCampaign = slide.eyebrowAr === "إعلان ممول" || slide.eyebrowEn === "Sponsored Ad";
+          const slideBg = (
+            <div
+              className={cn(
+                "absolute inset-0 bg-center transition-all duration-1000 ease-in-out z-0",
+                isCampaign ? "bg-contain bg-no-repeat bg-onyx-950" : "bg-cover",
+                idx === currentSlideIndex ? "opacity-100 scale-100 blur-none" : "opacity-0 scale-105"
+              )}
+              style={{ backgroundImage: `url('${cleanImageUrl(slide.imageUrl)}')` }}
+            />
+          );
 
-        {slides.length > 0 && (
+          if (isCampaign) {
+            const linkUrl = slide.btn1Link ? (slide.btn1Link.startsWith("http") ? slide.btn1Link : `/${locale}${slide.btn1Link.startsWith("/") ? "" : "/"}${slide.btn1Link}`) : "#";
+            return (
+              <Link
+                key={slide.id}
+                href={linkUrl}
+                className={cn(
+                  "absolute inset-0 transition-opacity duration-1000 z-10",
+                  idx === currentSlideIndex ? "opacity-100 cursor-pointer pointer-events-auto" : "opacity-0 pointer-events-none"
+                )}
+              >
+                {slideBg}
+                {/* Small elegant Ad badge in the corner */}
+                <div className="absolute top-28 right-8 z-40">
+                  <span className="px-3 py-1 rounded bg-black/60 backdrop-blur-sm border border-white/10 text-gold-500 text-[10px] font-black uppercase tracking-wider shadow-md">
+                    {isArabic ? "ممول" : "Sponsored"}
+                  </span>
+                </div>
+              </Link>
+            );
+          }
+
+          return slideBg;
+        })}
+        {/* Premium deep dark gradient overlay for text readability - ONLY for non-campaign slides */}
+        {!(currentSlide.eyebrowAr === "إعلان ممول" || currentSlide.eyebrowEn === "Sponsored Ad") && (
+          <div className="absolute inset-0 bg-gradient-to-t from-onyx-950 via-onyx-950/85 to-onyx-950/60 z-10" />
+        )}
+
+        {slides.length > 0 && !(currentSlide.eyebrowAr === "إعلان ممول" || currentSlide.eyebrowEn === "Sponsored Ad") && (
           <div className="max-w-5xl mx-auto text-center relative z-20 w-full">
             <motion.div 
               key={currentSlideIndex} // Triggers re-animation automatically on slide switch!
@@ -371,6 +419,11 @@ export function LandingPage({ locale }: { locale: Locale }) {
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
             >
+              { (currentSlide.eyebrowAr || currentSlide.eyebrowEn) && (
+                <span className="inline-block mb-4 px-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-widest bg-gold-500 text-onyx-950 shadow-md">
+                  {isArabic ? currentSlide.eyebrowAr : currentSlide.eyebrowEn}
+                </span>
+              )}
               <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-[1.15] mb-6 tracking-tight">
                 {isArabic ? currentSlide.titleAr : currentSlide.titleEn}
               </h1>
@@ -379,15 +432,36 @@ export function LandingPage({ locale }: { locale: Locale }) {
               </p>
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Link href={`/${locale}/register/client`} className="w-full sm:w-auto btn-gold text-center py-4 px-8 text-lg shadow-lg shadow-gold-500/20">
-                  {isArabic ? "اطلب صنايعي" : "Order a Pro"}
-                </Link>
-                <Link href={`/${locale}/register/worker`} className="w-full sm:w-auto btn-ghost text-center py-4 px-8 text-lg shadow-lg">
-                  {isArabic ? "انضم كصنايعي" : "Join as Pro"}
-                </Link>
-                <Link href={`/${locale}/register/vendor`} className="w-full sm:w-auto btn-ghost text-center py-4 px-8 text-lg shadow-lg">
-                  {isArabic ? "انضم كمتجر" : "Join as Vendor"}
-                </Link>
+                {currentSlide.btn1Link ? (
+                  <>
+                    <Link
+                      href={currentSlide.btn1Link.startsWith("http") ? currentSlide.btn1Link : `/${locale}${currentSlide.btn1Link.startsWith("/") ? "" : "/"}${currentSlide.btn1Link}`}
+                      className="w-full sm:w-auto btn-gold text-center py-4 px-8 text-lg shadow-lg shadow-gold-500/20"
+                    >
+                      {isArabic ? currentSlide.btn1TextAr || currentSlide.btn1Text : currentSlide.btn1TextEn || currentSlide.btn1Text}
+                    </Link>
+                    {currentSlide.btn2Link && (
+                      <Link
+                        href={currentSlide.btn2Link.startsWith("http") ? currentSlide.btn2Link : `/${locale}${currentSlide.btn2Link.startsWith("/") ? "" : "/"}${currentSlide.btn2Link}`}
+                        className="w-full sm:w-auto btn-ghost text-center py-4 px-8 text-lg shadow-lg"
+                      >
+                        {isArabic ? currentSlide.btn2TextAr || currentSlide.btn2Text : currentSlide.btn2TextEn || currentSlide.btn2Text}
+                      </Link>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <Link href={`/${locale}/register/client`} className="w-full sm:w-auto btn-gold text-center py-4 px-8 text-lg shadow-lg shadow-gold-500/20">
+                      {isArabic ? "اطلب صنايعي" : "Order a Pro"}
+                    </Link>
+                    <Link href={`/${locale}/register/worker`} className="w-full sm:w-auto btn-ghost text-center py-4 px-8 text-lg shadow-lg">
+                      {isArabic ? "انضم كصنايعي" : "Join as Pro"}
+                    </Link>
+                    <Link href={`/${locale}/register/vendor`} className="w-full sm:w-auto btn-ghost text-center py-4 px-8 text-lg shadow-lg">
+                      {isArabic ? "انضم كمتجر" : "Join as Vendor"}
+                    </Link>
+                  </>
+                )}
               </div>
 
               <div className="mt-12 flex items-center justify-center gap-6">
@@ -408,134 +482,81 @@ export function LandingPage({ locale }: { locale: Locale }) {
                 </div>
               </div>
             </motion.div>
+          </div>
+        )}
 
-            {/* Slider Dots indicators */}
-            {slides.length > 1 && (
-              <div className="flex justify-center items-center gap-3 mt-12">
-                {slides.map((_, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setCurrentSlideIndex(idx)}
-                    className={cn(
-                      "h-2 rounded-full transition-all duration-300",
-                      idx === currentSlideIndex ? "bg-gold-500 w-8" : "bg-white/20 w-2 hover:bg-white/45"
-                    )}
-                  />
-                ))}
-              </div>
-            )}
+        {/* Slider Dots indicators */}
+        {slides.length > 1 && (
+          <div className="absolute bottom-6 left-0 right-0 z-40 flex justify-center items-center gap-3">
+            {slides.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setCurrentSlideIndex(idx)}
+                className={cn(
+                  "h-2 rounded-full transition-all duration-300",
+                  idx === currentSlideIndex ? "bg-gold-500 w-8" : "bg-white/20 w-2 hover:bg-white/45"
+                )}
+              />
+            ))}
           </div>
         )}
       </section>
 
-      {/* Sponsored Campaigns Section */}
-      {campaigns.length > 0 && (
-        <section className="py-16 md:py-20 px-0 md:px-4 bg-onyx-950/40 relative border-b border-gold-700/10 animate-slideUp">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex items-center justify-between mb-8 md:mb-12 px-4 md:px-0">
-              <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-2xl bg-gold-700/10 border border-gold-700/25 flex items-center justify-center text-gold-800 shrink-0 shadow-lg">
-                  <Megaphone className="h-6 w-6 animate-pulse" />
-                </div>
-                <div>
-                  <h2 className="text-2xl md:text-4xl font-black text-onyx-950 tracking-tight">
-                    {isArabic ? "شركاء أُسطفاي والعروض المميزة" : "Sponsored Deals & Partners"}
-                  </h2>
-                  <p className="text-onyx-600 text-sm mt-1">
-                    {isArabic ? "عروض حصرية وخصومات من المتاجر والشركاء المعتمدين لدينا" : "Exclusive deals and services from our trusted sponsors"}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Dynamic Grid Columns based on campaigns count to showcase the last ad in large layout */}
-            <div className={cn(
-              "grid gap-8",
-              campaigns.length === 1
-                ? "grid-cols-1"
-                : campaigns.length === 2
-                ? "grid-cols-1 md:grid-cols-3"
-                : campaigns.length === 3
-                ? "grid-cols-1 md:grid-cols-3 lg:grid-cols-4"
-                : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
-            )}>
-              {campaigns.map((camp, idx) => {
-                const isLast = idx === campaigns.length - 1;
-                const showLarge = isLast && campaigns.length > 1;
-                
-                return (
-                  <Link
-                    key={camp.id}
-                    href={camp.link.startsWith("http") ? camp.link : `/${locale}${camp.link.startsWith("/") ? "" : "/"}${camp.link}`}
-                    className={cn(
-                      "group w-full flex flex-col md:block md:relative md:rounded-[2rem] md:overflow-hidden border-b border-gold-700/10 md:border md:border-gold-700/10 md:hover:border-gold-500/30 transition-all duration-500 md:shadow-xl md:bg-gold-100 pb-6 md:pb-0",
-                      "md:aspect-[16/9] md:h-auto md:min-h-0",
-                      showLarge ? "md:col-span-2" : ""
-                    )}
-                  >
-                    {camp.imageUrl ? (
-                      <div className="relative w-full aspect-[16/9] md:absolute md:inset-0 md:h-full md:w-full md:aspect-auto overflow-hidden">
-                        <img
-                          src={cleanImageUrl(camp.imageUrl)}
-                          alt=""
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                        />
-                        {/* Mobile-only "ممول" badge overlayed on the top-start of the image wrapper */}
-                        <div className="absolute top-4 start-4 md:hidden z-20">
-                          <span className="inline-block px-2.5 py-1 rounded bg-gold-800 text-onyx-950 text-[9px] font-black uppercase tracking-wider shadow-md">
-                            {isArabic ? "ممول" : "Ad"}
-                          </span>
-                        </div>
-                      </div>
-                    ) : null}
-                    {/* Desktop: Premium deep dark gradient overlay; No overlay on mobile */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-onyx-950 via-onyx-950/75 to-transparent hidden md:block" />
-                    
-                    <div className="absolute top-4 end-4 hidden md:block">
-                      <span className="inline-block px-2.5 py-1 rounded bg-gold-800 text-onyx-950 text-[9px] font-black uppercase tracking-wider shadow-md">
-                        {isArabic ? "ممول" : "Ad"}
-                      </span>
-                    </div>
-
-                    <div className="w-full px-4 pt-4 text-start space-y-2 md:absolute md:inset-0 md:z-10 md:flex md:flex-col md:justify-end md:p-6 md:space-y-2 md:text-start">
-                      <h3 className={cn(
-                        "font-black leading-tight transition-colors",
-                        "text-lg text-onyx-950 md:text-white group-hover:text-gold-500",
-                        showLarge ? "md:text-2xl lg:text-3xl" : "md:text-xl"
-                      )}>
-                        {isArabic ? camp.titleAr : camp.titleEn}
-                      </h3>
-                      <p className={cn(
-                        "leading-relaxed font-normal md:font-light",
-                        "text-xs text-onyx-700 md:text-onyx-300",
-                        showLarge ? "md:text-sm lg:text-base md:line-clamp-3 lg:line-clamp-4" : "line-clamp-3 md:line-clamp-2"
-                      )}>
-                        {isArabic ? camp.descAr : camp.descEn}
-                      </p>
-                      <div className="flex items-center gap-1.5 text-xs font-bold pt-2 text-gold-800 md:text-gold-500 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all duration-300">
-                        {isArabic ? "عرض التفاصيل" : "Explore Offer"}
-                        <ChevronRight className="h-3 w-3 rtl:rotate-180" />
-                      </div>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
+      {/* Categories Grid */}
+      <section className="py-24 px-4 bg-transparent">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-black text-onyx-950 mb-4">
+              {isArabic ? "خدماتنا الأساسية" : "Our Core Services"}
+            </h2>
+            <div className="h-1 w-24 bg-gold-500 mx-auto rounded-full" />
           </div>
-        </section>
-      )}
+
+          <motion.div 
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6"
+          >
+            {displayCrafts.map((craft) => (
+              <motion.div key={craft.id} variants={itemVariants}>
+                <Link href={`/${locale}/services/${craft.id}`} className="group block p-4 rounded-[2rem] bg-[#111111] border border-white/10 hover:border-gold-500/60 hover:shadow-gold transition-all duration-500 hover:-translate-y-2">
+                  <div className="h-48 w-full rounded-xl overflow-hidden mb-4 transition-transform duration-500 group-hover:scale-105 relative shadow-md">
+                    <img 
+                      src={craft.image} 
+                      alt="" 
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                      }}
+                    />
+                  </div>
+                  <h3 className="text-base font-bold text-white mb-1 group-hover:text-gold-400 transition-colors px-1">
+                    {isArabic ? craft.name.ar : craft.name.en}
+                  </h3>
+                  <div className="flex items-center gap-1 text-xs text-gold-500 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-[-4px] group-hover:translate-x-0 px-1">
+                    {isArabic ? "اطلب الآن" : "Book Now"}
+                    <ChevronRight className="h-3 w-3 rtl:rotate-180" />
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
 
       {/* Worker Exploration Section */}
-      <section className="py-20 px-4 bg-onyx-950 relative border-b border-white/5">
+      <section className="py-20 px-4 bg-transparent relative border-b border-white/5">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <span className="text-xs font-bold uppercase tracking-wider text-gold-500 px-3 py-1 rounded-full bg-gold-500/10 border border-gold-500/25">
               {isArabic ? "الفنيين المميزين" : "Featured Pros"}
             </span>
-            <h2 className="text-3xl md:text-5xl font-black text-white mt-4 mb-4">
+            <h2 className="text-3xl md:text-5xl font-black text-onyx-950 mt-4 mb-4">
               {isArabic ? "أفضل فنيين وصنايعية موثقين ورعاة" : "Top Sponsored & Featured Pros"}
             </h2>
-            <p className="text-onyx-400 max-w-2xl mx-auto text-base md:text-lg">
+            <p className="text-onyx-700 max-w-2xl mx-auto text-base md:text-lg">
               {isArabic 
                 ? "تصفح قائمة أمهر الفنيين الحاصلين على أعلى التقييمات والموثقين للبدء فوراً" 
                 : "Browse our top-rated sponsored and verified technicians for immediate service."}
@@ -554,12 +575,12 @@ export function LandingPage({ locale }: { locale: Locale }) {
               {error}
             </div>
           ) : sponsoredWorkers.length === 0 ? (
-            <div className="text-center py-16 onyx-card border-white/5 bg-white/[0.01] rounded-3xl">
-              <Users className="h-16 w-16 text-onyx-600 mx-auto mb-4" />
-              <h4 className="text-xl font-bold text-white mb-2">
+            <div className="text-center py-16 onyx-card rounded-3xl">
+              <Users className="h-16 w-16 text-onyx-500 mx-auto mb-4" />
+              <h4 className="text-xl font-bold text-onyx-950 mb-2">
                 {isArabic ? "لم نجد أي فنيين" : "No Technicians Found"}
               </h4>
-              <p className="text-onyx-400 text-sm max-w-md mx-auto">
+              <p className="text-onyx-700 text-sm max-w-md mx-auto">
                 {isArabic ? "لا يوجد فنيين مسجلين حالياً." : "There are no registered pros at the moment."}
               </p>
             </div>
@@ -569,7 +590,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
                 {sponsoredWorkers.map((worker) => (
                 <div 
                   key={worker.id}
-                  className="onyx-card border-white/5 bg-white/[0.02] hover:border-gold-500/30 transition-all duration-300 rounded-3xl p-6 flex flex-col justify-between group"
+                  className="onyx-card transition-all duration-300 rounded-3xl p-6 flex flex-col justify-between group"
                 >
                   <div>
                     {/* Header: Status and Badges */}
@@ -616,38 +637,38 @@ export function LandingPage({ locale }: { locale: Locale }) {
                       {/* Name & Specialty */}
                       <div className="min-w-0 flex-1">
                         <Link href={`/${locale}/workers/${worker.id}`}>
-                          <h4 className="text-lg font-black text-white truncate hover:text-gold-500 transition-colors cursor-pointer">
+                          <h4 className="text-lg font-black text-onyx-950 truncate hover:text-gold-700 transition-colors cursor-pointer">
                             {worker.name}
                           </h4>
                         </Link>
-                        <p className="text-sm text-gold-500/90 font-medium mt-0.5">
+                        <p className="text-sm text-gold-700 font-bold mt-0.5">
                           {isArabic ? worker.professionAr : worker.professionEn}
                         </p>
                         
                         {/* Rating */}
                         <div className="flex items-center gap-1.5 mt-2">
                           <Star className="h-4 w-4 text-gold-500 fill-current" />
-                          <span className="text-sm font-bold text-white">{worker.rating > 0 ? worker.rating.toFixed(1) : "5.0"}</span>
+                          <span className="text-sm font-bold text-onyx-900">{worker.rating > 0 ? worker.rating.toFixed(1) : "5.0"}</span>
                           <span className="text-xs text-onyx-500">({worker.ratingCount || 1})</span>
                           <span className="text-onyx-700 mx-1">|</span>
-                          <span className="text-xs text-onyx-400 font-semibold">{worker.totalJobs || 0} {isArabic ? "عملية ناجحة" : "jobs"}</span>
+                          <span className="text-xs text-onyx-600 font-semibold">{worker.totalJobs || 0} {isArabic ? "عملية ناجحة" : "jobs"}</span>
                         </div>
                       </div>
                     </div>
 
                     {/* Locations */}
-                    <div className="border-t border-white/5 pt-4 mb-6">
+                    <div className="border-t border-black/5 pt-4 mb-6">
                       <p className="text-xs text-onyx-500 font-bold mb-2 uppercase tracking-wide">
                         {isArabic ? "مناطق التغطية" : "Service Coverage"}
                       </p>
                       <div className="flex flex-wrap gap-1.5">
                         {worker.areas.slice(0, 3).map((a: string, idx: number) => (
-                          <span key={idx} className="text-xs bg-onyx-800/80 text-onyx-300 px-2.5 py-1 rounded-lg border border-white/[0.03]">
+                          <span key={idx} className="text-xs bg-gold-500/10 text-onyx-800 px-2.5 py-1 rounded-lg border border-gold-500/20">
                             {a}
                           </span>
                         ))}
                         {worker.areas.length > 3 && (
-                          <span className="text-xs bg-onyx-800/80 text-onyx-400 px-2.5 py-1 rounded-lg border border-white/[0.03]">
+                          <span className="text-xs bg-gold-500/10 text-onyx-800 px-2.5 py-1 rounded-lg border border-gold-500/20">
                             +{worker.areas.length - 3}
                           </span>
                         )}
@@ -743,16 +764,16 @@ export function LandingPage({ locale }: { locale: Locale }) {
       )}
 
       {/* Public Open Requests Job Board Section */}
-      <section className="py-20 px-4 bg-onyx-900/30 border-b border-white/5">
+      <section className="py-20 px-4 bg-transparent border-b border-white/5">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <span className="text-xs font-bold uppercase tracking-wider text-gold-500 px-3 py-1 rounded-full bg-gold-500/10 border border-gold-500/25">
               {isArabic ? "فرص العمل المتاحة" : "Open Opportunities"}
             </span>
-            <h2 className="text-3xl md:text-5xl font-black text-white mt-4 mb-4">
+            <h2 className="text-3xl md:text-5xl font-black text-onyx-950 mt-4 mb-4">
               {isArabic ? "طلبات صيانة مفتوحة تنتظر فنيين" : "Active Home Maintenance Jobs"}
             </h2>
-            <p className="text-onyx-400 max-w-2xl mx-auto text-base md:text-lg">
+            <p className="text-onyx-700 max-w-2xl mx-auto text-base md:text-lg">
               {isArabic 
                 ? "شاهد طلبات العملاء الحالية في منطقتك، واستلم العمل فوراً بمجرد تسجيلك كفني محترف" 
                 : "View open maintenance requests, select jobs, and start earning by joining as a pro"}
@@ -784,7 +805,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
                 {publicRequests.slice(0, 6).map((req) => (
                 <div
                   key={req.id}
-                  className="onyx-card border-white/5 bg-white/[0.02] hover:border-gold-500/30 transition-all duration-300 rounded-3xl p-6 flex flex-col justify-between group"
+                  className="onyx-card transition-all duration-300 rounded-3xl p-6 flex flex-col justify-between group"
                 >
                   <div>
                     {/* Badge and Location */}
@@ -793,7 +814,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
                         "text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md",
                         req.urgency === "EMERGENCY" 
                           ? "bg-red-500/10 text-red-500 border border-red-500/20" 
-                          : "bg-onyx-800 text-onyx-300 border border-white/5"
+                          : "bg-gold-500/10 text-onyx-800 border border-gold-500/20"
                       )}>
                         {req.urgency === "EMERGENCY" 
                           ? (isArabic ? "حالة طوارئ" : "Emergency") 
@@ -808,22 +829,22 @@ export function LandingPage({ locale }: { locale: Locale }) {
                       </span>
                     </div>
 
-                    <h4 className="text-lg font-black text-white mb-1.5 line-clamp-1 group-hover:text-gold-500 transition-colors">
+                    <h4 className="text-lg font-black text-onyx-950 mb-1.5 line-clamp-1 group-hover:text-gold-700 transition-colors">
                       {req.title}
                     </h4>
 
-                    <p className="text-xs text-gold-500 font-bold mb-3 uppercase tracking-wider">
+                    <p className="text-xs text-gold-700 font-bold mb-3 uppercase tracking-wider">
                       {isArabic ? req.categoryNameAr : req.categoryNameEn}
                     </p>
 
-                    <p className="text-sm text-onyx-400 line-clamp-3 leading-relaxed mb-6">
+                    <p className="text-sm text-onyx-700 line-clamp-3 leading-relaxed mb-6">
                       {req.description}
                     </p>
                   </div>
 
                   {/* Footer & Action */}
-                  <div className="border-t border-white/5 pt-4 mt-auto">
-                    <div className="flex items-center gap-2 text-xs text-onyx-400 mb-4 font-semibold">
+                  <div className="border-t border-black/5 pt-4 mt-auto">
+                    <div className="flex items-center gap-2 text-xs text-onyx-600 mb-4 font-semibold">
                       <MapPin className="h-4 w-4 text-gold-500 flex-shrink-0" />
                       <span>{isArabic ? `${req.governorate}، ${req.city}` : `${req.governorate}, ${req.city}`}</span>
                     </div>
@@ -853,11 +874,10 @@ export function LandingPage({ locale }: { locale: Locale }) {
         </div>
       </section>
 
-      {/* 3-Step How It Works Row */}
-      <section className="py-16 px-4 bg-onyx-950/40 border-b border-white/5">
+      <section className="py-16 px-4 bg-transparent border-b border-white/5">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-2xl md:text-3xl font-black text-white">
+            <h2 className="text-2xl md:text-3xl font-black text-onyx-950">
               {isArabic ? "خطوات بسيطة لبدء الصيانة" : "How OSTA Works"}
             </h2>
             <div className="h-1 w-16 bg-gold-500 mx-auto rounded-full mt-4" />
@@ -955,52 +975,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
       )}
 
 
-      {/* Categories Grid */}
-      <section className="py-24 px-4 bg-onyx-900/50">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-black text-onyx-950 md:text-white mb-4">
-              {isArabic ? "خدماتنا الأساسية" : "Our Core Services"}
-            </h2>
-            <div className="h-1 w-24 bg-gold-500 mx-auto rounded-full" />
-          </div>
 
-          <motion.div 
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6"
-          >
-            {displayCrafts.map((craft) => (
-              <motion.div key={craft.id} variants={itemVariants}>
-                <Link href={`/${locale}/services/${craft.id}`} className="group block p-6 onyx-card hover:border-gold-500/50 transition-all duration-500 hover:-translate-y-2">
-                  <div className={cn(
-                    "h-48 w-full rounded-2xl overflow-hidden mb-6 transition-transform duration-500 group-hover:scale-105 group-hover:rotate-1 relative shadow-lg bg-onyx-800 border border-white/5",
-                  )}>
-                    <img 
-                      src={craft.image} 
-                      alt="" 
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        e.currentTarget.style.display = 'none';
-                      }}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-onyx-950/90 via-onyx-950/20 to-transparent" />
-                  </div>
-                  <h3 className="text-lg font-bold text-onyx-950 md:text-white mb-2 group-hover:text-gold-500 transition-colors">
-                    {isArabic ? craft.name.ar : craft.name.en}
-                  </h3>
-                  <div className="flex items-center gap-1 text-xs text-gold-500 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-[-4px] group-hover:translate-x-0">
-                    {isArabic ? "اطلب الآن" : "Book Now"}
-                    <ChevronRight className="h-3 w-3 rtl:rotate-180" />
-                  </div>
-                </Link>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
 
       {/* Features */}
       <section className="py-24 px-4 relative overflow-hidden">
@@ -1041,10 +1016,10 @@ export function LandingPage({ locale }: { locale: Locale }) {
         <div className="max-w-5xl mx-auto onyx-card p-12 text-center relative overflow-hidden group">
           <div className="absolute inset-0 bg-gold-gradient opacity-0 group-hover:opacity-5 transition-opacity pointer-events-none" />
           <div className="relative z-10">
-            <h2 className="text-4xl md:text-6xl font-black text-white mb-8">
+            <h2 className="text-4xl md:text-6xl font-black text-onyx-950 mb-8">
               {isArabic ? "جاهز لتجربة أُسطفاي؟" : "Ready for Ostafy Experience?"}
             </h2>
-            <p className="text-gold-100 text-xl mb-12 max-w-2xl mx-auto">
+            <p className="text-onyx-700 text-xl mb-12 max-w-2xl mx-auto">
               {isArabic ? "سجل الآن كعميل وابدأ في طلب خدماتك أو انضم كمحترف وضاعف دخلك." : "Register now as a client or join as a pro and multiply your income."}
             </p>
             <div className="flex flex-wrap justify-center gap-6">

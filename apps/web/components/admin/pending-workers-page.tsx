@@ -32,7 +32,14 @@ const specialtyLabels: Record<DashboardWorkerSpecialtyCode, Record<Locale, strin
   applianceRepair: { ar: "صيانة أجهزة منزلية", en: "Appliance Repair" },
   cleaning: { ar: "عامل نظافة", en: "Cleaning Worker" },
   gypsum: { ar: "فني جبس", en: "Gypsum Worker" },
-  ceramic: { ar: "مبلط سيراميك", en: "Ceramic Installer" }
+  ceramic: { ar: "مبلط سيراميك", en: "Ceramic Installer" },
+  plastering: { ar: "أعمال محارة", en: "Plasterer" },
+  ironwork: { ar: "حدادة", en: "Ironworker" },
+  finishing: { ar: "تشطيبات شاملة", en: "Finishing Specialist" },
+  moving: { ar: "نقل عفش وتغليف", en: "Furniture Mover" },
+  carMechanic: { ar: "ميكانيكي سيارات", en: "Car Mechanic" },
+  bikeMechanic: { ar: "ميكانيكي موتوسيكلات", en: "Motorcycle Mechanic" },
+  engineRepair: { ar: "صيانة مواتير", en: "Engine Repair Specialist" }
 };
 
 const statusLabels: Record<DashboardVerificationStatus, Record<Locale, string>> = {

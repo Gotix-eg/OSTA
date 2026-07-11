@@ -5,18 +5,26 @@ import { hashPassword } from "../src/utils/password.js";
 const prisma = new PrismaClient();
 
 const CORE_CATEGORIES = [
-  { nameAr: "نجارة", nameEn: "Carpentry", slug: "carpentry", icon: "hammer" },
-  { nameAr: "سباكة", nameEn: "Plumbing", slug: "plumbing", icon: "droplets" },
-  { nameAr: "كهرباء", nameEn: "Electricity", slug: "electricity", icon: "zap" },
-  { nameAr: "تكييف وتبريد", nameEn: "Air Conditioning", slug: "ac", icon: "wind" },
-  { nameAr: "صيانة أجهزة منزلية", nameEn: "Appliance Repair", slug: "appliances", icon: "settings" },
-  { nameAr: "دهانات وديكور", nameEn: "Painting", slug: "painting", icon: "paint-bucket" },
-  { nameAr: "ألوميتال", nameEn: "Aluminum Work", slug: "aluminum", icon: "layout" },
-  { nameAr: "شبكات كمبيوتر", nameEn: "Computer Networks", slug: "networks", icon: "network" },
-  { nameAr: "صيانة كمبيوتر", nameEn: "Computer Repair", slug: "computer-repair", icon: "monitor" },
-  { nameAr: "تركيب كاميرات", nameEn: "Camera Installation", slug: "cctv", icon: "camera" },
-  { nameAr: "مبلط سيراميك", nameEn: "Ceramic Tiling", slug: "tiling", icon: "grid" },
-  { nameAr: "أعمال محارة", nameEn: "Plastering", slug: "plastering", icon: "layers" },
+  { nameAr: "نجارة", nameEn: "Carpentry", slug: "carpentry", icon: "hammer", imageUrl: "/images/services/carpentry.png" },
+  { nameAr: "سباكة", nameEn: "Plumbing", slug: "plumbing", icon: "droplets", imageUrl: "/images/services/plumbing.png" },
+  { nameAr: "كهرباء", nameEn: "Electricity", slug: "electricity", icon: "zap", imageUrl: "/images/services/electrical.png" },
+  { nameAr: "تكييف وتبريد", nameEn: "Air Conditioning", slug: "ac", icon: "wind", imageUrl: "/images/services/ac.png" },
+  { nameAr: "صيانة أجهزة منزلية", nameEn: "Appliance Repair", slug: "appliances", icon: "settings", imageUrl: "/images/services/appliances.png" },
+  { nameAr: "دهانات وديكور", nameEn: "Painting", slug: "painting", icon: "paint-bucket", imageUrl: "/images/services/painting.png" },
+  { nameAr: "ألوميتال", nameEn: "Aluminum Work", slug: "aluminum", icon: "layout", imageUrl: "/images/services/aluminum.png" },
+  { nameAr: "شبكات كمبيوتر", nameEn: "Computer Networks", slug: "networks", icon: "network", imageUrl: "/images/services/networks.png" },
+  { nameAr: "صيانة كمبيوتر", nameEn: "Computer Repair", slug: "computer-repair", icon: "monitor", imageUrl: "/images/services/computer.png" },
+  { nameAr: "تركيب كاميرات", nameEn: "Camera Installation", slug: "cctv", icon: "cctv", imageUrl: "/images/services/cctv.png" },
+  { nameAr: "مبلط سيراميك", nameEn: "Ceramic Tiling", slug: "tiling", icon: "grid", imageUrl: "/images/services/tiling.png" },
+  { nameAr: "أعمال محارة", nameEn: "Plastering", slug: "plastering", icon: "layers", imageUrl: "/images/services/plastering.png" },
+  { nameAr: "حدادة", nameEn: "Ironwork", slug: "ironwork", icon: "hammer", imageUrl: "/images/services/ironwork.png" },
+  { nameAr: "تشطيبات شاملة", nameEn: "Comprehensive Finishing", slug: "finishing", icon: "layers", imageUrl: "/images/services/finishing.png" },
+  { nameAr: "جبس بورد وديكور", nameEn: "Gypsum Board", slug: "gypsum", icon: "layout", imageUrl: "/images/services/gypsum.png" },
+  { nameAr: "نقل عفش وتغليف", nameEn: "Furniture Moving", slug: "moving", icon: "truck", imageUrl: "/images/services/moving.png" },
+  { nameAr: "تنظيف وتعقيم منازل", nameEn: "Home Cleaning", slug: "cleaning", icon: "sparkles", imageUrl: "/images/services/cleaning.png" },
+  { nameAr: "ميكانيكي سيارات", nameEn: "Car Mechanic", slug: "car-mechanic", icon: "settings", imageUrl: "/images/services/car-mechanic.png" },
+  { nameAr: "ميكانيكي موتوسيكلات", nameEn: "Motorcycle Mechanic", slug: "bike-mechanic", icon: "settings", imageUrl: "/images/services/bike-mechanic.png" },
+  { nameAr: "صيانة مواتير", nameEn: "Engine Repair", slug: "engine-repair", icon: "hammer", imageUrl: "/images/services/engine-repair.png" },
 ];
 
 async function main() {
@@ -47,12 +55,14 @@ async function main() {
         nameAr: cat.nameAr,
         nameEn: cat.nameEn,
         icon: cat.icon,
+        imageUrl: cat.imageUrl,
       },
       create: {
         nameAr: cat.nameAr,
         nameEn: cat.nameEn,
         slug: cat.slug,
         icon: cat.icon,
+        imageUrl: cat.imageUrl,
         isActive: true,
       }
     });

@@ -2,6 +2,7 @@ import { Router } from "express";
 import { UserRole } from "@prisma/client";
 
 import { z } from "zod";
+import { getCategorySlugFromProfession } from "../../routes/index.js";
 
 import { authenticate, requireRoles } from "../../middleware/auth.middleware.js";
 import { successResponse } from "../../utils/ApiResponse.js";
@@ -32,7 +33,14 @@ type PendingWorkerRecord = {
     | "applianceRepair"
     | "cleaning"
     | "gypsum"
-    | "ceramic";
+    | "ceramic"
+    | "plastering"
+    | "ironwork"
+    | "finishing"
+    | "moving"
+    | "carMechanic"
+    | "bikeMechanic"
+    | "engineRepair";
   area: string;
   experienceYears: number;
   rating: number;
@@ -116,6 +124,13 @@ function mapPendingWorkerSpecialty(profession?: string | null): PendingWorkerRec
   if (value.includes("نظاف") || value.includes("clean")) return "cleaning";
   if (value.includes("جبس") || value.includes("gypsum")) return "gypsum";
   if (value.includes("سيراميك") || value.includes("ceramic")) return "ceramic";
+  if (value.includes("محارة") || value.includes("plaster")) return "plastering";
+  if (value.includes("حداد") || value.includes("iron")) return "ironwork";
+  if (value.includes("تشطيب") || value.includes("finish")) return "finishing";
+  if (value.includes("نقل") || value.includes("move")) return "moving";
+  if (value.includes("سيار") || value.includes("car")) return "carMechanic";
+  if (value.includes("موتوسيك") || value.includes("motorcycl") || value.includes("bike")) return "bikeMechanic";
+  if (value.includes("موتور") || value.includes("engine")) return "engineRepair";
   return "electrician";
 }
 
@@ -300,22 +315,7 @@ router.patch("/workers/:id/verify", catchAsync(async (request, response) => {
       // 1. Create specialization if missing
       const hasSpec = await prisma.workerSpecialization.count({ where: { workerId: updatedWorker.id } });
       if (hasSpec === 0) {
-        const prof = (updatedWorker.profession || "").toLowerCase().trim();
-        let catSlug = "electricity";
-        if (prof === "plumber" || prof === "ceramic") catSlug = "plumbing";
-        else if (prof === "electrician") catSlug = "electricity";
-        else if (prof === "carpenter" || prof === "gypsum") catSlug = "carpentry";
-        else if (prof === "ac-technician") catSlug = "ac";
-        else if (prof === "appliance-repair") catSlug = "appliances";
-        else if (prof === "painter") catSlug = "painting";
-        else if (prof === "networks-cameras") catSlug = "networks";
-        else if (prof.includes("سبا") || prof.includes("plumb") || prof.includes("سيراميك") || prof.includes("ceramic")) catSlug = "plumbing";
-        else if (prof.includes("كهرب") || prof.includes("electr")) catSlug = "electricity";
-        else if (prof.includes("تكييف") || prof.includes("ac")) catSlug = "ac";
-        else if (prof.includes("أجهز") || prof.includes("appliance")) catSlug = "appliances";
-        else if (prof.includes("نجار") || prof.includes("carp") || prof.includes("جبس")) catSlug = "carpentry";
-        else if (prof.includes("نقاش") || prof.includes("دهان") || prof.includes("paint")) catSlug = "painting";
-        else if (prof.includes("شبك") || prof.includes("كاميرات") || prof.includes("network") || prof.includes("camera")) catSlug = "networks";
+        const catSlug = getCategorySlugFromProfession(updatedWorker.profession);
 
         const service = await prisma.service.findFirst({
           where: { category: { slug: catSlug } }
@@ -590,22 +590,7 @@ router.post("/workers/:id/verify", catchAsync(async (request, response) => {
     // 1. Create specialization if missing
     const hasSpec = await prisma.workerSpecialization.count({ where: { workerId: updated.id } });
     if (hasSpec === 0) {
-      const prof = (updated.profession || "").toLowerCase().trim();
-      let catSlug = "electricity";
-      if (prof === "plumber" || prof === "ceramic") catSlug = "plumbing";
-      else if (prof === "electrician") catSlug = "electricity";
-      else if (prof === "carpenter" || prof === "gypsum") catSlug = "carpentry";
-      else if (prof === "ac-technician") catSlug = "ac";
-      else if (prof === "appliance-repair") catSlug = "appliances";
-      else if (prof === "painter") catSlug = "painting";
-      else if (prof === "networks-cameras") catSlug = "networks";
-      else if (prof.includes("سبا") || prof.includes("plumb") || prof.includes("سيراميك") || prof.includes("ceramic")) catSlug = "plumbing";
-      else if (prof.includes("كهرب") || prof.includes("electr")) catSlug = "electricity";
-      else if (prof.includes("تكييف") || prof.includes("ac")) catSlug = "ac";
-      else if (prof.includes("أجهز") || prof.includes("appliance")) catSlug = "appliances";
-      else if (prof.includes("نجار") || prof.includes("carp") || prof.includes("جبس")) catSlug = "carpentry";
-      else if (prof.includes("نقاش") || prof.includes("دهان") || prof.includes("paint")) catSlug = "painting";
-      else if (prof.includes("شبك") || prof.includes("كاميرات") || prof.includes("network") || prof.includes("camera")) catSlug = "networks";
+      const catSlug = getCategorySlugFromProfession(updated.profession);
 
       const service = await prisma.service.findFirst({
         where: { category: { slug: catSlug } }
@@ -689,22 +674,7 @@ router.patch("/workers/:id", catchAsync(async (request, response) => {
         where: { workerId: id }
       });
 
-      const prof = profession.toLowerCase().trim();
-      let catSlug = "electricity";
-      if (prof === "plumber" || prof === "ceramic") catSlug = "plumbing";
-      else if (prof === "electrician") catSlug = "electricity";
-      else if (prof === "carpenter" || prof === "gypsum") catSlug = "carpentry";
-      else if (prof === "ac-technician") catSlug = "ac";
-      else if (prof === "appliance-repair") catSlug = "appliances";
-      else if (prof === "painter") catSlug = "painting";
-      else if (prof === "networks-cameras") catSlug = "networks";
-      else if (prof.includes("سبا") || prof.includes("plumb") || prof.includes("سيراميك") || prof.includes("ceramic")) catSlug = "plumbing";
-      else if (prof.includes("كهرب") || prof.includes("electr")) catSlug = "electricity";
-      else if (prof.includes("تكييف") || prof.includes("ac")) catSlug = "ac";
-      else if (prof.includes("أجهز") || prof.includes("appliance")) catSlug = "appliances";
-      else if (prof.includes("نجار") || prof.includes("carp") || prof.includes("جبس")) catSlug = "carpentry";
-      else if (prof.includes("نقاش") || prof.includes("دهان") || prof.includes("paint")) catSlug = "painting";
-      else if (prof.includes("شبك") || prof.includes("كاميرات") || prof.includes("network") || prof.includes("camera")) catSlug = "networks";
+      const catSlug = getCategorySlugFromProfession(profession);
 
       const service = await prisma.service.findFirst({
         where: { category: { slug: catSlug } }

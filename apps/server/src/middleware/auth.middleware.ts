@@ -4,7 +4,7 @@ import type { UserRole } from "@prisma/client";
 import { ApiError } from "../utils/ApiError.js";
 import { verifyAccessToken } from "../utils/tokens.js";
 
-function getToken(request: Request) {
+export function getToken(request: Request) {
   const authHeader = request.headers.authorization;
 
   if (authHeader?.startsWith("Bearer ")) {

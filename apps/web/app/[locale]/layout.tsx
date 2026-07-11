@@ -7,6 +7,7 @@ import { getDirection, isLocale, supportedLocales, type Locale } from "@/lib/loc
 import { FloatingSupport } from "@/components/shared/floating-support";
 import { SocketProvider } from "@/components/providers/socket-provider";
 import { FloatingChatWidget } from "@/components/shared/floating-chat";
+import { TestModeBanner } from "@/components/shared/test-mode-banner";
 
 export function generateStaticParams() {
   return supportedLocales.map((locale) => ({ locale }));
@@ -43,6 +44,7 @@ export default async function LocaleLayout({
   return (
     <div lang={locale} dir={getDirection(locale as Locale)} className="min-h-screen">
       <SocketProvider>
+        <TestModeBanner locale={locale as Locale} />
         {children}
         <FloatingSupport locale={locale as Locale} />
         <FloatingChatWidget />

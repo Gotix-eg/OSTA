@@ -31,8 +31,10 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
           credentials: "include",
           headers: { Accept: "application/json" }
         });
+        const payload = response.ok ? await response.json() : null;
+        const user = payload?.data?.user ?? payload?.data;
         if (!cancelled) {
-          setIsAuthenticated(response.ok);
+          setIsAuthenticated(Boolean(user?.id));
         }
       } catch {
         if (!cancelled) {

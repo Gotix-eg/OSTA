@@ -22,6 +22,32 @@ import { notificationsRouter } from "../modules/notifications/notifications.rout
 import { chatRouter } from "../modules/chat/chat.routes.js";
 import { reviewsRouter } from "../modules/reviews/reviews.routes.js";
 
+export function getCategorySlugFromProfession(profession: string | null | undefined): string {
+  if (!profession) return "electricity";
+  const p = profession.toLowerCase().trim();
+  if (p === "carpenter" || p === "نجار" || p.includes("نجار") || p.includes("carp")) return "carpentry";
+  if (p === "plumber" || p === "سباك" || p.includes("سبا") || p.includes("plumb")) return "plumbing";
+  if (p === "electrician" || p === "كهربائي" || p.includes("كهرب") || p.includes("electr")) return "electricity";
+  if (p === "ac-technician" || p === "تكييف" || p.includes("تكيي") || p.includes("ac")) return "ac";
+  if (p === "painter" || p === "نقاش" || p.includes("نقاش") || p.includes("دهان") || p.includes("paint")) return "painting";
+  if (p === "aluminum" || p === "الوميتال" || p.includes("الوم") || p.includes("aluminum")) return "aluminum";
+  if (p === "networks" || p === "شبكات" || p.includes("شبك") || p.includes("network")) return "networks";
+  if (p === "computer" || p === "컴퓨터" || p === "كمبيوتر" || p.includes("كمبيو") || p.includes("comput") || p.includes("pc")) return "computer-repair";
+  if (p === "cctv" || p === "كاميرات" || p.includes("كامير") || p.includes("cctv")) return "cctv";
+  if (p === "appliances" || p === "أجهزة" || p.includes("جهز") || p.includes("appliance")) return "appliances";
+  if (p === "tiling" || p === "سيراميك" || p === "رخام" || p === "مبلط" || p.includes("مبلط") || p.includes("سيراميك") || p.includes("رخام") || p.includes("tile") || p.includes("tiling")) return "tiling";
+  if (p === "plastering" || p === "محارة" || p.includes("محارة") || p.includes("plaster")) return "plastering";
+  if (p === "ironwork" || p === "حداد" || p.includes("حداد") || p.includes("iron")) return "ironwork";
+  if (p === "finishing" || p === "تشطيب" || p.includes("تشطيب") || p.includes("finish")) return "finishing";
+  if (p === "gypsum" || p === "جبس" || p.includes("جبس") || p.includes("gypsum")) return "gypsum";
+  if (p === "moving" || p === "نقل" || p.includes("نقل") || p.includes("move")) return "moving";
+  if (p === "cleaning" || p === "نظافة" || p.includes("نظاف") || p.includes("clean")) return "cleaning";
+  if (p === "car-mechanic" || p === "سيارات" || p.includes("سيار") || p.includes("car")) return "car-mechanic";
+  if (p === "bike-mechanic" || p === "موتوسيكلات" || p.includes("موتوسيك") || p.includes("bike")) return "bike-mechanic";
+  if (p === "engine-repair" || p === "مواتير" || p.includes("موتور") || p.includes("engine")) return "engine-repair";
+  return "electricity";
+}
+
 router.get("/public/workers", async (request, response) => {
   const { specialty, governorate, city, area } = request.query as {
     specialty?: string;
@@ -50,22 +76,7 @@ router.get("/public/workers", async (request, response) => {
         // Create specialization if missing
         const hasSpec = await prisma.workerSpecialization.count({ where: { workerId: w.id } });
         if (hasSpec === 0) {
-          const prof = (w.profession || "").toLowerCase().trim();
-          let catSlug = "electricity";
-          if (prof === "plumber" || prof === "ceramic") catSlug = "plumbing";
-          else if (prof === "electrician") catSlug = "electricity";
-          else if (prof === "carpenter" || prof === "gypsum") catSlug = "carpentry";
-          else if (prof === "ac-technician") catSlug = "ac";
-          else if (prof === "appliance-repair") catSlug = "appliances";
-          else if (prof === "painter") catSlug = "painting";
-          else if (prof === "networks-cameras") catSlug = "networks";
-          else if (prof.includes("سبا") || prof.includes("plumb") || prof.includes("سيراميك") || prof.includes("ceramic")) catSlug = "plumbing";
-          else if (prof.includes("كهرب") || prof.includes("electr")) catSlug = "electricity";
-          else if (prof.includes("تكييف") || prof.includes("ac")) catSlug = "ac";
-          else if (prof.includes("أجهز") || prof.includes("appliance")) catSlug = "appliances";
-          else if (prof.includes("نجار") || prof.includes("carp") || prof.includes("جبس")) catSlug = "carpentry";
-          else if (prof.includes("نقاش") || prof.includes("دهان") || prof.includes("paint")) catSlug = "painting";
-          else if (prof.includes("شبك") || prof.includes("كاميرات") || prof.includes("network") || prof.includes("camera")) catSlug = "networks";
+          const catSlug = getCategorySlugFromProfession(w.profession);
 
           const service = await prisma.service.findFirst({
             where: { category: { slug: catSlug } }
@@ -313,6 +324,65 @@ router.get("/public/workers/:id", async (request, response) => {
   }
 });
 
+router.get("/public/fix-specialties", async (request, response) => {
+  try {
+    const workers = await prisma.workerProfile.findMany({
+      include: {
+        user: true,
+        specializations: {
+          include: {
+            service: {
+              include: {
+                category: true
+              }
+            }
+          }
+        }
+      }
+    });
+
+    const logs: string[] = [];
+    logs.push(`Found ${workers.length} total workers in the database.`);
+
+    for (const w of workers) {
+      const correctSlug = getCategorySlugFromProfession(w.profession);
+      const currentSlug = w.specializations[0]?.service?.category?.slug || "";
+
+      if (currentSlug !== correctSlug) {
+        logs.push(`Mismatch detected for worker: ${w.user?.firstName} ${w.user?.lastName} (ID: ${w.id})`);
+        logs.push(`- Profession: "${w.profession}"`);
+        logs.push(`- Current category: "${currentSlug}"`);
+        logs.push(`- Correct category: "${correctSlug}"`);
+
+        const service = await prisma.service.findFirst({
+          where: { category: { slug: correctSlug } }
+        });
+
+        if (service) {
+          await prisma.workerSpecialization.deleteMany({
+            where: { workerId: w.id }
+          });
+
+          await prisma.workerSpecialization.create({
+            data: {
+              workerId: w.id,
+              serviceId: service.id
+            }
+          });
+
+          logs.push(`=> Successfully updated specialization to "${correctSlug}"`);
+        } else {
+          logs.push(`=> Warning: Could not find any service for category "${correctSlug}"`);
+        }
+      }
+    }
+
+    response.status(200).json(successResponse({ logs }, "Specialties fix executed"));
+  } catch (e: any) {
+    response.status(500).json({ error: e.message });
+  }
+});
+
 router.get("/public/requests", async (request, response) => {
   const { specialty } = request.query as { specialty?: string };
 
@@ -461,7 +531,7 @@ router.get("/public/slides", async (_req, response) => {
       isActive: true
     }));
 
-    response.json({ success: true, data: activeSlides });
+    response.json({ success: true, data: [...activeSlides, ...mappedCampaigns] });
   } catch (e: any) {
     response.json({ success: true, data: [] });
   }
@@ -473,7 +543,30 @@ router.get("/public/mobile-slides", async (_req, response) => {
     const setting = await prisma.systemSetting.findUnique({ where: { key: "hero_slides_mobile" } });
     const slides = setting ? JSON.parse(setting.value) : [];
     const activeSlides = Array.isArray(slides) ? slides.filter((s: any) => s.isActive !== false) : [];
-    response.json({ success: true, data: activeSlides });
+
+    const campaignsSetting = await prisma.systemSetting.findUnique({ where: { key: "sponsored_campaigns" } });
+    const rawCampaigns = campaignsSetting ? JSON.parse(campaignsSetting.value) : [];
+    const activeCampaigns = Array.isArray(rawCampaigns) ? rawCampaigns.filter((c: any) => c.isActive !== false) : [];
+
+    const mappedCampaigns = activeCampaigns.map((c: any) => ({
+      id: c.id,
+      eyebrowAr: "إعلان ممول",
+      eyebrowEn: "Sponsored Ad",
+      titleAr: c.titleAr || "",
+      titleEn: c.titleEn || "",
+      descAr: c.descAr || "",
+      descEn: c.descEn || "",
+      imageUrl: c.imageUrl || "",
+      btn1TextAr: "عرض التفاصيل",
+      btn1TextEn: "View Details",
+      btn1Link: c.link || "",
+      btn2TextAr: "",
+      btn2TextEn: "",
+      btn2Link: "",
+      isActive: true
+    }));
+
+    response.json({ success: true, data: [...activeSlides, ...mappedCampaigns] });
   } catch (e: any) {
     response.json({ success: true, data: [] });
   }

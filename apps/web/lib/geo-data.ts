@@ -298,5 +298,12 @@ export const workerProfessions: GeoOption[] = [
   { value: "cctv", labelEn: "Camera Installation (CCTV)", labelAr: "تركيب كاميرات" },
   { value: "cleaning", labelEn: "Cleaning Worker", labelAr: "عامل نظافة" },
   { value: "gypsum", labelEn: "Gypsum Worker", labelAr: "فني جبس" },
-  { value: "ceramic", labelEn: "Ceramic Installer", labelAr: "مبلط سيراميك" }
+  { value: "ceramic", labelEn: "Ceramic Installer", labelAr: "مبلط سيراميك" },
+  { value: "plastering", labelEn: "Plasterer (Plastering)", labelAr: "أعمال محارة" },
+  { value: "ironwork", labelEn: "Ironworker (Ironwork)", labelAr: "حدادة" },
+  { value: "finishing", labelEn: "Finishing Specialist", labelAr: "تشطيبات شاملة" },
+  { value: "moving", labelEn: "Furniture Mover", labelAr: "نقل عفش وتغليف" },
+  { value: "car-mechanic", labelEn: "Car Mechanic", labelAr: "ميكانيكي سيارات" },
+  { value: "bike-mechanic", labelEn: "Motorcycle Mechanic", labelAr: "ميكانيكي موتوسيكلات" },
+  { value: "engine-repair", labelEn: "Engine Repair Specialist", labelAr: "صيانة مواتير" }
 ];
