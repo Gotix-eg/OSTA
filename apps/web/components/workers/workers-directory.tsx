@@ -119,12 +119,15 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
   ];
 
   return (
-    <div className="bg-[#f9f9f9] text-[#1a1c1c] font-sans -mx-4 md:-mx-12 -my-12 px-8 md:px-12 py-16">
+    <div className="bg-[#f9f9f9] text-[#1a1c1c] font-sans antialiased">
+      <style dangerouslySetInnerHTML={{__html: '.worker-card { background-color: #ffffff; border: 1px solid #eeeeee; padding: 24px; position: relative; display: flex; flex-direction: column; transition: all 0.2s ease-in-out; } .worker-card:hover { outline: 2px solid #f5bd18; transform: translateY(-2px); } .btn-pop { box-shadow: 4px 4px 0px #000000; transition: all 0.1s ease-in-out; } .btn-pop:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px #000000; }' }} />
+
       {/* Hero Search & Filter Section */}
-      <section className="max-w-7xl mx-auto mb-12 text-start">
-        <div className="bg-black p-8 rounded-none border border-white/10 shadow-2xl relative overflow-hidden">
+      <section className="max-w-7xl mx-auto px-4 md:px-12 mb-12 mt-6">
+        <div className="bg-black p-8 rounded-lg border border-white/10 shadow-2xl relative overflow-hidden text-start">
+          {/* Decorative background bleed */}
           <div className="absolute -right-20 -top-20 w-64 h-64 bg-[#f5bd18]/10 rounded-full blur-3xl"></div>
-          <h1 className="font-display-lg text-4xl md:text-5xl font-black text-white mb-8">
+          <h1 className="font-display-lg text-4xl md:text-5xl font-bold text-white mb-8">
             {isArabic ? "ابحث عن فني محترف" : "Find Expert Workers"}
           </h1>
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 relative z-10">
@@ -139,7 +142,7 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-[#121212] border border-white/20 text-white pl-12 pr-4 py-4 focus:border-[#f5bd18] focus:ring-0 transition-all outline-none rounded-none text-sm text-start" 
+                  className="w-full bg-[#121212] border border-white/20 text-white pl-12 pr-4 py-4 focus:border-[#f5bd18] focus:ring-0 transition-all outline-none rounded-none text-sm" 
                   placeholder={isArabic ? "مثال: نجار محترف، سباك..." : "e.g. Master Electrician"} 
                 />
               </div>
@@ -202,19 +205,19 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
       </section>
 
       {/* Stats / Quick Nav */}
-      <section className="max-w-7xl mx-auto mb-8 flex items-center justify-between text-start border-b border-neutral-200 pb-4">
+      <section className="max-w-7xl mx-auto px-4 md:px-12 mb-8 flex items-center justify-between text-start">
         <div className="flex items-center gap-3">
-          <span className="text-xl font-black text-black">
+          <span className="text-xl font-bold text-black">
             {filteredWorkers.length} {isArabic ? "فني متاح" : "Professionals"}
           </span>
-          <span className="w-2.5 h-2.5 rounded-full bg-[#f5bd18] animate-pulse"></span>
+          <span className="w-2 h-2 rounded-full bg-[#f5bd18] animate-pulse"></span>
         </div>
         <div className="flex items-center gap-4">
           <span className="text-xs font-bold uppercase text-neutral-500">{isArabic ? "ترتيب حسب:" : "Sort by:"}</span>
           <select 
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="bg-transparent border-none font-black text-black focus:ring-0 cursor-pointer text-xs uppercase"
+            className="bg-transparent border-none font-bold text-black focus:ring-0 cursor-pointer text-xs uppercase"
           >
             <option value="Top Rated">{isArabic ? "الأعلى تقييماً" : "Top Rated"}</option>
             <option value="Most Experienced">{isArabic ? "الأكثر خبرة" : "Most Experienced"}</option>
@@ -223,7 +226,7 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
       </section>
 
       {/* Worker Grid */}
-      <section className="max-w-7xl mx-auto">
+      <section className="max-w-7xl mx-auto px-4 md:px-12">
         {isLoading ? (
           <div className="py-20 flex flex-col items-center justify-center">
             <Loader2 className="h-12 w-12 animate-spin text-[#f5bd18] mb-4" />
@@ -241,7 +244,7 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
                 ? worker.avatarUrl 
                 : defaultAvatars[index % defaultAvatars.length];
               return (
-                <div key={worker.id} className="bg-white border border-neutral-200 p-6 relative flex flex-col group rounded-none hover:outline-2 hover:outline-[#f5bd18] transition-all duration-300 shadow-md text-start">
+                <div key={worker.id} className="worker-card group">
                   <div className="absolute top-4 right-4 z-10">
                     <span className={cn(
                       "text-[10px] font-bold px-2 py-1 flex items-center gap-1 rounded-none",
@@ -296,7 +299,7 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
       {/* Booking Auth Prompt Modal */}
       {showAuthModal && selectedWorkerForBooking && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm animate-fadeIn">
-          <div className="bg-[#1a1c1c] text-white max-w-md w-full p-8 rounded-none border border-white/10 shadow-2xl relative">
+          <div className="bg-[#1a1c1c] text-white max-w-md w-full p-8 rounded-none border border-white/10 shadow-2xl relative text-start">
             <button 
               onClick={() => setShowAuthModal(false)}
               className="absolute top-4 right-4 text-white/60 hover:text-white"
