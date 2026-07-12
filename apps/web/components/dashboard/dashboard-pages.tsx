@@ -6,13 +6,14 @@ import Link from "next/link";
 import {
   ArrowUpRight, Banknote, Briefcase, CalendarClock, CheckCircle2,
   CircleDollarSign, Clock3, MapPin, Route, ShieldAlert, ShieldCheck,
-  Sparkles, Star, Store, TrendingUp, Users, Wallet, Wrench, Zap,
+  Heart, Package, Sparkles, Star, Store, TrendingUp, Users, Wallet, Wrench, Zap,
   MessageSquare, ChevronRight, SlidersHorizontal, Megaphone, Settings, User,
   Plus, Trash2, Edit3, Eye, EyeOff, Image as ImageIcon, FolderOpen, UploadCloud
 } from "lucide-react";
 
 import { useLiveApiData } from "@/hooks/use-live-api-data";
 import { AdBanner } from "@/components/shared/ad-banner";
+import type { ClientDashboardData } from "@/lib/dashboard-data";
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
 import { MediaSelectorModal } from "@/components/admin/media-selector-modal";
@@ -160,60 +161,485 @@ function EmptyNotice({ message }: { message: string }) {
 
 // --- Dashboards ---
 
+const clientServiceLabels: Record<string, { ar: string; en: string }> = {
+  acMaintenance: { ar: "صيانة التكييف", en: "AC maintenance" },
+  electricalInspection: { ar: "فحص الكهرباء", en: "Electrical inspection" },
+  electricalRepair: { ar: "إصلاح كهرباء", en: "Electrical repair" },
+  kitchenPlumbing: { ar: "سباكة المطبخ", en: "Kitchen plumbing" },
+  paintingRefresh: { ar: "تجديد دهانات", en: "Painting refresh" },
+  livingRoomPainting: { ar: "دهان غرفة المعيشة", en: "Living room painting" },
+  faucetInstallation: { ar: "تركيب خلاط", en: "Faucet installation" },
+  heaterMaintenance: { ar: "صيانة سخان", en: "Heater maintenance" },
+  ceilingFanInstallation: { ar: "تركيب مروحة سقف", en: "Ceiling fan installation" }
+};
+
+const clientWorkerSpecialtyLabels: Record<string, { ar: string; en: string }> = {
+  acTechnician: { ar: "فني تكييف", en: "AC technician" },
+  electrician: { ar: "كهربائي", en: "Electrician" },
+  plumber: { ar: "سباك", en: "Plumber" },
+  carpenter: { ar: "نجار", en: "Carpenter" },
+  painter: { ar: "نقاش", en: "Painter" },
+  applianceRepair: { ar: "صيانة أجهزة", en: "Appliance repair" },
+  cleaning: { ar: "تنظيف", en: "Cleaning" },
+  cctv: { ar: "كاميرات مراقبة", en: "CCTV" }
+};
+
+const clientAreaLabels: Record<string, { ar: string; en: string }> = {
+  newCairo: { ar: "القاهرة الجديدة", en: "New Cairo" },
+  nasrCity: { ar: "مدينة نصر", en: "Nasr City" },
+  maadi: { ar: "المعادي", en: "Maadi" }
+};
+
+const clientStatusLabels: Record<string, { ar: string; en: string; className: string }> = {
+  WORKER_EN_ROUTE: {
+    ar: "الفني في الطريق",
+    en: "Worker en route",
+    className: "bg-[#f5bd18]/20 text-[#684e00] border-[#f5bd18]/50"
+  },
+  IN_PROGRESS: {
+    ar: "جاري التنفيذ",
+    en: "In progress",
+    className: "bg-[#0d9488]/10 text-[#006a61] border-[#0d9488]/25"
+  },
+  COMPLETED: {
+    ar: "مكتمل",
+    en: "Completed",
+    className: "bg-[#0d9488]/10 text-[#006a61] border-[#0d9488]/25"
+  },
+  CANCELLED: {
+    ar: "ملغي",
+    en: "Cancelled",
+    className: "bg-red-500/10 text-red-700 border-red-500/20"
+  }
+};
+
+function getLocalizedLabel(map: Record<string, { ar: string; en: string }>, key: string, locale: Locale) {
+  const fallback = key
+    .replace(/([A-Z])/g, " $1")
+    .replace(/[_-]/g, " ")
+    .trim();
+  return map[key]?.[locale] ?? fallback;
+}
+
+function getClientStatus(status: string) {
+  return clientStatusLabels[status] ?? clientStatusLabels.COMPLETED!;
+}
+
+function ClientPanel({
+  title,
+  action,
+  children,
+  className
+}: {
+  title: string;
+  action?: ReactNode;
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <section className={cn("border border-white/10 bg-black p-4 text-white shadow-[4px_4px_0_#000] sm:p-6", className)}>
+      <div className="mb-5 flex items-center justify-between gap-3">
+        <h2 className="flex items-center gap-2 text-xl font-black text-white sm:text-2xl">
+          <span className="h-3 w-3 bg-[#f5bd18]" />
+          {title}
+        </h2>
+        {action}
+      </div>
+      {children}
+    </section>
+  );
+}
+
 export function ClientDashboardHome({ locale }: { locale: Locale }) {
   const isArabic = locale === "ar";
-  const data = useLiveApiData("/clients/dashboard", { 
-    summary: { totalRequests: 0, activeRequests: 0, walletBalance: 0, activeWarranties: 0 },
-    activeRequests: [] 
+  const data = useLiveApiData<ClientDashboardData>("/clients/dashboard", {
+    summary: {
+      totalRequests: 0,
+      totalRequestsDelta: 0,
+      activeRequests: 0,
+      enRouteCount: 0,
+      walletBalance: 0,
+      activeWarranties: 0
+    },
+    activeRequests: [],
+    suggestedServices: [],
+    recentCompleted: [],
+    favoriteWorkers: []
   });
 
+  const activeRequest = data.activeRequests[0];
+  const recentRows = data.recentCompleted.length > 0
+    ? data.recentCompleted.slice(0, 3).map((request) => ({
+        id: request.id,
+        service: request.service,
+        status: "COMPLETED",
+        meta: isArabic
+          ? `منذ ${formatNumber(locale, request.completedDaysAgo)} يوم`
+          : `${formatNumber(locale, request.completedDaysAgo)} days ago`
+      }))
+    : data.activeRequests.slice(0, 3).map((request) => ({
+        id: request.id,
+        service: request.service,
+        status: request.status,
+        meta: getLocalizedLabel(clientAreaLabels, request.area, locale)
+      }));
+
+  const metrics = [
+    {
+      label: isArabic ? "إجمالي الطلبات" : "Total requests",
+      value: formatNumber(locale, data.summary.totalRequests),
+      note: isArabic ? "كل ما طلبته عبر أُسطفاي" : "All-time service requests",
+      icon: Briefcase
+    },
+    {
+      label: isArabic ? "طلبات نشطة" : "Active",
+      value: formatNumber(locale, data.summary.activeRequests),
+      note: isArabic ? "تحتاج متابعة الآن" : "Need attention now",
+      icon: Zap
+    },
+    {
+      label: isArabic ? "ضمانات فعالة" : "Warranties",
+      value: formatNumber(locale, data.summary.activeWarranties),
+      note: isArabic ? "خدمات ما زالت محمية" : "Protected services",
+      icon: ShieldCheck
+    },
+    {
+      label: isArabic ? "رصيد المحفظة" : "Wallet balance",
+      value: formatCurrency(locale, data.summary.walletBalance),
+      note: isArabic ? "جاهز للدفع المحمي" : "Ready for protected payment",
+      icon: Wallet
+    }
+  ];
+
+  const quickActions = [
+    {
+      href: `/${locale}/client/new-request`,
+      title: isArabic ? "طلب خدمة" : "New request",
+      note: isArabic ? "ابدأ طلب صيانة جديد" : "Start a service request",
+      icon: Plus
+    },
+    {
+      href: `/${locale}/client/my-requests`,
+      title: isArabic ? "طلباتي" : "My requests",
+      note: isArabic ? "تابع الحالات والعروض" : "Track statuses and offers",
+      icon: FolderOpen
+    },
+    {
+      href: `/${locale}/client/stores`,
+      title: isArabic ? "المتاجر" : "Stores",
+      note: isArabic ? "متاجر موثقة قريبة" : "Nearby verified stores",
+      icon: Store
+    },
+    {
+      href: `/${locale}/client/materials`,
+      title: isArabic ? "سوق الخامات" : "Materials",
+      note: isArabic ? "اطلب قطع الغيار" : "Request spare parts",
+      icon: Package
+    },
+    {
+      href: `/${locale}/client/favorites`,
+      title: isArabic ? "المفضلين" : "Favorites",
+      note: isArabic ? "فنيون تثق بهم" : "Trusted technicians",
+      icon: Heart
+    },
+    {
+      href: `/${locale}/client/wallet`,
+      title: isArabic ? "المحفظة" : "Wallet",
+      note: isArabic ? "رصيد ومعاملات" : "Balance and history",
+      icon: Wallet
+    }
+  ];
+
   return (
-    <div className="animate-slideUp">
-      <SectionTitle
-        eyebrow={isArabic ? "بوابة العميل" : "Client Portal"}
-        title={isArabic ? "أهلاً بك في أُسطفاي" : "Welcome to Ostafy"}
-        subtitle={isArabic ? "تحكم في طلباتك، تتبع الفنيين، وأدر مدفوعاتك بكل سهولة وأمان." : "Manage your requests, track pros, and handle payments with ease and security."}
-        actionLabel={isArabic ? "طلب جديد" : "New Request"}
-        actionHref={`/${locale}/client/new-request`}
-      />
+    <div className="animate-slideUp text-[#100e08]">
+      <section className="mb-6 flex flex-col gap-4 lg:mb-12 lg:flex-row lg:items-start lg:justify-between">
+        <div>
+          <h1 className="text-3xl font-black leading-tight tracking-normal text-black sm:text-5xl">
+            {isArabic ? "أهلاً بك، أحمد" : "Welcome back, Ahmed"}
+          </h1>
+          <p className="mt-2 text-base font-semibold leading-7 text-black/70 sm:text-lg">
+            {isArabic
+              ? `لديك ${formatNumber(locale, data.summary.activeRequests)} خدمة نشطة اليوم وميزانية جاهزة للمشاريع.`
+              : `You have ${formatNumber(locale, data.summary.activeRequests)} active services today and a ready project budget.`}
+          </p>
+        </div>
 
-      <div className="mb-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <MetricCard label={isArabic ? "طلباتك" : "Total Requests"} value={String(data.summary.totalRequests)} note={isArabic ? "إجمالي الطلبات" : "all time"} icon={Briefcase} />
-        <MetricCard label={isArabic ? "نشط" : "Active"} value={String(data.summary.activeRequests)} note={isArabic ? "قيد التنفيذ حالياً" : "currently active"} icon={Zap} tone="gold" />
-        <MetricCard label={isArabic ? "الضمان" : "Warranty"} value={String(data.summary.activeWarranties)} note={isArabic ? "خدمات تحت الضمان" : "active warranties"} icon={ShieldCheck} />
-        <MetricCard label={isArabic ? "المحفظة" : "Wallet"} value={formatCurrency(locale, data.summary.walletBalance)} note={isArabic ? "رصيدك الحالي" : "available balance"} icon={Wallet} />
-      </div>
+        <div className="hidden items-center gap-6 lg:flex">
+          <div className="border border-white/10 bg-black/80 px-6 py-3 text-white backdrop-blur-xl">
+            <p className="text-xs font-black uppercase tracking-[0.2em] text-[#f5bd18]">
+              {isArabic ? "الرصيد المتاح" : "Available balance"}
+            </p>
+            <p className="mt-1 text-2xl font-black text-white">{formatCurrency(locale, data.summary.walletBalance)}</p>
+          </div>
+          <div className="flex h-12 w-12 items-center justify-center border-2 border-black bg-black text-[#f5bd18]">
+            <User className="h-6 w-6" />
+          </div>
+        </div>
+      </section>
 
-      <div className="grid lg:grid-cols-[1.5fr_1fr] gap-8">
-        <Surface title={isArabic ? "الطلبات النشطة" : "Active Requests"}>
-          {data.activeRequests.length === 0 ? (
-            <EmptyNotice message={isArabic ? "لا توجد طلبات نشطة حالياً. ابدأ بطلبك الأول!" : "No active requests. Start your first job today!"} />
-          ) : (
-            <div className="space-y-4">
-              {/* Mapping live requests here */}
-            </div>
-          )}
-        </Surface>
+      <section className="mb-6 flex gap-4 overflow-x-auto pb-3 lg:hidden">
+        {metrics.slice(0, 3).map(({ label, value, icon: Icon }) => (
+          <div key={label} className="min-w-40 border border-white/10 bg-black p-4 text-white">
+            <Icon className="mb-2 h-6 w-6 text-[#f5bd18]" />
+            <p className="text-xs font-bold text-white/60">{label}</p>
+            <p className="mt-1 text-2xl font-black text-[#f5bd18]">{value}</p>
+          </div>
+        ))}
+      </section>
 
-        <Surface title={isArabic ? "روابط سريعة" : "Quick Actions"}>
-          <div className="grid gap-4">
-            <Link href={`/${locale}/client/new-request`} className="onyx-card p-6 flex items-center justify-between group hover:border-gold-500/40">
-               <div>
-                  <h4 className="font-bold text-white mb-1">{isArabic ? "اطلب فني" : "Book a Pro"}</h4>
-                  <p className="text-sm text-onyx-500">{isArabic ? "كهرباء، سباكة، والمزيد" : "Electrical, Plumbing, and more"}</p>
-               </div>
-               <ArrowUpRight className="h-5 w-5 text-gold-500 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-            </Link>
-            <Link href={`/${locale}/vendors`} className="onyx-card p-6 flex items-center justify-between group hover:border-gold-500/40">
-               <div>
-                  <h4 className="font-bold text-white mb-1">{isArabic ? "تسوق الخامات" : "Buy Materials"}</h4>
-                  <p className="text-sm text-onyx-500">{isArabic ? "من أقرب المتاجر الموثقة" : "From nearest verified stores"}</p>
-               </div>
-               <ArrowUpRight className="h-5 w-5 text-gold-500 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+        <section className="space-y-6 lg:col-span-8">
+          <div className="flex items-center justify-between">
+            <h2 className="flex items-center gap-2 text-2xl font-black text-black">
+              <span className="h-3 w-3 animate-pulse rounded-full bg-red-600" />
+              {isArabic ? "تتبع الخدمات النشطة" : "Active service tracking"}
+            </h2>
+            <Link href={`/${locale}/client/my-requests`} className="border-b-2 border-black text-sm font-black text-black">
+              {isArabic ? "مشاهدة الكل" : "View all"}
             </Link>
           </div>
-        </Surface>
+
+          <div className="overflow-hidden border border-white/10 bg-black text-white">
+            {activeRequest ? (
+              <div className="grid min-h-[18rem] lg:grid-cols-5">
+                <div className="relative hidden bg-[#121212] lg:col-span-2 lg:block">
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_35%_35%,rgba(245,189,24,0.26),transparent_28%),linear-gradient(135deg,#24211a,#050505_62%)]" />
+                  <div className="absolute inset-x-8 bottom-8 top-10 border border-[#f5bd18]/35 bg-black/30 p-6">
+                    <Wrench className="h-16 w-16 text-[#f5bd18]" />
+                    <p className="mt-8 text-sm font-black uppercase tracking-[0.2em] text-white/45">
+                      OSTA Field Ops
+                    </p>
+                  </div>
+                </div>
+                <div className="flex flex-col justify-between gap-8 p-5 lg:col-span-3 lg:p-8">
+                  <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+                    <div>
+                      <span className="mb-3 inline-block bg-[#f5bd18] px-3 py-1 text-xs font-black text-black">
+                        {getClientStatus(activeRequest.status)[locale]}
+                      </span>
+                      <h3 className="text-2xl font-black text-white">
+                        {getLocalizedLabel(clientServiceLabels, activeRequest.service, locale)}
+                      </h3>
+                      <p className="mt-2 text-sm font-semibold text-white/55">
+                        {isArabic ? "رقم الطلب" : "Request ID"}: #{activeRequest.id.slice(0, 8)}
+                      </p>
+                    </div>
+                    <div className="text-start sm:text-end">
+                      <div className="mb-1 inline-flex items-center gap-1 text-[#f5bd18]">
+                        <Star className="h-5 w-5 fill-current" />
+                        <span className="font-black">4.9</span>
+                      </div>
+                      <p className="text-xs font-black uppercase tracking-[0.18em] text-white/40">
+                        {isArabic ? "متخصص معتمد" : "Certified specialist"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="flex justify-between gap-4 text-xs font-black uppercase text-white">
+                      <span>{isArabic ? "المرحلة: في الطريق" : "Stage: en route"}</span>
+                      <span>
+                        {activeRequest.etaMinutes
+                          ? isArabic
+                            ? `وصول متوقع: ${formatNumber(locale, activeRequest.etaMinutes)} دقيقة`
+                            : `ETA: ${formatNumber(locale, activeRequest.etaMinutes)} min`
+                          : isArabic
+                            ? "قيد التنسيق"
+                            : "Scheduling"}
+                      </span>
+                    </div>
+                    <div className="h-2 w-full overflow-hidden bg-white/10">
+                      <div className="h-full w-2/3 bg-[#f5bd18]" />
+                    </div>
+                    <div className="grid gap-3 text-sm font-semibold text-white/60 sm:grid-cols-3">
+                      <span className="inline-flex items-center gap-2">
+                        <User className="h-4 w-4 text-[#f5bd18]" />
+                        {activeRequest.workerName}
+                      </span>
+                      <span className="inline-flex items-center gap-2">
+                        <Clock3 className="h-4 w-4 text-[#f5bd18]" />
+                        {activeRequest.etaMinutes ? `${formatNumber(locale, activeRequest.etaMinutes)} ${isArabic ? "دقيقة" : "min"}` : isArabic ? "قيد التنسيق" : "Scheduling"}
+                      </span>
+                      <span className="inline-flex items-center gap-2">
+                        <MapPin className="h-4 w-4 text-[#f5bd18]" />
+                        {getLocalizedLabel(clientAreaLabels, activeRequest.area, locale)}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-3 sm:flex-row">
+                    <Link href={`/${locale}/client/request/${activeRequest.id}`} className="inline-flex flex-1 items-center justify-center gap-2 bg-white px-5 py-3 text-sm font-black text-black shadow-[4px_4px_0_#f5bd18] hover:-translate-y-0.5">
+                      <MessageSquare className="h-4 w-4" />
+                      {isArabic ? "تواصل مع الفني" : "Contact worker"}
+                    </Link>
+                    <Link href={`/${locale}/client/request/${activeRequest.id}`} className="inline-flex flex-1 items-center justify-center gap-2 border border-white/20 px-5 py-3 text-sm font-black text-white hover:bg-white/10">
+                      <Route className="h-4 w-4" />
+                      {isArabic ? "تفاصيل الموقع" : "Location details"}
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="p-6 lg:p-10">
+                <span className="mb-4 inline-block bg-[#f5bd18] px-3 py-1 text-xs font-black text-black">
+                  {isArabic ? "لا يوجد طلب نشط" : "No active request"}
+                </span>
+                <h3 className="text-2xl font-black text-white">
+                  {isArabic ? "ابدأ طلبك القادم في أقل من دقيقة" : "Start your next request in under a minute"}
+                </h3>
+                <p className="mt-2 text-sm font-semibold text-white/55">
+                  {isArabic ? "اختر الخدمة والمنطقة وسنربطك بفني موثّق." : "Choose a service and area, then we will match you with a verified worker."}
+                </p>
+                <Link href={`/${locale}/client/new-request`} className="mt-6 inline-flex bg-white px-5 py-3 text-sm font-black text-black shadow-[4px_4px_0_#f5bd18]">
+                  {isArabic ? "طلب جديد" : "New request"}
+                </Link>
+              </div>
+            )}
+          </div>
+        </section>
+
+        <section className="space-y-6 lg:col-span-4">
+          <h2 className="text-2xl font-black text-black">{isArabic ? "وصول سريع" : "Quick access"}</h2>
+          <div className="grid grid-cols-2 gap-4">
+            {quickActions.slice(0, 4).map(({ href, title, icon: Icon }, index) => (
+              <Link
+                key={href}
+                href={href as `/${string}`}
+                className={cn(
+                  "group flex aspect-square flex-col justify-between p-5 text-sm font-black shadow-[4px_4px_0_#000] hover:-translate-y-0.5 sm:p-6",
+                  index === 1 ? "bg-white text-black" : "border border-white/10 bg-black text-white"
+                )}
+              >
+                <Icon className={cn("h-9 w-9 transition-transform group-hover:scale-110", index === 1 ? "text-black" : "text-[#f5bd18]")} />
+                <span>{title}</span>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        <section className="mt-4 lg:col-span-12 lg:mt-6">
+          <div className="mb-6 flex items-center justify-between">
+            <h2 className="text-2xl font-black text-black">{isArabic ? "فنيين تعاملت معهم سابقاً" : "Previously booked pros"}</h2>
+            <Link href={`/${locale}/client/favorites`} className="bg-black px-5 py-2 text-xs font-black text-white shadow-[4px_4px_0_rgba(0,0,0,0.35)]">
+              {isArabic ? "استعراض الكل" : "Browse all"}
+            </Link>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {data.favoriteWorkers.length > 0 ? (
+              data.favoriteWorkers.slice(0, 3).map((worker) => (
+                <div key={worker.id} className="border border-white/10 bg-black p-5 text-white">
+                  <div className="mb-6 flex gap-4">
+                    <div className="flex h-16 w-16 shrink-0 items-center justify-center bg-[#121212] text-[#f5bd18]">
+                      <User className="h-8 w-8" />
+                    </div>
+                    <div className="min-w-0">
+                      <h4 className="truncate text-sm font-black text-white">{worker.name}</h4>
+                      <p className="mt-1 text-xs font-semibold text-white/40">
+                        {getLocalizedLabel(clientWorkerSpecialtyLabels, worker.specialty, locale)}
+                      </p>
+                      <div className="mt-2 flex items-center gap-1 text-[#f5bd18]">
+                        <Star className="h-4 w-4 fill-current" />
+                        <span className="text-xs font-black">{formatNumber(locale, worker.rating)}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <Link href={`/${locale}/client/new-request`} className="flex-1 bg-[#f5bd18] py-2 text-center text-xs font-black text-black shadow-[3px_3px_0_#000]">
+                      {isArabic ? "حجز سريع" : "Quick book"}
+                    </Link>
+                    <Link href={`/${locale}/contact`} className="flex h-10 w-10 items-center justify-center border border-white/20 text-white hover:bg-white/10">
+                      <MessageSquare className="h-4 w-4" />
+                    </Link>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="border border-white/10 bg-black p-6 text-white md:col-span-2 xl:col-span-3">
+                <p className="text-sm font-semibold text-white/65">
+                  {isArabic ? "الفنيون الذين تتعامل معهم كثيراً سيظهرون هنا." : "Technicians you use often will show up here."}
+                </p>
+              </div>
+            )}
+
+            <Link href={`/${locale}/workers`} className="flex min-h-44 flex-col items-center justify-center border-2 border-dashed border-black/25 bg-white p-6 text-center text-black hover:border-black">
+              <Users className="mb-3 h-10 w-10 text-black/45" />
+              <p className="text-sm font-black text-black/65">{isArabic ? "اكتشف المزيد من المحترفين" : "Discover more professionals"}</p>
+            </Link>
+          </div>
+        </section>
+
+        <section className="lg:col-span-12">
+          <div className="relative overflow-hidden border-t-4 border-[#f5bd18] bg-black p-6 text-white lg:p-10">
+            <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+              <div>
+                <div className="mb-4 flex items-center gap-4">
+                  <ShieldCheck className="h-12 w-12 text-[#f5bd18]" />
+                  <h2 className="text-2xl font-black text-white lg:text-3xl">
+                    {isArabic ? "مدفوعاتك محمية بقوة الصناعة" : "Your payments are protected"}
+                  </h2>
+                </div>
+                <p className="max-w-2xl text-base font-semibold leading-7 text-white/70">
+                  {isArabic
+                    ? "نضمن جودة التنفيذ وأمان التحويلات. لا يتم تحويل المستحقات للفني إلا بعد تأكيدك على جودة العمل."
+                    : "We keep execution quality and transfers clear. Funds are released only after you confirm the completed work."}
+                </p>
+              </div>
+              <div className="grid grid-cols-2 gap-6 text-center">
+                <div>
+                  <p className="text-4xl font-black text-[#f5bd18]">100%</p>
+                  <p className="text-xs font-black uppercase tracking-[0.2em] text-white/50">{isArabic ? "ضمان الجودة" : "Quality guarantee"}</p>
+                </div>
+                <div>
+                  <p className="text-4xl font-black text-[#f5bd18]">24/7</p>
+                  <p className="text-xs font-black uppercase tracking-[0.2em] text-white/50">{isArabic ? "دعم فني" : "Support"}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="lg:col-span-12">
+          <ClientPanel title={isArabic ? "آخر الطلبات" : "Recent requests"} className="shadow-none">
+            {recentRows.length > 0 ? (
+              <div className="divide-y divide-white/10">
+                {recentRows.map((request) => {
+                  const status = getClientStatus(request.status);
+                  return (
+                    <div key={request.id} className="flex flex-col gap-3 py-4 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between">
+                      <div className="min-w-0">
+                        <p className="font-black text-white">{getLocalizedLabel(clientServiceLabels, request.service, locale)}</p>
+                        <p className="mt-1 text-xs font-semibold text-white/45">{request.meta}</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="bg-[#f5bd18] px-2 py-1 text-xs font-black text-black">
+                          {status[locale]}
+                        </span>
+                        <Link href={`/${locale}/client/request/${request.id}`} className="inline-flex h-9 items-center justify-center border border-white/20 px-3 text-xs font-black text-white hover:bg-white/10">
+                          {isArabic ? "تفاصيل" : "Details"}
+                        </Link>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="border border-dashed border-white/20 bg-white/5 p-5 text-sm font-semibold text-white/55">
+                {isArabic ? "سجل الطلبات سيظهر هنا بعد أول خدمة." : "Your request history will appear here after the first service."}
+              </p>
+            )}
+          </ClientPanel>
+        </section>
       </div>
+
+      <footer className="mt-12 flex flex-col gap-4 border-t border-black/10 pb-2 pt-8 text-xs font-bold text-black/45 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex flex-wrap gap-5">
+          <Link href={`/${locale}/privacy`} className="hover:text-black">{isArabic ? "سياسة الخصوصية" : "Privacy"}</Link>
+          <Link href={`/${locale}/terms`} className="hover:text-black">{isArabic ? "شروط الاستخدام" : "Terms"}</Link>
+          <Link href={`/${locale}/contact`} className="hover:text-black">{isArabic ? "مركز المساعدة" : "Help center"}</Link>
+        </div>
+        <p className="text-black/45">© 2026 OSTA INDUSTRIAL</p>
+      </footer>
     </div>
   );
 }
