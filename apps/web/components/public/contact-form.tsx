@@ -1,152 +1,345 @@
 "use client";
 
 import { useState } from "react";
-import { Mail, Phone, MapPin, Send, MessageSquare, Sparkles, Facebook, Instagram } from "lucide-react";
+import { Phone, Mail, MapPin, Facebook, Instagram, Send } from "lucide-react";
 import type { Locale } from "@/lib/locales";
 
 export function ContactForm({ locale }: { locale: Locale }) {
   const isArabic = locale === "ar";
   const [submitted, setSubmitted] = useState(false);
 
+  const copy = {
+    ar: {
+      heroTitle: "تواصل معنا",
+      heroSub: "دعم صناعي متميز لخدمات التجارة الراقية. تواصل مع خبراء أوستا اليوم.",
+      detailsTitle: "بيانات التواصل",
+      phone: "واتساب",
+      email: "البريد الإلكتروني",
+      address: "العنوان",
+      location: "القاهرة، مصر",
+      followTitle: "تابعنا",
+      formTitle: "أرسل لنا رسالة",
+      nameLabel: "الاسم الكامل",
+      namePlaceholder: "محمد أحمد",
+      phoneLabel: "رقم الهاتف",
+      phonePlaceholder: "+20 100 000 0000",
+      emailLabel: "البريد الإلكتروني",
+      emailPlaceholder: "example@email.com",
+      subjectLabel: "الموضوع",
+      subjectOptions: ["استفسار عام", "طلب خدمة", "شراكة موردين", "ملاحظات"],
+      messageLabel: "الرسالة",
+      messagePlaceholder: "اكتب تفاصيل طلبك هنا...",
+      submitBtn: "إرسال الرسالة",
+      successTitle: "تم الإرسال بنجاح!",
+      successSub: "شكراً لتواصلك معنا. سنرد عليك في أقرب وقت ممكن.",
+      anotherBtn: "إرسال رسالة أخرى",
+      mapLabel: "ابحث عنا في القاهرة",
+    },
+    en: {
+      heroTitle: "GET IN TOUCH",
+      heroSub: "Premium industrial support for high-end trade services. Connect with the experts at OSTA today.",
+      detailsTitle: "Contact Details",
+      phone: "WhatsApp",
+      email: "Email",
+      address: "Address",
+      location: "Cairo, Egypt",
+      followTitle: "Follow Our Work",
+      formTitle: "Send us a message",
+      nameLabel: "Full Name",
+      namePlaceholder: "John Doe",
+      phoneLabel: "Phone Number",
+      phonePlaceholder: "+20 100 000 0000",
+      emailLabel: "Email Address",
+      emailPlaceholder: "john@example.com",
+      subjectLabel: "Subject",
+      subjectOptions: ["General Inquiry", "Service Request", "Vendor Partnership", "Feedback"],
+      messageLabel: "Message",
+      messagePlaceholder: "Describe your requirement...",
+      submitBtn: "Send Message",
+      successTitle: "Message Sent!",
+      successSub: "Thanks for reaching out. We'll get back to you shortly.",
+      anotherBtn: "Send another message",
+      mapLabel: "Find us in Cairo",
+    },
+  };
+
+  const c = copy[locale] ?? copy.en;
+
+  const contactItems = [
+    { label: c.phone, value: "+20 100 941 0112", href: "https://wa.me/201009410112", Icon: Phone },
+    { label: c.email, value: "info@ostafy.com", href: "mailto:info@ostafy.com", Icon: Mail },
+    { label: c.address, value: c.location, href: null, Icon: MapPin },
+  ];
+
   return (
-    <div className="animate-fadeIn grid lg:grid-cols-3 gap-12 pb-20">
-      {/* ── Contact Info ── */}
-      <div className="space-y-6">
-        <div className="onyx-card p-10 border-gold-500/10 relative overflow-hidden h-full flex flex-col justify-between">
-           <div className="absolute top-0 right-0 p-8 opacity-10"><Sparkles className="h-20 w-20 text-gold-500" /></div>
-           
-           <div className="space-y-8 relative z-10">
-              <span className="inline-flex rounded-full bg-gold-500/10 px-4 py-2 text-[10px] font-black uppercase tracking-[0.4em] text-gold-500 border border-gold-500/20">
-                {isArabic ? "تواصل معنا" : "Get in Touch"}
-              </span>
-              <h2 className="text-4xl font-black text-white leading-tight">
-                {isArabic ? "نحن هنا لمساعدتك دائماً" : "We're Always Here to Help"}
-              </h2>
-              <p className="text-onyx-400 leading-relaxed">
-                {isArabic 
-                  ? "لديك استفسار؟ شكوى؟ أو اقتراح؟ فريق الدعم متاح على مدار الساعة للإجابة عليك." 
-                  : "Have a question, complaint, or suggestion? Our support team is available 24/7 to assist you."}
-              </p>
-           </div>
-
-            <div className="space-y-6 mt-12 relative z-10">
-               <a 
-                  href="https://wa.me/201009410112"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-4 group cursor-pointer"
-               >
-                  <div className="h-12 w-12 rounded-xl bg-onyx-900 border border-onyx-700 flex items-center justify-center text-gold-500 group-hover:bg-gold-500 group-hover:text-onyx-950 transition-all duration-500 shadow-gold/5 group-hover:shadow-gold/20">
-                     <Phone className="h-5 w-5" />
-                  </div>
-                  <div>
-                     <p className="text-xs text-onyx-500 font-bold uppercase tracking-widest">{isArabic ? "تواصل واتساب" : "WhatsApp Us"}</p>
-                     <p className="text-white font-bold tracking-wider group-hover:text-gold-500 transition-colors" dir="ltr">+20 100 941 0112</p>
-                  </div>
-               </a>
-
-               <a 
-                  href="mailto:info@ostafy.com"
-                  className="flex items-center gap-4 group cursor-pointer"
-               >
-                  <div className="h-12 w-12 rounded-xl bg-onyx-900 border border-onyx-700 flex items-center justify-center text-gold-500 group-hover:bg-gold-500 group-hover:text-onyx-950 transition-all duration-500 shadow-gold/5 group-hover:shadow-gold/20">
-                     <Mail className="h-5 w-5" />
-                  </div>
-                  <div>
-                     <p className="text-xs text-onyx-500 font-bold uppercase tracking-widest">{isArabic ? "راسلنا" : "Email Us"}</p>
-                     <p className="text-white font-bold tracking-wider group-hover:text-gold-500 transition-colors">info@ostafy.com</p>
-                  </div>
-               </a>
-
-               <div className="flex items-center gap-4 group">
-                  <div className="h-12 w-12 rounded-xl bg-onyx-900 border border-onyx-700 flex items-center justify-center text-gold-500 group-hover:bg-gold-500 group-hover:text-onyx-950 transition-all duration-500 shadow-gold/5 group-hover:shadow-gold/20">
-                     <MapPin className="h-5 w-5" />
-                  </div>
-                  <div>
-                     <p className="text-xs text-onyx-500 font-bold uppercase tracking-widest">{isArabic ? "مقرنا" : "Location"}</p>
-                     <p className="text-white font-bold tracking-wider">{isArabic ? "القاهرة، مصر" : "Cairo, Egypt"}</p>
-                  </div>
-               </div>
-
-               <a 
-                  href="https://www.facebook.com/2ostafy/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-4 group cursor-pointer"
-               >
-                  <div className="h-12 w-12 rounded-xl bg-onyx-900 border border-onyx-700 flex items-center justify-center text-gold-500 group-hover:bg-gold-500 group-hover:text-onyx-950 transition-all duration-500 shadow-gold/5 group-hover:shadow-gold/20">
-                     <Facebook className="h-5 w-5" />
-                  </div>
-                  <div>
-                     <p className="text-xs text-onyx-500 font-bold uppercase tracking-widest">{isArabic ? "فيسبوك" : "Facebook"}</p>
-                     <p className="text-white font-bold tracking-wider group-hover:text-gold-500 transition-colors">Ostafy Egypt</p>
-                  </div>
-               </a>
-
-               <a 
-                  href="https://instagram.com/osta.egypt"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-4 group cursor-pointer"
-               >
-                  <div className="h-12 w-12 rounded-xl bg-onyx-900 border border-onyx-700 flex items-center justify-center text-gold-500 group-hover:bg-gold-500 group-hover:text-onyx-950 transition-all duration-500 shadow-gold/5 group-hover:shadow-gold/20">
-                     <Instagram className="h-5 w-5" />
-                  </div>
-                  <div>
-                     <p className="text-xs text-onyx-500 font-bold uppercase tracking-widest">{isArabic ? "إنستغرام" : "Instagram"}</p>
-                     <p className="text-white font-bold tracking-wider group-hover:text-gold-500 transition-colors">@osta.egypt</p>
-                  </div>
-               </a>
-           </div>
-        </div>
+    <div
+      dir={isArabic ? "rtl" : "ltr"}
+      style={{ backgroundColor: "#f5bd18", minHeight: "100vh" }}
+    >
+      {/* ── Hero Header ── */}
+      <div className="px-4 md:px-12 pt-10 pb-8 max-w-[1280px] mx-auto">
+        <h1 className="font-black text-[#1a1c1c] uppercase leading-tight tracking-tight text-4xl md:text-7xl mb-3">
+          {c.heroTitle}
+        </h1>
+        <p className="text-[#1a1c1c]/80 text-base md:text-lg max-w-2xl leading-relaxed">
+          {c.heroSub}
+        </p>
       </div>
 
-      {/* ── Contact Form ── */}
-      <div className="lg:col-span-2">
-        <div className="onyx-card p-10 border-gold-500/10">
-          {submitted ? (
-            <div className="text-center py-20 space-y-6">
-              <div className="h-20 w-20 bg-success/10 border border-success/30 rounded-full flex items-center justify-center mx-auto">
-                 <Send className="h-8 w-8 text-success" />
+      {/* ── Main Grid ── */}
+      <div className="px-4 md:px-12 pb-12 max-w-[1280px] mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+
+          {/* ── Left: Contact Details (Dark Obsidian Card) ── */}
+          <div
+            className="lg:col-span-5 p-8 md:p-14 flex flex-col justify-between"
+            style={{ backgroundColor: "#1a1c1c", border: "1px solid rgba(255,255,255,0.1)" }}
+          >
+            <div>
+              <h2
+                className="font-black uppercase text-2xl md:text-3xl mb-8"
+                style={{ color: "#f5bd18" }}
+              >
+                {c.detailsTitle}
+              </h2>
+
+              <div className="space-y-8">
+                {contactItems.map(({ label, value, href, Icon }) => {
+                  const content = (
+                    <div className="flex items-start gap-5 group cursor-pointer">
+                      {/* Yellow icon box */}
+                      <div
+                        className="flex-shrink-0 p-3 flex items-center justify-center"
+                        style={{ backgroundColor: "#f5bd18" }}
+                      >
+                        <Icon size={20} className="text-[#1a1c1c]" strokeWidth={2} />
+                      </div>
+                      <div>
+                        <p className="text-xs font-black uppercase tracking-widest text-white/60 mb-1">
+                          {label}
+                        </p>
+                        <p className="font-black text-white text-lg group-hover:text-[#f5bd18] transition-colors duration-200" dir="ltr">
+                          {value}
+                        </p>
+                      </div>
+                    </div>
+                  );
+
+                  return href ? (
+                    <a key={label} href={href} target="_blank" rel="noopener noreferrer">
+                      {content}
+                    </a>
+                  ) : (
+                    <div key={label}>{content}</div>
+                  );
+                })}
               </div>
-              <h3 className="text-3xl font-black text-white">{isArabic ? "تم الإرسال بنجاح!" : "Message Sent!"}</h3>
-              <p className="text-onyx-400">{isArabic ? "شكراً لتواصلك معنا. سنرد عليك في أقرب وقت ممكن." : "Thanks for reaching out. We'll get back to you shortly."}</p>
-              <button onClick={() => setSubmitted(false)} className="btn-onyx">{isArabic ? "إرسال رسالة أخرى" : "Send another message"}</button>
             </div>
-          ) : (
-            <form onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }} className="space-y-8">
-              <div className="grid md:grid-cols-2 gap-8">
-                <label className="block space-y-2">
-                  <span className="text-sm font-bold text-onyx-300 tracking-wide">{isArabic ? "الاسم الكامل" : "Full Name"}</span>
-                  <input type="text" required className="h-14 w-full rounded-2xl border border-onyx-700 bg-onyx-800/50 px-5 text-white transition-all focus:border-gold-500/50 outline-none" />
-                </label>
-                <label className="block space-y-2">
-                  <span className="text-sm font-bold text-onyx-300 tracking-wide">{isArabic ? "رقم الهاتف" : "Phone Number"}</span>
-                  <input type="tel" required className="h-14 w-full rounded-2xl border border-onyx-700 bg-onyx-800/50 px-5 text-white transition-all focus:border-gold-500/50 outline-none" />
-                </label>
+
+            {/* Social links */}
+            <div className="mt-10">
+              <p className="font-black text-xs uppercase tracking-widest text-white mb-4">
+                {c.followTitle}
+              </p>
+              <div className="flex gap-3">
+                {[
+                  { href: "https://www.facebook.com/2ostafy/", Icon: Facebook },
+                  { href: "https://instagram.com/osta.egypt", Icon: Instagram },
+                ].map(({ href, Icon }) => (
+                  <a
+                    key={href}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-12 h-12 flex items-center justify-center text-white transition-all duration-200"
+                    style={{ backgroundColor: "rgba(255,255,255,0.1)" }}
+                    onMouseEnter={(e) => {
+                      (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "#f5bd18";
+                      (e.currentTarget as HTMLAnchorElement).style.color = "#1a1c1c";
+                    }}
+                    onMouseLeave={(e) => {
+                      (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "rgba(255,255,255,0.1)";
+                      (e.currentTarget as HTMLAnchorElement).style.color = "#ffffff";
+                    }}
+                  >
+                    <Icon size={20} strokeWidth={2} />
+                  </a>
+                ))}
               </div>
+            </div>
+          </div>
 
-              <label className="block space-y-2">
-                <span className="text-sm font-bold text-onyx-300 tracking-wide">{isArabic ? "البريد الإلكتروني" : "Email Address"}</span>
-                <input type="email" required className="h-14 w-full rounded-2xl border border-onyx-700 bg-onyx-800/50 px-5 text-white transition-all focus:border-gold-500/50 outline-none" />
-              </label>
+          {/* ── Right: Contact Form (White/Translucent) ── */}
+          <div
+            className="lg:col-span-7 p-8 md:p-14"
+            style={{
+              backgroundColor: "rgba(255,255,255,0.5)",
+              backdropFilter: "blur(8px)",
+              border: "1px solid rgba(26,28,28,0.1)",
+            }}
+          >
+            {submitted ? (
+              <div className="flex flex-col items-center justify-center h-full py-20 text-center space-y-6">
+                <div
+                  className="w-20 h-20 flex items-center justify-center"
+                  style={{ backgroundColor: "#1a1c1c" }}
+                >
+                  <Send size={32} className="text-[#f5bd18]" />
+                </div>
+                <h3 className="font-black text-[#1a1c1c] uppercase text-3xl">{c.successTitle}</h3>
+                <p className="text-[#1a1c1c]/70 max-w-sm">{c.successSub}</p>
+                <button
+                  onClick={() => setSubmitted(false)}
+                  className="font-black uppercase text-sm px-8 py-4 transition-all duration-150"
+                  style={{
+                    backgroundColor: "#1a1c1c",
+                    color: "#ffffff",
+                    boxShadow: "4px 4px 0px #000000",
+                  }}
+                >
+                  {c.anotherBtn}
+                </button>
+              </div>
+            ) : (
+              <>
+                <h2 className="font-black text-[#1a1c1c] uppercase text-2xl md:text-3xl mb-8">
+                  {c.formTitle}
+                </h2>
 
-              <label className="block space-y-2">
-                <span className="text-sm font-bold text-onyx-300 tracking-wide">{isArabic ? "الموضوع" : "Subject"}</span>
-                <input type="text" required className="h-14 w-full rounded-2xl border border-onyx-700 bg-onyx-800/50 px-5 text-white transition-all focus:border-gold-500/50 outline-none" />
-              </label>
+                <form
+                  onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }}
+                  className="space-y-5"
+                >
+                  {/* Name + Phone */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div className="space-y-2">
+                      <label className="block font-black text-xs uppercase tracking-widest text-[#1a1c1c]/70">
+                        {c.nameLabel}
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        placeholder={c.namePlaceholder}
+                        className="w-full p-4 font-medium placeholder:text-[#1a1c1c]/30 focus:outline-none transition-colors"
+                        style={{ backgroundColor: "#ffffff", border: "2px solid #1a1c1c" }}
+                        onFocus={(e) => (e.currentTarget.style.borderColor = "#f5bd18")}
+                        onBlur={(e) => (e.currentTarget.style.borderColor = "#1a1c1c")}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="block font-black text-xs uppercase tracking-widest text-[#1a1c1c]/70">
+                        {c.phoneLabel}
+                      </label>
+                      <input
+                        type="tel"
+                        required
+                        placeholder={c.phonePlaceholder}
+                        dir="ltr"
+                        className="w-full p-4 font-medium placeholder:text-[#1a1c1c]/30 focus:outline-none transition-colors"
+                        style={{ backgroundColor: "#ffffff", border: "2px solid #1a1c1c" }}
+                        onFocus={(e) => (e.currentTarget.style.borderColor = "#f5bd18")}
+                        onBlur={(e) => (e.currentTarget.style.borderColor = "#1a1c1c")}
+                      />
+                    </div>
+                  </div>
 
-              <label className="block space-y-2">
-                <span className="text-sm font-bold text-onyx-300 tracking-wide">{isArabic ? "رسالتك" : "Your Message"}</span>
-                <textarea required rows={5} className="w-full rounded-2xl border border-onyx-700 bg-onyx-800/50 px-5 py-4 text-white transition-all focus:border-gold-500/50 outline-none resize-none" />
-              </label>
+                  {/* Email + Subject */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div className="space-y-2">
+                      <label className="block font-black text-xs uppercase tracking-widest text-[#1a1c1c]/70">
+                        {c.emailLabel}
+                      </label>
+                      <input
+                        type="email"
+                        required
+                        placeholder={c.emailPlaceholder}
+                        dir="ltr"
+                        className="w-full p-4 font-medium placeholder:text-[#1a1c1c]/30 focus:outline-none transition-colors"
+                        style={{ backgroundColor: "#ffffff", border: "2px solid #1a1c1c" }}
+                        onFocus={(e) => (e.currentTarget.style.borderColor = "#f5bd18")}
+                        onBlur={(e) => (e.currentTarget.style.borderColor = "#1a1c1c")}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="block font-black text-xs uppercase tracking-widest text-[#1a1c1c]/70">
+                        {c.subjectLabel}
+                      </label>
+                      <select
+                        className="w-full p-4 font-medium focus:outline-none appearance-none transition-colors"
+                        style={{ backgroundColor: "#ffffff", border: "2px solid #1a1c1c" }}
+                        onFocus={(e) => (e.currentTarget.style.borderColor = "#f5bd18")}
+                        onBlur={(e) => (e.currentTarget.style.borderColor = "#1a1c1c")}
+                      >
+                        {c.subjectOptions.map((opt) => (
+                          <option key={opt}>{opt}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
 
-              <button type="submit" className="btn-gold w-full h-16 text-lg flex items-center justify-center gap-3">
-                {isArabic ? "إرسال الرسالة" : "Send Message"}
-                <MessageSquare className="h-5 w-5" />
-              </button>
-            </form>
-          )}
+                  {/* Message */}
+                  <div className="space-y-2">
+                    <label className="block font-black text-xs uppercase tracking-widest text-[#1a1c1c]/70">
+                      {c.messageLabel}
+                    </label>
+                    <textarea
+                      required
+                      rows={6}
+                      placeholder={c.messagePlaceholder}
+                      className="w-full p-4 font-medium placeholder:text-[#1a1c1c]/30 focus:outline-none resize-none transition-colors"
+                      style={{ backgroundColor: "#ffffff", border: "2px solid #1a1c1c" }}
+                      onFocus={(e) => (e.currentTarget.style.borderColor = "#f5bd18")}
+                      onBlur={(e) => (e.currentTarget.style.borderColor = "#1a1c1c")}
+                    />
+                  </div>
+
+                  {/* Submit */}
+                  <button
+                    type="submit"
+                    className="font-black uppercase text-sm px-12 py-5 text-white transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5"
+                    style={{
+                      backgroundColor: "#1a1c1c",
+                      boxShadow: "4px 4px 0px #000000",
+                    }}
+                  >
+                    {c.submitBtn}
+                  </button>
+                </form>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* ── Map Section ── */}
+        <div
+          className="mt-6 overflow-hidden relative group"
+          style={{
+            height: "400px",
+            backgroundColor: "#1a1c1c",
+            border: "1px solid rgba(255,255,255,0.1)",
+          }}
+        >
+          {/* Overlay label */}
+          <div className="absolute inset-0 bg-[#1a1c1c]/40 group-hover:bg-[#1a1c1c]/20 transition-colors z-10 flex items-center justify-center pointer-events-none">
+            <div
+              className="font-black uppercase text-xl px-8 py-4"
+              style={{
+                backgroundColor: "#f5bd18",
+                color: "#1a1c1c",
+                boxShadow: "4px 4px 0px #000000",
+              }}
+            >
+              {c.mapLabel}
+            </div>
+          </div>
+
+          {/* Map image */}
+          <div
+            className="w-full h-full bg-cover bg-center grayscale opacity-60 group-hover:scale-105 transition-transform duration-700"
+            style={{
+              backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuA0YwXLbNng_Wr44GR8VZg8-Fx3rvuDeqGUL4BTX0WuGWXDOVA_TcSa93dNwGWfslJq_WfUJ1G28wYv7KIy2Waxdz8MnqWl8UPtB6Jkbciu5IyEzklq0MAm-deQ_3rTcV2CmerFfG25M6oeoSJlYYqmc24OgUAztZy1uzt9CkQWsKPLI207G9HSaop6Lumf5lgf5r82kobW3TpQt_jT5ROeI17DRSN36ebcMa2tPaLASWDKCqBxlPKp5BdnEmzyFrjlyGtE2jLYol8')`,
+            }}
+          />
         </div>
       </div>
     </div>
