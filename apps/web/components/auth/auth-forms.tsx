@@ -362,10 +362,10 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
           {(["CLIENT", "WORKER", "VENDOR"] as const).map((role, idx) => {
             const isActive = activeTab === role;
             const label = role === "CLIENT"
-              ? (isArabic ? "CLIENT / عميل" : "CLIENT / عميل")
+              ? (isArabic ? "عميل" : "CLIENT")
               : role === "WORKER"
-              ? (isArabic ? "PRO / فني" : "PRO / فني")
-              : (isArabic ? "VENDOR / مورد" : "VENDOR / مورد");
+              ? (isArabic ? "فني" : "PRO")
+              : (isArabic ? "مورد" : "VENDOR");
             return (
               <button
                 key={role}
@@ -393,7 +393,7 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
         {/* Phone Input */}
         <div className="space-y-2 text-start">
           <label className="block text-white/70 font-black text-xs uppercase tracking-widest flex justify-between">
-            <span>{isArabic ? "رقم الهاتف" : "Phone Number / رقم الهاتف"}</span>
+            <span>{isArabic ? "رقم الهاتف" : "Phone Number"}</span>
             <Phone size={14} className="text-[#f5bd18]" />
           </label>
           <input
@@ -419,7 +419,7 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
         {/* Password Input */}
         <div className="space-y-2 text-start">
           <label className="block text-white/70 font-black text-xs uppercase tracking-widest flex justify-between">
-            <span>{isArabic ? "كلمة المرور" : "Password / كلمة المرور"}</span>
+            <span>{isArabic ? "كلمة المرور" : "Password"}</span>
             <Lock size={14} className="text-[#f5bd18]" />
           </label>
           <div className="relative">
@@ -461,11 +461,11 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
               className="rounded-none bg-transparent border-white/20 text-[#f5bd18] focus:ring-0 focus:ring-offset-0 cursor-pointer h-4 w-4"
             />
             <span className="group-hover:text-white transition-colors">
-              {isArabic ? "تذكرني" : "Remember Me / تذكرني"}
+              {isArabic ? "تذكرني" : "Remember Me"}
             </span>
           </label>
           <Link href={`/${locale}/forgot-password`} className="hover:text-[#f5bd18] transition-colors">
-            {isArabic ? "نسيت كلمة المرور؟" : "Forgot Password? / نسيت كلمة المرور؟"}
+            {isArabic ? "نسيت كلمة المرور؟" : "Forgot Password?"}
           </Link>
         </div>
 
@@ -486,7 +486,7 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
             e.currentTarget.style.boxShadow = "4px 4px 0px rgba(255,255,255,0.2)";
           }}
         >
-          {isSubmitting ? (isArabic ? "... جاري الدخول" : "LOGGING IN...") : (isArabic ? "تسجيل الدخول" : "LOGIN / تسجيل الدخول")}
+          {isSubmitting ? (isArabic ? "جاري الدخول..." : "LOGGING IN...") : (isArabic ? "تسجيل الدخول" : "LOGIN")}
         </button>
 
         {submitted && (

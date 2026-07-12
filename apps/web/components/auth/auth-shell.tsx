@@ -84,7 +84,7 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
                 >
                   {isArabic
                     ? <>{isLogin ? "أهلاً بك مجدداً" : "إنشاء حساب"}</>
-                    : <>{isLogin ? <>WELCOME BACK /<br /><span>أهلاً بك</span></> : <>CREATE ACCOUNT /<br /><span>إنشاء حساب</span></>}</>
+                    : <>{isLogin ? "WELCOME BACK" : "CREATE ACCOUNT"}</>
                   }
                 </h1>
                 <p className="font-black text-xs uppercase tracking-widest text-white/50">
