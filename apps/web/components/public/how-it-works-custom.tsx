@@ -3,20 +3,20 @@
 import { useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  UserCircle2, 
-  Wrench, 
-  Store, 
-  ArrowLeft, 
-  ArrowRight, 
-  Sparkles, 
-  ShieldCheck, 
-  MessageSquare, 
-  DollarSign, 
-  CheckCircle2, 
-  Layers3, 
-  UserPlus, 
-  MapPin, 
+import {
+  UserCircle2,
+  Wrench,
+  Store,
+  ArrowLeft,
+  ArrowRight,
+  Sparkles,
+  ShieldCheck,
+  MessageSquare,
+  DollarSign,
+  CheckCircle2,
+  Layers3,
+  UserPlus,
+  MapPin,
   FileText,
   FileCheck,
   TrendingUp,
@@ -32,7 +32,7 @@ interface Step {
   number: number;
   title: string;
   desc: string;
-  icon: any;
+  icon: string; // Material Symbols icon name
   highlight?: string;
 }
 
@@ -44,473 +44,239 @@ export function HowItWorksCustom({ locale }: { locale: Locale }) {
   const copy = {
     ar: {
       eyebrow: "دليل الاستخدام",
-      title: "كيف يعمل أُسطفاي؟",
-      subtitle: "رحلتك نحو خدمات صيانة منزلية وقطع غيار بضمان وأمان تام تبدأ بخطوات بسيطة. اختر حسابك وتعرف على التفاصيل.",
+      title: "يُمكِّن",
+      titleHighlight: "المحترف",
+      subtitle: "أوستا هو النظام البيئي الصناعي المتكامل الذي يربط الحرفيين المهرة بالموردين الموثوقين والعملاء الباحثين عن الجودة.",
       ctaTitle: "هل أنت مستعد للبدء؟",
-      ctaSub: "سجل حسابك الآن وانضم إلى شبكة أُسطفاي المتكاملة.",
+      ctaSub: "سجل حسابك الآن وانضم إلى شبكة أوستا المتكاملة.",
+      ctaClientBtn: "سجل كعميل",
+      ctaPartnerBtn: "انضم كشريك",
       roles: {
         client: {
-          label: "عميل (طلب خدمات)",
+          label: "العملاء",
           desc: "احصل على خدمات منزلية فورية ومضمونة من فنيين موثقين.",
           cta: "سجل كعميل الآن",
           steps: [
-            {
-              number: 1,
-              title: "سجل حسابك",
-              desc: "قم بإنشاء حساب عميل برقم هاتفك واسمك لتفعيل حسابك خلال ثوانٍ.",
-              icon: UserPlus,
-              highlight: "رقم الهاتف والاسم فقط"
-            },
-            {
-              number: 2,
-              title: "أنشئ طلب صيانة",
-              desc: "حدد القسم (سباكة، كهرباء، نجارة، إلخ)، واكتب تفاصيل المشكلة مع إرفاق صور ومستوى الاستعجال.",
-              icon: FileText,
-              highlight: "صور وتفاصيل المشكلة"
-            },
-            {
-              number: 3,
-              title: "استقبل عروض الأسعار",
-              desc: "ستتلقى عروضًا من فنيين موثقين قريبين منك. قارن بينهم بناءً على السعر، التقييم، وسرعة الرد.",
-              icon: Layers3,
-              highlight: "فنيين موثقين وقريبين"
-            },
-            {
-              number: 4,
-              title: "تواصل وتفاوض لايف",
-              desc: "دردش مع الفني مباشرة في شات مباشر بالمنصة لتوضيح أي تفاصيل إضافية والاتفاق على الميزانية.",
-              icon: MessageSquare,
-              highlight: "شات مباشر فوري"
-            },
-            {
-              number: 5,
-              title: "اقبل العرض المناسب",
-              desc: "بمجرد قبول العرض، سيبدأ الفني بالتحرك نحو موقعك لتنفيذ المهمة المطلوبة.",
-              icon: CheckCircle2,
-              highlight: "تحرك فوري للفني"
-            },
-            {
-              number: 6,
-              title: "أنهِ الطلب وقيم الخدمة",
-              desc: "بعد انتهاء العمل، أكد إتمام الخدمة وقيم الفني لتفعيل ضمان العمل وللحفاظ على جودة الخدمات.",
-              icon: ShieldCheck,
-              highlight: "تفعيل الضمان والتقييم"
-            }
+            { number: 1, title: "سجل", desc: "أنشئ ملفك الشخصي الآمن في دقائق. التحقق عالي الجودة يضمن بيئة آمنة لجميع احتياجات الخدمة المتميزة.", icon: "how_to_reg" },
+            { number: 2, title: "اطلب", desc: "انشر متطلبات مشروعك بتفاصيل دقيقة. نظامنا يصنف احتياجاتك لمطابقتها مع أكثر الحرفيين تأهلاً.", icon: "pending_actions" },
+            { number: 3, title: "عروض", desc: "استقبل عروضاً شفافة ومفصلة من المحترفين الموثقين. بدون تكاليف خفية، مجرد قيمة حقيقية وحرفية خبيرة.", icon: "request_quote" },
+            { number: 4, title: "تواصل", desc: "خط تواصل مباشر مع الخبير المختار. ناقش المخططات والجداول الزمنية والخدمات اللوجستية.", icon: "chat" },
+            { number: 5, title: "اقبل", desc: "أبرم العقد بمصافحة رقمية. تُحتجز الأموال في الضمان لضمان جودة التسليم والتعويض العادل.", icon: "check_circle" },
+            { number: 6, title: "قيّم", desc: "أكمل حلقة التغذية الراجعة. مراجعتك تبني سمعة أسطواتنا وتحافظ على معاييرنا العالية.", icon: "star_rate" }
           ]
         },
         worker: {
-          label: "فني / عامل (تقديم خدمات)",
+          label: "العمال",
           desc: "زد من دخلك اليومي واحصل على طلبات عمل حقيقية في منطقتك.",
           cta: "انضم كفني محترف",
           steps: [
-            {
-              number: 1,
-              title: "أنشئ حسابك المهني",
-              desc: "سجل بياناتك الشخصية وارفع بطاقة الهوية والأوراق الرسمية للمراجعة والتوثيق الأمني.",
-              icon: UserPlus,
-              highlight: "توثيق أمني كامل لسلامتك"
-            },
-            {
-              number: 2,
-              title: "حدد تخصصك ونطاق عملك",
-              desc: "اختر مهنتك الأساسية (مثل كهربائي، سباك) ومناطق التغطية الجغرافية التي ترغب بالعمل فيها.",
-              icon: MapPin,
-              highlight: "تخصصات ومناطق مرنة"
-            },
-            {
-              number: 3,
-              title: "استقبل طلبات الصيانة",
-              desc: "ستصلك إشعارات فورية عن طلبات الصيانة المنشورة من عملاء في نطاقك الجغرافي وبنفس تخصصك.",
-              icon: FileCheck,
-              highlight: "إشعارات فورية لحظية"
-            },
-            {
-              number: 4,
-              title: "قدم عرض سعر مناسب",
-              desc: "راجع تفاصيل المشكلة وصورها، وقدم للعميل عرض سعر منافس ومناسب للتنفيذ.",
-              icon: DollarSign,
-              highlight: "تقديم عروض أسعار"
-            },
-            {
-              number: 5,
-              title: "تفاوض واتفق عبر الشات",
-              desc: "تحدث مع العميل داخل الشات المباشر، وأجب عن استفساراته لتأكيد الطلب وتعديل الميزانية إن لزم الأمر.",
-              icon: MessageSquare,
-              highlight: "شات لايف متكامل"
-            },
-            {
-              number: 6,
-              title: "نفذ الخدمة واستلم أرباحك",
-              desc: "توجه للعميل، أنجز العمل بجودة عالية، وأكد إتمام الطلب لتستلم أرباحك مباشرة في محفظتك الإلكترونية.",
-              icon: Wrench,
-              highlight: "سحب أرباح سهل وسريع"
-            }
+            { number: 1, title: "الملف الشخصي", desc: "اعرض محفظتك وشهاداتك وخبراتك. تميّز كحرفي متميز في الصناعة.", icon: "account_box" },
+            { number: 2, title: "الحرفة", desc: "اختر تخصصاتك الدقيقة في الحرفة. خوارزميتنا تُوجّه العروض ذات الصلة التي تتناسب مع مستوى مهاراتك.", icon: "construction" },
+            { number: 3, title: "التنبيهات", desc: "إشعارات فورية للمشاريع ذات القيمة العالية في منطقتك. لا تفوّت فرصة لتطبيق خبراتك.", icon: "notification_important" },
+            { number: 4, title: "عرض السعر", desc: "قدّم عطاءات احترافية باستخدام أدوات التقدير المدمجة. حدد نطاق عملك والمواد بوضوح.", icon: "list_alt" },
+            { number: 5, title: "التفاوض", desc: "أنهِ الشروط مع العملاء مباشرة. منصتنا تدعم الشفافية المهنية في كل مرحلة من مراحل التفاوض.", icon: "handshake" },
+            { number: 6, title: "المدفوعات", desc: "احصل على أجرك بأمان وفي الوقت المحدد. استمتع بأسرع دورة مدفوعات صناعية في السوق.", icon: "payments" }
           ]
         },
         vendor: {
-          label: "متجر (توريد بضائع وقطع غيار)",
-          desc: "اعرض بضائعك لآلاف الفنيين والعملاء ووفر قطع الغيار اللازمة للصيانة.",
+          label: "الموردون",
+          desc: "اعرض بضائعك لآلاف الفنيين والعملاء ووفر قطع الغيار اللازمة.",
           cta: "سجل متجرك الآن",
           steps: [
-            {
-              number: 1,
-              title: "سجل بيانات متجرك",
-              desc: "أنشئ حساب متجر، وحدد موقعك الجغرافي، وارفع السجل التجاري أو البطاقة الضريبية للمراجعة.",
-              icon: UserPlus,
-              highlight: "حساب متجر رسمي موثق"
-            },
-            {
-              number: 2,
-              title: "أضف منتجاتك وقطع الغيار",
-              desc: "ارفع المنتجات، وحدد تفاصيلها، أسعارها، كمياتها المتوفرة، وصورها لتسهيل اختيارها.",
-              icon: Upload,
-              highlight: "إدارة مخزون مرنة وسهلة"
-            },
-            {
-              number: 3,
-              title: "استقبل طلبات قطع الغيار",
-              desc: "تلقى طلبات فورية لقطع الغيار والمواد المطلوبة من الفنيين لإكمال طلبات الصيانة الجارية.",
-              icon: FileCheck,
-              highlight: "طلبات بيع مباشرة"
-            },
-            {
-              number: 4,
-              title: "أكد توافر البضائع وعروضك",
-              desc: "قدم عروضك للمواد المطلوبة وأكد توافرها وأسعار التوصيل للعميل أو الفني.",
-              icon: DollarSign,
-              highlight: "عروض أسعار المواد"
-            },
-            {
-              number: 5,
-              title: "جهز الطلب للشحن أو الاستلام",
-              desc: "بمجرد تأكيد الطلب، جهز المنتجات لتسليمها لشركة الشحن أو تسليمها للفني في موقع متجرك.",
-              icon: Store,
-              highlight: "شحن سريع واستلام مباشر"
-            }
+            { number: 1, title: "سجّل المتجر", desc: "أحضر متجرك للتوريد عبر الإنترنت. أدرج تفاصيل الخدمات اللوجستية والتوصيل في مركز الموردين المركزي.", icon: "storefront" },
+            { number: 2, title: "المخزون", desc: "زامن كتالوج المواد الخاص بك. اسمح للحرفيين برؤية التوافر الفوري لمستلزمات التجارة الأساسية.", icon: "inventory_2" },
+            { number: 3, title: "الطلبات", desc: "استقبل طلبات المواد بالجملة مباشرة من مواقع المشاريع. بسّط قمعك في B2B مع تنبيهات آلية.", icon: "local_shipping" },
+            { number: 4, title: "عرض السعر", desc: "قدّم أسعاراً تنافسية للمواد والخدمات اللوجستية. اكسب العقود من خلال الحجم والموثوقية.", icon: "point_of_sale" },
+            { number: 5, title: "الشحن", desc: "نسّق عمليات التوصيل بدقة. تتبع الخدمات اللوجستية من مستودعك إلى موقع مشروع الحرفي.", icon: "conveyor_belt" }
           ]
         }
       }
     },
     en: {
       eyebrow: "HOW-TO GUIDE",
-      title: "How Ostafy Works?",
-      subtitle: "Your journey to guaranteed, secure home maintenance and spare parts supply starts with simple steps. Select your account type to learn more.",
-      ctaTitle: "Ready to get started?",
-      ctaSub: "Register your account now and join the integrated Ostafy network.",
+      title: "Empowering the",
+      titleHighlight: "Master Builder",
+      subtitle: "OSTA is the premium industrial ecosystem connecting skilled craftsmen, reliable vendors, and quality-seeking clients through a seamless, high-integrity platform.",
+      ctaTitle: "Ready to start your next",
+      ctaTitleHighlight: "Masterpiece?",
+      ctaSub: "Join OSTA today and be part of the premium industrial network.",
+      ctaClientBtn: "Join as a Client",
+      ctaPartnerBtn: "Become a Partner",
       roles: {
         client: {
-          label: "Client (Book Services)",
+          label: "Clients",
           desc: "Get instant, guaranteed home services from verified technicians.",
           cta: "Register as Client Now",
           steps: [
-            {
-              number: 1,
-              title: "Create Your Account",
-              desc: "Create a client account with your name and phone number to activate it within seconds.",
-              icon: UserPlus,
-              highlight: "Only name and phone number"
-            },
-            {
-              number: 2,
-              title: "Post a Service Request",
-              desc: "Choose the category (plumbing, electrical, etc.), describe the problem, attach photos and urgency level.",
-              icon: FileText,
-              highlight: "Photos & issue details"
-            },
-            {
-              number: 3,
-              title: "Receive Quotes",
-              desc: "Get price offers from nearby verified technicians. Compare based on pricing, reviews, and response times.",
-              icon: Layers3,
-              highlight: "Verified local workers"
-            },
-            {
-              number: 4,
-              title: "Chat & Negotiate",
-              desc: "Chat directly with the technician using the live in-app chat to clarify details and adjust budgets.",
-              icon: MessageSquare,
-              highlight: "Instant live chat"
-            },
-            {
-              number: 5,
-              title: "Accept & Begin",
-              desc: "Once you accept the quote, the technician will head to your location to execute the job.",
-              icon: CheckCircle2,
-              highlight: "Worker heads to you"
-            },
-            {
-              number: 6,
-              title: "Complete & Review",
-              desc: "Confirm completion, review the worker to activate your warranty and maintain service quality.",
-              icon: ShieldCheck,
-              highlight: "Warranty activation & rating"
-            }
+            { number: 1, title: "Register", desc: "Create your secure profile in minutes. High-integrity verification ensures a safe environment for all premium service needs.", icon: "how_to_reg" },
+            { number: 2, title: "Request", desc: "Post your project requirements with precise details. Our system categorizes your needs to match with the most qualified craftsmen.", icon: "pending_actions" },
+            { number: 3, title: "Quotes", desc: "Receive transparent, itemized quotes from verified professionals. No hidden costs, just raw value and expert craftsmanship.", icon: "request_quote" },
+            { number: 4, title: "Chat", desc: "Direct line of communication with your chosen expert. Discuss blueprints, timelines, and logistics within our secure encrypted portal.", icon: "chat" },
+            { number: 5, title: "Accept", desc: "Lock in the contract with a digital handshake. Funds are held in escrow to ensure quality delivery and fair compensation.", icon: "check_circle" },
+            { number: 6, title: "Rate", desc: "Complete the feedback loop. Your review builds the reputation of our master builders and maintains our high standards.", icon: "star_rate" }
           ]
         },
         worker: {
-          label: "Worker / Tech (Provide Services)",
-          desc: "Boost your daily income and get real maintenance jobs in your neighborhood.",
+          label: "Workers",
+          desc: "Boost your daily income and get real maintenance jobs in your area.",
           cta: "Join as Professional Tech",
           steps: [
-            {
-              number: 1,
-              title: "Create Professional Account",
-              desc: "Fill in your details and upload your ID card and documents for background checks and security vetting.",
-              icon: UserPlus,
-              highlight: "Full verification for safety"
-            },
-            {
-              number: 2,
-              title: "Set Trade & Coverage",
-              desc: "Choose your primary trade (e.g. plumber, electrician) and define the geographic areas you service.",
-              icon: MapPin,
-              highlight: "Flexible trades and locations"
-            },
-            {
-              number: 3,
-              title: "Receive Job Alerts",
-              desc: "Get instant notifications for new maintenance requests published by clients within your service area.",
-              icon: FileCheck,
-              highlight: "Real-time alerts"
-            },
-            {
-              number: 4,
-              title: "Submit Price Quote",
-              desc: "Review the client's request details, description, and photos, and submit a competitive price offer.",
-              icon: DollarSign,
-              highlight: "Send custom bids"
-            },
-            {
-              number: 5,
-              title: "Negotiate via Chat",
-              desc: "Chat live with the client, answer their questions, and adjust the budget if needed to close the deal.",
-              icon: MessageSquare,
-              highlight: "Fully integrated live chat"
-            },
-            {
-              number: 6,
-              title: "Deliver & Get Paid",
-              desc: "Go to the client's site, complete the job with high quality, and mark it complete to receive earnings directly.",
-              icon: Wrench,
-              highlight: "Easy & fast payout withdrawal"
-            }
+            { number: 1, title: "Profile", desc: "Showcase your portfolio, certifications, and expertise. Stand out as a premium craftsman in the industry.", icon: "account_box" },
+            { number: 2, title: "Trade", desc: "Select your specific trade specialties. Our algorithm routes relevant leads that match your high-level skill set.", icon: "construction" },
+            { number: 3, title: "Alerts", desc: "Real-time notifications for high-value projects in your area. Never miss an opportunity to apply your expertise.", icon: "notification_important" },
+            { number: 4, title: "Quote", desc: "Submit professional bids using our built-in estimation tools. Clearly define your scope of work and materials.", icon: "list_alt" },
+            { number: 5, title: "Negotiate", desc: "Finalize terms with clients directly. Our platform supports professional transparency at every negotiation stage.", icon: "handshake" },
+            { number: 6, title: "Payout", desc: "Get paid securely and on time. Experience the fastest industrial payout cycle in the market upon job completion.", icon: "payments" }
           ]
         },
         vendor: {
-          label: "Store (Supply Materials)",
+          label: "Vendors",
           desc: "List your materials and spare parts for thousands of workers and clients.",
           cta: "Register Your Store Now",
           steps: [
-            {
-              number: 1,
-              title: "Register Store Info",
-              desc: "Create a vendor account, set your location, and upload your commercial register or tax documents.",
-              icon: UserPlus,
-              highlight: "Official verified store"
-            },
-            {
-              number: 2,
-              title: "Upload Products",
-              desc: "Upload spare parts and materials with clear names, details, pricing, stock levels, and photos.",
-              icon: Upload,
-              highlight: "Easy inventory management"
-            },
-            {
-              number: 3,
-              title: "Receive Parts Requests",
-              desc: "Get orders for spare parts and supplies required by technicians to complete ongoing jobs.",
-              icon: FileCheck,
-              highlight: "Direct selling opportunities"
-            },
-            {
-              number: 4,
-              title: "Provide Material Quotes",
-              desc: "Submit your quotes for the requested materials, specifying availability and shipping/delivery details.",
-              icon: DollarSign,
-              highlight: "Material price quotes"
-            },
-            {
-              number: 5,
-              title: "Pack & Ship/Handover",
-              desc: "Once accepted, pack the products for shipment or make them ready for technician pickup at your store.",
-              icon: Store,
-              highlight: "Fast shipping or pickup"
-            }
+            { number: 1, title: "Register Shop", desc: "Bring your supply store online. Onboard your logistics and fulfillment details to our centralized vendor hub.", icon: "storefront" },
+            { number: 2, title: "Inventory", desc: "Sync your material catalog. Allow craftsmen to see real-time availability of essential trade supplies.", icon: "inventory_2" },
+            { number: 3, title: "Requests", desc: "Receive bulk material requests directly from project sites. Streamline your B2B sales funnel with automated alerts.", icon: "local_shipping" },
+            { number: 4, title: "Quote", desc: "Provide competitive pricing for materials and logistics. Win contracts through volume and reliability.", icon: "point_of_sale" },
+            { number: 5, title: "Dispatch", desc: "Coordinate deliveries with precision. Track logistics from your warehouse to the craftsman's project location with full transparency.", icon: "conveyor_belt" }
           ]
         }
       }
     }
   };
 
-  const currentCopy = copy[locale] || copy.ar;
+  const currentCopy = (copy as any)[locale] || copy.en;
   const currentRoleData = currentCopy.roles[activeRole];
 
-  // Icons mapping for role tabs
-  const tabIcons = {
-    client: UserCircle2,
-    worker: Wrench,
-    vendor: Store
-  };
+  const roleKeys: Role[] = ["client", "worker", "vendor"];
 
   return (
-    <div className="animate-fadeIn space-y-16 py-8">
-      {/* ── Subpage Hero Section ── */}
-      <section className="onyx-card relative overflow-hidden p-8 sm:p-12 lg:p-16 border-gold-500/10">
-        {/* Decorative glow */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-gold-500/5 blur-[120px] rounded-full -mr-48 -mt-48" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-gold-500/5 blur-[100px] rounded-full -ml-32 -mb-32" />
-        
-        <div className="relative max-w-4xl space-y-6">
-          <span className="inline-flex rounded-full bg-gold-500/10 px-4 py-2 text-[10px] font-black uppercase tracking-[0.4em] text-gold-500 border border-gold-500/20">
-            {currentCopy.eyebrow}
+    <div
+      dir={isArabic ? "rtl" : "ltr"}
+      style={{ backgroundColor: "#f5bd18", minHeight: "100vh" }}
+      className="font-sans"
+    >
+      {/* ── Hero Section ── */}
+      <section className="px-4 md:px-12 py-20 flex flex-col items-center text-center max-w-4xl mx-auto">
+        <h1 className="text-4xl md:text-7xl font-black text-[#1a1c1c] mb-3 uppercase leading-tight tracking-tight">
+          {currentCopy.title}{" "}
+          <br />
+          <span className="bg-[#1a1c1c] text-[#f5bd18] px-3 inline-block mt-1">
+            {currentCopy.titleHighlight}
           </span>
-          <h1 className="text-4xl sm:text-6xl font-black text-white leading-tight tracking-tight">
-            {currentCopy.title}
-          </h1>
-          <div className="h-1.5 w-28 bg-gradient-to-r from-gold-500 to-transparent rounded-full" />
-          <p className="text-lg sm:text-xl leading-relaxed text-onyx-300 max-w-3xl">
-            {currentCopy.subtitle}
-          </p>
-        </div>
+        </h1>
+        <p className="font-[Inter] text-lg text-[#1a1c1c]/80 max-w-2xl mt-6">
+          {currentCopy.subtitle}
+        </p>
       </section>
 
-      {/* ── Interactive Role Switcher Tabs ── */}
-      <div className="flex flex-col items-center space-y-8">
-        <div className="flex flex-wrap justify-center p-1.5 rounded-[2rem] bg-onyx-900 border border-white/5 gap-2 max-w-3xl w-full">
-          {(["client", "worker", "vendor"] as Role[]).map((role) => {
-            const IconComponent = tabIcons[role];
+      {/* ── Interactive Tabs Section ── */}
+      <section className="px-4 md:px-12 pb-20 max-w-[1280px] mx-auto">
+        {/* Tabs */}
+        <div className="flex flex-wrap justify-center gap-4 mb-12">
+          {roleKeys.map((role) => {
             const isActive = activeRole === role;
-
             return (
               <button
                 key={role}
                 onClick={() => setActiveRole(role)}
                 className={cn(
-                  "relative flex items-center justify-center gap-3 px-6 py-4 rounded-[1.5rem] font-bold text-sm transition-all duration-300 flex-1 min-w-[200px] outline-none",
-                  isActive 
-                    ? "text-onyx-950" 
-                    : "text-onyx-400 hover:text-white hover:bg-white/[0.02]"
+                  "px-8 py-3 font-black uppercase text-sm border-2 border-[#1a1c1c] transition-all duration-150",
+                  isActive
+                    ? "bg-white text-[#1a1c1c] shadow-[4px_4px_0px_#1a1c1c]"
+                    : "bg-[#1a1c1c] text-[#f5bd18] hover:bg-[#1a1c1c]/80"
                 )}
               >
-                {isActive && (
-                  <motion.div
-                    layoutId="activeTabGlow"
-                    className="absolute inset-0 bg-gold-500 rounded-[1.5rem] shadow-lg shadow-gold-500/20"
-                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                  />
-                )}
-                <IconComponent className={cn("h-5 w-5 relative z-10", isActive ? "text-onyx-950" : "text-gold-500")} />
-                <span className="relative z-10">{currentCopy.roles[role].label}</span>
+                {currentCopy.roles[role].label}
               </button>
             );
           })}
         </div>
-        <p className="text-sm font-medium text-onyx-400 text-center max-w-lg">
-          {currentCopy.roles[activeRole].desc}
-        </p>
-      </div>
 
-      {/* ── Step-by-Step Flow ── */}
-      <div className="relative">
-        {/* Timeline connecting line (desktop only) */}
-        <div className={cn(
-          "absolute top-0 bottom-0 w-1 bg-gradient-to-b from-gold-500/40 via-gold-500/10 to-transparent hidden lg:block",
-          isArabic ? "right-1/2 translate-x-1/2" : "left-1/2 -translate-x-1/2"
-        )} />
-
-        <div className="space-y-12 lg:space-y-20 relative">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeRole}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.4 }}
-              className="space-y-12 lg:space-y-16"
-            >
-              {currentRoleData.steps.map((step, idx) => {
-                const StepIcon = step.icon;
-                const isEven = idx % 2 === 0;
-
-                return (
-                  <div
-                    key={step.number}
-                    className={cn(
-                      "flex flex-col lg:flex-row items-center gap-8 lg:gap-16 w-full",
-                      isEven ? "lg:flex-row" : "lg:flex-row-reverse"
-                    )}
-                  >
-                    {/* Left/Right Text Content Card */}
-                    <div className="flex-1 w-full">
-                      <div className={cn(
-                        "onyx-card p-8 sm:p-10 border-gold-500/10 hover:border-gold-500/30 transition-all group relative overflow-hidden",
-                        isEven ? "lg:text-left rtl:lg:text-right" : "lg:text-right rtl:lg:text-left"
-                      )}>
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-gold-500/[0.02] blur-[40px] rounded-full" />
-                        <div className="flex items-center gap-4 mb-6 justify-start">
-                          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gold-500/10 text-gold-500 border border-gold-500/20 group-hover:scale-110 transition-transform duration-500">
-                            <StepIcon className="h-5 w-5" />
-                          </div>
-                          <span className="text-xs font-black tracking-widest text-gold-500/80 uppercase">
-                            {isArabic ? `الخطوة ${step.number}` : `STEP ${step.number}`}
-                          </span>
-                        </div>
-
-                        <h3 className="text-xl sm:text-2xl font-black text-white mb-4 group-hover:text-gold-500 transition-colors">
-                          {step.title}
-                        </h3>
-                        <p className="text-onyx-300 leading-relaxed text-sm sm:text-base">
-                          {step.desc}
-                        </p>
-                        
-                        {step.highlight && (
-                          <div className="mt-6 inline-flex items-center gap-2 px-3 py-1 bg-white/5 rounded-full text-xs font-medium text-gold-500/90 border border-white/5">
-                            <Sparkles className="h-3.5 w-3.5" />
-                            <span>{step.highlight}</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Timeline Center Point Indicator (desktop only) */}
-                    <div className="relative flex items-center justify-center z-10 hidden lg:flex">
-                      <div className="h-16 w-16 rounded-full bg-onyx-950 border-4 border-onyx-900 flex items-center justify-center shadow-2xl text-gold-500 font-black text-xl hover:scale-110 transition-transform duration-300">
-                        {step.number}
-                      </div>
-                    </div>
-
-                    {/* Empty placeholder to balance the grid layout */}
-                    <div className="flex-1 w-full hidden lg:block" />
-                  </div>
-                );
-              })}
-            </motion.div>
-          </AnimatePresence>
-        </div>
-      </div>
-
-      {/* ── Call to Action / Footer Section ── */}
-      <section className="onyx-card relative overflow-hidden p-8 sm:p-12 lg:p-16 border-gold-500/10 text-center space-y-8">
-        <div className="absolute inset-0 bg-gradient-to-b from-gold-500/[0.03] to-transparent pointer-events-none" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gold-500/5 blur-[150px] rounded-full pointer-events-none" />
-        
-        <div className="max-w-2xl mx-auto space-y-4 relative z-10">
-          <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
-            {currentCopy.ctaTitle}
-          </h2>
-          <p className="text-onyx-400 text-sm sm:text-base max-w-lg mx-auto">
-            {currentCopy.ctaSub}
-          </p>
-        </div>
-
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 relative z-10 max-w-lg mx-auto">
-          <Link 
-            href={`/${locale}/register/${activeRole}`} 
-            className="btn-gold flex items-center justify-center gap-3 w-full py-4 text-center font-black"
+        {/* Step Cards Grid */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeRole}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -16 }}
+            transition={{ duration: 0.3 }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
-            <span>{currentRoleData.cta}</span>
-            {isArabic ? <ArrowLeft className="h-4.5 w-4.5" /> : <ArrowRight className="h-4.5 w-4.5" />}
-          </Link>
+            {currentRoleData.steps.map((step: any) => (
+              <div
+                key={step.number}
+                className="group flex flex-col gap-4 p-6 border border-white/10 hover:border-[#f5bd18] transition-colors duration-300"
+                style={{ backgroundColor: "#000000" }}
+              >
+                {/* Number + Icon */}
+                <div className="flex justify-between items-start">
+                  <span
+                    className="font-black text-[#f5bd18] leading-none"
+                    style={{ fontSize: "48px", opacity: 0.2 }}
+                  >
+                    {String(step.number).padStart(2, "0")}
+                  </span>
+                  <span
+                    className="material-symbols-outlined text-[#f5bd18]"
+                    style={{ fontSize: "36px" }}
+                  >
+                    {step.icon}
+                  </span>
+                </div>
+
+                {/* Title */}
+                <h3 className="font-black text-white uppercase text-xl tracking-wide">
+                  {step.title}
+                </h3>
+
+                {/* Description */}
+                <p className="font-[Inter] text-base text-[#c6c6c6] leading-relaxed">
+                  {step.desc}
+                </p>
+              </div>
+            ))}
+          </motion.div>
+        </AnimatePresence>
+      </section>
+
+      {/* ── Final CTA ── */}
+      <section className="px-4 md:px-12 pb-20 max-w-[1280px] mx-auto">
+        <div
+          className="relative overflow-hidden p-12 md:p-16 text-center border border-white/10"
+          style={{ backgroundColor: "#000000" }}
+        >
+          {/* Background glow decoration */}
+          <div
+            className="absolute -right-20 -bottom-20 w-80 h-80 rounded-full blur-3xl"
+            style={{ backgroundColor: "#f5bd18", opacity: 0.1 }}
+          />
+
+          <h2 className="font-black text-white uppercase text-3xl md:text-5xl mb-8">
+            {currentCopy.ctaTitle}{" "}
+            <br />
+            <span className="text-[#f5bd18]">{currentCopy.ctaTitleHighlight || currentCopy.ctaSub}</span>
+          </h2>
+
+          <div className="flex flex-col md:flex-row justify-center gap-6">
+            <Link
+              href={`/${locale}/register/client`}
+              className="inline-block px-10 py-4 font-black uppercase text-sm transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5"
+              style={{
+                backgroundColor: "#f5bd18",
+                color: "#1a1c1c",
+                boxShadow: "4px 4px 0px #ffffff40"
+              }}
+            >
+              {currentCopy.ctaClientBtn}
+            </Link>
+            <Link
+              href={`/${locale}/register/worker`}
+              className="inline-block px-10 py-4 font-black uppercase text-sm border-2 border-[#f5bd18] text-[#f5bd18] hover:bg-[#f5bd18] hover:text-[#1a1c1c] transition-colors duration-200"
+            >
+              {currentCopy.ctaPartnerBtn}
+            </Link>
+          </div>
         </div>
       </section>
     </div>

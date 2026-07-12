@@ -19,9 +19,7 @@ export default async function HowItWorksPage({ params }: { params: Promise<{ loc
 
   return (
     <PublicShell locale={locale as Locale} pathname="/how-it-works">
-      <div className="section-shell py-12">
-        <HowItWorksCustom locale={locale as Locale} />
-      </div>
+      <HowItWorksCustom locale={locale as Locale} />
     </PublicShell>
   );
 }
