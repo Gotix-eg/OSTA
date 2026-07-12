@@ -19,9 +19,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
 
   return (
     <PublicShell locale={locale as Locale} pathname="/about">
-      <div className="section-shell py-12">
-        <AboutProfileCustom locale={locale as Locale} />
-      </div>
+      <AboutProfileCustom locale={locale as Locale} />
     </PublicShell>
   );
 }

@@ -1,17 +1,18 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
-import { 
-  ShieldCheck, 
-  Handshake, 
-  Sparkles, 
-  Star, 
-  Users2, 
-  Briefcase, 
-  Globe2, 
-  CheckCircle,
+import {
+  ShieldCheck,
+  GitBranch,
+  BadgeCheck,
+  Cpu,
+  Rocket,
   Eye,
-  Target
+  Users2,
+  Briefcase,
+  Globe2,
+  Star,
 } from "lucide-react";
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
@@ -19,262 +20,276 @@ import { cn } from "@/lib/utils";
 export function AboutProfileCustom({ locale }: { locale: Locale }) {
   const isArabic = locale === "ar";
 
-  // Translation copy dictionary
   const copy = {
     ar: {
-      eyebrow: "من نحن",
-      title: "ملف أُسطفاي التعريفي",
-      subtitle: (
-        <>
-          ريادة مصرية متكاملة لتنظيم وتطوير قطاع الصيانة المنزلية والخدمات الفنية من خلال حلول تقنية مبتكرة وآمنة.
-        </>
-      ),
-      
-      missionTitle: "رسالتنا",
-      missionDesc: "نهدف إلى تمكين أصحاب المنازل والمنشآت من الوصول الآمن والسريع لأكفأ الكوادر الفنية (الصنايعية) الموثقين، مع تنظيم وضمان جودة الخدمات وتقديم حلول تقنية تسهل حياة الفرد والمجتمع وتطور أداء الحرفي المصري.",
-      
-      visionTitle: "رؤيتنا",
-      visionDesc: "أن نكون المنصة الأولى والأكثر موثوقية في مصر والشرق الأوسط للخدمات المنزلية والمهنية وتوريد قطع الغيار، ورفع معايير السلامة المهنية ومستوى المعيشة للحرفيين والمهنيين.",
-      
-      valuesTitle: "قيمنا الأساسية",
-      valuesSubtitle: "المبادئ التي توجه عملنا اليومي للحفاظ على ثقة عملائنا وشركائنا.",
-      
-      values: [
-        {
-          title: "الأمان والتوثيق الكامل",
-          desc: "لا يمكن لأي فني أو متجر النشاط في المنصة قبل المرور بمراجعة أمنية دقيقة تشمل فحص الهوية والفيش الجنائي والأوراق الرسمية.",
-          icon: ShieldCheck
-        },
-        {
-          title: "التسعير العادل والشفافية",
-          desc: "نحارب الاحتكار والعمولات المخفية، ونعطي العميل والفني كامل الحرية للتواصل والاتفاق المباشر على ميزانية الطلبات بكل وضوح.",
-          icon: Handshake
-        },
-        {
-          title: "الضمان والجودة",
-          desc: "نضمن حقوق جميع الأطراف. كل عملية صيانة تتم عبر أُسطفاي مغطاة بضمان حقيقي، مع وجود دعم فني مستعد للتدخل وحل الشكاوى.",
-          icon: CheckCircle
-        },
-        {
-          title: "التميز التقني",
-          desc: "نسخر التكنولوجيا الحديثة لتسهيل التواصل والتشغيل عبر دردشة ذكية فورية، وإشعارات لحظية، وتتبع مباشر لمراحل الطلب.",
-          icon: Sparkles
-        }
+      badge: "تأسست 2024",
+      heroTitle: "نعيد تعريف الحرفة في العصر الرقمي",
+      heroSub: "أوستا تربط أكثر الحرفيين مهارةً والخبراء التقنيين بالأفراد والشركات التي لا تقبل إلا التميز.",
+      journeyBtn: "رحلتنا",
+      joinBtn: "انضم كمحترف",
+
+      statsTitle: "أوستا بالأرقام",
+      stats: [
+        { value: "5K+", label: "محترف موثق", },
+        { value: "12K+", label: "طلب منجز", },
+        { value: "15+", label: "محافظة مغطاة", },
+        { value: "98%", label: "نسبة الرضا", },
       ],
 
-      statsTitle: "أُسطفاي بالأرقام",
-      stats: [
-        { value: "+٥,٠٠٠", label: "فني وصنايعي موثق", icon: Users2 },
-        { value: "+١٢,٠٠٠", label: "طلب صيانة ناجح", icon: Briefcase },
-        { value: "١٥", label: "محافظة مغطاة في مصر", icon: Globe2 },
-        { value: "٩٨٪", label: "نسبة رضا العملاء", icon: Star }
-      ]
+      missionTitle: "رسالتنا",
+      missionDesc: "تمكين الحرفيين المتميزين من خلال منصة تُقدّر الجودة على الكمية، تضمن أن كل خدمة تُقدَّم هي شهادة على النزاهة المهنية والتميز التقني.",
+      visionTitle: "رؤيتنا",
+      visionDesc: "أن نصبح المعيار العالمي للعمالة الماهرة عند الطلب، نخلق عالماً حيث الحرفة المتميزة متاحة بنقرة واحدة، نبني الثقة والنمو الصناعي.",
+
+      foundationTitle: "القيم الأساسية",
+      foundationSub: "مبادئ تشغيلنا مصاغة من واقع الورشة ودقة المختبر.",
+      values: [
+        { title: "الأمان", desc: "معايير صارمة في السلامة الجسدية وحماية البيانات الرقمية في كل تفاعل.", Icon: ShieldCheck },
+        { title: "الشفافية", desc: "أسعار واضحة، تتبع فوري، وتقييمات حقيقية. نُزيل التخمين من التوظيف.", Icon: GitBranch },
+        { title: "الجودة", desc: "لا نصلح المشكلات فحسب؛ نوفر حلولاً متينة تصمد أمام اختبار الزمن.", Icon: BadgeCheck },
+        { title: "التميز", desc: "التزام بالتدريب التقني المستمر وأحدث المنهجيات الصناعية.", Icon: Cpu },
+      ],
+
+      ctaTitle: "هل أنت مستعد للعمل؟",
+      ctaBtn: "استأجر خبيراً الآن",
     },
     en: {
-      eyebrow: "ABOUT US",
-      title: "Ostafy Platform Profile",
-      subtitle: (
-        <>
-          Bilingual Egyptian leadership in organizing and developing the home maintenance and technical services sector.
-        </>
-      ),
-      
-      missionTitle: "Our Mission",
-      missionDesc: "We aim to empower homeowners and businesses with safe, fast access to the most skilled verified technicians, while organizing and guaranteeing service quality, providing technical solutions that improve lives, and elevating the profession of Egyptian craftsmen.",
-      
-      visionTitle: "Our Vision",
-      visionDesc: "To be the leading and most trusted platform in Egypt and the Middle East for home and professional services, spare parts supply, raising occupational safety standards, and improving the standard of living for skilled technicians.",
-      
-      valuesTitle: "Our Core Values",
-      valuesSubtitle: "The principles guiding our daily operations to maintain the trust of our clients and partners.",
-      
-      values: [
-        {
-          title: "Safety & Verification",
-          desc: "No worker or store is activated without full background checks, including national ID verification, criminal record review, and documentation checks.",
-          icon: ShieldCheck
-        },
-        {
-          title: "Transparency & Fair Pricing",
-          desc: "We eliminate hidden fees and monopolies, giving clients and technicians full freedom to chat and agree on custom budgets directly.",
-          icon: Handshake
-        },
-        {
-          title: "Quality & Warranty",
-          desc: "We protect everyone's rights. Every request completed on Ostafy is backed by a real warranty and a dedicated support team to resolve disputes.",
-          icon: CheckCircle
-        },
-        {
-          title: "Technical Excellence",
-          desc: "We utilize modern technologies to streamline communication: in-app live chat, push notifications, and live status tracking.",
-          icon: Sparkles
-        }
+      badge: "ESTABLISHED 2024",
+      heroTitle: "REDEFINING CRAFTSMANSHIP FOR THE DIGITAL AGE",
+      heroSub: "Ostafy connects the world's most skilled artisans and technical experts with individuals and businesses that demand nothing but excellence.",
+      journeyBtn: "OUR JOURNEY",
+      joinBtn: "JOIN AS A PRO",
+
+      statsTitle: "OSTAFY IN NUMBERS",
+      stats: [
+        { value: "5K+", label: "VERIFIED PROS" },
+        { value: "12K+", label: "ORDERS COMPLETED" },
+        { value: "15+", label: "PROVINCES COVERED" },
+        { value: "98%", label: "SATISFACTION RATE" },
       ],
 
-      statsTitle: "Ostafy in Numbers",
-      stats: [
-        { value: "5,000+", label: "Verified Technicians", icon: Users2 },
-        { value: "12,000+", label: "Successful Orders", icon: Briefcase },
-        { value: "15+", label: "Provinces Covered", icon: Globe2 },
-        { value: "98%", label: "Client Satisfaction Rate", icon: Star }
-      ]
-    }
+      missionTitle: "OUR MISSION",
+      missionDesc: "To empower master craftsmen by providing a platform that values quality over quantity, ensuring every service rendered is a testament to professional integrity and technical excellence.",
+      visionTitle: "OUR VISION",
+      visionDesc: "To become the global standard for on-demand skilled labor, creating a world where premium craftsmanship is accessible with a single tap, fostering trust and industrial growth.",
+
+      foundationTitle: "THE FOUNDATION",
+      foundationSub: "Our operating principles are forged in the reality of the workshop and the precision of the laboratory.",
+      values: [
+        { title: "SAFETY", desc: "Uncompromising standards in physical safety and digital data protection for every interaction.", Icon: ShieldCheck },
+        { title: "TRANSPARENCY", desc: "Clear pricing, real-time tracking, and honest reviews. We eliminate the guesswork from hiring.", Icon: GitBranch },
+        { title: "QUALITY", desc: "We don't just fix problems; we provide durable solutions that stand the test of time.", Icon: BadgeCheck },
+        { title: "EXCELLENCE", desc: "A commitment to continuous technical training and the latest industrial methodologies.", Icon: Cpu },
+      ],
+
+      ctaTitle: "READY TO WORK?",
+      ctaBtn: "HIRE AN EXPERT NOW",
+    },
   };
 
-  const currentCopy = copy[locale] || copy.ar;
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: { staggerChildren: 0.15 }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
-  };
+  const c = copy[locale] ?? copy.en;
 
   return (
-    <div className="animate-fadeIn space-y-16 py-8">
-      {/* ── Subpage Hero Section ── */}
-      <section className="onyx-card relative overflow-hidden p-8 sm:p-12 lg:p-16 border-gold-500/10">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-gold-500/5 blur-[120px] rounded-full -mr-48 -mt-48" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-gold-500/5 blur-[100px] rounded-full -ml-32 -mb-32" />
-        
-        <div className="relative max-w-4xl space-y-6">
-          <span className="inline-flex rounded-full bg-gold-500/10 px-4 py-2 text-[10px] font-black uppercase tracking-[0.4em] text-gold-500 border border-gold-500/20">
-            {currentCopy.eyebrow}
+    <div
+      dir={isArabic ? "rtl" : "ltr"}
+      style={{ backgroundColor: "#f5bd18", minHeight: "100vh" }}
+    >
+      {/* ── Hero Banner (Obsidian Card) ── */}
+      <section className="px-4 md:px-12 py-12 max-w-[1280px] mx-auto">
+        <div
+          className="relative overflow-hidden p-10 md:p-24 text-center"
+          style={{ backgroundColor: "#000000", border: "1px solid rgba(255,255,255,0.1)" }}
+        >
+          {/* Badge */}
+          <span
+            className="inline-block font-black text-xs uppercase px-4 py-1 mb-6 tracking-widest"
+            style={{ backgroundColor: "#f5bd18", color: "#1a1c1c" }}
+          >
+            {c.badge}
           </span>
-          <h1 className="text-4xl sm:text-6xl font-black text-white leading-tight tracking-tight">
-            {currentCopy.title}
+
+          {/* Title */}
+          <h1 className="font-black text-white uppercase leading-tight tracking-tight text-3xl md:text-6xl mb-6 max-w-4xl mx-auto">
+            {c.heroTitle}
           </h1>
-          <div className="h-1.5 w-28 bg-gradient-to-r from-gold-500 to-transparent rounded-full" />
-          <p className="text-lg sm:text-xl leading-relaxed text-onyx-300 max-w-3xl">
-            {currentCopy.subtitle}
+
+          {/* Subtitle */}
+          <p className="text-white/70 text-base md:text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
+            {c.heroSub}
           </p>
+
+          {/* CTA Buttons */}
+          <div className="flex flex-col md:flex-row gap-4 justify-center">
+            <button
+              className="font-black uppercase text-sm px-10 py-4 transition-all duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5"
+              style={{
+                backgroundColor: "#ffffff",
+                color: "#000000",
+                boxShadow: "4px 4px 0px rgba(255,255,255,0.25)",
+              }}
+            >
+              {c.journeyBtn}
+            </button>
+            <Link
+              href={`/${locale}/register/worker`}
+              className="inline-block font-black uppercase text-sm px-10 py-4 border-2 border-white text-white hover:bg-white/10 transition-all duration-200"
+            >
+              {c.joinBtn}
+            </Link>
+          </div>
         </div>
       </section>
 
-      {/* ── Mission & Vision ── */}
-      <div className="grid gap-8 md:grid-cols-2">
-        <motion.div 
-          initial={{ opacity: 0, x: isArabic ? 30 : -30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
-          className="onyx-card p-8 sm:p-10 border-gold-500/10 hover:border-gold-500/20 transition-all group"
-        >
-          <div className="flex items-center gap-4 mb-6">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gold-500/10 text-gold-500 border border-gold-500/20">
-              <Target className="h-5 w-5" />
-            </div>
-            <h2 className="text-2xl font-black text-white group-hover:text-gold-500 transition-colors">
-              {currentCopy.missionTitle}
-            </h2>
-          </div>
-          <p className="text-onyx-300 leading-relaxed text-base sm:text-lg">
-            {currentCopy.missionDesc}
-          </p>
-        </motion.div>
-
-        <motion.div 
-          initial={{ opacity: 0, x: isArabic ? -30 : 30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
-          className="onyx-card p-8 sm:p-10 border-gold-500/10 hover:border-gold-500/20 transition-all group"
-        >
-          <div className="flex items-center gap-4 mb-6">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gold-500/10 text-gold-500 border border-gold-500/20">
-              <Eye className="h-5 w-5" />
-            </div>
-            <h2 className="text-2xl font-black text-white group-hover:text-gold-500 transition-colors">
-              {currentCopy.visionTitle}
-            </h2>
-          </div>
-          <p className="text-onyx-300 leading-relaxed text-base sm:text-lg">
-            {currentCopy.visionDesc}
-          </p>
-        </motion.div>
-      </div>
-
-      {/* ── Statistics Counters ── */}
-      <section className="onyx-card p-8 sm:p-12 border-gold-500/10 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gold-500/[0.01] pointer-events-none" />
-        
-        <div className="text-center mb-10 max-w-lg mx-auto">
-          <h2 className="text-3xl font-black text-white">{currentCopy.statsTitle}</h2>
-          <div className="h-1 w-16 bg-gold-500 mx-auto mt-4 rounded-full" />
-        </div>
-
-        <motion.div 
-          variants={containerVariants}
-          initial="hidden"
-          animate="show"
-          className="grid gap-6 grid-cols-2 lg:grid-cols-4"
-        >
-          {currentCopy.stats.map((stat, idx) => {
-            const StatIcon = stat.icon;
-
-            return (
-              <motion.div 
-                key={idx}
-                variants={itemVariants}
-                className="flex flex-col items-center justify-center text-center p-6 bg-white/[0.01] rounded-2xl border border-white/5 hover:border-gold-500/20 transition-all group"
+      {/* ── Stats Block (Dark Band) ── */}
+      <section
+        className="w-full py-12 md:py-16"
+        style={{ backgroundColor: "#1a1c1c" }}
+      >
+        <div className="max-w-[1280px] mx-auto px-4 md:px-12">
+          <h2 className="font-black text-white uppercase text-3xl md:text-4xl mb-12 text-center md:text-start">
+            {c.statsTitle}
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {c.stats.map((stat, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1, duration: 0.5 }}
+                className="py-4 pl-6"
+                style={{ borderLeft: "4px solid #f5bd18" }}
               >
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gold-500/10 text-gold-500 mb-4 group-hover:scale-110 transition-transform duration-300">
-                  <StatIcon className="h-5 w-5" />
-                </div>
-                <div className="text-3xl sm:text-4xl font-black text-white text-gold-gradient mb-2">
+                <div
+                  className="font-black text-4xl md:text-5xl mb-2"
+                  style={{ color: "#f5bd18" }}
+                >
                   {stat.value}
                 </div>
-                <p className="text-xs sm:text-sm font-semibold text-onyx-400">
+                <div className="font-black text-xs uppercase text-white/60 tracking-widest">
                   {stat.label}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Mission & Vision (White Cards) ── */}
+      <section className="px-4 md:px-12 py-12 max-w-[1280px] mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Mission */}
+          <div
+            className="p-10 md:p-12"
+            style={{
+              backgroundColor: "#ffffff",
+              border: "4px solid #000000",
+              boxShadow: "4px 4px 0px #000000",
+            }}
+          >
+            <Rocket size={40} className="mb-6 text-[#1a1c1c]" strokeWidth={1.5} />
+            <h3 className="font-black text-[#1a1c1c] uppercase text-2xl md:text-3xl mb-4">
+              {c.missionTitle}
+            </h3>
+            <p className="text-[#1a1c1c]/80 text-base leading-relaxed">
+              {c.missionDesc}
+            </p>
+          </div>
+
+          {/* Vision */}
+          <div
+            className="p-10 md:p-12"
+            style={{
+              backgroundColor: "#ffffff",
+              border: "4px solid #000000",
+              boxShadow: "4px 4px 0px #000000",
+            }}
+          >
+            <Eye size={40} className="mb-6 text-[#1a1c1c]" strokeWidth={1.5} />
+            <h3 className="font-black text-[#1a1c1c] uppercase text-2xl md:text-3xl mb-4">
+              {c.visionTitle}
+            </h3>
+            <p className="text-[#1a1c1c]/80 text-base leading-relaxed">
+              {c.visionDesc}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Core Values Grid ── */}
+      <section className="px-4 md:px-12 py-12 max-w-[1280px] mx-auto">
+        <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
+          <div>
+            <h2 className="font-black text-[#1a1c1c] uppercase text-3xl md:text-4xl mb-2">
+              {c.foundationTitle}
+            </h2>
+            <p className="text-[#1a1c1c]/80 text-base max-w-xl">{c.foundationSub}</p>
+          </div>
+          <div className="h-1 w-full md:w-48 mb-2" style={{ backgroundColor: "#1a1c1c" }} />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {c.values.map((val, i) => {
+            const { Icon } = val;
+            return (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1, duration: 0.4 }}
+                className="group p-8 border border-white/10 transition-all duration-300 cursor-default"
+                style={{ backgroundColor: "#000000" }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLDivElement).style.backgroundColor = "#f5bd18";
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLDivElement).style.backgroundColor = "#000000";
+                }}
+              >
+                {/* Icon box */}
+                <div
+                  className="w-12 h-12 flex items-center justify-center mb-8 transition-colors duration-300 group-hover:bg-black"
+                  style={{ backgroundColor: "#f5bd18" }}
+                >
+                  <Icon
+                    size={22}
+                    strokeWidth={2}
+                    className="text-black group-hover:text-[#f5bd18] transition-colors duration-300"
+                  />
+                </div>
+                <h4 className="font-black text-white group-hover:text-black uppercase text-xl mb-3 transition-colors duration-300">
+                  {val.title}
+                </h4>
+                <p className="text-white/60 group-hover:text-black/80 text-sm leading-relaxed transition-colors duration-300">
+                  {val.desc}
                 </p>
               </motion.div>
             );
           })}
-        </motion.div>
+        </div>
       </section>
 
-      {/* ── Core Values Grid ── */}
-      <div className="space-y-8">
-        <div className="text-center max-w-xl mx-auto space-y-3">
-          <h2 className="text-3xl font-black text-white">{currentCopy.valuesTitle}</h2>
-          <p className="text-sm text-onyx-400">{currentCopy.valuesSubtitle}</p>
+      {/* ── CTA Banner (Dark) ── */}
+      <section
+        className="w-full h-80 flex items-center justify-center relative overflow-hidden"
+        style={{ backgroundColor: "#1a1c1c" }}
+      >
+        <div className="text-center relative z-10">
+          <h2 className="font-black text-white uppercase text-3xl md:text-5xl mb-8">
+            {c.ctaTitle}
+          </h2>
+          <Link
+            href={`/${locale}/workers`}
+            className="inline-block font-black uppercase text-sm px-12 py-5 transition-all duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5"
+            style={{
+              backgroundColor: "#f5bd18",
+              color: "#1a1c1c",
+              boxShadow: "4px 4px 0px rgba(255,255,255,0.2)",
+            }}
+          >
+            {c.ctaBtn}
+          </Link>
         </div>
-
-        <motion.div 
-          variants={containerVariants}
-          initial="hidden"
-          animate="show"
-          className="grid gap-6 md:grid-cols-2"
-        >
-          {currentCopy.values.map((val, idx) => {
-            const ValIcon = val.icon;
-
-            return (
-              <motion.div 
-                key={idx}
-                variants={itemVariants}
-                className="onyx-card p-8 group border-gold-500/10 hover:border-gold-500/30 transition-all flex gap-6"
-              >
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gold-500 text-onyx-950 shadow-gold/10 shadow-lg flex-shrink-0 group-hover:rotate-6 transition-all duration-300">
-                  <ValIcon className="h-6 w-6" />
-                </div>
-                <div className="space-y-3">
-                  <h3 className="text-xl font-bold text-white group-hover:text-gold-500 transition-colors">
-                    {val.title}
-                  </h3>
-                  <p className="text-onyx-400 leading-relaxed text-sm sm:text-base">
-                    {val.desc}
-                  </p>
-                </div>
-              </motion.div>
-            );
-          })}
-        </motion.div>
-      </div>
+      </section>
     </div>
   );
 }
