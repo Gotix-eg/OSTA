@@ -15,7 +15,9 @@ import {
   EyeOff,
   ShieldCheck,
   ArrowUpRight,
-  Loader2
+  Loader2,
+  Phone,
+  Lock
 } from "lucide-react";
 
 import { postApiData } from "@/lib/api";
@@ -354,15 +356,16 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
   }
 
   return (
-    <form onSubmit={(e) => { e.preventDefault(); handleLogin(); }} className="space-y-8 animate-fadeIn">
+    <form onSubmit={(e) => { e.preventDefault(); handleLogin(); }} className="space-y-6 animate-fadeIn">
       {!isAdmin && (
-        <div className="grid grid-cols-3 gap-2 rounded-2xl bg-onyx-950 p-1.5 border border-onyx-800">
-          {(["CLIENT", "WORKER", "VENDOR"] as const).map((role) => {
+        <div className="flex w-full mb-8 border border-white/10 rounded-none overflow-hidden">
+          {(["CLIENT", "WORKER", "VENDOR"] as const).map((role, idx) => {
+            const isActive = activeTab === role;
             const label = role === "CLIENT"
-              ? (isArabic ? "عميل" : "Client")
+              ? (isArabic ? "CLIENT / عميل" : "CLIENT / عميل")
               : role === "WORKER"
-              ? (isArabic ? "فني" : "Technician")
-              : (isArabic ? "مورد" : "Vendor");
+              ? (isArabic ? "PRO / فني" : "PRO / فني")
+              : (isArabic ? "VENDOR / مورد" : "VENDOR / مورد");
             return (
               <button
                 key={role}
@@ -372,10 +375,11 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
                   setError(null);
                 }}
                 className={cn(
-                  "rounded-xl py-3 text-sm font-bold transition-all duration-300",
-                  activeTab === role
-                    ? "bg-gold-500 text-onyx-950 shadow-md shadow-gold-500/10"
-                    : "text-onyx-400 hover:text-white hover:bg-onyx-900/50"
+                  "flex-1 py-4 font-black uppercase text-[10px] tracking-tight transition-all duration-150 rounded-none",
+                  isActive
+                    ? "bg-[#f5bd18] text-black"
+                    : "text-white hover:bg-white/5",
+                  idx > 0 && (isArabic ? "border-r border-white/10" : "border-l border-white/10")
                 )}
               >
                 {label}
@@ -386,111 +390,115 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
       )}
 
       <div className="grid gap-6">
-        <InputField
-          label={isArabic ? "رقم الهاتف" : "Phone number"}
-          value={phone}
-          onChange={(val) => {
-            setPhone(val);
-            if (phoneError) setPhoneError(null);
-          }}
-          placeholder="01x xxxx xxxx"
-          errorText={phoneError || undefined}
-          name="phone"
-          autoComplete="username"
-        />
+        {/* Phone Input */}
+        <div className="space-y-2 text-start">
+          <label className="block text-white/70 font-black text-xs uppercase tracking-widest flex justify-between">
+            <span>{isArabic ? "رقم الهاتف" : "Phone Number / رقم الهاتف"}</span>
+            <Phone size={14} className="text-[#f5bd18]" />
+          </label>
+          <input
+            type="text"
+            value={phone}
+            onChange={(e) => {
+              setPhone(e.target.value);
+              if (phoneError) setPhoneError(null);
+            }}
+            placeholder={isArabic ? "01x xxxx xxxx" : "01x xxxx xxxx"}
+            autoComplete="username"
+            name="phone"
+            className={cn(
+              "w-full bg-[#121212] text-white p-4 font-semibold transition-colors placeholder:text-white/20 rounded-none focus:ring-0 focus:outline-none focus:border-[#f5bd18]",
+              phoneError ? "border-2 border-red-500" : "border border-white/20"
+            )}
+          />
+          {phoneError && (
+            <p className="text-xs text-red-500 mt-1 select-none font-bold animate-fadeIn">{phoneError}</p>
+          )}
+        </div>
 
-        <label className="block space-y-2 text-start">
-          <span className="text-sm font-bold text-onyx-300 tracking-wide">{isArabic ? "كلمة المرور" : "Password"}</span>
+        {/* Password Input */}
+        <div className="space-y-2 text-start">
+          <label className="block text-white/70 font-black text-xs uppercase tracking-widest flex justify-between">
+            <span>{isArabic ? "كلمة المرور" : "Password / كلمة المرور"}</span>
+            <Lock size={14} className="text-[#f5bd18]" />
+          </label>
           <div className="relative">
             <input
               type={showPassword ? "text" : "password"}
               value={password}
-              onChange={(event) => {
-                setPassword(event.target.value);
+              onChange={(e) => {
+                setPassword(e.target.value);
                 if (passwordError) setPasswordError(null);
               }}
-              name="password"
+              placeholder="••••••••"
               autoComplete="current-password"
+              name="password"
               className={cn(
-                "h-14 w-full rounded-2xl border bg-onyx-800/50 px-5 pe-12 text-white transition-all placeholder:text-onyx-600 focus:ring-4 focus:ring-gold-500/10 outline-none",
-                passwordError ? "border-red-500/50 focus:border-red-500/50" : "border-onyx-700 focus:border-gold-500/50"
+                "w-full bg-[#121212] text-white p-4 pe-12 font-semibold transition-colors placeholder:text-white/20 rounded-none focus:ring-0 focus:outline-none focus:border-[#f5bd18]",
+                passwordError ? "border-2 border-red-500" : "border border-white/20"
               )}
             />
             <button
               type="button"
               onClick={() => setShowPassword((current) => !current)}
-              className="absolute inset-y-0 end-4 flex items-center text-onyx-500 transition hover:text-gold-500"
+              className="absolute inset-y-0 end-4 flex items-center text-white/50 hover:text-[#f5bd18] transition-colors"
             >
-              {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
           {passwordError && (
             <p className="text-xs text-red-500 mt-1 select-none font-bold animate-fadeIn">{passwordError}</p>
           )}
-        </label>
+        </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-4 text-sm font-medium">
-          <label className="flex items-center gap-3 cursor-pointer group">
-            <div className="relative flex h-5 w-5 items-center justify-center">
-               <input
-                  type="checkbox"
-                  checked={remember}
-                  onChange={(event) => setRemember(event.target.checked)}
-                  className="peer h-full w-full opacity-0 absolute cursor-pointer"
-               />
-               <div className="h-full w-full rounded border border-onyx-700 bg-onyx-800 transition peer-checked:border-gold-500 peer-checked:bg-gold-500" />
-               <Check className="pointer-events-none absolute h-3.5 w-3.5 text-onyx-950 opacity-0 transition peer-checked:opacity-100" />
-            </div>
-            <span className="text-onyx-300 group-hover:text-onyx-100 transition">{isArabic ? "تذكرني" : "Remember me"}</span>
+        {/* Remember / Forgot */}
+        <div className="flex items-center justify-between text-xs font-black text-white/70">
+          <label className="flex items-center gap-2 cursor-pointer group">
+            <input
+              type="checkbox"
+              checked={remember}
+              onChange={(e) => setRemember(e.target.checked)}
+              className="rounded-none bg-transparent border-white/20 text-[#f5bd18] focus:ring-0 focus:ring-offset-0 cursor-pointer h-4 w-4"
+            />
+            <span className="group-hover:text-white transition-colors">
+              {isArabic ? "تذكرني" : "Remember Me / تذكرني"}
+            </span>
           </label>
-          <Link href={`/${locale}/forgot-password`} className="text-gold-500 hover:text-gold-400 transition-colors">
-            {isArabic ? "نسيت كلمة المرور؟" : "Forgot password?"}
+          <Link href={`/${locale}/forgot-password`} className="hover:text-[#f5bd18] transition-colors">
+            {isArabic ? "نسيت كلمة المرور؟" : "Forgot Password? / نسيت كلمة المرور؟"}
           </Link>
         </div>
 
+        {/* Submit Button */}
         <button
           type="submit"
           disabled={isSubmitting}
-          className="btn-gold h-14 text-lg"
+          className="w-full bg-[#f5bd18] text-black font-black text-sm py-5 mt-4 transition-all uppercase rounded-none"
+          style={{
+            boxShadow: "4px 4px 0px rgba(255,255,255,0.2)",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = "translate(2px, 2px)";
+            e.currentTarget.style.boxShadow = "2px 2px 0px rgba(255,255,255,0.2)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = "translate(0px, 0px)";
+            e.currentTarget.style.boxShadow = "4px 4px 0px rgba(255,255,255,0.2)";
+          }}
         >
-          {isSubmitting ? (isArabic ? "... جاري" : "Signing in...") : isArabic ? "تسجيل الدخول" : "Sign in"}
+          {isSubmitting ? (isArabic ? "... جاري الدخول" : "LOGGING IN...") : (isArabic ? "تسجيل الدخول" : "LOGIN / تسجيل الدخول")}
         </button>
 
         {submitted && (
-          <div className="onyx-card p-4 border-success/20 bg-success/5 text-success text-center font-bold">
+          <div className="p-4 border border-success/20 bg-success/5 text-success text-center font-bold rounded-none">
             {copy.success}
           </div>
         )}
 
         {error && (
-          <div className="onyx-card p-4 border-red-500/20 bg-red-500/5 text-red-500 text-center font-bold">
+          <div className="p-4 border border-red-500/20 bg-red-500/5 text-red-500 text-center font-bold rounded-none">
             {error}
           </div>
-        )}
-
-        {!isAdmin && (
-          <>
-            <div className="relative py-4">
-              <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-onyx-800" /></div>
-              <div className="relative flex justify-center text-xs uppercase tracking-widest"><span className="bg-onyx-900 px-4 text-onyx-600 font-black">{isArabic ? "أو" : "or"}</span></div>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-3">
-              {[
-                { labelAr: "تسجيل عميل", labelEn: "Register Client", href: "client" },
-                { labelAr: "تسجيل عامل", labelEn: "Register Worker", href: "worker" },
-                { labelAr: "تسجيل مورد", labelEn: "Register Vendor", href: "vendor" }
-              ].map((btn) => (
-                <Link
-                   key={btn.href}
-                   href={`/${locale}/register/${btn.href}`}
-                   className="btn-onyx h-12 flex items-center justify-center text-xs px-2"
-                >
-                   {isArabic ? btn.labelAr : btn.labelEn}
-                </Link>
-              ))}
-            </div>
-          </>
         )}
       </div>
     </form>
