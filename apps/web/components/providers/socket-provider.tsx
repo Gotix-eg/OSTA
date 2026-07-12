@@ -59,7 +59,13 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    const apiVal = process.env.NEXT_PUBLIC_OSTA_API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
+    const apiVal = process.env.NEXT_PUBLIC_OSTA_API_URL || process.env.NEXT_PUBLIC_API_URL;
+    if (!apiVal) {
+      console.warn("Socket connection skipped: NEXT_PUBLIC_OSTA_API_URL is not configured");
+      setSocket(null);
+      setIsConnected(false);
+      return;
+    }
     const socketUrl = apiVal.replace("/api", "");
 
     console.log("Connecting to socket server at:", socketUrl);
