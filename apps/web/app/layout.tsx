@@ -7,7 +7,13 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Ostafy | Skilled Workers Platform",
-  description: "Premium bilingual platform connecting Egyptian households with verified skilled workers."
+  description: "Premium bilingual platform connecting Egyptian households with verified skilled workers.",
+  icons: {
+    icon: [
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" }
+    ]
+  }
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
