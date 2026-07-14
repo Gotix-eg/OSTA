@@ -101,6 +101,18 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
     window.setTimeout(() => setSaved(false), 2000);
   }
 
+  const safeWorkPreferences = {
+    isAvailable: data.workPreferences?.isAvailable ?? false,
+    acceptsEmergency: data.workPreferences?.acceptsEmergency ?? false,
+    acceptsSameDay: data.workPreferences?.acceptsSameDay ?? false,
+    serviceAreas: Array.isArray(data.workPreferences?.serviceAreas) ? data.workPreferences.serviceAreas : []
+  };
+  const safePayout = {
+    method: data.payout?.method ?? "",
+    schedule: data.payout?.schedule ?? "",
+    bankLabel: data.payout?.bankLabel ?? ""
+  };
+
   return (
     <div>
       <SubpageHero
@@ -115,9 +127,9 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
       />
 
       <div className="mb-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        <MiniMetric label={isArabic ? "التوفر" : "Availability"} value={data.workPreferences.isAvailable ? (isArabic ? "مفعل" : "ON") : isArabic ? "متوقف" : "OFF"} note={isArabic ? "ظهور الطلبات" : "job visibility"} icon={Sparkles} tone="accent" />
-        <MiniMetric label={isArabic ? "مناطق الخدمة" : "Service areas"} value={formatNumber(locale, data.workPreferences.serviceAreas.length)} note={isArabic ? "نطاق التغطية" : "coverage map"} icon={ShieldCheck} tone="sun" />
-        <MiniMetric label={isArabic ? "جدول التحويل" : "Payout"} value={data.payout.schedule} note={isArabic ? "دورة التحويل" : "transfer cycle"} icon={Wallet} tone="primary" />
+        <MiniMetric label={isArabic ? "التوفر" : "Availability"} value={safeWorkPreferences.isAvailable ? (isArabic ? "مفعل" : "ON") : isArabic ? "متوقف" : "OFF"} note={isArabic ? "ظهور الطلبات" : "job visibility"} icon={Sparkles} tone="accent" />
+        <MiniMetric label={isArabic ? "مناطق الخدمة" : "Service areas"} value={formatNumber(locale, safeWorkPreferences.serviceAreas.length)} note={isArabic ? "نطاق التغطية" : "coverage map"} icon={ShieldCheck} tone="sun" />
+        <MiniMetric label={isArabic ? "جدول التحويل" : "Payout"} value={safePayout.schedule || (isArabic ? "غير محدد" : "Unset")} note={isArabic ? "دورة التحويل" : "transfer cycle"} icon={Wallet} tone="primary" />
       </div>
 
       {saved ? <div className="mb-4 rounded-[1.2rem] border border-success/20 bg-success/10 px-4 py-3 text-sm text-success">{isArabic ? "تم الحفظ محليًا" : "Saved locally"}</div> : null}
@@ -143,7 +155,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
                 <span className="font-medium text-white">{item.label}</span>
                 <input
                   type="checkbox"
-                  checked={data.workPreferences[item.key as keyof typeof data.workPreferences] as boolean}
+                  checked={safeWorkPreferences[item.key as keyof typeof safeWorkPreferences] as boolean}
                   onChange={(event) => setData({ ...data, workPreferences: { ...data.workPreferences, [item.key]: event.target.checked } })}
                   className="h-4 w-4"
                 />
@@ -152,16 +164,16 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
             <SoftCard>
               <p className="text-xs uppercase tracking-[0.22em] text-onyx-500">{isArabic ? "المناطق" : "Areas"}</p>
               <div className="mt-3 flex flex-wrap gap-2">
-                {data.workPreferences.serviceAreas.map((area) => (
+                {safeWorkPreferences.serviceAreas.map((area) => (
                   <SoftBadge key={area} label={area} tone="accent" />
                 ))}
               </div>
             </SoftCard>
             <SplitInfo
               items={[
-                { label: isArabic ? "الوسيلة" : "Method", value: data.payout.method },
-                { label: isArabic ? "الجدول" : "Schedule", value: data.payout.schedule },
-                { label: isArabic ? "البنك" : "Bank", value: data.payout.bankLabel }
+                { label: isArabic ? "الوسيلة" : "Method", value: safePayout.method || (isArabic ? "غير محدد" : "Unset") },
+                { label: isArabic ? "الجدول" : "Schedule", value: safePayout.schedule || (isArabic ? "غير محدد" : "Unset") },
+                { label: isArabic ? "البنك" : "Bank", value: safePayout.bankLabel || (isArabic ? "غير محدد" : "Unset") }
               ]}
             />
           </div>

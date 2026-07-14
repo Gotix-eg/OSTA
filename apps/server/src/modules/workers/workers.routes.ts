@@ -661,6 +661,7 @@ router.get("/settings", catchAsync(async (request, response) => {
       email: user.email
     },
     workPreferences: {
+      ...workerSettings.workPreferences,
       isAvailable: user.workerProfile?.isAvailable ?? false,
       notificationsEnabledApp: user.workerProfile?.notificationsEnabledApp ?? true,
       notificationsEnabledEmail: user.workerProfile?.notificationsEnabledEmail ?? true,
