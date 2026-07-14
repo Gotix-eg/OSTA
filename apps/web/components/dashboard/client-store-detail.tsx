@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
-  ArrowLeft, ArrowRight, ImageOff, Minus, Plus, ShoppingCart,
-  Star, MapPin, Store, Trash2, CheckCircle2, ChevronRight, ChevronLeft,
-  MessageSquarePlus, Send, Loader2
+  Building2, ChevronLeft, ChevronRight, CheckCircle2, ImageOff, Loader2,
+  MapPin, Menu, MessageSquarePlus, Minus, Plus, Send, ShoppingCart,
+  Store, Trash2, Verified
 } from "lucide-react";
 import { fetchApiData, postApiData } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
@@ -59,43 +59,45 @@ function ProductCard({
   const name = isArabic ? product.nameAr : (product.nameEn || product.nameAr);
 
   return (
-    <article className="overflow-hidden rounded-[1.6rem] border border-onyx-700/70 bg-onyx-800/50 shadow-soft transition hover:-translate-y-0.5">
-      {/* Image */}
-      <div className="relative h-44 w-full overflow-hidden bg-onyx-800/50">
+    <article className="group overflow-hidden rounded-[32px] bg-black text-white transition active:scale-[0.98] lg:rounded-none lg:border lg:border-white/10 lg:shadow-[5px_5px_0_#1a1c1c] lg:hover:-translate-y-0.5 lg:hover:border-[#f5bd18]/60">
+      <div className="relative h-64 w-full overflow-hidden bg-[#121212] lg:h-48">
         {product.imageUrl ? (
-          <img src={product.imageUrl} alt={name} className="h-full w-full object-cover" />
+          <img src={product.imageUrl} alt={name} className="h-full w-full object-cover transition duration-500 lg:grayscale lg:group-hover:scale-110 lg:group-hover:grayscale-0" />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-onyx-600">
+          <div className="flex h-full w-full items-center justify-center text-white/25">
             <ImageOff className="h-10 w-10" />
           </div>
         )}
+        <span className={cn("absolute end-3 top-3 rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] lg:rounded-none", product.inStock ? "bg-[#f5bd18] text-black" : "border border-white/15 bg-black text-white/45")}>
+          {product.inStock ? (isArabic ? "متاح" : "In stock") : (isArabic ? "غير متاح" : "Out")}
+        </span>
       </div>
 
-      <div className="p-4">
-        <p className="font-semibold text-white leading-snug">{name}</p>
+      <div className="p-6 text-start lg:p-4">
+        <p className="text-xl font-black leading-snug text-[#f5bd18] lg:text-base lg:text-white lg:group-hover:text-[#f5bd18]">{name}</p>
         {product.description && (
-          <p className="mt-1 line-clamp-2 text-xs text-onyx-400">{product.description}</p>
+          <p className="mt-2 line-clamp-2 text-sm font-semibold leading-5 text-white/55 lg:text-xs">{product.description}</p>
         )}
-        <p className="mt-3 text-xl font-bold text-primary-700">{formatPrice(product.price, locale)}</p>
+        <p className="mt-4 text-2xl font-black text-white lg:text-[#f5bd18]">{formatPrice(product.price, locale)}</p>
 
-        {/* Cart controls */}
-        <div className="mt-4">
+        <div className="mt-6 lg:mt-4">
           {cartQty === 0 ? (
             <button
               type="button"
               onClick={onAdd}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary-600 py-2.5 text-sm font-semibold text-white transition hover:bg-primary-700"
+              disabled={!product.inStock}
+              className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#f5bd18] py-2.5 text-sm font-black text-black transition active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 lg:rounded-none lg:bg-white lg:shadow-[3px_3px_0_#f5bd18] lg:active:translate-x-1 lg:active:translate-y-1 lg:active:scale-100 lg:active:shadow-none"
             >
               <Plus className="h-4 w-4" />
               {isArabic ? "أضف للسلة" : "Add to Cart"}
             </button>
           ) : (
-            <div className="flex items-center justify-between rounded-full border border-primary-200 bg-primary-50 px-2 py-1">
-              <button type="button" onClick={onRemove} className="flex h-8 w-8 items-center justify-center rounded-full bg-onyx-800/50 text-primary-700 shadow-soft transition hover:bg-primary-100">
+            <div className="flex items-center justify-between rounded-xl bg-[#f5bd18] px-2 py-1 text-black lg:rounded-none lg:border lg:border-[#f5bd18]">
+              <button type="button" onClick={onRemove} className="flex h-8 w-8 items-center justify-center rounded-lg bg-black text-[#f5bd18] transition hover:bg-white hover:text-black lg:rounded-none">
                 <Minus className="h-4 w-4" />
               </button>
-              <span className="text-lg font-bold text-primary-700">{cartQty}</span>
-              <button type="button" onClick={onAdd} className="flex h-8 w-8 items-center justify-center rounded-full bg-onyx-800/50 text-primary-700 shadow-soft transition hover:bg-primary-100">
+              <span className="text-lg font-black">{cartQty}</span>
+              <button type="button" onClick={onAdd} className="flex h-8 w-8 items-center justify-center rounded-lg bg-black text-[#f5bd18] transition hover:bg-white hover:text-black lg:rounded-none">
                 <Plus className="h-4 w-4" />
               </button>
             </div>
@@ -110,7 +112,6 @@ function CartPanel({
   cart,
   locale,
   vendorId,
-  vendorName,
   onClear,
   onRemoveItem,
   onChangeQty,
@@ -118,7 +119,6 @@ function CartPanel({
   cart: CartItem[];
   locale: Locale;
   vendorId: string;
-  vendorName: string;
   onClear: () => void;
   onRemoveItem: (id: string) => void;
   onChangeQty: (id: string, delta: number) => void;
@@ -152,12 +152,12 @@ function CartPanel({
 
   if (success) {
     return (
-      <div className="rounded-[1.6rem] border border-success/30 bg-success/10 p-6 text-center">
-        <CheckCircle2 className="mx-auto h-10 w-10 text-success" />
-        <h3 className="mt-4 text-xl font-semibold text-white">
+      <div className="rounded-[20px] border border-emerald-400/30 bg-black p-6 text-center text-white shadow-[5px_5px_0_#1a1c1c] lg:rounded-none">
+        <CheckCircle2 className="mx-auto h-10 w-10 text-emerald-300" />
+        <h3 className="mt-4 text-xl font-black text-white">
           {isArabic ? "تم إرسال طلبك!" : "Order Placed!"}
         </h3>
-        <p className="mt-2 text-sm text-onyx-300">
+        <p className="mt-2 text-sm font-semibold leading-6 text-white/55">
           {isArabic
             ? "سيتواصل معك المتجر قريباً لتأكيد الطلب."
             : "The store will contact you soon to confirm your order."}
@@ -167,35 +167,44 @@ function CartPanel({
   }
 
   return (
-    <div className="rounded-[1.8rem] border border-onyx-700/70 bg-onyx-800/50 shadow-soft">
-      <div className="border-b border-dark-100 p-5">
+    <div className="flex flex-col rounded-[20px] border border-white/10 bg-black text-white shadow-[5px_5px_0_#1a1c1c] lg:h-[calc(100vh-250px)] lg:rounded-none">
+      <div className="border-b border-white/10 bg-white/[0.03] p-5">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-            <ShoppingCart className="h-5 w-5 text-primary-600" />
+          <h3 className="flex items-center gap-2 text-lg font-black text-white">
+            <ShoppingCart className="h-5 w-5 text-[#f5bd18]" />
             {isArabic ? "سلة المشتريات" : "Your Cart"}
           </h3>
-          <button type="button" onClick={onClear} className="text-xs text-error hover:underline">
+          <button type="button" onClick={onClear} className="border-b border-red-300 text-xs font-black text-red-300">
             {isArabic ? "إفراغ السلة" : "Clear"}
           </button>
         </div>
       </div>
 
-      <div className="divide-y divide-dark-100 px-5">
+      <div className="custom-scrollbar flex-1 divide-y divide-white/10 overflow-y-auto px-5">
         {cart.map(item => (
           <div key={item.product.id} className="flex items-center gap-3 py-3">
+            <div className="h-14 w-14 shrink-0 bg-white/10">
+              {item.product.imageUrl ? (
+                <img src={item.product.imageUrl} alt={isArabic ? item.product.nameAr : (item.product.nameEn || item.product.nameAr)} className="h-full w-full object-cover" />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center text-white/25">
+                  <ImageOff className="h-5 w-5" />
+                </div>
+              )}
+            </div>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-semibold text-white truncate">{isArabic ? item.product.nameAr : (item.product.nameEn || item.product.nameAr)}</p>
-              <p className="text-xs text-onyx-400">{formatPrice(item.product.price, locale)} × {item.qty}</p>
+              <p className="truncate text-sm font-black text-white">{isArabic ? item.product.nameAr : (item.product.nameEn || item.product.nameAr)}</p>
+              <p className="text-xs font-semibold text-white/45">{formatPrice(item.product.price, locale)} × {item.qty}</p>
             </div>
             <div className="flex items-center gap-2 shrink-0">
-              <button type="button" onClick={() => onChangeQty(item.product.id, -1)} className="flex h-7 w-7 items-center justify-center rounded-full border border-onyx-700 text-onyx-300 hover:bg-onyx-800/50">
+              <button type="button" onClick={() => onChangeQty(item.product.id, -1)} className="flex h-7 w-7 items-center justify-center border border-white/10 text-white/65 hover:border-[#f5bd18] hover:text-[#f5bd18]">
                 <Minus className="h-3 w-3" />
               </button>
-              <span className="w-5 text-center text-sm font-semibold">{item.qty}</span>
-              <button type="button" onClick={() => onChangeQty(item.product.id, 1)} className="flex h-7 w-7 items-center justify-center rounded-full border border-onyx-700 text-onyx-300 hover:bg-onyx-800/50">
+              <span className="w-5 text-center text-sm font-black">{item.qty}</span>
+              <button type="button" onClick={() => onChangeQty(item.product.id, 1)} className="flex h-7 w-7 items-center justify-center border border-white/10 text-white/65 hover:border-[#f5bd18] hover:text-[#f5bd18]">
                 <Plus className="h-3 w-3" />
               </button>
-              <button type="button" onClick={() => onRemoveItem(item.product.id)} className="flex h-7 w-7 items-center justify-center rounded-full text-error hover:bg-error/10">
+              <button type="button" onClick={() => onRemoveItem(item.product.id)} className="flex h-7 w-7 items-center justify-center text-red-300 hover:bg-red-400/10">
                 <Trash2 className="h-3.5 w-3.5" />
               </button>
             </div>
@@ -203,16 +212,25 @@ function CartPanel({
         ))}
       </div>
 
-      <div className="space-y-4 p-5">
-        {/* Total */}
-        <div className="flex items-center justify-between rounded-[1.2rem] bg-onyx-800/50 px-4 py-3">
-          <span className="font-semibold text-onyx-200">{isArabic ? "الإجمالي" : "Total"}</span>
-          <span className="text-xl font-bold text-primary-700">{formatPrice(total, locale)}</span>
+      <div className="space-y-4 border-t border-white/10 p-5">
+        <div className="space-y-2">
+          <div className="flex items-center justify-between text-sm font-bold text-white/55">
+            <span>{isArabic ? "المجموع الفرعي" : "Subtotal"}</span>
+            <span>{formatPrice(total, locale)}</span>
+          </div>
+          <div className="flex items-center justify-between text-sm font-bold text-white/55">
+            <span>{isArabic ? "مصاريف الشحن" : "Delivery"}</span>
+            <span>{formatPrice(cart.length > 0 ? 50 : 0, locale)}</span>
+          </div>
+          <div className="flex items-center justify-between pt-2 text-lg font-black text-white">
+            <span>{isArabic ? "الإجمالي" : "Total"}</span>
+            <span className="text-[#f5bd18]">{formatPrice(total + (cart.length > 0 ? 50 : 0), locale)}</span>
+          </div>
         </div>
 
         {/* Payment method */}
         <div className="space-y-2">
-          <p className="text-sm font-medium text-onyx-200">{isArabic ? "طريقة الدفع" : "Payment Method"}</p>
+          <p className="text-xs font-black uppercase tracking-[0.16em] text-white/45">{isArabic ? "طريقة الدفع" : "Payment Method"}</p>
           <div className="grid grid-cols-2 gap-2">
             {(["CASH_ON_DELIVERY", "INSTAPAY"] as const).map(method => (
               <button
@@ -220,10 +238,10 @@ function CartPanel({
                 type="button"
                 onClick={() => setPaymentMethod(method)}
                 className={cn(
-                  "rounded-[1rem] border px-3 py-2 text-sm font-medium transition",
+                  "border px-3 py-2 text-sm font-black transition",
                   paymentMethod === method
-                    ? "border-primary-400 bg-primary-50 text-primary-700"
-                    : "border-onyx-700 bg-onyx-800/50 text-onyx-300 hover:border-dark-400"
+                    ? "border-[#f5bd18] bg-[#f5bd18] text-black"
+                    : "border-white/10 bg-white/5 text-white/60 hover:border-white/30"
                 )}
               >
                 {method === "CASH_ON_DELIVERY"
@@ -236,25 +254,25 @@ function CartPanel({
 
         {/* Notes */}
         <label className="block space-y-1.5">
-          <span className="text-sm font-medium text-onyx-200">{isArabic ? "ملاحظات التوصيل (اختياري)" : "Delivery Notes (Optional)"}</span>
+          <span className="text-xs font-black uppercase tracking-[0.16em] text-white/45">{isArabic ? "ملاحظات التوصيل" : "Delivery Notes"}</span>
           <textarea
             value={notes}
             onChange={e => setNotes(e.target.value)}
             rows={2}
             placeholder={isArabic ? "العنوان، الطابق، أي تعليمات..." : "Address, floor, any instructions..."}
-            className="w-full rounded-[1.1rem] border border-onyx-700 bg-onyx-800/50 px-4 py-3 text-sm text-white placeholder:text-onyx-500 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200"
+            className="w-full border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-white placeholder:text-white/30 focus:border-[#f5bd18] focus:outline-none"
           />
         </label>
 
         {error && (
-          <div className="rounded-[1rem] border border-error/30 bg-error/10 px-4 py-3 text-sm text-error">{error}</div>
+          <div className="border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm font-semibold text-red-200">{error}</div>
         )}
 
         <button
           type="button"
           onClick={handleOrder}
           disabled={submitting || cart.length === 0}
-          className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary-600 py-3 text-sm font-semibold text-white transition hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex min-h-12 w-full items-center justify-center gap-2 bg-[#f5bd18] py-3 text-sm font-black text-black shadow-[4px_4px_0_#2a2a2a] transition active:translate-x-1 active:translate-y-1 active:shadow-none disabled:cursor-not-allowed disabled:opacity-60"
         >
           {submitting ? (isArabic ? "جاري الإرسال..." : "Placing order...") : (isArabic ? "تأكيد الطلب" : "Place Order")}
         </button>
@@ -314,81 +332,176 @@ export function ClientStoreDetailPage({ locale, vendorId }: { locale: Locale; ve
     ? (isArabic && vendor.shopNameAr ? vendor.shopNameAr : vendor.shopName)
     : "";
 
-  const cartCount = cart.reduce((s, i) => s + i.qty, 0);
-
   if (loading) {
     return (
-      <div className="space-y-6">
-        <div className="h-40 animate-pulse rounded-[1.8rem] bg-onyx-800/50" />
+      <div className="-m-4 min-h-screen bg-[#f5bd18] p-4 sm:-m-6 sm:p-6 lg:-m-8 lg:p-8">
+        <div className="h-40 animate-pulse border border-white/10 bg-black shadow-[6px_6px_0_#1a1c1c]" />
         <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-          {[1, 2, 3, 4].map(i => <div key={i} className="h-64 animate-pulse rounded-[1.6rem] bg-onyx-800/50" />)}
+          {[1, 2, 3, 4].map(i => <div key={i} className="h-64 animate-pulse border border-white/10 bg-black shadow-[5px_5px_0_#1a1c1c]" />)}
         </div>
       </div>
     );
   }
 
   return (
-    <div>
-      {/* Back link */}
-      <Link
-        href={`/${locale}/client/stores`}
-        className="mb-6 inline-flex items-center gap-2 text-sm text-onyx-400 hover:text-white"
-      >
-        {isArabic ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-        {isArabic ? "العودة للمتاجر" : "Back to Stores"}
-      </Link>
+    <div className="-m-4 min-h-screen bg-[#f5bd18] pb-24 text-black sm:-m-6 lg:-m-8 lg:p-8 lg:pb-8">
+      <header className="sticky top-0 z-30 flex items-center justify-between bg-[#f5bd18] p-4 lg:hidden">
+        <Link href={`/${locale}/client/stores`} className="inline-flex items-center gap-3">
+          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-black text-[#f5bd18] shadow-lg">
+            {isArabic ? <ChevronRight className="h-6 w-6" /> : <ChevronLeft className="h-6 w-6" />}
+          </span>
+          <span className="text-lg font-black">{isArabic ? "العودة للمتاجر" : "Back to Stores"}</span>
+        </Link>
+        <button type="button" className="flex h-10 w-10 items-center justify-center rounded-xl bg-black text-[#f5bd18]">
+          <Menu className="h-5 w-5" />
+        </button>
+      </header>
 
-      {/* Store header */}
       {vendor && (
-        <div className="mb-6 overflow-hidden rounded-[1.8rem] border border-onyx-700/70 bg-onyx-800/50 shadow-soft">
-          <div className="relative h-40 overflow-hidden bg-gradient-to-br from-primary-50 to-surface-peach">
-            {vendor.shopImageUrl
-              ? <img src={vendor.shopImageUrl} alt={shopName} className="h-full w-full object-cover" />
-              : <div className="flex h-full w-full items-center justify-center"><Store className="h-14 w-14 text-primary-300" /></div>
-            }
-            <span className={cn("absolute end-4 top-4 rounded-full px-3 py-1 text-xs font-semibold", vendor.isOpen ? "bg-success/90 text-white" : "bg-dark-400/80 text-white")}>
-              {vendor.isOpen ? (isArabic ? "مفتوح" : "Open") : (isArabic ? "مغلق" : "Closed")}
-            </span>
-          </div>
-          <div className="p-5">
-            <div className="flex flex-wrap items-start justify-between gap-3">
+        <section className="px-4 lg:px-0">
+          <div className="relative mb-6 hidden overflow-hidden border border-white/10 bg-black p-8 text-white shadow-[6px_6px_0_#1a1c1c] lg:block">
+            <div className="absolute inset-0 opacity-25">
+              {vendor.shopImageUrl ? (
+                <img src={vendor.shopImageUrl} alt={shopName} className="h-full w-full object-cover grayscale brightness-75 contrast-125" />
+              ) : (
+                <div className="h-full w-full bg-[radial-gradient(circle_at_30%_20%,rgba(245,189,24,0.35),transparent_35%),linear-gradient(135deg,#181818,#000)]" />
+              )}
+            </div>
+            <div className="relative z-10 flex min-h-32 items-end justify-between gap-6">
               <div>
-                <h1 className="text-2xl font-semibold text-white">{shopName}</h1>
-                {vendor.category && <p className="mt-1 text-sm font-medium text-primary-700">{vendor.category}</p>}
-                {vendor.shopDescription && <p className="mt-2 text-sm text-onyx-400">{vendor.shopDescription}</p>}
+                <div className="mb-3 flex items-center gap-3">
+                  <span className={cn("px-2 py-1 text-xs font-black uppercase", vendor.isOpen ? "bg-[#f5bd18] text-black" : "border border-white/15 bg-black text-white/55")}>
+                    {vendor.isOpen ? (isArabic ? "مفتوح" : "Open") : (isArabic ? "مغلق" : "Closed")}
+                  </span>
+                  <span className="inline-flex items-center gap-1 text-sm font-bold text-white/55">
+                    <MapPin className="h-4 w-4" />
+                    {vendor.city || vendor.governorate}
+                  </span>
+                </div>
+                <h1 className="text-5xl font-black leading-none text-white">{shopName}</h1>
+                {vendor.category && <p className="mt-3 text-lg font-black text-[#f5bd18]">{vendor.category}</p>}
               </div>
-              <div className="flex items-center gap-4 text-sm text-onyx-400">
-                <span className="flex items-center gap-1">
-                  <Star className="h-4 w-4 fill-sun-400 text-sun-400" />
-                  <strong className="text-white/90">{vendor.rating > 0 ? vendor.rating.toFixed(1) : "—"}</strong>
-                  {vendor.ratingCount > 0 && <span>({vendor.ratingCount})</span>}
-                </span>
-                <span className="flex items-center gap-1">
-                  <MapPin className="h-4 w-4" />
-                  {vendor.city || vendor.governorate}
-                </span>
+              <div className="flex flex-wrap gap-3">
+                <button type="button" className="inline-flex min-h-12 items-center gap-2 bg-white px-6 text-sm font-black text-black shadow-[4px_4px_0_#f5bd18]">
+                  <MessageSquarePlus className="h-4 w-4" />
+                  {isArabic ? "تواصل مع المتجر" : "Chat with Store"}
+                </button>
+                <a href="#store-request" className="inline-flex min-h-12 items-center border-2 border-white px-6 text-sm font-black text-white transition hover:bg-white/10">
+                  {isArabic ? "اطلب من المتجر" : "Request from Store"}
+                </a>
               </div>
             </div>
           </div>
-        </div>
+
+          <div className="relative mb-6 rounded-[32px] border border-black/10 bg-black/10 p-8 text-center lg:hidden">
+            {vendor.shopImageUrl
+              ? <img src={vendor.shopImageUrl} alt={shopName} className="mx-auto mb-4 h-20 w-20 rounded-2xl object-cover" />
+              : <Building2 className="mx-auto mb-4 h-16 w-16 text-black" />
+            }
+            <span className={cn("absolute end-10 top-24 rounded-full px-4 py-1 text-xs font-black", vendor.isOpen ? "bg-emerald-400 text-white" : "bg-black text-white/60")}>
+              {vendor.isOpen ? (isArabic ? "مفتوح" : "Open") : (isArabic ? "مغلق" : "Closed")}
+            </span>
+            <h1 className="text-3xl font-black">{shopName}</h1>
+            {vendor.category && <p className="mt-2 font-semibold text-black/70">{vendor.category}</p>}
+            <div className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-black/60">
+              <span>{vendor.city || vendor.governorate}</span>
+              <MapPin className="h-4 w-4" />
+            </div>
+          </div>
+        </section>
       )}
 
-      <div className="grid gap-6 xl:grid-cols-[1fr_340px]">
-        {/* Products */}
-        <div>
-          <h2 className="mb-4 text-xl font-semibold text-white">
+      <div className="px-4 lg:px-0">
+        <div className="mb-6 grid gap-4 lg:hidden">
+          <a href="#store-request" className="flex items-center justify-between rounded-[20px] border border-black/20 bg-black/10 p-5 text-start">
+            <div className="flex items-center gap-4">
+              <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-black text-[#f5bd18]">
+                <MessageSquarePlus className="h-6 w-6" />
+              </span>
+              <span>
+                <span className="block text-lg font-black">{isArabic ? "اطلب من المتجر" : "Request from Store"}</span>
+                <span className="mt-1 block text-sm font-semibold text-black/60">
+                  {isArabic ? "اكتب طلبك وأبعته للمحل مباشرة" : "Write what you need and send it directly"}
+                </span>
+              </span>
+            </div>
+            {isArabic ? <ChevronLeft className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
+          </a>
+          {cart.length === 0 && (
+            <div className="flex min-h-28 flex-col items-center justify-center rounded-[20px] border border-black/20 bg-black/10 p-6 text-center text-black/45">
+              <ShoppingCart className="mb-2 h-10 w-10" />
+              <p className="font-semibold">{isArabic ? "السلة فارغة - اضغط على المنتج لإضافته" : "Cart is empty - tap a product to add it"}</p>
+            </div>
+          )}
+        </div>
+
+        <div className="grid gap-6 xl:grid-cols-[380px_1fr]">
+          <aside className="order-2 space-y-4 xl:order-1 xl:sticky xl:top-6 xl:self-start">
+            {cart.length > 0 ? (
+              <CartPanel
+                cart={cart}
+                locale={locale}
+                vendorId={vendorId}
+                onClear={() => setCart([])}
+                onRemoveItem={id => setCart(prev => prev.filter(i => i.product.id !== id))}
+                onChangeQty={changeQty}
+              />
+            ) : (
+              <div className="hidden flex-col items-center justify-center border-2 border-dashed border-black/10 bg-black p-8 text-center text-white shadow-[5px_5px_0_#1a1c1c] xl:flex">
+                <ShoppingCart className="h-10 w-10 text-[#f5bd18]" />
+                <p className="mt-3 text-sm font-semibold leading-6 text-white/50">
+                  {isArabic ? "أضف المزيد من المنتجات" : "Add more products"}
+                </p>
+              </div>
+            )}
+            {vendor && (
+              <div className="hidden border border-white/10 bg-black p-4 text-white shadow-[5px_5px_0_#1a1c1c] xl:block">
+                <div className="flex items-center gap-4">
+                  <div className="flex h-12 w-12 items-center justify-center bg-[#f5bd18] text-black">
+                    <Verified className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <p className="font-black">{isArabic ? "بائع موثوق" : "Trusted seller"}</p>
+                    <p className="text-sm font-semibold text-white/45">
+                      {isArabic ? "متجر معتمد على أوستا" : "Verified OSTA store"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </aside>
+
+          <main className="order-1 xl:order-2">
+            <div className="mb-6 hidden items-center justify-between bg-black/5 p-4 lg:flex">
+              <h2 className="text-xl font-black text-black">
+                {isArabic ? "المنتجات المتاحة" : "Available Products"}
+              </h2>
+              <div className="flex gap-2">
+                <input
+                  readOnly
+                  value=""
+                  placeholder={isArabic ? "ابحث في المنتجات..." : "Search products..."}
+                  className="min-h-11 min-w-[250px] border border-black/20 bg-black/10 px-4 text-sm font-semibold text-black placeholder:text-black/50 focus:border-black focus:outline-none"
+                />
+                <button type="button" className="flex h-11 w-11 items-center justify-center bg-black text-white">
+                  <Menu className="h-5 w-5" />
+                </button>
+              </div>
+            </div>
+
+            <h2 className="mb-6 text-xl font-black text-black lg:hidden">
             {isArabic ? `المنتجات (${products.length})` : `Products (${products.length})`}
           </h2>
 
           {products.length === 0 ? (
-            <div className="flex flex-col items-center justify-center rounded-[2rem] border border-dashed border-onyx-700 bg-onyx-800/50 py-16 text-center">
-              <Store className="h-10 w-10 text-onyx-600" />
-              <p className="mt-3 text-onyx-400">
+            <div className="flex flex-col items-center justify-center rounded-[32px] bg-black py-16 text-center text-white lg:rounded-none lg:border lg:border-dashed lg:border-white/15 lg:shadow-[5px_5px_0_#1a1c1c]">
+              <Store className="h-10 w-10 text-[#f5bd18]" />
+              <p className="mt-3 text-sm font-black text-white/60">
                 {isArabic ? "لا توجد منتجات متاحة في هذا المتجر حالياً" : "No products available in this store yet"}
               </p>
             </div>
           ) : (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
               {products.map(product => (
                 <ProductCard
                   key={product.id}
@@ -401,32 +514,11 @@ export function ClientStoreDetailPage({ locale, vendorId }: { locale: Locale; ve
               ))}
             </div>
           )}
+          </main>
         </div>
 
-        {/* Sidebar */}
-        <div className="space-y-4 xl:sticky xl:top-6 xl:self-start">
-          {/* Custom Request Form */}
+        <div id="store-request" className="mt-6">
           <CustomRequestForm locale={locale} vendorId={vendorId} />
-
-          {/* Cart */}
-          {cart.length > 0 ? (
-            <CartPanel
-              cart={cart}
-              locale={locale}
-              vendorId={vendorId}
-              vendorName={shopName}
-              onClear={() => setCart([])}
-              onRemoveItem={id => setCart(prev => prev.filter(i => i.product.id !== id))}
-              onChangeQty={changeQty}
-            />
-          ) : (
-            <div className="flex flex-col items-center justify-center rounded-[1.8rem] border border-dashed border-onyx-700 bg-onyx-800/50 p-8 text-center">
-              <ShoppingCart className="h-10 w-10 text-onyx-600" />
-              <p className="mt-3 text-sm text-onyx-400">
-                {isArabic ? "السلة فارغة — اضغط على المنتج لإضافته" : "Cart is empty — tap a product to add it"}
-              </p>
-            </div>
-          )}
         </div>
       </div>
     </div>
@@ -470,18 +562,18 @@ function CustomRequestForm({ locale, vendorId }: { locale: Locale; vendorId: str
 
   if (success) {
     return (
-      <div className="rounded-[1.6rem] border border-success/30 bg-success/10 p-5 text-center">
-        <CheckCircle2 className="mx-auto h-8 w-8 text-success" />
-        <p className="mt-3 font-semibold text-white">
+      <div className="rounded-[20px] border border-emerald-400/30 bg-black p-5 text-center text-white shadow-[5px_5px_0_#1a1c1c] lg:rounded-none">
+        <CheckCircle2 className="mx-auto h-8 w-8 text-emerald-300" />
+        <p className="mt-3 font-black text-white">
           {isArabic ? "تم إرسال طلبك بنجاح!" : "Request sent successfully!"}
         </p>
-        <p className="mt-1 text-sm text-onyx-400">
+        <p className="mt-2 text-sm font-semibold leading-6 text-white/55">
           {isArabic ? "المتجر هيتواصل معاك قريباً." : "The store will contact you soon."}
         </p>
         <button
           type="button"
           onClick={() => { setSuccess(false); setOpen(false); }}
-          className="mt-4 text-sm font-semibold text-primary-700 hover:underline"
+          className="mt-4 border-b border-[#f5bd18] text-sm font-black text-[#f5bd18]"
         >
           {isArabic ? "حسناً" : "OK"}
         </button>
@@ -490,30 +582,30 @@ function CustomRequestForm({ locale, vendorId }: { locale: Locale; vendorId: str
   }
 
   return (
-    <div className="rounded-[1.6rem] border border-onyx-700/70 bg-onyx-800/50 shadow-soft">
+    <div className="rounded-[20px] border border-black/20 bg-black/10 text-black lg:rounded-none lg:border-white/10 lg:bg-black lg:text-white lg:shadow-[5px_5px_0_#1a1c1c]">
       <button
         type="button"
         onClick={() => setOpen(!open)}
         className="flex w-full items-center gap-3 p-5"
       >
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-50 text-primary-700">
+        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-black text-[#f5bd18] lg:h-10 lg:w-10 lg:rounded-none lg:border lg:border-[#f5bd18] lg:bg-[#121212]">
           <MessageSquarePlus className="h-5 w-5" />
         </div>
         <div className="flex-1 text-start">
-          <p className="font-semibold text-white">
+          <p className="font-black text-black lg:text-white">
             {isArabic ? "اطلب من المتجر" : "Request from Store"}
           </p>
-          <p className="text-xs text-onyx-400">
+          <p className="mt-1 text-xs font-semibold text-black/55 lg:text-white/45">
             {isArabic ? "اكتب طلبك وأبعته للمحل مباشرة" : "Write what you need and send it directly"}
           </p>
         </div>
-        <ChevronRight className={cn("h-5 w-5 text-onyx-500 transition", open && "rotate-90")} />
+        <ChevronRight className={cn("h-5 w-5 text-black/45 transition lg:text-white/45", open && "rotate-90 text-black lg:text-[#f5bd18]")} />
       </button>
 
       {open && (
-        <div className="space-y-3 border-t border-dark-100 p-5">
+        <div className="space-y-3 border-t border-black/10 p-5 lg:border-white/10">
           <label className="block space-y-1.5">
-            <span className="text-sm font-medium text-onyx-200">
+            <span className="text-xs font-black uppercase tracking-[0.16em] text-black/55 lg:text-white/45">
               {isArabic ? "وصف الطلب *" : "Request Description *"}
             </span>
             <textarea
@@ -523,12 +615,12 @@ function CustomRequestForm({ locale, vendorId }: { locale: Locale; vendorId: str
               placeholder={isArabic
                 ? "مثال: عاوز فلتر زيت لموتوسيكل هوندا 2020 + شمعات..."
                 : "e.g. I need an oil filter for Honda 2020 + spark plugs..."}
-              className="w-full rounded-[1.1rem] border border-onyx-700 bg-onyx-800/50 px-4 py-3 text-sm text-white placeholder:text-onyx-500 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200"
+              className="w-full rounded-xl border border-black/10 bg-white/45 px-4 py-3 text-sm font-semibold text-black placeholder:text-black/35 focus:border-black focus:outline-none lg:rounded-none lg:border-white/10 lg:bg-white/5 lg:text-white lg:placeholder:text-white/30 lg:focus:border-[#f5bd18]"
             />
           </label>
 
           <label className="block space-y-1.5">
-            <span className="text-sm font-medium text-onyx-200">
+            <span className="text-xs font-black uppercase tracking-[0.16em] text-black/55 lg:text-white/45">
               {isArabic ? "رقم التلفون (اختياري)" : "Phone Number (Optional)"}
             </span>
             <input
@@ -536,19 +628,19 @@ function CustomRequestForm({ locale, vendorId }: { locale: Locale; vendorId: str
               value={phone}
               onChange={e => setPhone(e.target.value)}
               placeholder={isArabic ? "01xxxxxxxxx" : "01xxxxxxxxx"}
-              className="h-11 w-full rounded-[1.1rem] border border-onyx-700 bg-onyx-800/50 px-4 text-sm text-white placeholder:text-onyx-500 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200"
+              className="h-11 w-full rounded-xl border border-black/10 bg-white/45 px-4 text-sm font-semibold text-black placeholder:text-black/35 focus:border-black focus:outline-none lg:rounded-none lg:border-white/10 lg:bg-white/5 lg:text-white lg:placeholder:text-white/30 lg:focus:border-[#f5bd18]"
             />
           </label>
 
           {error && (
-            <div className="rounded-[1rem] border border-error/30 bg-error/10 px-4 py-3 text-sm text-error">{error}</div>
+            <div className="border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm font-semibold text-red-200">{error}</div>
           )}
 
           <button
             type="button"
             onClick={handleSend}
             disabled={sending}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary-600 py-3 text-sm font-semibold text-white transition hover:bg-primary-700 disabled:opacity-60"
+            className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-black py-3 text-sm font-black text-[#f5bd18] transition active:scale-95 disabled:opacity-60 lg:rounded-none lg:bg-white lg:text-black lg:shadow-[4px_4px_0_#f5bd18] lg:active:translate-x-1 lg:active:translate-y-1 lg:active:scale-100 lg:active:shadow-none"
           >
             {sending ? (
               <Loader2 className="h-4 w-4 animate-spin" />
