@@ -97,10 +97,10 @@ function WorkerModeSwitcher({
 
   return (
     <WorkerProPanel title={isArabic ? "وضع التشغيل" : "Operating mode"} eyebrow="OSTA PRO">
-      <div className="grid gap-5 xl:grid-cols-[0.9fr_1.1fr]">
-        <div className="border border-white/10 bg-[#111] p-5">
-          <div className="flex items-center gap-4">
-            <div className="relative h-20 w-20 shrink-0 overflow-hidden border border-[#f5bd18] bg-[#121212] shadow-[4px_4px_0_#f5bd18]">
+      <div className="grid gap-6 xl:grid-cols-[minmax(360px,0.85fr)_minmax(0,1.25fr)]">
+        <div className="border border-white/10 bg-[#111] p-6">
+          <div className="flex items-center gap-5">
+            <div className="relative h-24 w-24 shrink-0 overflow-hidden border border-[#f5bd18] bg-[#121212] shadow-[4px_4px_0_#f5bd18]">
               {avatarUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={avatarUrl} alt={fullName} className="h-full w-full object-cover grayscale transition duration-300 hover:grayscale-0" />
@@ -110,8 +110,8 @@ function WorkerModeSwitcher({
             </div>
             <div className="min-w-0">
               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#f5bd18]">{isArabic ? "بيانات الحساب" : "Account identity"}</p>
-              <h2 className="mt-1 truncate text-xl font-black uppercase text-white">{fullName}</h2>
-              <div className="mt-3 space-y-1 text-sm font-semibold text-white/50">
+              <h2 className="mt-2 truncate text-2xl font-black uppercase text-white">{fullName}</h2>
+              <div className="mt-4 space-y-1 text-sm font-bold text-white/65">
                 <p className="truncate">{email || (isArabic ? "لا يوجد بريد" : "No email")}</p>
                 <p className="truncate">{phone || (isArabic ? "لا يوجد هاتف" : "No phone")}</p>
               </div>
@@ -121,27 +121,29 @@ function WorkerModeSwitcher({
 
         <div className="grid gap-3">
           {error ? <div className="border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm font-bold text-red-200">{error}</div> : null}
-          <div className="grid gap-3 md:grid-cols-3">
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
             {modes.map((mode) => {
               const Icon = mode.icon;
               const isPending = pendingRole === mode.targetRole;
               const content = (
                 <>
-                  <div className={mode.active ? "flex h-11 w-11 shrink-0 items-center justify-center border border-[#f5bd18] bg-[#f5bd18] text-black" : "flex h-11 w-11 shrink-0 items-center justify-center border border-white/15 bg-[#121212] text-[#f5bd18]"}>
-                    <Icon className="h-5 w-5" />
+                  <div className="flex w-full items-start gap-4">
+                    <div className={mode.active ? "flex h-12 w-12 shrink-0 items-center justify-center border border-[#f5bd18] bg-[#f5bd18] text-black" : "flex h-12 w-12 shrink-0 items-center justify-center border border-white/15 bg-[#121212] text-[#f5bd18]"}>
+                      <Icon className="h-5 w-5" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="text-base font-black uppercase leading-tight text-white">{mode.title}</h3>
+                      <p className="mt-2 text-xs leading-5 text-white/50">{mode.note}</p>
+                    </div>
                   </div>
-                  <div className="min-w-0 flex-1">
-                    <h3 className="truncate text-sm font-black uppercase text-white">{mode.title}</h3>
-                    <p className="mt-1 line-clamp-2 text-xs leading-5 text-white/45">{mode.note}</p>
-                  </div>
-                  <span className={mode.active ? "shrink-0 bg-white px-3 py-2 text-[10px] font-black uppercase tracking-[0.12em] text-black" : "shrink-0 border border-white/15 px-3 py-2 text-[10px] font-black uppercase tracking-[0.12em] text-[#f5bd18]"}>
+                  <span className={mode.active ? "mt-4 inline-flex shrink-0 bg-white px-4 py-2 text-[10px] font-black uppercase tracking-[0.12em] text-black" : "mt-4 inline-flex shrink-0 border border-white/15 px-4 py-2 text-[10px] font-black uppercase tracking-[0.12em] text-[#f5bd18]"}>
                     {mode.active ? (isArabic ? "الحالي" : "CURRENT") : isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : isArabic ? "تبديل" : "SWITCH"}
                   </span>
                 </>
               );
 
               return mode.active ? (
-                <div key={mode.key} className="flex items-center gap-4 border border-[#f5bd18] bg-[#121212] p-4">
+                <div key={mode.key} className="flex min-h-44 flex-col justify-between border border-[#f5bd18] bg-[#121212] p-5">
                   {content}
                 </div>
               ) : (
@@ -154,7 +156,7 @@ function WorkerModeSwitcher({
                       void switchRole(mode.targetRole, mode.href);
                     }
                   }}
-                  className="flex items-center gap-4 border border-white/10 bg-[#121212] p-4 text-start transition-colors hover:border-[#f5bd18] disabled:cursor-wait disabled:opacity-70"
+                  className="flex min-h-44 flex-col justify-between border border-white/10 bg-[#121212] p-5 text-start transition-colors hover:border-[#f5bd18] disabled:cursor-wait disabled:opacity-70"
                 >
                   {content}
                 </button>
