@@ -257,7 +257,7 @@ export function DashboardShell({
                 </div>
               </section>
 
-              <nav className="min-h-0 flex-1 overflow-y-auto px-4 pb-28">
+              <nav className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-4 [-webkit-overflow-scrolling:touch]">
                 <div className="space-y-3">
                   <h3 className="px-2 text-sm font-black text-white/40">
                     {locale === "ar" ? "أقسام لوحة التحكم" : "Dashboard sections"}
@@ -327,7 +327,7 @@ export function DashboardShell({
                 </div>
               </nav>
 
-              <footer className="absolute inset-x-0 bottom-0 border-t border-white/10 bg-black/80 p-4 backdrop-blur-xl">
+              <footer className="shrink-0 border-t border-white/10 bg-black/80 p-4 backdrop-blur-xl">
                 <button
                   type="button"
                   onClick={async () => {
@@ -492,7 +492,7 @@ function SidebarContent({
   return (
     <div
       className={cn(
-        "relative flex h-full flex-col overflow-hidden",
+        "relative flex h-full min-h-0 flex-col overflow-x-hidden overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch]",
         isClientDashboard
           ? "border-l border-white/10 bg-black/90 px-6 py-6 text-white backdrop-blur-md"
           : "dashboard-card-dark"
