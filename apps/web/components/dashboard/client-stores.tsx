@@ -9,6 +9,12 @@ import {
 import { fetchApiData } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
+import {
+  ClientStitchBadge,
+  ClientStitchEmpty,
+  ClientStitchHero,
+  ClientStitchMetric
+} from "@/components/client/client-stitch-ui";
 
 type VendorStore = {
   id: string;
@@ -51,6 +57,10 @@ function formatDistance(km: number, locale: Locale): string {
   return locale === "ar" ? `${km.toFixed(1)} كم` : `${km.toFixed(1)} km`;
 }
 
+function formatCount(locale: Locale, value: number): string {
+  return new Intl.NumberFormat(locale === "ar" ? "ar-EG" : "en-US", { maximumFractionDigits: 0 }).format(value);
+}
+
 function StoreCard({
   store, locale, href,
 }: {
@@ -62,27 +72,27 @@ function StoreCard({
   return (
     <Link
       href={href}
-      className="group relative overflow-hidden rounded-[1.8rem] border border-onyx-700/70 bg-onyx-800/50 shadow-soft transition hover:-translate-y-1 hover:shadow-md"
+      className="group relative overflow-hidden border border-white/10 bg-black text-white shadow-[5px_5px_0_#1a1c1c] transition hover:-translate-y-1"
     >
       {/* Banner */}
-      <div className="relative h-40 w-full overflow-hidden bg-gradient-to-br from-primary-50 to-surface-peach">
+      <div className="relative h-48 w-full overflow-hidden bg-[#121212]">
         {store.shopImageUrl ? (
-          <img src={store.shopImageUrl} alt={name} className="h-full w-full object-cover transition group-hover:scale-105" />
+          <img src={store.shopImageUrl} alt={name} className="h-full w-full object-cover grayscale transition duration-700 group-hover:scale-105 group-hover:grayscale-0" />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
-            <Store className="h-14 w-14 text-primary-300" />
+            <Store className="h-14 w-14 text-[#f5bd18]" />
           </div>
         )}
         {/* Open/Closed badge */}
         <span className={cn(
           "absolute end-3 top-3 rounded-full px-3 py-1 text-xs font-semibold",
-          store.isOpen ? "bg-success/90 text-white" : "bg-dark-400/80 text-white"
+          store.isOpen ? "bg-[#f5bd18] text-black" : "bg-black/80 text-white"
         )}>
           {store.isOpen ? (isArabic ? "مفتوح" : "Open") : (isArabic ? "مغلق" : "Closed")}
         </span>
         {/* Distance badge */}
         {store._distanceKm !== undefined && (
-          <span className="absolute start-3 top-3 flex items-center gap-1 rounded-full bg-onyx-800/50/90 px-2.5 py-1 text-xs font-semibold text-primary-700 shadow">
+          <span className="absolute start-3 top-3 flex items-center gap-1 bg-black/80 px-2.5 py-1 text-xs font-black text-[#f5bd18]">
             <Navigation className="h-3 w-3" />
             {formatDistance(store._distanceKm, locale)}
           </span>
@@ -92,18 +102,18 @@ function StoreCard({
       <div className="p-5">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
-            <h2 className="truncate text-lg font-semibold text-white">{name}</h2>
+            <h2 className="truncate text-xl font-black uppercase text-white">{name}</h2>
             {store.category && (
-              <p className="mt-0.5 text-sm text-primary-700 font-medium">{store.category}</p>
+              <p className="mt-1 text-xs font-black uppercase tracking-widest text-[#f5bd18]">{store.category}</p>
             )}
           </div>
-          <div className="flex shrink-0 items-center gap-1 text-sm font-semibold text-onyx-200">
-            <Star className="h-4 w-4 fill-sun-400 text-sun-400" />
+          <div className="flex shrink-0 items-center gap-1 text-sm font-black text-[#f5bd18]">
+            <Star className="h-4 w-4 fill-[#f5bd18] text-[#f5bd18]" />
             {store.rating > 0 ? store.rating.toFixed(1) : "—"}
           </div>
         </div>
 
-        <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-onyx-400">
+        <div className="mt-4 flex flex-wrap items-center gap-3 text-xs font-bold text-white/50">
           <span className="flex items-center gap-1">
             <MapPin className="h-3.5 w-3.5" />
             {store.city || store.governorate}
@@ -115,10 +125,10 @@ function StoreCard({
         </div>
 
         {store.shopDescription && (
-          <p className="mt-3 line-clamp-2 text-sm text-onyx-400">{store.shopDescription}</p>
+          <p className="mt-4 line-clamp-2 text-sm leading-relaxed text-white/55">{store.shopDescription}</p>
         )}
 
-        <div className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-primary-700">
+        <div className="mt-5 inline-flex items-center gap-1 text-xs font-black uppercase tracking-widest text-[#f5bd18]">
           {isArabic ? "تصفح المنتجات" : "Browse Products"}
           {isArabic ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
         </div>
@@ -197,33 +207,31 @@ export function ClientStoresPage({ locale }: { locale: Locale }) {
   });
 
   return (
-    <div>
-      {/* Header */}
-      <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-primary-700">
-            {isArabic ? "استعرض المتاجر" : "Browse Stores"}
-          </p>
-          <h1 className="mt-2 text-3xl font-semibold text-white">
-            {isArabic ? "متاجر قطع الغيار" : "Parts Vendor Stores"}
-          </h1>
-          <p className="mt-2 text-onyx-400">
-            {isArabic
-              ? "اختر متجرًا، استعرض المنتجات، واطلب مباشرة."
-              : "Pick a store, browse products, and order directly."}
-          </p>
-        </div>
+    <div className="space-y-6 lg:space-y-8">
+      <ClientStitchHero
+        locale={locale}
+        eyebrow={isArabic ? "سوق الموردين" : "Vendor market"}
+        title={isArabic ? "المتاجر" : "STORES"}
+        subtitle={
+          isArabic
+            ? "ابحث عن متاجر الخامات وقطع الغيار القريبة، وقارن التقييم والتوفر قبل الطلب."
+            : "Find nearby material and parts vendors, then compare rating, stock, and availability before ordering."
+        }
+        icon={Store}
+      />
 
-        {/* Location button */}
+      <div className="grid gap-4 md:grid-cols-3">
+        <ClientStitchMetric label={isArabic ? "المتاجر" : "Stores"} value={formatCount(locale, filtered.length)} note={isArabic ? "نتائج ظاهرة" : "visible results"} icon={Store} />
+        <ClientStitchMetric label={isArabic ? "المفتوحة الآن" : "Open now"} value={formatCount(locale, stores.filter((s) => s.isOpen).length)} note={isArabic ? "جاهزة للطلب" : "ready for orders"} icon={Package} />
         <button
           type="button"
           onClick={requestLocation}
           disabled={locating}
           className={cn(
-            "inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold transition",
+            "flex min-h-[5.6rem] items-center justify-center gap-2 border px-4 py-3 text-sm font-black uppercase tracking-wider shadow-[4px_4px_0_#1a1c1c] transition",
             userPos
-              ? "bg-success/10 text-success"
-              : "bg-primary-50 text-primary-700 hover:bg-primary-100"
+              ? "border-emerald-700/30 bg-emerald-100 text-emerald-800"
+              : "border-black/10 bg-white text-black hover:bg-[#f5bd18]"
           )}
         >
           {locating ? (
@@ -240,7 +248,7 @@ export function ClientStoresPage({ locale }: { locale: Locale }) {
       </div>
 
       {locError && (
-        <div className="mb-4 flex items-center gap-2 rounded-[1.2rem] border border-error/30 bg-error/10 px-4 py-3 text-sm text-error">
+        <div className="flex items-center gap-2 border border-red-500/30 bg-black px-4 py-3 text-sm font-semibold text-red-300">
           <WifiOff className="h-4 w-4 shrink-0" />
           {isArabic
             ? "لم يتم السماح بالوصول للموقع. تأكد من إذن المتصفح."
@@ -249,33 +257,46 @@ export function ClientStoresPage({ locale }: { locale: Locale }) {
       )}
 
       {/* Search bar */}
-      <div className="mb-6 relative">
-        <Search className="absolute start-4 top-1/2 h-4 w-4 -translate-y-1/2 text-onyx-500" />
+      <div className="relative border border-black/10 bg-black p-2 shadow-[4px_4px_0_#1a1c1c]">
+        <Search className="absolute start-6 top-1/2 h-5 w-5 -translate-y-1/2 text-[#f5bd18]" />
         <input
           type="text"
           value={search}
           onChange={e => setSearch(e.target.value)}
           placeholder={isArabic ? "ابحث باسم المتجر أو التصنيف أو المنطقة..." : "Search by store name, category or area..."}
-          className="h-12 w-full rounded-[1.3rem] border border-onyx-700 bg-onyx-800/50 ps-11 pe-4 text-sm text-white shadow-soft placeholder:text-onyx-500 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200"
+          className="h-14 w-full border border-white/10 bg-[#121212] ps-12 pe-4 text-sm font-bold text-white placeholder:text-white/30 focus:border-[#f5bd18] focus:outline-none"
         />
+      </div>
+
+      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+        {[
+          isArabic ? "كل المتاجر" : "All stores",
+          isArabic ? "كهرباء" : "Electrical",
+          isArabic ? "سباكة" : "Plumbing",
+          isArabic ? "تشطيبات" : "Finishing"
+        ].map((label, index) => (
+          <button key={label} className={index === 0 ? "bg-black px-4 py-2 text-xs font-black uppercase text-[#f5bd18]" : "border border-black/10 bg-white/60 px-4 py-2 text-xs font-black uppercase text-black"}>
+            {label}
+          </button>
+        ))}
       </div>
 
       {/* Stores grid */}
       {loading ? (
         <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {[1, 2, 3, 4, 5, 6].map(i => (
-            <div key={i} className="h-72 animate-pulse rounded-[1.8rem] bg-onyx-800/50" />
+            <div key={i} className="h-80 animate-pulse border border-white/10 bg-black" />
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-[2rem] border border-dashed border-onyx-700 bg-onyx-800/50 py-20 text-center">
-          <Store className="h-12 w-12 text-onyx-600" />
-          <p className="mt-4 text-lg font-semibold text-onyx-200">
+        <ClientStitchEmpty>
+          <Store className="mx-auto mb-4 h-12 w-12 text-[#f5bd18]" />
+          <p className="text-lg font-black text-white">
             {stores.length === 0
               ? (isArabic ? "لا توجد متاجر بعد" : "No stores yet")
               : (isArabic ? "لا توجد نتائج للبحث" : "No results found")}
           </p>
-        </div>
+        </ClientStitchEmpty>
       ) : (
         <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {filtered.map(store => (

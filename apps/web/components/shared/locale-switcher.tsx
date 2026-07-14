@@ -20,7 +20,7 @@ export function LocaleSwitcher({ locale, pathname, className }: LocaleSwitcherPr
       aria-label={`Switch language to ${altLocale.toUpperCase()}`}
     >
       <Globe className="h-4 w-4 text-gold-500 shrink-0" />
-      <span>{altLocale === "ar" ? "العربية" : "English"}</span>
+      <span>{locale === "ar" ? "الإنجليزية" : "Arabic"}</span>
     </Link>
   );
 }

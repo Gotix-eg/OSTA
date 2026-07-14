@@ -31,6 +31,13 @@ import {
   SplitInfo,
   SubpageHero
 } from "@/components/dashboard/dashboard-subpage-primitives";
+import {
+  ClientStitchBadge,
+  ClientStitchEmpty,
+  ClientStitchHero,
+  ClientStitchMetric,
+  ClientStitchPanel
+} from "@/components/client/client-stitch-ui";
 import { useLiveApiData } from "@/hooks/use-live-api-data";
 import { patchApiData } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
@@ -51,6 +58,10 @@ function formatDate(locale: Locale, value: string) {
     dateStyle: "medium",
     timeStyle: "short"
   }).format(new Date(value));
+}
+
+function formatCount(locale: Locale, value: number) {
+  return new Intl.NumberFormat(locale === "ar" ? "ar-EG" : "en-US", { maximumFractionDigits: 0 }).format(value);
 }
 
 function getServiceName(item: any, locale: Locale) {
@@ -498,35 +509,36 @@ export function ClientRequestsPage({ locale, initialData }: { locale: Locale; in
   };
 
   return (
-    <div>
-      <SubpageHero
-        eyebrow={isArabic ? "مكتب الطلبات" : "Request desk"}
-        title={isArabic ? "طلباتي" : "My requests"}
+    <div className="space-y-6 lg:space-y-8">
+      <ClientStitchHero
+        locale={locale}
+        eyebrow={isArabic ? "مكتب الطلبات" : "Request command"}
+        title={isArabic ? "طلباتي" : "MY REQUESTS"}
         subtitle={
           isArabic
-            ? "شاهد كل الطلبات وحالتها وتوقيت إنشائها من مساحة أوضح وأكثر تنظيمًا."
-            : "Track every request, its current status, and the booking timeline from one clearer workspace."
+            ? "تابع طلبات الصيانة ومشتريات المتاجر من لوحة تشغيل واضحة وسريعة."
+            : "Track service requests and store orders from one sharp operations board."
         }
         actionLabel={isArabic ? "طلب جديد" : "New request"}
         actionHref={`/${locale}/client/new-request`}
-        tone="primary"
+        icon={Wrench}
       />
 
-      <div className="mb-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <MiniMetric label={isArabic ? "إجمالي الطلبات" : "Total requests"} value={String(counts.total)} note={isArabic ? "كل الطلبات المنشأة" : "all created jobs"} icon={Wrench} tone="primary" />
-        <MiniMetric label={isArabic ? "قيد المراجعة" : "Pending review"} value={String(counts.pending)} note={isArabic ? "ما زالت تنتظر الإجراء" : "still waiting for action"} icon={TimerReset} tone="sun" />
-        <MiniMetric label={isArabic ? "طلبات نشطة" : "Active requests"} value={String(counts.active)} note={isArabic ? "متابعة مباشرة" : "live follow-up"} icon={Sparkles} tone="accent" />
-        <MiniMetric label={isArabic ? "مكتملة" : "Completed"} value={String(counts.completed)} note={isArabic ? "أغلقت بنجاح" : "closed successfully"} icon={CheckCircle2} tone="dark" />
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <ClientStitchMetric label={isArabic ? "إجمالي الطلبات" : "Total requests"} value={formatCount(locale, counts.total)} note={isArabic ? "كل الطلبات" : "all jobs"} icon={Wrench} />
+        <ClientStitchMetric label={isArabic ? "قيد المراجعة" : "Pending"} value={formatCount(locale, counts.pending)} note={isArabic ? "بانتظار إجراء" : "awaiting action"} icon={TimerReset} />
+        <ClientStitchMetric label={isArabic ? "نشطة" : "Active"} value={formatCount(locale, counts.active)} note={isArabic ? "متابعة مباشرة" : "live follow-up"} icon={Sparkles} />
+        <ClientStitchMetric label={isArabic ? "مكتملة" : "Completed"} value={formatCount(locale, counts.completed)} note={isArabic ? "أغلقت بنجاح" : "closed"} icon={CheckCircle2} dark />
       </div>
 
       {/* Tabs Filter */}
-      <div className="mb-6 flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+      <div className="flex gap-2 overflow-x-auto border border-black/10 bg-white/70 p-2 shadow-[4px_4px_0_#1a1c1c] scrollbar-hide">
         <button
           onClick={() => setActiveTab("services")}
-          className={`relative flex-shrink-0 flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition ${
+          className={`relative flex-shrink-0 flex items-center gap-2 px-5 py-3 text-xs font-black uppercase tracking-wider transition ${
             activeTab === "services" 
-              ? "bg-gold-500 text-onyx-950 shadow-gold" 
-              : "border border-white/10 bg-white/5 text-onyx-400 hover:bg-white/10"
+              ? "bg-black text-[#f5bd18]" 
+              : "border border-black/10 bg-transparent text-black/70 hover:border-black"
           }`}
         >
           <Wrench className="h-4 w-4" />
@@ -539,10 +551,10 @@ export function ClientRequestsPage({ locale, initialData }: { locale: Locale; in
         </button>
         <button
           onClick={() => setActiveTab("custom_requests")}
-          className={`relative flex-shrink-0 flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition ${
+          className={`relative flex-shrink-0 flex items-center gap-2 px-5 py-3 text-xs font-black uppercase tracking-wider transition ${
             activeTab === "custom_requests" 
-              ? "bg-gold-500 text-onyx-950 shadow-gold" 
-              : "border border-white/10 bg-white/5 text-onyx-400 hover:bg-white/10"
+              ? "bg-black text-[#f5bd18]" 
+              : "border border-black/10 bg-transparent text-black/70 hover:border-black"
           }`}
         >
           <MessageSquare className="h-4 w-4" />
@@ -555,10 +567,10 @@ export function ClientRequestsPage({ locale, initialData }: { locale: Locale; in
         </button>
         <button
           onClick={() => setActiveTab("direct_orders")}
-          className={`relative flex-shrink-0 flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition ${
+          className={`relative flex-shrink-0 flex items-center gap-2 px-5 py-3 text-xs font-black uppercase tracking-wider transition ${
             activeTab === "direct_orders" 
-              ? "bg-gold-500 text-onyx-950 shadow-gold" 
-              : "border border-white/10 bg-white/5 text-onyx-400 hover:bg-white/10"
+              ? "bg-black text-[#f5bd18]" 
+              : "border border-black/10 bg-transparent text-black/70 hover:border-black"
           }`}
         >
           <ShoppingBag className="h-4 w-4" />
@@ -572,34 +584,37 @@ export function ClientRequestsPage({ locale, initialData }: { locale: Locale; in
       </div>
 
       {activeTab === "services" && (
-        <DashboardBlock title={isArabic ? "تدفق الطلبات" : "Request stream"} eyebrow={isArabic ? "الطابور المباشر" : "live queue"}>
+        <ClientStitchPanel title={isArabic ? "تدفق الطلبات" : "Request stream"} eyebrow={isArabic ? "الطابور المباشر" : "live queue"}>
           {data.length === 0 ? (
-            <EmptyState>{isArabic ? "لا توجد طلبات حاليًا" : "No requests yet"}</EmptyState>
+            <ClientStitchEmpty>{isArabic ? "لا توجد طلبات حاليًا" : "No requests yet"}</ClientStitchEmpty>
           ) : (
             <div className="grid gap-4">
               {data.map((item) => {
                 const status = getStatusMeta(locale, item.status);
                 return (
-                  <article key={item.id} className="onyx-card p-4 sm:p-5">
+                  <article key={item.id} className="border border-white/10 bg-[#121212] p-4 transition hover:border-[#f5bd18]/60 sm:p-5">
                     <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-3">
-                          <h2 className="text-2xl font-semibold text-white">{item.title}</h2>
-                          <SoftBadge label={status.label} tone={status.tone} />
+                          <h2 className="text-xl font-black uppercase text-white sm:text-2xl">{item.title}</h2>
+                          <ClientStitchBadge tone={status.tone === "success" ? "success" : status.tone === "error" ? "danger" : "gold"}>{status.label}</ClientStitchBadge>
                         </div>
-                        <div className="mt-4">
-                          <SplitInfo
-                            items={[
-                              { label: isArabic ? "رقم الطلب" : "Request no", value: item.requestNumber },
-                              { label: isArabic ? "الخدمة" : "Service", value: getServiceName(item, locale) },
-                              { label: isArabic ? "المنطقة" : "Area", value: translateArea(item.area, locale) },
-                              { label: isArabic ? "تاريخ الإنشاء" : "Created", value: formatDate(locale, item.createdAt) }
-                            ]}
-                          />
+                        <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                          {[
+                            { label: isArabic ? "رقم الطلب" : "Request no", value: item.requestNumber },
+                            { label: isArabic ? "الخدمة" : "Service", value: getServiceName(item, locale) },
+                            { label: isArabic ? "المنطقة" : "Area", value: translateArea(item.area, locale) },
+                            { label: isArabic ? "تاريخ الإنشاء" : "Created", value: formatDate(locale, item.createdAt) }
+                          ].map((info) => (
+                            <div key={info.label} className="border border-white/5 bg-black p-3">
+                              <p className="text-[10px] font-black uppercase tracking-[0.18em] text-white/35">{info.label}</p>
+                              <p className="mt-2 truncate text-sm font-bold text-white">{info.value}</p>
+                            </div>
+                          ))}
                         </div>
                       </div>
 
-                      <Link href={`/${locale}/client/request/${item.id}`} className="inline-flex items-center gap-2 rounded-full border border-onyx-700 bg-onyx-800/50 px-4 py-2.5 text-sm font-semibold text-onyx-200 shadow-soft transition hover:border-primary-300 hover:text-primary-700">
+                      <Link href={`/${locale}/client/request/${item.id}`} className="inline-flex items-center justify-center gap-2 border border-white bg-white px-4 py-3 text-xs font-black uppercase text-black transition hover:bg-[#f5bd18]">
                         {isArabic ? "التفاصيل" : "Details"}
                         <ChevronRight className="h-4 w-4" />
                       </Link>
@@ -609,7 +624,7 @@ export function ClientRequestsPage({ locale, initialData }: { locale: Locale; in
               })}
             </div>
           )}
-        </DashboardBlock>
+        </ClientStitchPanel>
       )}
 
       {activeTab === "custom_requests" && (

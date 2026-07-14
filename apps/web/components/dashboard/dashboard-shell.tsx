@@ -448,8 +448,8 @@ export function DashboardShell({
         </div>
 
         {isClientDashboard ? (
-          <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-4 border-t border-white/10 bg-black/80 px-2 py-3 text-white backdrop-blur-xl lg:hidden">
-            {navItems.slice(0, 4).map((item) => {
+          <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-white/10 bg-black/80 px-2 py-3 text-white backdrop-blur-xl lg:hidden">
+            {navItems.slice(2, 7).map((item) => {
               const Icon = item.icon;
               const itemPath = stripLocalePrefix(item.href);
               const active = currentPath === itemPath || currentPath.startsWith(`${itemPath}/`);
@@ -511,7 +511,7 @@ function SidebarContent({
         </div>
 
         <p className={cn("mt-1 text-xs font-black uppercase tracking-[0.24em]", isClientDashboard ? "text-[#f5bd18]" : "hidden")}>
-          Premium Industrial
+          {locale === "ar" ? "تشغيل احترافي" : "Premium Industrial"}
         </p>
 
         {!isClientDashboard ? <div className={cn("mt-5 flex w-full items-center justify-between border px-3 py-3 text-xs", "rounded-2xl border-white/5 bg-white/5 px-4")}>

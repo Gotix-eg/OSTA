@@ -19,6 +19,7 @@ import {
 import { DashboardShell } from "@/components/dashboard/dashboard-shell";
 import { fetchApiData, postApiData } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
+import { ClientStitchHero, ClientStitchMetric } from "@/components/client/client-stitch-ui";
 
 interface VendorUser {
   firstName: string;
@@ -60,6 +61,10 @@ interface MaterialRequest {
   createdAt: string;
   offers: MaterialOffer[];
   order?: MaterialOrder;
+}
+
+function formatCount(locale: Locale, value: number): string {
+  return new Intl.NumberFormat(locale === "ar" ? "ar-EG" : "en-US", { maximumFractionDigits: 0 }).format(value);
 }
 
 export default function ClientMaterialsClientPage({ locale }: { locale: Locale }) {
@@ -173,50 +178,51 @@ export default function ClientMaterialsClientPage({ locale }: { locale: Locale }
     );
   };
 
+  const openRequests = requests.filter((request) => request.status === "PENDING" || request.status === "OFFERS_RECEIVED").length;
+  const totalOffers = requests.reduce((sum, request) => sum + request.offers.length, 0);
+  const acceptedRequests = requests.filter((request) => request.status === "ACCEPTED" || Boolean(request.order)).length;
+
   return (
     <DashboardShell locale={locale} role="client">
-      <div className="space-y-8 animate-slideUp">
-        {/* Hero Section */}
-        <div className="relative rounded-[2.5rem] border border-white/5 bg-onyx-950/40 p-8 overflow-hidden backdrop-blur-3xl shadow-2xl">
-          <div className="absolute -right-12 top-0 h-40 w-40 rounded-full bg-gold-500/10 blur-3xl pointer-events-none" />
-          <div className="absolute -left-12 bottom-0 h-40 w-40 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
-          
-          <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div>
-              <span className="text-gold-500 text-xs font-bold tracking-[0.25em] uppercase">
-                {isArabic ? "سوق الخامات الفاخر" : "Premium Material Hub"}
-              </span>
-              <h1 className="mt-2 text-3xl md:text-4xl font-extrabold text-white tracking-tight">
-                {isArabic ? "سوق وعروض أسعار الخامات" : "Material Bidding Marketplace"}
-              </h1>
-              <p className="mt-3 text-sm text-onyx-400 max-w-xl leading-relaxed">
-                {isArabic 
-                  ? "اطلب خامات الصيانة والتشطيب ودع المتاجر المحلية تتنافس لتقديم أفضل أسعار الخامات والتوصيل إليك مباشرة."
-                  : "Request maintenance materials and let local stores compete to give you the best prices and instant delivery."}
-              </p>
-            </div>
+      <div className="space-y-6 animate-slideUp lg:space-y-8">
+        <ClientStitchHero
+          locale={locale}
+          eyebrow={isArabic ? "سوق الخامات" : "Materials market"}
+          title={isArabic ? "عروض الخامات" : "MATERIALS MARKET"}
+          subtitle={
+            isArabic
+              ? "اطلب الخامات ودع المتاجر المحلية ترسل عروض أسعار واضحة وسريعة."
+              : "Request materials and let local vendors send fast, competitive quotes."
+          }
+          icon={Package}
+        />
 
-            <div className="flex gap-3">
-              <button
-                onClick={() => {
-                  setRefreshing(true);
-                  loadRequests();
-                }}
-                disabled={refreshing}
-                className="inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-white transition-all hover:bg-white/10 active:scale-95 disabled:opacity-50"
-              >
-                <RefreshCw className={`h-5 w-5 ${refreshing ? "animate-spin" : ""}`} />
-              </button>
+        <div className="grid gap-4 md:grid-cols-3">
+          <ClientStitchMetric label={isArabic ? "طلبات مفتوحة" : "Open requests"} value={formatCount(locale, openRequests)} note={isArabic ? "بانتظار عروض" : "awaiting bids"} icon={Clock} />
+          <ClientStitchMetric label={isArabic ? "العروض" : "Offers"} value={formatCount(locale, totalOffers)} note={isArabic ? "إجمالي العروض" : "total bids"} icon={MessageSquare} />
+          <ClientStitchMetric label={isArabic ? "طلبات مؤكدة" : "Accepted"} value={formatCount(locale, acceptedRequests)} note={isArabic ? "قيد التنفيذ" : "in execution"} icon={CheckCircle2} dark />
+        </div>
 
-              <button
-                onClick={() => setShowCreateModal(true)}
-                className="inline-flex h-12 items-center gap-2 rounded-2xl bg-gold-500 px-6 font-bold text-onyx-950 transition-all hover:bg-gold-400 active:scale-95 shadow-lg shadow-gold-500/25"
-              >
-                <Plus className="h-5 w-5" />
-                {isArabic ? "طلب خامات جديد" : "Request Materials"}
-              </button>
-            </div>
-          </div>
+        <div className="flex flex-wrap gap-3">
+          <button
+            onClick={() => {
+              setRefreshing(true);
+              loadRequests();
+            }}
+            disabled={refreshing}
+            className="inline-flex h-12 items-center justify-center gap-2 border border-black bg-white px-4 text-xs font-black uppercase text-black shadow-[4px_4px_0_#1a1c1c] transition active:translate-x-1 active:translate-y-1 active:shadow-none disabled:opacity-50"
+          >
+            <RefreshCw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
+            {isArabic ? "تحديث" : "Refresh"}
+          </button>
+
+          <button
+            onClick={() => setShowCreateModal(true)}
+            className="inline-flex h-12 items-center gap-2 bg-black px-5 text-xs font-black uppercase text-[#f5bd18] shadow-[4px_4px_0_#1a1c1c] transition active:translate-x-1 active:translate-y-1 active:shadow-none"
+          >
+            <Plus className="h-5 w-5" />
+            {isArabic ? "طلب خامات جديد" : "Request materials"}
+          </button>
         </div>
 
         {/* Content Body */}
@@ -522,8 +528,8 @@ export default function ClientMaterialsClientPage({ locale }: { locale: Locale }
                     onChange={(e) => setFormDeliveryMethod(e.target.value)}
                     className="h-12 w-full rounded-xl border border-white/5 bg-white/5 px-4 text-white focus:border-gold-500/30 focus:bg-white/10 outline-none text-sm transition-all"
                   >
-                    <option value="VENDOR_DELIVERY">{isArabic ? "توصيل لباب البيت (Vendor Delivery)" : "Home Delivery"}</option>
-                    <option value="CLIENT_PICKUP">{isArabic ? "سأقوم بالاستلام بنفسي من المحل (Client Pickup)" : "Self Pickup"}</option>
+                    <option value="VENDOR_DELIVERY">{isArabic ? "توصيل لباب البيت" : "Home Delivery"}</option>
+                    <option value="CLIENT_PICKUP">{isArabic ? "سأقوم بالاستلام بنفسي من المحل" : "Self Pickup"}</option>
                   </select>
                 </label>
 

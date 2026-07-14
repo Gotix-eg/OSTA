@@ -13,6 +13,13 @@ import {
   SplitInfo,
   SubpageHero
 } from "@/components/dashboard/dashboard-subpage-primitives";
+import {
+  ClientStitchBadge,
+  ClientStitchEmpty,
+  ClientStitchHero,
+  ClientStitchMetric,
+  ClientStitchPanel
+} from "@/components/client/client-stitch-ui";
 import { useLiveApiData } from "@/hooks/use-live-api-data";
 import type { Locale } from "@/lib/locales";
 import type { ClientFavoritesData, ClientSettingsData, ClientWalletData } from "@/lib/operations-data";
@@ -39,52 +46,58 @@ export function ClientFavoritesPage({ locale, initialData }: { locale: Locale; i
   const data = useLiveApiData("/clients/favorites", initialData);
 
   return (
-    <div>
-      <SubpageHero
-        eyebrow={isArabic ? "الفنيون الموثوقون" : "Trusted workers"}
-        title={isArabic ? "المفضلون" : "Favorites"}
+    <div className="space-y-6 lg:space-y-8">
+      <ClientStitchHero
+        locale={locale}
+        eyebrow={isArabic ? "محترفون موثوقون" : "Trusted professionals"}
+        title={isArabic ? "المفضلون" : "FAVORITES"}
         subtitle={
           isArabic
-            ? "هنا الفنيون الذين تعتمد عليهم أكثر، مع التوفر الحالي والتقييم وسرعة الوصول لإعادة الحجز."
-            : "Your trusted workers live here with availability, rating, and quick rebooking context."
+            ? "قائمة الفنيين الذين تثق بهم مع التوفر الحالي والتقييم وسرعة إعادة الحجز."
+            : "Your trusted pros with availability, rating, and quick rebooking context."
         }
-        tone="accent"
+        icon={Heart}
       />
 
-      <div className="mb-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        <MiniMetric label={isArabic ? "إجمالي المفضلين" : "Total favorites"} value={formatNumber(locale, data.summary.totalFavorites)} note={isArabic ? "قائمة محفوظة" : "saved roster"} icon={Heart} tone="primary" />
-        <MiniMetric label={isArabic ? "متصل الآن" : "Online now"} value={formatNumber(locale, data.summary.onlineNow)} note={isArabic ? "جاهز للحجز فورًا" : "available instantly"} icon={Sparkles} tone="accent" />
-        <MiniMetric label={isArabic ? "متوسط التقييم" : "Avg rating"} value={formatNumber(locale, data.summary.avgRating)} note={isArabic ? "مؤشر الثقة" : "trust score"} icon={ShieldCheck} tone="dark" />
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <ClientStitchMetric label={isArabic ? "إجمالي المفضلين" : "Total favorites"} value={formatNumber(locale, data.summary.totalFavorites)} note={isArabic ? "قائمة محفوظة" : "saved roster"} icon={Heart} />
+        <ClientStitchMetric label={isArabic ? "متصل الآن" : "Online now"} value={formatNumber(locale, data.summary.onlineNow)} note={isArabic ? "جاهز للحجز" : "ready to book"} icon={Sparkles} />
+        <ClientStitchMetric label={isArabic ? "متوسط التقييم" : "Avg rating"} value={formatNumber(locale, data.summary.avgRating)} note={isArabic ? "مؤشر الثقة" : "trust score"} icon={ShieldCheck} dark />
       </div>
 
-      <DashboardBlock title={isArabic ? "قائمة الفنيين المفضلين" : "Favorite worker list"} eyebrow={isArabic ? "قائمة محفوظة" : "saved deck"}>
+      <ClientStitchPanel title={isArabic ? "قائمة الفنيين" : "Saved professionals"} eyebrow={isArabic ? "قائمة محفوظة" : "saved deck"}>
         {data.workers.length === 0 ? (
-          <EmptyState>{isArabic ? "لا يوجد فنيون محفوظون بعد" : "No favorite workers yet"}</EmptyState>
+          <ClientStitchEmpty>{isArabic ? "لا يوجد فنيون محفوظون بعد" : "No favorite workers yet"}</ClientStitchEmpty>
         ) : (
           <div className="grid gap-4 xl:grid-cols-2">
             {data.workers.map((worker, index) => (
-              <article key={worker.id} className={index % 2 === 0 ? "onyx-card p-5" : "onyx-card bg-onyx-800/80 p-5"}>
+              <article key={worker.id} className={index % 2 === 0 ? "border border-white/10 bg-[#121212] p-5" : "border border-white/10 bg-black p-5"}>
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <h2 className="text-2xl font-semibold text-white">{worker.name}</h2>
-                    <p className="mt-2 text-body text-onyx-400">{worker.specialty}</p>
+                    <h2 className="text-2xl font-black uppercase text-white">{worker.name}</h2>
+                    <p className="mt-2 text-sm font-bold text-[#f5bd18]">{worker.specialty}</p>
                   </div>
-                  <SoftBadge label={isArabic ? (worker.availability === "Online now" ? "متصل الآن" : worker.availability === "Available tomorrow" ? "متاح غدًا" : "اليوم 7 مساءً") : worker.availability} tone={worker.availability === "Online now" ? "accent" : "sun"} />
+                  <ClientStitchBadge tone={worker.availability === "Online now" ? "gold" : "muted"}>
+                    {isArabic ? (worker.availability === "Online now" ? "متصل الآن" : worker.availability === "Available tomorrow" ? "متاح غدًا" : "اليوم 7 مساءً") : worker.availability}
+                  </ClientStitchBadge>
                 </div>
-                <div className="mt-4">
-                  <SplitInfo
-                    items={[
-                      { label: isArabic ? "التقييم" : "Rating", value: formatNumber(locale, worker.rating) },
-                      { label: isArabic ? "الطلبات" : "Jobs", value: formatNumber(locale, worker.completedJobs) },
-                      { label: isArabic ? "المنطقة" : "Area", value: worker.area }
-                    ]}
-                  />
+                <div className="mt-5 grid gap-3 sm:grid-cols-3">
+                  {[
+                    { label: isArabic ? "التقييم" : "Rating", value: formatNumber(locale, worker.rating) },
+                    { label: isArabic ? "الطلبات" : "Jobs", value: formatNumber(locale, worker.completedJobs) },
+                    { label: isArabic ? "المنطقة" : "Area", value: worker.area }
+                  ].map((item) => (
+                    <div key={item.label} className="border border-white/5 bg-black p-3">
+                      <p className="text-[10px] font-black uppercase tracking-[0.18em] text-white/35">{item.label}</p>
+                      <p className="mt-2 truncate text-sm font-bold text-white">{item.value}</p>
+                    </div>
+                  ))}
                 </div>
               </article>
             ))}
           </div>
         )}
-      </DashboardBlock>
+      </ClientStitchPanel>
     </div>
   );
 }
@@ -94,60 +107,64 @@ export function ClientWalletPage({ locale, initialData }: { locale: Locale; init
   const data = useLiveApiData("/clients/wallet", initialData);
 
   return (
-    <div>
-      <SubpageHero
-        eyebrow={isArabic ? "المحفظة" : "Wallet rail"}
-        title={isArabic ? "المحفظة" : "Wallet"}
-        subtitle={
-          isArabic
-            ? "راقب الرصيد والمصروفات والاستردادات وآخر حركة مالية من شاشة أوضح وأهدأ."
-            : "Track balance, spend, refunds, and the latest transaction movement from a cleaner finance view."
-        }
-        tone="sun"
-      />
+    <div className="space-y-6 lg:space-y-8">
+      <section className="relative overflow-hidden border border-white/10 bg-black p-6 text-white shadow-[6px_6px_0_#1a1c1c] sm:p-8 lg:p-10">
+        <p className="text-xs font-black uppercase tracking-[0.28em] text-white/45">{isArabic ? "الرصيد المتاح" : "Available balance"}</p>
+        <h1 className="mt-4 text-5xl font-black leading-none text-[#f5bd18] sm:text-6xl lg:text-7xl">
+          {formatCurrency(locale, data.balance)}
+        </h1>
+        <div className="mt-8 flex flex-wrap gap-3">
+          <button className="bg-white px-5 py-3 text-xs font-black uppercase text-black shadow-[4px_4px_0_#f5bd18]">
+            {isArabic ? "شحن الرصيد" : "Top up"}
+          </button>
+          <button className="border-2 border-white px-5 py-3 text-xs font-black uppercase text-white">
+            {isArabic ? "وسائل الدفع" : "Payment methods"}
+          </button>
+        </div>
+      </section>
 
-      <div className="mb-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <MiniMetric label={isArabic ? "الرصيد" : "Balance"} value={formatCurrency(locale, data.balance)} note={isArabic ? "جاهز للاستخدام" : "ready to use"} icon={Wallet} tone="dark" />
-        <MiniMetric label={isArabic ? "مصروفات هذا الشهر" : "Spend this month"} value={formatCurrency(locale, data.spendThisMonth)} note={isArabic ? "استخدام شهري" : "monthly usage"} icon={CreditCard} tone="primary" />
-        <MiniMetric label={isArabic ? "استردادات معلقة" : "Pending refunds"} value={formatCurrency(locale, data.pendingRefunds)} note={isArabic ? "مسار الاسترداد" : "refund rail"} icon={ShieldCheck} tone="accent" />
-        <MiniMetric label={isArabic ? "وسائل الدفع" : "Payment methods"} value={formatNumber(locale, data.paymentMethods.length)} note={isArabic ? "مصادر محفوظة" : "saved rails"} icon={Sparkles} tone="sun" />
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <ClientStitchMetric label={isArabic ? "الرصيد" : "Balance"} value={formatCurrency(locale, data.balance)} note={isArabic ? "جاهز للاستخدام" : "ready to use"} icon={Wallet} dark />
+        <ClientStitchMetric label={isArabic ? "مصروفات الشهر" : "Spend this month"} value={formatCurrency(locale, data.spendThisMonth)} note={isArabic ? "استخدام شهري" : "monthly usage"} icon={CreditCard} />
+        <ClientStitchMetric label={isArabic ? "استردادات معلقة" : "Pending refunds"} value={formatCurrency(locale, data.pendingRefunds)} note={isArabic ? "مسار الاسترداد" : "refund rail"} icon={ShieldCheck} />
+        <ClientStitchMetric label={isArabic ? "وسائل الدفع" : "Payment methods"} value={formatNumber(locale, data.paymentMethods.length)} note={isArabic ? "مصادر محفوظة" : "saved rails"} icon={Sparkles} />
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
-        <DashboardBlock title={isArabic ? "وسائل الدفع" : "Payment methods"} eyebrow={isArabic ? "مصادر محفوظة" : "saved sources"}>
+      <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
+        <ClientStitchPanel title={isArabic ? "وسائل الدفع" : "Payment methods"} eyebrow={isArabic ? "مصادر محفوظة" : "saved sources"}>
           <div className="grid gap-4">
             {data.paymentMethods.map((method) => (
-              <SoftCard key={method.id}>
+              <div key={method.id} className="border border-white/10 bg-[#121212] p-4">
                 <div className="flex items-center justify-between gap-3">
                   <div>
-                    <p className="text-lg font-semibold text-white">{method.label}</p>
-                    <p className="mt-1 text-sm text-onyx-400">{isArabic ? "مصدر الدفع" : "payment source"}</p>
+                    <p className="text-lg font-black text-white">{method.label}</p>
+                    <p className="mt-1 text-xs font-bold uppercase tracking-widest text-white/35">{isArabic ? "مصدر الدفع" : "payment source"}</p>
                   </div>
-                  {method.isDefault ? <SoftBadge label={isArabic ? "افتراضي" : "Default"} tone="accent" /> : null}
+                  {method.isDefault ? <ClientStitchBadge>{isArabic ? "افتراضي" : "Default"}</ClientStitchBadge> : null}
                 </div>
-              </SoftCard>
+              </div>
             ))}
           </div>
-        </DashboardBlock>
+        </ClientStitchPanel>
 
-        <DashboardBlock title={isArabic ? "آخر المعاملات" : "Recent transactions"} eyebrow={isArabic ? "حركة المال" : "money stream"}>
+        <ClientStitchPanel title={isArabic ? "آخر المعاملات" : "Recent transactions"} eyebrow={isArabic ? "حركة المال" : "money stream"}>
           <div className="grid gap-4">
             {data.recentTransactions.map((item, index) => (
-              <div key={item.id} className={index % 2 === 0 ? "onyx-card p-4" : "onyx-card bg-onyx-800/80 p-4"}>
+              <div key={item.id} className={index % 2 === 0 ? "border border-white/10 bg-[#121212] p-4" : "border border-white/10 bg-black p-4"}>
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
-                    <p className="font-semibold text-white">{item.label}</p>
-                    <p className="mt-1 text-sm text-onyx-400">{formatDate(locale, item.createdAt)}</p>
+                    <p className="font-black text-white">{item.label}</p>
+                    <p className="mt-1 text-xs font-bold uppercase tracking-widest text-white/35">{formatDate(locale, item.createdAt)}</p>
                   </div>
                   <div className="text-end">
-                    <p className={item.amount < 0 ? "text-lg font-semibold text-error" : "text-lg font-semibold text-white"}>{formatCurrency(locale, item.amount)}</p>
-                    <p className="mt-1 text-xs uppercase tracking-[0.18em] text-onyx-500">{item.type}</p>
+                    <p className={item.amount < 0 ? "text-lg font-black text-red-300" : "text-lg font-black text-[#f5bd18]"}>{formatCurrency(locale, item.amount)}</p>
+                    <p className="mt-1 text-xs uppercase tracking-[0.18em] text-white/35">{item.type}</p>
                   </div>
                 </div>
               </div>
             ))}
           </div>
-        </DashboardBlock>
+        </ClientStitchPanel>
       </div>
     </div>
   );
