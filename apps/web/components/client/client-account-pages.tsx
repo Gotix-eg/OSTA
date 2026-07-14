@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
 
-import Link from "next/link";
 import {
   BriefcaseBusiness,
   Check,
@@ -34,6 +33,7 @@ import {
   ClientStitchPanel
 } from "@/components/client/client-stitch-ui";
 import { useLiveApiData } from "@/hooks/use-live-api-data";
+import { postApiData } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
 import type { ClientFavoritesData, ClientSettingsData, ClientWalletData } from "@/lib/operations-data";
 import { cn } from "@/lib/utils";
@@ -282,8 +282,12 @@ function SettingsRoleSwitcher({
     vendorNote: string;
     current: string;
     switchTo: string;
+    switching: string;
+    switchError: string;
   };
 }) {
+  const [pendingRole, setPendingRole] = useState<"WORKER" | "VENDOR" | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const initials = fullName
     .split(" ")
     .filter(Boolean)
@@ -297,7 +301,8 @@ function SettingsRoleSwitcher({
       note: labels.clientNote,
       href: `/${locale}/client`,
       icon: User,
-      active: true
+      active: true,
+      targetRole: "CLIENT" as const
     },
     {
       key: "worker",
@@ -305,7 +310,8 @@ function SettingsRoleSwitcher({
       note: labels.workerNote,
       href: `/${locale}/worker`,
       icon: BriefcaseBusiness,
-      active: false
+      active: false,
+      targetRole: "WORKER" as const
     },
     {
       key: "vendor",
@@ -313,9 +319,23 @@ function SettingsRoleSwitcher({
       note: labels.vendorNote,
       href: `/${locale}/vendor`,
       icon: Store,
-      active: false
+      active: false,
+      targetRole: "VENDOR" as const
     }
   ];
+
+  async function switchRole(targetRole: "WORKER" | "VENDOR", href: string) {
+    setError(null);
+    setPendingRole(targetRole);
+
+    try {
+      await postApiData<{ role: string }, { targetRole: "WORKER" | "VENDOR" }>("/auth/switch-role", { targetRole });
+      window.location.assign(href);
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : labels.switchError);
+      setPendingRole(null);
+    }
+  }
 
   return (
     <section className="border border-white/10 bg-black p-6 text-white shadow-[4px_4px_0_#000]">
@@ -337,9 +357,11 @@ function SettingsRoleSwitcher({
         </div>
         <span className="border border-[#f5bd18] bg-[#f5bd18] px-3 py-2 text-[10px] font-black uppercase tracking-[0.16em] text-black">{labels.current}</span>
       </div>
+      {error ? <div className="mb-4 border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm font-bold text-red-200">{error}</div> : null}
       <div className="grid gap-3 md:grid-cols-3">
         {roles.map((role) => {
           const Icon = role.icon;
+          const isPending = pendingRole === role.targetRole;
           const content = (
             <>
               <div className={cn("flex h-11 w-11 shrink-0 items-center justify-center border", role.active ? "border-[#f5bd18] bg-[#f5bd18] text-black" : "border-white/15 bg-[#121212] text-[#f5bd18]")}>
@@ -350,7 +372,7 @@ function SettingsRoleSwitcher({
                 <p className="mt-1 line-clamp-2 text-xs leading-5 text-white/45">{role.note}</p>
               </div>
               <span className={cn("shrink-0 px-3 py-2 text-[10px] font-black uppercase tracking-[0.12em]", role.active ? "bg-white text-black" : "border border-white/15 text-[#f5bd18]")}>
-                {role.active ? labels.current : labels.switchTo}
+                {role.active ? labels.current : isPending ? labels.switching : labels.switchTo}
               </span>
             </>
           );
@@ -360,9 +382,19 @@ function SettingsRoleSwitcher({
               {content}
             </div>
           ) : (
-            <Link key={role.key} href={role.href} className="flex items-center gap-4 border border-white/10 bg-[#121212] p-4 transition-colors hover:border-[#f5bd18]">
+            <button
+              key={role.key}
+              type="button"
+              disabled={pendingRole !== null}
+              onClick={() => {
+                if (role.targetRole !== "CLIENT") {
+                  void switchRole(role.targetRole, role.href);
+                }
+              }}
+              className="flex items-center gap-4 border border-white/10 bg-[#121212] p-4 text-start transition-colors hover:border-[#f5bd18] disabled:cursor-wait disabled:opacity-70"
+            >
               {content}
-            </Link>
+            </button>
           );
         })}
       </div>
@@ -437,7 +469,9 @@ export function ClientSettingsPage({ locale, initialData }: { locale: Locale; in
     vendorMode: isArabic ? "وضع المورد" : "Vendor Mode",
     vendorNote: isArabic ? "إدارة الخامات، المخزون، الطلبات، والإعلانات." : "Materials, inventory, orders, and ads management.",
     current: isArabic ? "الحالي" : "CURRENT",
-    switchTo: isArabic ? "تبديل" : "SWITCH"
+    switchTo: isArabic ? "تبديل" : "SWITCH",
+    switching: isArabic ? "جاري" : "WAIT",
+    switchError: isArabic ? "تعذر تبديل وضع التشغيل" : "Could not switch operating mode"
   };
 
   return (
