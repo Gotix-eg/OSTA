@@ -1,18 +1,28 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
-import { Bell, CreditCard, Heart, MapPin, Save, ShieldCheck, Sparkles, Wallet } from "lucide-react";
+import type { ReactNode } from "react";
 
 import {
-  DashboardBlock,
-  EmptyState,
-  MiniMetric,
-  SoftBadge,
-  SoftCard,
-  SplitInfo,
-  SubpageHero
-} from "@/components/dashboard/dashboard-subpage-primitives";
+  Check,
+  Cloud,
+  CreditCard,
+  Heart,
+  LogOut,
+  Mail,
+  MapPin,
+  MessageSquare,
+  PhoneCall,
+  Save,
+  Shield,
+  ShieldCheck,
+  SlidersHorizontal,
+  Sparkles,
+  User,
+  Wallet
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+
 import {
   ClientStitchBadge,
   ClientStitchEmpty,
@@ -23,6 +33,7 @@ import {
 import { useLiveApiData } from "@/hooks/use-live-api-data";
 import type { Locale } from "@/lib/locales";
 import type { ClientFavoritesData, ClientSettingsData, ClientWalletData } from "@/lib/operations-data";
+import { cn } from "@/lib/utils";
 
 function formatNumber(locale: Locale, value: number) {
   return new Intl.NumberFormat(locale === "ar" ? "ar-EG" : "en-US", { maximumFractionDigits: 0 }).format(value);
@@ -170,6 +181,84 @@ export function ClientWalletPage({ locale, initialData }: { locale: Locale; init
   );
 }
 
+function SettingsMetric({ label, value, icon: Icon, iconText, muted }: { label: string; value: string; icon?: LucideIcon; iconText?: string; muted?: boolean }) {
+  return (
+    <article className="group flex items-center justify-between gap-4 border border-white/10 bg-black p-6 text-white transition-colors hover:border-[#f5bd18]">
+      <div className="min-w-0">
+        <p className="truncate text-[10px] font-black uppercase tracking-[0.18em] text-white/40">{label}</p>
+        <h2 className="mt-2 truncate text-xl font-black uppercase text-white">{value}</h2>
+      </div>
+      <div className={cn("flex h-12 w-12 shrink-0 items-center justify-center border border-white/20 text-white transition-colors group-hover:bg-white group-hover:text-black", iconText ? "border-[#f5bd18] bg-[#f5bd18] text-black" : muted ? "text-white/40" : "")}>
+        {Icon ? <Icon className="h-5 w-5" /> : <span className="text-sm font-black">{iconText}</span>}
+      </div>
+    </article>
+  );
+}
+
+function SettingsPanel({ title, icon: Icon, children }: { title: string; icon: LucideIcon; children: ReactNode }) {
+  return (
+    <section className="border border-white/10 bg-black p-6 text-white">
+      <div className="mb-6 flex items-center gap-3 border-b border-white/10 pb-4">
+        <Icon className="h-5 w-5 text-[#f5bd18]" />
+        <h2 className="text-xl font-black uppercase tracking-wide text-white">{title}</h2>
+      </div>
+      {children}
+    </section>
+  );
+}
+
+function SettingsInput({ label, value, onChange, type = "text", readOnly }: { label: string; value: string; onChange?: (value: string) => void; type?: string; readOnly?: boolean }) {
+  return (
+    <label className="block space-y-2">
+      <span className="block text-[10px] font-black uppercase tracking-[0.18em] text-white/40">{label}</span>
+      <input
+        value={value}
+        onChange={(event) => onChange?.(event.target.value)}
+        readOnly={readOnly}
+        type={type}
+        className="w-full border border-white/10 bg-[#121212] px-4 py-3 text-sm font-bold text-white outline-none transition-colors focus:border-[#f5bd18] read-only:text-white/80"
+      />
+    </label>
+  );
+}
+
+function SettingsToggle({ label, note, checked, onChange }: { label: string; note: string; checked: boolean; onChange: (checked: boolean) => void }) {
+  return (
+    <button type="button" onClick={() => onChange(!checked)} className="flex w-full items-center justify-between gap-4 border border-white/5 bg-[#121212] p-4 text-start transition-colors hover:border-[#f5bd18]/50">
+      <span className="min-w-0">
+        <span className="block text-sm font-black uppercase text-white">{label}</span>
+        <span className="mt-1 block text-xs leading-5 text-white/40">{note}</span>
+      </span>
+      <span className={cn("relative h-6 w-12 shrink-0 transition-colors", checked ? "bg-[#f5bd18]" : "bg-white/20")}>
+        <span className={cn("absolute top-1 h-4 w-4 bg-black transition-transform", checked ? "translate-x-7 rtl:-translate-x-7" : "translate-x-1 rtl:-translate-x-1")} />
+      </span>
+    </button>
+  );
+}
+
+function SettingsCheck({ label, checked, onChange }: { label: string; checked: boolean; onChange: (checked: boolean) => void }) {
+  return (
+    <button type="button" onClick={() => onChange(!checked)} className="flex w-full items-center gap-4 py-3 text-start">
+      <span className={cn("relative flex h-6 w-6 shrink-0 items-center justify-center border-2", checked ? "border-[#f5bd18] bg-[#f5bd18]" : "border-white/20")}>
+        {checked ? <Check className="h-4 w-4 text-black" /> : null}
+      </span>
+      <span className="text-sm font-black uppercase text-white">{label}</span>
+    </button>
+  );
+}
+
+function SettingsFooterCard({ icon: Icon, title, text }: { icon: LucideIcon; title: string; text: string }) {
+  return (
+    <article className="space-y-4">
+      <div className="flex h-10 w-10 items-center justify-center border border-white/10 bg-black">
+        <Icon className="h-5 w-5 text-[#f5bd18]" />
+      </div>
+      <h3 className="text-sm font-black uppercase text-black">{title}</h3>
+      <p className="text-xs leading-5 text-black/60">{text}</p>
+    </article>
+  );
+}
+
 export function ClientSettingsPage({ locale, initialData }: { locale: Locale; initialData: ClientSettingsData }) {
   const isArabic = locale === "ar";
   const liveData = useLiveApiData("/clients/settings", initialData);
@@ -185,74 +274,185 @@ export function ClientSettingsPage({ locale, initialData }: { locale: Locale; in
     window.setTimeout(() => setSaved(false), 2000);
   }
 
+  const fullName = `${data.profile.firstName} ${data.profile.lastName}`.trim();
+  const languageCode = data.preferences.language?.toUpperCase() || locale.toUpperCase();
+  const smsEnabled = data.preferences.notificationsBySms;
+  const labels = {
+    heroEyebrow: isArabic ? "لوحة تحكم العميل" : "CLIENT CONTROLS",
+    heroTitle: isArabic ? "إعدادات الحساب" : "CLIENT CONTROLS",
+    heroText: isArabic
+      ? "إدارة بيانات الهوية، قنوات التواصل، وتفضيلات الحساب داخل تجربة OSTA الصناعية."
+      : "Manage your global account preferences, service communication channels, and identity data to optimize your OSTA industrial experience.",
+    language: isArabic ? "اللغة" : "Language",
+    languageValue: isArabic ? (languageCode === "AR" ? "العربية (AR)" : "الإنجليزية (EN)") : languageCode === "AR" ? "ARABIC (AR)" : "ENGLISH (EN)",
+    addresses: isArabic ? "العناوين المحفوظة" : "Saved Addresses",
+    sites: isArabic ? `${formatNumber(locale, data.addresses.length)} مواقع` : `${formatNumber(locale, data.addresses.length)} SITES`,
+    smsState: isArabic ? "حالة SMS" : "SMS State",
+    smsValue: smsEnabled ? (isArabic ? "متصل" : "ONLINE") : isArabic ? "غير متصل" : "OFFLINE",
+    identity: isArabic ? "بيانات الهوية" : "Identity Data",
+    fullName: isArabic ? "الاسم الكامل" : "Full Name",
+    firstName: isArabic ? "الاسم الأول" : "First Name",
+    lastName: isArabic ? "اسم العائلة" : "Last Name",
+    email: isArabic ? "البريد الإلكتروني" : "Email Address",
+    phone: isArabic ? "رقم الهاتف الأساسي" : "Primary Phone",
+    signal: isArabic ? "ضوابط الإشارة" : "Signal Controls",
+    push: isArabic ? "إشعارات الرسائل" : "Push Notifications",
+    pushNote: isArabic ? "تنبيهات فورية عند وصول الفني وتحديث حالة الطلب" : "Real-time status updates on technician arrival",
+    emailReports: isArabic ? "تقارير البريد" : "Email Reports",
+    emailNote: isArabic ? "ملخصات أسبوعية وتحديثات مهمة على البريد" : "Weekly financial summaries and site analytics",
+    security: isArabic ? "التحقق الثنائي" : "Two-Factor Auth",
+    securityNote: isArabic ? "حماية إضافية للمدفوعات والعمليات الحساسة" : "Enhanced security for financial transactions",
+    marketing: isArabic ? "تحديثات التسويق" : "Marketing Updates",
+    marketingNote: isArabic ? "عروض وتحديثات مرتبطة بالخدمات" : "Service offers and product updates",
+    save: isArabic ? "حفظ كل التغييرات" : "SAVE ALL CHANGES",
+    saved: isArabic ? "تم حفظ التغييرات محليًا" : "Changes saved locally",
+    protocol: isArabic ? "بروتوكول الأمان" : "Security Protocol",
+    protocolText: isArabic ? "كل البيانات محمية بمعايير تشفير صناعية." : "All data is encrypted via industrial standards.",
+    sync: isArabic ? "مزامنة السحابة" : "Cloud Sync",
+    syncText: isArabic ? "التفضيلات متزامنة مع أجهزة وخدمات OSTA." : "Preferences synced across OSTA devices and services.",
+    supportEyebrow: isArabic ? "خدمة OSTA المميزة" : "OSTA Premium Service",
+    supportTitle: isArabic ? "تحتاج مساعدة فورية؟" : "NEED IMMEDIATE ASSISTANCE?",
+    supportAction: isArabic ? "اتصل بالدعم" : "CALL DISPATCH",
+    logout: isArabic ? "تسجيل الخروج" : "LOGOUT",
+    system: isArabic ? "تفضيلات النظام" : "System Preferences",
+    alerts: isArabic ? "تنبيهات الإشارة" : "Signal Alerts",
+    update: isArabic ? "تحديث البيانات" : "UPDATE DATA"
+  };
+
   return (
-    <div>
-      <SubpageHero
-        eyebrow={isArabic ? "إعدادات العميل" : "Client controls"}
-        title={isArabic ? "الإعدادات" : "Settings"}
-        subtitle={
-          isArabic
-            ? "تحكم في الملف الشخصي والإشعارات واللغة والعناوين من لوحة أوضح وأكثر هدوءًا."
-            : "Control profile, notifications, language, and address preferences from a cleaner account panel."
-        }
-        tone="dark"
-      />
+    <div className="relative -m-4 min-h-screen bg-[#f5bd18] p-4 text-[#1a1c1c] sm:-m-6 sm:p-6 lg:-m-8 lg:p-8" dir={isArabic ? "rtl" : "ltr"}>
+      <div className="mx-auto max-w-[1280px] space-y-6 lg:space-y-12">
+        <section className="border border-white/10 bg-black p-6 text-white shadow-[4px_4px_0_#000] sm:p-8">
+          <p className="mb-2 text-[10px] font-black uppercase tracking-[0.24em] text-[#f5bd18]">{labels.heroEyebrow}</p>
+          <h1 className="text-3xl font-black uppercase leading-tight text-white sm:text-4xl">{labels.heroTitle}</h1>
+          <p className="mt-3 max-w-3xl text-sm leading-6 text-white/60 sm:text-base">{labels.heroText}</p>
+        </section>
 
-      <div className="mb-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        <MiniMetric label={isArabic ? "اللغة" : "Language"} value={data.preferences.language.toUpperCase()} note={isArabic ? "اللغة الحالية" : "active locale"} icon={Bell} tone="accent" />
-        <MiniMetric label={isArabic ? "العناوين المحفوظة" : "Saved addresses"} value={formatNumber(locale, data.addresses.length)} note={isArabic ? "نقاط الوصول" : "delivery anchors"} icon={MapPin} tone="sun" />
-        <MiniMetric label={isArabic ? "حالة التواصل" : "Contact state"} value={data.preferences.notificationsBySms ? (isArabic ? "رسائل مفعلة" : "SMS on") : isArabic ? "رسائل متوقفة" : "SMS off"} note={isArabic ? "تفضيلات الإشعارات" : "notification rail"} icon={Save} tone="primary" />
-      </div>
+        <div className="grid gap-4 md:grid-cols-3">
+          <SettingsMetric label={labels.language} value={labels.languageValue} iconText={languageCode} />
+          <SettingsMetric label={labels.addresses} value={labels.sites} icon={MapPin} />
+          <SettingsMetric label={labels.smsState} value={labels.smsValue} icon={smsEnabled ? MessageSquare : Mail} muted={!smsEnabled} />
+        </div>
 
-      {saved ? <div className="mb-4 rounded-[1.2rem] border border-success/20 bg-success/10 px-4 py-3 text-sm text-success">{isArabic ? "تم الحفظ محليًا" : "Saved locally"}</div> : null}
+        {saved ? <div className="border border-black bg-white px-4 py-3 text-sm font-black text-black shadow-[4px_4px_0_#000]">{labels.saved}</div> : null}
 
-      <div className="grid gap-6 xl:grid-cols-[1fr_1fr]">
-        <DashboardBlock title={isArabic ? "الملف الشخصي" : "Profile"} eyebrow={isArabic ? "بيانات الهوية" : "identity data"}>
-          <div className="grid gap-6 sm:grid-cols-2">
-            <label className="space-y-3">
-              <span className="text-caption">{isArabic ? "الاسم الأول" : "First name"}</span>
-              <input value={data.profile.firstName} onChange={(event) => setData({ ...data, profile: { ...data.profile, firstName: event.target.value } })} className="h-14 w-full rounded-2xl border border-white/5 bg-white/5 px-5 text-white focus:border-gold-500/30 focus:bg-white/10" />
-            </label>
-            <label className="space-y-3">
-              <span className="text-caption">{isArabic ? "اسم العائلة" : "Last name"}</span>
-              <input value={data.profile.lastName} onChange={(event) => setData({ ...data, profile: { ...data.profile, lastName: event.target.value } })} className="h-14 w-full rounded-2xl border border-white/5 bg-white/5 px-5 text-white focus:border-gold-500/30 focus:bg-white/10" />
-            </label>
-            <label className="space-y-3">
-              <span className="text-caption">{isArabic ? "البريد الإلكتروني" : "Email"}</span>
-              <input value={data.profile.email} onChange={(event) => setData({ ...data, profile: { ...data.profile, email: event.target.value } })} className="h-14 w-full rounded-2xl border border-white/5 bg-white/5 px-5 text-white focus:border-gold-500/30 focus:bg-white/10" />
-            </label>
-            <label className="space-y-3">
-              <span className="text-caption">{isArabic ? "رقم الهاتف" : "Phone"}</span>
-              <input value={data.profile.phone} onChange={(event) => setData({ ...data, profile: { ...data.profile, phone: event.target.value } })} className="h-14 w-full rounded-2xl border border-white/5 bg-white/5 px-5 text-white focus:border-gold-500/30 focus:bg-white/10" />
-            </label>
-          </div>
-        </DashboardBlock>
-
-        <DashboardBlock title={isArabic ? "التفضيلات" : "Preferences"} eyebrow={isArabic ? "إعدادات الإشعارات" : "signal controls"}>
-          <div className="grid gap-3">
-            {[
-              { key: "notificationsBySms", label: isArabic ? "إشعارات الرسائل" : "SMS notifications" },
-              { key: "notificationsByEmail", label: isArabic ? "إشعارات البريد" : "Email notifications" },
-              { key: "marketingUpdates", label: isArabic ? "العروض التسويقية" : "Marketing updates" }
-            ].map((item) => (
-              <label key={item.key} className="flex cursor-pointer items-center justify-between gap-4 rounded-2xl border border-white/5 bg-white/5 p-5 transition-all hover:bg-white/10">
-                <span className="text-sm font-bold text-white/80">{item.label}</span>
-                <input
-                  type="checkbox"
-                  checked={data.preferences[item.key as keyof typeof data.preferences] as boolean}
-                  onChange={(event) => setData({ ...data, preferences: { ...data.preferences, [item.key]: event.target.checked } })}
-                  className="h-5 w-5 rounded-lg border-white/20 bg-white/5 text-gold-500 focus:ring-gold-500/50"
-                />
+        <div className="grid gap-6 lg:grid-cols-2">
+          <SettingsPanel title={labels.identity} icon={User}>
+            <div className="hidden space-y-6 md:block">
+              <SettingsInput label={labels.fullName} value={fullName} readOnly />
+              <SettingsInput label={labels.email} value={data.profile.email} onChange={(value) => setData({ ...data, profile: { ...data.profile, email: value } })} type="email" />
+              <label className="space-y-2 block">
+                <span className="block text-[10px] font-black uppercase tracking-[0.18em] text-white/40">{labels.phone}</span>
+                <div className="flex gap-2">
+                  <span className="border border-white/10 bg-[#121212] px-4 py-3 text-sm font-bold text-white">+20</span>
+                  <input
+                    value={data.profile.phone.replace(/^\+?20\s?/, "")}
+                    onChange={(event) => setData({ ...data, profile: { ...data.profile, phone: event.target.value } })}
+                    className="min-w-0 flex-1 border border-white/10 bg-[#121212] px-4 py-3 text-sm font-bold text-white outline-none transition-colors focus:border-[#f5bd18]"
+                    type="tel"
+                  />
+                </div>
               </label>
-            ))}
-          </div>
-        </DashboardBlock>
-      </div>
+            </div>
 
-      <div className="mt-6 flex justify-end">
-        <button type="button" onClick={handleSave} className="inline-flex items-center gap-2 rounded-full bg-dark-950 px-5 py-3 text-sm font-semibold text-white shadow-soft">
-          <Save className="h-4 w-4" />
-          {isArabic ? "حفظ" : "Save"}
+            <div className="grid gap-4 md:hidden">
+              <div className="grid grid-cols-2 gap-4">
+                <SettingsInput label={labels.firstName} value={data.profile.firstName} onChange={(value) => setData({ ...data, profile: { ...data.profile, firstName: value } })} />
+                <SettingsInput label={labels.lastName} value={data.profile.lastName} onChange={(value) => setData({ ...data, profile: { ...data.profile, lastName: value } })} />
+              </div>
+              <SettingsInput label={labels.email} value={data.profile.email} onChange={(value) => setData({ ...data, profile: { ...data.profile, email: value } })} type="email" />
+              <SettingsInput label={labels.phone} value={data.profile.phone} onChange={(value) => setData({ ...data, profile: { ...data.profile, phone: value } })} type="tel" />
+              <button type="button" onClick={handleSave} className="mt-2 bg-white px-5 py-4 text-xs font-black uppercase tracking-[0.16em] text-black shadow-[4px_4px_0_#f5bd18] active:translate-x-1 active:translate-y-1 active:shadow-none">
+                {labels.update}
+              </button>
+            </div>
+          </SettingsPanel>
+
+          <SettingsPanel title={labels.signal} icon={SlidersHorizontal}>
+            <div className="space-y-2">
+              <SettingsToggle
+                label={labels.push}
+                note={labels.pushNote}
+                checked={data.preferences.notificationsBySms}
+                onChange={(checked) => setData({ ...data, preferences: { ...data.preferences, notificationsBySms: checked } })}
+              />
+              <SettingsToggle
+                label={labels.emailReports}
+                note={labels.emailNote}
+                checked={data.preferences.notificationsByEmail}
+                onChange={(checked) => setData({ ...data, preferences: { ...data.preferences, notificationsByEmail: checked } })}
+              />
+              <SettingsToggle label={labels.security} note={labels.securityNote} checked={false} onChange={() => undefined} />
+              <SettingsToggle
+                label={labels.marketing}
+                note={labels.marketingNote}
+                checked={data.preferences.marketingUpdates}
+                onChange={(checked) => setData({ ...data, preferences: { ...data.preferences, marketingUpdates: checked } })}
+              />
+            </div>
+          </SettingsPanel>
+        </div>
+
+        <div className="grid gap-6 md:hidden">
+          <section className="space-y-4">
+            <h2 className="px-1 text-2xl font-black text-black">{labels.system}</h2>
+            <div className="divide-y divide-white/10 border border-white/10 bg-black p-6 text-white">
+              <div className="flex items-center justify-between gap-4 py-4">
+                <div>
+                  <p className="text-xs font-black uppercase">{labels.language}</p>
+                  <p className="mt-1 text-xs text-white/60">{labels.languageValue}</p>
+                </div>
+                <div className="flex border border-white/10 bg-[#121212] p-1">
+                  {["AR", "EN"].map((code) => (
+                    <button key={code} type="button" className={cn("px-4 py-1 text-xs font-black", languageCode === code ? "bg-[#f5bd18] text-black" : "text-white")}>
+                      {code}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="flex items-center justify-between gap-4 py-4">
+                <div>
+                  <p className="text-xs font-black uppercase">{labels.addresses}</p>
+                  <p className="mt-1 text-xs text-white/60">{labels.sites}</p>
+                </div>
+                <span className="bg-[#f5bd18] px-3 py-1 text-sm font-black text-black">{formatNumber(locale, data.addresses.length)}</span>
+              </div>
+            </div>
+          </section>
+
+          <section className="space-y-4">
+            <h2 className="px-1 text-2xl font-black text-black">{labels.alerts}</h2>
+            <div className="border border-white/10 bg-black p-6 text-white">
+              <SettingsCheck label={labels.push} checked={data.preferences.notificationsBySms} onChange={(checked) => setData({ ...data, preferences: { ...data.preferences, notificationsBySms: checked } })} />
+              <SettingsCheck label={labels.emailReports} checked={data.preferences.notificationsByEmail} onChange={(checked) => setData({ ...data, preferences: { ...data.preferences, notificationsByEmail: checked } })} />
+              <SettingsCheck label={labels.marketing} checked={data.preferences.marketingUpdates} onChange={(checked) => setData({ ...data, preferences: { ...data.preferences, marketingUpdates: checked } })} />
+            </div>
+          </section>
+        </div>
+
+        <div className="flex justify-end">
+          <button type="button" onClick={handleSave} className="inline-flex items-center gap-3 bg-white px-7 py-4 text-xs font-black uppercase tracking-[0.12em] text-black shadow-[4px_4px_0_#000] transition-transform active:translate-x-1 active:translate-y-1 active:shadow-none sm:px-12">
+            <span>{labels.save}</span>
+            <Save className="h-4 w-4" />
+          </button>
+        </div>
+
+        <footer className="grid gap-6 border-t border-black/10 pt-8 md:grid-cols-4 md:pt-16">
+          <SettingsFooterCard icon={Shield} title={labels.protocol} text={labels.protocolText} />
+          <SettingsFooterCard icon={Cloud} title={labels.sync} text={labels.syncText} />
+          <div className="border border-white/10 bg-black p-6 text-white md:col-span-2">
+            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-white/40">{labels.supportEyebrow}</p>
+            <h2 className="mt-2 text-xl font-black uppercase text-white">{labels.supportTitle}</h2>
+            <button type="button" className="mt-5 inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.12em] text-[#f5bd18]">
+              {labels.supportAction}
+              <PhoneCall className="h-4 w-4" />
+            </button>
+          </div>
+        </footer>
+
+        <button type="button" className="flex w-full items-center justify-center gap-2 border border-red-500/50 bg-black py-4 text-xs font-black uppercase tracking-[0.16em] text-red-400 md:hidden">
+          <LogOut className="h-4 w-4" />
+          {labels.logout}
         </button>
       </div>
     </div>
