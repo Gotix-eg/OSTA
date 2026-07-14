@@ -234,6 +234,7 @@ export interface WorkerSettingsData {
     lastName: string;
     phone: string;
     email: string;
+    avatarUrl?: string | null;
   };
   workPreferences: {
     isAvailable: boolean;
@@ -434,7 +435,8 @@ const workerSettingsFallback: WorkerSettingsData = {
     firstName: "",
     lastName: "",
     phone: "",
-    email: ""
+    email: "",
+    avatarUrl: null
   },
   workPreferences: {
     isAvailable: false,

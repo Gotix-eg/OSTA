@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import { Save, ShieldCheck, Sparkles, Star, TimerReset, UserCircle2, Wallet } from "lucide-react";
+import { BriefcaseBusiness, Loader2, Save, ShieldCheck, Sparkles, Star, Store, TimerReset, User, UserCircle2, Wallet } from "lucide-react";
 
 import {
   WorkerProAction,
@@ -15,6 +15,7 @@ import {
   WorkerProTopStrip
 } from "@/components/worker/worker-pro-ui";
 import { useLiveApiData } from "@/hooks/use-live-api-data";
+import { postApiData } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
 import type { WorkerRatingsData, WorkerSettingsData } from "@/lib/operations-data";
 
@@ -26,6 +27,144 @@ function formatDate(locale: Locale, value: string) {
   return new Intl.DateTimeFormat(locale === "ar" ? "ar-EG" : "en-US", {
     dateStyle: "medium"
   }).format(new Date(value));
+}
+
+function WorkerModeSwitcher({
+  locale,
+  fullName,
+  avatarUrl,
+  email,
+  phone
+}: {
+  locale: Locale;
+  fullName: string;
+  avatarUrl?: string | null;
+  email: string;
+  phone: string;
+}) {
+  const isArabic = locale === "ar";
+  const [pendingRole, setPendingRole] = useState<"CLIENT" | "VENDOR" | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const initials = fullName
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join("") || "O";
+
+  const modes = [
+    {
+      key: "worker",
+      title: isArabic ? "وضع الفني" : "Technician mode",
+      note: isArabic ? "الطلبات الواردة، التنفيذ، الأرباح، والتقييمات." : "Incoming jobs, active work, earnings, and ratings.",
+      icon: BriefcaseBusiness,
+      active: true,
+      targetRole: "WORKER" as const,
+      href: `/${locale}/worker/settings`
+    },
+    {
+      key: "client",
+      title: isArabic ? "وضع العميل" : "Client mode",
+      note: isArabic ? "طلبات الخدمات، المتاجر، المفضلة، والمحفظة." : "Service requests, stores, favorites, and wallet.",
+      icon: User,
+      active: false,
+      targetRole: "CLIENT" as const,
+      href: `/${locale}/client`
+    },
+    {
+      key: "vendor",
+      title: isArabic ? "وضع المورد" : "Vendor mode",
+      note: isArabic ? "الخامات، المخزون، الطلبات، والإعلانات." : "Materials, inventory, orders, and ads management.",
+      icon: Store,
+      active: false,
+      targetRole: "VENDOR" as const,
+      href: `/${locale}/vendor`
+    }
+  ];
+
+  async function switchRole(targetRole: "CLIENT" | "VENDOR", href: string) {
+    setError(null);
+    setPendingRole(targetRole);
+
+    try {
+      await postApiData<{ role: string }, { targetRole: "CLIENT" | "VENDOR" }>("/auth/switch-role", { targetRole });
+      window.location.assign(href);
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : isArabic ? "تعذر تبديل وضع التشغيل" : "Could not switch operating mode");
+      setPendingRole(null);
+    }
+  }
+
+  return (
+    <WorkerProPanel title={isArabic ? "وضع التشغيل" : "Operating mode"} eyebrow="OSTA PRO">
+      <div className="grid gap-5 xl:grid-cols-[0.9fr_1.1fr]">
+        <div className="border border-white/10 bg-[#111] p-5">
+          <div className="flex items-center gap-4">
+            <div className="relative h-20 w-20 shrink-0 overflow-hidden border border-[#f5bd18] bg-[#121212] shadow-[4px_4px_0_#f5bd18]">
+              {avatarUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={avatarUrl} alt={fullName} className="h-full w-full object-cover grayscale transition duration-300 hover:grayscale-0" />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center bg-[#f5bd18] text-2xl font-black text-black">{initials}</div>
+              )}
+            </div>
+            <div className="min-w-0">
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#f5bd18]">{isArabic ? "بيانات الحساب" : "Account identity"}</p>
+              <h2 className="mt-1 truncate text-xl font-black uppercase text-white">{fullName}</h2>
+              <div className="mt-3 space-y-1 text-sm font-semibold text-white/50">
+                <p className="truncate">{email || (isArabic ? "لا يوجد بريد" : "No email")}</p>
+                <p className="truncate">{phone || (isArabic ? "لا يوجد هاتف" : "No phone")}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid gap-3">
+          {error ? <div className="border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm font-bold text-red-200">{error}</div> : null}
+          <div className="grid gap-3 md:grid-cols-3">
+            {modes.map((mode) => {
+              const Icon = mode.icon;
+              const isPending = pendingRole === mode.targetRole;
+              const content = (
+                <>
+                  <div className={mode.active ? "flex h-11 w-11 shrink-0 items-center justify-center border border-[#f5bd18] bg-[#f5bd18] text-black" : "flex h-11 w-11 shrink-0 items-center justify-center border border-white/15 bg-[#121212] text-[#f5bd18]"}>
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="truncate text-sm font-black uppercase text-white">{mode.title}</h3>
+                    <p className="mt-1 line-clamp-2 text-xs leading-5 text-white/45">{mode.note}</p>
+                  </div>
+                  <span className={mode.active ? "shrink-0 bg-white px-3 py-2 text-[10px] font-black uppercase tracking-[0.12em] text-black" : "shrink-0 border border-white/15 px-3 py-2 text-[10px] font-black uppercase tracking-[0.12em] text-[#f5bd18]"}>
+                    {mode.active ? (isArabic ? "الحالي" : "CURRENT") : isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : isArabic ? "تبديل" : "SWITCH"}
+                  </span>
+                </>
+              );
+
+              return mode.active ? (
+                <div key={mode.key} className="flex items-center gap-4 border border-[#f5bd18] bg-[#121212] p-4">
+                  {content}
+                </div>
+              ) : (
+                <button
+                  key={mode.key}
+                  type="button"
+                  disabled={pendingRole !== null}
+                  onClick={() => {
+                    if (mode.targetRole !== "WORKER") {
+                      void switchRole(mode.targetRole, mode.href);
+                    }
+                  }}
+                  className="flex items-center gap-4 border border-white/10 bg-[#121212] p-4 text-start transition-colors hover:border-[#f5bd18] disabled:cursor-wait disabled:opacity-70"
+                >
+                  {content}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </WorkerProPanel>
+  );
 }
 
 export function WorkerRatingsPage({ locale, initialData }: { locale: Locale; initialData: WorkerRatingsData }) {
@@ -111,6 +250,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
     schedule: data.payout?.schedule ?? "",
     bankLabel: data.payout?.bankLabel ?? ""
   };
+  const fullName = `${data.profile.firstName} ${data.profile.lastName}`.trim() || "OSTA Pro";
 
   return (
     <WorkerProShell locale={locale}>
@@ -125,14 +265,15 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
           <div className="border border-white/10 bg-black p-5 text-white shadow-[4px_4px_0_#1d1600]">
             <div className="flex items-center gap-4">
               <div className="flex h-20 w-20 items-center justify-center overflow-hidden border border-[#f5bd18]/50 bg-[#111] text-[#f5bd18]">
-                {(data.profile as any).imageUrl || (data.profile as any).avatarUrl ? (
-                  <img src={(data.profile as any).imageUrl || (data.profile as any).avatarUrl} alt={isArabic ? "صورة الفني" : "Worker avatar"} className="h-full w-full object-cover" />
+                {data.profile.avatarUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={data.profile.avatarUrl} alt={isArabic ? "صورة الفني" : "Worker avatar"} className="h-full w-full object-cover" />
                 ) : (
                   <UserCircle2 className="h-10 w-10" />
                 )}
               </div>
               <div>
-                <h3 className="text-xl font-black text-white">{data.profile.firstName} {data.profile.lastName}</h3>
+                <h3 className="text-xl font-black text-white">{fullName}</h3>
                 <p className="mt-1 text-[10px] font-black uppercase tracking-[0.18em] text-[#f5bd18]">OSTA PRO</p>
               </div>
             </div>
@@ -148,6 +289,8 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
 
       {saved ? <div className="border border-emerald-400/30 bg-emerald-400/10 px-4 py-3 text-sm font-black text-emerald-200">{isArabic ? "تم الحفظ محلياً" : "Saved locally"}</div> : null}
 
+      <WorkerModeSwitcher locale={locale} fullName={fullName} avatarUrl={data.profile.avatarUrl} email={data.profile.email} phone={data.profile.phone} />
+
       <div className="grid gap-6 xl:grid-cols-[1fr_1fr]">
         <WorkerProPanel title={isArabic ? "الملف الشخصي" : "Profile"} eyebrow={isArabic ? "بيانات الفني" : "worker identity"}>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -160,7 +303,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
               <label key={field.key} className="space-y-2">
                 <span className="text-sm font-black text-white/45">{field.label}</span>
                 <input
-                  value={data.profile[field.key as keyof typeof data.profile]}
+                  value={data.profile[field.key as keyof typeof data.profile] ?? ""}
                   onChange={(event) => setData({ ...data, profile: { ...data.profile, [field.key]: event.target.value } })}
                   className="h-12 w-full border border-white/10 bg-[#111] px-4 text-white outline-none focus:border-[#f5bd18]"
                 />

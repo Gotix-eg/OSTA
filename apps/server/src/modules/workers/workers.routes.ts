@@ -658,7 +658,8 @@ router.get("/settings", catchAsync(async (request, response) => {
       firstName: user.firstName,
       lastName: user.lastName,
       phone: user.phone,
-      email: user.email
+      email: user.email,
+      avatarUrl: user.avatarUrl
     },
     workPreferences: {
       ...workerSettings.workPreferences,
