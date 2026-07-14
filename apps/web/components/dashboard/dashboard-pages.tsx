@@ -17,6 +17,15 @@ import type { ClientDashboardData } from "@/lib/dashboard-data";
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
 import { MediaSelectorModal } from "@/components/admin/media-selector-modal";
+import {
+  WorkerProEmpty,
+  WorkerProHero,
+  WorkerProInfoCard,
+  WorkerProMetric,
+  WorkerProPanel,
+  WorkerProShell,
+  WorkerProTopStrip
+} from "@/components/worker/worker-pro-ui";
 
 // --- Types & Helpers ---
 type CardTone = "gold" | "onyx" | "marble";
@@ -655,38 +664,73 @@ export function WorkerDashboardHome({ locale }: { locale: Locale }) {
   const trialDaysLeft = data.summary.trialExpiresAt ? Math.ceil((new Date(data.summary.trialExpiresAt).getTime() - new Date().getTime()) / (1000 * 3600 * 24)) : 0;
 
   return (
-    <div className="animate-slideUp">
-      <SectionTitle
-        eyebrow={isArabic ? "لوحة المحترفين" : "Pro Dashboard"}
-        title={isArabic ? "أهلاً بك يا بطل" : "Welcome Hero"}
-        subtitle={isArabic ? "تتبع أرباحك، استقبل الطلبات، ونمّ أعمالك مع أُسطفاي." : "Track earnings, accept jobs, and grow your business with Ostafy."}
-        actionLabel={isArabic ? "استعراض الطلبات" : "Browse Jobs"}
+    <WorkerProShell locale={locale}>
+      <WorkerProTopStrip locale={locale} title={isArabic ? "الرئيسية" : "Dashboard"} actionHref={`/${locale}/worker/requests/incoming`} actionLabel={isArabic ? "طلب جديد" : "New request"} />
+      <WorkerProHero
+        locale={locale}
+        eyebrow={isArabic ? "لوحة المحترفين" : "Pro dashboard"}
+        title={isArabic ? "مرحباً بك،" : "Welcome back,"}
+        highlight={isArabic ? "محترف" : "Osama"}
+        subtitle={
+          isArabic
+            ? "استعد للطلب التالي. خبرتك مطلوبة اليوم، راقب الطلبات القريبة وابدأ تحقيق الدخل من نفس الشاشة."
+            : "Ready to tackle the next big project? Your expertise is in high demand today. Browse active service requests and start earning."
+        }
         actionHref={`/${locale}/worker/requests/incoming`}
+        actionLabel={isArabic ? "استعرض الطلبات" : "Browse jobs"}
+        side={
+          <>
+            <WorkerProInfoCard
+              title={isArabic ? "ظهور الملف: مرتفع" : "Profile Visibility: High"}
+              text={isArabic ? "تظهر في معظم عمليات البحث المحلية هذا الأسبوع." : "You're appearing in most local searches this week."}
+              href={`/${locale}/worker/settings`}
+              actionLabel={isArabic ? "تحسين الملف" : "Boost this"}
+              icon={Eye}
+            />
+            <WorkerProInfoCard
+              title={isArabic ? "وثّق هويتك" : "Verify identity"}
+              text={isArabic ? "استكمل بياناتك لفتح فرص أكبر وعقود أعلى قيمة." : "Complete your profile to unlock premium enterprise contracts."}
+              href={`/${locale}/worker/settings`}
+              actionLabel={isArabic ? "استكمال الآن" : "Complete now"}
+              icon={ShieldCheck}
+            />
+          </>
+        }
       />
 
-      <div className="mb-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <MetricCard 
-          label={isTrialActive ? (isArabic ? "التجربة المجانية" : "Free Trial") : (isArabic ? "رصيد العمل" : "Job Quota")} 
-          value={isTrialActive ? (isArabic ? `${formatNumber(locale, trialDaysLeft)} يوم` : `${trialDaysLeft}d`) : String(data.summary.orderQuota)} 
-          note={isArabic ? "متبقي في اشتراكك" : "remaining in subscription"} 
-          icon={Sparkles} 
-          tone="gold" 
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <WorkerProMetric
+          label={isTrialActive ? (isArabic ? "تجربة مجانية" : "Free trial") : isArabic ? "رصيد الطلبات" : "Job quota"}
+          value={isTrialActive ? (isArabic ? `${formatNumber(locale, trialDaysLeft)} يوم` : `${trialDaysLeft}d`) : formatNumber(locale, data.summary.orderQuota)}
+          note={isArabic ? "متبقي" : "days left"}
+          icon={Sparkles}
+          index="01"
         />
-        <MetricCard label={isArabic ? "طلبات واردة" : "Incoming Jobs"} value={String(data.summary.incomingRequests)} note={isArabic ? "فرص عمل جديدة" : "new opportunities"} icon={Briefcase} />
-        <MetricCard label={isArabic ? "عمل حالي" : "Active Jobs"} value={String(data.summary.activeJobs)} note={isArabic ? "قيد التنفيذ" : "in progress"} icon={Zap} />
-        <MetricCard label={isArabic ? "أرباح الشهر" : "Monthly Earnings"} value={formatCurrency(locale, data.summary.monthlyEarnings)} note={isArabic ? "صافي الربح" : "net earnings"} icon={CircleDollarSign} />
+        <WorkerProMetric label={isArabic ? "طلبات واردة" : "Incoming jobs"} value={formatNumber(locale, data.summary.incomingRequests)} note={isArabic ? "فرص جديدة" : "new jobs"} icon={Briefcase} index="02" />
+        <WorkerProMetric label={isArabic ? "طلبات نشطة" : "Active jobs"} value={formatNumber(locale, data.summary.activeJobs)} note={isArabic ? "قيد التنفيذ" : "in progress"} icon={Zap} index="03" />
+        <WorkerProMetric label={isArabic ? "أرباح الشهر" : "Monthly earnings"} value={formatCurrency(locale, data.summary.monthlyEarnings)} note={isArabic ? "هذا الشهر" : "this month"} icon={CircleDollarSign} index="04" />
       </div>
 
-      <Surface title={isArabic ? "طابور العمل المباشر" : "Live Job Queue"}>
+      <WorkerProPanel eyebrow={isArabic ? "طلبات قريبة من نطاقك" : "Real-time requests in your current service area"} title={isArabic ? "طابور العمل المباشر" : "Live job queue"}>
         {data.queue.length === 0 ? (
-          <EmptyNotice message={isArabic ? "لا توجد طلبات جديدة في منطقتك حالياً." : "No new jobs in your area right now."} />
+          <WorkerProEmpty
+            title={isArabic ? "جار البحث عن فرص" : "Searching for opportunities"}
+            text={isArabic ? "لا توجد طلبات جديدة حالياً. تأكد من تشغيل الإشعارات وتحديث مناطق الخدمة." : "No new jobs in your area right now. Make sure your notifications are on and your skills match your profile."}
+            actionLabel={isArabic ? "تحديث المهارات" : "Update skills"}
+            actionHref={`/${locale}/worker/settings`}
+          />
         ) : (
-          <div className="grid md:grid-cols-2 gap-6">
-            {/* Mapping live queue items here */}
+          <div className="grid gap-4 md:grid-cols-2">
+            {data.queue.map((item: any) => (
+              <div key={item.id} className="border border-white/10 bg-[#121212] p-5">
+                <h3 className="text-xl font-black text-white">{item.serviceNameEn || item.serviceNameAr || item.title || item.id}</h3>
+                <p className="mt-3 text-sm text-white/50">{item.areaNameEn || item.areaNameAr || item.area}</p>
+              </div>
+            ))}
           </div>
         )}
-      </Surface>
-    </div>
+      </WorkerProPanel>
+    </WorkerProShell>
   );
 }
 

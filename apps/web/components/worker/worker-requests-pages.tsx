@@ -5,13 +5,15 @@ import { useEffect, useState } from "react";
 import { Briefcase, Clock3, Loader2, MapPin, Route, Wallet, Wrench, MessageSquare, Phone } from "lucide-react";
 
 import {
-  DashboardBlock,
-  EmptyState,
-  MiniMetric,
-  SoftBadge,
-  SplitInfo,
-  SubpageHero
-} from "@/components/dashboard/dashboard-subpage-primitives";
+  WorkerProAction,
+  WorkerProBadge,
+  WorkerProEmpty,
+  WorkerProHero,
+  WorkerProMetric,
+  WorkerProPanel,
+  WorkerProShell,
+  WorkerProTopStrip
+} from "@/components/worker/worker-pro-ui";
 import { useLiveApiData } from "@/hooks/use-live-api-data";
 import { fetchApiData, patchApiData } from "@/lib/api";
 import type { DashboardAreaCode, DashboardServiceCode } from "@/lib/dashboard-data";
@@ -118,102 +120,70 @@ export function WorkerIncomingRequestsPage({ locale, initialData }: { locale: Lo
   }
 
   return (
-    <div>
-      <SubpageHero
-        eyebrow={isArabic ? "الطابور الساخن" : "Hot queue"}
-        title={isArabic ? "الطلبات الواردة" : "Incoming requests"}
-        subtitle={
-          isArabic
-            ? "راجع أفضل الطلبات القريبة مع الميزانية والمسافة واتخذ القرار بسرعة من شاشة أوضح."
-            : "Review the strongest nearby jobs with clearer budget, distance, and decision controls."
-        }
-        actionLabel={isArabic ? "الطلبات النشطة" : "Active jobs"}
+    <WorkerProShell locale={locale}>
+      <WorkerProTopStrip locale={locale} title={isArabic ? "الطلبات الواردة" : "Service requests"} actionHref={`/${locale}/worker/requests/active`} actionLabel={isArabic ? "النشطة" : "Active jobs"} />
+      <WorkerProHero
+        locale={locale}
+        eyebrow={isArabic ? "لوحة المحترفين" : "Pro dashboard"}
+        title={isArabic ? "طلبات" : "Incoming"}
+        highlight={isArabic ? "واردة" : "requests"}
+        subtitle={isArabic ? "راجع الطلبات القريبة مع الميزانية والمسافة واتخذ القرار بسرعة." : "Review nearby jobs with budget, distance, and fast accept or reject controls."}
         actionHref={`/${locale}/worker/requests/active`}
-        tone="accent"
+        actionLabel={isArabic ? "الطلبات النشطة" : "Active jobs"}
       />
 
-      <div className="mb-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <MiniMetric label={isArabic ? "المتاح الآن" : "Available now"} value={formatNumber(locale, data.summary.availableNow)} note={isArabic ? "الطابور المفتوح" : "open queue"} icon={Briefcase} tone="accent" />
-        <MiniMetric label={isArabic ? "نفس اليوم" : "Same day"} value={formatNumber(locale, data.summary.sameDay)} note={isArabic ? "تحويلات سريعة" : "fast conversions"} icon={Clock3} tone="sun" />
-        <MiniMetric label={isArabic ? "عاجل" : "Urgent"} value={formatNumber(locale, data.summary.emergency)} note={isArabic ? "طلب ذو أولوية" : "priority demand"} icon={Route} tone="primary" />
-        <MiniMetric label={isArabic ? "متوسط الميزانية" : "Avg budget"} value={formatCurrency(locale, data.summary.averageBudget)} note={isArabic ? "متوسط الطابور" : "queue average"} icon={Wallet} tone="dark" />
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <WorkerProMetric label={isArabic ? "متاح الآن" : "Available now"} value={formatNumber(locale, data.summary.availableNow)} note={isArabic ? "طابور مفتوح" : "queue flow"} icon={Briefcase} index="01" />
+        <WorkerProMetric label={isArabic ? "نفس اليوم" : "Same day"} value={formatNumber(locale, data.summary.sameDay)} note={isArabic ? "سريع" : "fast lane"} icon={Clock3} index="02" />
+        <WorkerProMetric label={isArabic ? "عاجل" : "Urgent"} value={formatNumber(locale, data.summary.emergency)} note={isArabic ? "أولوية" : "priority"} icon={Route} index="03" />
+        <WorkerProMetric label={isArabic ? "متوسط الميزانية" : "Avg budget"} value={formatCurrency(locale, data.summary.averageBudget)} note={isArabic ? "متوسط" : "average"} icon={Wallet} index="04" />
       </div>
 
-      <DashboardBlock title={isArabic ? "مسار الطلبات الواردة" : "Incoming lane"} eyebrow={isArabic ? "طابور القرار" : "decision queue"}>
-        {feedback ? <div className="mb-4 rounded-[1.2rem] border border-onyx-700 bg-onyx-800/50 px-4 py-3 text-sm text-onyx-300">{feedback}</div> : null}
+      <WorkerProPanel eyebrow={isArabic ? "طابور القرار" : "Decision queue"} title={isArabic ? "مسار الطلبات الواردة" : "Incoming lane"}>
+        {feedback ? <div className="mb-4 border border-[#f5bd18]/40 bg-[#f5bd18]/10 px-4 py-3 text-sm font-black text-[#f5bd18]">{feedback}</div> : null}
         {data.requests.length === 0 ? (
-          <EmptyState>{isArabic ? "الطابور فارغ حاليًا" : "The queue is empty right now"}</EmptyState>
+          <WorkerProEmpty title={isArabic ? "الطابور فارغ" : "Queue is empty"} text={isArabic ? "لا توجد طلبات واردة حالياً في نطاقك." : "No incoming jobs in your service area right now."} actionLabel={isArabic ? "تحديث المهارات" : "Update skills"} actionHref={`/${locale}/worker/settings`} />
         ) : (
-          <div className="grid gap-4">
-            {data.requests.map((item, index) => (
-              <article key={item.id} className={index % 2 === 0 ? "onyx-card p-4 sm:p-5" : "onyx-card bg-onyx-800/80 p-4 sm:p-5"}>
-                <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
-                  <div className="min-w-0 flex-1">
+          <div className="grid gap-5">
+            {data.requests.map((item, index) => {
+              const title = isArabic ? (item.serviceNameAr || serviceLabels[item.service]?.[locale] || item.service) : (item.serviceNameEn || serviceLabels[item.service]?.[locale] || item.service);
+              const area = isArabic ? (item.areaNameAr || areaLabels[item.area]?.[locale] || item.area) : (item.areaNameEn || areaLabels[item.area]?.[locale] || item.area);
+              return (
+                <article key={item.id} className={index % 2 === 0 ? "grid gap-5 border border-white/10 bg-[#111] p-5 lg:grid-cols-[180px_1fr_auto]" : "grid gap-5 border border-[#f5bd18]/30 bg-[#2a2207] p-5 lg:grid-cols-[180px_1fr_auto]"}>
+                  <div className="min-h-36 border border-white/10 bg-[#f5bd18]/10 p-4 text-xs font-black uppercase text-white/45">
+                    {isArabic ? "طلب وارد" : "Incoming request"}
+                  </div>
+                  <div>
                     <div className="flex flex-wrap items-center gap-3">
-                      <h2 className="text-2xl font-semibold text-white">
-                        {isArabic
-                          ? (item.serviceNameAr || serviceLabels[item.service]?.[locale] || item.service)
-                          : (item.serviceNameEn || serviceLabels[item.service]?.[locale] || item.service)}
-                      </h2>
-                      <SoftBadge label={urgencyLabel(locale, item.urgency)} tone={item.urgency === "URGENT" ? "error" : item.urgency === "SAME_DAY" ? "sun" : "accent"} />
+                      <WorkerProBadge tone={item.urgency === "URGENT" ? "red" : item.urgency === "SAME_DAY" ? "gold" : "muted"}>{urgencyLabel(locale, item.urgency)}</WorkerProBadge>
+                      <span className="text-[10px] font-black uppercase tracking-[0.18em] text-white/35">{formatNumber(locale, item.freshnessMinutes)} min</span>
                     </div>
-                    <div className="mt-4">
-                      <SplitInfo
-                        items={[
-                          {
-                            label: isArabic ? "المنطقة" : "Area",
-                            value: isArabic
-                              ? (item.areaNameAr || areaLabels[item.area]?.[locale] || item.area)
-                              : (item.areaNameEn || areaLabels[item.area]?.[locale] || item.area)
-                          },
-                          { label: isArabic ? "المسافة" : "Distance", value: `${formatNumber(locale, item.distanceKm, 1)} km` },
-                          { label: isArabic ? "الحداثة" : "Freshness", value: isArabic ? `منذ ${formatNumber(locale, item.freshnessMinutes)} د` : `${formatNumber(locale, item.freshnessMinutes)} mins ago` },
-                          { label: isArabic ? "الميزانية" : "Budget", value: `${formatCurrency(locale, item.budgetMin)} - ${formatCurrency(locale, item.budgetMax)}` }
-                        ]}
-                      />
+                    <h2 className="mt-4 text-2xl font-black uppercase text-white">{title}</h2>
+                    <p className="mt-3 text-sm leading-6 text-white/55">{area} | {formatNumber(locale, item.distanceKm, 1)} km</p>
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      <WorkerProBadge tone="muted">{isArabic ? "ميزانية" : "Budget"} {formatCurrency(locale, item.budgetMin)} - {formatCurrency(locale, item.budgetMax)}</WorkerProBadge>
                     </div>
                   </div>
-
-                  <div className="flex flex-wrap items-center gap-3">
+                  <div className="flex flex-wrap items-center gap-3 lg:flex-col lg:items-stretch lg:justify-center">
                     {item.clientUserId ? (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          window.dispatchEvent(new CustomEvent("osta_open_chat", {
-                            detail: { id: item.clientUserId, firstName: item.clientName || "", lastName: "" }
-                          }));
-                        }}
-                        className="rounded-full border border-onyx-700 bg-onyx-800/50 p-2.5 text-sm font-semibold text-onyx-200 shadow-soft hover:bg-white/5 transition-colors flex items-center justify-center mr-1"
-                        title={isArabic ? "محادثة العميل قبل القبول" : "Chat with Client before accepting"}
-                      >
-                        <MessageSquare className="h-4.5 w-4.5 text-gold-500" />
-                      </button>
+                      <WorkerProAction tone="ghost" onClick={() => window.dispatchEvent(new CustomEvent("osta_open_chat", { detail: { id: item.clientUserId, firstName: item.clientName || "", lastName: "" } }))}>
+                        <MessageSquare className="h-4 w-4" />
+                        {isArabic ? "محادثة" : "Chat"}
+                      </WorkerProAction>
                     ) : null}
-                    <button
-                      type="button"
-                      onClick={() => void handleIncomingAction(item.id, "reject")}
-                      disabled={busyId === item.id}
-                      className="rounded-full border border-onyx-700 bg-onyx-800/50 px-4 py-2.5 text-sm font-semibold text-onyx-200 shadow-soft disabled:opacity-60"
-                    >
-                      {isArabic ? "رفض" : "Reject"}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => void handleIncomingAction(item.id, "accept")}
-                      disabled={busyId === item.id}
-                      className="inline-flex items-center gap-2 rounded-full bg-dark-950 px-4 py-2.5 text-sm font-semibold text-white shadow-soft disabled:opacity-60"
-                    >
+                    <WorkerProAction tone="ghost" onClick={() => void handleIncomingAction(item.id, "reject")} disabled={busyId === item.id}>{isArabic ? "رفض" : "Reject"}</WorkerProAction>
+                    <WorkerProAction tone="light" onClick={() => void handleIncomingAction(item.id, "accept")} disabled={busyId === item.id}>
                       {busyId === item.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wrench className="h-4 w-4" />}
-                      {isArabic ? "قبول" : "Accept"}
-                    </button>
+                      {isArabic ? "قبول" : "Accept job"}
+                    </WorkerProAction>
                   </div>
-                </div>
-              </article>
-            ))}
+                </article>
+              );
+            })}
           </div>
         )}
-      </DashboardBlock>
-    </div>
+      </WorkerProPanel>
+    </WorkerProShell>
   );
 }
 
@@ -283,120 +253,92 @@ export function WorkerActiveRequestsPage({ locale, initialData }: { locale: Loca
   }
 
   return (
-    <div>
-      <SubpageHero
-        eyebrow={isArabic ? "المسار النشط" : "Active rail"}
-        title={isArabic ? "الطلبات النشطة" : "Active requests"}
-        subtitle={
-          isArabic
-            ? "تابع مسار التنفيذ ومواعيد العملاء والعائد المتوقع من شاشة أكثر ترتيبًا ووضوحًا."
-            : "Track in-flight jobs, client windows, and expected earnings through a more polished workflow surface."
-        }
-        actionLabel={isArabic ? "الوارد" : "Incoming jobs"}
+    <WorkerProShell locale={locale}>
+      <WorkerProTopStrip locale={locale} title={isArabic ? "الطلبات النشطة" : "Active requests"} actionHref={`/${locale}/worker/requests/incoming`} actionLabel={isArabic ? "الوارد" : "Incoming"} />
+      <WorkerProHero
+        locale={locale}
+        eyebrow={isArabic ? "تنفيذ ميداني" : "Field execution"}
+        title={isArabic ? "طلبات" : "Active"}
+        highlight={isArabic ? "نشطة" : "jobs"}
+        subtitle={isArabic ? "تابع مسار التنفيذ ومواعيد العملاء والعائد المتوقع من شاشة عمليات مباشرة." : "Track in-flight jobs, client windows, and expected earnings from a live operations lane."}
         actionHref={`/${locale}/worker/requests/incoming`}
-        tone="primary"
+        actionLabel={isArabic ? "الطلبات الواردة" : "Incoming jobs"}
       />
 
-      <div className="mb-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <MiniMetric label={isArabic ? "طلبات نشطة" : "Active jobs"} value={formatNumber(locale, data.summary.activeJobs)} note={isArabic ? "تنفيذ مباشر" : "live operations"} icon={Briefcase} tone="primary" />
-        <MiniMetric label={isArabic ? "في الطريق" : "En route"} value={formatNumber(locale, data.summary.enRoute)} note={isArabic ? "مرحلة الوصول" : "travel mode"} icon={Route} tone="accent" />
-        <MiniMetric label={isArabic ? "في الموقع" : "On site"} value={formatNumber(locale, data.summary.onSite)} note={isArabic ? "مرحلة التنفيذ" : "execution mode"} icon={MapPin} tone="sun" />
-        <MiniMetric label={isArabic ? "إنهاء" : "Wrap up"} value={formatNumber(locale, data.summary.wrapUp)} note={isArabic ? "مرحلة التسليم" : "handover mode"} icon={Wallet} tone="dark" />
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <WorkerProMetric label={isArabic ? "طلبات نشطة" : "Active jobs"} value={formatNumber(locale, data.summary.activeJobs)} note={isArabic ? "تنفيذ مباشر" : "live operations"} icon={Briefcase} index="01" />
+        <WorkerProMetric label={isArabic ? "في الطريق" : "En route"} value={formatNumber(locale, data.summary.enRoute)} note={isArabic ? "مرحلة الوصول" : "travel mode"} icon={Route} index="02" />
+        <WorkerProMetric label={isArabic ? "في الموقع" : "On site"} value={formatNumber(locale, data.summary.onSite)} note={isArabic ? "مرحلة التنفيذ" : "execution mode"} icon={MapPin} index="03" />
+        <WorkerProMetric label={isArabic ? "إنهاء" : "Wrap up"} value={formatNumber(locale, data.summary.wrapUp)} note={isArabic ? "مرحلة التسليم" : "handover mode"} icon={Wallet} index="04" />
       </div>
 
-      <DashboardBlock title={isArabic ? "بطاقات التنفيذ" : "Job deck"} eyebrow={isArabic ? "تنفيذ ميداني" : "field execution"}>
-        {feedback ? <div className="mb-4 rounded-[1.2rem] border border-onyx-700 bg-onyx-800/50 px-4 py-3 text-sm text-onyx-300">{feedback}</div> : null}
+      <WorkerProPanel eyebrow={isArabic ? "مسار التنفيذ" : "Execution lane"} title={isArabic ? "بطاقات العمل الحالية" : "Current job deck"}>
+        {feedback ? <div className="mb-4 border border-[#f5bd18]/40 bg-[#f5bd18]/10 px-4 py-3 text-sm font-black text-[#f5bd18]">{feedback}</div> : null}
         {data.requests.length === 0 ? (
-          <EmptyState>{isArabic ? "لا توجد طلبات نشطة حاليًا" : "No active jobs right now"}</EmptyState>
+          <WorkerProEmpty title={isArabic ? "لا توجد طلبات نشطة" : "No active jobs"} text={isArabic ? "الطلبات التي تقبلها ستظهر هنا مع خطوات التنفيذ." : "Accepted jobs will appear here with execution controls."} actionLabel={isArabic ? "راجع الوارد" : "Check incoming"} actionHref={`/${locale}/worker/requests/incoming`} />
         ) : (
-          <div className="grid gap-4">
-            {data.requests.map((item, index) => (
-              <article key={item.id} className={index % 2 === 0 ? "onyx-card p-4 sm:p-5" : "onyx-card bg-onyx-800/80 p-4 sm:p-5"}>
-                <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
-                  <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-center gap-3">
-                      <h2 className="text-2xl font-semibold text-white">
-                        {isArabic
-                          ? (item.serviceNameAr || serviceLabels[item.service]?.[locale] || item.service)
-                          : (item.serviceNameEn || serviceLabels[item.service]?.[locale] || item.service)}
-                      </h2>
-                      <SoftBadge label={activeStatusLabel(locale, item.status)} tone={item.status === "WRAP_UP" ? "success" : item.status === "ON_SITE" ? "sun" : "accent"} />
+          <div className="grid gap-5">
+            {data.requests.map((item, index) => {
+              const title = isArabic ? (item.serviceNameAr || serviceLabels[item.service]?.[locale] || item.service) : (item.serviceNameEn || serviceLabels[item.service]?.[locale] || item.service);
+              const area = isArabic ? (item.areaNameAr || areaLabels[item.area]?.[locale] || item.area) : (item.areaNameEn || areaLabels[item.area]?.[locale] || item.area);
+              return (
+                <article key={item.id} className={index % 2 === 0 ? "border border-white/10 bg-[#111] p-5" : "border border-[#f5bd18]/30 bg-[#2a2207] p-5"}>
+                  <div className="grid gap-5 xl:grid-cols-[1fr_auto] xl:items-center">
+                    <div>
+                      <div className="flex flex-wrap items-center gap-3">
+                        <WorkerProBadge tone={item.status === "WRAP_UP" ? "green" : item.status === "ON_SITE" ? "gold" : "muted"}>{activeStatusLabel(locale, item.status)}</WorkerProBadge>
+                        <span className="text-[10px] font-black uppercase tracking-[0.18em] text-white/35">{item.scheduledWindow}</span>
+                      </div>
+                      <h2 className="mt-4 text-2xl font-black uppercase text-white">{title}</h2>
+                      <div className="mt-4 grid gap-3 text-sm font-semibold text-white/55 md:grid-cols-2 xl:grid-cols-5">
+                        <span>{isArabic ? "العميل" : "Client"}: {item.clientName}</span>
+                        {item.clientPhone ? <span>{isArabic ? "الهاتف" : "Phone"}: {item.clientPhone}</span> : null}
+                        <span>{isArabic ? "المنطقة" : "Area"}: {area}</span>
+                        <span>{isArabic ? "الفترة" : "Window"}: {item.scheduledWindow}</span>
+                        <span className="text-[#f5bd18]">{isArabic ? "العائد" : "Earnings"}: {formatCurrency(locale, item.earnings)}</span>
+                      </div>
                     </div>
-                    <div className="mt-4">
-                      <SplitInfo
-                        items={[
-                          { label: isArabic ? "العميل" : "Client", value: item.clientName },
-                          ...(item.clientPhone ? [{ label: isArabic ? "الهاتف" : "Phone", value: item.clientPhone }] : []),
-                          {
-                            label: isArabic ? "المنطقة" : "Area",
-                            value: isArabic
-                              ? (item.areaNameAr || areaLabels[item.area]?.[locale] || item.area)
-                              : (item.areaNameEn || areaLabels[item.area]?.[locale] || item.area)
-                          },
-                          { label: isArabic ? "الفترة" : "Window", value: item.scheduledWindow },
-                          { label: isArabic ? "العائد" : "Earnings", value: formatCurrency(locale, item.earnings) }
-                        ]}
-                      />
+
+                    <div className="flex flex-wrap items-center gap-3 xl:justify-end">
+                      <WorkerProAction
+                        tone="ghost"
+                        onClick={() => {
+                          window.dispatchEvent(new CustomEvent("osta_open_chat", {
+                            detail: { id: item.clientUserId, firstName: item.clientName, lastName: "" }
+                          }));
+                        }}
+                      >
+                        <MessageSquare className="h-4 w-4" />
+                        {isArabic ? "محادثة" : "Chat"}
+                      </WorkerProAction>
+                      {item.status !== "WRAP_UP" ? (
+                        <WorkerProAction tone="ghost" onClick={() => void handleEditActivePrice(item.id, item.earnings)} disabled={busyId === item.id}>
+                          <Wallet className="h-4 w-4" />
+                          {isArabic ? "السعر" : "Price"}
+                        </WorkerProAction>
+                      ) : null}
+                      {item.status === "EN_ROUTE" ? (
+                        <WorkerProAction tone="light" onClick={() => void handleActiveAction(item.id, "start")} disabled={busyId === item.id}>
+                          {busyId === item.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Clock3 className="h-4 w-4" />}
+                          {isArabic ? "بدء" : "Start"}
+                        </WorkerProAction>
+                      ) : null}
+                      {item.status !== "WRAP_UP" ? (
+                        <WorkerProAction tone="light" onClick={() => void handleActiveAction(item.id, "complete")} disabled={busyId === item.id}>
+                          {busyId === item.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wallet className="h-4 w-4" />}
+                          {isArabic ? "إنهاء" : "Complete"}
+                        </WorkerProAction>
+                      ) : (
+                        <WorkerProBadge tone="green">{isArabic ? "جاهز" : "Ready"}</WorkerProBadge>
+                      )}
                     </div>
                   </div>
-
-                  <div className="flex flex-wrap items-center gap-3">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        window.dispatchEvent(new CustomEvent("osta_open_chat", {
-                          detail: { id: item.clientUserId, firstName: item.clientName, lastName: "" }
-                        }));
-                      }}
-                      className="rounded-full border border-onyx-700 bg-onyx-800/50 p-2.5 text-sm font-semibold text-onyx-200 shadow-soft hover:bg-white/5 transition-colors flex items-center justify-center mr-1"
-                      title={isArabic ? "محادثة العميل" : "Chat with Client"}
-                    >
-                      <MessageSquare className="h-4.5 w-4.5 text-gold-500" />
-                    </button>
-
-                    {item.status !== "WRAP_UP" && (
-                      <button
-                        type="button"
-                        onClick={() => void handleEditActivePrice(item.id, item.earnings)}
-                        disabled={busyId === item.id}
-                        className="rounded-full border border-onyx-700 bg-onyx-800/50 p-2.5 text-sm font-semibold text-onyx-200 shadow-soft hover:bg-white/5 transition-colors flex items-center justify-center mr-1 disabled:opacity-50"
-                        title={isArabic ? "تعديل السعر" : "Edit Price"}
-                      >
-                        <Wallet className="h-4.5 w-4.5 text-accent-500" />
-                      </button>
-                    )}
-
-                    {item.status === "EN_ROUTE" ? (
-                      <button
-                        type="button"
-                        onClick={() => void handleActiveAction(item.id, "start")}
-                        disabled={busyId === item.id}
-                        className="inline-flex items-center gap-2 rounded-full border border-onyx-700 bg-onyx-800/50 px-4 py-2.5 text-sm font-semibold text-onyx-200 shadow-soft disabled:opacity-60"
-                      >
-                        {busyId === item.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Clock3 className="h-4 w-4" />}
-                        {isArabic ? "بدء" : "Start"}
-                      </button>
-                    ) : null}
-                    {item.status !== "WRAP_UP" ? (
-                      <button
-                        type="button"
-                        onClick={() => void handleActiveAction(item.id, "complete")}
-                        disabled={busyId === item.id}
-                        className="inline-flex items-center gap-2 rounded-full bg-dark-950 px-4 py-2.5 text-sm font-semibold text-white shadow-soft disabled:opacity-60"
-                      >
-                        {busyId === item.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wallet className="h-4 w-4" />}
-                        {isArabic ? "إنهاء" : "Complete"}
-                      </button>
-                    ) : (
-                      <SoftBadge label={isArabic ? "جاهز" : "Ready"} tone="success" />
-                    )}
-                  </div>
-                </div>
-              </article>
-            ))}
+                </article>
+              );
+            })}
           </div>
         )}
-      </DashboardBlock>
-    </div>
+      </WorkerProPanel>
+    </WorkerProShell>
   );
 }

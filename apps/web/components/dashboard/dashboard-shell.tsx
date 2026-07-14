@@ -112,6 +112,7 @@ export function DashboardShell({
   const shared = dashboardCopy[locale].shared;
   const theme = roleThemes[role];
   const isClientDashboard = role === "client";
+  const isStitchDashboard = isClientDashboard || role === "worker";
 
   useEffect(() => {
     let cancelled = false;
@@ -208,8 +209,8 @@ export function DashboardShell({
   const currentPath = stripLocalePrefix(pathname || "/");
 
   return (
-    <div className={cn("min-h-screen text-foreground", isClientDashboard ? "bg-[#f5bd18]" : "dashboard-shell-bg")}>
-      {!isClientDashboard ? (
+    <div className={cn("min-h-screen text-foreground", isStitchDashboard ? "bg-[#f5bd18]" : "dashboard-shell-bg")}>
+      {!isStitchDashboard ? (
         <>
           <div className="pointer-events-none absolute inset-0 dashboard-grid-overlay opacity-50 hidden md:block" />
           <div className="pointer-events-none absolute inset-x-0 top-0 h-[22rem] bg-dashboardGlow opacity-90 hidden md:block" />
@@ -217,7 +218,7 @@ export function DashboardShell({
       ) : null}
 
       <div className="relative flex min-h-screen">
-        <aside className={cn("hidden shrink-0 lg:block", isClientDashboard ? "fixed right-0 top-0 z-40 h-screen w-64 p-0" : "w-[19.5rem] px-4 py-4")}>
+        <aside className={cn("hidden shrink-0 lg:block", isStitchDashboard ? "fixed right-0 top-0 z-40 h-screen w-64 p-0" : "w-[19.5rem] px-4 py-4")}>
           <SidebarContent locale={locale} role={role} roleLabel={copy.role} theme={theme} navItems={navItems} currentPath={currentPath} />
         </aside>
 
@@ -344,40 +345,40 @@ export function DashboardShell({
           </div>
         ) : null}
 
-        <div className={cn("flex min-w-0 flex-1 flex-col", isClientDashboard ? "px-4 pb-28 pt-20 lg:mr-64 lg:px-12 lg:pb-12 lg:pt-12" : "px-3 pb-4 pt-3 sm:px-4 lg:px-0 lg:py-4 lg:pe-4")}>
+        <div className={cn("flex min-w-0 flex-1 flex-col", isStitchDashboard ? "px-4 pb-28 pt-20 lg:mr-64 lg:px-12 lg:pb-12 lg:pt-12" : "px-3 pb-4 pt-3 sm:px-4 lg:px-0 lg:py-4 lg:pe-4")}>
           <header
             className={cn(
               "z-30 overflow-hidden border",
-              isClientDashboard
+              isStitchDashboard
                 ? "fixed inset-x-0 top-0 h-16 border-white/10 bg-black/80 px-4 shadow-none backdrop-blur-xl lg:static lg:mb-12 lg:h-auto lg:border-0 lg:bg-transparent lg:px-0 lg:backdrop-blur-0"
                 : "dashboard-card top-4 rounded-[2rem] border-white/5 bg-onyx-800/50/[0.02] backdrop-blur-2xl"
             )}
           >
-            {!isClientDashboard ? <div className={cn("absolute inset-0 rounded-[2rem] overflow-hidden bg-gradient-to-r opacity-50", theme.accent)} /> : null}
-            <div className={cn("relative flex items-center gap-4", isClientDashboard ? "h-16 lg:h-auto" : "section-shell h-20 lg:h-24")}>
+            {!isStitchDashboard ? <div className={cn("absolute inset-0 rounded-[2rem] overflow-hidden bg-gradient-to-r opacity-50", theme.accent)} /> : null}
+            <div className={cn("relative flex items-center gap-4", isStitchDashboard ? "h-16 lg:h-auto" : "section-shell h-20 lg:h-24")}>
               <button
                 type="button"
                 onClick={() => setMobileOpen(true)}
                 className={cn(
                   "inline-flex h-11 w-11 items-center justify-center border lg:hidden",
-                  isClientDashboard ? "rounded bg-transparent text-[#f5bd18] border-transparent" : "rounded-full border-gold-700/15 bg-white/50 text-onyx-950"
+                  isStitchDashboard ? "rounded bg-transparent text-[#f5bd18] border-transparent" : "rounded-full border-gold-700/15 bg-white/50 text-onyx-950"
                 )}
               >
                 <Menu className="h-5 w-5" />
               </button>
 
-              {isClientDashboard ? (
-                <Link href={`/${locale}/client`} className="inline-flex items-center lg:hidden">
+              {isStitchDashboard ? (
+                <Link href={`/${locale}/${role}`} className="inline-flex items-center lg:hidden">
                   <img src="/logo.svg" alt="Ostafy" className="h-8 w-auto object-contain brightness-0 invert" />
                 </Link>
               ) : null}
 
-              <div className={cn("min-w-0 flex-1", isClientDashboard ? "hidden lg:block" : "")}>
+              <div className={cn("min-w-0 flex-1", isStitchDashboard ? "hidden lg:block" : "")}>
                 <div className="flex items-center gap-4">
                   <div
                     className={cn(
                       "hidden h-11 w-11 items-center justify-center sm:flex",
-                      isClientDashboard ? "rounded-lg bg-[#100e08] text-[#f5bd18]" : "rounded-2xl bg-onyx-800/50 text-foreground shadow-xl"
+                      isStitchDashboard ? "rounded-lg bg-[#100e08] text-[#f5bd18]" : "rounded-2xl bg-onyx-800/50 text-foreground shadow-xl"
                     )}
                   >
                     <LayoutDashboard className="h-5 w-5" />
@@ -385,56 +386,56 @@ export function DashboardShell({
                   <div
                     className={cn(
                       "min-w-0 flex-1 border px-5 py-3 text-sm",
-                      isClientDashboard
+                      isStitchDashboard
                         ? "rounded-lg border-[#e5ddc9] bg-[#fff8df] text-[#5a5248]"
                         : "rounded-full border-gold-700/10 bg-white/50 text-onyx-600 shadow-inner"
                     )}
                   >
                     <div className="flex items-center gap-3">
-                      <Search className={cn("h-4 w-4", isClientDashboard ? "text-[#775a00]" : "text-onyx-600")} />
+                      <Search className={cn("h-4 w-4", isStitchDashboard ? "text-[#775a00]" : "text-onyx-600")} />
                       <span className="truncate opacity-60">{copy.search}</span>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className={cn("items-center gap-4", isClientDashboard ? "ms-auto flex" : "hidden xl:flex")}>
+              <div className={cn("items-center gap-4", isStitchDashboard ? "ms-auto flex" : "hidden xl:flex")}>
 
                 <LocaleSwitcher
                   locale={locale}
                   pathname={currentPath}
                   className={cn(
                     "inline-flex h-11 items-center justify-center px-4 text-[10px] font-bold uppercase tracking-widest transition-all duration-300",
-                    isClientDashboard
+                    isStitchDashboard
                       ? "hidden rounded border border-black bg-white text-black shadow-[4px_4px_0_#000] hover:-translate-y-0.5 sm:inline-flex lg:inline-flex"
                       : "rounded-full border border-white/5 bg-white/5 text-white shadow-xl hover:bg-white/10"
                   )}
                 />
                 <NotificationsPopover locale={locale} />
-                <div className={cn(isClientDashboard ? "hidden sm:block" : "")}>
+                <div className={cn(isStitchDashboard ? "hidden sm:block" : "")}>
                   <HeaderChatButton locale={locale} />
                 </div>
                 <div
                   className={cn(
                     "flex items-center gap-3 border p-1.5 pe-4",
-                    isClientDashboard
+                    isStitchDashboard
                       ? "h-11 rounded border-[#f5bd18] bg-black/20 p-0 pe-0 sm:h-12 sm:w-12 sm:overflow-hidden"
                       : "rounded-full border-white/5 bg-white/5 shadow-xl"
                   )}
                 >
-                  <div className={cn("flex h-9 w-9 items-center justify-center", isClientDashboard ? "h-10 w-10 rounded-full border border-[#f5bd18] bg-black text-[#f5bd18] sm:h-12 sm:w-12" : cn("rounded-full shadow-inner", theme.orb, theme.ring))}>
+                  <div className={cn("flex h-9 w-9 items-center justify-center", isStitchDashboard ? "h-10 w-10 rounded-full border border-[#f5bd18] bg-black text-[#f5bd18] sm:h-12 sm:w-12" : cn("rounded-full shadow-inner", theme.orb, theme.ring))}>
                     <UserCircle2 className="h-5 w-5" />
                   </div>
-                  <div className={cn("text-start", isClientDashboard ? "hidden" : "")}>
-                    <p className={cn("text-sm font-bold", isClientDashboard ? "text-[#100e08]" : "text-white")}>{shared.profile}</p>
-                    <p className={cn("text-[10px] font-medium uppercase tracking-[0.2em]", isClientDashboard ? "text-[#775a00]" : "text-gold-500/60")}>{shared.online}</p>
+                  <div className={cn("text-start", isStitchDashboard ? "hidden" : "")}>
+                    <p className={cn("text-sm font-bold", isStitchDashboard ? "text-[#100e08]" : "text-white")}>{shared.profile}</p>
+                    <p className={cn("text-[10px] font-medium uppercase tracking-[0.2em]", isStitchDashboard ? "text-[#775a00]" : "text-gold-500/60")}>{shared.online}</p>
                   </div>
                 </div>
               </div>
             </div>
           </header>
 
-          <div className={cn("flex-1", isClientDashboard ? "w-full" : "section-shell pb-6 pt-12 lg:pb-7 lg:pt-14")}>
+          <div className={cn("flex-1", isStitchDashboard ? "w-full" : "section-shell pb-6 pt-12 lg:pb-7 lg:pt-14")}>
             {isComplete === null ? (
               <div className="flex h-64 items-center justify-center">
                 <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-600 border-t-transparent" />
@@ -488,33 +489,35 @@ function SidebarContent({
   currentPath: string;
 }) {
   const isClientDashboard = role === "client";
+  const isWorkerDashboard = role === "worker";
+  const isStitchSidebar = isClientDashboard || isWorkerDashboard;
 
   return (
     <div
       className={cn(
         "relative flex h-full min-h-0 flex-col overflow-x-hidden overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch]",
-        isClientDashboard
+        isStitchSidebar
           ? "border-l border-white/10 bg-black/90 px-6 py-6 text-white backdrop-blur-md"
           : "dashboard-card-dark"
       )}
     >
-      {!isClientDashboard ? (
+      {!isStitchSidebar ? (
         <>
           <div className={cn("absolute -right-12 top-8 h-36 w-36 rounded-full blur-3xl", theme.orb)} />
           <div className="absolute -left-14 bottom-12 h-44 w-44 rounded-full bg-white/5 blur-3xl" />
         </>
       ) : null}
 
-      <div className={cn("relative flex flex-col border", isClientDashboard ? "border-0 p-0" : "items-center rounded-[2rem] border-white/5 bg-white/5 p-5 backdrop-blur-xl")}>
+      <div className={cn("relative flex flex-col border", isStitchSidebar ? "border-0 p-0" : "items-center rounded-[2rem] border-white/5 bg-white/5 p-5 backdrop-blur-xl")}>
         <div className="flex h-16 shrink-0 items-center justify-center w-full">
-          <img src="/logo.svg" alt="Ostafy" className={cn("h-10 w-auto object-contain", isClientDashboard ? "brightness-0 invert" : "")} />
+          <img src="/logo.svg" alt="Ostafy" className={cn("h-10 w-auto object-contain", isStitchSidebar ? "brightness-0 invert" : "")} />
         </div>
 
-        <p className={cn("mt-1 text-xs font-black uppercase tracking-[0.24em]", isClientDashboard ? "text-[#f5bd18]" : "hidden")}>
-          {locale === "ar" ? "تشغيل احترافي" : "Premium Industrial"}
+        <p className={cn("mt-1 text-xs font-black uppercase tracking-[0.24em]", isStitchSidebar ? "text-[#f5bd18]" : "hidden")}>
+          {isWorkerDashboard ? "OSTA PRO" : locale === "ar" ? "تشغيل احترافي" : "Premium Industrial"}
         </p>
 
-        {!isClientDashboard ? <div className={cn("mt-5 flex w-full items-center justify-between border px-3 py-3 text-xs", "rounded-2xl border-white/5 bg-white/5 px-4")}>
+        {!isStitchSidebar ? <div className={cn("mt-5 flex w-full items-center justify-between border px-3 py-3 text-xs", "rounded-2xl border-white/5 bg-white/5 px-4")}>
           <div>
             <p className="opacity-40">{locale === "ar" ? "الوضع" : "Mode"}</p>
             <p className="mt-1 font-bold text-white/90">{isClientDashboard ? (locale === "ar" ? "تشغيل العميل" : "Client ops") : theme.tag}</p>
@@ -526,7 +529,7 @@ function SidebarContent({
         </div> : null}
       </div>
 
-      <nav className={cn("relative grid", isClientDashboard ? "mt-10 gap-4" : "mt-6 gap-2")}>
+      <nav className={cn("relative grid", isStitchSidebar ? "mt-10 gap-4" : "mt-6 gap-2")}>
         {navItems.map((item) => {
           const Icon = item.icon;
           const itemPath = stripLocalePrefix(item.href);
@@ -538,7 +541,7 @@ function SidebarContent({
               href={item.href as `/${string}`}
               className={cn(
                 "group flex items-center justify-between border px-4 py-3 text-sm font-bold transition-all duration-300",
-                isClientDashboard
+                isStitchSidebar
                   ? active
                     ? "border-b-2 border-[#f5bd18] bg-transparent text-[#f5bd18]"
                     : "border-transparent bg-transparent text-white/70 hover:bg-white/5 hover:text-white"
@@ -548,7 +551,7 @@ function SidebarContent({
               )}
             >
                 <span className="flex items-center gap-3">
-                <span className={cn("flex h-9 w-9 items-center justify-center transition-all duration-300", isClientDashboard ? "rounded-none" : "rounded-xl", active ? "bg-white/10" : "bg-white/5 group-hover:bg-white/10") }>
+                <span className={cn("flex h-9 w-9 items-center justify-center transition-all duration-300", isStitchSidebar ? "rounded-none" : "rounded-xl", active ? "bg-white/10" : "bg-white/5 group-hover:bg-white/10") }>
                   <Icon className="h-4 w-4" />
                 </span>
                 {item.label}
@@ -559,7 +562,7 @@ function SidebarContent({
         })}
       </nav>
 
-      <div className={cn("relative mt-6 border border-white/10 bg-white/[0.03] p-4", isClientDashboard ? "hidden" : "rounded-[2rem] p-6")}>
+      <div className={cn("relative mt-6 border border-white/10 bg-white/[0.03] p-4", isStitchSidebar ? "hidden" : "rounded-[2rem] p-6")}>
         <div className="mb-5 flex items-center justify-between">
           <div>
             <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">{locale === "ar" ? "صحة المنصة" : "Platform health"}</p>

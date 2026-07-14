@@ -2,17 +2,18 @@
 
 import { useEffect, useState } from "react";
 
-import { Save, ShieldCheck, Sparkles, Star, TimerReset, Wallet } from "lucide-react";
+import { Save, ShieldCheck, Sparkles, Star, TimerReset, UserCircle2, Wallet } from "lucide-react";
 
 import {
-  DashboardBlock,
-  EmptyState,
-  MiniMetric,
-  SoftBadge,
-  SoftCard,
-  SplitInfo,
-  SubpageHero
-} from "@/components/dashboard/dashboard-subpage-primitives";
+  WorkerProAction,
+  WorkerProBadge,
+  WorkerProEmpty,
+  WorkerProHero,
+  WorkerProMetric,
+  WorkerProPanel,
+  WorkerProShell,
+  WorkerProTopStrip
+} from "@/components/worker/worker-pro-ui";
 import { useLiveApiData } from "@/hooks/use-live-api-data";
 import type { Locale } from "@/lib/locales";
 import type { WorkerRatingsData, WorkerSettingsData } from "@/lib/operations-data";
@@ -32,57 +33,55 @@ export function WorkerRatingsPage({ locale, initialData }: { locale: Locale; ini
   const data = useLiveApiData("/workers/ratings", initialData);
 
   return (
-    <div>
-      <SubpageHero
+    <WorkerProShell locale={locale}>
+      <WorkerProTopStrip locale={locale} title={isArabic ? "التقييمات" : "Ratings"} />
+      <WorkerProHero
+        locale={locale}
         eyebrow={isArabic ? "السمعة المهنية" : "Reputation rail"}
-        title={isArabic ? "التقييمات" : "Ratings"}
-        subtitle={
-          isArabic
-            ? "تابع آراء العملاء والشارات ومؤشرات الثقة من طبقة جودة أوضح وأقوى."
-            : "Track client feedback, earned badges, and trust signals from a richer quality layer."
-        }
-        tone="accent"
+        title={isArabic ? "تقييمات" : "Ratings"}
+        highlight={isArabic ? "الفني" : "signal"}
+        subtitle={isArabic ? "تابع آراء العملاء والشارات ومؤشرات الثقة من طبقة جودة واضحة." : "Track client feedback, earned badges, and trust signals from a focused quality layer."}
       />
 
-      <div className="mb-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <MiniMetric label={isArabic ? "التقييم العام" : "Overall"} value={formatNumber(locale, data.summary.overallRating)} note={isArabic ? "المؤشر الرئيسي" : "headline rating"} icon={Star} tone="dark" />
-        <MiniMetric label={isArabic ? "عدد المراجعات" : "Reviews"} value={formatNumber(locale, data.summary.totalReviews)} note={isArabic ? "إجمالي الآراء" : "total feedback"} icon={Sparkles} tone="accent" />
-        <MiniMetric label={isArabic ? "العملاء المتكررون" : "Repeat clients"} value={`${formatNumber(locale, data.summary.repeatClientsRate)}%`} note={isArabic ? "معدل الولاء" : "loyalty rate"} icon={TimerReset} tone="sun" />
-        <MiniMetric label={isArabic ? "خمس نجوم" : "Five stars"} value={formatNumber(locale, data.summary.fiveStars)} note={isArabic ? "إشارة ثقة قوية" : "premium signal"} icon={ShieldCheck} tone="primary" />
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <WorkerProMetric label={isArabic ? "التقييم العام" : "Overall"} value={formatNumber(locale, data.summary.overallRating)} note={isArabic ? "المؤشر الرئيسي" : "headline rating"} icon={Star} index="01" />
+        <WorkerProMetric label={isArabic ? "عدد المراجعات" : "Reviews"} value={formatNumber(locale, data.summary.totalReviews)} note={isArabic ? "إجمالي الآراء" : "total feedback"} icon={Sparkles} index="02" />
+        <WorkerProMetric label={isArabic ? "عملاء متكررون" : "Repeat clients"} value={`${formatNumber(locale, data.summary.repeatClientsRate)}%`} note={isArabic ? "معدل الولاء" : "loyalty rate"} icon={TimerReset} index="03" />
+        <WorkerProMetric label={isArabic ? "خمس نجوم" : "Five stars"} value={formatNumber(locale, data.summary.fiveStars)} note={isArabic ? "ثقة قوية" : "premium signal"} icon={ShieldCheck} index="04" />
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
-        <DashboardBlock title={isArabic ? "الشارات المكتسبة" : "Earned badges"} eyebrow={isArabic ? "علامات الثقة" : "trust marks"}>
+      <div className="grid gap-6 xl:grid-cols-[0.85fr_1.15fr]">
+        <WorkerProPanel title={isArabic ? "الشارات المكتسبة" : "Earned badges"} eyebrow={isArabic ? "علامات الثقة" : "trust marks"}>
           <div className="flex flex-wrap gap-3">
             {data.badges.map((badge, index) => (
-              <SoftBadge key={badge} label={badge} tone={index % 3 === 0 ? "accent" : index % 3 === 1 ? "sun" : "primary"} />
+              <WorkerProBadge key={badge} tone={index % 3 === 0 ? "gold" : index % 3 === 1 ? "green" : "muted"}>{badge}</WorkerProBadge>
             ))}
           </div>
-        </DashboardBlock>
+        </WorkerProPanel>
 
-        <DashboardBlock title={isArabic ? "أحدث المراجعات" : "Recent reviews"} eyebrow={isArabic ? "صوت العميل" : "client voice"}>
+        <WorkerProPanel title={isArabic ? "أحدث المراجعات" : "Recent reviews"} eyebrow={isArabic ? "صوت العميل" : "client voice"}>
           {data.reviews.length === 0 ? (
-            <EmptyState>{isArabic ? "لا توجد مراجعات بعد" : "No reviews yet"}</EmptyState>
+            <WorkerProEmpty title={isArabic ? "لا توجد مراجعات بعد" : "No reviews yet"} text={isArabic ? "بعد إكمال أول خدمة سيظهر تقييم العميل هنا." : "After your first completed job, client reviews will appear here."} />
           ) : (
             <div className="grid gap-4">
               {data.reviews.map((review, index) => (
-                <div key={review.id} className={index % 2 === 0 ? "onyx-card p-4" : "onyx-card bg-onyx-800/80 p-4"}>
+                <div key={review.id} className={index % 2 === 0 ? "border border-white/10 bg-[#111] p-4" : "border border-[#f5bd18]/30 bg-[#2a2207] p-4"}>
                   <div className="flex items-center justify-between gap-3">
                     <div>
-                      <p className="text-lg font-semibold text-white">{review.clientName}</p>
-                      <p className="mt-1 text-sm text-onyx-400">{review.service}</p>
+                      <p className="text-lg font-black text-white">{review.clientName}</p>
+                      <p className="mt-1 text-sm text-white/45">{review.service}</p>
                     </div>
-                    <SoftBadge label={isArabic ? `${review.rating} نجوم` : `${review.rating} stars`} tone={review.rating === 5 ? "success" : "sun"} />
+                    <WorkerProBadge tone={review.rating === 5 ? "green" : "gold"}>{isArabic ? `${review.rating} نجوم` : `${review.rating} stars`}</WorkerProBadge>
                   </div>
-                  <p className="mt-4 text-sm leading-7 text-onyx-300">{review.comment}</p>
-                  <p className="mt-3 text-xs uppercase tracking-[0.18em] text-onyx-500">{formatDate(locale, review.createdAt)}</p>
+                  <p className="mt-4 text-sm leading-7 text-white/60">{review.comment}</p>
+                  <p className="mt-3 text-[10px] font-black uppercase tracking-[0.18em] text-white/35">{formatDate(locale, review.createdAt)}</p>
                 </div>
               ))}
             </div>
           )}
-        </DashboardBlock>
+        </WorkerProPanel>
       </div>
-    </div>
+    </WorkerProShell>
   );
 }
 
@@ -114,78 +113,109 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
   };
 
   return (
-    <div>
-      <SubpageHero
-        eyebrow={isArabic ? "إعدادات العامل" : "Worker controls"}
-        title={isArabic ? "الإعدادات" : "Settings"}
-        subtitle={
-          isArabic
-            ? "تحكم في التوفر ووضع الطوارئ ومناطق الخدمة وتفضيلات التحويل من لوحة أوضح."
-            : "Control availability, emergency mode, service areas, and payout preferences from a cleaner control panel."
+    <WorkerProShell locale={locale}>
+      <WorkerProTopStrip locale={locale} title={isArabic ? "الإعدادات" : "Settings"} />
+      <WorkerProHero
+        locale={locale}
+        eyebrow={isArabic ? "إعدادات الفني" : "Worker controls"}
+        title={isArabic ? "لوحة" : "Worker"}
+        highlight={isArabic ? "التشغيل" : "settings"}
+        subtitle={isArabic ? "تحكم في التوفر ووضع الطوارئ ومناطق الخدمة وتفضيلات التحويل." : "Control availability, emergency mode, service areas, and payout preferences."}
+        side={
+          <div className="border border-white/10 bg-black p-5 text-white shadow-[4px_4px_0_#1d1600]">
+            <div className="flex items-center gap-4">
+              <div className="flex h-20 w-20 items-center justify-center overflow-hidden border border-[#f5bd18]/50 bg-[#111] text-[#f5bd18]">
+                {(data.profile as any).imageUrl || (data.profile as any).avatarUrl ? (
+                  <img src={(data.profile as any).imageUrl || (data.profile as any).avatarUrl} alt={isArabic ? "صورة الفني" : "Worker avatar"} className="h-full w-full object-cover" />
+                ) : (
+                  <UserCircle2 className="h-10 w-10" />
+                )}
+              </div>
+              <div>
+                <h3 className="text-xl font-black text-white">{data.profile.firstName} {data.profile.lastName}</h3>
+                <p className="mt-1 text-[10px] font-black uppercase tracking-[0.18em] text-[#f5bd18]">OSTA PRO</p>
+              </div>
+            </div>
+          </div>
         }
-        tone="dark"
       />
 
-      <div className="mb-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        <MiniMetric label={isArabic ? "التوفر" : "Availability"} value={safeWorkPreferences.isAvailable ? (isArabic ? "مفعل" : "ON") : isArabic ? "متوقف" : "OFF"} note={isArabic ? "ظهور الطلبات" : "job visibility"} icon={Sparkles} tone="accent" />
-        <MiniMetric label={isArabic ? "مناطق الخدمة" : "Service areas"} value={formatNumber(locale, safeWorkPreferences.serviceAreas.length)} note={isArabic ? "نطاق التغطية" : "coverage map"} icon={ShieldCheck} tone="sun" />
-        <MiniMetric label={isArabic ? "جدول التحويل" : "Payout"} value={safePayout.schedule || (isArabic ? "غير محدد" : "Unset")} note={isArabic ? "دورة التحويل" : "transfer cycle"} icon={Wallet} tone="primary" />
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <WorkerProMetric label={isArabic ? "التوفر" : "Availability"} value={safeWorkPreferences.isAvailable ? (isArabic ? "مفعل" : "ON") : isArabic ? "متوقف" : "OFF"} note={isArabic ? "ظهور الطلبات" : "job visibility"} icon={Sparkles} index="01" />
+        <WorkerProMetric label={isArabic ? "مناطق الخدمة" : "Service areas"} value={formatNumber(locale, safeWorkPreferences.serviceAreas.length)} note={isArabic ? "نطاق التغطية" : "coverage map"} icon={ShieldCheck} index="02" />
+        <WorkerProMetric label={isArabic ? "جدول التحويل" : "Payout"} value={safePayout.schedule || (isArabic ? "غير محدد" : "Unset")} note={isArabic ? "دورة التحويل" : "transfer cycle"} icon={Wallet} index="03" />
       </div>
 
-      {saved ? <div className="mb-4 rounded-[1.2rem] border border-success/20 bg-success/10 px-4 py-3 text-sm text-success">{isArabic ? "تم الحفظ محليًا" : "Saved locally"}</div> : null}
+      {saved ? <div className="border border-emerald-400/30 bg-emerald-400/10 px-4 py-3 text-sm font-black text-emerald-200">{isArabic ? "تم الحفظ محلياً" : "Saved locally"}</div> : null}
 
       <div className="grid gap-6 xl:grid-cols-[1fr_1fr]">
-        <DashboardBlock title={isArabic ? "الملف الشخصي" : "Profile"} eyebrow={isArabic ? "بيانات العامل" : "worker identity"}>
+        <WorkerProPanel title={isArabic ? "الملف الشخصي" : "Profile"} eyebrow={isArabic ? "بيانات الفني" : "worker identity"}>
           <div className="grid gap-4 sm:grid-cols-2">
-            <label className="space-y-2"><span className="text-sm text-onyx-400">{isArabic ? "الاسم الأول" : "First name"}</span><input value={data.profile.firstName} onChange={(event) => setData({ ...data, profile: { ...data.profile, firstName: event.target.value } })} className="h-12 w-full rounded-[1rem] border border-onyx-700 bg-onyx-800/50 px-4" /></label>
-            <label className="space-y-2"><span className="text-sm text-onyx-400">{isArabic ? "اسم العائلة" : "Last name"}</span><input value={data.profile.lastName} onChange={(event) => setData({ ...data, profile: { ...data.profile, lastName: event.target.value } })} className="h-12 w-full rounded-[1rem] border border-onyx-700 bg-onyx-800/50 px-4" /></label>
-            <label className="space-y-2"><span className="text-sm text-onyx-400">{isArabic ? "البريد الإلكتروني" : "Email"}</span><input value={data.profile.email} onChange={(event) => setData({ ...data, profile: { ...data.profile, email: event.target.value } })} className="h-12 w-full rounded-[1rem] border border-onyx-700 bg-onyx-800/50 px-4" /></label>
-            <label className="space-y-2"><span className="text-sm text-onyx-400">{isArabic ? "رقم الهاتف" : "Phone"}</span><input value={data.profile.phone} onChange={(event) => setData({ ...data, profile: { ...data.profile, phone: event.target.value } })} className="h-12 w-full rounded-[1rem] border border-onyx-700 bg-onyx-800/50 px-4" /></label>
+            {[
+              { key: "firstName", label: isArabic ? "الاسم الأول" : "First name" },
+              { key: "lastName", label: isArabic ? "اسم العائلة" : "Last name" },
+              { key: "email", label: isArabic ? "البريد الإلكتروني" : "Email" },
+              { key: "phone", label: isArabic ? "رقم الهاتف" : "Phone" }
+            ].map((field) => (
+              <label key={field.key} className="space-y-2">
+                <span className="text-sm font-black text-white/45">{field.label}</span>
+                <input
+                  value={data.profile[field.key as keyof typeof data.profile]}
+                  onChange={(event) => setData({ ...data, profile: { ...data.profile, [field.key]: event.target.value } })}
+                  className="h-12 w-full border border-white/10 bg-[#111] px-4 text-white outline-none focus:border-[#f5bd18]"
+                />
+              </label>
+            ))}
           </div>
-        </DashboardBlock>
+        </WorkerProPanel>
 
-        <DashboardBlock title={isArabic ? "تفضيلات العمل" : "Work preferences"} eyebrow={isArabic ? "خيارات التشغيل" : "ops toggles"}>
+        <WorkerProPanel title={isArabic ? "تفضيلات العمل" : "Work preferences"} eyebrow={isArabic ? "خيارات التشغيل" : "ops toggles"}>
           <div className="grid gap-4">
             {[
               { key: "isAvailable", label: isArabic ? "متاح للطلبات" : "Available for jobs" },
               { key: "acceptsEmergency", label: isArabic ? "يقبل الطوارئ" : "Accept emergency" },
               { key: "acceptsSameDay", label: isArabic ? "يقبل نفس اليوم" : "Accept same-day" }
             ].map((item) => (
-              <label key={item.key} className="onyx-card flex items-center justify-between gap-4 p-4">
-                <span className="font-medium text-white">{item.label}</span>
+              <label key={item.key} className="flex items-center justify-between gap-4 border border-white/10 bg-[#111] p-4">
+                <span className="font-black text-white">{item.label}</span>
                 <input
                   type="checkbox"
                   checked={safeWorkPreferences[item.key as keyof typeof safeWorkPreferences] as boolean}
                   onChange={(event) => setData({ ...data, workPreferences: { ...data.workPreferences, [item.key]: event.target.checked } })}
-                  className="h-4 w-4"
+                  className="h-5 w-5 accent-[#f5bd18]"
                 />
               </label>
             ))}
-            <SoftCard>
-              <p className="text-xs uppercase tracking-[0.22em] text-onyx-500">{isArabic ? "المناطق" : "Areas"}</p>
+            <div className="border border-white/10 bg-[#111] p-4">
+              <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/35">{isArabic ? "المناطق" : "Areas"}</p>
               <div className="mt-3 flex flex-wrap gap-2">
                 {safeWorkPreferences.serviceAreas.map((area) => (
-                  <SoftBadge key={area} label={area} tone="accent" />
+                  <WorkerProBadge key={area} tone="gold">{area}</WorkerProBadge>
                 ))}
               </div>
-            </SoftCard>
-            <SplitInfo
-              items={[
+            </div>
+            <div className="grid gap-3 sm:grid-cols-3">
+              {[
                 { label: isArabic ? "الوسيلة" : "Method", value: safePayout.method || (isArabic ? "غير محدد" : "Unset") },
                 { label: isArabic ? "الجدول" : "Schedule", value: safePayout.schedule || (isArabic ? "غير محدد" : "Unset") },
                 { label: isArabic ? "البنك" : "Bank", value: safePayout.bankLabel || (isArabic ? "غير محدد" : "Unset") }
-              ]}
-            />
+              ].map((item) => (
+                <div key={item.label} className="border border-white/10 bg-white/5 p-3">
+                  <p className="text-[10px] font-black uppercase tracking-[0.16em] text-white/35">{item.label}</p>
+                  <p className="mt-2 text-sm font-black text-white">{item.value}</p>
+                </div>
+              ))}
+            </div>
           </div>
-        </DashboardBlock>
+        </WorkerProPanel>
       </div>
 
-      <div className="mt-6 flex justify-end">
-        <button type="button" onClick={handleSave} className="inline-flex items-center gap-2 rounded-full bg-dark-950 px-5 py-3 text-sm font-semibold text-white shadow-soft">
+      <div className="flex justify-end">
+        <WorkerProAction tone="dark" onClick={handleSave}>
           <Save className="h-4 w-4" />
           {isArabic ? "حفظ" : "Save"}
-        </button>
+        </WorkerProAction>
       </div>
-    </div>
+    </WorkerProShell>
   );
 }
