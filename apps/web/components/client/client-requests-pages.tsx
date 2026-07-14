@@ -60,6 +60,21 @@ function formatDate(locale: Locale, value: string) {
   }).format(new Date(value));
 }
 
+function formatDateOnly(locale: Locale, value: string) {
+  return new Intl.DateTimeFormat(locale === "ar" ? "ar-EG" : "en-US", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).format(new Date(value));
+}
+
+function formatTimeOnly(locale: Locale, value: string) {
+  return new Intl.DateTimeFormat(locale === "ar" ? "ar-EG" : "en-US", {
+    hour: "2-digit",
+    minute: "2-digit"
+  }).format(new Date(value));
+}
+
 function formatCount(locale: Locale, value: number) {
   return new Intl.NumberFormat(locale === "ar" ? "ar-EG" : "en-US", { maximumFractionDigits: 0 }).format(value);
 }
@@ -644,6 +659,11 @@ export function ClientRequestDetailPage({ locale, requestId, initialData }: { lo
   const status = getStatusMeta(locale, data.status);
 
   const currentPrice = data.finalPrice || data.estimatedPrice || 0;
+  const serviceName = getServiceName(data, locale);
+  const addressText = resolveAddress(locale, data);
+  const priceText = currentPrice > 0 ? formatPrice(locale, currentPrice) : (isArabic ? "غير محدد" : "Not specified");
+  const canEditBudget = ["PENDING", "ACCEPTED", "WORKER_EN_ROUTE", "IN_PROGRESS"].includes(data.status);
+  const mapImage = "https://lh3.googleusercontent.com/aida-public/AB6AXuAYCCgb8EMbX5TBAInhvCXHspEoppbuxNBQuUz3UxzY__E-M4gnuGuX9qyDZv8dgUY-KMI38-pDvEmIrfeAl8VrAk1ULYen26GSn7VB2wRs4_b1nNbvkVsnORsCGWP8_FbHNknyu1lVzrPxeQXkj65ADH4O1bNYxZmH2rcoUUWNELHG8-fZ2IZZwkuohxWFiIx8lgwAbTBK9ytOUMfHkHwg7K-PcKwa9G0VMAwH6ssOzNvcEmsYFAYatx_hSoWh0PqblOgbwlLTCIg";
 
   const handleEditBudget = async () => {
     const promptText = isArabic
@@ -668,129 +688,212 @@ export function ClientRequestDetailPage({ locale, requestId, initialData }: { lo
     }
   };
 
-  return (
-    <div>
-      <SubpageHero
-        eyebrow={data.requestNumber}
-        title={data.title}
-        subtitle={data.description}
-        actionLabel={isArabic ? "العودة إلى الطلبات" : "Back to requests"}
-        actionHref={`/${locale}/client/my-requests`}
-        tone="accent"
-      />
+  const openChat = () => {
+    if (!data.worker) {
+      alert(isArabic ? "لم يتم تعيين فني لهذا الطلب حتى الآن." : "No pro has been assigned to this request yet.");
+      return;
+    }
 
-      <div className="mb-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <MiniMetric label={isArabic ? "الحالة" : "Status"} value={status.label} note={isArabic ? "الحالة الحالية للطلب" : "current request state"} icon={ShieldCheck} tone="primary" />
-        <MiniMetric label={isArabic ? "الخدمة" : "Service"} value={getServiceName(data, locale)} note={isArabic ? "الفئة المطلوبة" : "requested category"} icon={Wrench} tone="sun" />
-        <MiniMetric label={isArabic ? "التوقيت" : "Timing"} value={formatTiming(locale, data.timing)} note={isArabic ? "الموعد المفضل" : "preferred schedule"} icon={Clock3} tone="accent" />
-        <MiniMetric label={isArabic ? "المنطقة" : "Area"} value={translateArea(data.area, locale)} note={isArabic ? "منطقة الخدمة" : "delivery zone"} icon={MapPin} tone="dark" />
+    window.dispatchEvent(new CustomEvent("osta_open_chat", {
+      detail: { id: data.worker.userId, firstName: data.worker.name, lastName: "" }
+    }));
+  };
+
+  return (
+    <div className="relative -m-4 min-h-screen bg-[#f5bd18] px-4 pb-28 pt-4 text-[#1a1c1c] sm:-m-6 sm:px-6 sm:py-6 lg:-m-8 lg:px-12 lg:py-10">
+      <div className="hidden items-center justify-between gap-6 md:flex">
+        <Link
+          href={`/${locale}/client/my-requests`}
+          className="inline-flex min-h-14 items-center justify-center gap-2 rounded-lg bg-black px-6 py-4 text-sm font-black uppercase tracking-[0.05em] text-white shadow-[6px_6px_0_#ffffff] transition hover:-translate-y-0.5"
+        >
+          <ChevronRight className={`h-5 w-5 ${isArabic ? "" : "rotate-180"}`} />
+          {isArabic ? "العودة إلى الطلبات" : "Back to requests"}
+        </Link>
+
+        <div className="flex items-center gap-4 rounded-lg border border-[#f5bd18]/30 bg-black px-6 py-3 text-white">
+          <div className="flex flex-col">
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/45">{isArabic ? "رقم الطلب" : "Request ID"}</span>
+            <span className="text-2xl font-black leading-none text-[#f5bd18]">{data.requestNumber}</span>
+          </div>
+          <div className="h-8 w-px bg-white/10" />
+          <div className="flex flex-col">
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/45">{isArabic ? "الحالة" : "Status"}</span>
+            <span className="text-sm font-black uppercase tracking-tight text-white">{status.label}</span>
+          </div>
+        </div>
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
-        <DashboardBlock title={isArabic ? "سياق الطلب" : "Request context"} eyebrow={isArabic ? "تفاصيل المشكلة" : "issue profile"}>
-          <div className="grid gap-4">
-            <SoftCard>
-              <p className="text-xs uppercase tracking-[0.22em] text-onyx-500">{isArabic ? "الخدمة" : "Service"}</p>
-              <p className="mt-3 text-lg font-semibold text-white">{getServiceName(data, locale)}</p>
-            </SoftCard>
-            <SoftCard>
-              <p className="text-xs uppercase tracking-[0.22em] text-onyx-500">{isArabic ? "الوصف" : "Description"}</p>
-              <p className="mt-3 text-sm leading-7 text-onyx-300">{data.description}</p>
-            </SoftCard>
-            <SoftCard>
-              <p className="text-xs uppercase tracking-[0.22em] text-onyx-500">{isArabic ? "ملاحظات الوسائط" : "Media notes"}</p>
-              <p className="mt-3 text-sm leading-7 text-onyx-300">{data.mediaNotes || (isArabic ? "لا توجد ملاحظات" : "No notes added")}</p>
-            </SoftCard>
-            <SoftCard>
-              <div className="flex flex-wrap items-center justify-between gap-4">
+      <div className="mt-0 grid grid-cols-1 gap-6 md:mt-10 md:grid-cols-12">
+        <section className="relative overflow-hidden rounded-lg border-2 border-[#f5bd18]/20 bg-black p-6 text-white md:col-span-12 md:flex md:items-center md:justify-between md:p-12">
+          <div className="relative z-10">
+            <div className="mb-3 flex items-start justify-between gap-4 md:hidden">
+              <span className="rounded-sm bg-[#f5bd18] px-2 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-black">{status.label}</span>
+              <span className="font-mono text-xs text-white/40">{data.requestNumber}</span>
+            </div>
+            <p className="hidden text-xs font-black uppercase tracking-[0.24em] text-[#f5bd18] md:block">{data.requestNumber}</p>
+            <h1 className="text-3xl font-black leading-tight text-white md:mt-4 md:text-5xl">{data.title || (isArabic ? "تفاصيل الطلب" : "Request details")}</h1>
+            <p className="mt-2 text-sm font-black uppercase tracking-[0.05em] text-[#f5bd18] md:text-2xl md:normal-case md:tracking-normal">{serviceName}</p>
+            <Link
+              href={`/${locale}/client/my-requests`}
+              className="mt-6 inline-flex min-h-11 items-center justify-center gap-2 rounded-sm bg-white px-5 py-2 text-sm font-black text-black shadow-[4px_4px_0_#000000] md:hidden"
+            >
+              <ChevronRight className={`h-4 w-4 ${isArabic ? "" : "rotate-180"}`} />
+              {isArabic ? "العودة إلى الطلبات" : "Back to requests"}
+            </Link>
+          </div>
+
+          <div className="relative z-10 mt-6 hidden gap-6 md:flex">
+            <div className="flex min-w-[140px] flex-col items-center justify-center rounded-lg border border-white/10 bg-white/5 p-6 text-center">
+              <Clock3 className="mb-2 h-9 w-9 text-[#f5bd18]" />
+              <span className="text-2xl font-black text-white">{formatTiming(locale, data.timing)}</span>
+              <span className="mt-2 text-[10px] font-black uppercase tracking-[0.18em] text-white/45">{isArabic ? "التوقيت" : "Scheduled timing"}</span>
+            </div>
+            <div className="flex min-w-[140px] flex-col items-center justify-center rounded-lg border border-white/10 bg-white/5 p-6 text-center">
+              <TimerReset className="mb-2 h-9 w-9 text-[#f5bd18]" />
+              <span className="text-2xl font-black text-white">{status.label}</span>
+              <span className="mt-2 text-[10px] font-black uppercase tracking-[0.18em] text-white/45">{isArabic ? "الحالة الحالية" : "Current status"}</span>
+            </div>
+          </div>
+        </section>
+
+        <section className="grid grid-cols-2 gap-2 md:hidden">
+          <div className="flex flex-col items-center justify-center rounded-lg border border-white/10 bg-black p-4 text-center text-white">
+            <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-[#775a00]/30 text-[#f5bd18]">
+              <ShieldCheck className="h-5 w-5" />
+            </div>
+            <span className="mb-1 text-xs font-black uppercase text-white/60">{isArabic ? "الحالة" : "Status"}</span>
+            <span className="font-black text-[#f5bd18]">{status.label}</span>
+          </div>
+          <div className="flex flex-col items-center justify-center rounded-lg border border-white/10 bg-black p-4 text-center text-white">
+            <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-[#775a00]/30 text-[#f5bd18]">
+              <CalendarDays className="h-5 w-5" />
+            </div>
+            <span className="mb-1 text-xs font-black uppercase text-white/60">{isArabic ? "التوقيت" : "Timing"}</span>
+            <span className="font-black text-white">{formatTiming(locale, data.timing)}</span>
+          </div>
+        </section>
+
+        <section className="flex flex-col gap-6 md:col-span-5">
+          <div className="overflow-hidden rounded-lg border border-white/10 bg-black text-white">
+            <div className="hidden items-center justify-between border-b border-white/10 bg-white/5 p-6 md:flex">
+              <h2 className="text-2xl font-black uppercase tracking-tight text-white">{isArabic ? "الموقع والخط الزمني" : "Location & timeline"}</h2>
+              <MapPin className="h-6 w-6 text-[#f5bd18]" />
+            </div>
+            <div className="relative h-48 overflow-hidden md:h-64 md:grayscale md:contrast-125">
+              <div className="absolute inset-0 bg-cover bg-center opacity-75" style={{ backgroundImage: `url(${mapImage})` }} />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+              <div className="absolute inset-x-4 bottom-4 flex items-center gap-2 md:bottom-6 md:left-6 md:right-auto md:block">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-black text-[#f5bd18] md:hidden">
+                  <MapPin className="h-5 w-5" />
+                </span>
                 <div>
-                  <p className="text-xs uppercase tracking-[0.22em] text-onyx-500">{isArabic ? "الميزانية / السعر" : "Budget / Price"}</p>
-                  <p className="mt-3 text-lg font-semibold text-white">
-                    {currentPrice > 0 ? formatPrice(locale, currentPrice) : (isArabic ? "غير محدد" : "Not specified")}
+                  <p className="text-sm font-black text-white md:text-2xl">{translateArea(data.area, locale) || addressText}</p>
+                  <p className="text-xs font-bold text-white/60 md:mt-1 md:text-base md:text-[#f5bd18]">{addressText}</p>
+                </div>
+              </div>
+            </div>
+            <div className="hidden space-y-4 p-8 md:block">
+              <div className="flex items-start gap-4 rounded-lg border border-white/5 bg-white/5 p-4">
+                <Clock3 className="h-5 w-5 text-[#f5bd18]" />
+                <div>
+                  <p className="text-xs font-black uppercase tracking-[0.18em] text-white/45">{isArabic ? "تاريخ الإنشاء" : "Created date"}</p>
+                  <p className="mt-1 text-base font-black text-white">{formatDate(locale, data.createdAt)}</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4 rounded-lg border border-white/5 bg-white/5 p-4">
+                <TimerReset className="h-5 w-5 text-[#f5bd18]" />
+                <div>
+                  <p className="text-xs font-black uppercase tracking-[0.18em] text-white/45">{isArabic ? "آخر تحديث" : "Last updated"}</p>
+                  <p className="mt-1 text-base font-black text-white">{formatDate(locale, data.updatedAt)}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-lg border border-white/10 bg-black p-6 text-white md:hidden">
+            <div className="mb-4 flex items-center gap-2 border-b border-white/10 pb-4">
+              <Clock3 className="h-5 w-5 text-[#f5bd18]" />
+              <h2 className="text-2xl font-black text-white">{isArabic ? "العنوان والخط الزمني" : "Location & timeline"}</h2>
+            </div>
+            <div className={`relative mt-4 space-y-8 ${isArabic ? "pr-6" : "pl-6"}`}>
+              <div className={`absolute bottom-2 top-2 w-0.5 bg-white/10 ${isArabic ? "right-[7px]" : "left-[7px]"}`} />
+              {[
+                { label: isArabic ? "تاريخ الإنشاء" : "Created date", date: formatDateOnly(locale, data.createdAt), time: formatTimeOnly(locale, data.createdAt), active: true },
+                { label: isArabic ? "آخر تحديث" : "Last updated", date: formatDateOnly(locale, data.updatedAt), time: formatTimeOnly(locale, data.updatedAt), active: data.status !== "PENDING" }
+              ].map((item) => (
+                <div className="relative" key={item.label}>
+                  <div className={`absolute top-1 h-4 w-4 rounded-full border-4 border-black ${item.active ? "bg-[#f5bd18]" : "bg-white/20"} ${isArabic ? "-right-6" : "-left-6"}`} />
+                  <span className="block text-[10px] font-black uppercase text-white/40">{item.label}</span>
+                  <p className="mt-1 text-base font-black text-white">{item.date}</p>
+                  <p className="text-xs font-semibold text-white/60">{item.time}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="flex flex-col gap-6 md:col-span-7">
+          <div className="rounded-lg border border-white/10 bg-black text-white">
+            <div className="flex items-center justify-between border-b border-white/10 bg-white/5 p-6">
+              <h2 className="text-2xl font-black md:uppercase md:tracking-tight">{isArabic ? "سياق الطلب" : "Issue context"}</h2>
+              <Wrench className="h-6 w-6 text-[#f5bd18]" />
+            </div>
+            <div className="space-y-6 p-6 md:p-8">
+              <div>
+                <p className="mb-3 block text-[10px] font-black uppercase tracking-[0.18em] text-[#f5bd18]">{isArabic ? "الخدمة" : "Service type"}</p>
+                <div className="rounded-lg border border-white/10 bg-white/5 p-5">
+                  <p className="text-lg font-black text-white md:text-2xl">{serviceName}</p>
+                </div>
+              </div>
+              <div>
+                <p className="mb-3 block text-[10px] font-black uppercase tracking-[0.18em] text-[#f5bd18]">{isArabic ? "الوصف" : "User description"}</p>
+                <div className="min-h-[100px] rounded-lg border border-white/10 bg-white/5 p-5">
+                  <p className="text-sm font-semibold italic leading-7 text-white/80 md:text-base">
+                    &ldquo;{data.description || (isArabic ? "لا يوجد وصف مضاف" : "No description added")}&rdquo;
                   </p>
                 </div>
-                {["PENDING", "ACCEPTED", "WORKER_EN_ROUTE", "IN_PROGRESS"].includes(data.status) && (
-                  <button
-                    onClick={handleEditBudget}
-                    className="rounded-full bg-white/5 border border-white/10 px-4 py-2 text-xs font-semibold text-gold-500 hover:bg-white/10 transition-colors"
-                  >
-                    {isArabic ? "تعديل السعر" : "Edit Price"}
-                  </button>
-                )}
               </div>
-            </SoftCard>
-          </div>
-        </DashboardBlock>
-
-        <DashboardBlock title={isArabic ? "العنوان والخط الزمني" : "Delivery + timeline"} eyebrow={isArabic ? "تفاصيل الوصول" : "address rail"}>
-          <div className="grid gap-4">
-            <SoftCard>
-              <p className="text-xs uppercase tracking-[0.22em] text-onyx-500">{isArabic ? "الموقع" : "Location"}</p>
-              <p className="mt-3 text-sm font-semibold text-white">{resolveAddress(locale, data)}</p>
-            </SoftCard>
-            <SoftCard>
-              <p className="text-xs uppercase tracking-[0.22em] text-onyx-500">{isArabic ? "التوقيت المطلوب" : "Requested timing"}</p>
-              <p className="mt-3 text-sm font-semibold text-white">{formatTiming(locale, data.timing)}</p>
-            </SoftCard>
-            <SplitInfo
-              items={[
-                { label: isArabic ? "تاريخ الإنشاء" : "Created", value: formatDate(locale, data.createdAt) },
-                { label: isArabic ? "آخر تحديث" : "Updated", value: formatDate(locale, data.updatedAt) }
-              ]}
-            />
-            <div className="flex flex-wrap items-center gap-3">
-              <SoftBadge label={status.label} tone={status.tone} />
-              <SoftBadge label={data.requestNumber} tone="accent" />
-            </div>
-          </div>
-        </DashboardBlock>
-      </div>
-
-      {data.worker && (
-        <div className="mt-6">
-          <DashboardBlock title={isArabic ? "الفني المعين" : "Assigned Pro"} eyebrow={isArabic ? "تفاصيل الاتصال" : "contact profile"}>
-            <div className="onyx-card p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-gold-500/10">
-              <div className="flex items-center gap-4">
-                <div className="h-16 w-16 rounded-2xl bg-onyx-800 border border-white/10 flex items-center justify-center text-gold-500 text-xl font-bold overflow-hidden">
-                  {data.worker.avatarUrl ? (
-                    <img src={data.worker.avatarUrl} alt="" className="h-full w-full object-cover" />
-                  ) : (
-                    data.worker.name.charAt(0)
-                  )}
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <div>
+                  <p className="mb-3 block text-[10px] font-black uppercase tracking-[0.18em] text-[#f5bd18]">{isArabic ? "الميزانية / السعر" : "Budget / price"}</p>
+                  <div className="flex h-full items-center justify-between gap-4 rounded-lg border border-white/10 bg-white/5 p-5 md:block">
+                    <p className="text-2xl font-black text-[#f5bd18] md:text-white">{priceText}</p>
+                    {canEditBudget ? (
+                      <button onClick={handleEditBudget} className="shrink-0 border-b-2 border-[#f5bd18] pb-1 text-sm font-black text-[#f5bd18] md:hidden">
+                        {isArabic ? "تعديل السعر" : "Edit price"}
+                      </button>
+                    ) : null}
+                  </div>
                 </div>
                 <div>
-                  <h4 className="text-lg font-black text-white">{data.worker.name}</h4>
-                  <div className="flex items-center gap-1.5 mt-1 text-sm text-gold-500 font-bold">
-                    <Star className="h-4 w-4 fill-current" />
-                    <span>{data.worker.rating.toFixed(1)}</span>
+                  <p className="mb-3 block text-[10px] font-black uppercase tracking-[0.18em] text-[#f5bd18]">{isArabic ? "المرفقات" : "Media attachments"}</p>
+                  <div className="flex h-full min-h-20 items-center justify-center rounded-lg border-2 border-dashed border-white/10 bg-white/5 p-5">
+                    <p className="text-sm font-semibold text-white/45">{data.mediaNotes || (isArabic ? "لا توجد ملفات مرفقة" : "No files attached")}</p>
                   </div>
-                  {data.worker.phone ? (
-                    <p className="text-sm font-semibold text-white mt-1.5">{data.worker.phone}</p>
-                  ) : (
-                    <p className="text-xs text-amber-500 mt-1.5">
-                      {isArabic ? "سيظهر رقم الهاتف بعد قبول الطلب من الطرفين" : "Phone number will appear after order is accepted"}
-                    </p>
-                  )}
                 </div>
               </div>
-              
-              <button
-                onClick={() => {
-                  if (data.worker) {
-                    window.dispatchEvent(new CustomEvent("osta_open_chat", {
-                      detail: { id: data.worker.userId, firstName: data.worker.name, lastName: "" }
-                    }));
-                  }
-                }}
-                className="btn-gold py-3 px-6 text-sm font-black flex items-center justify-center gap-2 group/btn shadow-md shrink-0"
-              >
-                <MessageSquare className="h-4 w-4" />
-                <span>{isArabic ? "محادثة الفني" : "Chat with Pro"}</span>
+            </div>
+            <div className="hidden flex-col justify-end gap-4 rounded-b-lg border-t border-white/10 bg-white/5 p-8 sm:flex-row md:flex">
+              {canEditBudget ? (
+                <button onClick={handleEditBudget} className="rounded-lg border-2 border-white px-8 py-4 text-sm font-black uppercase tracking-[0.14em] text-white transition hover:bg-white hover:text-black">
+                  {isArabic ? "تعديل الميزانية" : "Edit budget"}
+                </button>
+              ) : null}
+              <button disabled className="rounded-lg bg-white px-8 py-4 text-sm font-black uppercase tracking-[0.14em] text-black opacity-60 shadow-[6px_6px_0_#000000]">
+                {isArabic ? "إلغاء الطلب" : "Cancel request"}
               </button>
             </div>
-          </DashboardBlock>
-        </div>
-      )}
+          </div>
+        </section>
+      </div>
+
+      <button
+        onClick={openChat}
+        className="fixed bottom-20 right-6 z-40 flex h-14 w-14 items-center justify-center rounded-sm bg-white text-black shadow-[4px_4px_0_#000000] transition active:scale-95 md:hidden"
+        aria-label={isArabic ? "محادثة الفني" : "Chat with pro"}
+      >
+        <MessageSquare className="h-7 w-7" />
+      </button>
     </div>
   );
 }
