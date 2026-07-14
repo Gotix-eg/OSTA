@@ -748,6 +748,7 @@ router.get(
         lastName: true,
         email: true,
         phone: true,
+        avatarUrl: true,
         preferredLanguage: true,
       },
     });
@@ -774,6 +775,7 @@ router.get(
             lastName: user.lastName,
             email: user.email || "",
             phone: user.phone,
+            avatarUrl: user.avatarUrl,
           },
           preferences: {
             language: user.preferredLanguage || "ar",

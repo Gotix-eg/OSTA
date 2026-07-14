@@ -94,6 +94,7 @@ export interface ClientSettingsData {
     lastName: string;
     email: string;
     phone: string;
+    avatarUrl?: string | null;
   };
   preferences: {
     language: string;
@@ -375,7 +376,8 @@ const clientSettingsFallback: ClientSettingsData = {
     firstName: "",
     lastName: "",
     email: "",
-    phone: ""
+    phone: "",
+    avatarUrl: null
   },
   preferences: {
     language: "ar",

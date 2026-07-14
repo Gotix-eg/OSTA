@@ -3,7 +3,9 @@
 import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
 
+import Link from "next/link";
 import {
+  BriefcaseBusiness,
   Check,
   Cloud,
   CreditCard,
@@ -18,6 +20,7 @@ import {
   ShieldCheck,
   SlidersHorizontal,
   Sparkles,
+  Store,
   User,
   Wallet
 } from "lucide-react";
@@ -259,6 +262,114 @@ function SettingsFooterCard({ icon: Icon, title, text }: { icon: LucideIcon; tit
   );
 }
 
+function SettingsRoleSwitcher({
+  locale,
+  fullName,
+  avatarUrl,
+  labels
+}: {
+  locale: Locale;
+  fullName: string;
+  avatarUrl?: string | null;
+  labels: {
+    modeTitle: string;
+    modeNote: string;
+    clientMode: string;
+    clientNote: string;
+    workerMode: string;
+    workerNote: string;
+    vendorMode: string;
+    vendorNote: string;
+    current: string;
+    switchTo: string;
+  };
+}) {
+  const initials = fullName
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join("") || "O";
+  const roles = [
+    {
+      key: "client",
+      title: labels.clientMode,
+      note: labels.clientNote,
+      href: `/${locale}/client`,
+      icon: User,
+      active: true
+    },
+    {
+      key: "worker",
+      title: labels.workerMode,
+      note: labels.workerNote,
+      href: `/${locale}/worker`,
+      icon: BriefcaseBusiness,
+      active: false
+    },
+    {
+      key: "vendor",
+      title: labels.vendorMode,
+      note: labels.vendorNote,
+      href: `/${locale}/vendor`,
+      icon: Store,
+      active: false
+    }
+  ];
+
+  return (
+    <section className="border border-white/10 bg-black p-6 text-white shadow-[4px_4px_0_#000]">
+      <div className="mb-5 flex flex-wrap items-start justify-between gap-4 border-b border-white/10 pb-4">
+        <div className="flex min-w-0 items-center gap-4">
+          <div className="relative h-16 w-16 shrink-0 overflow-hidden border border-[#f5bd18] bg-[#121212] shadow-[3px_3px_0_#f5bd18]">
+            {avatarUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={avatarUrl} alt={fullName} className="h-full w-full object-cover grayscale transition duration-300 hover:grayscale-0" />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center bg-[#f5bd18] text-xl font-black text-black">{initials}</div>
+            )}
+          </div>
+          <div className="min-w-0">
+            <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#f5bd18]">{labels.modeTitle}</p>
+            <h2 className="mt-1 truncate text-lg font-black uppercase text-white">{fullName}</h2>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-white/55">{labels.modeNote}</p>
+          </div>
+        </div>
+        <span className="border border-[#f5bd18] bg-[#f5bd18] px-3 py-2 text-[10px] font-black uppercase tracking-[0.16em] text-black">{labels.current}</span>
+      </div>
+      <div className="grid gap-3 md:grid-cols-3">
+        {roles.map((role) => {
+          const Icon = role.icon;
+          const content = (
+            <>
+              <div className={cn("flex h-11 w-11 shrink-0 items-center justify-center border", role.active ? "border-[#f5bd18] bg-[#f5bd18] text-black" : "border-white/15 bg-[#121212] text-[#f5bd18]")}>
+                <Icon className="h-5 w-5" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <h3 className="truncate text-sm font-black uppercase text-white">{role.title}</h3>
+                <p className="mt-1 line-clamp-2 text-xs leading-5 text-white/45">{role.note}</p>
+              </div>
+              <span className={cn("shrink-0 px-3 py-2 text-[10px] font-black uppercase tracking-[0.12em]", role.active ? "bg-white text-black" : "border border-white/15 text-[#f5bd18]")}>
+                {role.active ? labels.current : labels.switchTo}
+              </span>
+            </>
+          );
+
+          return role.active ? (
+            <div key={role.key} className="flex items-center gap-4 border border-[#f5bd18] bg-[#121212] p-4">
+              {content}
+            </div>
+          ) : (
+            <Link key={role.key} href={role.href} className="flex items-center gap-4 border border-white/10 bg-[#121212] p-4 transition-colors hover:border-[#f5bd18]">
+              {content}
+            </Link>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
 export function ClientSettingsPage({ locale, initialData }: { locale: Locale; initialData: ClientSettingsData }) {
   const isArabic = locale === "ar";
   const liveData = useLiveApiData("/clients/settings", initialData);
@@ -274,7 +385,7 @@ export function ClientSettingsPage({ locale, initialData }: { locale: Locale; in
     window.setTimeout(() => setSaved(false), 2000);
   }
 
-  const fullName = `${data.profile.firstName} ${data.profile.lastName}`.trim();
+  const fullName = `${data.profile.firstName} ${data.profile.lastName}`.trim() || "OSTA Client";
   const languageCode = data.preferences.language?.toUpperCase() || locale.toUpperCase();
   const smsEnabled = data.preferences.notificationsBySms;
   const labels = {
@@ -316,7 +427,17 @@ export function ClientSettingsPage({ locale, initialData }: { locale: Locale; in
     logout: isArabic ? "تسجيل الخروج" : "LOGOUT",
     system: isArabic ? "تفضيلات النظام" : "System Preferences",
     alerts: isArabic ? "تنبيهات الإشارة" : "Signal Alerts",
-    update: isArabic ? "تحديث البيانات" : "UPDATE DATA"
+    update: isArabic ? "تحديث البيانات" : "UPDATE DATA",
+    modeTitle: isArabic ? "وضع التشغيل" : "Operating Mode",
+    modeNote: isArabic ? "انتقل بين لوحة العميل، لوحة الفني، ولوحة المورد بنفس الحساب حسب الصلاحيات المتاحة." : "Move between the client, technician, and vendor dashboards with the same account when access is available.",
+    clientMode: isArabic ? "وضع العميل" : "Client Mode",
+    clientNote: isArabic ? "طلبات الخدمات، المتاجر، المفضلة، والمحفظة." : "Service requests, stores, favorites, and wallet.",
+    workerMode: isArabic ? "وضع الفني" : "Technician Mode",
+    workerNote: isArabic ? "استقبال الطلبات، الأعمال النشطة، الأرباح، والتقييمات." : "Incoming jobs, active work, earnings, and ratings.",
+    vendorMode: isArabic ? "وضع المورد" : "Vendor Mode",
+    vendorNote: isArabic ? "إدارة الخامات، المخزون، الطلبات، والإعلانات." : "Materials, inventory, orders, and ads management.",
+    current: isArabic ? "الحالي" : "CURRENT",
+    switchTo: isArabic ? "تبديل" : "SWITCH"
   };
 
   return (
@@ -333,6 +454,8 @@ export function ClientSettingsPage({ locale, initialData }: { locale: Locale; in
           <SettingsMetric label={labels.addresses} value={labels.sites} icon={MapPin} />
           <SettingsMetric label={labels.smsState} value={labels.smsValue} icon={smsEnabled ? MessageSquare : Mail} muted={!smsEnabled} />
         </div>
+
+        <SettingsRoleSwitcher locale={locale} fullName={fullName} avatarUrl={data.profile.avatarUrl} labels={labels} />
 
         {saved ? <div className="border border-black bg-white px-4 py-3 text-sm font-black text-black shadow-[4px_4px_0_#000]">{labels.saved}</div> : null}
 
