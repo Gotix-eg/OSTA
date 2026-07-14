@@ -14,15 +14,59 @@ interface AuthShellProps {
 }
 
 export function AuthShell({ locale, pathname, title, description, children }: AuthShellProps) {
+  const isArabic = locale === "ar";
   const isLogin = pathname === "/login";
-  const altLocale = locale === "ar" ? "en" : "ar";
+  const altLocale = isArabic ? "en" : "ar";
 
   const trustBadges = [
-    { Icon: ShieldCheck, label: "SECURE AUTH" },
-    { Icon: Lock, label: "DATA PROTECTED" },
-    { Icon: Headphones, label: "24/7 SUPPORT" },
+    { Icon: ShieldCheck, label: isArabic ? "دخول آمن" : "SECURE AUTH" },
+    { Icon: Lock, label: isArabic ? "بيانات محمية" : "DATA PROTECTED" },
+    { Icon: Headphones, label: isArabic ? "دعم مستمر" : "24/7 SUPPORT" },
   ];
-  const navLinks = ["Directory", "Services", "Bookings", "Support"];
+  const navLinks = isArabic
+    ? [
+        { label: "الدليل", href: `/${locale}` },
+        { label: "الخدمات", href: `/${locale}/services` },
+        { label: "الحجوزات", href: `/${locale}/orders` },
+        { label: "الدعم", href: `/${locale}/contact` },
+      ]
+    : [
+        { label: "Directory", href: `/${locale}` },
+        { label: "Services", href: `/${locale}/services` },
+        { label: "Bookings", href: `/${locale}/orders` },
+        { label: "Support", href: `/${locale}/contact` },
+      ];
+  const heroTitle = isArabic ? "دقة في كل اتصال." : "Precision in Every Connection.";
+  const heroCopy = isArabic
+    ? "نربط الحرفيين المحترفين بالعملاء الباحثين عن الجودة في كل المنطقة."
+    : "Connecting professional craftsmen with quality-driven clients across the region.";
+  const heading = isLogin
+    ? (isArabic ? "أهلاً بك" : "WELCOME BACK")
+    : (isArabic ? "إنشاء حساب" : "CREATE ACCOUNT");
+  const subheading = isArabic ? "بوابة الخدمة المتميزة" : "Premium Service Portal";
+  const mobileSubheading = isArabic
+    ? "تسجيل دخول آمن للحرفيين والعملاء المعتمدين"
+    : "Secure login for Egypt's elite tradesmen and clients";
+  const registerPrompt = isArabic ? "ليس لديك حساب؟" : "Don't have an account?";
+  const desktopRegisterPrompt = isArabic ? "جديد في أوستا؟ سجل كـ:" : "New to OSTA? Register as:";
+  const registerLabels = {
+    client: isArabic ? "عميل" : "Client",
+    worker: isArabic ? "فني" : "Worker",
+    vendor: isArabic ? "مورد" : "Vendor",
+  };
+  const registerPrefix = isArabic ? "تسجيل " : "Register ";
+  const footerLinks = {
+    privacy: isArabic ? "سياسة الخصوصية" : "Privacy Policy",
+    terms: isArabic ? "شروط الخدمة" : "Terms of Service",
+    contact: isArabic ? "تواصل معنا" : "Contact Us",
+    careers: isArabic ? "الوظائف" : "Careers",
+  };
+  const bottomLinks = [
+    { Icon: Home, label: isArabic ? "الرئيسية" : "Home", href: `/${locale}` },
+    { Icon: Wrench, label: isArabic ? "الفنيون" : "Workers", href: `/${locale}/workers` },
+    { Icon: Store, label: isArabic ? "الموردون" : "Vendors", href: `/${locale}/vendors` },
+    { Icon: User, label: isArabic ? "حسابي" : "Profile", href: `/${locale}/login` },
+  ];
 
   return (
     <main
@@ -41,10 +85,10 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
               <img src="/logo.svg" alt="OSTA Logo" className="h-8 w-auto brightness-0 invert" />
             </Link>
             <div className="hidden gap-6 md:flex">
-              {navLinks.map((label) => (
+              {navLinks.map(({ label, href }) => (
                 <Link
                   key={label}
-                  href={`/${locale}`}
+                  href={href as `/${string}`}
                   className="text-sm font-black uppercase tracking-wide text-white hover:text-[#f5bd18]"
                 >
                   {label}
@@ -57,10 +101,10 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
               href={`/${altLocale}${pathname}` as `/${string}`}
               className="px-1.5 py-2 text-sm font-black uppercase text-[#f5bd18] md:hidden"
             >
-              AR/EN
+              {isArabic ? "الإنجليزية" : "Arabic"}
             </Link>
             <button className="hidden bg-white px-6 py-2 text-sm font-black uppercase text-black shadow-[4px_4px_0_#000] md:inline-flex">
-              LOGIN
+              {isArabic ? "دخول" : "LOGIN"}
             </button>
           </div>
         </nav>
@@ -85,12 +129,12 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
               alt="Master craftsman"
               className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
             />
-            <div className="absolute bottom-12 left-12 z-20 max-w-md">
+            <div className="absolute bottom-12 left-12 z-20 max-w-md" dir={isArabic ? "rtl" : "ltr"}>
               <h2 className="mb-4 text-4xl font-black leading-tight text-white">
-                Precision in Every Connection.
+                {heroTitle}
               </h2>
               <p className="text-lg leading-relaxed text-white/70">
-                Connecting professional craftsmen with quality-driven clients across the region.
+                {heroCopy}
               </p>
             </div>
           </div>
@@ -98,25 +142,17 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
           <div
             className="flex flex-col justify-center p-8 md:p-16"
             style={{ backgroundColor: "#000000" }}
-            dir="ltr"
+            dir={isArabic ? "rtl" : "ltr"}
           >
             <div className="mb-10 text-center md:text-start">
               <h1 className="mb-2 whitespace-nowrap text-[26px] font-black uppercase leading-tight text-[#f5bd18] md:text-5xl">
-                {isLogin ? (
-                  <>
-                    WELCOME BACK / <span className="md:mt-1 md:block">أهلاً بك</span>
-                  </>
-                ) : (
-                  <>
-                    CREATE ACCOUNT / <span className="md:mt-1 md:block">إنشاء حساب</span>
-                  </>
-                )}
+                {heading}
               </h1>
               <p className="mx-auto max-w-md text-base leading-relaxed text-white/70 md:mx-0 md:text-sm md:font-black md:uppercase md:tracking-[0.2em] md:text-white/50">
                 <span className="md:hidden">
-                  Secure login for Egypt&apos;s elite tradesmen and clients / منصة الحرفيين الموثقة
+                  {mobileSubheading}
                 </span>
-                <span className="hidden md:inline">Premium Service Portal</span>
+                <span className="hidden md:inline">{subheading}</span>
               </p>
             </div>
 
@@ -125,24 +161,19 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
             {isLogin && (
               <div className="mt-10 grid gap-4 border-t border-white/10 pt-6">
                 <p className="mb-2 text-center text-xs font-black uppercase tracking-[0.2em] text-white/40">
-                  <span className="md:hidden">Don&apos;t have an account? / ليس لديك حساب؟</span>
-                  <span className="hidden md:inline">New to OSTA? Register as:</span>
+                  <span className="md:hidden">{registerPrompt}</span>
+                  <span className="hidden md:inline">{desktopRegisterPrompt}</span>
                 </p>
                 <div className="grid grid-cols-1 gap-4 md:flex md:gap-3">
                   {(["client", "worker", "vendor"] as const).map((role) => {
-                    const labels: Record<string, string> = {
-                      client: "Client",
-                      worker: "Worker",
-                      vendor: "Vendor",
-                    };
                     return (
                       <Link
                         key={role}
                         href={`/${locale}/register/${role}`}
                         className="flex-1 border border-white/10 py-2 text-center text-[10px] font-black uppercase text-white transition-all hover:border-[#f5bd18]/40 hover:bg-white/5 md:py-3 md:hover:bg-[#f5bd18] md:hover:text-black"
                       >
-                        <span className="md:hidden">Register </span>
-                        {labels[role]}
+                        <span className="md:hidden">{registerPrefix}</span>
+                        {registerLabels[role]}
                       </Link>
                     );
                   })}
@@ -169,30 +200,29 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
           <div className="space-y-4">
             <img alt="OSTA Logo" className="h-6 w-auto brightness-0 invert" src="/logo.svg" />
             <p className="max-w-md text-base leading-relaxed text-white/45">
-              OSTA Marketplace: The premier ecosystem for skilled labor and industrial solutions. Powered by quality, driven by technology.
+              {isArabic
+                ? "سوق أوستا: منظومة متكاملة للعمالة الماهرة والحلول الصناعية، مدعومة بالجودة والتقنية."
+                : "OSTA Marketplace: The premier ecosystem for skilled labor and industrial solutions. Powered by quality, driven by technology."}
             </p>
-            <p className="text-base text-[#ffdf9a]">© 2026 OSTA Marketplace. All rights reserved.</p>
+            <p className="text-base text-[#ffdf9a]">
+              {isArabic ? "© 2026 أوستا. جميع الحقوق محفوظة." : "© 2026 OSTA Marketplace. All rights reserved."}
+            </p>
           </div>
           <div className="grid grid-cols-2 justify-items-end gap-8">
             <div className="flex flex-col gap-3">
-              <Link className="text-white/45 hover:text-white" href={`/${locale}/privacy`}>Privacy Policy</Link>
-              <Link className="text-white/45 hover:text-white" href={`/${locale}/terms`}>Terms of Service</Link>
+              <Link className="text-white/45 hover:text-white" href={`/${locale}/privacy`}>{footerLinks.privacy}</Link>
+              <Link className="text-white/45 hover:text-white" href={`/${locale}/terms`}>{footerLinks.terms}</Link>
             </div>
             <div className="flex flex-col gap-3">
-              <Link className="text-white/45 hover:text-white" href={`/${locale}/contact`}>Contact Us</Link>
-              <Link className="text-white/45 hover:text-white" href={`/${locale}/careers`}>Careers</Link>
+              <Link className="text-white/45 hover:text-white" href={`/${locale}/contact`}>{footerLinks.contact}</Link>
+              <Link className="text-white/45 hover:text-white" href={`/${locale}/careers`}>{footerLinks.careers}</Link>
             </div>
           </div>
         </div>
       </footer>
 
       <nav className="fixed bottom-0 z-50 flex h-20 w-full items-center justify-around border-t border-white/10 bg-black/80 px-4 text-[#f5bd18] backdrop-blur-md md:hidden">
-        {[
-          { Icon: Home, label: "Home", href: `/${locale}` },
-          { Icon: Wrench, label: "Workers", href: `/${locale}/workers` },
-          { Icon: Store, label: "Vendors", href: `/${locale}/vendors` },
-          { Icon: User, label: "Profile", href: `/${locale}/login` },
-        ].map(({ Icon, label, href }, index) => (
+        {bottomLinks.map(({ Icon, label, href }, index) => (
           <Link key={label} href={href as `/${string}`} className={index === 0 ? "flex flex-col items-center gap-1 text-[#f5bd18]" : "flex flex-col items-center gap-1 text-white/45"}>
             <Icon className="h-5 w-5" />
             <span className="text-xs font-black">{label}</span>
