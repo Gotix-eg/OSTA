@@ -13,6 +13,9 @@ import {
   ChevronRight,
   Eye,
   EyeOff,
+  Fingerprint,
+  IdCard,
+  KeyRound,
   ShieldCheck,
   ArrowUpRight,
   Loader2,
@@ -300,6 +303,27 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
   // Inline validation error states
   const [phoneError, setPhoneError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
+  const loginLabels = isAdmin
+    ? {
+        phone: isArabic ? "معرف المدير / الهاتف" : "Administrator ID",
+        phonePlaceholder: isArabic ? "OS-XXXX أو رقم الهاتف" : "OS-XXXX or phone number",
+        password: isArabic ? "مفتاح التشفير" : "Encryption Key",
+        passwordPlaceholder: "••••••••",
+        remember: isArabic ? "حفظ الجلسة الآمنة" : "Keep Secure Session",
+        forgot: isArabic ? "إعادة ضبط المفاتيح" : "Reset Keys",
+        submit: isArabic ? "إنشاء الاتصال" : "Establish Link",
+        submitting: isArabic ? "جاري التهيئة..." : "Initializing..."
+      }
+    : {
+        phone: isArabic ? "رقم الهاتف" : "Phone Number",
+        phonePlaceholder: "+20 1XX XXX XXXX",
+        password: isArabic ? "كلمة المرور" : "Password",
+        passwordPlaceholder: "••••••••",
+        remember: isArabic ? "تذكرني" : "Remember Me",
+        forgot: isArabic ? "نسيت كلمة المرور؟" : "Forgot Password?",
+        submit: isArabic ? "تسجيل الدخول" : "LOGIN",
+        submitting: isArabic ? "جاري تسجيل الدخول..." : "LOGGING IN..."
+      };
 
   async function handleLogin() {
     let isValid = true;
@@ -356,7 +380,7 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
   }
 
   return (
-    <form onSubmit={(e) => { e.preventDefault(); handleLogin(); }} className="space-y-6 animate-fadeIn">
+    <form onSubmit={(e) => { e.preventDefault(); handleLogin(); }} className={cn("space-y-6 animate-fadeIn", isAdmin && "w-full")}>
       {!isAdmin && (
         <div className="mb-8 flex w-full overflow-hidden border border-white/10 rounded-none md:border">
           {(["CLIENT", "WORKER", "VENDOR"] as const).map((role, idx) => {
@@ -393,11 +417,15 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
         {/* Phone Input */}
         <div className="space-y-2 text-start">
           <label className="mb-2 flex justify-between text-xs font-black uppercase tracking-widest text-white/60 md:text-white/70">
-            <span>{isArabic ? "رقم الهاتف" : "Phone Number"}</span>
-            <Phone size={14} className="hidden text-[#f5bd18] md:block" />
+            <span className={isAdmin ? "text-[#f5bd18]" : ""}>{loginLabels.phone}</span>
+            {isAdmin ? <IdCard size={14} className="hidden text-[#f5bd18] md:block" /> : <Phone size={14} className="hidden text-[#f5bd18] md:block" />}
           </label>
           <div className="relative">
-            <Phone size={20} className="absolute start-4 top-1/2 -translate-y-1/2 text-white/40 md:hidden" />
+            {isAdmin ? (
+              <IdCard size={20} className="absolute start-4 top-1/2 -translate-y-1/2 text-white/45" />
+            ) : (
+              <Phone size={20} className="absolute start-4 top-1/2 -translate-y-1/2 text-white/40 md:hidden" />
+            )}
             <input
               type="text"
               value={phone}
@@ -405,12 +433,13 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
                 setPhone(e.target.value);
                 if (phoneError) setPhoneError(null);
               }}
-              placeholder="+20 1XX XXX XXXX"
+              placeholder={loginLabels.phonePlaceholder}
               autoComplete="username"
               name="phone"
               dir="ltr"
               className={cn(
-                "w-full rounded-none bg-[#121212] p-4 ps-12 font-semibold text-white transition-colors placeholder:text-white/20 focus:border-[#f5bd18] focus:outline-none focus:ring-0 md:ps-4",
+                "w-full rounded-none bg-[#121212] p-4 font-semibold text-white transition-colors placeholder:text-white/20 focus:border-[#f5bd18] focus:outline-none focus:ring-0",
+                isAdmin ? "ps-12 md:ps-12" : "ps-12 md:ps-4",
                 phoneError ? "border-2 border-red-500" : "border border-white/20"
               )}
             />
@@ -423,11 +452,15 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
         {/* Password Input */}
         <div className="space-y-2 text-start">
           <label className="mb-2 flex justify-between text-xs font-black uppercase tracking-widest text-white/60 md:text-white/70">
-            <span>{isArabic ? "كلمة المرور" : "Password"}</span>
-            <Lock size={14} className="hidden text-[#f5bd18] md:block" />
+            <span className={isAdmin ? "text-[#f5bd18]" : ""}>{loginLabels.password}</span>
+            {isAdmin ? <KeyRound size={14} className="hidden text-[#f5bd18] md:block" /> : <Lock size={14} className="hidden text-[#f5bd18] md:block" />}
           </label>
           <div className="relative">
-            <Lock size={20} className="absolute start-4 top-1/2 -translate-y-1/2 text-white/40 md:hidden" />
+            {isAdmin ? (
+              <KeyRound size={20} className="absolute start-4 top-1/2 -translate-y-1/2 text-white/45" />
+            ) : (
+              <Lock size={20} className="absolute start-4 top-1/2 -translate-y-1/2 text-white/40 md:hidden" />
+            )}
             <input
               type={showPassword ? "text" : "password"}
               value={password}
@@ -435,7 +468,7 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
                 setPassword(e.target.value);
                 if (passwordError) setPasswordError(null);
               }}
-              placeholder="••••••••"
+              placeholder={loginLabels.passwordPlaceholder}
               autoComplete="current-password"
               name="password"
               className={cn(
@@ -447,6 +480,7 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
               type="button"
               onClick={() => setShowPassword((current) => !current)}
               className="absolute inset-y-0 end-4 flex items-center text-white/50 hover:text-[#f5bd18] transition-colors"
+              aria-label={showPassword ? (isArabic ? "إخفاء كلمة المرور" : "Hide password") : (isArabic ? "إظهار كلمة المرور" : "Show password")}
             >
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
@@ -466,11 +500,11 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
               className="rounded-none bg-transparent border-white/20 text-[#f5bd18] focus:ring-0 focus:ring-offset-0 cursor-pointer h-4 w-4"
             />
             <span className="leading-tight transition-colors group-hover:text-white">
-              {isArabic ? "تذكرني" : "Remember Me"}
+              {loginLabels.remember}
             </span>
           </label>
           <Link href={`/${locale}/forgot-password`} className="text-end leading-tight transition-colors hover:text-[#f5bd18]">
-            {isArabic ? "نسيت كلمة المرور؟" : "Forgot Password?"}
+            {loginLabels.forgot}
           </Link>
         </div>
 
@@ -478,7 +512,10 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
         <button
           type="submit"
           disabled={isSubmitting}
-          className="mt-4 w-full rounded-none bg-[#f5bd18] py-5 text-sm font-black uppercase text-black transition-all"
+          className={cn(
+            "mt-4 w-full rounded-none py-5 text-sm font-black uppercase text-black transition-all",
+            isAdmin ? "bg-[#f5bd18] tracking-[0.18em] hover:brightness-110 active:scale-[0.98]" : "bg-[#f5bd18]"
+          )}
           style={{
             boxShadow: "4px 4px 0px #000000",
           }}
@@ -491,10 +528,24 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
             e.currentTarget.style.boxShadow = "4px 4px 0px #000000";
           }}
         >
-          {isSubmitting
-            ? (isArabic ? "جاري تسجيل الدخول..." : "LOGGING IN...")
-            : (isArabic ? "تسجيل الدخول" : "LOGIN")}
+          <span className="inline-flex items-center justify-center gap-3">
+            {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+            {isSubmitting ? loginLabels.submitting : loginLabels.submit}
+            {isAdmin && !isSubmitting ? <ArrowUpRight className={cn("h-4 w-4", isArabic ? "-scale-x-100" : "")} /> : null}
+          </span>
         </button>
+
+        {isAdmin ? (
+          <button
+            type="button"
+            className="w-full rounded-none border border-white/20 bg-transparent py-4 text-xs font-black uppercase tracking-widest text-white transition-colors hover:bg-white/5"
+          >
+            <span className="inline-flex items-center justify-center gap-3">
+              <Fingerprint className="h-5 w-5 text-[#f5bd18]" />
+              {isArabic ? "تحقق بالبصمة" : "Biometric Auth"}
+            </span>
+          </button>
+        ) : null}
 
         {submitted && (
           <div className="p-4 border border-success/20 bg-success/5 text-success text-center font-bold rounded-none">

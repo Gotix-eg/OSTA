@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { Home, Lock, Menu, ShieldCheck, Headphones, Store, User, Wrench } from "lucide-react";
+import { Activity, CircleHelp, FileWarning, Home, Lock, Menu, Scale, Shield, ShieldCheck, Headphones, Store, User, Wrench } from "lucide-react";
 import type { Locale } from "@/lib/locales";
 
 interface AuthShellProps {
@@ -229,6 +229,116 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
           </Link>
         ))}
       </nav>
+    </main>
+  );
+}
+
+export function AdminAuthShell({ locale, children }: { locale: Locale; children: ReactNode }) {
+  const isArabic = locale === "ar";
+  const labels = {
+    brand: isArabic ? "إدارة أوستا" : "OSTA ADMIN",
+    status: isArabic ? "حالة النظام: مستقرة" : "System Status: Optimal",
+    title: isArabic ? "دخول آمن" : "Secure Access",
+    tier: isArabic ? "مستوى النظام: تحقق إداري متقدم" : "System Level: Tier 1 Auth Required",
+    ssl: isArabic ? "تشفير SSL آمن نشط" : "Secure SSL Encryption Active",
+    node: isArabic ? "بوابة الاتصال" : "Gateway Node",
+    region: isArabic ? "نطاق الوصول" : "Access Region",
+    legal: isArabic ? "السياسات" : "Legal",
+    breach: isArabic ? "بوابة البلاغات" : "Breach Portal",
+    copyright: isArabic ? "© 2026 أنظمة أوستا الآمنة" : "© 2026 OSTA Secure Systems",
+    mobileTitle: isArabic ? "بوابة التحكم" : "Access Control",
+    watermark: isArabic ? "بوابة آمنة" : "SECURE PORTAL",
+    mobileCopy: isArabic
+      ? "الوصول إلى هذا النظام مقصور على موظفي أوستا المخولين فقط. يتم تسجيل كل الأنشطة ومراجعتها."
+      : "Access to this system is restricted to authorized OSTA personnel only. All activities are logged and monitored."
+  };
+
+  return (
+    <main className="relative min-h-screen overflow-x-hidden bg-[#0a0a0a] text-white" dir={isArabic ? "rtl" : "ltr"}>
+      <div className="pointer-events-none absolute inset-0 opacity-25 [background-image:radial-gradient(rgba(245,189,24,0.12)_1px,transparent_1px)] [background-size:24px_24px]" />
+      <div className="pointer-events-none absolute bottom-[8%] end-[-8%] hidden select-none text-[9rem] font-black uppercase leading-none text-white/[0.03] -rotate-12 sm:block lg:text-[13rem]">
+        {labels.watermark}
+      </div>
+
+      <header className="fixed inset-x-0 top-0 z-50 border-b border-white/5 bg-[#0a0a0a]/80 px-4 py-5 backdrop-blur-md md:px-12">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <span className="h-8 w-2 bg-[#f5bd18]" />
+            <span className="text-xl font-black uppercase tracking-tight text-[#f5bd18] md:text-2xl">{labels.brand}</span>
+          </div>
+          <div className="flex items-center gap-5 md:gap-8">
+            <div className="hidden items-center gap-2 border border-[#f5bd18]/20 bg-[#f5bd18]/5 px-4 py-1.5 md:flex">
+              <span className="h-2 w-2 animate-pulse rounded-full bg-[#f5bd18] shadow-[0_0_8px_#f5bd18]" />
+              <span className="text-[11px] font-black uppercase tracking-[0.18em] text-[#f5bd18]">{labels.status}</span>
+            </div>
+            <div className="flex items-center gap-4 text-white/55">
+              <Lock className="h-5 w-5 transition-colors hover:text-[#f5bd18]" />
+              <CircleHelp className="h-5 w-5 transition-colors hover:text-[#f5bd18]" />
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <section className="relative z-10 flex min-h-screen items-center justify-center px-4 pb-28 pt-24 md:pb-24">
+        <div className="w-full max-w-md">
+          <div className="relative overflow-hidden border border-[#f5bd18]/10 bg-[#111111] p-6 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] md:p-12">
+            <Shield className="pointer-events-none absolute end-4 top-4 h-16 w-16 text-[#f5bd18]/20 md:h-20 md:w-20" />
+
+            <div className="mb-9 text-center md:mb-10">
+              <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center bg-[#f5bd18] text-black shadow-[4px_4px_0_#fff] md:shadow-none">
+                <ShieldCheck className="h-9 w-9" />
+              </div>
+              <h1 className="text-3xl font-black uppercase tracking-widest text-white md:text-4xl">
+                <span className="hidden md:inline">{labels.title}</span>
+                <span className="md:hidden">{labels.mobileTitle}</span>
+              </h1>
+              <div className="mt-4 inline-flex items-center gap-2 border border-white/10 bg-white/5 px-3 py-1">
+                <Activity className="h-4 w-4 text-[#f5bd18]" />
+                <p className="text-[11px] font-black uppercase tracking-tight text-white/70">{labels.tier}</p>
+              </div>
+            </div>
+
+            {children}
+
+            <div className="mt-10 border-t border-white/5 pt-7 md:mt-12 md:pt-8">
+              <div className="mb-7 flex items-center justify-center gap-3 text-white/45 md:mb-8">
+                <ShieldCheck className="h-5 w-5 text-[#f5bd18]" />
+                <span className="text-[11px] font-black uppercase tracking-[0.18em]">{labels.ssl}</span>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="border border-white/5 bg-black/50 p-4 text-center">
+                  <p className="mb-1 text-[10px] font-black uppercase tracking-tight text-white/30">{labels.node}</p>
+                  <p className="text-sm font-black uppercase text-[#f5bd18]">OS-PRIME-01</p>
+                </div>
+                <div className="border border-white/5 bg-black/50 p-4 text-center">
+                  <p className="mb-1 text-[10px] font-black uppercase tracking-tight text-white/30">{labels.region}</p>
+                  <p className="text-sm font-black uppercase text-[#f5bd18]">GLOBAL-SEC</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p className="mx-auto mt-6 max-w-sm text-center text-[10px] font-bold uppercase leading-relaxed text-white/40 md:hidden">
+            {labels.mobileCopy}
+          </p>
+
+          <div className="mt-8 flex flex-col items-center justify-between gap-5 px-2 text-white/25 md:mt-10 md:flex-row">
+            <div className="text-[11px] font-black uppercase tracking-[0.24em]">{labels.copyright}</div>
+            <div className="flex gap-6 text-[11px] font-black uppercase tracking-widest">
+              <a className="transition-colors hover:text-[#f5bd18]" href={`/${locale}/terms`}>
+                <Scale className="me-1 inline h-3.5 w-3.5" />
+                {labels.legal}
+              </a>
+              <a className="transition-colors hover:text-[#f5bd18]" href={`/${locale}/contact`}>
+                <FileWarning className="me-1 inline h-3.5 w-3.5" />
+                {labels.breach}
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="fixed bottom-0 left-0 h-1 w-full bg-[#f5bd18] shadow-[0_-5px_15px_rgba(245,189,24,0.3)]" />
     </main>
   );
 }
