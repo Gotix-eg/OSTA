@@ -26,6 +26,14 @@ import {
   WorkerProShell,
   WorkerProTopStrip
 } from "@/components/worker/worker-pro-ui";
+import {
+  VendorStitchEmpty,
+  VendorStitchHero,
+  VendorStitchMetric,
+  VendorStitchPanel,
+  VendorStitchShell,
+  VendorStitchTopStrip
+} from "@/components/vendor/vendor-stitch-ui";
 
 // --- Types & Helpers ---
 type CardTone = "gold" | "onyx" | "marble";
@@ -745,38 +753,74 @@ export function VendorDashboardHome({ locale }: { locale: Locale }) {
   const trialDaysLeft = data.summary.trialExpiresAt ? Math.ceil((new Date(data.summary.trialExpiresAt).getTime() - new Date().getTime()) / (1000 * 3600 * 24)) : 0;
 
   return (
-    <div className="animate-slideUp">
-      <SectionTitle
-        eyebrow={isArabic ? "لوحة الموردين" : "Vendor Dashboard"}
-        title={isArabic ? "متجرك، أرباحك، نجاحك" : "Your Store, Your Success"}
-        subtitle={isArabic ? "أدر مخزونك، استقبل طلبات الخامات، وتابع مبيعاتك من مكان واحد." : "Manage inventory, receive material requests, and track sales in one place."}
-        actionLabel={isArabic ? "إدارة المخزون" : "Manage Inventory"}
+    <VendorStitchShell locale={locale}>
+      <VendorStitchTopStrip
+        locale={locale}
+        title={isArabic ? "لوحة المورد" : "Vendor home"}
         actionHref={`/${locale}/vendor/inventory`}
+        actionLabel={isArabic ? "إدارة المخزون" : "Manage inventory"}
       />
 
-      <div className="mb-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <MetricCard 
-          label={isTrialActive ? (isArabic ? "الفترة التجريبية" : "Free Trial") : (isArabic ? "الطلبات" : "Orders")} 
-          value={isTrialActive ? (isArabic ? `${formatNumber(locale, trialDaysLeft)} يوم` : `${trialDaysLeft}d`) : String(data.summary.activeOrders)} 
-          note={isArabic ? "متبقي للتجربة" : "trial days left"} 
-          icon={Store} 
-          tone="gold" 
-        />
-        <MetricCard label={isArabic ? "مبيعات الشهر" : "Monthly Sales"} value={formatCurrency(locale, data.summary.monthlySales)} note={isArabic ? "إجمالي المبيعات" : "total sales"} icon={CircleDollarSign} />
-        <MetricCard label={isArabic ? "طلبات التسعير" : "Quote Requests"} value={String(data.recentRequests.length)} note={isArabic ? "تنتظر ردك" : "awaiting your response"} icon={MessageSquare} />
-        <MetricCard label={isArabic ? "المحفظة" : "Wallet"} value={formatCurrency(locale, data.summary.walletBalance)} note={isArabic ? "الرصيد المتاح" : "available balance"} icon={Wallet} />
+      <VendorStitchHero
+        locale={locale}
+        eyebrow={isArabic ? "مركز تشغيل المورد" : "Vendor operating hub"}
+        title={isArabic ? "إدارة متجر" : "Storefront"}
+        highlight={isArabic ? "الخامات" : "control"}
+        subtitle={
+          isArabic
+            ? "تابع مخزونك، الطلبات النشطة، عروض التسعير، والمحفظة من مساحة واحدة بنفس نظام تصميم Stitch."
+            : "Track inventory, active orders, material bids, and wallet balance from one Stitch-aligned workspace."
+        }
+        actionHref={`/${locale}/vendor/materials`}
+        actionLabel={isArabic ? "طلبات الخامات" : "Material bids"}
+        side={
+          <>
+            <VendorStitchMetric
+              label={isTrialActive ? (isArabic ? "تجربة مجانية" : "Free trial") : isArabic ? "طلبات نشطة" : "Active orders"}
+              value={isTrialActive ? (isArabic ? `${formatNumber(locale, trialDaysLeft)} يوم` : `${trialDaysLeft}d`) : formatNumber(locale, data.summary.activeOrders)}
+              note={isArabic ? "جاهزة للمتابعة" : "ready to track"}
+              icon={Store}
+              index="01"
+            />
+            <VendorStitchMetric
+              label={isArabic ? "مبيعات الشهر" : "Monthly sales"}
+              value={formatCurrency(locale, data.summary.monthlySales)}
+              note={isArabic ? "إجمالي التشغيل" : "gross flow"}
+              icon={CircleDollarSign}
+              index="02"
+            />
+          </>
+        }
+      />
+
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <VendorStitchMetric label={isArabic ? "طلبات التسعير" : "Quote requests"} value={formatNumber(locale, data.recentRequests.length)} note={isArabic ? "تنتظر ردك" : "awaiting reply"} icon={MessageSquare} index="03" />
+        <VendorStitchMetric label={isArabic ? "المحفظة" : "Wallet"} value={formatCurrency(locale, data.summary.walletBalance)} note={isArabic ? "رصيد متاح" : "available"} icon={Wallet} index="04" />
+        <VendorStitchMetric label={isArabic ? "الطلبات النشطة" : "Active orders"} value={formatNumber(locale, data.summary.activeOrders)} note={isArabic ? "قيد التنفيذ" : "in progress"} icon={Package} index="05" />
+        <VendorStitchMetric label={isArabic ? "حالة المتجر" : "Store state"} value={isArabic ? "نشط" : "Live"} note={isArabic ? "جاهز لاستقبال الطلبات" : "ready for orders"} icon={ShieldCheck} index="06" />
       </div>
 
-      <Surface title={isArabic ? "طلبات الخامات الأخيرة" : "Recent Material Requests"}>
+      <VendorStitchPanel eyebrow={isArabic ? "طلبات الخامات الأخيرة" : "Latest material requests"} title={isArabic ? "طابور عروض الأسعار" : "Quotation queue"}>
         {data.recentRequests.length === 0 ? (
-          <EmptyNotice message={isArabic ? "لا توجد طلبات خامات جديدة حالياً." : "No new material requests at the moment."} />
+          <VendorStitchEmpty
+            title={isArabic ? "لا توجد طلبات خامات جديدة" : "No new material requests"}
+            text={isArabic ? "أي طلب خامات قريب من نطاق متجرك سيظهر هنا فوراً لتقديم عرض سعر." : "Nearby material requests will appear here as soon as they are available for bidding."}
+            actionLabel={isArabic ? "افتح المزايدات" : "Open bidding"}
+            actionHref={`/${locale}/vendor/materials`}
+          />
         ) : (
-          <div className="space-y-4">
-            {/* Mapping requests here */}
+          <div className="grid gap-4 md:grid-cols-2">
+            {data.recentRequests.map((request: any) => (
+              <Link key={request.id ?? request.title} href={`/${locale}/vendor/materials`} className="border border-white/10 bg-[#121212] p-5 transition-colors hover:border-[#f5bd18]/60">
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#f5bd18]">{isArabic ? "طلب خامات" : "Material request"}</p>
+                <h3 className="mt-3 text-xl font-black text-white">{request.title ?? request.serviceNameAr ?? request.serviceNameEn ?? (isArabic ? "طلب جديد" : "New request")}</h3>
+                <p className="mt-2 line-clamp-2 text-sm leading-6 text-white/50">{request.description ?? (isArabic ? "افتح الطلب لعرض التفاصيل وتقديم السعر." : "Open the request to review details and quote.")}</p>
+              </Link>
+            ))}
           </div>
         )}
-      </Surface>
-    </div>
+      </VendorStitchPanel>
+    </VendorStitchShell>
   );
 }
 

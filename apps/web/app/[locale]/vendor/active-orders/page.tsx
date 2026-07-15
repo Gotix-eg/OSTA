@@ -1,29 +1,52 @@
 import { notFound } from "next/navigation";
+import { ClipboardCheck, PackageCheck, Truck, Wallet } from "lucide-react";
+
 import { DashboardShell } from "@/components/dashboard/dashboard-shell";
+import {
+  VendorStitchEmpty,
+  VendorStitchHero,
+  VendorStitchMetric,
+  VendorStitchPanel,
+  VendorStitchShell,
+  VendorStitchTopStrip
+} from "@/components/vendor/vendor-stitch-ui";
 import { isLocale } from "@/lib/locales";
-import { Construction } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
 export default async function VendorActiveOrdersPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
+  const isArabic = locale === "ar";
 
   return (
     <DashboardShell locale={locale} role="vendor">
-      <div className="flex h-[60vh] flex-col items-center justify-center text-center">
-        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-surface-soft text-dark-400">
-          <Construction className="h-10 w-10" />
+      <VendorStitchShell locale={locale}>
+        <VendorStitchTopStrip locale={locale} title={isArabic ? "الطلبات النشطة" : "Active orders"} />
+        <VendorStitchHero
+          locale={locale}
+          eyebrow={isArabic ? "تنفيذ وتوصيل" : "Fulfillment board"}
+          title={isArabic ? "طلبات المتجر" : "Live order"}
+          highlight={isArabic ? "النشطة" : "pipeline"}
+          subtitle={isArabic ? "تابع تجهيز الطلبات المقبولة، الشحن، والتسليم بنفس نظام تشغيل المورد." : "Monitor accepted orders, preparation, shipping, and delivery in the vendor operating style."}
+          actionHref={`/${locale}/vendor/materials`}
+          actionLabel={isArabic ? "طلبات الخامات" : "Material bids"}
+        />
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <VendorStitchMetric label={isArabic ? "مقبولة" : "Accepted"} value="0" note={isArabic ? "بانتظار التجهيز" : "waiting prep"} icon={ClipboardCheck} index="01" />
+          <VendorStitchMetric label={isArabic ? "قيد التجهيز" : "Preparing"} value="0" note={isArabic ? "داخل المتجر" : "in store"} icon={PackageCheck} index="02" />
+          <VendorStitchMetric label={isArabic ? "قيد التوصيل" : "Shipping"} value="0" note={isArabic ? "في الطريق" : "on route"} icon={Truck} index="03" />
+          <VendorStitchMetric label={isArabic ? "قيمة الطلبات" : "Order value"} value={isArabic ? "0 ج.م" : "EGP 0" } note={isArabic ? "نشط الآن" : "active now"} icon={Wallet} index="04" />
         </div>
-        <h2 className="mt-6 text-2xl font-semibold text-dark-950">
-          {locale === "ar" ? "قريباً - الطلبات الجارية" : "Coming Soon - Active Orders"}
-        </h2>
-        <p className="mt-2 text-dark-500 max-w-md">
-          {locale === "ar"
-            ? "هنا ستتابع الطلبات المباشرة التي قام العملاء بتأكيدها من مخزونك."
-            : "Here you will track direct orders verified by customers from your inventory."}
-        </p>
-      </div>
+        <VendorStitchPanel eyebrow={isArabic ? "قائمة التنفيذ" : "Execution queue"} title={isArabic ? "لا توجد طلبات قيد التنفيذ" : "No active fulfillment orders"}>
+          <VendorStitchEmpty
+            title={isArabic ? "الطابور فارغ حالياً" : "The queue is currently clear"}
+            text={isArabic ? "عندما يقبل العميل عرض سعر أو يشتري من مخزونك، سيظهر الطلب هنا بمراحل التجهيز والتوصيل." : "When a client accepts a quote or buys from your inventory, the order will appear here with preparation and delivery stages."}
+            actionLabel={isArabic ? "افتح المزايدات" : "Open bidding"}
+            actionHref={`/${locale}/vendor/materials`}
+          />
+        </VendorStitchPanel>
+      </VendorStitchShell>
     </DashboardShell>
   );
 }

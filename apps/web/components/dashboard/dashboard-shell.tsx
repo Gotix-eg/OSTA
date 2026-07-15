@@ -112,7 +112,8 @@ export function DashboardShell({
   const shared = dashboardCopy[locale].shared;
   const theme = roleThemes[role];
   const isClientDashboard = role === "client";
-  const isStitchDashboard = isClientDashboard || role === "worker";
+  const isVendorDashboard = role === "vendor";
+  const isStitchDashboard = isClientDashboard || role === "worker" || isVendorDashboard;
 
   useEffect(() => {
     let cancelled = false;
@@ -448,7 +449,7 @@ export function DashboardShell({
           </div>
         </div>
 
-        {isClientDashboard ? (
+        {isClientDashboard || isVendorDashboard ? (
           <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-white/10 bg-black/80 px-2 py-3 text-white backdrop-blur-xl lg:hidden">
             {navItems.slice(2, 7).map((item) => {
               const Icon = item.icon;
@@ -490,7 +491,8 @@ function SidebarContent({
 }) {
   const isClientDashboard = role === "client";
   const isWorkerDashboard = role === "worker";
-  const isStitchSidebar = isClientDashboard || isWorkerDashboard;
+  const isVendorDashboard = role === "vendor";
+  const isStitchSidebar = isClientDashboard || isWorkerDashboard || isVendorDashboard;
 
   return (
     <div
@@ -514,7 +516,7 @@ function SidebarContent({
         </div>
 
         <p className={cn("mt-1 text-xs font-black uppercase tracking-[0.24em]", isStitchSidebar ? "text-[#f5bd18]" : "hidden")}>
-          {isWorkerDashboard ? "OSTA PRO" : locale === "ar" ? "تشغيل احترافي" : "Premium Industrial"}
+          {isWorkerDashboard ? "OSTA PRO" : isVendorDashboard ? "OSTA VENDOR" : locale === "ar" ? "تشغيل احترافي" : "Premium Industrial"}
         </p>
 
         {!isStitchSidebar ? <div className={cn("mt-5 flex w-full items-center justify-between border px-3 py-3 text-xs", "rounded-2xl border-white/5 bg-white/5 px-4")}>

@@ -17,6 +17,7 @@ import {
   Store
 } from "lucide-react";
 import { DashboardShell } from "@/components/dashboard/dashboard-shell";
+import { VendorStitchShell, VendorStitchTopStrip } from "@/components/vendor/vendor-stitch-ui";
 import { fetchApiData, postApiData } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
 
@@ -161,12 +162,12 @@ export default function VendorAdsClientPage({ locale }: { locale: Locale }) {
 
   return (
     <DashboardShell locale={locale} role="vendor">
-      <div className="space-y-8 animate-slideUp">
+      <VendorStitchShell locale={locale}>
+        <VendorStitchTopStrip locale={locale} title={isArabic ? "الإعلانات الممولة" : "Sponsored ads"} />
         
-        {/* Neon Hero Section */}
-        <div className="relative rounded-[2.5rem] border border-white/5 bg-onyx-950/40 p-8 overflow-hidden backdrop-blur-3xl shadow-2xl">
-          <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
-          <div className="absolute -left-24 bottom-0 h-72 w-72 rounded-full bg-gold-500/10 blur-3xl pointer-events-none" />
+        {/* Hero Section */}
+        <div className="relative overflow-hidden border border-white/10 bg-black p-6 text-white shadow-[5px_5px_0_#1d1600] lg:p-8">
+          <div className="absolute inset-0 opacity-25 [background:radial-gradient(circle_at_20%_20%,#f5bd18_0,transparent_32%),linear-gradient(135deg,transparent_0,#171717_70%)]" />
           
           <div className="relative flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             <div>
@@ -190,14 +191,14 @@ export default function VendorAdsClientPage({ locale }: { locale: Locale }) {
               <button
                 onClick={handleRefresh}
                 disabled={refreshing}
-                className="inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-white transition-all hover:bg-white/10 active:scale-95 disabled:opacity-50"
+                className="inline-flex h-12 w-12 items-center justify-center border border-white/10 bg-white/5 text-white transition-all hover:bg-white/10 active:scale-95 disabled:opacity-50"
               >
                 <RefreshCw className={`h-5 w-5 ${refreshing ? "animate-spin" : ""}`} />
               </button>
 
               <button
                 onClick={() => setShowCreateModal(true)}
-                className="inline-flex h-12 items-center gap-2 rounded-2xl bg-emerald-400 px-6 font-bold text-onyx-950 transition-all hover:bg-emerald-300 active:scale-95 shadow-lg shadow-emerald-400/25"
+                className="inline-flex h-12 items-center gap-2 bg-[#f5bd18] px-6 font-black text-black transition-all hover:bg-white active:scale-95"
               >
                 <Plus className="h-5 w-5" />
                 {isArabic ? "إنشاء إعلان ممول" : "Build Sponsored Ad"}
@@ -270,8 +271,8 @@ export default function VendorAdsClientPage({ locale }: { locale: Locale }) {
           
           {/* Active Campaigns Feed */}
           <div className="space-y-6">
-            <h2 className="text-xl font-bold text-white flex items-center gap-2">
-              <Megaphone className="h-5 w-5 text-emerald-400" />
+            <h2 className="flex items-center gap-2 text-xl font-black text-black">
+              <Megaphone className="h-5 w-5 text-black" />
               {isArabic ? "حملات الترويج للمتجر" : "My Store Campaigns"}
             </h2>
 
@@ -353,8 +354,8 @@ export default function VendorAdsClientPage({ locale }: { locale: Locale }) {
 
           {/* Futuristic Sparkle Preview Deck */}
           <div className="space-y-6">
-            <h2 className="text-xl font-bold text-white flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-emerald-400" />
+            <h2 className="flex items-center gap-2 text-xl font-black text-black">
+              <Sparkles className="h-5 w-5 text-black" />
               {isArabic ? "بوابة مبيعات المتاجر الممولة" : "Merchant Ad Features"}
             </h2>
 
@@ -560,7 +561,7 @@ export default function VendorAdsClientPage({ locale }: { locale: Locale }) {
             </div>
           </div>
         )}
-      </div>
+      </VendorStitchShell>
     </DashboardShell>
   );
 }

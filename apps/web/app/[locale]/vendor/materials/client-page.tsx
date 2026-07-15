@@ -18,6 +18,7 @@ import {
   MessageSquare
 } from "lucide-react";
 import { DashboardShell } from "@/components/dashboard/dashboard-shell";
+import { VendorStitchShell, VendorStitchTopStrip } from "@/components/vendor/vendor-stitch-ui";
 import { fetchApiData, postApiData } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
 
@@ -205,12 +206,12 @@ export default function VendorMaterialsClientPage({ locale }: { locale: Locale }
 
   return (
     <DashboardShell locale={locale} role="vendor">
-      <div className="space-y-8 animate-slideUp">
+      <VendorStitchShell locale={locale}>
+        <VendorStitchTopStrip locale={locale} title={isArabic ? "مزايدات الخامات" : "Material bidding"} />
         
         {/* Hero Banner */}
-        <div className="relative rounded-[2.5rem] border border-white/5 bg-onyx-950/40 p-8 overflow-hidden backdrop-blur-3xl shadow-2xl">
-          <div className="absolute -right-12 top-0 h-40 w-40 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
-          <div className="absolute -left-12 bottom-0 h-40 w-40 rounded-full bg-gold-500/10 blur-3xl pointer-events-none" />
+        <div className="relative overflow-hidden border border-white/10 bg-black p-6 text-white shadow-[5px_5px_0_#1d1600] lg:p-8">
+          <div className="absolute inset-0 opacity-25 [background:radial-gradient(circle_at_20%_20%,#f5bd18_0,transparent_32%),linear-gradient(135deg,transparent_0,#171717_70%)]" />
           
           <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
@@ -231,7 +232,7 @@ export default function VendorMaterialsClientPage({ locale }: { locale: Locale }
               <button
                 onClick={handleRefresh}
                 disabled={refreshing}
-                className="inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-white transition-all hover:bg-white/10 active:scale-95 disabled:opacity-50"
+                className="inline-flex h-12 w-12 items-center justify-center border border-white/10 bg-white/5 text-white transition-all hover:bg-white/10 active:scale-95 disabled:opacity-50"
               >
                 <RefreshCw className={`h-5 w-5 ${refreshing ? "animate-spin" : ""}`} />
               </button>
@@ -240,28 +241,28 @@ export default function VendorMaterialsClientPage({ locale }: { locale: Locale }
         </div>
 
         {/* Tab Controls */}
-        <div className="flex border-b border-white/10 gap-6">
+        <div className="flex gap-6 border-b border-black/20">
           <button
             onClick={() => setActiveTab("nearby")}
-            className={`pb-4 text-base font-extrabold transition-all relative ${
-              activeTab === "nearby" ? "text-emerald-400" : "text-onyx-400 hover:text-white"
+            className={`relative pb-4 text-base font-extrabold transition-all ${
+              activeTab === "nearby" ? "text-black" : "text-black/45 hover:text-black"
             }`}
           >
             {isArabic ? "طلبات الجوار النشطة" : "Nearby Active Requests"}
             {activeTab === "nearby" && (
-              <span className="absolute bottom-0 inset-x-0 h-1 bg-emerald-400 rounded-t-full" />
+              <span className="absolute bottom-0 inset-x-0 h-1 bg-black" />
             )}
           </button>
           
           <button
             onClick={() => setActiveTab("orders")}
-            className={`pb-4 text-base font-extrabold transition-all relative ${
-              activeTab === "orders" ? "text-emerald-400" : "text-onyx-400 hover:text-white"
+            className={`relative pb-4 text-base font-extrabold transition-all ${
+              activeTab === "orders" ? "text-black" : "text-black/45 hover:text-black"
             }`}
           >
             {isArabic ? "طلباتي الجارية والمقبولة" : "My Supplies & Orders"}
             {activeTab === "orders" && (
-              <span className="absolute bottom-0 inset-x-0 h-1 bg-emerald-400 rounded-t-full" />
+              <span className="absolute bottom-0 inset-x-0 h-1 bg-black" />
             )}
           </button>
         </div>
@@ -273,8 +274,8 @@ export default function VendorMaterialsClientPage({ locale }: { locale: Locale }
           <div className="space-y-6">
             {activeTab === "nearby" ? (
               <>
-                <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                  <MapPin className="h-5 w-5 text-emerald-400" />
+                <h2 className="flex items-center gap-2 text-xl font-black text-black">
+                  <MapPin className="h-5 w-5 text-black" />
                   {isArabic ? "طلبات الجوار المتاحة للتسعير" : "Nearby Requests Waiting for Quotes"}
                 </h2>
 
@@ -353,8 +354,8 @@ export default function VendorMaterialsClientPage({ locale }: { locale: Locale }
               </>
             ) : (
               <>
-                <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-emerald-400" />
+                <h2 className="flex items-center gap-2 text-xl font-black text-black">
+                  <CheckCircle2 className="h-5 w-5 text-black" />
                   {isArabic ? "الطلبات والمبيعات المقبولة" : "Accepted Orders & Deliveries"}
                 </h2>
 
@@ -474,8 +475,8 @@ export default function VendorMaterialsClientPage({ locale }: { locale: Locale }
 
           {/* Details / Pricing Proposal Form */}
           <div className="space-y-6">
-            <h2 className="text-xl font-bold text-white flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-emerald-400" />
+            <h2 className="flex items-center gap-2 text-xl font-black text-black">
+              <TrendingUp className="h-5 w-5 text-black" />
               {isArabic ? "تقديم عرض السعر الفوري" : "Quotation Proposal Form"}
             </h2>
 
@@ -593,7 +594,7 @@ export default function VendorMaterialsClientPage({ locale }: { locale: Locale }
 
         </div>
 
-      </div>
+      </VendorStitchShell>
     </DashboardShell>
   );
 }
