@@ -134,7 +134,7 @@ function useEphemeralState<T>(initialValue: T) {
 
 function StepIndicator({ current, total }: { current: number; total: number }) {
   return (
-    <div className="mb-10 flex items-center gap-3">
+    <div className="mb-8 flex items-center gap-3">
       {Array.from({ length: total }).map((_, index) => {
         const active = index <= current;
 
@@ -142,16 +142,16 @@ function StepIndicator({ current, total }: { current: number; total: number }) {
           <div key={index} className="flex flex-1 items-center gap-3">
             <div
               className={cn(
-                "flex h-10 w-10 items-center justify-center rounded-full border text-sm font-black transition duration-500",
+                "flex h-9 w-9 items-center justify-center rounded-none border text-sm font-black transition duration-300",
                 active
-                  ? "border-gold-500 bg-gold-500 text-onyx-950 shadow-gold/20 shadow-lg"
-                  : "border-onyx-700 bg-onyx-800 text-onyx-500"
+                  ? "border-[#f5bd18] bg-[#f5bd18] text-black"
+                  : "border-white/15 bg-[#121212] text-white/35"
               )}
             >
               {active && index < current ? <Check className="h-4 w-4" /> : index + 1}
             </div>
             {index < total - 1 ? (
-              <div className={cn("h-0.5 flex-1 rounded-full", active ? "bg-gold-500/50" : "bg-onyx-800")} />
+              <div className={cn("h-px flex-1", active ? "bg-[#f5bd18]" : "bg-white/10")} />
             ) : null}
           </div>
         );
@@ -187,7 +187,7 @@ function InputField({
 }) {
   return (
     <label className="block space-y-2 text-start">
-      <span className="text-sm font-bold text-onyx-300 tracking-wide">{label}</span>
+      <span className="text-xs font-black uppercase tracking-widest text-white/70">{label}</span>
       {textarea ? (
         <textarea
           value={value}
@@ -197,8 +197,8 @@ function InputField({
           name={name}
           autoComplete={autoComplete}
           className={cn(
-            "min-h-28 w-full rounded-2xl border bg-onyx-800/50 px-5 py-4 text-white transition-all placeholder:text-onyx-600 focus:ring-4 focus:ring-gold-500/10 outline-none",
-            errorText ? "border-red-500/50 focus:border-red-500/50" : "border-onyx-700 focus:border-gold-500/50"
+            "min-h-28 w-full rounded-none border bg-[#121212] px-4 py-4 text-sm font-semibold text-white outline-none transition-colors placeholder:text-white/20 focus:border-[#f5bd18]",
+            errorText ? "border-red-500" : "border-white/20"
           )}
         />
       ) : (
@@ -210,15 +210,15 @@ function InputField({
           name={name}
           autoComplete={autoComplete}
           className={cn(
-            "h-14 w-full rounded-2xl border bg-onyx-800/50 px-5 text-white transition-all placeholder:text-onyx-600 focus:ring-4 focus:ring-gold-500/10 outline-none",
-            errorText ? "border-red-500/50 focus:border-red-500/50" : "border-onyx-700 focus:border-gold-500/50"
+            "h-14 w-full rounded-none border bg-[#121212] px-4 text-sm font-semibold text-white outline-none transition-colors placeholder:text-white/20 focus:border-[#f5bd18]",
+            errorText ? "border-red-500" : "border-white/20"
           )}
         />
       )}
       {errorText ? (
         <p className="text-xs text-red-500 mt-1 select-none font-bold animate-fadeIn">{errorText}</p>
       ) : helperText ? (
-        <p className="text-xs text-onyx-500 mt-1 select-none font-medium leading-normal">{helperText}</p>
+        <p className="mt-1 text-xs font-semibold leading-normal text-white/35">{helperText}</p>
       ) : null}
     </label>
   );
@@ -255,7 +255,7 @@ function OtpBoxes({ value, onChange }: { value: string; onChange: (value: string
               refs.current[index - 1]?.focus();
             }
           }}
-          className="h-16 w-12 rounded-2xl border border-onyx-700 bg-onyx-800 text-center text-2xl font-black text-gold-500 transition-all focus:border-gold-500 focus:ring-4 focus:ring-gold-500/10 outline-none sm:w-16"
+          className="h-16 w-12 rounded-none border border-white/20 bg-[#121212] text-center text-2xl font-black text-[#f5bd18] outline-none transition-colors focus:border-[#f5bd18] sm:w-16"
         />
       ))}
     </div>
@@ -518,69 +518,69 @@ function FormSkeleton({ locale }: { locale: Locale }) {
     <div className="space-y-8 animate-pulse">
       {/* Title / Section Header Skeleton */}
       <div className="space-y-3">
-        <div className="h-6 w-32 bg-onyx-800/50 rounded-lg" />
-        <div className="h-0.5 w-16 bg-gold-500/30 rounded-full" />
+        <div className="h-6 w-32 bg-white/10" />
+        <div className="h-px w-16 bg-[#f5bd18]/40" />
       </div>
 
       <div className="space-y-6">
-        <div className="onyx-card p-6 space-y-6 border-white/5 bg-white/[0.02]">
+        <div className="space-y-6 border border-white/10 bg-white/[0.02] p-6">
           {/* Section subtitle */}
-          <div className="h-5 w-40 bg-onyx-800/50 rounded-md border-b border-white/5 pb-2" />
+          <div className="h-5 w-40 bg-white/10" />
           
           {/* Input 1 */}
           <div className="space-y-2">
-            <div className="h-4 w-24 bg-onyx-800/50 rounded" />
-            <div className="h-12 w-full bg-onyx-900/50 border border-white/5 rounded-xl" />
-            <div className="h-3 w-56 bg-onyx-800/30 rounded" />
+            <div className="h-4 w-24 bg-white/10" />
+            <div className="h-12 w-full border border-white/10 bg-[#121212]" />
+            <div className="h-3 w-56 bg-white/5" />
           </div>
 
           {/* Grid inputs */}
           <div className="grid gap-6 sm:grid-cols-2">
             <div className="space-y-2">
-              <div className="h-4 w-20 bg-onyx-800/50 rounded" />
-              <div className="h-12 w-full bg-onyx-900/50 border border-white/5 rounded-xl" />
+              <div className="h-4 w-20 bg-white/10" />
+              <div className="h-12 w-full border border-white/10 bg-[#121212]" />
             </div>
             <div className="space-y-2">
-              <div className="h-4 w-20 bg-onyx-800/50 rounded" />
-              <div className="h-12 w-full bg-onyx-900/50 border border-white/5 rounded-xl" />
+              <div className="h-4 w-20 bg-white/10" />
+              <div className="h-12 w-full border border-white/10 bg-[#121212]" />
             </div>
           </div>
 
           {/* Input 2 */}
           <div className="space-y-2">
-            <div className="h-4 w-28 bg-onyx-800/50 rounded" />
-            <div className="h-12 w-full bg-onyx-900/50 border border-white/5 rounded-xl" />
-            <div className="h-3 w-64 bg-onyx-800/30 rounded" />
+            <div className="h-4 w-28 bg-white/10" />
+            <div className="h-12 w-full border border-white/10 bg-[#121212]" />
+            <div className="h-3 w-64 bg-white/5" />
           </div>
           
           {/* Grid inputs 2 */}
           <div className="grid gap-6 sm:grid-cols-2">
             <div className="space-y-2">
-              <div className="h-4 w-20 bg-onyx-800/50 rounded" />
-              <div className="h-12 w-full bg-onyx-900/50 border border-white/5 rounded-xl" />
+              <div className="h-4 w-20 bg-white/10" />
+              <div className="h-12 w-full border border-white/10 bg-[#121212]" />
             </div>
             <div className="space-y-2">
-              <div className="h-4 w-20 bg-onyx-800/50 rounded" />
-              <div className="h-12 w-full bg-onyx-900/50 border border-white/5 rounded-xl" />
+              <div className="h-4 w-20 bg-white/10" />
+              <div className="h-12 w-full border border-white/10 bg-[#121212]" />
             </div>
           </div>
         </div>
 
         {/* Checkbox skeleton */}
-        <div className="flex items-center gap-3 onyx-card p-4 border-white/5 bg-white/[0.01]">
-          <div className="h-5 w-5 bg-onyx-800/50 rounded border border-white/5" />
-          <div className="h-4 w-64 bg-onyx-800/40 rounded" />
+        <div className="flex items-center gap-3 border border-white/10 bg-white/[0.02] p-4">
+          <div className="h-5 w-5 border border-white/10 bg-[#121212]" />
+          <div className="h-4 w-64 bg-white/10" />
         </div>
 
         {/* Button skeleton */}
-        <div className="h-14 w-full bg-gold-500/20 border border-gold-500/10 rounded-2xl flex items-center justify-center gap-2">
-          <Loader2 className="h-5 w-5 animate-spin text-gold-500" />
-          <span className="text-sm font-bold text-gold-500/70">
+        <div className="flex h-14 w-full items-center justify-center gap-2 border border-[#f5bd18]/20 bg-[#f5bd18]/15">
+          <Loader2 className="h-5 w-5 animate-spin text-[#f5bd18]" />
+          <span className="text-sm font-black text-[#f5bd18]/80">
             {isArabic ? "جاري التحضير..." : "Preparing..."}
           </span>
         </div>
 
-        <div className="text-center text-sm font-semibold text-onyx-400 pt-2">
+        <div className="pt-2 text-center text-sm font-semibold text-white/45">
           {isArabic ? (
             <>
               لديك حساب بالفعل؟{" "}
@@ -697,11 +697,11 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
     return (
       <div className="space-y-8 animate-fadeIn">
         <div className="text-center space-y-3">
-          <div className="h-16 w-16 bg-gold-500/10 border border-gold-500/25 rounded-full flex items-center justify-center mx-auto text-gold-500">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center border border-[#f5bd18]/40 bg-[#f5bd18]/10 text-[#f5bd18]">
              <ShieldCheck className="h-8 w-8" />
           </div>
           <h2 className="text-2xl font-black text-white">{isArabic ? "أدخل رمز التحقق" : "Verify Your Email"}</h2>
-          <p className="text-onyx-400 text-sm leading-relaxed">
+          <p className="text-sm leading-relaxed text-white/55">
             {isArabic 
               ? `لقد أرسلنا رمز تحقق مكون من 6 أرقام إلى بريدك الإلكتروني: ${registeredEmail}`
               : `We've sent a 6-digit verification code to your email: ${registeredEmail}`}
@@ -715,7 +715,7 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
            }} />
 
            {otpError && (
-             <div className="onyx-card p-4 border-red-500/20 bg-red-500/5 text-red-500 text-center font-bold">
+             <div className="border border-red-500/20 bg-red-500/5 p-4 text-center font-bold text-red-500">
                {otpError}
              </div>
            )}
@@ -724,7 +724,7 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
              type="button"
              onClick={handleVerifyOtp}
              disabled={otpSubmitting || otpCode.length < 6}
-             className="w-full btn-gold h-14 text-lg font-black disabled:opacity-50"
+             className="h-14 w-full bg-[#f5bd18] text-sm font-black uppercase text-black shadow-[4px_4px_0_#000] transition-transform active:translate-x-1 active:translate-y-1 active:shadow-none disabled:opacity-50"
            >
              {otpSubmitting ? (isArabic ? "... جاري التحقق" : "Verifying...") : isArabic ? "تفعيل الحساب" : "Activate Account"}
            </button>
@@ -736,15 +736,15 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
   return (
     <div className="space-y-8 animate-fadeIn">
       {submitted ? (
-        <div className="onyx-card p-10 text-center border-success/30 bg-success/5 space-y-4">
+        <div className="space-y-4 border border-success/30 bg-success/5 p-10 text-center">
           <ShieldCheck className="h-16 w-16 text-success mx-auto" />
           <h3 className="text-2xl font-black text-white">{isArabic ? "تم إنشاء الحساب!" : "Account Created!"}</h3>
-          <p className="text-onyx-400">{isArabic ? "جاري تحويلك إلى لوحة التحكم..." : "Redirecting to dashboard..."}</p>
+          <p className="text-white/50">{isArabic ? "جاري تحويلك إلى لوحة التحكم..." : "Redirecting to dashboard..."}</p>
         </div>
       ) : (
         <div className="space-y-6">
-          <div className="onyx-card p-6 space-y-6 border-white/5 bg-white/[0.02]">
-            <h3 className="text-lg font-bold text-gold-500 border-b border-white/5 pb-2">
+          <div className="space-y-6 border border-white/10 bg-white/[0.02] p-6">
+            <h3 className="border-b border-white/10 pb-3 text-sm font-black uppercase tracking-[0.18em] text-[#f5bd18]">
               {isArabic ? "البيانات الأساسية" : "Basic Information"}
             </h3>
             
@@ -780,26 +780,26 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
             </div>
           </div>
 
-          <label className="flex items-center gap-3 cursor-pointer group onyx-card p-4 border-onyx-700 bg-onyx-800/30">
+          <label className="group flex cursor-pointer items-center gap-3 border border-white/10 bg-white/[0.02] p-4">
             <div className="relative flex h-5 w-5 items-center justify-center">
                 <input type="checkbox" checked={state.acceptedTerms} onChange={(e) => setState({ ...state, acceptedTerms: e.target.checked })} className="peer h-full w-full opacity-0 absolute cursor-pointer" />
-                <div className="h-full w-full rounded border border-onyx-700 bg-onyx-800 transition peer-checked:border-gold-500 peer-checked:bg-gold-500" />
-                <Check className="pointer-events-none absolute h-3.5 w-3.5 text-onyx-950 opacity-0 transition peer-checked:opacity-100" />
+                <div className="h-full w-full border border-white/20 bg-[#121212] transition peer-checked:border-[#f5bd18] peer-checked:bg-[#f5bd18]" />
+                <Check className="pointer-events-none absolute h-3.5 w-3.5 text-black opacity-0 transition peer-checked:opacity-100" />
             </div>
-            <span className="text-sm text-onyx-400 group-hover:text-onyx-200 transition">{copy.terms}</span>
+            <span className="text-sm font-semibold text-white/50 transition group-hover:text-white">{copy.terms}</span>
           </label>
 
           <button 
               type="button" 
               onClick={handleRegister} 
               disabled={isSubmitting}
-              className="btn-gold w-full h-14 text-lg font-black flex items-center justify-center gap-2"
+              className="flex h-14 w-full items-center justify-center gap-2 bg-[#f5bd18] text-sm font-black uppercase text-black shadow-[4px_4px_0_#000] transition-transform active:translate-x-1 active:translate-y-1 active:shadow-none disabled:opacity-50"
           >
             {isSubmitting ? (isArabic ? "جاري إنشاء الحساب..." : "Creating Account...") : (isArabic ? "إنشاء الحساب" : "Create Account")}
             {!isSubmitting && <ArrowUpRight className="h-5 w-5" />}
           </button>
 
-          <div className="text-center text-sm font-semibold text-onyx-400 pt-2">
+          <div className="pt-2 text-center text-sm font-semibold text-white/45">
             {isArabic ? (
               <>
                 لديك حساب بالفعل؟{" "}
@@ -817,7 +817,7 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
             )}
           </div>
 
-          {error && <div className="onyx-card p-4 border-red-500/20 bg-red-500/5 text-red-500 text-center font-bold text-sm animate-shake">{error}</div>}
+          {error && <div className="animate-shake border border-red-500/20 bg-red-500/5 p-4 text-center text-sm font-bold text-red-500">{error}</div>}
         </div>
       )}
     </div>
@@ -894,15 +894,15 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
   return (
     <div className="space-y-8 animate-fadeIn">
       {submitted ? (
-        <div className="onyx-card p-10 text-center border-success/30 bg-success/5 space-y-4">
+        <div className="space-y-4 border border-success/30 bg-success/5 p-10 text-center">
           <ShieldCheck className="h-16 w-16 text-success mx-auto" />
           <h3 className="text-2xl font-black text-white">{isArabic ? "تم إرسال الطلب!" : "Application Sent!"}</h3>
-          <p className="text-onyx-400">{isArabic ? "جاري مراجعة بياناتك من قبل الإدارة..." : "Your data is being reviewed by the admin..."}</p>
+          <p className="text-white/50">{isArabic ? "جاري مراجعة بياناتك من قبل الإدارة..." : "Your data is being reviewed by the admin..."}</p>
         </div>
       ) : (
         <div className="space-y-6">
-          <div className="onyx-card p-6 space-y-6 border-white/5 bg-white/[0.02]">
-            <h3 className="text-lg font-bold text-gold-500 border-b border-white/5 pb-2">
+          <div className="space-y-6 border border-white/10 bg-white/[0.02] p-6">
+            <h3 className="border-b border-white/10 pb-3 text-sm font-black uppercase tracking-[0.18em] text-[#f5bd18]">
               {isArabic ? "البيانات الشخصية" : "Personal Information"}
             </h3>
             
@@ -927,18 +927,19 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
                 options={workerProfessions.map(p => ({ value: p.value, label: isArabic ? p.labelAr : p.labelEn }))}
                 onChange={(prof) => setState({ ...state, profession: prof })}
                 placeholder={isArabic ? "اختر المهنة" : "Select profession"}
+                variant="auth"
               />
             </div>
           </div>
 
-          <div className="onyx-card p-6 space-y-6 border-white/5 bg-white/[0.02]">
-            <h3 className="text-lg font-bold text-gold-500 border-b border-white/5 pb-2">
+          <div className="space-y-6 border border-white/10 bg-white/[0.02] p-6">
+            <h3 className="border-b border-white/10 pb-3 text-sm font-black uppercase tracking-[0.18em] text-[#f5bd18]">
               {isArabic ? "مستندات التوثيق" : "Verification Documents"}
             </h3>
             
             <div className="grid gap-6 sm:grid-cols-2">
-              <ImageUpload isArabic={isArabic} purpose="registration-document" label={isArabic ? "صورة البطاقة (أمام)" : "ID Front"} value={state.nationalIdFront} onChange={(url) => setState({ ...state, nationalIdFront: url })} />
-              <ImageUpload isArabic={isArabic} purpose="registration-document" label={isArabic ? "صورة البطاقة (خلف)" : "ID Back"} value={state.nationalIdBack} onChange={(url) => setState({ ...state, nationalIdBack: url })} />
+              <ImageUpload isArabic={isArabic} purpose="registration-document" variant="auth" label={isArabic ? "صورة البطاقة (أمام)" : "ID Front"} value={state.nationalIdFront} onChange={(url) => setState({ ...state, nationalIdFront: url })} />
+              <ImageUpload isArabic={isArabic} purpose="registration-document" variant="auth" label={isArabic ? "صورة البطاقة (خلف)" : "ID Back"} value={state.nationalIdBack} onChange={(url) => setState({ ...state, nationalIdBack: url })} />
             </div>
 
             <div className="grid gap-6 sm:grid-cols-2">
@@ -961,26 +962,26 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
             </div>
           </div>
 
-          <label className="flex items-center gap-3 cursor-pointer group onyx-card p-4 border-onyx-700 bg-onyx-800/30">
+          <label className="group flex cursor-pointer items-center gap-3 border border-white/10 bg-white/[0.02] p-4">
             <div className="relative flex h-5 w-5 items-center justify-center">
                 <input type="checkbox" checked={state.acceptedTerms} onChange={(e) => setState({ ...state, acceptedTerms: e.target.checked })} className="peer h-full w-full opacity-0 absolute cursor-pointer" />
-                <div className="h-full w-full rounded border border-onyx-700 bg-onyx-800 transition peer-checked:border-gold-500 peer-checked:bg-gold-500" />
-                <Check className="pointer-events-none absolute h-3.5 w-3.5 text-onyx-950 opacity-0 transition peer-checked:opacity-100" />
+                <div className="h-full w-full border border-white/20 bg-[#121212] transition peer-checked:border-[#f5bd18] peer-checked:bg-[#f5bd18]" />
+                <Check className="pointer-events-none absolute h-3.5 w-3.5 text-black opacity-0 transition peer-checked:opacity-100" />
             </div>
-            <span className="text-sm text-onyx-400 group-hover:text-onyx-200 transition">{copy.terms}</span>
+            <span className="text-sm font-semibold text-white/50 transition group-hover:text-white">{copy.terms}</span>
           </label>
 
           <button 
               type="button" 
               onClick={handleRegister} 
               disabled={isSubmitting}
-              className="btn-gold w-full h-14 text-lg font-black flex items-center justify-center gap-2"
+              className="flex h-14 w-full items-center justify-center gap-2 bg-[#f5bd18] text-sm font-black uppercase text-black shadow-[4px_4px_0_#000] transition-transform active:translate-x-1 active:translate-y-1 active:shadow-none disabled:opacity-50"
           >
             {isSubmitting ? (isArabic ? "جاري إرسال الطلب..." : "Submitting Application...") : (isArabic ? "إرسال طلب الانضمام" : "Submit Application")}
             {!isSubmitting && <ArrowUpRight className="h-5 w-5" />}
           </button>
 
-          <div className="text-center text-sm font-semibold text-onyx-400 pt-2">
+          <div className="pt-2 text-center text-sm font-semibold text-white/45">
             {isArabic ? (
               <>
                 لديك حساب بالفعل؟{" "}
@@ -998,7 +999,7 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
             )}
           </div>
 
-          {error && <div className="onyx-card p-4 border-red-500/20 bg-red-500/5 text-red-500 text-center font-bold text-sm animate-shake">{error}</div>}
+          {error && <div className="animate-shake border border-red-500/20 bg-red-500/5 p-4 text-center text-sm font-bold text-red-500">{error}</div>}
         </div>
       )}
     </div>
@@ -1086,15 +1087,15 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
   return (
     <div className="space-y-8 animate-fadeIn">
       {submitted ? (
-        <div className="onyx-card p-10 text-center border-success/30 bg-success/5 space-y-4">
+        <div className="space-y-4 border border-success/30 bg-success/5 p-10 text-center">
           <ShieldCheck className="h-16 w-16 text-success mx-auto" />
           <h3 className="text-2xl font-black text-white">{isArabic ? "تم إرسال الطلب!" : "Account Created!"}</h3>
-          <p className="text-onyx-400">{isArabic ? "جاري تحويلك إلى لوحة التحكم..." : "Redirecting to dashboard..."}</p>
+          <p className="text-white/50">{isArabic ? "جاري تحويلك إلى لوحة التحكم..." : "Redirecting to dashboard..."}</p>
         </div>
       ) : (
         <div className="space-y-6">
-          <div className="onyx-card p-6 space-y-6 border-white/5 bg-white/[0.02]">
-            <h3 className="text-lg font-bold text-gold-500 border-b border-white/5 pb-2">
+          <div className="space-y-6 border border-white/10 bg-white/[0.02] p-6">
+            <h3 className="border-b border-white/10 pb-3 text-sm font-black uppercase tracking-[0.18em] text-[#f5bd18]">
               {isArabic ? "بيانات المتجر" : "Store Information"}
             </h3>
             
@@ -1112,11 +1113,12 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
                 options={vendorCategories.map(c => ({ value: c.value, label: isArabic ? c.labelAr : c.labelEn }))}
                 onChange={(cat) => setState({ ...state, category: cat })}
                 placeholder={isArabic ? "اختر تصنيف المتجر" : "Select store category"}
+                variant="auth"
             />
           </div>
 
-          <div className="onyx-card p-6 space-y-6 border-white/5 bg-white/[0.02]">
-            <h3 className="text-lg font-bold text-gold-500 border-b border-white/5 pb-2">
+          <div className="space-y-6 border border-white/10 bg-white/[0.02] p-6">
+            <h3 className="border-b border-white/10 pb-3 text-sm font-black uppercase tracking-[0.18em] text-[#f5bd18]">
               {isArabic ? "البيانات الشخصية" : "Owner Information"}
             </h3>
             
@@ -1152,14 +1154,14 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
             </div>
           </div>
 
-          <div className="onyx-card p-6 space-y-6 border-white/5 bg-white/[0.02]">
-            <h3 className="text-lg font-bold text-gold-500 border-b border-white/5 pb-2">
+          <div className="space-y-6 border border-white/10 bg-white/[0.02] p-6">
+            <h3 className="border-b border-white/10 pb-3 text-sm font-black uppercase tracking-[0.18em] text-[#f5bd18]">
               {isArabic ? "مستندات التوثيق" : "Verification Documents"}
             </h3>
             
             <div className="grid gap-6 sm:grid-cols-2">
-              <ImageUpload isArabic={isArabic} purpose="registration-document" label={isArabic ? "السجل التجاري" : "Commercial Record"} value={state.commercialRecord} onChange={(url) => setState({ ...state, commercialRecord: url })} />
-              <ImageUpload isArabic={isArabic} purpose="registration-document" label={isArabic ? "البطاقة الضريبية" : "Tax Card"} value={state.taxCard} onChange={(url) => setState({ ...state, taxCard: url })} />
+              <ImageUpload isArabic={isArabic} purpose="registration-document" variant="auth" label={isArabic ? "السجل التجاري" : "Commercial Record"} value={state.commercialRecord} onChange={(url) => setState({ ...state, commercialRecord: url })} />
+              <ImageUpload isArabic={isArabic} purpose="registration-document" variant="auth" label={isArabic ? "البطاقة الضريبية" : "Tax Card"} value={state.taxCard} onChange={(url) => setState({ ...state, taxCard: url })} />
             </div>
 
             <div className="grid gap-6 sm:grid-cols-2">
@@ -1169,6 +1171,7 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
                 options={egyptianGovernorates.map(g => ({ value: g.value, label: isArabic ? g.labelAr : g.labelEn }))}
                 onChange={(gov) => setState({ ...state, governorate: gov, city: "" })}
                 placeholder={isArabic ? "اختر المحافظة" : "Select governorate"}
+                variant="auth"
               />
               <SelectField
                 label={isArabic ? "المدينة / المنطقة" : "City / Area"}
@@ -1177,12 +1180,13 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
                 options={(majorCities[state.governorate] || []).map(c => ({ value: c.value, label: isArabic ? c.labelAr : c.labelEn }))}
                 onChange={(city) => setState({ ...state, city })}
                 placeholder={isArabic ? "اختر المدينة" : "Select city"}
+                variant="auth"
               />
             </div>
 
             <div className="space-y-3">
-              <span className="text-sm font-bold text-onyx-300 tracking-wide">{isArabic ? "تحديد الموقع على الخريطة" : "Store Location"}</span>
-              <div className="rounded-2xl overflow-hidden border border-onyx-700 h-64 gold-border-glow">
+              <span className="text-xs font-black uppercase tracking-widest text-white/70">{isArabic ? "تحديد الموقع على الخريطة" : "Store Location"}</span>
+              <div className="h-64 overflow-hidden border border-white/20">
                 <MapPicker lat={state.latitude} lng={state.longitude} isArabic={isArabic} onChange={(lat, lng) => setState({ ...state, latitude: lat, longitude: lng })} />
               </div>
             </div>
@@ -1190,26 +1194,26 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
             <InputField label={isArabic ? "العنوان التفصيلي" : "Detailed address"} value={state.address} onChange={(address) => setState({ ...state, address })} textarea rows={2} />
           </div>
 
-          <label className="flex items-center gap-3 cursor-pointer group onyx-card p-4 border-onyx-700 bg-onyx-800/30">
+          <label className="group flex cursor-pointer items-center gap-3 border border-white/10 bg-white/[0.02] p-4">
             <div className="relative flex h-5 w-5 items-center justify-center">
                 <input type="checkbox" checked={state.acceptedTerms} onChange={(e) => setState({ ...state, acceptedTerms: e.target.checked })} className="peer h-full w-full opacity-0 absolute cursor-pointer" />
-                <div className="h-full w-full rounded border border-onyx-700 bg-onyx-800 transition peer-checked:border-gold-500 peer-checked:bg-gold-500" />
-                <Check className="pointer-events-none absolute h-3.5 w-3.5 text-onyx-950 opacity-0 transition peer-checked:opacity-100" />
+                <div className="h-full w-full border border-white/20 bg-[#121212] transition peer-checked:border-[#f5bd18] peer-checked:bg-[#f5bd18]" />
+                <Check className="pointer-events-none absolute h-3.5 w-3.5 text-black opacity-0 transition peer-checked:opacity-100" />
             </div>
-            <span className="text-sm text-onyx-400 group-hover:text-onyx-200 transition">{copy.terms}</span>
+            <span className="text-sm font-semibold text-white/50 transition group-hover:text-white">{copy.terms}</span>
           </label>
 
           <button 
               type="button" 
               onClick={handleRegister} 
               disabled={isSubmitting}
-              className="btn-gold w-full h-14 text-lg font-black flex items-center justify-center gap-2"
+              className="flex h-14 w-full items-center justify-center gap-2 bg-[#f5bd18] text-sm font-black uppercase text-black shadow-[4px_4px_0_#000] transition-transform active:translate-x-1 active:translate-y-1 active:shadow-none disabled:opacity-50"
           >
             {isSubmitting ? (isArabic ? "جاري إنشاء الحساب..." : "Creating Account...") : (isArabic ? "إنشاء حساب المتجر" : "Create Store Account")}
             {!isSubmitting && <ArrowUpRight className="h-5 w-5" />}
           </button>
 
-          <div className="text-center text-sm font-semibold text-onyx-400 pt-2">
+          <div className="pt-2 text-center text-sm font-semibold text-white/45">
             {isArabic ? (
               <>
                 لديك حساب بالفعل؟{" "}
@@ -1227,7 +1231,7 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
             )}
           </div>
 
-          {error && <div className="onyx-card p-4 border-red-500/20 bg-red-500/5 text-red-500 text-center font-bold text-sm animate-shake">{error}</div>}
+          {error && <div className="animate-shake border border-red-500/20 bg-red-500/5 p-4 text-center text-sm font-bold text-red-500">{error}</div>}
         </div>
       )}
     </div>
