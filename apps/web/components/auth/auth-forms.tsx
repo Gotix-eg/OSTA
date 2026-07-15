@@ -14,8 +14,6 @@ import {
   Eye,
   EyeOff,
   Fingerprint,
-  IdCard,
-  KeyRound,
   ShieldCheck,
   ArrowUpRight,
   Loader2,
@@ -305,14 +303,14 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const loginLabels = isAdmin
     ? {
-        phone: isArabic ? "معرف المدير / الهاتف" : "Administrator ID",
-        phonePlaceholder: isArabic ? "OS-XXXX أو رقم الهاتف" : "OS-XXXX or phone number",
-        password: isArabic ? "مفتاح التشفير" : "Encryption Key",
+        phone: isArabic ? "رقم هاتف المدير" : "Admin Phone Number",
+        phonePlaceholder: "+20 1XX XXX XXXX",
+        password: isArabic ? "كلمة المرور" : "Password",
         passwordPlaceholder: "••••••••",
         remember: isArabic ? "حفظ الجلسة الآمنة" : "Keep Secure Session",
-        forgot: isArabic ? "إعادة ضبط المفاتيح" : "Reset Keys",
-        submit: isArabic ? "إنشاء الاتصال" : "Establish Link",
-        submitting: isArabic ? "جاري التهيئة..." : "Initializing..."
+        forgot: isArabic ? "نسيت كلمة المرور؟" : "Forgot Password?",
+        submit: isArabic ? "تسجيل دخول الإدارة" : "Admin Login",
+        submitting: isArabic ? "جاري تسجيل الدخول..." : "Logging in..."
       }
     : {
         phone: isArabic ? "رقم الهاتف" : "Phone Number",
@@ -418,11 +416,11 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
         <div className="space-y-2 text-start">
           <label className="mb-2 flex justify-between text-xs font-black uppercase tracking-widest text-white/60 md:text-white/70">
             <span className={isAdmin ? "text-[#f5bd18]" : ""}>{loginLabels.phone}</span>
-            {isAdmin ? <IdCard size={14} className="hidden text-[#f5bd18] md:block" /> : <Phone size={14} className="hidden text-[#f5bd18] md:block" />}
+            {isAdmin ? <Phone size={14} className="hidden text-[#f5bd18] md:block" /> : <Phone size={14} className="hidden text-[#f5bd18] md:block" />}
           </label>
           <div className="relative">
             {isAdmin ? (
-              <IdCard size={20} className="absolute start-4 top-1/2 -translate-y-1/2 text-white/45" />
+              <Phone size={20} className="absolute start-4 top-1/2 -translate-y-1/2 text-white/45" />
             ) : (
               <Phone size={20} className="absolute start-4 top-1/2 -translate-y-1/2 text-white/40 md:hidden" />
             )}
@@ -453,11 +451,11 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
         <div className="space-y-2 text-start">
           <label className="mb-2 flex justify-between text-xs font-black uppercase tracking-widest text-white/60 md:text-white/70">
             <span className={isAdmin ? "text-[#f5bd18]" : ""}>{loginLabels.password}</span>
-            {isAdmin ? <KeyRound size={14} className="hidden text-[#f5bd18] md:block" /> : <Lock size={14} className="hidden text-[#f5bd18] md:block" />}
+            {isAdmin ? <Lock size={14} className="hidden text-[#f5bd18] md:block" /> : <Lock size={14} className="hidden text-[#f5bd18] md:block" />}
           </label>
           <div className="relative">
             {isAdmin ? (
-              <KeyRound size={20} className="absolute start-4 top-1/2 -translate-y-1/2 text-white/45" />
+              <Lock size={20} className="absolute start-4 top-1/2 -translate-y-1/2 text-white/45" />
             ) : (
               <Lock size={20} className="absolute start-4 top-1/2 -translate-y-1/2 text-white/40 md:hidden" />
             )}
