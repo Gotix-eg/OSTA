@@ -3,22 +3,24 @@
 import { useEffect, useState } from "react";
 import { 
   Store, 
-  Package, 
   MapPin, 
   Clock, 
   Truck, 
   CheckCircle2, 
   ChevronRight, 
-  DollarSign, 
   AlertCircle,
   TrendingUp,
   RefreshCw,
-  Sliders,
-  Send,
-  MessageSquare
+  Send
 } from "lucide-react";
 import { DashboardShell } from "@/components/dashboard/dashboard-shell";
-import { VendorStitchShell, VendorStitchTopStrip } from "@/components/vendor/vendor-stitch-ui";
+import {
+  VendorStitchBadge,
+  VendorStitchEmpty,
+  VendorStitchPanel,
+  VendorStitchShell,
+  VendorStitchTopStrip
+} from "@/components/vendor/vendor-stitch-ui";
 import { fetchApiData, postApiData } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
 
@@ -190,18 +192,14 @@ export default function VendorMaterialsClientPage({ locale }: { locale: Locale }
   }
 
   const getOrderStatusLabel = (status: string) => {
-    const states: Record<string, { labelAr: string; labelEn: string; classes: string }> = {
-      ACCEPTED: { labelAr: "مقبول - بانتظار التجهيز", labelEn: "Accepted - Awaiting Prep", classes: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" },
-      PREPARING: { labelAr: "قيد التجهيز بالمحل", labelEn: "Preparing Items", classes: "bg-purple-500/10 text-purple-400 border border-purple-500/20" },
-      SHIPPED: { labelAr: "قيد الشحن والتوصيل", labelEn: "Shipped & Out for Delivery", classes: "bg-orange-500/10 text-orange-400 border border-orange-500/20" },
-      DELIVERED: { labelAr: "تم التسليم بنجاح", labelEn: "Delivered Successfully", classes: "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30" }
+    const states: Record<string, { labelAr: string; labelEn: string; tone: "gold" | "green" | "muted" }> = {
+      ACCEPTED: { labelAr: "مقبول - بانتظار التجهيز", labelEn: "Accepted - Awaiting Prep", tone: "gold" },
+      PREPARING: { labelAr: "قيد التجهيز بالمحل", labelEn: "Preparing Items", tone: "muted" },
+      SHIPPED: { labelAr: "قيد الشحن والتوصيل", labelEn: "Shipped & Out for Delivery", tone: "muted" },
+      DELIVERED: { labelAr: "تم التسليم بنجاح", labelEn: "Delivered Successfully", tone: "green" }
     };
-    const s = states[status] || { labelAr: status, labelEn: status, classes: "bg-white/5 text-white/70" };
-    return (
-      <span className={`px-3 py-1 rounded-full text-xs font-bold ${s.classes}`}>
-        {isArabic ? s.labelAr : s.labelEn}
-      </span>
-    );
+    const s = states[status] || { labelAr: status, labelEn: status, tone: "muted" as const };
+    return <VendorStitchBadge tone={s.tone}>{isArabic ? s.labelAr : s.labelEn}</VendorStitchBadge>;
   };
 
   return (
@@ -271,53 +269,43 @@ export default function VendorMaterialsClientPage({ locale }: { locale: Locale }
         <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
           
           {/* List panel */}
-          <div className="space-y-6">
+          <VendorStitchPanel
+            eyebrow={activeTab === "nearby" ? "Requests" : "Orders"}
+            title={activeTab === "nearby" ? (isArabic ? "طلبات الجوار المتاحة للتسعير" : "Nearby Requests Waiting for Quotes") : (isArabic ? "الطلبات والمبيعات المقبولة" : "Accepted Orders & Deliveries")}
+            action={activeTab === "nearby" ? <MapPin className="h-5 w-5 text-[#f5bd18]" /> : <CheckCircle2 className="h-5 w-5 text-[#f5bd18]" />}
+          >
             {activeTab === "nearby" ? (
               <>
-                <h2 className="flex items-center gap-2 text-xl font-black text-black">
-                  <MapPin className="h-5 w-5 text-black" />
-                  {isArabic ? "طلبات الجوار المتاحة للتسعير" : "Nearby Requests Waiting for Quotes"}
-                </h2>
-
                 {loading ? (
-                  <div className="flex h-48 items-center justify-center rounded-[2rem] border border-white/5 bg-onyx-900/20">
-                    <div className="h-8 w-8 animate-spin rounded-full border-4 border-emerald-400 border-t-transparent" />
+                  <div className="flex h-48 items-center justify-center border border-white/10 bg-[#080808]">
+                    <div className="h-9 w-9 animate-spin border-4 border-[#f5bd18] border-t-transparent" />
                   </div>
                 ) : nearbyRequests.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center h-64 rounded-[2.5rem] border border-white/5 bg-onyx-900/20 p-8 text-center backdrop-blur-md">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/5 text-onyx-400 mb-4">
-                      <Package className="h-7 w-7" />
-                    </div>
-                    <p className="font-bold text-white text-lg">
-                      {isArabic ? "لا توجد طلبات قريبة حالياً" : "No nearby requests available"}
-                    </p>
-                    <p className="mt-2 text-sm text-onyx-400 max-w-sm">
-                      {isArabic 
-                        ? "جميع طلبات خامات الصيانة والتشطيب المحيطة بموقع متجرك تم تغطيتها أو لا توجد طلبات جديدة حالياً."
-                        : "All material requests around your store coordinates have been quoted or there are no new active requests."}
-                    </p>
-                  </div>
+                  <VendorStitchEmpty
+                    title={isArabic ? "لا توجد طلبات قريبة حالياً" : "No nearby requests available"}
+                    text={isArabic
+                      ? "جميع طلبات خامات الصيانة والتشطيب المحيطة بموقع متجرك تم تغطيتها أو لا توجد طلبات جديدة حالياً."
+                      : "All material requests around your store have been quoted or there are no new active requests."}
+                  />
                 ) : (
                   <div className="grid gap-4">
                     {nearbyRequests.map((req) => (
                       <div
                         key={req.id}
                         onClick={() => setSelectedRequest(req)}
-                        className={`group relative cursor-pointer rounded-[2rem] border p-6 transition-all duration-300 ${
+                        className={`group relative cursor-pointer border p-5 shadow-[3px_3px_0_#1d1600] transition-colors ${
                           selectedRequest?.id === req.id 
-                            ? "border-emerald-500/30 bg-emerald-500/[0.03] shadow-emerald-500/5" 
-                            : "border-white/5 bg-onyx-900/30 hover:bg-white/[0.02]"
+                            ? "border-[#f5bd18] bg-[#111111]"
+                            : "border-white/10 bg-[#080808] hover:border-[#f5bd18]/70"
                         }`}
                       >
                         <div className="flex items-start justify-between gap-4">
                           <div>
                             <div className="flex flex-wrap items-center gap-3">
-                              <h3 className="font-extrabold text-white text-lg group-hover:text-emerald-400 transition-colors">
+                              <h3 className="font-extrabold text-white text-lg group-hover:text-[#f5bd18] transition-colors">
                                 {req.title}
                               </h3>
-                              <span className="px-2.5 py-0.5 rounded-md text-[10px] font-extrabold bg-emerald-500/10 text-emerald-400">
-                                {isArabic ? "طلب متاح" : "Open request"}
-                              </span>
+                              <VendorStitchBadge tone="gold">{isArabic ? "طلب متاح" : "Open request"}</VendorStitchBadge>
                             </div>
                             
                             <p className="mt-2 text-sm text-onyx-400 line-clamp-2 leading-relaxed">
@@ -326,11 +314,11 @@ export default function VendorMaterialsClientPage({ locale }: { locale: Locale }
 
                             <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-onyx-500 font-medium">
                               <span className="flex items-center gap-1.5">
-                                <Clock className="h-3.5 w-3.5 text-emerald-500/70" />
+                                <Clock className="h-3.5 w-3.5 text-[#f5bd18]" />
                                 {new Date(req.createdAt).toLocaleDateString(locale, { dateStyle: "medium" })}
                               </span>
                               <span className="flex items-center gap-1.5">
-                                <Truck className="h-3.5 w-3.5 text-emerald-500/70" />
+                                <Truck className="h-3.5 w-3.5 text-[#f5bd18]" />
                                 {req.deliveryMethod === "VENDOR_DELIVERY" 
                                   ? (isArabic ? "توصيل للمنزل" : "Home Delivery") 
                                   : (isArabic ? "استلام شخصي" : "Self Pickup")}
@@ -343,7 +331,7 @@ export default function VendorMaterialsClientPage({ locale }: { locale: Locale }
                             </div>
                           </div>
 
-                          <div className={`p-2 rounded-xl bg-white/5 text-onyx-400 group-hover:text-emerald-400 transition-colors ${isArabic ? "rotate-180" : ""}`}>
+                          <div className={`border border-white/10 bg-black p-2 text-white/45 transition-colors group-hover:border-[#f5bd18] group-hover:text-[#f5bd18] ${isArabic ? "rotate-180" : ""}`}>
                             <ChevronRight className="h-5 w-5" />
                           </div>
                         </div>
@@ -354,35 +342,23 @@ export default function VendorMaterialsClientPage({ locale }: { locale: Locale }
               </>
             ) : (
               <>
-                <h2 className="flex items-center gap-2 text-xl font-black text-black">
-                  <CheckCircle2 className="h-5 w-5 text-black" />
-                  {isArabic ? "الطلبات والمبيعات المقبولة" : "Accepted Orders & Deliveries"}
-                </h2>
-
                 {loading ? (
-                  <div className="flex h-48 items-center justify-center rounded-[2rem] border border-white/5 bg-onyx-900/20">
-                    <div className="h-8 w-8 animate-spin rounded-full border-4 border-emerald-400 border-t-transparent" />
+                  <div className="flex h-48 items-center justify-center border border-white/10 bg-[#080808]">
+                    <div className="h-9 w-9 animate-spin border-4 border-[#f5bd18] border-t-transparent" />
                   </div>
                 ) : vendorOrders.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center h-64 rounded-[2.5rem] border border-white/5 bg-onyx-900/20 p-8 text-center backdrop-blur-md">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/5 text-onyx-400 mb-4">
-                      <Truck className="h-7 w-7" />
-                    </div>
-                    <p className="font-bold text-white text-lg">
-                      {isArabic ? "لا توجد مبيعات جارية حالياً" : "No active orders"}
-                    </p>
-                    <p className="mt-2 text-sm text-onyx-400 max-w-sm">
-                      {isArabic 
-                        ? "بمجرد قيام العميل بقبول عروض الأسعار التي ترسلها، ستظهر مبيعاتك وطلبات الشحن والتجهيز هنا مباشرة."
-                        : "Once a client accepts your bid, the purchase details and shipping pipelines will show up here."}
-                    </p>
-                  </div>
+                  <VendorStitchEmpty
+                    title={isArabic ? "لا توجد مبيعات جارية حالياً" : "No active orders"}
+                    text={isArabic
+                      ? "بمجرد قيام العميل بقبول عروض الأسعار التي ترسلها، ستظهر مبيعاتك وطلبات الشحن والتجهيز هنا مباشرة."
+                      : "Once a client accepts your bid, purchase details and delivery status will show up here."}
+                  />
                 ) : (
                   <div className="grid gap-4">
                     {vendorOrders.map((order) => (
                       <div 
                         key={order.id}
-                        className="rounded-[2rem] border border-white/5 bg-onyx-900/30 p-6 space-y-4"
+                        className="space-y-4 border border-white/10 bg-[#080808] p-5 shadow-[3px_3px_0_#1d1600]"
                       >
                         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/5 pb-4">
                           <div>
@@ -400,10 +376,10 @@ export default function VendorMaterialsClientPage({ locale }: { locale: Locale }
                           {order.request.description}
                         </p>
 
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-white/[0.02] p-4 rounded-2xl border border-white/5 text-xs">
+                        <div className="grid grid-cols-2 gap-3 border border-white/10 bg-black p-4 text-xs md:grid-cols-4">
                           <div>
                             <span className="block text-onyx-500">{isArabic ? "قيمة الطلب الكلية" : "Total Amount"}</span>
-                            <span className="mt-1 block font-black text-emerald-400 text-sm">
+                            <span className="mt-1 block font-black text-[#f5bd18] text-sm">
                               {order.totalAmount} {isArabic ? "ج.م" : "EGP"}
                             </span>
                           </div>
@@ -438,7 +414,7 @@ export default function VendorMaterialsClientPage({ locale }: { locale: Locale }
                               <button
                                 onClick={() => handleUpdateOrderStatus(order.id, "PREPARING")}
                                 disabled={orderUpdatingId === order.id}
-                                className="px-4 py-2 rounded-xl bg-purple-500 text-onyx-950 font-bold text-xs hover:bg-purple-400 disabled:opacity-50"
+                                className="border border-[#f5bd18] bg-[#f5bd18] px-4 py-2 text-xs font-black uppercase text-black transition-colors hover:bg-white disabled:opacity-50"
                               >
                                 {isArabic ? "بدء التجهيز والتحضير" : "Start Prep"}
                               </button>
@@ -448,7 +424,7 @@ export default function VendorMaterialsClientPage({ locale }: { locale: Locale }
                               <button
                                 onClick={() => handleUpdateOrderStatus(order.id, "SHIPPED")}
                                 disabled={orderUpdatingId === order.id}
-                                className="px-4 py-2 rounded-xl bg-orange-500 text-onyx-950 font-bold text-xs hover:bg-orange-400 disabled:opacity-50"
+                                className="border border-[#f5bd18] bg-[#f5bd18] px-4 py-2 text-xs font-black uppercase text-black transition-colors hover:bg-white disabled:opacity-50"
                               >
                                 {isArabic ? "تسليم شركة الشحن / بدء التوصيل" : "Ship Order"}
                               </button>
@@ -458,7 +434,7 @@ export default function VendorMaterialsClientPage({ locale }: { locale: Locale }
                               <button
                                 onClick={() => handleUpdateOrderStatus(order.id, "DELIVERED")}
                                 disabled={orderUpdatingId === order.id}
-                                className="px-4 py-2 rounded-xl bg-emerald-500 text-onyx-950 font-bold text-xs hover:bg-emerald-400 disabled:opacity-50"
+                                className="border border-[#f5bd18] bg-[#f5bd18] px-4 py-2 text-xs font-black uppercase text-black transition-colors hover:bg-white disabled:opacity-50"
                               >
                                 {isArabic ? "تأكيد التسليم النهائي للعميل" : "Delivered"}
                               </button>
@@ -471,20 +447,19 @@ export default function VendorMaterialsClientPage({ locale }: { locale: Locale }
                 )}
               </>
             )}
-          </div>
+          </VendorStitchPanel>
 
           {/* Details / Pricing Proposal Form */}
-          <div className="space-y-6">
-            <h2 className="flex items-center gap-2 text-xl font-black text-black">
-              <TrendingUp className="h-5 w-5 text-black" />
-              {isArabic ? "تقديم عرض السعر الفوري" : "Quotation Proposal Form"}
-            </h2>
-
+          <VendorStitchPanel
+            eyebrow="Quote"
+            title={isArabic ? "تقديم عرض السعر الفوري" : "Quotation Proposal Form"}
+            action={<TrendingUp className="h-5 w-5 text-[#f5bd18]" />}
+          >
             {selectedRequest ? (
-              <div className="rounded-[2.5rem] border border-white/5 bg-onyx-900/35 p-6 backdrop-blur-md space-y-6">
+              <div className="space-y-6">
                 <div>
                   <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 font-bold border border-emerald-500/20">
+                    <div className="flex h-10 w-10 items-center justify-center border border-[#f5bd18]/60 bg-[#f5bd18] font-black text-black">
                       {selectedRequest.requester.firstName.substring(0, 1)}
                     </div>
                     <div>
@@ -497,7 +472,7 @@ export default function VendorMaterialsClientPage({ locale }: { locale: Locale }
                     </div>
                   </div>
                   
-                  <div className="mt-4 p-4 rounded-2xl border border-white/5 bg-white/[0.02] text-sm text-onyx-300 leading-relaxed">
+                  <div className="mt-4 border border-white/10 bg-[#080808] p-4 text-sm leading-relaxed text-onyx-300">
                     <span className="block text-[10px] font-bold uppercase tracking-wider text-onyx-500 mb-2">{isArabic ? "الطلبات والمواصفات المطلوبة:" : "Requested specification:"}</span>
                     {selectedRequest.description}
                   </div>
@@ -508,15 +483,15 @@ export default function VendorMaterialsClientPage({ locale }: { locale: Locale }
                     {isArabic ? "نموذج تقديم العرض المالي" : "Financial Quotation"}
                   </h5>
 
-                  {bidError && (
-                    <div className="rounded-xl bg-error/10 border border-error/20 p-3 text-sm text-error flex items-center gap-2">
+                {bidError && (
+                    <div className="flex items-center gap-2 border border-error/30 bg-error/10 p-3 text-sm text-error">
                       <AlertCircle className="h-4 w-4 shrink-0" />
                       <span>{bidError}</span>
                     </div>
                   )}
 
                   {bidSuccess && (
-                    <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-3 text-sm text-emerald-400 flex items-center gap-2">
+                    <div className="flex items-center gap-2 border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-300">
                       <CheckCircle2 className="h-4 w-4 shrink-0" />
                       <span>{isArabic ? "تم إرسال عرض سعرك بنجاح للعميل!" : "Quotation submitted successfully!"}</span>
                     </div>
@@ -532,7 +507,7 @@ export default function VendorMaterialsClientPage({ locale }: { locale: Locale }
                         placeholder="e.g. 750"
                         value={bidPrice}
                         onChange={(e) => setBidPrice(e.target.value)}
-                        className="h-12 w-full rounded-xl border border-white/5 bg-white/5 px-4 text-white focus:border-emerald-500/30 focus:bg-white/10 outline-none text-sm transition-all"
+                        className="h-12 w-full border border-white/10 bg-[#121212] px-4 text-white outline-none transition-colors focus:border-[#f5bd18] text-sm"
                       />
                     </label>
 
@@ -543,7 +518,7 @@ export default function VendorMaterialsClientPage({ locale }: { locale: Locale }
                         placeholder="e.g. 50"
                         value={bidDeliveryFee}
                         onChange={(e) => setBidDeliveryFee(e.target.value)}
-                        className="h-12 w-full rounded-xl border border-white/5 bg-white/5 px-4 text-white focus:border-emerald-500/30 focus:bg-white/10 outline-none text-sm transition-all"
+                        className="h-12 w-full border border-white/10 bg-[#121212] px-4 text-white outline-none transition-colors focus:border-[#f5bd18] text-sm"
                       />
                     </label>
                   </div>
@@ -557,7 +532,7 @@ export default function VendorMaterialsClientPage({ locale }: { locale: Locale }
                       placeholder="e.g. 45"
                       value={bidDeliveryTime}
                       onChange={(e) => setBidDeliveryTime(e.target.value)}
-                      className="h-12 w-full rounded-xl border border-white/5 bg-white/5 px-4 text-white focus:border-emerald-500/30 focus:bg-white/10 outline-none text-sm transition-all"
+                      className="h-12 w-full border border-white/10 bg-[#121212] px-4 text-white outline-none transition-colors focus:border-[#f5bd18] text-sm"
                     />
                   </label>
 
@@ -568,14 +543,14 @@ export default function VendorMaterialsClientPage({ locale }: { locale: Locale }
                       placeholder={isArabic ? "تفاصيل إضافية مثل: الدهانات أصلية جوتن والأسلاك بضمان السويدي..." : "e.g. paints are original Jotun, copper cables Elsewedy certified..."}
                       value={bidNotes}
                       onChange={(e) => setBidNotes(e.target.value)}
-                      className="w-full rounded-xl border border-white/5 bg-white/5 p-4 text-white focus:border-emerald-500/30 focus:bg-white/10 outline-none text-sm transition-all resize-none"
+                      className="w-full resize-none border border-white/10 bg-[#121212] p-4 text-white outline-none transition-colors focus:border-[#f5bd18] text-sm"
                     />
                   </label>
 
                   <button
                     type="submit"
                     disabled={bidSubmitting || bidSuccess}
-                    className="w-full mt-4 h-12 rounded-xl bg-emerald-400 font-extrabold text-onyx-950 hover:bg-emerald-300 disabled:opacity-50 transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-400/10"
+                    className="mt-4 flex h-12 w-full items-center justify-center gap-2 border border-[#f5bd18] bg-[#f5bd18] font-black uppercase text-black transition-colors hover:bg-white disabled:opacity-50"
                   >
                     {bidSubmitting ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                     {isArabic ? "تقديم هذا العرض للعميل" : "Submit Proposal"}
@@ -583,14 +558,14 @@ export default function VendorMaterialsClientPage({ locale }: { locale: Locale }
                 </form>
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center h-80 rounded-[2.5rem] border border-white/5 bg-onyx-900/10 p-6 text-center backdrop-blur-md text-onyx-500">
-                <Store className="h-8 w-8 mb-3 text-white/20" />
+              <div className="flex h-80 flex-col items-center justify-center border border-white/10 bg-[#080808] p-6 text-center text-onyx-500">
+                <Store className="h-8 w-8 mb-3 text-[#f5bd18]/70" />
                 <p className="text-sm font-semibold">
                   {isArabic ? "اختر طلبًا متاحًا من الجوار لتجهيز وتقديم عرض السعر والمزايدة عليه فوراً" : "Select an active nearby request from the feed to draft and submit your supply bid"}
                 </p>
               </div>
             )}
-          </div>
+          </VendorStitchPanel>
 
         </div>
 
