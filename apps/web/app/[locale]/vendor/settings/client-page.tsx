@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
-import { BriefcaseBusiness, Settings, ShieldCheck, Store, User, Wrench } from "lucide-react";
+import { useState } from "react";
+import { BriefcaseBusiness, Loader2, Settings, ShieldCheck, Store, User, Wrench } from "lucide-react";
 
 import {
   VendorStitchAction,
@@ -10,16 +10,32 @@ import {
   VendorStitchShell,
   VendorStitchTopStrip
 } from "@/components/vendor/vendor-stitch-ui";
+import { postApiData } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
 
 export function VendorSettingsClientPage({ locale }: { locale: Locale }) {
   const isArabic = locale === "ar";
+  const [pendingRole, setPendingRole] = useState<"CLIENT" | "WORKER" | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const modes = [
-    { href: `/${locale}/client/settings`, icon: User, title: isArabic ? "وضع العميل" : "Client mode", current: false },
-    { href: `/${locale}/worker/settings`, icon: Wrench, title: isArabic ? "وضع الفني" : "Worker mode", current: false },
-    { href: `/${locale}/vendor/settings`, icon: Store, title: isArabic ? "وضع المورد" : "Vendor mode", current: true }
+    { href: `/${locale}/client`, icon: User, title: isArabic ? "وضع العميل" : "Client mode", targetRole: "CLIENT" as const, current: false },
+    { href: `/${locale}/worker`, icon: Wrench, title: isArabic ? "وضع الفني" : "Worker mode", targetRole: "WORKER" as const, current: false },
+    { href: `/${locale}/vendor/settings`, icon: Store, title: isArabic ? "وضع المورد" : "Vendor mode", targetRole: "VENDOR" as const, current: true }
   ];
+
+  async function switchRole(targetRole: "CLIENT" | "WORKER", href: string) {
+    setError(null);
+    setPendingRole(targetRole);
+
+    try {
+      await postApiData<{ role: string }, { targetRole: "CLIENT" | "WORKER" }>("/auth/switch-role", { targetRole });
+      window.location.assign(href);
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : isArabic ? "تعذر تبديل وضع التشغيل" : "Could not switch operating mode");
+      setPendingRole(null);
+    }
+  }
 
   return (
     <VendorStitchShell locale={locale}>
@@ -59,26 +75,43 @@ export function VendorSettingsClientPage({ locale }: { locale: Locale }) {
         </VendorStitchPanel>
 
         <VendorStitchPanel eyebrow={isArabic ? "تبديل الوضع" : "Mode switcher"} title={isArabic ? "أدوار أُسطفاي" : "Ostafy roles"}>
+          {error ? <div className="mb-4 border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm font-bold text-red-200">{error}</div> : null}
           <div className="grid gap-3">
             {modes.map((mode) => {
               const Icon = mode.icon;
-              return (
-                <Link
-                  key={mode.href}
-                  href={mode.href}
-                  className={cn(
-                    "flex items-center justify-between border p-4 transition-colors",
-                    mode.current ? "border-[#f5bd18] bg-[#f5bd18] text-black" : "border-white/10 bg-[#121212] text-white hover:border-[#f5bd18]/60"
-                  )}
-                >
+              const isPending = pendingRole === mode.targetRole;
+              const content = (
+                <>
                   <span className="flex items-center gap-4">
                     <span className={cn("flex h-11 w-11 items-center justify-center", mode.current ? "bg-black text-[#f5bd18]" : "bg-black/40 text-[#f5bd18]")}>
                       <Icon className="h-5 w-5" />
                     </span>
                     <span className="text-sm font-black uppercase">{mode.title}</span>
                   </span>
-                  <span className="text-[10px] font-black uppercase tracking-[0.18em]">{mode.current ? (isArabic ? "الحالي" : "Current") : (isArabic ? "تبديل" : "Switch")}</span>
-                </Link>
+                  <span className="text-[10px] font-black uppercase tracking-[0.18em]">
+                    {mode.current ? (isArabic ? "الحالي" : "Current") : isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : (isArabic ? "تبديل" : "Switch")}
+                  </span>
+                </>
+              );
+
+              return mode.current ? (
+                <div key={mode.href} className="flex items-center justify-between border border-[#f5bd18] bg-[#f5bd18] p-4 text-black">
+                  {content}
+                </div>
+              ) : (
+                <button
+                  key={mode.href}
+                  type="button"
+                  disabled={pendingRole !== null}
+                  onClick={() => {
+                    if (mode.targetRole !== "VENDOR") {
+                      void switchRole(mode.targetRole, mode.href);
+                    }
+                  }}
+                  className="flex items-center justify-between border border-white/10 bg-[#121212] p-4 text-start text-white transition-colors hover:border-[#f5bd18]/60 disabled:cursor-wait disabled:opacity-70"
+                >
+                  {content}
+                </button>
               );
             })}
           </div>
