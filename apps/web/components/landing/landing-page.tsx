@@ -24,13 +24,29 @@ const serviceImages: Record<string, string> = {
   appliances: "https://lh3.googleusercontent.com/aida-public/AB6AXuBUaJL8m48Bpe_ujODneuoPvDhfmC9U-Zof1pGoXVy11MeUd0XRYsVEFmXl_CHdnj6n8RbrD1wOlgE1kA7IG3s5mprEpYrgocNSvPhqy5uhDaQhZEqaJuck7qJZ1jR6r1bFPs6IU44hEor3AkW1KdTuFfAsh8CsbDieBqYLx2wNXuaLZl37PYkCkUCIWDG8qwLx8czzHu1d-qQv4WUtm0SOr3HbUStlA5shYeNw653FVGST0q9y0pT1gInSJ0yNH2xUyr1BM4IQxo4"
 };
 
+const fallbackServiceImage = "https://images.unsplash.com/photo-1581092160562-40aa08e78837?q=80&w=900&auto=format&fit=crop";
+
 function getServiceImage(craft: any) {
-  return craft.imageUrl || serviceImages[craft.slug] || serviceImages[craft.icon] || "https://images.unsplash.com/photo-1581092160562-40aa08e78837?q=80&w=900&auto=format&fit=crop";
+  const imageUrl = typeof craft?.imageUrl === "string" ? craft.imageUrl : "";
+  const slug = typeof craft?.slug === "string" ? craft.slug : "";
+  const icon = typeof craft?.icon === "string" ? craft.icon : "";
+  return imageUrl || serviceImages[slug] || serviceImages[icon] || fallbackServiceImage;
+}
+
+function getServiceSlug(craft: any) {
+  return typeof craft?.slug === "string" && craft.slug.trim() ? craft.slug : "services";
+}
+
+function getServiceName(craft: any, isArabic: boolean) {
+  const nameAr = typeof craft?.nameAr === "string" ? craft.nameAr : "";
+  const nameEn = typeof craft?.nameEn === "string" ? craft.nameEn : "";
+  return isArabic ? (nameAr || nameEn || "خدمة") : (nameEn || nameAr || "Service");
 }
 
 export function LandingPage({ locale }: { locale: Locale }) {
   const isArabic = locale === "ar";
   const liveCategories = useLiveApiData<any[]>("/services/categories", []);
+  const safeCategories = Array.isArray(liveCategories) ? liveCategories.filter(Boolean) : [];
   
   const [slides, setSlides] = useState<any[]>([]);
   const [campaigns, setCampaigns] = useState<any[]>([]);
@@ -95,7 +111,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
   };
 
   const activeHeroSlide = slides[0] || defaultSlide;
-  const mobileCategories = (liveCategories.length > 0 ? liveCategories.slice(0, 4) : [
+  const mobileCategories = (safeCategories.length > 0 ? safeCategories.slice(0, 4) : [
     { id: "electricity", slug: "electricity", nameAr: "كهرباء", nameEn: "Electricity" },
     { id: "plumbing", slug: "plumbing", nameAr: "سباكة", nameEn: "Plumbing" },
     { id: "ac", slug: "ac", nameAr: "تكييف", nameEn: "Air Conditioning" },
@@ -207,16 +223,17 @@ export function LandingPage({ locale }: { locale: Locale }) {
             <div className="grid grid-cols-2 gap-4">
               {mobileCategories.map((craft) => {
                 const imgUrl = getServiceImage(craft);
+                const slug = getServiceSlug(craft);
                 return (
                   <Link
-                    key={craft.id}
-                    href={`/${locale}/services/${craft.slug}`}
+                    key={craft?.id ?? slug}
+                    href={`/${locale}/services/${slug}`}
                     className="group relative flex min-h-[132px] overflow-hidden border border-white/10 bg-black text-center text-white transition-transform active:scale-95"
                   >
                     <img src={imgUrl} alt="" className="absolute inset-0 h-full w-full object-cover opacity-70 transition-transform duration-500 group-hover:scale-110" />
                     <span className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-black/15" />
                     <span className="relative z-10 mt-auto w-full px-4 pb-5 text-sm font-black uppercase">
-                      {isArabic ? craft.nameAr : craft.nameEn}
+                      {getServiceName(craft, isArabic)}
                     </span>
                   </Link>
                 );
@@ -396,19 +413,20 @@ export function LandingPage({ locale }: { locale: Locale }) {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-            {liveCategories.slice(0, 5).map((craft) => {
+            {safeCategories.slice(0, 5).map((craft) => {
               const imgUrl = getServiceImage(craft);
+              const slug = getServiceSlug(craft);
               return (
                 <Link 
-                  key={craft.id}
-                  href={`/${locale}/services/${craft.slug}`} 
+                  key={craft?.id ?? slug}
+                  href={`/${locale}/services/${slug}`}
                   className="group relative min-h-[260px] overflow-hidden border border-white/10 bg-[#1a1c1c] text-center cursor-pointer hover:border-[#f5bd18] transition-all duration-300 rounded-none"
                 >
                   <img src={imgUrl} alt="" className="absolute inset-0 h-full w-full object-cover opacity-75 transition-transform duration-700 group-hover:scale-110" />
                   <span className="absolute inset-0 bg-gradient-to-t from-black via-black/65 to-black/20" />
                   <div className="relative z-10 flex h-full min-h-[260px] flex-col items-center justify-end p-6">
                   <h3 className="text-white font-bold text-lg">
-                    {isArabic ? craft.nameAr : craft.nameEn}
+                    {getServiceName(craft, isArabic)}
                   </h3>
                   <p className="text-neutral-400 text-xs mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     {isArabic ? "فنيون معتمدون" : "Certified Pros"}
