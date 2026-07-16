@@ -1007,8 +1007,8 @@ export function AdminAdsPage({ locale }: { locale: Locale }) {
   const DEFAULT_SLIDES = [
     {
       id: "slide-1",
-      eyebrowAr: "منصة الحرفيين رقم 1 في مصر",
-      eyebrowEn: "Egypt's #1 Craftsman Platform",
+      eyebrowAr: "خدمات موثوقة في مصر",
+      eyebrowEn: "Egypt's Trusted Service Network",
       titleAr: "اطلب أُسطفاي محترف بنقرة واحدة",
       titleEn: "Hire a Professional Ostafy in Seconds",
       descAr: "أول منصة تجمع أمهر الفنيين والمتاجر الموثقة في مصر. جودة مضمونة، أسعار عادلة، وتجربة مستخدم فاخرة.",
@@ -1947,7 +1947,7 @@ export function AdminAdsPage({ locale }: { locale: Locale }) {
                     <div className="relative text-center max-w-sm z-10 space-y-4">
                       {/* Eyebrow */}
                       <span className="inline-block px-2.5 py-1 rounded-full bg-gold-500/10 border border-gold-500/20 text-gold-500 text-[10px] font-bold">
-                        {isArabic ? (formData.eyebrowAr || "منصة الحرفيين") : (formData.eyebrowEn || "Exclusive Tag")}
+                        {isArabic ? (formData.eyebrowAr || "خدمات موثوقة") : (formData.eyebrowEn || "Exclusive Tag")}
                       </span>
                       {/* Title */}
                       <h2 className="text-2xl md:text-3xl font-black text-white leading-tight">

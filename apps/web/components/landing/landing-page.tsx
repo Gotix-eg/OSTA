@@ -326,7 +326,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
               </>
             )}
             <span className="block mt-6 text-3xl md:text-4xl text-[#f5bd18]">
-              {isArabic ? "منصة الحرفيين والمتاجر الموثقة في مصر" : "Egypt's Premium Tradesmen Hub"}
+              {isArabic ? "خدمات وفنيين ومتاجر موثوقة في مصر" : "Egypt's Premium Service Network"}
             </span>
           </h1>
           <p className="text-white max-w-2xl mx-auto opacity-90 text-lg md:text-xl font-light leading-relaxed">
