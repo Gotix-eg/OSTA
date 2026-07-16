@@ -75,7 +75,7 @@ export function VendorsDirectory({ locale }: { locale: Locale }) {
   }, [searchQuery, locale, vendors, activeCategory, selectedCity, isArabic]);
 
   return (
-    <div className="bg-[#f5bd18] text-[#1a1c1c] font-sans -mx-4 md:-mx-12 -my-12">
+    <div className="w-full bg-[#f5bd18] text-[#1a1c1c] font-sans">
       {/* Hero Section */}
       <section className="py-20 px-8 md:px-12 flex flex-col justify-center border-b-4 border-black text-start max-w-7xl mx-auto w-full">
         <div className="w-full">
@@ -223,8 +223,12 @@ export function VendorsDirectory({ locale }: { locale: Locale }) {
       {/* Featured Brands */}
       <section className="bg-black py-16 overflow-hidden border-y-4 border-white/10 text-white text-start">
         <div className="px-8 md:px-12 max-w-7xl mx-auto mb-8">
-          <h3 className="text-xs font-black text-[#f5bd18] uppercase tracking-[0.3em] mb-2">Trusted Partnerships</h3>
-          <h4 className="text-2xl font-black text-white">INDUSTRIAL BRANDS WE CARRY</h4>
+          <h3 className="text-xs font-black text-[#f5bd18] uppercase tracking-[0.3em] mb-2">
+            {isArabic ? "شراكات موثوقة" : "Trusted Partnerships"}
+          </h3>
+          <h4 className="text-2xl font-black text-white">
+            {isArabic ? "علامات صناعية نوفرها" : "INDUSTRIAL BRANDS WE CARRY"}
+          </h4>
         </div>
         <div className="flex space-x-12 whitespace-nowrap overflow-x-auto py-4 hide-scrollbar justify-center max-w-7xl mx-auto opacity-70">
           <div className="flex items-center gap-16 font-black text-2xl tracking-widest text-neutral-400">
@@ -251,9 +255,9 @@ export function VendorsDirectory({ locale }: { locale: Locale }) {
                   : "Join Egypt's largest industrial network and expand your reach to thousands of maintenance professionals."}
               </p>
               <div className="flex flex-wrap gap-4 text-xs font-black text-[#f5bd18]">
-                <span>✓ ZERO SETUP FEE</span>
-                <span>✓ BULK ORDER TOOLS</span>
-                <span>✓ SECURE PAYMENTS</span>
+                <span>{isArabic ? "✓ بدون رسوم إعداد" : "✓ ZERO SETUP FEE"}</span>
+                <span>{isArabic ? "✓ أدوات طلبات الجملة" : "✓ BULK ORDER TOOLS"}</span>
+                <span>{isArabic ? "✓ مدفوعات آمنة" : "✓ SECURE PAYMENTS"}</span>
               </div>
             </div>
             <Link 
