@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Briefcase, Grid3X3, UserCircle } from "lucide-react";
+import { Home, Store, UserCircle, UsersRound } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/locales";
 import { useState, useEffect } from "react";
@@ -41,16 +41,16 @@ export function BottomNav() {
       exact: true,
     },
     {
-      href: `/${locale}/services`,
-      labelAr: "الخدمات",
-      labelEn: "Services",
-      icon: Grid3X3,
+      href: `/${locale}/workers`,
+      labelAr: "الفنيين",
+      labelEn: "Workers",
+      icon: UsersRound,
     },
     {
-      href: role ? `/${locale}/${role.toLowerCase()}/requests` : `/${locale}/register/client`,
-      labelAr: "طلباتي",
-      labelEn: "Requests",
-      icon: Briefcase,
+      href: `/${locale}/vendors`,
+      labelAr: "المتاجر",
+      labelEn: "Vendors",
+      icon: Store,
     },
     {
       href: profileLink,
@@ -61,8 +61,8 @@ export function BottomNav() {
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-gold-700/10 bg-background/95 backdrop-blur-lg md:hidden">
-      <div className="flex h-16 items-center justify-around px-2">
+    <div className="fixed bottom-0 left-0 right-0 z-40 overflow-hidden rounded-t-[1.35rem] border-t border-white/10 bg-black/95 text-white shadow-[0_-10px_30px_rgba(0,0,0,0.28)] backdrop-blur-lg md:hidden">
+      <div className="flex h-[86px] items-center justify-around px-2">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = item.exact
@@ -74,12 +74,12 @@ export function BottomNav() {
               key={item.href}
               href={item.href as `/${string}`}
               className={cn(
-                "flex flex-col items-center justify-center gap-1 text-center py-1 flex-1 transition-all",
-                isActive ? "text-gold-800 scale-105" : "text-onyx-600 hover:text-gold-800"
+                "flex flex-1 flex-col items-center justify-center gap-2 py-2 text-center transition-all active:scale-95",
+                isActive ? "text-[#a88400]" : "text-white/70 hover:text-white"
               )}
             >
-              <Icon className="h-5.5 w-5.5" />
-              <span className="text-[10px] font-medium leading-none">
+              <Icon className="h-8 w-8 stroke-[2.4]" />
+              <span className="text-[18px] font-black leading-none tracking-tight">
                 {isArabic ? item.labelAr : item.labelEn}
               </span>
             </Link>

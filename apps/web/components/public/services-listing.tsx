@@ -108,7 +108,7 @@ export function ServicesListing({ locale }: { locale: Locale }) {
                   )}
                 </div>
                 <h3 className="text-2xl font-black text-white mb-2 font-mono">
-                  {cat.nameEn} / {cat.nameAr}
+                  {isArabic ? cat.nameAr : cat.nameEn}
                 </h3>
                 <p className="text-neutral-400 text-sm font-light leading-relaxed mb-6">
                   {isArabic ? desc.ar : desc.en}

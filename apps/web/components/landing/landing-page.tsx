@@ -481,9 +481,15 @@ export function LandingPage({ locale }: { locale: Locale }) {
                 {/* Default Fallback Ad 1 */}
                 <div className="bg-black border border-white/10 p-8 flex flex-col justify-between min-h-[320px] sticker-shadow hover:border-[#f5bd18] transition-all group text-start rounded-none">
                   <div>
-                    <span className="bg-[#f5bd18] text-[#1a1c1c] px-3 py-1 text-[10px] font-black uppercase mb-6 inline-block rounded-none">PROMOTED</span>
-                    <h3 className="text-white text-xl font-black mb-2">Premium Tool Kits / أطقم أدوات احترافية</h3>
-                    <p className="text-neutral-400 text-sm">Get the latest industrial-grade tools with a 2-year warranty. Exclusive for OSTA vendors.</p>
+                    <span className="bg-[#f5bd18] text-[#1a1c1c] px-3 py-1 text-[10px] font-black uppercase mb-6 inline-block rounded-none">
+                      {isArabic ? "ممول" : "PROMOTED"}
+                    </span>
+                    <h3 className="text-white text-xl font-black mb-2">
+                      {isArabic ? "أطقم أدوات احترافية" : "Premium Tool Kits"}
+                    </h3>
+                    <p className="text-neutral-400 text-sm">
+                      {isArabic ? "أدوات احترافية بضمان عامين، مخصصة لموردي أُسطفاي." : "Get the latest industrial-grade tools with a 2-year warranty. Exclusive for OSTA vendors."}
+                    </p>
                   </div>
                   <Link href={`/${locale}/register/vendor`} className="mt-8 w-full bg-[#f5bd18] text-[#1a1c1c] text-center font-black py-3 hover:scale-105 transition-transform uppercase rounded-none">
                     {isArabic ? "عرض التفاصيل" : "View Details"}
@@ -492,9 +498,15 @@ export function LandingPage({ locale }: { locale: Locale }) {
                 {/* Default Fallback Ad 2 */}
                 <div className="bg-black border border-white/10 p-8 flex flex-col justify-between min-h-[320px] sticker-shadow hover:border-[#f5bd18] transition-all group text-start rounded-none">
                   <div>
-                    <span className="bg-white text-black px-3 py-1 text-[10px] font-black uppercase mb-6 inline-block rounded-none">OFFER</span>
-                    <h3 className="text-white text-xl font-black mb-2">Bulk Material Supply / توريد مواد بالجملة</h3>
-                    <p className="text-neutral-400 text-sm">Save up to 25% on cement and steel for large-scale projects. Verified suppliers only.</p>
+                    <span className="bg-white text-black px-3 py-1 text-[10px] font-black uppercase mb-6 inline-block rounded-none">
+                      {isArabic ? "عرض" : "OFFER"}
+                    </span>
+                    <h3 className="text-white text-xl font-black mb-2">
+                      {isArabic ? "توريد مواد بالجملة" : "Bulk Material Supply"}
+                    </h3>
+                    <p className="text-neutral-400 text-sm">
+                      {isArabic ? "وفّر حتى 25% على الأسمنت والحديد للمشروعات الكبيرة من موردين موثقين فقط." : "Save up to 25% on cement and steel for large-scale projects. Verified suppliers only."}
+                    </p>
                   </div>
                   <Link href={`/${locale}/register/vendor`} className="mt-8 w-full bg-[#f5bd18] text-[#1a1c1c] text-center font-black py-3 hover:scale-105 transition-transform uppercase rounded-none">
                     {isArabic ? "عرض التفاصيل" : "View Details"}
@@ -503,9 +515,15 @@ export function LandingPage({ locale }: { locale: Locale }) {
                 {/* Default Fallback Ad 3 */}
                 <div className="bg-black border border-white/10 p-8 flex flex-col justify-between min-h-[320px] sticker-shadow hover:border-[#f5bd18] transition-all group text-start rounded-none">
                   <div>
-                    <span className="bg-[#f5bd18] text-[#1a1c1c] px-3 py-1 text-[10px] font-black uppercase mb-6 inline-block rounded-none">PROMOTED</span>
-                    <h3 className="text-white text-xl font-black mb-2">Smart Home Setup / تركيب أنظمة ذكية</h3>
-                    <p className="text-neutral-400 text-sm">Certified electricians available for full home automation and security installations.</p>
+                    <span className="bg-[#f5bd18] text-[#1a1c1c] px-3 py-1 text-[10px] font-black uppercase mb-6 inline-block rounded-none">
+                      {isArabic ? "ممول" : "PROMOTED"}
+                    </span>
+                    <h3 className="text-white text-xl font-black mb-2">
+                      {isArabic ? "تركيب أنظمة ذكية" : "Smart Home Setup"}
+                    </h3>
+                    <p className="text-neutral-400 text-sm">
+                      {isArabic ? "كهربائيون معتمدون لتركيب أنظمة المنزل الذكي والأمان بالكامل." : "Certified electricians available for full home automation and security installations."}
+                    </p>
                   </div>
                   <Link href={`/${locale}/register/client`} className="mt-8 w-full bg-[#f5bd18] text-[#1a1c1c] text-center font-black py-3 hover:scale-105 transition-transform uppercase rounded-none">
                     {isArabic ? "عرض التفاصيل" : "View Details"}
@@ -615,7 +633,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
                     worker.isOnline ? "bg-green-500" : "bg-gray-400"
                   )}>
                     {worker.isOnline && <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>}
-                    {worker.isOnline ? "ONLINE" : "OFFLINE"}
+                    {worker.isOnline ? (isArabic ? "متاح" : "ONLINE") : (isArabic ? "غير متاح" : "OFFLINE")}
                   </div>
                 </div>
                 <div className="p-6">
@@ -707,22 +725,34 @@ export function LandingPage({ locale }: { locale: Locale }) {
             <div className="flex items-start gap-6 p-8 md:border-r border-[#e2e2e2] text-start">
               <ShieldCheck className="h-12 w-12 text-[#1a1c1c] flex-shrink-0" />
               <div>
-                <h4 className="font-bold text-lg text-[#1a1c1c] uppercase mb-2">Full Security</h4>
-                <p className="text-neutral-500 text-sm font-light">Escrow protection and background-verified professionals for every single task.</p>
+                <h4 className="font-bold text-lg text-[#1a1c1c] uppercase mb-2">
+                  {isArabic ? "أمان كامل" : "Full Security"}
+                </h4>
+                <p className="text-neutral-500 text-sm font-light">
+                  {isArabic ? "دفع محمي وفنيون تم التحقق من بياناتهم لكل مهمة." : "Escrow protection and background-verified professionals for every single task."}
+                </p>
               </div>
             </div>
             <div className="flex items-start gap-6 p-8 md:border-r border-[#e2e2e2] text-start">
               <ShieldCheck className="h-12 w-12 text-[#1a1c1c] flex-shrink-0" />
               <div>
-                <h4 className="font-bold text-lg text-[#1a1c1c] uppercase mb-2">Quality Guarantee</h4>
-                <p className="text-neutral-500 text-sm font-light">Our 14-day warranty ensures every job meets premium craftsmanship standards.</p>
+                <h4 className="font-bold text-lg text-[#1a1c1c] uppercase mb-2">
+                  {isArabic ? "ضمان الجودة" : "Quality Guarantee"}
+                </h4>
+                <p className="text-neutral-500 text-sm font-light">
+                  {isArabic ? "ضمان 14 يومًا يضمن تنفيذ كل خدمة بمستوى احترافي." : "Our 14-day warranty ensures every job meets premium craftsmanship standards."}
+                </p>
               </div>
             </div>
             <div className="flex items-start gap-6 p-8 text-start">
               <ShieldCheck className="h-12 w-12 text-[#1a1c1c] flex-shrink-0" />
               <div>
-                <h4 className="font-bold text-lg text-[#1a1c1c] uppercase mb-2">Materials Market</h4>
-                <p className="text-neutral-500 text-sm font-light">Direct access to raw materials and parts at wholesale prices for OSTA users.</p>
+                <h4 className="font-bold text-lg text-[#1a1c1c] uppercase mb-2">
+                  {isArabic ? "سوق الخامات" : "Materials Market"}
+                </h4>
+                <p className="text-neutral-500 text-sm font-light">
+                  {isArabic ? "وصول مباشر للخامات وقطع الغيار بأسعار مناسبة لمستخدمي أُسطفاي." : "Direct access to raw materials and parts at wholesale prices for OSTA users."}
+                </p>
               </div>
             </div>
           </div>
@@ -735,8 +765,12 @@ export function LandingPage({ locale }: { locale: Locale }) {
           <div className="bg-[#1a1c1c] p-12 md:p-24 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-12 sticker-shadow rounded-none text-white text-start">
             <div className="absolute top-0 right-0 w-64 h-64 border-[40px] border-white/5 rounded-full translate-x-1/2 -translate-y-1/2"></div>
             <div className="relative z-10 max-w-xl">
-              <h2 className="text-3xl md:text-5xl font-black text-white mb-6">Ready to Experience Professionalism?</h2>
-              <p className="text-neutral-400 text-lg font-light">Join the hub today and start hiring the best tradesmen in the region or list your services to reach thousands of clients.</p>
+              <h2 className="text-3xl md:text-5xl font-black text-white mb-6">
+                {isArabic ? "جاهز لتجربة خدمة احترافية؟" : "Ready to Experience Professionalism?"}
+              </h2>
+              <p className="text-neutral-400 text-lg font-light">
+                {isArabic ? "انضم إلى أُسطفاي اليوم وابدأ في طلب أفضل الفنيين أو اعرض خدماتك لآلاف العملاء." : "Join the hub today and start hiring the best tradesmen in the region or list your services to reach thousands of clients."}
+              </p>
             </div>
             <div className="relative z-10 flex flex-col gap-4 w-full md:w-auto">
               <Link 
