@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import { 
   Star, ShieldCheck, X, Search, DollarSign,
-  Zap, Waves, Hammer, Wind, Settings
 } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
@@ -13,6 +12,21 @@ import { getBrowserAuthState } from "@/lib/auth-client";
 import { resolveApiBaseUrl } from "@/lib/api";
 import { useLiveApiData } from "@/hooks/use-live-api-data";
 import { MobileHeroSlider } from "@/components/landing/mobile-hero-slider";
+
+const serviceImages: Record<string, string> = {
+  electrical: "https://lh3.googleusercontent.com/aida-public/AB6AXuChTug4Xa3ATzUKqNy7G76wapjHoS13_0giOPdgZyg5sMyfyS1BPleTfgcep3s8DKqeZ8mCcttXB_YXKsqn9XzLyFu6E3OEXW6p4WtccVVTpzOkPz0TqrTkSok5aUqsuqTjIeFDNtY5JFCTrgyYGSp840rFBaMBdkMnFDh3SGgVgNWdAxi0ytene1YgTpurVFCBeoLJMz2la9VCeaqyp0GlN4G3c1UkcOn-1c56tSY401lQ1OXlHiSIIU_QeKL_d-_h4Bmt-pvnfZg",
+  electricity: "https://lh3.googleusercontent.com/aida-public/AB6AXuChTug4Xa3ATzUKqNy7G76wapjHoS13_0giOPdgZyg5sMyfyS1BPleTfgcep3s8DKqeZ8mCcttXB_YXKsqn9XzLyFu6E3OEXW6p4WtccVVTpzOkPz0TqrTkSok5aUqsuqTjIeFDNtY5JFCTrgyYGSp840rFBaMBdkMnFDh3SGgVgNWdAxi0ytene1YgTpurVFCBeoLJMz2la9VCeaqyp0GlN4G3c1UkcOn-1c56tSY401lQ1OXlHiSIIU_QeKL_d-_h4Bmt-pvnfZg",
+  plumbing: "https://lh3.googleusercontent.com/aida-public/AB6AXuA9XbarKd7rQKgRTM2Hzk9naU8iMkUDbh6pHfVRY1iLHWKMWWIhm_Mim9QkMqUrMyRCFPeQ9nTzVKPhYLPP8wMNTsrhKlAJxi7NC948G93xPBBAbb1YBH7WHGbhJmYU3pf0Yrr56hX2rsNn2UDUP_qiFfnKsKXltoEtNRIar1K_fEhwHcplZG7er1D11PMiUBgZWzyGVt0aqCmrN8fjsqnqtCBjp24msn0aTF28dVrosruN4KqVMDrnBKPZkYsAtDJENehKtQLQv5A",
+  carpentry: "https://lh3.googleusercontent.com/aida-public/AB6AXuCdtFKd2NwRiyi28iKlLYtc-E1-JMk0CR_kGnPAth4xUTPkJ-13jYhNfcDxPisTKesVah5oualQ26CwBxewPOALBwM3SbSXDxlTeLc4oKej-ez3OC437YueiGP2T774Agu89I29NEAIkrKArvd-J5p6bI1UunndB_Co4xafbLyxHScBpYHMd1ajeNyjrlq9j2OCOsFyH_JXEAN-WRSkKhRRszmHlDv40PDUoehzBarXwBUm-AD9vma0Qxyp4uc3GcfqWY-T-WYWTkk",
+  ac: "https://lh3.googleusercontent.com/aida-public/AB6AXuDvFMjd2ZtJaYv7nDjvS_gkgZJEtZkt8t4IYRggrKpGcqULySwW2zaa4zDemr22X5cwx5Ati0gtxbsBb13axmYy3f-w90ZmO_Xs6hCMCVFgE611SrRZntRCMIEEDnWjOPCsqjNmJ0qqiMRSoqq5P2jlji1As7oy_6cDAI8_uar3TPG2CM9CY53v5SGZ5W3xllmTsQGlFaJbSbSwNUcbb1V0uAeEH5EkGFEcj00JS7Wec0qjq-3PbN0hqM1esfxHX5Qqqc1yWyqiNes",
+  "ac-maintenance": "https://lh3.googleusercontent.com/aida-public/AB6AXuDvFMjd2ZtJaYv7nDjvS_gkgZJEtZkt8t4IYRggrKpGcqULySwW2zaa4zDemr22X5cwx5Ati0gtxbsBb13axmYy3f-w90ZmO_Xs6hCMCVFgE611SrRZntRCMIEEDnWjOPCsqjNmJ0qqiMRSoqq5P2jlji1As7oy_6cDAI8_uar3TPG2CM9CY53v5SGZ5W3xllmTsQGlFaJbSbSwNUcbb1V0uAeEH5EkGFEcj00JS7Wec0qjq-3PbN0hqM1esfxHX5Qqqc1yWyqiNes",
+  painting: "https://lh3.googleusercontent.com/aida-public/AB6AXuDcJb2n56wQexHYRH4gH4fvGF2wPV_cVeslINqGn09LSGdNZasRBxwkhdMVw9f3s8EITjKLXgef4kHXxehQUtPeCDHi-8CqwiAqQ5acm2Rh22fB8XY7nu0ZqGtjIx0_69MqWdQ-LahX0HHm_6vAu7ycdMueBz2u8-OPZvghmu6iLH4oOoYlaC9CYNhl8fPGXKZnPeCp9azh00foyZCrqcAQUa6FHIXAkkXiNaHLY0b3RYIkMfNpaXHH0BRk-4GHYbSxs51-OUyQZjY",
+  appliances: "https://lh3.googleusercontent.com/aida-public/AB6AXuBUaJL8m48Bpe_ujODneuoPvDhfmC9U-Zof1pGoXVy11MeUd0XRYsVEFmXl_CHdnj6n8RbrD1wOlgE1kA7IG3s5mprEpYrgocNSvPhqy5uhDaQhZEqaJuck7qJZ1jR6r1bFPs6IU44hEor3AkW1KdTuFfAsh8CsbDieBqYLx2wNXuaLZl37PYkCkUCIWDG8qwLx8czzHu1d-qQv4WUtm0SOr3HbUStlA5shYeNw653FVGST0q9y0pT1gInSJ0yNH2xUyr1BM4IQxo4"
+};
+
+function getServiceImage(craft: any) {
+  return craft.imageUrl || serviceImages[craft.slug] || serviceImages[craft.icon] || "https://images.unsplash.com/photo-1581092160562-40aa08e78837?q=80&w=900&auto=format&fit=crop";
+}
 
 export function LandingPage({ locale }: { locale: Locale }) {
   const isArabic = locale === "ar";
@@ -69,17 +83,6 @@ export function LandingPage({ locale }: { locale: Locale }) {
         window.location.href = `/${locale}/client/new-request?workerId=${worker.id}`;
       }
     });
-  };
-
-  // Map icon mapping for categories
-  const iconMap: Record<string, any> = {
-    electricity: Zap,
-    electrical: Zap,
-    plumbing: Waves,
-    carpentry: Hammer,
-    ac: Wind,
-    "ac-maintenance": Wind,
-    painting: Settings
   };
 
   // Fallback slides in case database is empty
@@ -203,15 +206,16 @@ export function LandingPage({ locale }: { locale: Locale }) {
           <section className="relative z-10 mt-12 px-4">
             <div className="grid grid-cols-2 gap-4">
               {mobileCategories.map((craft) => {
-                const IconComp = iconMap[craft.slug] || Settings;
+                const imgUrl = getServiceImage(craft);
                 return (
                   <Link
                     key={craft.id}
                     href={`/${locale}/services/${craft.slug}`}
-                    className="flex min-h-[132px] flex-col items-center justify-center gap-3 border border-white/10 bg-black p-6 text-center text-white transition-transform active:scale-95"
+                    className="group relative flex min-h-[132px] overflow-hidden border border-white/10 bg-black text-center text-white transition-transform active:scale-95"
                   >
-                    <IconComp className="h-10 w-10 text-[#f5bd18]" />
-                    <span className="text-sm font-black uppercase">
+                    <img src={imgUrl} alt="" className="absolute inset-0 h-full w-full object-cover opacity-70 transition-transform duration-500 group-hover:scale-110" />
+                    <span className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-black/15" />
+                    <span className="relative z-10 mt-auto w-full px-4 pb-5 text-sm font-black uppercase">
                       {isArabic ? craft.nameAr : craft.nameEn}
                     </span>
                   </Link>
@@ -393,20 +397,23 @@ export function LandingPage({ locale }: { locale: Locale }) {
 
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             {liveCategories.slice(0, 5).map((craft) => {
-              const IconComp = iconMap[craft.slug] || Settings;
+              const imgUrl = getServiceImage(craft);
               return (
                 <Link 
                   key={craft.id}
                   href={`/${locale}/services/${craft.slug}`} 
-                  className="group bg-[#1a1c1c] border border-white/10 p-8 flex flex-col items-center justify-center text-center cursor-pointer hover:border-[#f5bd18] transition-all duration-300 rounded-none"
+                  className="group relative min-h-[260px] overflow-hidden border border-white/10 bg-[#1a1c1c] text-center cursor-pointer hover:border-[#f5bd18] transition-all duration-300 rounded-none"
                 >
-                  <IconComp className="text-[#f5bd18] h-12 w-12 mb-4 transition-transform group-hover:scale-110" />
+                  <img src={imgUrl} alt="" className="absolute inset-0 h-full w-full object-cover opacity-75 transition-transform duration-700 group-hover:scale-110" />
+                  <span className="absolute inset-0 bg-gradient-to-t from-black via-black/65 to-black/20" />
+                  <div className="relative z-10 flex h-full min-h-[260px] flex-col items-center justify-end p-6">
                   <h3 className="text-white font-bold text-lg">
                     {isArabic ? craft.nameAr : craft.nameEn}
                   </h3>
                   <p className="text-neutral-400 text-xs mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     {isArabic ? "فنيون معتمدون" : "Certified Pros"}
                   </p>
+                  </div>
                 </Link>
               );
             })}
