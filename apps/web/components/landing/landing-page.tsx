@@ -3,14 +3,13 @@
 import { motion } from "framer-motion";
 import { 
   Star, ShieldCheck, X, Search, DollarSign,
-  Zap, Waves, Hammer, Wind, Settings
+  Zap, Waves, Hammer, Wind, Settings, Menu, Home, Store, User, Wrench
 } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/locales";
 import { getBrowserAuthState } from "@/lib/auth-client";
-import { MobileHeroSlider } from "@/components/landing/mobile-hero-slider";
 import { resolveApiBaseUrl } from "@/lib/api";
 import { useLiveApiData } from "@/hooks/use-live-api-data";
 
@@ -88,15 +87,281 @@ export function LandingPage({ locale }: { locale: Locale }) {
     titleEn: "Hire a Professional Ostafy in Seconds",
     descAr: "أول منصة تجمع أمهر الفنيين والمتاجر الموثقة في مصر. جودة مضمونة، أسعار عادلة، وتجربة مستخدم فاخرة.",
     descEn: "The first platform connecting skilled pros and verified stores in Egypt. Guaranteed quality, fair prices, and a premium experience.",
-    imageUrl: "https://lh3.googleusercontent.com/aida/AP1WRLPWTNBI6QHPZstRjBzsdmedQT3X72YzMV1wUJYyabe37kyEjwlG62SdS-6HdpkuM68erjzOO8Sl7fYRrtTuj0nWSH4lhJorjhrnVTdVYMD9-UZp9f1ntjGzPjtYklrkLXZqN97d3BNLFNrgre7enhuKJjgKK19GNUbRzrVFd40xuD6EpwF9PTBqaBIb1VOZkPk65UJV5fMoheg-Id-EfwkvLOAbtD46U9Gdj8YCHlgtwvNCsYoMwmyHNc"
+    imageUrl: "https://lh3.googleusercontent.com/aida/AP1WRLvPWTNBI6QHPZstRjBzsdmedQT3X72YzMV1wUJYyabe37kyEjwlG62SdS-6HdpkuM68erjzOO8Sl7fYRrtTuj0nWSH4lhJorjhrnVTdVYMD9-UZp9f1ntjGzPjtYklrkLXZqN97d3BNLFNrgre7enhuKJjgKK19GNUbRzrVFd40xuD6EpwF9PTBqaBIb1VOZkPk65UJV5fMoheg-Id-EfwkvLOAbtD46U9Gdj8YCHlgtwvNCsYoMwmyHNc"
   };
 
   const activeHeroSlide = slides[0] || defaultSlide;
+  const mobileCategories = (liveCategories.length > 0 ? liveCategories.slice(0, 4) : [
+    { id: "electricity", slug: "electricity", nameAr: "كهرباء", nameEn: "Electricity" },
+    { id: "plumbing", slug: "plumbing", nameAr: "سباكة", nameEn: "Plumbing" },
+    { id: "ac", slug: "ac", nameAr: "تكييف", nameEn: "Air Conditioning" },
+    { id: "carpentry", slug: "carpentry", nameAr: "نجارة", nameEn: "Carpentry" }
+  ]);
+
+  const mobileFallbackPros = [
+    {
+      id: "fallback-electrician",
+      nameAr: "أحمد حسن",
+      nameEn: "Ahmed Hassan",
+      professionAr: "كهربائي محترف",
+      professionEn: "Master Electrician",
+      rating: 4.9,
+      jobs: 124,
+      distanceAr: "قريب منك",
+      distanceEn: "5.0 km away",
+      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCrP1yd3kdYkr-I3_KLKwkJpD7Zq1RpCOy8ez11g6uHVhJxb8sz6xIUUOSu7w3VVMb8-2DERi8UltiGnRjgDSnXhDkvtuOGpS3GQAaI81sjL92vUBGl3DhVoYey_NVsxLiRnDoEWmvSpyISj5mIJBsvPK03o2GnKCkR09DMfIqYBui9-r2qLmPcjJU6aegj6Pst8IDlz0hZXYyaj71Nj6O9Sc78C3qIw-BWfNzWb_tob7HYDfbjxpJ4YqQf9l-qfx5mbkhWNqkCspY"
+    },
+    {
+      id: "fallback-plumber",
+      nameAr: "سمير خليل",
+      nameEn: "Samir Khalil",
+      professionAr: "سباك أول",
+      professionEn: "Senior Plumber",
+      rating: 4.8,
+      jobs: 98,
+      distanceAr: "الأقرب",
+      distanceEn: "2.3 km away",
+      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCUjS8cqQCINIOM84jIMf2dYmBT0ln1b8teCxZV19vnToAaTPbpuwJcvOdIoY4CVoKIiP3wxhHAWIUx1LH3Fn2E5A7C_CRnb4Z-V1EnnCgZj1rtmJmzhkKS-Cei1wxR6LKdtJ5-B01h1LI_R_UiWI7slUhfpK0xSOUbS4Pk4Pe6yHWxPC8p6z6Blicrzxq9mF29GthmdUjKgmWQPcHcqGLawfLjxgAHGwF6OW7sGJ8QtC23cWBNawb9fMXzgXuUFjpTY6GYovxVDIg"
+    }
+  ];
+
+  type MobilePro = {
+    id: string;
+    raw?: any;
+    nameAr: string;
+    nameEn: string;
+    professionAr: string;
+    professionEn: string;
+    rating: number;
+    jobs: number;
+    distanceAr: string;
+    distanceEn: string;
+    image: string;
+  };
+
+  const fallbackProImage = mobileFallbackPros[0]?.image ?? "";
+  const mobilePros: MobilePro[] = workers.length > 0
+    ? workers.slice(0, 4).map((worker, index) => ({
+        id: worker.id,
+        raw: worker,
+        nameAr: worker.name,
+        nameEn: worker.name,
+        professionAr: worker.professionAr || "فني معتمد",
+        professionEn: worker.professionEn || "Verified Pro",
+        rating: worker.rating || 5,
+        jobs: worker.totalJobs || 0,
+        distanceAr: "داخل مصر",
+        distanceEn: "Egypt",
+        image: worker.avatarUrl && !worker.avatarUrl.includes("initials")
+          ? worker.avatarUrl
+          : mobileFallbackPros[index % mobileFallbackPros.length]?.image ?? fallbackProImage
+      }))
+    : mobileFallbackPros;
+
+  const mobileCampaigns = campaigns.length > 0
+    ? campaigns.slice(0, 2).map((campaign) => ({
+        id: campaign.id,
+        titleAr: campaign.titleAr,
+        titleEn: campaign.titleEn,
+        descAr: campaign.descAr,
+        descEn: campaign.descEn,
+        badgeAr: campaign.badgeAr || "عرض",
+        badgeEn: campaign.badgeEn || "Promo",
+        href: campaign.link || campaign.btn1Link || `/${locale}/services`
+      }))
+    : [
+        {
+          id: "mobile-offer-1",
+          titleAr: "خصم 20%",
+          titleEn: "20% OFF",
+          descAr: "على أول خدمة سباكة",
+          descEn: "First plumbing service",
+          badgeAr: "كود: OSTA20",
+          badgeEn: "Promo: OSTA20",
+          href: `/${locale}/register/client`
+        },
+        {
+          id: "mobile-offer-2",
+          titleAr: "معاينة مجانية",
+          titleEn: "FREE QUOTE",
+          descAr: "للمشروعات والتركيبات الكبيرة",
+          descEn: "Industrial installation projects",
+          badgeAr: "لفترة محدودة",
+          badgeEn: "Limited Time",
+          href: `/${locale}/services`
+        }
+      ];
 
   return (
     <div className="bg-[#f9f9f9] max-md:bg-[#f5bd18] selection:bg-[#f5bd18] selection:text-[#1a1c1c] overflow-x-hidden">
-      {/* Mobile Hero Slider — shown ONLY on mobile (< 768px) */}
-      <MobileHeroSlider locale={locale} />
+      {/* Stitch mobile home — shown ONLY on mobile (< 768px) */}
+      <div className="md:hidden min-h-screen bg-[#f5bd18] pb-24 text-[#1a1c1c]">
+        <header className="fixed inset-x-0 top-0 z-50 flex h-16 items-center justify-between border-b border-white/10 bg-black/80 px-4 text-white backdrop-blur-md">
+          <div className="flex items-center gap-4">
+            <Menu className="h-6 w-6 text-[#f5bd18]" />
+            <span className="text-3xl font-black tracking-tight text-[#f5bd18]">OSTA</span>
+          </div>
+          <Link href={isArabic ? "/en" : "/ar"} className="text-2xl font-black text-[#f5bd18] active:scale-95">
+            {isArabic ? "EN" : "AR"}
+          </Link>
+        </header>
+
+        <main className="pt-16">
+          <section className="relative h-[353px] w-full overflow-hidden bg-black">
+            <img
+              src={activeHeroSlide.imageUrl || defaultSlide.imageUrl}
+              alt={isArabic ? "فني محترف أثناء العمل" : "Professional craftsman at work"}
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/45 to-transparent" />
+            <div className="relative flex h-full flex-col justify-end px-4 pb-6 text-start">
+              <h1 className="max-w-[18rem] text-4xl font-black uppercase leading-none text-white">
+                {isArabic ? (
+                  <>
+                    اعتمادية <span className="text-[#f5bd18]">احترافية.</span>
+                  </>
+                ) : (
+                  <>
+                    Industrial <span className="text-[#f5bd18]">Reliability.</span>
+                  </>
+                )}
+              </h1>
+              <p className="mt-2 text-sm font-bold text-white/80">
+                {isArabic ? "خبرة موثوقة لبيتك." : "Expert hands for your home."}
+              </p>
+              <Link
+                href={`/${locale}/register/client`}
+                className="mt-4 inline-flex w-fit items-center bg-white px-8 py-3 text-sm font-black uppercase text-black shadow-[4px_4px_0_#000] active:translate-x-1 active:translate-y-1 active:shadow-none"
+              >
+                {isArabic ? "اطلب الآن" : "Book Now"}
+              </Link>
+            </div>
+          </section>
+
+          <section className="relative z-10 mt-12 px-4">
+            <div className="grid grid-cols-2 gap-4">
+              {mobileCategories.map((craft) => {
+                const IconComp = iconMap[craft.slug] || Settings;
+                return (
+                  <Link
+                    key={craft.id}
+                    href={`/${locale}/services/${craft.slug}`}
+                    className="flex min-h-[132px] flex-col items-center justify-center gap-3 border border-white/10 bg-black p-6 text-center text-white transition-transform active:scale-95"
+                  >
+                    <IconComp className="h-10 w-10 text-[#f5bd18]" />
+                    <span className="text-sm font-black uppercase">
+                      {isArabic ? craft.nameAr : craft.nameEn}
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+          </section>
+
+          <section className="mt-12 px-4">
+            <h2 className="mb-3 flex items-center gap-2 text-2xl font-black uppercase text-black">
+              <span className="h-1 w-8 bg-black" />
+              {isArabic ? "عروض خاصة" : "Special Offers"}
+            </h2>
+            <div className="flex snap-x gap-4 overflow-x-auto pb-4 [-webkit-overflow-scrolling:touch]">
+              {mobileCampaigns.map((offer) => (
+                <Link
+                  key={offer.id}
+                  href={offer.href.startsWith("http") ? offer.href : offer.href as `/${string}`}
+                  className="min-w-[280px] snap-center overflow-hidden border border-white/10 bg-black text-start"
+                >
+                  <div className="flex h-40 items-center justify-center bg-zinc-900 p-4 text-center">
+                    <div>
+                      <h3 className="mb-1 text-3xl font-black text-[#f5bd18]">
+                        {isArabic ? offer.titleAr : offer.titleEn}
+                      </h3>
+                      <p className="text-sm font-bold text-white/60">
+                        {isArabic ? offer.descAr : offer.descEn}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="bg-black p-4">
+                    <span className="bg-[#f5bd18] px-2 py-1 text-xs font-black uppercase text-black">
+                      {isArabic ? offer.badgeAr : offer.badgeEn}
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+
+          <section className="mb-12 mt-12">
+            <div className="mb-3 flex items-end justify-between px-4">
+              <h2 className="text-2xl font-black uppercase text-black">
+                {isArabic ? "فنيون مميزون" : "Featured Pros"}
+              </h2>
+              <Link href={`/${locale}/workers`} className="text-sm font-black underline decoration-2">
+                {isArabic ? "عرض الكل" : "View All"}
+              </Link>
+            </div>
+            <div className="flex snap-x gap-4 overflow-x-auto px-4 pb-6 [-webkit-overflow-scrolling:touch]">
+              {mobilePros.map((worker) => (
+                <article key={worker.id} className="min-w-[240px] snap-center space-y-4 border border-white/10 bg-black p-4 text-white">
+                  <div className="flex items-center gap-3">
+                    <div className="h-16 w-16 border border-white/20 bg-zinc-800">
+                      <img src={worker.image} alt={isArabic ? worker.nameAr : worker.nameEn} className="h-full w-full object-cover" />
+                    </div>
+                    <div className="min-w-0 text-start">
+                      <p className="truncate text-sm font-black">{isArabic ? worker.nameAr : worker.nameEn}</p>
+                      <p className="text-xs font-bold text-[#f5bd18]">{isArabic ? worker.professionAr : worker.professionEn}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between text-xs font-bold text-white/60">
+                    <span className="flex items-center gap-1">
+                      <Star className="h-4 w-4 fill-[#f5bd18] text-[#f5bd18]" />
+                      {Number(worker.rating).toFixed(1)} ({worker.jobs})
+                    </span>
+                    <span>{isArabic ? worker.distanceAr : worker.distanceEn}</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => worker.raw ? handleBookClick(worker.raw) : window.location.assign(`/${locale}/workers`)}
+                    className="w-full bg-[#f5bd18] py-2 text-sm font-black uppercase text-black shadow-[4px_4px_0_#000] active:translate-x-1 active:translate-y-1 active:shadow-none"
+                  >
+                    {isArabic ? "الملف" : "Profile"}
+                  </button>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <footer className="flex flex-col items-center gap-3 border-t border-white/10 bg-black p-4 pb-24 text-center">
+            <span className="text-2xl font-black text-[#f5bd18]">OSTA</span>
+            <div className="flex gap-4">
+              <Link className="text-xs font-bold text-white/40" href={`/${locale}/terms`}>{isArabic ? "الشروط" : "Terms"}</Link>
+              <Link className="text-xs font-bold text-white/40" href={`/${locale}/privacy`}>{isArabic ? "الخصوصية" : "Privacy"}</Link>
+              <Link className="text-xs font-bold text-white/40" href={`/${locale}/contact`}>{isArabic ? "اتصل بنا" : "Contact"}</Link>
+            </div>
+            <p className="text-xs font-bold text-white/40">
+              {isArabic ? "أُسطفاي. خدمات احترافية موثوقة." : "OSTA. INDUSTRIAL STRENGTH TRADES."}
+            </p>
+          </footer>
+        </main>
+
+        <nav className="fixed inset-x-0 bottom-0 z-50 flex items-center justify-around border-t border-white/10 bg-black/80 px-2 py-3 text-white backdrop-blur-md">
+          {[
+            { href: `/${locale}`, label: isArabic ? "الرئيسية" : "Home", icon: Home, active: true },
+            { href: `/${locale}/workers`, label: isArabic ? "الفنيين" : "Workers", icon: Wrench },
+            { href: `/${locale}/vendors`, label: isArabic ? "المتاجر" : "Vendors", icon: Store },
+            { href: `/${locale}/login`, label: isArabic ? "حسابي" : "Profile", icon: User }
+          ].map((item) => {
+            const Icon = item.icon;
+            return (
+              <Link key={item.href} href={item.href as `/${string}`} className={cn("flex flex-col items-center justify-center text-xs font-black", item.active ? "text-[#f5bd18]" : "text-white/60")}>
+                <Icon className="h-5 w-5" />
+                <span>{item.label}</span>
+              </Link>
+            );
+          })}
+        </nav>
+      </div>
+
+      <div className="hidden md:block">
 
       {/* Desktop Hero Section — ONLY on md+ */}
       <section className="hidden md:flex relative w-full h-[85vh] flex-col items-center justify-center text-center overflow-hidden bg-black">
@@ -529,6 +794,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
           </div>
         </div>
       </section>
+      </div>
 
       {/* Auth Prompt Modal */}
       {showAuthModal && (
