@@ -24,12 +24,11 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
   ];
 
   const isArabic = locale === "ar";
-  const isHome = pathname === "/" || pathname === "";
 
   return (
     <main className="bg-[#f9f9f9] max-md:bg-[#f5bd18] min-h-screen text-[#1a1c1c] selection:bg-[#f5bd18] selection:text-[#1a1c1c]">
       {/* TopNavBar */}
-      <header className={cn("sticky top-0 z-50 transition-all duration-300 backdrop-blur-md border-b border-white/10 bg-[#1a1c1c]/90 text-white", isHome && "max-md:hidden")}>
+      <header className="sticky top-0 z-50 transition-all duration-300 backdrop-blur-md border-b border-white/10 bg-[#1a1c1c]/90 text-white">
         <nav className="flex justify-between items-center px-4 md:px-12 w-full max-w-7xl mx-auto h-20">
           <div className="flex items-center gap-4">
             <img 
@@ -112,7 +111,7 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
       </div>
 
       {/* Footer */}
-      <footer className={cn("bg-[#1a1c1c] border-t border-white/10 w-full py-16 text-white mt-auto", isHome && "max-md:hidden")}>
+      <footer className="bg-[#1a1c1c] border-t border-white/10 w-full py-16 text-white mt-auto">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 px-4 md:px-12 max-w-7xl mx-auto text-start">
           <div className="space-y-6">
             <img 
@@ -155,9 +154,7 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
           <span>DEVELOPED BY GOTIX</span>
         </div>
       </footer>
-      <div className={cn(isHome && "max-md:hidden")}>
-        <BottomNav />
-      </div>
+      <BottomNav />
     </main>
   );
 }

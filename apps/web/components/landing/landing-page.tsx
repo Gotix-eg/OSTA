@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { 
   Star, ShieldCheck, X, Search, DollarSign,
-  Zap, Waves, Hammer, Wind, Settings, Menu, Home, Store, User, Wrench
+  Zap, Waves, Hammer, Wind, Settings
 } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
@@ -196,17 +196,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
     <div className="bg-[#f9f9f9] max-md:bg-[#f5bd18] selection:bg-[#f5bd18] selection:text-[#1a1c1c] overflow-x-hidden">
       {/* Stitch mobile home — shown ONLY on mobile (< 768px) */}
       <div className="md:hidden min-h-screen bg-[#f5bd18] pb-24 text-[#1a1c1c]">
-        <header className="fixed inset-x-0 top-0 z-50 flex h-16 items-center justify-between border-b border-white/10 bg-black/80 px-4 text-white backdrop-blur-md">
-          <div className="flex items-center gap-4">
-            <Menu className="h-6 w-6 text-[#f5bd18]" />
-            <span className="text-3xl font-black tracking-tight text-[#f5bd18]">OSTA</span>
-          </div>
-          <Link href={isArabic ? "/en" : "/ar"} className="text-2xl font-black text-[#f5bd18] active:scale-95">
-            {isArabic ? "EN" : "AR"}
-          </Link>
-        </header>
-
-        <main className="pt-16">
+        <main>
           <section className="relative h-[353px] w-full overflow-hidden bg-black">
             <img
               src={activeHeroSlide.imageUrl || defaultSlide.imageUrl}
@@ -329,36 +319,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
               ))}
             </div>
           </section>
-
-          <footer className="flex flex-col items-center gap-3 border-t border-white/10 bg-black p-4 pb-24 text-center">
-            <span className="text-2xl font-black text-[#f5bd18]">OSTA</span>
-            <div className="flex gap-4">
-              <Link className="text-xs font-bold text-white/40" href={`/${locale}/terms`}>{isArabic ? "الشروط" : "Terms"}</Link>
-              <Link className="text-xs font-bold text-white/40" href={`/${locale}/privacy`}>{isArabic ? "الخصوصية" : "Privacy"}</Link>
-              <Link className="text-xs font-bold text-white/40" href={`/${locale}/contact`}>{isArabic ? "اتصل بنا" : "Contact"}</Link>
-            </div>
-            <p className="text-xs font-bold text-white/40">
-              {isArabic ? "أُسطفاي. خدمات احترافية موثوقة." : "OSTA. INDUSTRIAL STRENGTH TRADES."}
-            </p>
-          </footer>
         </main>
-
-        <nav className="fixed inset-x-0 bottom-0 z-50 flex items-center justify-around border-t border-white/10 bg-black/80 px-2 py-3 text-white backdrop-blur-md">
-          {[
-            { href: `/${locale}`, label: isArabic ? "الرئيسية" : "Home", icon: Home, active: true },
-            { href: `/${locale}/workers`, label: isArabic ? "الفنيين" : "Workers", icon: Wrench },
-            { href: `/${locale}/vendors`, label: isArabic ? "المتاجر" : "Vendors", icon: Store },
-            { href: `/${locale}/login`, label: isArabic ? "حسابي" : "Profile", icon: User }
-          ].map((item) => {
-            const Icon = item.icon;
-            return (
-              <Link key={item.href} href={item.href as `/${string}`} className={cn("flex flex-col items-center justify-center text-xs font-black", item.active ? "text-[#f5bd18]" : "text-white/60")}>
-                <Icon className="h-5 w-5" />
-                <span>{item.label}</span>
-              </Link>
-            );
-          })}
-        </nav>
       </div>
 
       <div className="hidden md:block">
