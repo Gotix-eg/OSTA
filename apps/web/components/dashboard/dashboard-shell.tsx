@@ -113,7 +113,8 @@ export function DashboardShell({
   const theme = roleThemes[role];
   const isClientDashboard = role === "client";
   const isVendorDashboard = role === "vendor";
-  const isStitchDashboard = isClientDashboard || role === "worker" || isVendorDashboard;
+  const isAdminDashboard = role === "admin";
+  const isStitchDashboard = isClientDashboard || role === "worker" || isVendorDashboard || isAdminDashboard;
 
   useEffect(() => {
     let cancelled = false;
@@ -142,7 +143,7 @@ export function DashboardShell({
       } catch {
         if (!cancelled) {
           clearAuthSession();
-          window.location.replace(`/${locale}/login`);
+          window.location.replace(role === "admin" ? `/${locale}/login/admin` : `/${locale}/login`);
         }
       }
     }
@@ -210,7 +211,12 @@ export function DashboardShell({
   const currentPath = stripLocalePrefix(pathname || "/");
 
   return (
-    <div className={cn("min-h-screen text-foreground", isStitchDashboard ? "bg-[#f5bd18]" : "dashboard-shell-bg")}>
+    <div
+      className={cn(
+        "min-h-screen text-foreground",
+        isStitchDashboard ? (isAdminDashboard ? "admin-stitch-scope bg-[#050505] text-white" : "bg-[#f5bd18]") : "dashboard-shell-bg"
+      )}
+    >
       {!isStitchDashboard ? (
         <>
           <div className="pointer-events-none absolute inset-0 dashboard-grid-overlay opacity-50 hidden md:block" />
@@ -224,12 +230,12 @@ export function DashboardShell({
         </aside>
 
         {mobileOpen ? (
-          <div className="fixed inset-0 z-[10000] flex items-end justify-center bg-[#f5bd18] lg:hidden">
+            <div className={cn("fixed inset-0 z-[10000] flex items-end justify-center lg:hidden", isAdminDashboard ? "bg-[#050505]" : "bg-[#f5bd18]")}>
             <div className="pointer-events-none fixed right-8 top-24 h-32 w-32 rounded-full bg-[#f5bd18]/25 blur-[80px]" />
             <div className="pointer-events-none fixed bottom-32 left-4 h-44 w-44 rounded-full bg-[#f5bd18]/10 blur-[90px]" />
             <div className="relative flex h-[min(92dvh,49.75rem)] w-full max-w-md animate-slideUp flex-col overflow-hidden rounded-t-[2.5rem] border border-white/10 bg-black text-white shadow-2xl">
               <header className="flex h-16 shrink-0 items-center justify-between border-b border-white/10 bg-black/80 px-4 backdrop-blur-xl">
-                <span className="text-2xl font-black tracking-tight text-[#775a00]">OSTA</span>
+                  <span className={cn("text-2xl font-black tracking-tight", isAdminDashboard ? "text-[#f5bd18]" : "text-[#775a00]")}>OSTA</span>
                 <button
                   type="button"
                   onClick={() => setMobileOpen(false)}
@@ -321,7 +327,7 @@ export function DashboardShell({
                     className="flex items-center justify-between rounded-xl border border-white/5 bg-[#121212] p-4 text-white transition-colors hover:bg-white/5"
                   >
                     <span className="flex items-center gap-4">
-                      <ShieldCheck className="h-5 w-5 text-[#f5bd18]" />
+                    <ShieldCheck className="h-5 w-5 text-[#f5bd18]" />
                       <span className="text-sm font-black">{locale === "ar" ? "مركز المساعدة" : "Help center"}</span>
                     </span>
                     <ArrowUpRight className="h-4 w-4 text-white/25" />
@@ -334,7 +340,7 @@ export function DashboardShell({
                   type="button"
                   onClick={async () => {
                     await logoutAuthSession();
-                    window.location.replace(`/${locale}/login`);
+                    window.location.replace(role === "admin" ? `/${locale}/login/admin` : `/${locale}/login`);
                   }}
                   className="flex h-14 w-full items-center justify-center gap-3 bg-white text-sm font-black text-black shadow-[4px_4px_0_#000] active:translate-x-1 active:translate-y-1"
                 >
@@ -408,7 +414,7 @@ export function DashboardShell({
                   className={cn(
                     "inline-flex h-11 items-center justify-center px-4 text-[10px] font-bold uppercase tracking-widest transition-all duration-300",
                     isStitchDashboard
-                      ? "hidden rounded border border-black bg-white text-black shadow-[4px_4px_0_#000] hover:-translate-y-0.5 sm:inline-flex lg:inline-flex"
+                      ? cn("hidden rounded border bg-white text-black shadow-[4px_4px_0_#000] hover:-translate-y-0.5 sm:inline-flex lg:inline-flex", isAdminDashboard ? "border-[#f5bd18]" : "border-black")
                       : "rounded-full border border-white/5 bg-white/5 text-white shadow-xl hover:bg-white/10"
                   )}
                 />
@@ -492,7 +498,8 @@ function SidebarContent({
   const isClientDashboard = role === "client";
   const isWorkerDashboard = role === "worker";
   const isVendorDashboard = role === "vendor";
-  const isStitchSidebar = isClientDashboard || isWorkerDashboard || isVendorDashboard;
+  const isAdminDashboard = role === "admin";
+  const isStitchSidebar = isClientDashboard || isWorkerDashboard || isVendorDashboard || isAdminDashboard;
 
   return (
     <div
@@ -516,7 +523,15 @@ function SidebarContent({
         </div>
 
         <p className={cn("mt-1 text-xs font-black uppercase tracking-[0.24em]", isStitchSidebar ? "text-[#f5bd18]" : "hidden")}>
-          {isWorkerDashboard ? "OSTA PRO" : isVendorDashboard ? "OSTA VENDOR" : locale === "ar" ? "تشغيل احترافي" : "Premium Industrial"}
+          {isAdminDashboard
+            ? "OSTA ADMIN"
+            : isWorkerDashboard
+              ? "OSTA PRO"
+              : isVendorDashboard
+                ? "OSTA VENDOR"
+                : locale === "ar"
+                  ? "تشغيل احترافي"
+                  : "Premium Industrial"}
         </p>
 
         {!isStitchSidebar ? <div className={cn("mt-5 flex w-full items-center justify-between border px-3 py-3 text-xs", "rounded-2xl border-white/5 bg-white/5 px-4")}>
@@ -545,15 +560,23 @@ function SidebarContent({
                 "group flex items-center justify-between border px-4 py-3 text-sm font-bold transition-all duration-300",
                 isStitchSidebar
                   ? active
-                    ? "border-b-2 border-[#f5bd18] bg-transparent text-[#f5bd18]"
-                    : "border-transparent bg-transparent text-white/70 hover:bg-white/5 hover:text-white"
+                    ? cn(
+                        "text-[#f5bd18]",
+                        isAdminDashboard
+                          ? "border-[#f5bd18] bg-[#f5bd18] text-black shadow-[6px_6px_0_#2f2400]"
+                          : "border-b-2 border-[#f5bd18] bg-transparent"
+                      )
+                    : cn(
+                        "border-transparent bg-transparent text-white/70 hover:bg-white/5 hover:text-white",
+                        isAdminDashboard && "hover:border-[#f5bd18]/40"
+                      )
                   : active
                     ? "rounded-2xl border-gold-500/20 bg-gold-500 text-onyx-950 shadow-gold"
                     : "rounded-2xl border-transparent bg-transparent text-white/60 hover:bg-white/5 hover:text-white"
               )}
             >
                 <span className="flex items-center gap-3">
-                <span className={cn("flex h-9 w-9 items-center justify-center transition-all duration-300", isStitchSidebar ? "rounded-none" : "rounded-xl", active ? "bg-white/10" : "bg-white/5 group-hover:bg-white/10") }>
+                <span className={cn("flex h-9 w-9 items-center justify-center transition-all duration-300", isStitchSidebar ? "rounded-none" : "rounded-xl", active ? (isAdminDashboard ? "bg-black text-[#f5bd18]" : "bg-white/10") : "bg-white/5 group-hover:bg-white/10") }>
                   <Icon className="h-4 w-4" />
                 </span>
                 {item.label}
@@ -593,7 +616,7 @@ function SidebarContent({
         type="button"
         onClick={async () => {
           await logoutAuthSession();
-          window.location.replace(`/${locale}/login`);
+          window.location.replace(role === "admin" ? `/${locale}/login/admin` : `/${locale}/login`);
         }}
         className={cn(
           "relative mt-auto inline-flex items-center justify-between border border-error/10 bg-error/5 px-5 py-4 text-sm font-bold text-error transition-all duration-300 hover:bg-error/10",

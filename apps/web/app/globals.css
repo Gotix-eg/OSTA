@@ -287,3 +287,214 @@ input::placeholder, textarea::placeholder {
     scrollbar-width: none !important;  /* Firefox */
   }
 }
+
+/* ──────────────────────────────────────────────────────────────────────────────
+   OSTA Admin Stitch Dashboard
+   Scoped to the admin shell so client, worker, and vendor dashboards keep their
+   own Stitch treatments and existing behavior.
+   ────────────────────────────────────────────────────────────────────────────── */
+.admin-stitch-scope {
+  --admin-gold: #f5bd18;
+  --admin-gold-dark: #2f2400;
+  --admin-ink: #050505;
+  --admin-panel: #111111;
+  --admin-panel-2: #171717;
+  --admin-line: rgba(245, 189, 24, 0.38);
+  --admin-muted: rgba(255, 255, 255, 0.58);
+  background:
+    linear-gradient(rgba(245, 189, 24, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(245, 189, 24, 0.045) 1px, transparent 1px),
+    radial-gradient(circle at 12% 8%, rgba(245, 189, 24, 0.18), transparent 25rem),
+    #050505 !important;
+  background-size: 3rem 3rem, 3rem 3rem, auto;
+  color: #ffffff;
+}
+
+.admin-stitch-scope,
+.admin-stitch-scope * {
+  letter-spacing: 0;
+}
+
+.admin-stitch-scope h1,
+.admin-stitch-scope h2,
+.admin-stitch-scope h3,
+.admin-stitch-scope h4,
+.admin-stitch-scope p {
+  color: inherit;
+}
+
+.admin-stitch-scope .onyx-card,
+.admin-stitch-scope .dashboard-card,
+.admin-stitch-scope .glass-card {
+  border-radius: 0.25rem !important;
+  border-color: rgba(245, 189, 24, 0.28) !important;
+  background: linear-gradient(135deg, rgba(23, 23, 23, 0.96), rgba(7, 7, 7, 0.98)) !important;
+  box-shadow: 7px 7px 0 #000, inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+  backdrop-filter: none !important;
+}
+
+.admin-stitch-scope .onyx-card:hover {
+  border-color: var(--admin-gold) !important;
+  box-shadow: 9px 9px 0 #000, inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+  transform: translateY(-1px);
+}
+
+.admin-stitch-scope .rounded-full,
+.admin-stitch-scope .rounded-\[2rem\],
+.admin-stitch-scope .rounded-\[2\.5rem\],
+.admin-stitch-scope .rounded-3xl,
+.admin-stitch-scope .rounded-2xl,
+.admin-stitch-scope .rounded-xl,
+.admin-stitch-scope .rounded-lg {
+  border-radius: 0.25rem !important;
+}
+
+.admin-stitch-scope .text-eyebrow,
+.admin-stitch-scope [class*="uppercase"] {
+  color: var(--admin-gold) !important;
+  letter-spacing: 0.18em;
+}
+
+.admin-stitch-scope .text-onyx-300,
+.admin-stitch-scope .text-onyx-400,
+.admin-stitch-scope .text-onyx-500,
+.admin-stitch-scope .text-onyx-600 {
+  color: var(--admin-muted) !important;
+}
+
+.admin-stitch-scope .text-white {
+  color: #ffffff !important;
+}
+
+.admin-stitch-scope .text-gold-400,
+.admin-stitch-scope .text-gold-500,
+.admin-stitch-scope .text-gold-600,
+.admin-stitch-scope .text-gold-700 {
+  color: var(--admin-gold) !important;
+}
+
+.admin-stitch-scope .bg-onyx-950,
+.admin-stitch-scope .bg-onyx-900,
+.admin-stitch-scope .bg-onyx-900\/50,
+.admin-stitch-scope .bg-onyx-900\/40,
+.admin-stitch-scope .bg-onyx-900\/35,
+.admin-stitch-scope .bg-onyx-900\/30,
+.admin-stitch-scope .bg-onyx-900\/20,
+.admin-stitch-scope .bg-onyx-800,
+.admin-stitch-scope .bg-onyx-800\/80,
+.admin-stitch-scope .bg-onyx-800\/50,
+.admin-stitch-scope .bg-onyx-800\/30 {
+  background-color: var(--admin-panel) !important;
+}
+
+.admin-stitch-scope .border-onyx-700,
+.admin-stitch-scope .border-onyx-800,
+.admin-stitch-scope .border-white\/5,
+.admin-stitch-scope .border-white\/10 {
+  border-color: rgba(245, 189, 24, 0.22) !important;
+}
+
+.admin-stitch-scope input,
+.admin-stitch-scope textarea,
+.admin-stitch-scope select {
+  border-radius: 0.25rem !important;
+  border: 1px solid rgba(245, 189, 24, 0.3) !important;
+  background: #090909 !important;
+  color: #ffffff !important;
+  box-shadow: 4px 4px 0 #000;
+}
+
+.admin-stitch-scope input::placeholder,
+.admin-stitch-scope textarea::placeholder {
+  color: rgba(255, 255, 255, 0.42) !important;
+}
+
+.admin-stitch-scope input:focus,
+.admin-stitch-scope textarea:focus,
+.admin-stitch-scope select:focus {
+  border-color: var(--admin-gold) !important;
+  box-shadow: 4px 4px 0 #000, 0 0 0 2px rgba(245, 189, 24, 0.22) !important;
+}
+
+.admin-stitch-scope .btn-gold,
+.admin-stitch-scope button.bg-gold-500,
+.admin-stitch-scope a.bg-gold-500 {
+  border-radius: 0.25rem !important;
+  border: 1px solid var(--admin-gold) !important;
+  background: var(--admin-gold) !important;
+  color: #050505 !important;
+  box-shadow: 5px 5px 0 #000 !important;
+}
+
+.admin-stitch-scope .btn-gold:hover,
+.admin-stitch-scope button.bg-gold-500:hover,
+.admin-stitch-scope a.bg-gold-500:hover {
+  background: #ffd24a !important;
+  transform: translate(-1px, -1px);
+}
+
+.admin-stitch-scope .btn-onyx,
+.admin-stitch-scope .btn-ghost,
+.admin-stitch-scope button[class*="bg-onyx"],
+.admin-stitch-scope a[class*="bg-onyx"] {
+  border-radius: 0.25rem !important;
+  border-color: rgba(245, 189, 24, 0.26) !important;
+  background: #101010 !important;
+  color: #ffffff !important;
+}
+
+.admin-stitch-scope table {
+  border-collapse: separate;
+  border-spacing: 0 0.75rem;
+}
+
+.admin-stitch-scope thead tr {
+  background: #050505 !important;
+}
+
+.admin-stitch-scope th {
+  color: var(--admin-gold) !important;
+  font-size: 0.72rem;
+}
+
+.admin-stitch-scope tbody tr {
+  background: var(--admin-panel) !important;
+  box-shadow: 5px 5px 0 #000;
+}
+
+.admin-stitch-scope td,
+.admin-stitch-scope th {
+  border-top: 1px solid rgba(245, 189, 24, 0.18);
+  border-bottom: 1px solid rgba(245, 189, 24, 0.18);
+}
+
+.admin-stitch-scope td:first-child,
+.admin-stitch-scope th:first-child {
+  border-inline-start: 1px solid rgba(245, 189, 24, 0.18);
+}
+
+.admin-stitch-scope td:last-child,
+.admin-stitch-scope th:last-child {
+  border-inline-end: 1px solid rgba(245, 189, 24, 0.18);
+}
+
+.admin-stitch-scope [class*="fixed inset-0"] .onyx-card,
+.admin-stitch-scope [class*="fixed inset-0"] .bg-onyx-900 {
+  border: 1px solid var(--admin-gold) !important;
+  background: #0b0b0b !important;
+  box-shadow: 10px 10px 0 #000 !important;
+}
+
+@media (max-width: 1023px) {
+  .admin-stitch-scope {
+    background:
+      linear-gradient(rgba(245, 189, 24, 0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(245, 189, 24, 0.045) 1px, transparent 1px),
+      #050505 !important;
+    background-size: 2rem 2rem, 2rem 2rem, auto;
+  }
+
+  .admin-stitch-scope .onyx-card {
+    box-shadow: 5px 5px 0 #000 !important;
+  }
+}

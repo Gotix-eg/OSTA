@@ -20,7 +20,7 @@ export default async function AdminPage({ params }: { params: Promise<{ locale: 
 
   return (
     <DashboardShell locale={locale as Locale} role="admin">
-      <AdminDashboardView />
+      <AdminDashboardView locale={locale as Locale} />
     </DashboardShell>
   );
 }
