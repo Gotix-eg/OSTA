@@ -12,6 +12,7 @@ import type { Locale } from "@/lib/locales";
 import { getBrowserAuthState } from "@/lib/auth-client";
 import { resolveApiBaseUrl } from "@/lib/api";
 import { useLiveApiData } from "@/hooks/use-live-api-data";
+import { MobileHeroSlider } from "@/components/landing/mobile-hero-slider";
 
 export function LandingPage({ locale }: { locale: Locale }) {
   const isArabic = locale === "ar";
@@ -197,36 +198,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
       {/* Stitch mobile home — shown ONLY on mobile (< 768px) */}
       <div className="md:hidden min-h-screen bg-[#f5bd18] pb-24 text-[#1a1c1c]">
         <main>
-          <section className="relative h-[353px] w-full overflow-hidden bg-black">
-            <img
-              src={activeHeroSlide.imageUrl || defaultSlide.imageUrl}
-              alt={isArabic ? "فني محترف أثناء العمل" : "Professional craftsman at work"}
-              className="absolute inset-0 h-full w-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/45 to-transparent" />
-            <div className="relative flex h-full flex-col justify-end px-4 pb-6 text-start">
-              <h1 className="max-w-[18rem] text-4xl font-black uppercase leading-none text-white">
-                {isArabic ? (
-                  <>
-                    اعتمادية <span className="text-[#f5bd18]">احترافية.</span>
-                  </>
-                ) : (
-                  <>
-                    Industrial <span className="text-[#f5bd18]">Reliability.</span>
-                  </>
-                )}
-              </h1>
-              <p className="mt-2 text-sm font-bold text-white/80">
-                {isArabic ? "خبرة موثوقة لبيتك." : "Expert hands for your home."}
-              </p>
-              <Link
-                href={`/${locale}/register/client`}
-                className="mt-4 inline-flex w-fit items-center bg-white px-8 py-3 text-sm font-black uppercase text-black shadow-[4px_4px_0_#000] active:translate-x-1 active:translate-y-1 active:shadow-none"
-              >
-                {isArabic ? "اطلب الآن" : "Book Now"}
-              </Link>
-            </div>
-          </section>
+          <MobileHeroSlider locale={locale} />
 
           <section className="relative z-10 mt-12 px-4">
             <div className="grid grid-cols-2 gap-4">
