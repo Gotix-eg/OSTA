@@ -58,6 +58,24 @@ export function VendorsDirectory({ locale }: { locale: Locale }) {
     { id: "computer", label: { ar: "صيانة كمبيوتر", en: "COMPUTER PARTS" } }
   ];
 
+  const vendorCategoryLabels: Record<string, string> = {
+    plumbing: "مستلزمات سباكة",
+    "plumbing supplies": "مستلزمات سباكة",
+    electrical: "قطع غيار كهرباء",
+    "electrical parts": "قطع غيار كهرباء",
+    painting: "دهانات ومواد",
+    "painting & coating": "دهانات ومواد",
+    computer: "صيانة كمبيوتر",
+    "computer parts": "صيانة كمبيوتر",
+    "general supplies": "مستلزمات عامة"
+  };
+
+  function getVendorCategoryLabel(category: string | null | undefined) {
+    if (!category) return isArabic ? "مستلزمات عامة" : "General Supplies";
+    if (!isArabic) return category;
+    return vendorCategoryLabels[category.toLowerCase()] || "مستلزمات عامة";
+  }
+
   const filteredVendors = useMemo(() => {
     return vendors.filter(vendor => {
       const name = isArabic ? (vendor.shopNameAr || vendor.shopName) : vendor.shopName;
@@ -75,14 +93,14 @@ export function VendorsDirectory({ locale }: { locale: Locale }) {
   }, [searchQuery, locale, vendors, activeCategory, selectedCity, isArabic]);
 
   return (
-    <div className="w-full bg-[#f5bd18] text-[#1a1c1c] font-sans">
+    <div className="w-full bg-[#f5bd18] pb-28 text-[#1a1c1c] font-sans md:pb-0">
       {/* Hero Section */}
-      <section className="py-20 px-8 md:px-12 flex flex-col justify-center border-b-4 border-black text-start max-w-7xl mx-auto w-full">
+      <section className="mx-auto flex w-full max-w-7xl flex-col justify-center border-b-4 border-black px-4 py-6 text-start md:px-12 md:py-20">
         <div className="w-full">
-          <div className="inline-block bg-black text-[#f5bd18] px-4 py-1 mb-4 text-xs font-black uppercase tracking-widest rounded-none">
+          <div className="mb-4 inline-block bg-black px-3 py-1 text-[10px] font-black uppercase tracking-widest text-[#f5bd18] md:px-4 md:text-xs">
             {isArabic ? "سلسلة التوريد الممتازة" : "Premium Supply Chain"}
           </div>
-          <h1 className="font-display-lg text-4xl md:text-6xl text-black font-black leading-tight mb-4">
+          <h1 className="font-display-lg mb-3 text-4xl font-black leading-tight text-black md:mb-4 md:text-6xl">
             {isArabic ? (
               <>
                 موردين قطع الغيار <span className="block mt-2">والمواد المعتمدين</span>
@@ -93,30 +111,30 @@ export function VendorsDirectory({ locale }: { locale: Locale }) {
               </>
             )}
           </h1>
-          <h2 className="text-xl md:text-2xl text-black/80 font-bold">
+          <h2 className="text-base font-bold leading-7 text-black/80 md:text-2xl">
             {isArabic ? "ابحث عن أقرب متجر خامات لصيانة منزلك" : "Source spare parts & raw materials from local stores"}
           </h2>
         </div>
       </section>
 
       {/* Search & Filter Bar */}
-      <section className="sticky top-20 z-40 bg-black py-6 px-8 md:px-12 border-b border-white/10 text-white">
-        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-6">
+      <section className="sticky top-16 z-40 border-b border-white/10 bg-black px-4 py-4 text-white md:top-20 md:px-12 md:py-6">
+        <div className="mx-auto flex max-w-7xl flex-col gap-3 lg:flex-row lg:gap-6">
           <div className="flex-1 relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 h-5 w-5" />
+            <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-white/40 rtl:left-auto rtl:right-4" />
             <input 
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-[#121212] border border-white/20 text-white pl-12 pr-4 py-4 focus:border-[#f5bd18] focus:ring-0 transition-colors placeholder:text-white/30 uppercase text-xs rounded-none font-bold text-start"
+              className="h-12 w-full border border-white/20 bg-[#121212] px-12 text-start text-xs font-bold uppercase text-white placeholder:text-white/30 transition-colors focus:border-[#f5bd18] focus:ring-0"
               placeholder={isArabic ? "ابحث عن خامات، قطع غيار، علامات تجارية..." : "Search tools, parts, or brands..."}
             />
           </div>
-          <div className="flex flex-wrap lg:flex-nowrap gap-4">
+          <div className="grid grid-cols-2 gap-3 lg:flex lg:flex-nowrap lg:gap-4">
             <select 
               value={selectedCity}
               onChange={(e) => setSelectedCity(e.target.value)}
-              className="bg-[#121212] border border-white/20 text-white px-6 py-4 focus:border-[#f5bd18] focus:ring-0 appearance-none text-xs rounded-none font-bold"
+              className="h-12 rounded-none border border-white/20 bg-[#121212] px-3 text-xs font-bold text-white appearance-none focus:border-[#f5bd18] focus:ring-0 md:px-6"
             >
               {cities.map(c => (
                 <option key={c.value} value={c.value}>{c.label[locale]}</option>
@@ -125,7 +143,7 @@ export function VendorsDirectory({ locale }: { locale: Locale }) {
             <select 
               value={activeCategory}
               onChange={(e) => setActiveCategory(e.target.value)}
-              className="bg-[#121212] border border-white/20 text-white px-6 py-4 focus:border-[#f5bd18] focus:ring-0 appearance-none text-xs rounded-none font-bold"
+              className="h-12 rounded-none border border-white/20 bg-[#121212] px-3 text-xs font-bold text-white appearance-none focus:border-[#f5bd18] focus:ring-0 md:px-6"
             >
               {categories.map(cat => (
                 <option key={cat.id} value={cat.id}>{cat.label[locale]}</option>
@@ -136,16 +154,16 @@ export function VendorsDirectory({ locale }: { locale: Locale }) {
       </section>
 
       {/* Vendor Directory Grid */}
-      <section className="py-20 px-8 md:px-12 bg-[#f5bd18]">
+      <section className="bg-[#f5bd18] px-4 py-8 md:px-12 md:py-20">
         <div className="max-w-7xl mx-auto text-start">
-          <div className="flex justify-between items-end mb-12 border-b border-black/10 pb-6">
+          <div className="mb-6 flex items-end justify-between gap-4 border-b border-black/10 pb-4 md:mb-12 md:pb-6">
             <div className="flex items-center gap-4">
-              <div className="w-2 h-12 bg-black"></div>
-              <h3 className="text-2xl md:text-4xl text-black font-black uppercase">
+              <div className="h-10 w-1.5 bg-black md:h-12 md:w-2"></div>
+              <h3 className="text-2xl font-black uppercase text-black md:text-4xl">
                 {isArabic ? "الموردين المعتمدين" : "Verified Suppliers"}
               </h3>
             </div>
-            <p className="text-sm font-black text-black/60">
+            <p className="shrink-0 text-xs font-black text-black/60 md:text-sm">
               {isArabic 
                 ? `عرض ${filteredVendors.length} متجر متوفر حالياً` 
                 : `Showing ${filteredVendors.length} top-rated vendors`}
@@ -158,9 +176,9 @@ export function VendorsDirectory({ locale }: { locale: Locale }) {
               <p className="font-bold text-black">{isArabic ? "جاري تحميل المتاجر..." : "Loading verified stores..."}</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
               {filteredVendors.map((vendor) => (
-                <div key={vendor.id} className="bg-black border border-white/10 p-6 flex flex-col justify-between h-full hover:border-[#f5bd18] transition-all group text-start rounded-none text-white min-h-[380px]">
+                <div key={vendor.id} className="group flex min-h-[300px] flex-col justify-between border border-white/10 bg-black p-5 text-start text-white transition-all hover:border-[#f5bd18] md:min-h-[380px] md:p-6">
                   <div>
                     <div className="flex justify-between items-start mb-6">
                       <div className="w-16 h-16 bg-[#121212] border border-white/10 flex items-center justify-center">
@@ -171,8 +189,8 @@ export function VendorsDirectory({ locale }: { locale: Locale }) {
                           <Star className="h-3.5 w-3.5 fill-current" />
                           <span>{vendor.rating > 0 ? vendor.rating.toFixed(1) : "5.0"}</span>
                         </div>
-                        <span className="text-white/40 text-[10px] mt-1 uppercase font-bold">
-                          {vendor.ratingCount || 120} REVIEWS
+                        <span className="mt-1 text-[10px] font-bold uppercase text-white/40">
+                          {isArabic ? `${vendor.ratingCount || 120} تقييم` : `${vendor.ratingCount || 120} REVIEWS`}
                         </span>
                       </div>
                     </div>
@@ -192,23 +210,23 @@ export function VendorsDirectory({ locale }: { locale: Locale }) {
                     </p>
                     <div className="flex flex-wrap gap-2 mb-8">
                       <span className="border border-white/20 text-white/80 px-3 py-1 text-[10px] font-bold uppercase">
-                        {vendor.category || "General Supplies"}
+                        {getVendorCategoryLabel(vendor.category)}
                       </span>
                       <span className="border border-white/20 text-white/80 px-3 py-1 text-[10px] font-bold uppercase">
                         {vendor.isOpen ? (isArabic ? "مفتوح" : "OPEN") : (isArabic ? "مغلق" : "CLOSED")}
                       </span>
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-3 md:gap-4">
                     <Link 
                       href={`/${locale}/vendors/${vendor.id}`} 
-                      className="border-2 border-white text-white text-center py-3 text-xs font-black hover:bg-white hover:text-black transition-all rounded-none uppercase"
+                      className="border-2 border-white py-3 text-center text-xs font-black uppercase text-white transition-all hover:bg-white hover:text-black"
                     >
                       {isArabic ? "تصفح المجلد" : "CATALOG"}
                     </Link>
                     <Link 
                       href={`/${locale}/vendors/${vendor.id}/request`} 
-                      className="bg-[#f5bd18] text-black text-center py-3 text-xs font-black brutalist-shadow hover:bg-white transition-all rounded-none uppercase"
+                      className="bg-[#f5bd18] py-3 text-center text-xs font-black uppercase text-black transition-all hover:bg-white md:brutalist-shadow"
                     >
                       {isArabic ? "اطلب تسعير" : "CONTACT"}
                     </Link>
@@ -221,7 +239,7 @@ export function VendorsDirectory({ locale }: { locale: Locale }) {
       </section>
 
       {/* Featured Brands */}
-      <section className="bg-black py-16 overflow-hidden border-y-4 border-white/10 text-white text-start">
+      <section className="overflow-hidden border-y-4 border-white/10 bg-black py-10 text-start text-white md:py-16">
         <div className="px-8 md:px-12 max-w-7xl mx-auto mb-8">
           <h3 className="text-xs font-black text-[#f5bd18] uppercase tracking-[0.3em] mb-2">
             {isArabic ? "شراكات موثوقة" : "Trusted Partnerships"}
@@ -242,7 +260,7 @@ export function VendorsDirectory({ locale }: { locale: Locale }) {
       </section>
 
       {/* Become a Vendor CTA */}
-      <section className="bg-[#f5bd18] py-16 px-8 md:px-12 border-t-4 border-black">
+      <section className="border-t-4 border-black bg-[#f5bd18] px-4 py-10 md:px-12 md:py-16">
         <div className="max-w-7xl mx-auto bg-black p-8 md:p-12 relative overflow-hidden group border border-white/10 text-white text-start rounded-none">
           <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8">
             <div className="max-w-2xl">

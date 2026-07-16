@@ -119,28 +119,31 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
   ];
 
   return (
-    <div className="bg-[#f5bd18] text-[#1a1c1c] font-sans antialiased -mx-4 md:-mx-12 -my-12">
+    <div className="min-h-screen bg-[#f5bd18] pb-28 text-[#1a1c1c] font-sans antialiased md:-mx-12 md:-my-12 md:pb-0">
       <style dangerouslySetInnerHTML={{__html: '.worker-card-dark { background-color: #000000; color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.1); position: relative; display: flex; flex-direction: column; transition: all 0.2s ease-in-out; } .worker-card-light { background-color: #ffffff; color: #000000; border: 1px solid rgba(0, 0, 0, 0.1); position: relative; display: flex; flex-direction: column; transition: all 0.2s ease-in-out; } .worker-card-dark:hover { outline: 3px solid #000000; transform: translateY(-4px); } .worker-card-light:hover { outline: 3px solid #ffffff; transform: translateY(-4px); }' }} />
 
       {/* Black Hero Header Section */}
-      <section className="bg-black py-20 px-8 md:px-12 text-center border-b-4 border-black relative overflow-hidden">
-        <div className="max-w-4xl mx-auto space-y-6">
-          <div className="space-y-2">
-            <h1 className="text-2xl md:text-3xl font-black text-white">
-              Find Expert Workers
+      <section className="relative overflow-hidden border-b-4 border-black bg-black px-4 py-6 text-start md:px-12 md:py-20 md:text-center">
+        <div className="mx-auto max-w-4xl space-y-5 md:space-y-6">
+          <div className="space-y-3">
+            <span className="inline-flex bg-[#f5bd18] px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-black">
+              {isArabic ? "الفنيون" : "Workers"}
+            </span>
+            <h1 className="text-4xl font-black leading-tight text-white md:text-3xl">
+              {isArabic ? "ابحث عن فني محترف" : "Find Expert Workers"}
             </h1>
-            <h2 className="text-lg md:text-xl font-bold text-[#f5bd18]">
-              البحث عن فنيين محترفين
-            </h2>
+            <p className="max-w-xl text-sm font-bold leading-6 text-white/60 md:mx-auto md:text-base">
+              {isArabic ? "اختار التخصص والمنطقة وشوف الفنيين المتاحين بالقرب منك." : "Filter by specialty and area, then book a verified professional near you."}
+            </p>
           </div>
 
           {/* Centered Search Row */}
-          <div className="flex flex-col md:flex-row gap-4 justify-center items-center max-w-3xl mx-auto bg-[#121212]/80 p-4 rounded-xl border border-white/10 backdrop-blur">
+          <div className="mx-auto flex max-w-3xl flex-col items-center justify-center gap-3 border border-white/10 bg-[#121212]/90 p-3 md:flex-row md:gap-4 md:p-4">
             <div className="w-full md:w-1/3 relative">
               <select 
                 value={selectedSpecialty}
                 onChange={(e) => setSelectedSpecialty(e.target.value)}
-                className="w-full bg-[#121212] border border-white/20 text-white py-3 px-4 focus:border-[#f5bd18] focus:ring-0 outline-none rounded-none text-xs font-bold"
+                className="h-12 w-full rounded-none border border-white/20 bg-[#121212] px-4 text-xs font-bold text-white outline-none focus:border-[#f5bd18] focus:ring-0"
               >
                 {CRAFTS.map(craft => (
                   <option key={craft.id} value={craft.id}>{isArabic ? craft.name.ar : craft.name.en}</option>
@@ -152,40 +155,42 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={isArabic ? "الموقع (المدينة، الحي)" : "Location (City, Area)"}
-                className="w-full bg-[#121212] border border-white/20 text-white py-3 px-4 focus:border-[#f5bd18] focus:ring-0 outline-none rounded-none text-xs font-bold text-start"
+                placeholder={isArabic ? "الموقع أو اسم الفني" : "Location or worker name"}
+                className="h-12 w-full rounded-none border border-white/20 bg-[#121212] px-4 text-start text-xs font-bold text-white outline-none focus:border-[#f5bd18] focus:ring-0"
               />
             </div>
             <button 
               onClick={() => fetchWorkers()}
-              className="w-full md:w-1/3 bg-[#f5bd18] text-black font-black text-xs py-3 px-6 hover:bg-white transition-all uppercase rounded-none"
+              className="h-12 w-full rounded-none bg-[#f5bd18] px-6 text-xs font-black uppercase text-black transition-all hover:bg-white md:w-1/3"
             >
-              SEARCH NOW
+              {isArabic ? "ابحث الآن" : "SEARCH NOW"}
             </button>
           </div>
 
           {/* Popular Searches */}
-          <div className="text-xs text-white/60 font-bold space-x-2">
-            <span className="text-[#f5bd18]">POPULAR:</span>
-            <span className="cursor-pointer hover:text-white" onClick={() => { setSelectedSpecialty("plumbing"); setSearchQuery("Emergency"); }}>Emergency Plumber</span>
-            <span>|</span>
-            <span className="cursor-pointer hover:text-white" onClick={() => setSelectedSpecialty("ac")}>AC Maintenance</span>
-            <span>|</span>
-            <span className="cursor-pointer hover:text-white" onClick={() => setSelectedSpecialty("electricity")}>Licensed Electrician</span>
+          <div className="flex flex-wrap gap-2 text-xs font-bold text-white/60">
+            <span className="text-[#f5bd18]">{isArabic ? "الأكثر طلبًا:" : "Popular:"}</span>
+            <button className="hover:text-white" onClick={() => { setSelectedSpecialty("plumbing"); setSearchQuery(isArabic ? "طوارئ" : "Emergency"); }}>{isArabic ? "سباك طوارئ" : "Emergency Plumber"}</button>
+            <span className="text-white/25">|</span>
+            <button className="hover:text-white" onClick={() => setSelectedSpecialty("ac")}>{isArabic ? "صيانة تكييف" : "AC Maintenance"}</button>
+            <span className="text-white/25">|</span>
+            <button className="hover:text-white" onClick={() => setSelectedSpecialty("electricity")}>{isArabic ? "كهربائي معتمد" : "Licensed Electrician"}</button>
           </div>
         </div>
       </section>
 
       {/* Stats Bar */}
-      <section className="max-w-7xl mx-auto px-8 md:px-12 py-8 flex items-center justify-between text-start text-black">
+      <section className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-5 text-start text-black md:flex-row md:items-center md:justify-between md:px-12 md:py-8">
         <div className="flex items-center gap-3">
-          <span className="text-lg font-black uppercase">
-            {filteredWorkers.length} Professionals available in {selectedCity || (isArabic ? "القاهرة" : "New Cairo")}
+          <span className="text-sm font-black uppercase md:text-lg">
+            {isArabic
+              ? `${filteredWorkers.length} فني متاح في ${selectedCity || "القاهرة"}`
+              : `${filteredWorkers.length} professionals available in ${selectedCity || "New Cairo"}`}
           </span>
           <span className="w-2.5 h-2.5 rounded-full bg-black animate-pulse"></span>
         </div>
         <div className="flex items-center gap-4">
-          <span className="text-xs font-bold uppercase text-black/70">SORT BY:</span>
+          <span className="text-xs font-bold uppercase text-black/70">{isArabic ? "ترتيب:" : "SORT BY:"}</span>
           <select 
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
@@ -198,7 +203,7 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
       </section>
 
       {/* Worker Grid */}
-      <section className="max-w-7xl mx-auto px-8 md:px-12 pb-24">
+      <section className="mx-auto max-w-7xl px-4 pb-10 md:px-12 md:pb-24">
         {isLoading ? (
           <div className="py-20 flex flex-col items-center justify-center">
             <Loader2 className="h-12 w-12 animate-spin text-black mb-4" />
@@ -210,7 +215,7 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
             <p className="text-black/75 text-sm">{isArabic ? "جرب تغيير فلاتر البحث أو التخصص." : "Try changing search queries or specialties filters."}</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
             {filteredWorkers.map((worker, index) => {
               const avatarImg = worker.avatarUrl && !worker.avatarUrl.includes("initials") 
                 ? worker.avatarUrl 
@@ -228,7 +233,7 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
                   )}
                 >
                   {/* Full-width Image Header */}
-                  <div className="relative h-64 w-full bg-neutral-800 overflow-hidden">
+                    <div className="relative h-56 w-full overflow-hidden bg-neutral-800 md:h-64">
                     <img className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500" src={avatarImg} alt="" />
                     <div className="absolute top-4 left-4 z-10">
                       <span className={cn(
@@ -238,13 +243,13 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
                           : (isWhiteCard ? "bg-black text-white" : "bg-white text-black")
                       )}>
                         {worker.isOnline && <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span>}
-                        {worker.isOnline ? "ONLINE" : "OFFLINE"}
+                        {worker.isOnline ? (isArabic ? "متاح" : "ONLINE") : (isArabic ? "غير متاح" : "OFFLINE")}
                       </span>
                     </div>
                   </div>
 
                   {/* Card Content Area */}
-                  <div className="p-6 flex flex-col flex-grow justify-between text-start">
+                  <div className="flex flex-grow flex-col justify-between p-5 text-start md:p-6">
                     <div>
                       <div className="flex justify-between items-center mb-2">
                         <h3 className="font-black text-lg leading-tight truncate">{worker.name}</h3>
@@ -270,7 +275,7 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
                         </div>
                         <div className="flex justify-between items-center border-b border-black/10 md:border-white/10 pb-2">
                           <span>{isArabic ? "زمن الاستجابة" : "RESPONSE TIME"}</span>
-                          <span className={isWhiteCard ? "text-black" : "text-white"}>15 Mins</span>
+                          <span className={isWhiteCard ? "text-black" : "text-white"}>{isArabic ? "15 دقيقة" : "15 Mins"}</span>
                         </div>
                         <div className="flex justify-between items-center">
                           <span>{isArabic ? "الموقع" : "PRIMARY LOCATION"}</span>
@@ -302,7 +307,7 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
       </section>
 
       {/* Pagination */}
-      <div className="max-w-7xl mx-auto flex justify-center gap-2 pb-24">
+      <div className="mx-auto hidden max-w-7xl justify-center gap-2 pb-24 md:flex">
         <button className="w-10 h-10 flex items-center justify-center border border-black/20 bg-white hover:bg-black hover:text-white transition-colors font-bold rounded-none">{"<"}</button>
         <button className="w-10 h-10 flex items-center justify-center border border-black/20 bg-black text-[#f5bd18] font-bold rounded-none">1</button>
         <button className="w-10 h-10 flex items-center justify-center border border-black/20 bg-white hover:bg-black hover:text-white transition-colors font-bold rounded-none">2</button>

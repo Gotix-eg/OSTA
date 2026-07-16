@@ -171,23 +171,26 @@ export function HowItWorksCustom({ locale }: { locale: Locale }) {
       style={{ backgroundColor: "#f5bd18", minHeight: "100vh" }}
     >
       {/* ── Hero Section ── */}
-      <section className="px-4 md:px-12 py-20 flex flex-col items-center text-center max-w-4xl mx-auto">
-        <h1 className="text-4xl md:text-7xl font-black text-[#1a1c1c] mb-3 uppercase leading-tight tracking-tight">
+      <section className="mx-auto flex max-w-4xl flex-col items-start px-4 py-8 text-start md:items-center md:px-12 md:py-20 md:text-center">
+        <span className="mb-4 inline-flex bg-black px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-[#f5bd18]">
+          {isArabic ? "طريقة العمل" : "How it works"}
+        </span>
+        <h1 className="mb-3 text-4xl font-black uppercase leading-tight tracking-tight text-[#1a1c1c] md:text-7xl">
           {currentCopy.title}{" "}
           <br />
           <span className="bg-[#1a1c1c] text-[#f5bd18] px-3 inline-block mt-1">
             {currentCopy.titleHighlight}
           </span>
         </h1>
-        <p className="text-lg text-[#1a1c1c]/80 max-w-2xl mt-6 leading-relaxed">
+        <p className="mt-5 max-w-2xl text-base font-semibold leading-7 text-[#1a1c1c]/80 md:mt-6 md:text-lg">
           {currentCopy.subtitle}
         </p>
       </section>
 
       {/* ── Interactive Tabs Section ── */}
-      <section className="px-4 md:px-12 pb-20 max-w-[1280px] mx-auto">
+      <section className="mx-auto max-w-[1280px] px-4 pb-10 md:px-12 md:pb-20">
         {/* Tabs */}
-        <div className="flex flex-wrap justify-center gap-4 mb-12">
+        <div className="mb-6 flex gap-3 overflow-x-auto pb-2 [-webkit-overflow-scrolling:touch] md:mb-12 md:flex-wrap md:justify-center md:gap-4">
           {roleKeys.map((role) => {
             const isActive = activeRole === role;
             return (
@@ -195,7 +198,7 @@ export function HowItWorksCustom({ locale }: { locale: Locale }) {
                 key={role}
                 onClick={() => setActiveRole(role)}
                 className={cn(
-                  "px-8 py-3 font-black uppercase text-sm border-2 border-[#1a1c1c] transition-all duration-150",
+                  "min-h-11 shrink-0 border-2 border-[#1a1c1c] px-5 text-xs font-black uppercase transition-all duration-150 md:px-8 md:text-sm",
                   isActive
                     ? "bg-white text-[#1a1c1c] shadow-[4px_4px_0px_#1a1c1c]"
                     : "bg-[#1a1c1c] text-[#f5bd18] hover:bg-[#1a1c1c]/80"
@@ -215,38 +218,38 @@ export function HowItWorksCustom({ locale }: { locale: Locale }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -16 }}
             transition={{ duration: 0.3 }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-3"
           >
             {currentRoleData.steps.map((step) => {
               const { Icon } = step;
               return (
                 <div
                   key={step.number}
-                  className="group flex flex-col gap-4 p-6 border border-white/10 hover:border-[#f5bd18]/60 transition-colors duration-300"
+                  className="group flex flex-col gap-4 border border-white/10 p-5 transition-colors duration-300 hover:border-[#f5bd18]/60 md:p-6"
                   style={{ backgroundColor: "#000000" }}
                 >
                   {/* Number + Icon */}
                   <div className="flex justify-between items-start">
                     <span
                       className="font-black text-[#f5bd18] leading-none select-none"
-                      style={{ fontSize: "48px", opacity: 0.2 }}
+                      style={{ fontSize: "42px", opacity: 0.2 }}
                     >
                       {String(step.number).padStart(2, "0")}
                     </span>
                     <Icon
                       className="text-[#f5bd18] group-hover:scale-110 transition-transform duration-300"
-                      size={36}
+                      size={32}
                       strokeWidth={1.5}
                     />
                   </div>
 
                   {/* Title */}
-                  <h3 className="font-black text-white uppercase text-xl tracking-wide">
+                  <h3 className="text-xl font-black uppercase tracking-wide text-white">
                     {step.title}
                   </h3>
 
                   {/* Description */}
-                  <p className="text-base text-[#c6c6c6] leading-relaxed">
+                  <p className="text-sm font-semibold leading-7 text-[#c6c6c6] md:text-base">
                     {step.desc}
                   </p>
                 </div>
@@ -257,9 +260,9 @@ export function HowItWorksCustom({ locale }: { locale: Locale }) {
       </section>
 
       {/* ── Final CTA ── */}
-      <section className="px-4 md:px-12 pb-20 max-w-[1280px] mx-auto">
+      <section className="mx-auto max-w-[1280px] px-4 pb-28 md:px-12 md:pb-20">
         <div
-          className="relative overflow-hidden p-12 md:p-16 text-center border border-white/10"
+          className="relative overflow-hidden border border-white/10 p-6 text-start md:p-16 md:text-center"
           style={{ backgroundColor: "#000000" }}
         >
           <div
@@ -267,14 +270,14 @@ export function HowItWorksCustom({ locale }: { locale: Locale }) {
             style={{ backgroundColor: "#f5bd18", opacity: 0.08 }}
           />
 
-          <h2 className="font-black text-white uppercase text-3xl md:text-5xl mb-3 relative z-10">
+          <h2 className="relative z-10 mb-3 text-3xl font-black uppercase text-white md:text-5xl">
             {currentCopy.ctaTitle}
           </h2>
-          <h2 className="font-black text-[#f5bd18] uppercase text-3xl md:text-5xl mb-10 relative z-10">
+          <h2 className="relative z-10 mb-8 text-3xl font-black uppercase text-[#f5bd18] md:mb-10 md:text-5xl">
             {currentCopy.ctaTitleHighlight}
           </h2>
 
-          <div className="flex flex-col md:flex-row justify-center gap-6 relative z-10">
+          <div className="relative z-10 flex flex-col gap-3 md:flex-row md:justify-center md:gap-6">
             <Link
               href={`/${locale}/register/client`}
               className="inline-block px-10 py-4 font-black uppercase text-sm transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5"

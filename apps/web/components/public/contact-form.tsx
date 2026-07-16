@@ -77,36 +77,39 @@ export function ContactForm({ locale }: { locale: Locale }) {
       style={{ backgroundColor: "#f5bd18", minHeight: "100vh" }}
     >
       {/* ── Hero Header ── */}
-      <div className="px-4 md:px-12 pt-10 pb-8 max-w-[1280px] mx-auto">
-        <h1 className="font-black text-[#1a1c1c] uppercase leading-tight tracking-tight text-4xl md:text-7xl mb-3">
+      <div className="mx-auto max-w-[1280px] px-4 pb-6 pt-6 md:px-12 md:pb-8 md:pt-10">
+        <span className="mb-4 inline-flex bg-black px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-[#f5bd18]">
+          {isArabic ? "الدعم" : "Support"}
+        </span>
+        <h1 className="mb-3 text-4xl font-black uppercase leading-tight tracking-tight text-[#1a1c1c] md:text-7xl">
           {c.heroTitle}
         </h1>
-        <p className="text-[#1a1c1c]/80 text-base md:text-lg max-w-2xl leading-relaxed">
+        <p className="max-w-2xl text-sm font-bold leading-7 text-[#1a1c1c]/80 md:text-lg">
           {c.heroSub}
         </p>
       </div>
 
       {/* ── Main Grid ── */}
-      <div className="px-4 md:px-12 pb-12 max-w-[1280px] mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+      <div className="mx-auto max-w-[1280px] px-4 pb-28 md:px-12 md:pb-12">
+        <div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-12 lg:gap-6">
 
           {/* ── Left: Contact Details (Dark Obsidian Card) ── */}
           <div
-            className="lg:col-span-5 p-8 md:p-14 flex flex-col justify-between"
+            className="flex flex-col justify-between p-6 md:p-14 lg:col-span-5"
             style={{ backgroundColor: "#1a1c1c", border: "1px solid rgba(255,255,255,0.1)" }}
           >
             <div>
               <h2
-                className="font-black uppercase text-2xl md:text-3xl mb-8"
+                className="mb-6 text-2xl font-black uppercase md:mb-8 md:text-3xl"
                 style={{ color: "#f5bd18" }}
               >
                 {c.detailsTitle}
               </h2>
 
-              <div className="space-y-8">
+              <div className="space-y-5 md:space-y-8">
                 {contactItems.map(({ label, value, href, Icon }) => {
                   const content = (
-                    <div className="flex items-start gap-5 group cursor-pointer">
+                    <div className="group flex cursor-pointer items-start gap-4 md:gap-5">
                       {/* Yellow icon box */}
                       <div
                         className="flex-shrink-0 p-3 flex items-center justify-center"
@@ -171,7 +174,7 @@ export function ContactForm({ locale }: { locale: Locale }) {
 
           {/* ── Right: Contact Form (White/Translucent) ── */}
           <div
-            className="lg:col-span-7 p-8 md:p-14"
+            className="p-6 md:p-14 lg:col-span-7"
             style={{
               backgroundColor: "rgba(255,255,255,0.5)",
               backdropFilter: "blur(8px)",
@@ -202,13 +205,13 @@ export function ContactForm({ locale }: { locale: Locale }) {
               </div>
             ) : (
               <>
-                <h2 className="font-black text-[#1a1c1c] uppercase text-2xl md:text-3xl mb-8">
+                <h2 className="mb-6 text-2xl font-black uppercase text-[#1a1c1c] md:mb-8 md:text-3xl">
                   {c.formTitle}
                 </h2>
 
                 <form
                   onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }}
-                  className="space-y-5"
+                  className="space-y-4 md:space-y-5"
                 >
                   {/* Name + Phone */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -220,7 +223,7 @@ export function ContactForm({ locale }: { locale: Locale }) {
                         type="text"
                         required
                         placeholder={c.namePlaceholder}
-                        className="w-full p-4 font-medium placeholder:text-[#1a1c1c]/30 focus:outline-none transition-colors"
+                        className="h-[52px] w-full p-4 font-medium placeholder:text-[#1a1c1c]/30 transition-colors focus:outline-none"
                         style={{ backgroundColor: "#ffffff", border: "2px solid #1a1c1c" }}
                         onFocus={(e) => (e.currentTarget.style.borderColor = "#f5bd18")}
                         onBlur={(e) => (e.currentTarget.style.borderColor = "#1a1c1c")}
@@ -235,7 +238,7 @@ export function ContactForm({ locale }: { locale: Locale }) {
                         required
                         placeholder={c.phonePlaceholder}
                         dir="ltr"
-                        className="w-full p-4 font-medium placeholder:text-[#1a1c1c]/30 focus:outline-none transition-colors"
+                        className="h-[52px] w-full p-4 font-medium placeholder:text-[#1a1c1c]/30 transition-colors focus:outline-none"
                         style={{ backgroundColor: "#ffffff", border: "2px solid #1a1c1c" }}
                         onFocus={(e) => (e.currentTarget.style.borderColor = "#f5bd18")}
                         onBlur={(e) => (e.currentTarget.style.borderColor = "#1a1c1c")}
@@ -254,7 +257,7 @@ export function ContactForm({ locale }: { locale: Locale }) {
                         required
                         placeholder={c.emailPlaceholder}
                         dir="ltr"
-                        className="w-full p-4 font-medium placeholder:text-[#1a1c1c]/30 focus:outline-none transition-colors"
+                        className="h-[52px] w-full p-4 font-medium placeholder:text-[#1a1c1c]/30 transition-colors focus:outline-none"
                         style={{ backgroundColor: "#ffffff", border: "2px solid #1a1c1c" }}
                         onFocus={(e) => (e.currentTarget.style.borderColor = "#f5bd18")}
                         onBlur={(e) => (e.currentTarget.style.borderColor = "#1a1c1c")}
@@ -265,7 +268,7 @@ export function ContactForm({ locale }: { locale: Locale }) {
                         {c.subjectLabel}
                       </label>
                       <select
-                        className="w-full p-4 font-medium focus:outline-none appearance-none transition-colors"
+                        className="h-[52px] w-full appearance-none p-4 font-medium transition-colors focus:outline-none"
                         style={{ backgroundColor: "#ffffff", border: "2px solid #1a1c1c" }}
                         onFocus={(e) => (e.currentTarget.style.borderColor = "#f5bd18")}
                         onBlur={(e) => (e.currentTarget.style.borderColor = "#1a1c1c")}
@@ -296,7 +299,7 @@ export function ContactForm({ locale }: { locale: Locale }) {
                   {/* Submit */}
                   <button
                     type="submit"
-                    className="font-black uppercase text-sm px-12 py-5 text-white transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5"
+                    className="min-h-12 w-full px-8 text-sm font-black uppercase text-white transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 md:w-auto md:px-12"
                     style={{
                       backgroundColor: "#1a1c1c",
                       boxShadow: "4px 4px 0px #000000",
@@ -314,7 +317,7 @@ export function ContactForm({ locale }: { locale: Locale }) {
         <div
           className="mt-6 overflow-hidden relative group"
           style={{
-            height: "400px",
+            height: "min(400px, 54vh)",
             backgroundColor: "#1a1c1c",
             border: "1px solid rgba(255,255,255,0.1)",
           }}
@@ -322,7 +325,7 @@ export function ContactForm({ locale }: { locale: Locale }) {
           {/* Overlay label */}
           <div className="absolute inset-0 bg-[#1a1c1c]/40 group-hover:bg-[#1a1c1c]/20 transition-colors z-10 flex items-center justify-center pointer-events-none">
             <div
-              className="font-black uppercase text-xl px-8 py-4"
+              className="px-5 py-3 text-base font-black uppercase md:px-8 md:py-4 md:text-xl"
               style={{
                 backgroundColor: "#f5bd18",
                 color: "#1a1c1c",

@@ -95,31 +95,31 @@ export function AboutProfileCustom({ locale }: { locale: Locale }) {
       style={{ backgroundColor: "#f5bd18", minHeight: "100vh" }}
     >
       {/* ── Hero Banner (Obsidian Card) ── */}
-      <section className="px-4 md:px-12 py-12 max-w-[1280px] mx-auto">
+      <section className="mx-auto max-w-[1280px] px-4 pb-8 pt-6 md:px-12 md:py-12">
         <div
-          className="relative overflow-hidden p-10 md:p-24 text-center"
+          className="relative overflow-hidden p-6 text-start md:p-24 md:text-center"
           style={{ backgroundColor: "#000000", border: "1px solid rgba(255,255,255,0.1)" }}
         >
           {/* Badge */}
           <span
-            className="inline-block font-black text-xs uppercase px-4 py-1 mb-6 tracking-widest"
+            className="mb-5 inline-block px-3 py-1 text-[10px] font-black uppercase tracking-widest md:mb-6 md:px-4 md:text-xs"
             style={{ backgroundColor: "#f5bd18", color: "#1a1c1c" }}
           >
             {c.badge}
           </span>
 
           {/* Title */}
-          <h1 className="font-black text-white uppercase leading-tight tracking-tight text-3xl md:text-6xl mb-6 max-w-4xl mx-auto">
+          <h1 className="mx-auto mb-4 max-w-4xl text-4xl font-black uppercase leading-tight tracking-tight text-white md:mb-6 md:text-6xl">
             {c.heroTitle}
           </h1>
 
           {/* Subtitle */}
-          <p className="text-white/70 text-base md:text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
+          <p className="mx-auto mb-8 max-w-2xl text-sm font-semibold leading-7 text-white/70 md:mb-10 md:text-lg">
             {c.heroSub}
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col md:flex-row gap-4 justify-center">
+          <div className="flex flex-col gap-3 md:flex-row md:justify-center md:gap-4">
             <button
               className="font-black uppercase text-sm px-10 py-4 transition-all duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5"
               style={{
@@ -142,25 +142,25 @@ export function AboutProfileCustom({ locale }: { locale: Locale }) {
 
       {/* ── Stats Block (Dark Band) ── */}
       <section
-        className="w-full py-12 md:py-16"
+        className="w-full py-8 md:py-16"
         style={{ backgroundColor: "#1a1c1c" }}
       >
         <div className="max-w-[1280px] mx-auto px-4 md:px-12">
-          <h2 className="font-black text-white uppercase text-3xl md:text-4xl mb-12 text-center md:text-start">
+          <h2 className="mb-6 text-start text-2xl font-black uppercase text-white md:mb-12 md:text-4xl">
             {c.statsTitle}
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
             {c.stats.map((stat, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1, duration: 0.5 }}
-                className="py-4 pl-6"
+                className="py-3 pl-4 md:py-4 md:pl-6"
                 style={{ borderLeft: "4px solid #f5bd18" }}
               >
                 <div
-                  className="font-black text-4xl md:text-5xl mb-2"
+                  className="mb-2 text-3xl font-black md:text-5xl"
                   style={{ color: "#f5bd18" }}
                 >
                   {stat.value}
@@ -175,11 +175,11 @@ export function AboutProfileCustom({ locale }: { locale: Locale }) {
       </section>
 
       {/* ── Mission & Vision (White Cards) ── */}
-      <section className="px-4 md:px-12 py-12 max-w-[1280px] mx-auto">
+      <section className="mx-auto max-w-[1280px] px-4 py-8 md:px-12 md:py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Mission */}
           <div
-            className="p-10 md:p-12"
+            className="p-6 md:p-12"
             style={{
               backgroundColor: "#ffffff",
               border: "4px solid #000000",
@@ -197,7 +197,7 @@ export function AboutProfileCustom({ locale }: { locale: Locale }) {
 
           {/* Vision */}
           <div
-            className="p-10 md:p-12"
+            className="p-6 md:p-12"
             style={{
               backgroundColor: "#ffffff",
               border: "4px solid #000000",
@@ -216,18 +216,18 @@ export function AboutProfileCustom({ locale }: { locale: Locale }) {
       </section>
 
       {/* ── Core Values Grid ── */}
-      <section className="px-4 md:px-12 py-12 max-w-[1280px] mx-auto">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
+      <section className="mx-auto max-w-[1280px] px-4 py-8 md:px-12 md:py-12">
+        <div className="mb-6 flex flex-col items-start justify-between gap-4 md:mb-12 md:flex-row md:items-end">
           <div>
-            <h2 className="font-black text-[#1a1c1c] uppercase text-3xl md:text-4xl mb-2">
+            <h2 className="mb-2 text-3xl font-black uppercase text-[#1a1c1c] md:text-4xl">
               {c.foundationTitle}
             </h2>
             <p className="text-[#1a1c1c]/80 text-base max-w-xl">{c.foundationSub}</p>
           </div>
-          <div className="h-1 w-full md:w-48 mb-2" style={{ backgroundColor: "#1a1c1c" }} />
+          <div className="mb-2 h-1 w-24 md:w-48" style={{ backgroundColor: "#1a1c1c" }} />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-4">
           {c.values.map((val, i) => {
             const { Icon } = val;
             return (
@@ -236,7 +236,7 @@ export function AboutProfileCustom({ locale }: { locale: Locale }) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1, duration: 0.4 }}
-                className="group p-8 border border-white/10 transition-all duration-300 cursor-default"
+                className="group cursor-default border border-white/10 p-6 transition-all duration-300 md:p-8"
                 style={{ backgroundColor: "#000000" }}
                 onMouseEnter={(e) => {
                   (e.currentTarget as HTMLDivElement).style.backgroundColor = "#f5bd18";
@@ -270,7 +270,7 @@ export function AboutProfileCustom({ locale }: { locale: Locale }) {
 
       {/* ── CTA Banner (Dark) ── */}
       <section
-        className="w-full h-80 flex items-center justify-center relative overflow-hidden"
+        className="relative flex h-72 w-full items-center justify-center overflow-hidden pb-16 md:h-80 md:pb-0"
         style={{ backgroundColor: "#1a1c1c" }}
       >
         <div className="text-center relative z-10">

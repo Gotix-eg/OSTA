@@ -26,9 +26,37 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
   const isArabic = locale === "ar";
 
   return (
-    <main className="bg-[#f9f9f9] max-md:bg-[#f5bd18] min-h-screen text-[#1a1c1c] selection:bg-[#f5bd18] selection:text-[#1a1c1c]">
+    <main className="min-h-screen bg-[#f9f9f9] text-[#1a1c1c] selection:bg-[#f5bd18] selection:text-[#1a1c1c] max-md:bg-[#f5bd18]">
+      <header className="sticky top-0 z-50 border-b border-white/10 bg-black text-white md:hidden">
+        <nav className="flex h-16 items-center justify-between px-4">
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="flex h-11 w-11 items-center justify-center border border-white/10 bg-white/5 text-white active:scale-95"
+            aria-label={isMobileMenuOpen ? (isArabic ? "إغلاق القائمة" : "Close menu") : (isArabic ? "فتح القائمة" : "Open menu")}
+          >
+            {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+          <Link href={`/${locale}`} className="flex items-center justify-center">
+            <img
+              alt="OSTA Logo"
+              className="h-9 w-auto object-contain"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBu1Cr2Qb5XunsgNS63dL1yEu4iHVLV6I3gwxqInM8Qta47OxMPmanPnMaXI4SZTFZ9dd-0mEKbHsea4YqRFxqIE2duNvIPoYz5BsUrqf7JDfyAa2YxISdPTRtHV_FiLJgTl1xPi1VjLTpfwMBV9I8USHf_6dTSqD3mfsO2wIhvkC4TU6ipJSOZaUi3B2soFz85UQDUGwK8hTIeEcpBCPtKvahUwI4bhwqX7vHaLypDKtuHfoAuTOIV-UsxJjXrx4QL9sU0ng_2hvU"
+            />
+          </Link>
+          <div className="flex items-center gap-2">
+            <LocaleSwitcher locale={locale} pathname={pathname} className="h-11 rounded-none border border-white/10 bg-white/5 px-3 text-[11px] font-black text-white" />
+            <Link
+              href={`/${locale}/login`}
+              className="flex h-11 w-11 items-center justify-center bg-[#f5bd18] text-black active:scale-95"
+              aria-label={copy.login}
+            >
+              <LogIn className="h-5 w-5" />
+            </Link>
+          </div>
+        </nav>
+      </header>
       {/* TopNavBar */}
-      <header className="sticky top-0 z-50 transition-all duration-300 backdrop-blur-md border-b border-white/10 bg-[#1a1c1c]/90 text-white">
+      <header className="sticky top-0 z-50 hidden border-b border-white/10 bg-[#1a1c1c]/90 text-white backdrop-blur-md transition-all duration-300 md:block">
         <nav className="flex justify-between items-center px-4 md:px-12 w-full max-w-7xl mx-auto h-20">
           <div className="flex items-center gap-4">
             <img 
@@ -87,15 +115,15 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="fixed top-20 left-0 right-0 z-40 bg-[#1a1c1c] border-b border-white/10 text-white md:hidden"
+            className="fixed left-0 right-0 top-16 z-40 border-b border-white/10 bg-black text-white md:hidden"
           >
-            <div className="p-6 space-y-4 flex flex-col">
+            <div className="flex flex-col gap-2 p-4">
               {links.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href as `/${string}`}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="text-sm font-bold hover:text-[#f5bd18] py-2 border-b border-white/5"
+                  className="flex min-h-12 items-center justify-between border border-white/10 bg-white/[0.04] px-4 text-sm font-black hover:text-[#f5bd18]"
                 >
                   {item.label}
                 </Link>
@@ -110,7 +138,7 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
       </div>
 
       {/* Footer */}
-      <footer className="bg-[#1a1c1c] border-t border-white/10 w-full py-16 text-white mt-auto">
+      <footer className="mt-auto hidden w-full border-t border-white/10 bg-[#1a1c1c] py-16 text-white md:block">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 px-4 md:px-12 max-w-7xl mx-auto text-start">
           <div className="space-y-6">
             <img 
