@@ -53,18 +53,13 @@ export function ServicesListing({ locale }: { locale: Locale }) {
       {/* Hero Search Section */}
       <div className="max-w-7xl mx-auto mb-16 text-center space-y-8">
         <h1 className="font-display-lg text-4xl md:text-6xl text-[#1a1c1c] font-black leading-tight">
-          {isArabic ? (
-            <>
-              ماذا يمكننا أن نفعل لك؟
-              <span className="block text-2xl md:text-3xl mt-4 font-bold text-[#1a1c1c]/80">What can we do for you?</span>
-            </>
-          ) : (
-            <>
-              What can we do for you?
-              <span className="block text-2xl md:text-3xl mt-4 font-bold text-[#1a1c1c]/80" dir="rtl">ماذا يمكننا أن نفعل لك؟</span>
-            </>
-          )}
+          {isArabic ? "ماذا يمكننا أن نفعل لك؟" : "What can we do for you?"}
         </h1>
+        <p className="mx-auto max-w-2xl text-lg font-bold leading-8 text-[#1a1c1c]/75">
+          {isArabic
+            ? "اختر الخدمة المناسبة، وابحث عن فنيين موثوقين بالقرب منك."
+            : "Choose the right service and find verified professionals near you."}
+        </p>
         <div className="relative max-w-2xl mx-auto group">
           <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none z-25">
             <Search className="text-[#1a1c1c] h-6 w-6" />
@@ -98,12 +93,12 @@ export function ServicesListing({ locale }: { locale: Locale }) {
                   />
                   {cat.slug === "electrical" && (
                     <div className="absolute top-4 left-4 bg-[#f5bd18] text-[#1a1c1c] px-3 py-1 text-xs font-black rounded-none">
-                      URGENT
+                      {isArabic ? "عاجل" : "URGENT"}
                     </div>
                   )}
                   {cat.slug === "appliances" && (
                     <div className="absolute top-4 left-4 bg-white text-[#1a1c1c] px-3 py-1 text-xs font-black rounded-none">
-                      FEATURED
+                      {isArabic ? "مميز" : "FEATURED"}
                     </div>
                   )}
                 </div>
@@ -128,9 +123,17 @@ export function ServicesListing({ locale }: { locale: Locale }) {
       {/* CTA Banner */}
       <div className="max-w-7xl mx-auto mt-16 bg-[#1a1c1c] p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 border border-white/10 text-white text-start rounded-none">
         <div>
-          <h2 className="text-2xl font-black text-[#f5bd18] mb-2">Are you a master technician?</h2>
-          <h2 className="text-2xl font-black text-white">{isArabic ? "هل أنت فني محترف؟" : "Are you a professional pro?"}</h2>
-          <p className="text-neutral-400 mt-4 text-sm font-light">Join the elite network of OSTA craftsmen and grow your business.</p>
+          <h2 className="text-2xl font-black text-[#f5bd18] mb-2">
+            {isArabic ? "هل أنت فني محترف؟" : "Are you a master technician?"}
+          </h2>
+          <h3 className="text-2xl font-black text-white">
+            {isArabic ? "انضم إلى شبكة فنيين أُسطفاي" : "Join the OSTA craftsman network"}
+          </h3>
+          <p className="text-neutral-400 mt-4 text-sm font-light">
+            {isArabic
+              ? "وسع شغلك، واستقبل طلبات مناسبة، وابنِ سمعتك مع عملاء حقيقيين."
+              : "Grow your business, receive qualified requests, and build your reputation with real clients."}
+          </p>
         </div>
         <Link 
           href={`/${locale}/register/worker`} 
