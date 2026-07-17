@@ -422,8 +422,8 @@ export function LandingPage({ locale }: { locale: Locale }) {
                   <div className="relative h-[180px] overflow-hidden">
                     <img src={imgUrl} alt="" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" />
                   </div>
-                  <div className="flex flex-col items-center p-4 border-t border-white/5 group-hover:border-[#f5bd18] transition-colors">
-                    <h3 className="text-white font-bold text-lg">
+                  <div className="flex flex-col items-center py-2.5 px-4 border-t border-white/5 group-hover:border-[#f5bd18] transition-colors">
+                    <h3 className="text-white font-bold text-base">
                       {getServiceName(craft, isArabic)}
                     </h3>
                   </div>
