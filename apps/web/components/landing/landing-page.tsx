@@ -397,10 +397,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
         <div className="max-w-7xl mx-auto px-4 md:px-12">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-4 text-start">
             <div>
-              <span className="text-[#775a00] text-xs font-black tracking-widest uppercase">
-                {isArabic ? "خبراتنا" : "Expertise"}
-              </span>
-              <h2 className="text-3xl md:text-5xl text-[#1a1c1c] font-black mt-2">
+              <h2 className="text-3xl md:text-5xl text-[#1a1c1c] font-black">
                 {isArabic ? "الحرف المتخصصة" : "Specialized Crafts"}
               </h2>
             </div>
