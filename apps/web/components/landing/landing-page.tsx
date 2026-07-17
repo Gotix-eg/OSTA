@@ -427,7 +427,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
           <div className="mt-8 flex justify-end">
             <Link
               href={`/${locale}/services`}
-              className="border-2 border-[#1a1c1c] text-[#1a1c1c] text-xs font-black uppercase px-8 py-3 hover:bg-[#1a1c1c] hover:text-white transition-all"
+              className="bg-[#f5bd18] text-[#1a1c1c] px-8 py-3 text-xs font-black rounded-none sticker-shadow active:translate-x-1 active:translate-y-1 active:shadow-none transition-all uppercase"
             >
               {isArabic ? "عرض جميع التخصصات" : "View All Categories"}
             </Link>
