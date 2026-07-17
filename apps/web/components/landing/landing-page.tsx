@@ -414,20 +414,21 @@ export function LandingPage({ locale }: { locale: Locale }) {
               const imgUrl = getServiceImage(craft);
               const slug = getServiceSlug(craft);
               return (
-                <Link 
+                <Link
                   key={craft?.id ?? slug}
                   href={`/${locale}/services/${slug}`}
-                  className="group relative min-h-[260px] overflow-hidden border border-white/10 bg-[#1a1c1c] text-center cursor-pointer hover:border-[#f5bd18] transition-all duration-300 rounded-none"
+                  className="group flex flex-col overflow-hidden border border-white/10 bg-[#1a1c1c] text-center cursor-pointer hover:border-[#f5bd18] transition-all duration-300 rounded-none"
                 >
-                  <img src={imgUrl} alt="" className="absolute inset-0 h-full w-full object-cover opacity-75 transition-transform duration-700 group-hover:scale-110" />
-                  <span className="absolute inset-0 bg-gradient-to-t from-black via-black/65 to-black/20" />
-                  <div className="relative z-10 flex h-full min-h-[260px] flex-col items-center justify-end p-6">
-                  <h3 className="text-white font-bold text-lg">
-                    {getServiceName(craft, isArabic)}
-                  </h3>
-                  <p className="text-neutral-400 text-xs mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    {isArabic ? "فنيون معتمدون" : "Certified Pros"}
-                  </p>
+                  <div className="relative h-[180px] overflow-hidden">
+                    <img src={imgUrl} alt="" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                  </div>
+                  <div className="flex flex-col items-center p-4 border-t border-white/10 group-hover:border-[#f5bd18] transition-colors">
+                    <h3 className="text-white font-bold text-lg">
+                      {getServiceName(craft, isArabic)}
+                    </h3>
+                    <p className="text-neutral-400 text-xs mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      {isArabic ? "فنيون معتمدون" : "Certified Pros"}
+                    </p>
                   </div>
                 </Link>
               );
