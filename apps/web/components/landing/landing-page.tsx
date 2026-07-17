@@ -395,18 +395,10 @@ export function LandingPage({ locale }: { locale: Locale }) {
       {/* Service Categories */}
       <section className="py-24 bg-[#f3f3f4] max-md:bg-transparent">
         <div className="max-w-7xl mx-auto px-4 md:px-12">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-4 text-start">
-            <div>
-              <h2 className="text-3xl md:text-5xl text-[#1a1c1c] font-black">
-                {isArabic ? "الحرف المتخصصة" : "Specialized Crafts"}
-              </h2>
-            </div>
-            <Link 
-              href={`/${locale}/services`} 
-              className="text-[#1a1c1c] text-xs font-black underline underline-offset-8 hover:text-[#775a00] transition-colors uppercase"
-            >
-              {isArabic ? "عرض جميع التخصصات" : "View All Categories"}
-            </Link>
+          <div className="mb-12 text-start">
+            <h2 className="text-3xl md:text-5xl text-[#1a1c1c] font-black">
+              {isArabic ? "الحرف المتخصصة" : "Specialized Crafts"}
+            </h2>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
@@ -430,6 +422,15 @@ export function LandingPage({ locale }: { locale: Locale }) {
                 </Link>
               );
             })}
+          </div>
+
+          <div className="mt-8 flex justify-end">
+            <Link
+              href={`/${locale}/services`}
+              className="border-2 border-[#1a1c1c] text-[#1a1c1c] text-xs font-black uppercase px-8 py-3 hover:bg-[#1a1c1c] hover:text-white transition-all"
+            >
+              {isArabic ? "عرض جميع التخصصات" : "View All Categories"}
+            </Link>
           </div>
         </div>
       </section>
