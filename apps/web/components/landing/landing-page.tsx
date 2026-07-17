@@ -470,59 +470,25 @@ export function LandingPage({ locale }: { locale: Locale }) {
                 </div>
               ))
             ) : (
-              <>
-                {/* Default Fallback Ad 1 */}
-                <div className="bg-black border border-white/10 p-8 flex flex-col justify-between min-h-[320px] sticker-shadow hover:border-[#f5bd18] transition-all group text-start rounded-none">
-                  <div>
-                    <span className="bg-[#f5bd18] text-[#1a1c1c] px-3 py-1 text-[10px] font-black uppercase mb-6 inline-block rounded-none">
-                      {isArabic ? "ممول" : "PROMOTED"}
-                    </span>
-                    <h3 className="text-white text-xl font-black mb-2">
-                      {isArabic ? "أطقم أدوات احترافية" : "Premium Tool Kits"}
-                    </h3>
-                    <p className="text-neutral-400 text-sm">
-                      {isArabic ? "أدوات احترافية بضمان عامين، مخصصة لموردي أُسطفاي." : "Get the latest industrial-grade tools with a 2-year warranty. Exclusive for OSTA vendors."}
-                    </p>
-                  </div>
-                  <Link href={`/${locale}/register/vendor`} className="mt-8 w-full bg-[#f5bd18] text-[#1a1c1c] text-center font-black py-3 hover:scale-105 transition-transform uppercase rounded-none">
-                    {isArabic ? "عرض التفاصيل" : "View Details"}
-                  </Link>
-                </div>
-                {/* Default Fallback Ad 2 */}
-                <div className="bg-black border border-white/10 p-8 flex flex-col justify-between min-h-[320px] sticker-shadow hover:border-[#f5bd18] transition-all group text-start rounded-none">
-                  <div>
-                    <span className="bg-white text-black px-3 py-1 text-[10px] font-black uppercase mb-6 inline-block rounded-none">
-                      {isArabic ? "عرض" : "OFFER"}
-                    </span>
-                    <h3 className="text-white text-xl font-black mb-2">
-                      {isArabic ? "توريد مواد بالجملة" : "Bulk Material Supply"}
-                    </h3>
-                    <p className="text-neutral-400 text-sm">
-                      {isArabic ? "وفّر حتى 25% على الأسمنت والحديد للمشروعات الكبيرة من موردين موثقين فقط." : "Save up to 25% on cement and steel for large-scale projects. Verified suppliers only."}
-                    </p>
-                  </div>
-                  <Link href={`/${locale}/register/vendor`} className="mt-8 w-full bg-[#f5bd18] text-[#1a1c1c] text-center font-black py-3 hover:scale-105 transition-transform uppercase rounded-none">
-                    {isArabic ? "عرض التفاصيل" : "View Details"}
-                  </Link>
-                </div>
-                {/* Default Fallback Ad 3 */}
-                <div className="bg-black border border-white/10 p-8 flex flex-col justify-between min-h-[320px] sticker-shadow hover:border-[#f5bd18] transition-all group text-start rounded-none">
-                  <div>
-                    <span className="bg-[#f5bd18] text-[#1a1c1c] px-3 py-1 text-[10px] font-black uppercase mb-6 inline-block rounded-none">
-                      {isArabic ? "ممول" : "PROMOTED"}
-                    </span>
-                    <h3 className="text-white text-xl font-black mb-2">
-                      {isArabic ? "تركيب أنظمة ذكية" : "Smart Home Setup"}
-                    </h3>
-                    <p className="text-neutral-400 text-sm">
-                      {isArabic ? "كهربائيون معتمدون لتركيب أنظمة المنزل الذكي والأمان بالكامل." : "Certified electricians available for full home automation and security installations."}
-                    </p>
-                  </div>
-                  <Link href={`/${locale}/register/client`} className="mt-8 w-full bg-[#f5bd18] text-[#1a1c1c] text-center font-black py-3 hover:scale-105 transition-transform uppercase rounded-none">
-                    {isArabic ? "عرض التفاصيل" : "View Details"}
-                  </Link>
-                </div>
-              </>
+              <div className="md:col-span-3 border-2 border-dashed border-white/20 p-12 md:p-16 flex flex-col items-center justify-center text-center gap-4 rounded-none">
+                <span className="bg-[#f5bd18] text-[#1a1c1c] px-3 py-1 text-[10px] font-black uppercase inline-block rounded-none">
+                  {isArabic ? "مساحة إعلانية" : "AD SPACE"}
+                </span>
+                <h3 className="text-white text-2xl md:text-3xl font-black">
+                  {isArabic ? "هذا المكان لإعلانك" : "Your Ad Could Be Here"}
+                </h3>
+                <p className="text-neutral-400 text-sm max-w-xl">
+                  {isArabic
+                    ? "اعرض منتجاتك أو خدماتك أمام آلاف العملاء والفنيين على أُسطفاي. تواصل معنا لحجز هذه المساحة."
+                    : "Reach thousands of clients and craftsmen on Ostafy. Contact us to book this spot."}
+                </p>
+                <Link
+                  href={`/${locale}/contact`}
+                  className="mt-4 bg-[#f5bd18] text-[#1a1c1c] font-black px-8 py-3 hover:scale-105 transition-transform uppercase rounded-none"
+                >
+                  {isArabic ? "تواصل للإعلان معنا" : "Advertise With Us"}
+                </Link>
+              </div>
             )}
           </div>
         </div>
