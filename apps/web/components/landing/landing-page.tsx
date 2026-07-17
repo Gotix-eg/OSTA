@@ -419,8 +419,8 @@ export function LandingPage({ locale }: { locale: Locale }) {
                   href={`/${locale}/services/${slug}`}
                   className="group relative min-h-[260px] overflow-hidden border border-white/10 bg-[#1a1c1c] text-center cursor-pointer hover:border-[#f5bd18] transition-all duration-300 rounded-none"
                 >
-                  <img src={imgUrl} alt="" className="absolute inset-0 h-full w-full object-cover opacity-75 transition-transform duration-700 group-hover:scale-110" />
-                  <span className="absolute inset-0 bg-gradient-to-t from-black via-black/65 to-black/20" />
+                  <img src={imgUrl} alt="" className="absolute inset-0 h-full w-full object-cover opacity-75 grayscale contrast-125 transition-all duration-700 group-hover:scale-110 group-hover:grayscale-0" />
+                  <span className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-[#f5bd18]/20" />
                   <div className="relative z-10 flex h-full min-h-[260px] flex-col items-center justify-end p-6">
                   <h3 className="text-white font-bold text-lg">
                     {getServiceName(craft, isArabic)}
