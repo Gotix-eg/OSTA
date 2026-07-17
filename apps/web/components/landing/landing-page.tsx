@@ -374,7 +374,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
             </Link>
           </div>
           <div className="pt-8 flex items-center justify-center gap-2">
-            <div className="flex -space-x-4">
+            <div className="flex -space-x-4 rtl:space-x-reverse">
               <div className="w-10 h-10 rounded-full border-2 border-[#f5bd18] bg-neutral-800 overflow-hidden">
                 <img className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQnkfVDVnOUjLI9b30YFBXXjpltn4ESy_tdISPCmkdR3yromB3Lha3ilZ5pRfQhPB97_g7KsqwHJiEG7L67x83kkK15kXHB6ct4YnsanOsenIxnqjtpTaVyFLGu8VN9VIYqeOt0LqH7fO9ktFHjwOxvY0Vn3njIeV5NvIajV9NyLUSCTal_eFDKl60ywDiGbsWlfznbOhDMQUEQqHMhsI1i2rYLxKCUB_01Bo1yGT-5__-DBeqMZsy9TizFFh7GOTO03i97MbYSuc" alt="" />
               </div>
@@ -385,7 +385,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
                 <img className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVPCIqQb66zfGZ6ARRpvz-hLLKgeNQYhwOWu2zjDXp5PNlDkS9oDxnDk8Pn8dgTNOwNETkCXMYbmtRMWIUZYkz0OVIKZussoDQXG47U_VMPD2aoE7frzpgL-o7gT7PefJS5qhRsyXgaG5M6pXlf8o3gLBp6miiOgfBrt33qsOOwhEa2EyqOUfIN888RdacqGX6gG6GNPz8JTD6jDhktOiMmTHjFCJo33Uzczk_drl6JVGnbSS0k_EtPLXVVD58WSzJpBQbkE9UsKg" alt="" />
               </div>
             </div>
-            <span className="font-black text-white ml-4 text-xs uppercase tracking-wider">
+            <span className="font-black text-white me-4 text-xs uppercase tracking-wider">
               {isArabic ? "انضم إلينا أكثر من 50 ألف مستخدم موثوق" : "50K+ TRUSTED USERS ALREADY JOINED"}
             </span>
           </div>
