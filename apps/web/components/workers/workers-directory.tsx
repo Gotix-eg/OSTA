@@ -115,7 +115,7 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
     "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=400&auto=format&fit=crop",
     "https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=400&auto=format&fit=crop",
     "https://images.unsplash.com/photo-1581578731548-c64695cc6952?q=80&w=400&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1540324155974-752282871434?q=80&w=400&auto=format&fit=crop"
+    "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400&auto=format&fit=crop"
   ];
 
   return (
