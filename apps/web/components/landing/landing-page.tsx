@@ -521,9 +521,9 @@ export function LandingPage({ locale }: { locale: Locale }) {
               >
                 <div className="h-64 overflow-hidden relative">
                   {worker.avatarUrl ? (
-                    <img src={avatarImg} alt="" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
+                    <img src={avatarImg} alt="" className="w-full h-full object-cover transition-all duration-500" />
                   ) : (
-                    <img src={avatarImg} alt="" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
+                    <img src={avatarImg} alt="" className="w-full h-full object-cover transition-all duration-500" />
                   )}
                   <div className={cn(
                     "absolute top-4 right-4 text-white text-[10px] px-2 py-1 flex items-center gap-1 font-bold rounded-none",
