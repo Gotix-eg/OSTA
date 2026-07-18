@@ -33,7 +33,7 @@
 
 :root {
   /* Yellow theme defaults for both mobile and desktop */
-  --color-bg:       #f0bb19; /* Exact brand golden-yellow shade requested by user */
+  --color-bg:       #f5bd18; /* Brand gold — matches tailwind.config.ts gold.DEFAULT */
   --color-fg:       #100e08; /* Deep dark for max readability on yellow */
   --color-bg-card:  #ffffff; /* Pure white cards for best contrast */
   --color-border:   rgba(0, 0, 0, 0.12);
@@ -274,7 +274,7 @@ input::placeholder, textarea::placeholder {
 
   /* Override btn-gold to use bright yellow background and dark text */
   .btn-gold {
-    background: #f0bb19 !important;
+    background: #f5bd18 !important;
     color: #100e08 !important;
   }
 

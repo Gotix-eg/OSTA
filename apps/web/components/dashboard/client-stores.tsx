@@ -80,19 +80,19 @@ function StoreCard({
           <img src={store.shopImageUrl} alt={name} className="h-full w-full object-cover grayscale transition duration-700 group-hover:scale-105 group-hover:grayscale-0" />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
-            <Store className="h-14 w-14 text-[#f5bd18]" />
+            <Store className="h-14 w-14 text-gold" />
           </div>
         )}
         {/* Open/Closed badge */}
         <span className={cn(
           "absolute end-3 top-3 rounded-full px-3 py-1 text-xs font-semibold",
-          store.isOpen ? "bg-[#f5bd18] text-black" : "bg-black/80 text-white"
+          store.isOpen ? "bg-gold text-black" : "bg-black/80 text-white"
         )}>
           {store.isOpen ? (isArabic ? "مفتوح" : "Open") : (isArabic ? "مغلق" : "Closed")}
         </span>
         {/* Distance badge */}
         {store._distanceKm !== undefined && (
-          <span className="absolute start-3 top-3 flex items-center gap-1 bg-black/80 px-2.5 py-1 text-xs font-black text-[#f5bd18]">
+          <span className="absolute start-3 top-3 flex items-center gap-1 bg-black/80 px-2.5 py-1 text-xs font-black text-gold">
             <Navigation className="h-3 w-3" />
             {formatDistance(store._distanceKm, locale)}
           </span>
@@ -104,11 +104,11 @@ function StoreCard({
           <div className="min-w-0">
             <h2 className="truncate text-xl font-black uppercase text-white">{name}</h2>
             {store.category && (
-              <p className="mt-1 text-xs font-black uppercase tracking-widest text-[#f5bd18]">{store.category}</p>
+              <p className="mt-1 text-xs font-black uppercase tracking-widest text-gold">{store.category}</p>
             )}
           </div>
-          <div className="flex shrink-0 items-center gap-1 text-sm font-black text-[#f5bd18]">
-            <Star className="h-4 w-4 fill-[#f5bd18] text-[#f5bd18]" />
+          <div className="flex shrink-0 items-center gap-1 text-sm font-black text-gold">
+            <Star className="h-4 w-4 fill-gold text-gold" />
             {store.rating > 0 ? store.rating.toFixed(1) : "—"}
           </div>
         </div>
@@ -128,7 +128,7 @@ function StoreCard({
           <p className="mt-4 line-clamp-2 text-sm leading-relaxed text-white/55">{store.shopDescription}</p>
         )}
 
-        <div className="mt-5 inline-flex items-center gap-1 text-xs font-black uppercase tracking-widest text-[#f5bd18]">
+        <div className="mt-5 inline-flex items-center gap-1 text-xs font-black uppercase tracking-widest text-gold">
           {isArabic ? "تصفح المنتجات" : "Browse Products"}
           {isArabic ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
         </div>
@@ -231,7 +231,7 @@ export function ClientStoresPage({ locale }: { locale: Locale }) {
             "flex min-h-[5.6rem] items-center justify-center gap-2 border px-4 py-3 text-sm font-black uppercase tracking-wider shadow-[4px_4px_0_#1a1c1c] transition",
             userPos
               ? "border-emerald-700/30 bg-emerald-100 text-emerald-800"
-              : "border-black/10 bg-white text-black hover:bg-[#f5bd18]"
+              : "border-black/10 bg-white text-black hover:bg-gold"
           )}
         >
           {locating ? (
@@ -258,13 +258,13 @@ export function ClientStoresPage({ locale }: { locale: Locale }) {
 
       {/* Search bar */}
       <div className="relative border border-black/10 bg-black p-2 shadow-[4px_4px_0_#1a1c1c]">
-        <Search className="absolute start-6 top-1/2 h-5 w-5 -translate-y-1/2 text-[#f5bd18]" />
+        <Search className="absolute start-6 top-1/2 h-5 w-5 -translate-y-1/2 text-gold" />
         <input
           type="text"
           value={search}
           onChange={e => setSearch(e.target.value)}
           placeholder={isArabic ? "ابحث باسم المتجر أو التصنيف أو المنطقة..." : "Search by store name, category or area..."}
-          className="h-14 w-full border border-white/10 bg-[#121212] ps-12 pe-4 text-sm font-bold text-white placeholder:text-white/30 focus:border-[#f5bd18] focus:outline-none"
+          className="h-14 w-full border border-white/10 bg-[#121212] ps-12 pe-4 text-sm font-bold text-white placeholder:text-white/30 focus:border-gold focus:outline-none"
         />
       </div>
 
@@ -275,7 +275,7 @@ export function ClientStoresPage({ locale }: { locale: Locale }) {
           isArabic ? "سباكة" : "Plumbing",
           isArabic ? "تشطيبات" : "Finishing"
         ].map((label, index) => (
-          <button key={label} className={index === 0 ? "bg-black px-4 py-2 text-xs font-black uppercase text-[#f5bd18]" : "border border-black/10 bg-white/60 px-4 py-2 text-xs font-black uppercase text-black"}>
+          <button key={label} className={index === 0 ? "bg-black px-4 py-2 text-xs font-black uppercase text-gold" : "border border-black/10 bg-white/60 px-4 py-2 text-xs font-black uppercase text-black"}>
             {label}
           </button>
         ))}
@@ -290,7 +290,7 @@ export function ClientStoresPage({ locale }: { locale: Locale }) {
         </div>
       ) : filtered.length === 0 ? (
         <ClientStitchEmpty>
-          <Store className="mx-auto mb-4 h-12 w-12 text-[#f5bd18]" />
+          <Store className="mx-auto mb-4 h-12 w-12 text-gold" />
           <p className="text-lg font-black text-white">
             {stores.length === 0
               ? (isArabic ? "لا توجد متاجر بعد" : "No stores yet")

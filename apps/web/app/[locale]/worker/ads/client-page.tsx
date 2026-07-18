@@ -172,7 +172,7 @@ export default function WorkerAdsClientPage({ locale }: { locale: Locale }) {
           side={
             <div className="grid gap-4">
               <div className="border border-white/10 bg-black p-5 text-white shadow-[4px_4px_0_#1d1600]">
-                <Wallet className="h-5 w-5 text-[#f5bd18]" />
+                <Wallet className="h-5 w-5 text-gold" />
                 <p className="mt-4 text-[10px] font-black uppercase tracking-[0.2em] text-white/40">{isArabic ? "رصيد المحفظة" : "Wallet balance"}</p>
                 <p className="mt-2 text-3xl font-black text-white">{formatCurrency(locale, walletBalance)}</p>
               </div>
@@ -215,14 +215,14 @@ export default function WorkerAdsClientPage({ locale }: { locale: Locale }) {
           >
             {loading ? (
               <div className="flex h-48 items-center justify-center border border-white/10 bg-[#111]">
-                <div className="h-8 w-8 animate-spin border-4 border-[#f5bd18] border-t-transparent" />
+                <div className="h-8 w-8 animate-spin border-4 border-gold border-t-transparent" />
               </div>
             ) : campaigns.length === 0 ? (
               <WorkerProEmpty title={isArabic ? "لا توجد حملات حالية" : "No campaigns yet"} text={isArabic ? "ابدأ بحملة ممولة لرفع ظهور ملفك أمام العملاء المناسبين." : "Start a sponsored campaign to raise your profile in front of the right clients."} />
             ) : (
               <div className="grid gap-4">
                 {campaigns.map((ad, index) => (
-                  <article key={ad.id} className={index % 2 === 0 ? "border border-white/10 bg-[#111] p-5" : "border border-[#f5bd18]/30 bg-[#2a2207] p-5"}>
+                  <article key={ad.id} className={index % 2 === 0 ? "border border-white/10 bg-[#111] p-5" : "border border-gold/30 bg-[#2a2207] p-5"}>
                     <div className="flex flex-wrap items-start justify-between gap-4 border-b border-white/10 pb-4">
                       <div>
                         <div className="flex flex-wrap items-center gap-3">
@@ -240,7 +240,7 @@ export default function WorkerAdsClientPage({ locale }: { locale: Locale }) {
                       </div>
                       <div className="border border-white/10 bg-white/5 p-3">
                         <span className="block text-[10px] font-black uppercase tracking-[0.14em] text-white/35">{isArabic ? "نقرات" : "Clicks"}</span>
-                        <span className="mt-1 block text-lg font-black text-[#f5bd18]">{formatNumber(locale, ad.clicks)}</span>
+                        <span className="mt-1 block text-lg font-black text-gold">{formatNumber(locale, ad.clicks)}</span>
                       </div>
                       <div className="border border-white/10 bg-white/5 p-3">
                         <span className="block text-[10px] font-black uppercase tracking-[0.14em] text-white/35">{isArabic ? "المعدل" : "CTR"}</span>
@@ -262,7 +262,7 @@ export default function WorkerAdsClientPage({ locale }: { locale: Locale }) {
               ].map((item, index) => (
                 <div key={item.title} className="border border-white/10 bg-[#111] p-4">
                   <div className="flex items-start gap-3">
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center border border-[#f5bd18]/40 bg-[#f5bd18] text-sm font-black text-black">{index + 1}</span>
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center border border-gold/40 bg-gold text-sm font-black text-black">{index + 1}</span>
                     <div>
                       <h3 className="font-black text-white">{item.title}</h3>
                       <p className="mt-2 text-sm leading-6 text-white/50">{item.text}</p>
@@ -304,7 +304,7 @@ export default function WorkerAdsClientPage({ locale }: { locale: Locale }) {
                         setFormType(value);
                         setFormPlacement(value === "SPONSORED_PROFILE" ? "SEARCH_TOP" : "HOMEPAGE");
                       }}
-                      className="h-12 w-full border border-white/10 bg-[#111] px-4 text-white outline-none focus:border-[#f5bd18]"
+                      className="h-12 w-full border border-white/10 bg-[#111] px-4 text-white outline-none focus:border-gold"
                     >
                       <option value="SPONSORED_PROFILE">{isArabic ? "ملف ممول" : "Sponsored profile"}</option>
                       <option value="BANNER">{isArabic ? "بنر إعلاني" : "Banner ad"}</option>
@@ -313,7 +313,7 @@ export default function WorkerAdsClientPage({ locale }: { locale: Locale }) {
 
                   <label className="block space-y-2">
                     <span className="text-xs font-black uppercase tracking-[0.16em] text-white/45">{isArabic ? "مكان الإعلان" : "Ad placement"}</span>
-                    <select value={formPlacement} onChange={(event) => setFormPlacement(event.target.value as any)} className="h-12 w-full border border-white/10 bg-[#111] px-4 text-white outline-none focus:border-[#f5bd18]">
+                    <select value={formPlacement} onChange={(event) => setFormPlacement(event.target.value as any)} className="h-12 w-full border border-white/10 bg-[#111] px-4 text-white outline-none focus:border-gold">
                       {formType === "SPONSORED_PROFILE" ? (
                         <option value="SEARCH_TOP">{isArabic ? "صدارة البحث" : "Search top"}</option>
                       ) : (
@@ -328,31 +328,31 @@ export default function WorkerAdsClientPage({ locale }: { locale: Locale }) {
 
                 <label className="block space-y-2">
                   <span className="text-xs font-black uppercase tracking-[0.16em] text-white/45">{isArabic ? "عنوان الحملة" : "Campaign title"}</span>
-                  <input type="text" required placeholder={isArabic ? "مثال: فني سباكة معتمد" : "e.g. Certified plumbing expert"} value={formTitle} onChange={(event) => setFormTitle(event.target.value)} className="h-12 w-full border border-white/10 bg-[#111] px-4 text-white outline-none focus:border-[#f5bd18]" />
+                  <input type="text" required placeholder={isArabic ? "مثال: فني سباكة معتمد" : "e.g. Certified plumbing expert"} value={formTitle} onChange={(event) => setFormTitle(event.target.value)} className="h-12 w-full border border-white/10 bg-[#111] px-4 text-white outline-none focus:border-gold" />
                 </label>
 
                 {formType === "BANNER" ? (
                   <label className="block space-y-2">
                     <span className="text-xs font-black uppercase tracking-[0.16em] text-white/45">{isArabic ? "رابط صورة الإعلان" : "Banner image URL"}</span>
-                    <input type="url" placeholder="https://example.com/banner.jpg" value={formImageUrl} onChange={(event) => setFormImageUrl(event.target.value)} className="h-12 w-full border border-white/10 bg-[#111] px-4 text-white outline-none focus:border-[#f5bd18]" />
+                    <input type="url" placeholder="https://example.com/banner.jpg" value={formImageUrl} onChange={(event) => setFormImageUrl(event.target.value)} className="h-12 w-full border border-white/10 bg-[#111] px-4 text-white outline-none focus:border-gold" />
                   </label>
                 ) : null}
 
                 <label className="block space-y-2">
                   <span className="text-xs font-black uppercase tracking-[0.16em] text-white/45">{isArabic ? "رابط التحويل عند النقر" : "Target URL"}</span>
-                  <input type="url" placeholder="https://ostafy.com/profile/worker-1" value={formTargetUrl} onChange={(event) => setFormTargetUrl(event.target.value)} className="h-12 w-full border border-white/10 bg-[#111] px-4 text-white outline-none focus:border-[#f5bd18]" />
+                  <input type="url" placeholder="https://ostafy.com/profile/worker-1" value={formTargetUrl} onChange={(event) => setFormTargetUrl(event.target.value)} className="h-12 w-full border border-white/10 bg-[#111] px-4 text-white outline-none focus:border-gold" />
                 </label>
 
                 <div className="flex items-center justify-between border border-white/10 bg-[#111] p-4 text-sm">
                   <span className="font-black text-white/50">{isArabic ? "تكلفة الحملة" : "Campaign fee"}</span>
-                  <span className="font-black text-[#f5bd18]">{formatCurrency(locale, formType === "BANNER" ? 500 : 250)}</span>
+                  <span className="font-black text-gold">{formatCurrency(locale, formType === "BANNER" ? 500 : 250)}</span>
                 </div>
 
                 <div className="flex justify-end gap-3 pt-3">
                   <button type="button" onClick={() => setShowCreateModal(false)} className="border border-white/20 px-5 py-3 text-sm font-black text-white hover:bg-white/5">
                     {isArabic ? "إلغاء" : "Cancel"}
                   </button>
-                  <button type="submit" disabled={submitting || success} className="inline-flex items-center gap-2 bg-[#f5bd18] px-6 py-3 text-sm font-black text-black disabled:opacity-50">
+                  <button type="submit" disabled={submitting || success} className="inline-flex items-center gap-2 bg-gold px-6 py-3 text-sm font-black text-black disabled:opacity-50">
                     {submitting ? <RefreshCw className="h-4 w-4 animate-spin" /> : null}
                     {isArabic ? "تمويل وتفعيل" : "Fund and activate"}
                   </button>

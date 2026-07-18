@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import {
-  Star, ShieldCheck, Shield, Check, X, Search, DollarSign,
+  Star, ShieldCheck, Shield, Check, X, Search, DollarSign, MapPin, Clock,
 } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
@@ -51,6 +51,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
   const [slides, setSlides] = useState<any[]>([]);
   const [campaigns, setCampaigns] = useState<any[]>([]);
   const [workers, setWorkers] = useState<any[]>([]);
+  const [openRequests, setOpenRequests] = useState<any[]>([]);
   
   const [selectedWorkerForBooking, setSelectedWorkerForBooking] = useState<any | null>(null);
   const [showAuthModal, setShowAuthModal] = useState<boolean>(false);
@@ -85,6 +86,16 @@ export function LandingPage({ locale }: { locale: Locale }) {
       .then(payload => {
         if (payload.success && Array.isArray(payload.data)) {
           setWorkers(payload.data);
+        }
+      })
+      .catch(() => {});
+
+    // Fetch open service requests still searching for a professional
+    fetch(`${baseUrl}/public/requests`)
+      .then(r => r.json())
+      .then(payload => {
+        if (payload.success && Array.isArray(payload.data)) {
+          setOpenRequests(payload.data);
         }
       })
       .catch(() => {});
@@ -143,6 +154,13 @@ export function LandingPage({ locale }: { locale: Locale }) {
       distanceEn: "2.3 km away",
       image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCUjS8cqQCINIOM84jIMf2dYmBT0ln1b8teCxZV19vnToAaTPbpuwJcvOdIoY4CVoKIiP3wxhHAWIUx1LH3Fn2E5A7C_CRnb4Z-V1EnnCgZj1rtmJmzhkKS-Cei1wxR6LKdtJ5-B01h1LI_R_UiWI7slUhfpK0xSOUbS4Pk4Pe6yHWxPC8p6z6Blicrzxq9mF29GthmdUjKgmWQPcHcqGLawfLjxgAHGwF6OW7sGJ8QtC23cWBNawb9fMXzgXuUFjpTY6GYovxVDIg"
     }
+  ];
+
+  const desktopFallbackPros = [
+    { id: "fallback-electrician", name: "Ahmed Hassan", professionAr: "كهربائي محترف", professionEn: "Master Electrician", rating: 4.9, totalJobs: 124, isOnline: true, avatarUrl: "" },
+    { id: "fallback-plumber", name: "Samir Khalil", professionAr: "سباك أول", professionEn: "Senior Plumber", rating: 4.8, totalJobs: 98, isOnline: true, avatarUrl: "" },
+    { id: "fallback-carpenter", name: "Youssef Ali", professionAr: "نجار محترف", professionEn: "Master Carpenter", rating: 4.7, totalJobs: 76, isOnline: false, avatarUrl: "" },
+    { id: "fallback-ac", name: "Mostafa Adel", professionAr: "فني تكييف", professionEn: "AC Technician", rating: 4.9, totalJobs: 152, isOnline: true, avatarUrl: "" },
   ];
 
   type MobilePro = {
@@ -213,9 +231,9 @@ export function LandingPage({ locale }: { locale: Locale }) {
       ];
 
   return (
-    <div className="bg-[#f9f9f9] max-md:bg-[#f5bd18] selection:bg-[#f5bd18] selection:text-[#1a1c1c] overflow-x-hidden">
+    <div className="bg-[#f9f9f9] max-md:bg-gold selection:bg-gold selection:text-[#1a1c1c] overflow-x-hidden">
       {/* Stitch mobile home — shown ONLY on mobile (< 768px) */}
-      <div className="md:hidden min-h-screen bg-[#f5bd18] pb-24 text-[#1a1c1c]">
+      <div className="md:hidden min-h-screen bg-gold pb-24 text-[#1a1c1c]">
         <main>
           <MobileHeroSlider locale={locale} />
 
@@ -255,7 +273,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
                 >
                   <div className="flex h-40 items-center justify-center bg-zinc-900 p-4 text-center">
                     <div>
-                      <h3 className="mb-1 text-3xl font-black text-[#f5bd18]">
+                      <h3 className="mb-1 text-3xl font-black text-gold">
                         {isArabic ? offer.titleAr : offer.titleEn}
                       </h3>
                       <p className="text-sm font-bold text-white/60">
@@ -264,7 +282,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
                     </div>
                   </div>
                   <div className="bg-black p-4">
-                    <span className="bg-[#f5bd18] px-2 py-1 text-xs font-black uppercase text-black">
+                    <span className="bg-gold px-2 py-1 text-xs font-black uppercase text-black">
                       {isArabic ? offer.badgeAr : offer.badgeEn}
                     </span>
                   </div>
@@ -291,12 +309,12 @@ export function LandingPage({ locale }: { locale: Locale }) {
                     </div>
                     <div className="min-w-0 text-start">
                       <p className="truncate text-sm font-black">{isArabic ? worker.nameAr : worker.nameEn}</p>
-                      <p className="text-xs font-bold text-[#f5bd18]">{isArabic ? worker.professionAr : worker.professionEn}</p>
+                      <p className="text-xs font-bold text-gold">{isArabic ? worker.professionAr : worker.professionEn}</p>
                     </div>
                   </div>
                   <div className="flex items-center justify-between text-xs font-bold text-white/60">
                     <span className="flex items-center gap-1">
-                      <Star className="h-4 w-4 fill-[#f5bd18] text-[#f5bd18]" />
+                      <Star className="h-4 w-4 fill-gold text-gold" />
                       {Number(worker.rating).toFixed(1)} ({worker.jobs})
                     </span>
                     <span>{isArabic ? worker.distanceAr : worker.distanceEn}</span>
@@ -304,7 +322,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
                   <button
                     type="button"
                     onClick={() => worker.raw ? handleBookClick(worker.raw) : window.location.assign(`/${locale}/workers`)}
-                    className="w-full bg-[#f5bd18] py-2 text-sm font-black uppercase text-black shadow-[4px_4px_0_#000] active:translate-x-1 active:translate-y-1 active:shadow-none"
+                    className="w-full bg-gold py-2 text-sm font-black uppercase text-black shadow-[4px_4px_0_#000] active:translate-x-1 active:translate-y-1 active:shadow-none"
                   >
                     {isArabic ? "الملف" : "Profile"}
                   </button>
@@ -336,17 +354,17 @@ export function LandingPage({ locale }: { locale: Locale }) {
                 {activeHeroSlide.titleAr ? (
                   activeHeroSlide.titleAr.replace("أُسطفاي", "")
                 ) : "اطلب محترف بنقرة واحدة"}
-                <span className="inline-block bg-[#f5bd18] text-[#1a1c1c] px-4 pt-[0.3em] pb-1 mx-2">أُسطفاي</span>
+                <span className="inline-block bg-gold text-[#1a1c1c] px-4 pt-[0.3em] pb-1 mx-2">أُسطفاي</span>
               </>
             ) : (
               <>
                 {activeHeroSlide.titleEn ? (
                   activeHeroSlide.titleEn.replace("Ostafy", "")
                 ) : "Hire a Professional in Seconds"}
-                <span className="inline-block bg-[#f5bd18] text-[#1a1c1c] px-4 py-1 mx-2">Ostafy</span>
+                <span className="inline-block bg-gold text-[#1a1c1c] px-4 py-1 mx-2">Ostafy</span>
               </>
             )}
-            <span className="block mt-6 text-3xl md:text-4xl text-[#f5bd18]">
+            <span className="block mt-6 text-3xl md:text-4xl text-gold">
               {isArabic ? "خدمات وفنيين ومتاجر موثوقة في مصر" : "Egypt's Premium Service Network"}
             </span>
           </h1>
@@ -356,7 +374,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
           <div className="flex flex-col md:flex-row items-center justify-center gap-4 pt-4">
             <Link 
               href={`/${locale}/register/client`} 
-              className="w-full md:w-auto bg-[#f5bd18] text-[#1a1c1c] font-black px-10 py-4 rounded-none sticker-shadow hover:scale-105 transition-all uppercase text-center"
+              className="w-full md:w-auto bg-gold text-[#1a1c1c] font-black px-10 py-4 rounded-none sticker-shadow hover:scale-105 transition-all uppercase text-center"
             >
               {isArabic ? "اطلب فني" : "Order a Pro"}
             </Link>
@@ -375,13 +393,13 @@ export function LandingPage({ locale }: { locale: Locale }) {
           </div>
           <div className="pt-8 flex items-center justify-center gap-2">
             <div className="flex -space-x-4 rtl:space-x-reverse">
-              <div className="w-10 h-10 rounded-full border-2 border-[#f5bd18] bg-neutral-800 overflow-hidden">
+              <div className="w-10 h-10 rounded-full border-2 border-gold bg-neutral-800 overflow-hidden">
                 <img className="w-full h-full object-cover" src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=400&auto=format&fit=crop" alt="" />
               </div>
-              <div className="w-10 h-10 rounded-full border-2 border-[#f5bd18] bg-neutral-800 overflow-hidden">
+              <div className="w-10 h-10 rounded-full border-2 border-gold bg-neutral-800 overflow-hidden">
                 <img className="w-full h-full object-cover" src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=400&auto=format&fit=crop" alt="" />
               </div>
-              <div className="w-10 h-10 rounded-full border-2 border-[#f5bd18] bg-neutral-800 overflow-hidden">
+              <div className="w-10 h-10 rounded-full border-2 border-gold bg-neutral-800 overflow-hidden">
                 <img className="w-full h-full object-cover" src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?q=80&w=400&auto=format&fit=crop" alt="" />
               </div>
             </div>
@@ -409,12 +427,12 @@ export function LandingPage({ locale }: { locale: Locale }) {
                 <Link
                   key={craft?.id ?? slug}
                   href={`/${locale}/services/${slug}`}
-                  className="group flex flex-col overflow-hidden border border-white/10 bg-[#1a1c1c] text-center cursor-pointer hover:border-[#f5bd18] transition-all duration-300 rounded-none"
+                  className="group flex flex-col overflow-hidden border border-white/10 bg-[#1a1c1c] text-center cursor-pointer hover:border-gold transition-all duration-300 rounded-none"
                 >
                   <div className="relative h-[180px] overflow-hidden">
                     <img src={imgUrl} alt="" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" />
                   </div>
-                  <div className="flex flex-col items-center py-2.5 px-4 border-t border-white/5 group-hover:border-[#f5bd18] transition-colors">
+                  <div className="flex flex-col items-center py-2.5 px-4 border-t border-white/5 group-hover:border-gold transition-colors">
                     <h3 className="text-white font-bold text-base">
                       {getServiceName(craft, isArabic)}
                     </h3>
@@ -427,7 +445,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
           <div className="mt-8 flex justify-end">
             <Link
               href={`/${locale}/services`}
-              className="bg-[#f5bd18] text-[#1a1c1c] px-8 py-3 text-xs font-black rounded-none sticker-shadow active:translate-x-1 active:translate-y-1 active:shadow-none transition-all uppercase"
+              className="bg-gold text-[#1a1c1c] px-8 py-3 text-xs font-black rounded-none sticker-shadow active:translate-x-1 active:translate-y-1 active:shadow-none transition-all uppercase"
             >
               {isArabic ? "عرض جميع التخصصات" : "View All Categories"}
             </Link>
@@ -435,21 +453,102 @@ export function LandingPage({ locale }: { locale: Locale }) {
         </div>
       </section>
 
+      {/* Open Requests — still searching for a pro */}
+      {openRequests.length > 0 && (
+        <section className="py-24 bg-gold">
+          <div className="max-w-7xl mx-auto px-4 md:px-12">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-4 text-start">
+              <div>
+                <span className="text-[#1a1c1c]/70 text-xs font-black tracking-widest uppercase">
+                  {isArabic ? "طلبات مباشرة" : "LIVE REQUESTS"}
+                </span>
+                <h2 className="text-3xl md:text-5xl text-[#1a1c1c] font-black mt-2">
+                  {isArabic ? "طلبات تبحث عن فني الآن" : "Orders Looking for a Pro"}
+                </h2>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {openRequests.slice(0, 3).map((req) => (
+                <div
+                  key={req.id}
+                  className="bg-[#1a1c1c] border border-white/10 p-6 flex flex-col justify-between rounded-none text-start hover:border-white/30 transition-colors"
+                >
+                  <div>
+                    <div className="flex items-center justify-between mb-4">
+                      <span className={cn(
+                        "text-[10px] font-black uppercase tracking-wider px-2 py-1 rounded-none",
+                        req.urgency === "EMERGENCY"
+                          ? "bg-red-500/10 text-red-500 border border-red-500/20"
+                          : "bg-white/5 text-neutral-300 border border-white/10"
+                      )}>
+                        {req.urgency === "EMERGENCY"
+                          ? (isArabic ? "حالة طوارئ" : "Emergency")
+                          : (isArabic ? "طلب عادي" : "Normal")}
+                      </span>
+                      <span className="text-xs text-neutral-500 font-medium flex items-center gap-1">
+                        <Clock className="h-3.5 w-3.5" />
+                        {new Date(req.createdAt).toLocaleDateString(isArabic ? "ar-EG" : "en-US", {
+                          month: "short",
+                          day: "numeric"
+                        })}
+                      </span>
+                    </div>
+
+                    <h3 className="text-white text-lg font-black mb-1.5 line-clamp-1">
+                      {req.title}
+                    </h3>
+                    <p className="text-xs text-gold font-bold mb-3 uppercase tracking-wider">
+                      {isArabic ? req.categoryNameAr : req.categoryNameEn}
+                    </p>
+                    <p className="text-sm text-neutral-400 line-clamp-3 leading-relaxed">
+                      {req.description}
+                    </p>
+                  </div>
+
+                  <div className="border-t border-white/10 pt-4 mt-6">
+                    <div className="flex items-center gap-2 text-xs text-neutral-400 mb-4 font-semibold">
+                      <MapPin className="h-4 w-4 text-gold flex-shrink-0" />
+                      <span>{isArabic ? `${req.governorate}، ${req.city}` : `${req.governorate}, ${req.city}`}</span>
+                    </div>
+                    <Link
+                      href={`/${locale}/orders/${req.id}`}
+                      className="block w-full bg-gold text-[#1a1c1c] text-center font-black py-3 hover:scale-105 transition-transform uppercase rounded-none"
+                    >
+                      {isArabic ? "التفاصيل" : "View Details"}
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-8 flex justify-end">
+              <Link
+                href={`/${locale}/orders`}
+                className="bg-[#1a1c1c] text-white px-8 py-3 text-xs font-black rounded-none sticker-shadow active:translate-x-1 active:translate-y-1 active:shadow-none transition-all uppercase"
+              >
+                {isArabic ? "عرض جميع الطلبات" : "View All Orders"}
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Featured Ads Section */}
       <section className="py-24 bg-[#1a1c1c] text-white">
         <div className="max-w-7xl mx-auto px-4 md:px-12">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-5xl font-black text-[#f5bd18] mb-2">
+            <h2 className="text-3xl md:text-5xl font-black text-gold mb-2">
               {isArabic ? "إعلانات مميزة" : "Featured Ads"}
             </h2>
-            <div className="w-24 h-1 bg-[#f5bd18] mx-auto mt-4"></div>
+            <div className="w-24 h-1 bg-gold mx-auto mt-4"></div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {campaigns.length > 0 ? (
               campaigns.slice(0, 3).map((ad) => (
-                <div key={ad.id} className="bg-black border border-white/10 p-8 flex flex-col justify-between min-h-[320px] sticker-shadow hover:border-[#f5bd18] transition-all group text-start rounded-none">
+                <div key={ad.id} className="bg-black border border-white/10 p-8 flex flex-col justify-between min-h-[320px] sticker-shadow hover:border-gold transition-all group text-start rounded-none">
                   <div>
-                    <span className="bg-[#f5bd18] text-[#1a1c1c] px-3 py-1 text-[10px] font-black uppercase mb-6 inline-block rounded-none">
+                    <span className="bg-gold text-[#1a1c1c] px-3 py-1 text-[10px] font-black uppercase mb-6 inline-block rounded-none">
                       {isArabic ? ad.badgeAr || "ممول" : ad.badgeEn || "PROMOTED"}
                     </span>
                     <h3 className="text-white text-xl font-black mb-2">
@@ -462,7 +561,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
                   {ad.btn1Link && (
                     <Link 
                       href={ad.btn1Link.startsWith("http") ? ad.btn1Link : `/${locale}${ad.btn1Link.startsWith("/") ? "" : "/"}${ad.btn1Link}`} 
-                      className="mt-8 w-full bg-[#f5bd18] text-[#1a1c1c] text-center font-black py-3 hover:scale-105 transition-transform uppercase rounded-none"
+                      className="mt-8 w-full bg-gold text-[#1a1c1c] text-center font-black py-3 hover:scale-105 transition-transform uppercase rounded-none"
                     >
                       {isArabic ? ad.btn1TextAr || "عرض التفاصيل" : ad.btn1TextEn || "View Details"}
                     </Link>
@@ -471,7 +570,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
               ))
             ) : (
               <div className="md:col-span-3 border-2 border-dashed border-white/20 p-12 md:p-16 flex flex-col items-center justify-center text-center gap-4 rounded-none">
-                <span className="bg-[#f5bd18] text-[#1a1c1c] px-3 py-1 text-[10px] font-black uppercase inline-block rounded-none">
+                <span className="bg-gold text-[#1a1c1c] px-3 py-1 text-[10px] font-black uppercase inline-block rounded-none">
                   {isArabic ? "مساحة إعلانية" : "AD SPACE"}
                 </span>
                 <h3 className="text-white text-2xl md:text-3xl font-black">
@@ -484,7 +583,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
                 </p>
                 <Link
                   href={`/${locale}/contact`}
-                  className="mt-4 bg-[#f5bd18] text-[#1a1c1c] font-black px-8 py-3 hover:scale-105 transition-transform uppercase rounded-none"
+                  className="mt-4 bg-gold text-[#1a1c1c] font-black px-8 py-3 hover:scale-105 transition-transform uppercase rounded-none"
                 >
                   {isArabic ? "تواصل للإعلان معنا" : "Advertise With Us"}
                 </Link>
@@ -504,7 +603,8 @@ export function LandingPage({ locale }: { locale: Locale }) {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            {(workers.length > 0 ? workers.slice(0, 8) : []).slice(0, 4).map((worker, index) => {
+            {(workers.length > 0 ? workers.slice(0, 8) : desktopFallbackPros).slice(0, 4).map((worker, index) => {
+              const isFallbackWorker = workers.length === 0;
               const defaultAvatars = [
                 "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=400&auto=format&fit=crop",
                 "https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=400&auto=format&fit=crop",
@@ -541,20 +641,20 @@ export function LandingPage({ locale }: { locale: Locale }) {
                         {isArabic ? worker.professionAr : worker.professionEn}
                       </p>
                     </div>
-                    <div className="bg-[#f5bd18] text-[#1a1c1c] px-2 py-1 text-xs font-black">
+                    <div className="bg-gold text-[#1a1c1c] px-2 py-1 text-xs font-black">
                       {worker.rating > 0 ? worker.rating.toFixed(1) : "5.0"} ★
                     </div>
                   </div>
                   <div className="flex justify-between items-center text-xs text-neutral-500 mb-6 font-semibold">
                     <span className="flex items-center gap-1">
-                      <ShieldCheck className="h-4 w-4 text-[#775a00]" />
+                      <ShieldCheck className="h-4 w-4 text-gold" />
                       {worker.totalJobs || 120} {isArabic ? "عملية ناجحة" : "Jobs"}
                     </span>
                     <span className="font-bold">{isArabic ? "مصر" : "Egypt"}</span>
                   </div>
-                  <button 
-                    onClick={() => handleBookClick(worker)}
-                    className="w-full bg-[#1a1c1c] text-white font-black py-3 hover:bg-[#f5bd18] hover:text-[#1a1c1c] transition-colors uppercase rounded-none sticker-shadow"
+                  <button
+                    onClick={() => isFallbackWorker ? window.location.assign(`/${locale}/workers`) : handleBookClick(worker)}
+                    className="w-full bg-[#1a1c1c] text-white font-black py-3 hover:bg-gold hover:text-[#1a1c1c] transition-colors uppercase rounded-none sticker-shadow"
                   >
                     {isArabic ? "اطلب الفني الآن" : "Book Pro Now"}
                   </button>
@@ -567,7 +667,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
           <div className="mt-8 flex justify-end">
             <Link
               href={`/${locale}/workers`}
-              className="bg-[#f5bd18] text-[#1a1c1c] px-8 py-3 text-xs font-black rounded-none sticker-shadow active:translate-x-1 active:translate-y-1 active:shadow-none transition-all uppercase"
+              className="bg-gold text-[#1a1c1c] px-8 py-3 text-xs font-black rounded-none sticker-shadow active:translate-x-1 active:translate-y-1 active:shadow-none transition-all uppercase"
             >
               {isArabic ? "عرض جميع الأسطوات" : "View All Technicians (More) ➔"}
             </Link>
@@ -579,15 +679,15 @@ export function LandingPage({ locale }: { locale: Locale }) {
       <section className="py-24 bg-[#1a1c1c] text-center text-white">
         <div className="max-w-7xl mx-auto px-4 md:px-12">
           <div className="mb-16 text-center">
-            <h2 className="text-3xl md:text-5xl font-black text-[#f5bd18] mb-2">
+            <h2 className="text-3xl md:text-5xl font-black text-gold mb-2">
               {isArabic ? "كيف يعمل أُسطفاي" : "How OSTA Works"}
             </h2>
-            <div className="h-1 w-24 bg-[#f5bd18] mx-auto mt-4" />
+            <div className="h-1 w-24 bg-gold mx-auto mt-4" />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             <div className="flex flex-col items-center group">
               <div className="w-24 h-24 bg-black border border-white/10 flex items-center justify-center mb-8 rotate-45 group-hover:rotate-0 transition-transform duration-500 rounded-none">
-                <Search className="text-[#f5bd18] h-10 w-10 -rotate-45 group-hover:rotate-0 transition-transform" />
+                <Search className="text-gold h-10 w-10 -rotate-45 group-hover:rotate-0 transition-transform" />
               </div>
               <h3 className="text-white text-xl font-bold mb-4">
                 1. {isArabic ? "اختر التخصص" : "Request Service"}
@@ -599,7 +699,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
 
             <div className="flex flex-col items-center group">
               <div className="w-24 h-24 bg-black border border-white/10 flex items-center justify-center mb-8 rotate-45 group-hover:rotate-0 transition-transform duration-500 rounded-none">
-                <DollarSign className="text-[#f5bd18] h-10 w-10 -rotate-45 group-hover:rotate-0 transition-transform" />
+                <DollarSign className="text-gold h-10 w-10 -rotate-45 group-hover:rotate-0 transition-transform" />
               </div>
               <h3 className="text-white text-xl font-bold mb-4">
                 2. {isArabic ? "قارن الأسعار" : "Compare Quotes"}
@@ -611,7 +711,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
 
             <div className="flex flex-col items-center group">
               <div className="w-24 h-24 bg-black border border-white/10 flex items-center justify-center mb-8 rotate-45 group-hover:rotate-0 transition-transform duration-500 rounded-none">
-                <ShieldCheck className="text-[#f5bd18] h-10 w-10 -rotate-45 group-hover:rotate-0 transition-transform" />
+                <ShieldCheck className="text-gold h-10 w-10 -rotate-45 group-hover:rotate-0 transition-transform" />
               </div>
               <h3 className="text-white text-xl font-bold mb-4">
                 3. {isArabic ? "أنجز بأمان" : "Complete Safely"}
@@ -630,7 +730,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
           <div className="grid md:grid-cols-3 gap-12">
             <div className="flex items-start gap-6 p-8 md:border-r border-[#e2e2e2] text-start">
               <div className="relative h-12 w-12 flex-shrink-0 flex items-center justify-center">
-                <Shield className="h-12 w-12 text-[#f5bd18] absolute inset-0" />
+                <Shield className="h-12 w-12 text-gold absolute inset-0" />
                 <Check className="h-5 w-5 text-[#1a1c1c] relative" strokeWidth={3} />
               </div>
               <div>
@@ -644,7 +744,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
             </div>
             <div className="flex items-start gap-6 p-8 md:border-r border-[#e2e2e2] text-start">
               <div className="relative h-12 w-12 flex-shrink-0 flex items-center justify-center">
-                <Shield className="h-12 w-12 text-[#f5bd18] absolute inset-0" />
+                <Shield className="h-12 w-12 text-gold absolute inset-0" />
                 <Check className="h-5 w-5 text-[#1a1c1c] relative" strokeWidth={3} />
               </div>
               <div>
@@ -658,7 +758,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
             </div>
             <div className="flex items-start gap-6 p-8 text-start">
               <div className="relative h-12 w-12 flex-shrink-0 flex items-center justify-center">
-                <Shield className="h-12 w-12 text-[#f5bd18] absolute inset-0" />
+                <Shield className="h-12 w-12 text-gold absolute inset-0" />
                 <Check className="h-5 w-5 text-[#1a1c1c] relative" strokeWidth={3} />
               </div>
               <div>
@@ -690,13 +790,13 @@ export function LandingPage({ locale }: { locale: Locale }) {
             <div className="relative z-10 flex flex-col gap-4 w-full md:w-auto">
               <Link 
                 href={`/${locale}/register/client`} 
-                className="bg-[#f5bd18] text-[#1a1c1c] font-black px-12 py-5 text-center rounded-none sticker-shadow hover:scale-105 transition-all uppercase whitespace-nowrap"
+                className="bg-gold text-[#1a1c1c] font-black px-12 py-5 text-center rounded-none sticker-shadow hover:scale-105 transition-all uppercase whitespace-nowrap"
               >
                 {isArabic ? "اطلب فني الآن" : "Order a Pro Now"}
               </Link>
               <Link 
                 href={`/${locale}/register/worker`} 
-                className="border-2 border-[#f5bd18] text-[#f5bd18] font-black px-12 py-5 text-center rounded-none hover:bg-[#f5bd18] hover:text-[#1a1c1c] transition-all uppercase whitespace-nowrap"
+                className="border-2 border-gold text-gold font-black px-12 py-5 text-center rounded-none hover:bg-gold hover:text-[#1a1c1c] transition-all uppercase whitespace-nowrap"
               >
                 {isArabic ? "سجل كفني" : "List Your Service"}
               </Link>
@@ -716,7 +816,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
             >
               <X className="h-6 w-6" />
             </button>
-            <ShieldCheck className="h-16 w-16 text-[#f5bd18] mx-auto mb-6" />
+            <ShieldCheck className="h-16 w-16 text-gold mx-auto mb-6" />
             <h3 className="text-2xl font-black mb-4">
               {isArabic ? "تسجيل الدخول مطلوب" : "Login Required"}
             </h3>
@@ -728,7 +828,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
             <div className="flex flex-col gap-4">
               <Link 
                 href={`/login?redirect=/workers/${selectedWorkerForBooking?.id}`} 
-                className="w-full bg-[#f5bd18] text-[#1a1c1c] font-black py-4 uppercase rounded-none text-center block"
+                className="w-full bg-gold text-[#1a1c1c] font-black py-4 uppercase rounded-none text-center block"
               >
                 {isArabic ? "تسجيل الدخول" : "Login Now"}
               </Link>
@@ -753,7 +853,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
             >
               <X className="h-6 w-6" />
             </button>
-            <ShieldCheck className="h-16 w-16 text-[#f5bd18] mx-auto mb-6" />
+            <ShieldCheck className="h-16 w-16 text-gold mx-auto mb-6" />
             <h3 className="text-2xl font-black mb-4">
               {isArabic ? "تسجيل الدخول كفني مطلوب" : "Worker Login Required"}
             </h3>
@@ -765,7 +865,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
             <div className="flex flex-col gap-4">
               <Link 
                 href={`/login?redirect=/orders`} 
-                className="w-full bg-[#f5bd18] text-[#1a1c1c] font-black py-4 uppercase rounded-none text-center block"
+                className="w-full bg-gold text-[#1a1c1c] font-black py-4 uppercase rounded-none text-center block"
               >
                 {isArabic ? "تسجيل الدخول كفني" : "Login as Worker"}
               </Link>

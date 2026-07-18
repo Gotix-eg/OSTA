@@ -140,7 +140,7 @@ export function WorkerIncomingRequestsPage({ locale, initialData }: { locale: Lo
       </div>
 
       <WorkerProPanel eyebrow={isArabic ? "طابور القرار" : "Decision queue"} title={isArabic ? "مسار الطلبات الواردة" : "Incoming lane"}>
-        {feedback ? <div className="mb-4 border border-[#f5bd18]/40 bg-[#f5bd18]/10 px-4 py-3 text-sm font-black text-[#f5bd18]">{feedback}</div> : null}
+        {feedback ? <div className="mb-4 border border-gold/40 bg-gold/10 px-4 py-3 text-sm font-black text-gold">{feedback}</div> : null}
         {data.requests.length === 0 ? (
           <WorkerProEmpty title={isArabic ? "الطابور فارغ" : "Queue is empty"} text={isArabic ? "لا توجد طلبات واردة حالياً في نطاقك." : "No incoming jobs in your service area right now."} actionLabel={isArabic ? "تحديث المهارات" : "Update skills"} actionHref={`/${locale}/worker/settings`} />
         ) : (
@@ -149,8 +149,8 @@ export function WorkerIncomingRequestsPage({ locale, initialData }: { locale: Lo
               const title = isArabic ? (item.serviceNameAr || serviceLabels[item.service]?.[locale] || item.service) : (item.serviceNameEn || serviceLabels[item.service]?.[locale] || item.service);
               const area = isArabic ? (item.areaNameAr || areaLabels[item.area]?.[locale] || item.area) : (item.areaNameEn || areaLabels[item.area]?.[locale] || item.area);
               return (
-                <article key={item.id} className={index % 2 === 0 ? "grid gap-5 border border-white/10 bg-[#111] p-5 lg:grid-cols-[180px_1fr_auto]" : "grid gap-5 border border-[#f5bd18]/30 bg-[#2a2207] p-5 lg:grid-cols-[180px_1fr_auto]"}>
-                  <div className="min-h-36 border border-white/10 bg-[#f5bd18]/10 p-4 text-xs font-black uppercase text-white/45">
+                <article key={item.id} className={index % 2 === 0 ? "grid gap-5 border border-white/10 bg-[#111] p-5 lg:grid-cols-[180px_1fr_auto]" : "grid gap-5 border border-gold/30 bg-[#2a2207] p-5 lg:grid-cols-[180px_1fr_auto]"}>
+                  <div className="min-h-36 border border-white/10 bg-gold/10 p-4 text-xs font-black uppercase text-white/45">
                     {isArabic ? "طلب وارد" : "Incoming request"}
                   </div>
                   <div>
@@ -273,7 +273,7 @@ export function WorkerActiveRequestsPage({ locale, initialData }: { locale: Loca
       </div>
 
       <WorkerProPanel eyebrow={isArabic ? "مسار التنفيذ" : "Execution lane"} title={isArabic ? "بطاقات العمل الحالية" : "Current job deck"}>
-        {feedback ? <div className="mb-4 border border-[#f5bd18]/40 bg-[#f5bd18]/10 px-4 py-3 text-sm font-black text-[#f5bd18]">{feedback}</div> : null}
+        {feedback ? <div className="mb-4 border border-gold/40 bg-gold/10 px-4 py-3 text-sm font-black text-gold">{feedback}</div> : null}
         {data.requests.length === 0 ? (
           <WorkerProEmpty title={isArabic ? "لا توجد طلبات نشطة" : "No active jobs"} text={isArabic ? "الطلبات التي تقبلها ستظهر هنا مع خطوات التنفيذ." : "Accepted jobs will appear here with execution controls."} actionLabel={isArabic ? "راجع الوارد" : "Check incoming"} actionHref={`/${locale}/worker/requests/incoming`} />
         ) : (
@@ -282,7 +282,7 @@ export function WorkerActiveRequestsPage({ locale, initialData }: { locale: Loca
               const title = isArabic ? (item.serviceNameAr || serviceLabels[item.service]?.[locale] || item.service) : (item.serviceNameEn || serviceLabels[item.service]?.[locale] || item.service);
               const area = isArabic ? (item.areaNameAr || areaLabels[item.area]?.[locale] || item.area) : (item.areaNameEn || areaLabels[item.area]?.[locale] || item.area);
               return (
-                <article key={item.id} className={index % 2 === 0 ? "border border-white/10 bg-[#111] p-5" : "border border-[#f5bd18]/30 bg-[#2a2207] p-5"}>
+                <article key={item.id} className={index % 2 === 0 ? "border border-white/10 bg-[#111] p-5" : "border border-gold/30 bg-[#2a2207] p-5"}>
                   <div className="grid gap-5 xl:grid-cols-[1fr_auto] xl:items-center">
                     <div>
                       <div className="flex flex-wrap items-center gap-3">
@@ -295,7 +295,7 @@ export function WorkerActiveRequestsPage({ locale, initialData }: { locale: Loca
                         {item.clientPhone ? <span>{isArabic ? "الهاتف" : "Phone"}: {item.clientPhone}</span> : null}
                         <span>{isArabic ? "المنطقة" : "Area"}: {area}</span>
                         <span>{isArabic ? "الفترة" : "Window"}: {item.scheduledWindow}</span>
-                        <span className="text-[#f5bd18]">{isArabic ? "العائد" : "Earnings"}: {formatCurrency(locale, item.earnings)}</span>
+                        <span className="text-gold">{isArabic ? "العائد" : "Earnings"}: {formatCurrency(locale, item.earnings)}</span>
                       </div>
                     </div>
 

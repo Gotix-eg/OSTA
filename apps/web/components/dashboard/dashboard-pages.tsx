@@ -211,7 +211,7 @@ const clientStatusLabels: Record<string, { ar: string; en: string; className: st
   WORKER_EN_ROUTE: {
     ar: "الفني في الطريق",
     en: "Worker en route",
-    className: "bg-[#f5bd18]/20 text-[#684e00] border-[#f5bd18]/50"
+    className: "bg-gold/20 text-[#684e00] border-gold/50"
   },
   IN_PROGRESS: {
     ar: "جاري التنفيذ",
@@ -257,7 +257,7 @@ function ClientPanel({
     <section className={cn("border border-white/10 bg-black p-4 text-white shadow-[4px_4px_0_#000] sm:p-6", className)}>
       <div className="mb-5 flex items-center justify-between gap-3">
         <h2 className="flex items-center gap-2 text-xl font-black text-white sm:text-2xl">
-          <span className="h-3 w-3 bg-[#f5bd18]" />
+          <span className="h-3 w-3 bg-gold" />
           {title}
         </h2>
         {action}
@@ -383,12 +383,12 @@ export function ClientDashboardHome({ locale }: { locale: Locale }) {
 
         <div className="hidden items-center gap-6 lg:flex">
           <div className="border border-white/10 bg-black/80 px-6 py-3 text-white backdrop-blur-xl">
-            <p className="text-xs font-black uppercase tracking-[0.2em] text-[#f5bd18]">
+            <p className="text-xs font-black uppercase tracking-[0.2em] text-gold">
               {isArabic ? "الرصيد المتاح" : "Available balance"}
             </p>
             <p className="mt-1 text-2xl font-black text-white">{formatCurrency(locale, data.summary.walletBalance)}</p>
           </div>
-          <div className="flex h-12 w-12 items-center justify-center border-2 border-black bg-black text-[#f5bd18]">
+          <div className="flex h-12 w-12 items-center justify-center border-2 border-black bg-black text-gold">
             <User className="h-6 w-6" />
           </div>
         </div>
@@ -397,9 +397,9 @@ export function ClientDashboardHome({ locale }: { locale: Locale }) {
       <section className="mb-6 flex gap-4 overflow-x-auto pb-3 lg:hidden">
         {metrics.slice(0, 3).map(({ label, value, icon: Icon }) => (
           <div key={label} className="min-w-40 border border-white/10 bg-black p-4 text-white">
-            <Icon className="mb-2 h-6 w-6 text-[#f5bd18]" />
+            <Icon className="mb-2 h-6 w-6 text-gold" />
             <p className="text-xs font-bold text-white/60">{label}</p>
-            <p className="mt-1 text-2xl font-black text-[#f5bd18]">{value}</p>
+            <p className="mt-1 text-2xl font-black text-gold">{value}</p>
           </div>
         ))}
       </section>
@@ -421,8 +421,8 @@ export function ClientDashboardHome({ locale }: { locale: Locale }) {
               <div className="grid min-h-[18rem] lg:grid-cols-5">
                 <div className="relative hidden bg-[#121212] lg:col-span-2 lg:block">
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_35%_35%,rgba(245,189,24,0.26),transparent_28%),linear-gradient(135deg,#24211a,#050505_62%)]" />
-                  <div className="absolute inset-x-8 bottom-8 top-10 border border-[#f5bd18]/35 bg-black/30 p-6">
-                    <Wrench className="h-16 w-16 text-[#f5bd18]" />
+                  <div className="absolute inset-x-8 bottom-8 top-10 border border-gold/35 bg-black/30 p-6">
+                    <Wrench className="h-16 w-16 text-gold" />
                     <p className="mt-8 text-sm font-black uppercase tracking-[0.2em] text-white/45">
                       OSTA Field Ops
                     </p>
@@ -431,7 +431,7 @@ export function ClientDashboardHome({ locale }: { locale: Locale }) {
                 <div className="flex flex-col justify-between gap-8 p-5 lg:col-span-3 lg:p-8">
                   <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
                     <div>
-                      <span className="mb-3 inline-block bg-[#f5bd18] px-3 py-1 text-xs font-black text-black">
+                      <span className="mb-3 inline-block bg-gold px-3 py-1 text-xs font-black text-black">
                         {getClientStatus(activeRequest.status)[locale]}
                       </span>
                       <h3 className="text-2xl font-black text-white">
@@ -442,7 +442,7 @@ export function ClientDashboardHome({ locale }: { locale: Locale }) {
                       </p>
                     </div>
                     <div className="text-start sm:text-end">
-                      <div className="mb-1 inline-flex items-center gap-1 text-[#f5bd18]">
+                      <div className="mb-1 inline-flex items-center gap-1 text-gold">
                         <Star className="h-5 w-5 fill-current" />
                         <span className="font-black">4.9</span>
                       </div>
@@ -466,19 +466,19 @@ export function ClientDashboardHome({ locale }: { locale: Locale }) {
                       </span>
                     </div>
                     <div className="h-2 w-full overflow-hidden bg-white/10">
-                      <div className="h-full w-2/3 bg-[#f5bd18]" />
+                      <div className="h-full w-2/3 bg-gold" />
                     </div>
                     <div className="grid gap-3 text-sm font-semibold text-white/60 sm:grid-cols-3">
                       <span className="inline-flex items-center gap-2">
-                        <User className="h-4 w-4 text-[#f5bd18]" />
+                        <User className="h-4 w-4 text-gold" />
                         {activeRequest.workerName}
                       </span>
                       <span className="inline-flex items-center gap-2">
-                        <Clock3 className="h-4 w-4 text-[#f5bd18]" />
+                        <Clock3 className="h-4 w-4 text-gold" />
                         {activeRequest.etaMinutes ? `${formatNumber(locale, activeRequest.etaMinutes)} ${isArabic ? "دقيقة" : "min"}` : isArabic ? "قيد التنسيق" : "Scheduling"}
                       </span>
                       <span className="inline-flex items-center gap-2">
-                        <MapPin className="h-4 w-4 text-[#f5bd18]" />
+                        <MapPin className="h-4 w-4 text-gold" />
                         {getLocalizedLabel(clientAreaLabels, activeRequest.area, locale)}
                       </span>
                     </div>
@@ -498,7 +498,7 @@ export function ClientDashboardHome({ locale }: { locale: Locale }) {
               </div>
             ) : (
               <div className="p-6 lg:p-10">
-                <span className="mb-4 inline-block bg-[#f5bd18] px-3 py-1 text-xs font-black text-black">
+                <span className="mb-4 inline-block bg-gold px-3 py-1 text-xs font-black text-black">
                   {isArabic ? "لا يوجد طلب نشط" : "No active request"}
                 </span>
                 <h3 className="text-2xl font-black text-white">
@@ -527,7 +527,7 @@ export function ClientDashboardHome({ locale }: { locale: Locale }) {
                   index === 1 ? "bg-white text-black" : "border border-white/10 bg-black text-white"
                 )}
               >
-                <Icon className={cn("h-9 w-9 transition-transform group-hover:scale-110", index === 1 ? "text-black" : "text-[#f5bd18]")} />
+                <Icon className={cn("h-9 w-9 transition-transform group-hover:scale-110", index === 1 ? "text-black" : "text-gold")} />
                 <span>{title}</span>
               </Link>
             ))}
@@ -547,7 +547,7 @@ export function ClientDashboardHome({ locale }: { locale: Locale }) {
               data.favoriteWorkers.slice(0, 3).map((worker) => (
                 <div key={worker.id} className="border border-white/10 bg-black p-5 text-white">
                   <div className="mb-6 flex gap-4">
-                    <div className="flex h-16 w-16 shrink-0 items-center justify-center bg-[#121212] text-[#f5bd18]">
+                    <div className="flex h-16 w-16 shrink-0 items-center justify-center bg-[#121212] text-gold">
                       <User className="h-8 w-8" />
                     </div>
                     <div className="min-w-0">
@@ -555,14 +555,14 @@ export function ClientDashboardHome({ locale }: { locale: Locale }) {
                       <p className="mt-1 text-xs font-semibold text-white/40">
                         {getLocalizedLabel(clientWorkerSpecialtyLabels, worker.specialty, locale)}
                       </p>
-                      <div className="mt-2 flex items-center gap-1 text-[#f5bd18]">
+                      <div className="mt-2 flex items-center gap-1 text-gold">
                         <Star className="h-4 w-4 fill-current" />
                         <span className="text-xs font-black">{formatNumber(locale, worker.rating)}</span>
                       </div>
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <Link href={`/${locale}/client/new-request`} className="flex-1 bg-[#f5bd18] py-2 text-center text-xs font-black text-black shadow-[3px_3px_0_#000]">
+                    <Link href={`/${locale}/client/new-request`} className="flex-1 bg-gold py-2 text-center text-xs font-black text-black shadow-[3px_3px_0_#000]">
                       {isArabic ? "حجز سريع" : "Quick book"}
                     </Link>
                     <Link href={`/${locale}/contact`} className="flex h-10 w-10 items-center justify-center border border-white/20 text-white hover:bg-white/10">
@@ -587,11 +587,11 @@ export function ClientDashboardHome({ locale }: { locale: Locale }) {
         </section>
 
         <section className="lg:col-span-12">
-          <div className="relative overflow-hidden border-t-4 border-[#f5bd18] bg-black p-6 text-white lg:p-10">
+          <div className="relative overflow-hidden border-t-4 border-gold bg-black p-6 text-white lg:p-10">
             <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
               <div>
                 <div className="mb-4 flex items-center gap-4">
-                  <ShieldCheck className="h-12 w-12 text-[#f5bd18]" />
+                  <ShieldCheck className="h-12 w-12 text-gold" />
                   <h2 className="text-2xl font-black text-white lg:text-3xl">
                     {isArabic ? "مدفوعاتك محمية بقوة الصناعة" : "Your payments are protected"}
                   </h2>
@@ -604,11 +604,11 @@ export function ClientDashboardHome({ locale }: { locale: Locale }) {
               </div>
               <div className="grid grid-cols-2 gap-6 text-center">
                 <div>
-                  <p className="text-4xl font-black text-[#f5bd18]">100%</p>
+                  <p className="text-4xl font-black text-gold">100%</p>
                   <p className="text-xs font-black uppercase tracking-[0.2em] text-white/50">{isArabic ? "ضمان الجودة" : "Quality guarantee"}</p>
                 </div>
                 <div>
-                  <p className="text-4xl font-black text-[#f5bd18]">24/7</p>
+                  <p className="text-4xl font-black text-gold">24/7</p>
                   <p className="text-xs font-black uppercase tracking-[0.2em] text-white/50">{isArabic ? "دعم فني" : "Support"}</p>
                 </div>
               </div>
@@ -629,7 +629,7 @@ export function ClientDashboardHome({ locale }: { locale: Locale }) {
                         <p className="mt-1 text-xs font-semibold text-white/45">{request.meta}</p>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="bg-[#f5bd18] px-2 py-1 text-xs font-black text-black">
+                        <span className="bg-gold px-2 py-1 text-xs font-black text-black">
                           {status[locale]}
                         </span>
                         <Link href={`/${locale}/client/request/${request.id}`} className="inline-flex h-9 items-center justify-center border border-white/20 px-3 text-xs font-black text-white hover:bg-white/10">
@@ -811,8 +811,8 @@ export function VendorDashboardHome({ locale }: { locale: Locale }) {
         ) : (
           <div className="grid gap-4 md:grid-cols-2">
             {data.recentRequests.map((request: any) => (
-              <Link key={request.id ?? request.title} href={`/${locale}/vendor/materials`} className="border border-white/10 bg-[#121212] p-5 transition-colors hover:border-[#f5bd18]/60">
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#f5bd18]">{isArabic ? "طلب خامات" : "Material request"}</p>
+              <Link key={request.id ?? request.title} href={`/${locale}/vendor/materials`} className="border border-white/10 bg-[#121212] p-5 transition-colors hover:border-gold/60">
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gold">{isArabic ? "طلب خامات" : "Material request"}</p>
                 <h3 className="mt-3 text-xl font-black text-white">{request.title ?? request.serviceNameAr ?? request.serviceNameEn ?? (isArabic ? "طلب جديد" : "New request")}</h3>
                 <p className="mt-2 line-clamp-2 text-sm leading-6 text-white/50">{request.description ?? (isArabic ? "افتح الطلب لعرض التفاصيل وتقديم السعر." : "Open the request to review details and quote.")}</p>
               </Link>

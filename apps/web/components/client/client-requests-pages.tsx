@@ -552,7 +552,7 @@ export function ClientRequestsPage({ locale, initialData }: { locale: Locale; in
           onClick={() => setActiveTab("services")}
           className={`relative flex-shrink-0 flex items-center gap-2 px-5 py-3 text-xs font-black uppercase tracking-wider transition ${
             activeTab === "services" 
-              ? "bg-black text-[#f5bd18]" 
+              ? "bg-black text-gold" 
               : "border border-black/10 bg-transparent text-black/70 hover:border-black"
           }`}
         >
@@ -568,7 +568,7 @@ export function ClientRequestsPage({ locale, initialData }: { locale: Locale; in
           onClick={() => setActiveTab("custom_requests")}
           className={`relative flex-shrink-0 flex items-center gap-2 px-5 py-3 text-xs font-black uppercase tracking-wider transition ${
             activeTab === "custom_requests" 
-              ? "bg-black text-[#f5bd18]" 
+              ? "bg-black text-gold" 
               : "border border-black/10 bg-transparent text-black/70 hover:border-black"
           }`}
         >
@@ -584,7 +584,7 @@ export function ClientRequestsPage({ locale, initialData }: { locale: Locale; in
           onClick={() => setActiveTab("direct_orders")}
           className={`relative flex-shrink-0 flex items-center gap-2 px-5 py-3 text-xs font-black uppercase tracking-wider transition ${
             activeTab === "direct_orders" 
-              ? "bg-black text-[#f5bd18]" 
+              ? "bg-black text-gold" 
               : "border border-black/10 bg-transparent text-black/70 hover:border-black"
           }`}
         >
@@ -607,7 +607,7 @@ export function ClientRequestsPage({ locale, initialData }: { locale: Locale; in
               {data.map((item) => {
                 const status = getStatusMeta(locale, item.status);
                 return (
-                  <article key={item.id} className="border border-white/10 bg-[#121212] p-4 transition hover:border-[#f5bd18]/60 sm:p-5">
+                  <article key={item.id} className="border border-white/10 bg-[#121212] p-4 transition hover:border-gold/60 sm:p-5">
                     <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-3">
@@ -629,7 +629,7 @@ export function ClientRequestsPage({ locale, initialData }: { locale: Locale; in
                         </div>
                       </div>
 
-                      <Link href={`/${locale}/client/request/${item.id}`} className="inline-flex items-center justify-center gap-2 border border-white bg-white px-4 py-3 text-xs font-black uppercase text-black transition hover:bg-[#f5bd18]">
+                      <Link href={`/${locale}/client/request/${item.id}`} className="inline-flex items-center justify-center gap-2 border border-white bg-white px-4 py-3 text-xs font-black uppercase text-black transition hover:bg-gold">
                         {isArabic ? "التفاصيل" : "Details"}
                         <ChevronRight className="h-4 w-4" />
                       </Link>
@@ -700,7 +700,7 @@ export function ClientRequestDetailPage({ locale, requestId, initialData }: { lo
   };
 
   return (
-    <div className="relative -m-4 min-h-screen bg-[#f5bd18] px-4 pb-28 pt-4 text-[#1a1c1c] sm:-m-6 sm:px-6 sm:py-6 lg:-m-8 lg:px-12 lg:py-10">
+    <div className="relative -m-4 min-h-screen bg-gold px-4 pb-28 pt-4 text-[#1a1c1c] sm:-m-6 sm:px-6 sm:py-6 lg:-m-8 lg:px-12 lg:py-10">
       <div className="hidden items-center justify-between gap-6 md:flex">
         <Link
           href={`/${locale}/client/my-requests`}
@@ -710,10 +710,10 @@ export function ClientRequestDetailPage({ locale, requestId, initialData }: { lo
           {isArabic ? "العودة إلى الطلبات" : "Back to requests"}
         </Link>
 
-        <div className="flex items-center gap-4 rounded-lg border border-[#f5bd18]/30 bg-black px-6 py-3 text-white">
+        <div className="flex items-center gap-4 rounded-lg border border-gold/30 bg-black px-6 py-3 text-white">
           <div className="flex flex-col">
             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/45">{isArabic ? "رقم الطلب" : "Request ID"}</span>
-            <span className="text-2xl font-black leading-none text-[#f5bd18]">{data.requestNumber}</span>
+            <span className="text-2xl font-black leading-none text-gold">{data.requestNumber}</span>
           </div>
           <div className="h-8 w-px bg-white/10" />
           <div className="flex flex-col">
@@ -724,15 +724,15 @@ export function ClientRequestDetailPage({ locale, requestId, initialData }: { lo
       </div>
 
       <div className="mt-0 grid grid-cols-1 gap-6 md:mt-10 md:grid-cols-12">
-        <section className="relative overflow-hidden rounded-lg border-2 border-[#f5bd18]/20 bg-black p-6 text-white md:col-span-12 md:flex md:items-center md:justify-between md:p-12">
+        <section className="relative overflow-hidden rounded-lg border-2 border-gold/20 bg-black p-6 text-white md:col-span-12 md:flex md:items-center md:justify-between md:p-12">
           <div className="relative z-10">
             <div className="mb-3 flex items-start justify-between gap-4 md:hidden">
-              <span className="rounded-sm bg-[#f5bd18] px-2 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-black">{status.label}</span>
+              <span className="rounded-sm bg-gold px-2 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-black">{status.label}</span>
               <span className="font-mono text-xs text-white/40">{data.requestNumber}</span>
             </div>
-            <p className="hidden text-xs font-black uppercase tracking-[0.24em] text-[#f5bd18] md:block">{data.requestNumber}</p>
+            <p className="hidden text-xs font-black uppercase tracking-[0.24em] text-gold md:block">{data.requestNumber}</p>
             <h1 className="text-3xl font-black leading-tight text-white md:mt-4 md:text-5xl">{data.title || (isArabic ? "تفاصيل الطلب" : "Request details")}</h1>
-            <p className="mt-2 text-sm font-black uppercase tracking-[0.05em] text-[#f5bd18] md:text-2xl md:normal-case md:tracking-normal">{serviceName}</p>
+            <p className="mt-2 text-sm font-black uppercase tracking-[0.05em] text-gold md:text-2xl md:normal-case md:tracking-normal">{serviceName}</p>
             <Link
               href={`/${locale}/client/my-requests`}
               className="mt-6 inline-flex min-h-11 items-center justify-center gap-2 rounded-sm bg-white px-5 py-2 text-sm font-black text-black shadow-[4px_4px_0_#000000] md:hidden"
@@ -744,12 +744,12 @@ export function ClientRequestDetailPage({ locale, requestId, initialData }: { lo
 
           <div className="relative z-10 mt-6 hidden gap-6 md:flex">
             <div className="flex min-w-[140px] flex-col items-center justify-center rounded-lg border border-white/10 bg-white/5 p-6 text-center">
-              <Clock3 className="mb-2 h-9 w-9 text-[#f5bd18]" />
+              <Clock3 className="mb-2 h-9 w-9 text-gold" />
               <span className="text-2xl font-black text-white">{formatTiming(locale, data.timing)}</span>
               <span className="mt-2 text-[10px] font-black uppercase tracking-[0.18em] text-white/45">{isArabic ? "التوقيت" : "Scheduled timing"}</span>
             </div>
             <div className="flex min-w-[140px] flex-col items-center justify-center rounded-lg border border-white/10 bg-white/5 p-6 text-center">
-              <TimerReset className="mb-2 h-9 w-9 text-[#f5bd18]" />
+              <TimerReset className="mb-2 h-9 w-9 text-gold" />
               <span className="text-2xl font-black text-white">{status.label}</span>
               <span className="mt-2 text-[10px] font-black uppercase tracking-[0.18em] text-white/45">{isArabic ? "الحالة الحالية" : "Current status"}</span>
             </div>
@@ -758,14 +758,14 @@ export function ClientRequestDetailPage({ locale, requestId, initialData }: { lo
 
         <section className="grid grid-cols-2 gap-2 md:hidden">
           <div className="flex flex-col items-center justify-center rounded-lg border border-white/10 bg-black p-4 text-center text-white">
-            <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-[#775a00]/30 text-[#f5bd18]">
+            <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-[#775a00]/30 text-gold">
               <ShieldCheck className="h-5 w-5" />
             </div>
             <span className="mb-1 text-xs font-black uppercase text-white/60">{isArabic ? "الحالة" : "Status"}</span>
-            <span className="font-black text-[#f5bd18]">{status.label}</span>
+            <span className="font-black text-gold">{status.label}</span>
           </div>
           <div className="flex flex-col items-center justify-center rounded-lg border border-white/10 bg-black p-4 text-center text-white">
-            <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-[#775a00]/30 text-[#f5bd18]">
+            <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-[#775a00]/30 text-gold">
               <CalendarDays className="h-5 w-5" />
             </div>
             <span className="mb-1 text-xs font-black uppercase text-white/60">{isArabic ? "التوقيت" : "Timing"}</span>
@@ -777,31 +777,31 @@ export function ClientRequestDetailPage({ locale, requestId, initialData }: { lo
           <div className="overflow-hidden rounded-lg border border-white/10 bg-black text-white">
             <div className="hidden items-center justify-between border-b border-white/10 bg-white/5 p-6 md:flex">
               <h2 className="text-2xl font-black uppercase tracking-tight text-white">{isArabic ? "الموقع والخط الزمني" : "Location & timeline"}</h2>
-              <MapPin className="h-6 w-6 text-[#f5bd18]" />
+              <MapPin className="h-6 w-6 text-gold" />
             </div>
             <div className="relative h-48 overflow-hidden md:h-64 md:grayscale md:contrast-125">
               <div className="absolute inset-0 bg-cover bg-center opacity-75" style={{ backgroundImage: `url(${mapImage})` }} />
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
               <div className="absolute inset-x-4 bottom-4 flex items-center gap-2 md:bottom-6 md:left-6 md:right-auto md:block">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-black text-[#f5bd18] md:hidden">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-black text-gold md:hidden">
                   <MapPin className="h-5 w-5" />
                 </span>
                 <div>
                   <p className="text-sm font-black text-white md:text-2xl">{translateArea(data.area, locale) || addressText}</p>
-                  <p className="text-xs font-bold text-white/60 md:mt-1 md:text-base md:text-[#f5bd18]">{addressText}</p>
+                  <p className="text-xs font-bold text-white/60 md:mt-1 md:text-base md:text-gold">{addressText}</p>
                 </div>
               </div>
             </div>
             <div className="hidden space-y-4 p-8 md:block">
               <div className="flex items-start gap-4 rounded-lg border border-white/5 bg-white/5 p-4">
-                <Clock3 className="h-5 w-5 text-[#f5bd18]" />
+                <Clock3 className="h-5 w-5 text-gold" />
                 <div>
                   <p className="text-xs font-black uppercase tracking-[0.18em] text-white/45">{isArabic ? "تاريخ الإنشاء" : "Created date"}</p>
                   <p className="mt-1 text-base font-black text-white">{formatDate(locale, data.createdAt)}</p>
                 </div>
               </div>
               <div className="flex items-start gap-4 rounded-lg border border-white/5 bg-white/5 p-4">
-                <TimerReset className="h-5 w-5 text-[#f5bd18]" />
+                <TimerReset className="h-5 w-5 text-gold" />
                 <div>
                   <p className="text-xs font-black uppercase tracking-[0.18em] text-white/45">{isArabic ? "آخر تحديث" : "Last updated"}</p>
                   <p className="mt-1 text-base font-black text-white">{formatDate(locale, data.updatedAt)}</p>
@@ -812,7 +812,7 @@ export function ClientRequestDetailPage({ locale, requestId, initialData }: { lo
 
           <div className="rounded-lg border border-white/10 bg-black p-6 text-white md:hidden">
             <div className="mb-4 flex items-center gap-2 border-b border-white/10 pb-4">
-              <Clock3 className="h-5 w-5 text-[#f5bd18]" />
+              <Clock3 className="h-5 w-5 text-gold" />
               <h2 className="text-2xl font-black text-white">{isArabic ? "العنوان والخط الزمني" : "Location & timeline"}</h2>
             </div>
             <div className={`relative mt-4 space-y-8 ${isArabic ? "pr-6" : "pl-6"}`}>
@@ -822,7 +822,7 @@ export function ClientRequestDetailPage({ locale, requestId, initialData }: { lo
                 { label: isArabic ? "آخر تحديث" : "Last updated", date: formatDateOnly(locale, data.updatedAt), time: formatTimeOnly(locale, data.updatedAt), active: data.status !== "PENDING" }
               ].map((item) => (
                 <div className="relative" key={item.label}>
-                  <div className={`absolute top-1 h-4 w-4 rounded-full border-4 border-black ${item.active ? "bg-[#f5bd18]" : "bg-white/20"} ${isArabic ? "-right-6" : "-left-6"}`} />
+                  <div className={`absolute top-1 h-4 w-4 rounded-full border-4 border-black ${item.active ? "bg-gold" : "bg-white/20"} ${isArabic ? "-right-6" : "-left-6"}`} />
                   <span className="block text-[10px] font-black uppercase text-white/40">{item.label}</span>
                   <p className="mt-1 text-base font-black text-white">{item.date}</p>
                   <p className="text-xs font-semibold text-white/60">{item.time}</p>
@@ -836,17 +836,17 @@ export function ClientRequestDetailPage({ locale, requestId, initialData }: { lo
           <div className="rounded-lg border border-white/10 bg-black text-white">
             <div className="flex items-center justify-between border-b border-white/10 bg-white/5 p-6">
               <h2 className="text-2xl font-black md:uppercase md:tracking-tight">{isArabic ? "سياق الطلب" : "Issue context"}</h2>
-              <Wrench className="h-6 w-6 text-[#f5bd18]" />
+              <Wrench className="h-6 w-6 text-gold" />
             </div>
             <div className="space-y-6 p-6 md:p-8">
               <div>
-                <p className="mb-3 block text-[10px] font-black uppercase tracking-[0.18em] text-[#f5bd18]">{isArabic ? "الخدمة" : "Service type"}</p>
+                <p className="mb-3 block text-[10px] font-black uppercase tracking-[0.18em] text-gold">{isArabic ? "الخدمة" : "Service type"}</p>
                 <div className="rounded-lg border border-white/10 bg-white/5 p-5">
                   <p className="text-lg font-black text-white md:text-2xl">{serviceName}</p>
                 </div>
               </div>
               <div>
-                <p className="mb-3 block text-[10px] font-black uppercase tracking-[0.18em] text-[#f5bd18]">{isArabic ? "الوصف" : "User description"}</p>
+                <p className="mb-3 block text-[10px] font-black uppercase tracking-[0.18em] text-gold">{isArabic ? "الوصف" : "User description"}</p>
                 <div className="min-h-[100px] rounded-lg border border-white/10 bg-white/5 p-5">
                   <p className="text-sm font-semibold italic leading-7 text-white/80 md:text-base">
                     &ldquo;{data.description || (isArabic ? "لا يوجد وصف مضاف" : "No description added")}&rdquo;
@@ -855,18 +855,18 @@ export function ClientRequestDetailPage({ locale, requestId, initialData }: { lo
               </div>
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <div>
-                  <p className="mb-3 block text-[10px] font-black uppercase tracking-[0.18em] text-[#f5bd18]">{isArabic ? "الميزانية / السعر" : "Budget / price"}</p>
+                  <p className="mb-3 block text-[10px] font-black uppercase tracking-[0.18em] text-gold">{isArabic ? "الميزانية / السعر" : "Budget / price"}</p>
                   <div className="flex h-full items-center justify-between gap-4 rounded-lg border border-white/10 bg-white/5 p-5 md:block">
-                    <p className="text-2xl font-black text-[#f5bd18] md:text-white">{priceText}</p>
+                    <p className="text-2xl font-black text-gold md:text-white">{priceText}</p>
                     {canEditBudget ? (
-                      <button onClick={handleEditBudget} className="shrink-0 border-b-2 border-[#f5bd18] pb-1 text-sm font-black text-[#f5bd18] md:hidden">
+                      <button onClick={handleEditBudget} className="shrink-0 border-b-2 border-gold pb-1 text-sm font-black text-gold md:hidden">
                         {isArabic ? "تعديل السعر" : "Edit price"}
                       </button>
                     ) : null}
                   </div>
                 </div>
                 <div>
-                  <p className="mb-3 block text-[10px] font-black uppercase tracking-[0.18em] text-[#f5bd18]">{isArabic ? "المرفقات" : "Media attachments"}</p>
+                  <p className="mb-3 block text-[10px] font-black uppercase tracking-[0.18em] text-gold">{isArabic ? "المرفقات" : "Media attachments"}</p>
                   <div className="flex h-full min-h-20 items-center justify-center rounded-lg border-2 border-dashed border-white/10 bg-white/5 p-5">
                     <p className="text-sm font-semibold text-white/45">{data.mediaNotes || (isArabic ? "لا توجد ملفات مرفقة" : "No files attached")}</p>
                   </div>

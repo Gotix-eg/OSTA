@@ -218,7 +218,7 @@ export default function ClientMaterialsClientPage({ locale }: { locale: Locale }
 
           <button
             onClick={() => setShowCreateModal(true)}
-            className="inline-flex h-12 items-center gap-2 bg-black px-5 text-xs font-black uppercase text-[#f5bd18] shadow-[4px_4px_0_#1a1c1c] transition active:translate-x-1 active:translate-y-1 active:shadow-none"
+            className="inline-flex h-12 items-center gap-2 bg-black px-5 text-xs font-black uppercase text-gold shadow-[4px_4px_0_#1a1c1c] transition active:translate-x-1 active:translate-y-1 active:shadow-none"
           >
             <Plus className="h-5 w-5" />
             {isArabic ? "طلب خامات جديد" : "Request materials"}
@@ -241,11 +241,11 @@ export default function ClientMaterialsClientPage({ locale }: { locale: Locale }
 
             {loading ? (
               <div className="flex h-48 items-center justify-center border border-white/10 bg-black shadow-[6px_6px_0_#1a1c1c]">
-                <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#f5bd18] border-t-transparent" />
+                <div className="h-8 w-8 animate-spin rounded-full border-4 border-gold border-t-transparent" />
               </div>
             ) : requests.length === 0 ? (
               <div className="flex min-h-80 flex-col items-center justify-center border border-white/10 bg-black p-8 text-center text-white shadow-[6px_6px_0_#1a1c1c]">
-                <div className="mb-5 flex h-14 w-14 items-center justify-center border border-[#f5bd18] bg-[#121212] text-[#f5bd18]">
+                <div className="mb-5 flex h-14 w-14 items-center justify-center border border-gold bg-[#121212] text-gold">
                   <Package className="h-7 w-7" />
                 </div>
                 <p className="text-xl font-black text-white">
@@ -272,14 +272,14 @@ export default function ClientMaterialsClientPage({ locale }: { locale: Locale }
                     onClick={() => setSelectedRequest(req)}
                     className={`group relative cursor-pointer border p-5 shadow-[5px_5px_0_#1a1c1c] transition-all duration-300 hover:translate-x-1 ${
                       selectedRequest?.id === req.id 
-                        ? "border-[#f5bd18] bg-black" 
-                        : "border-white/10 bg-black hover:border-[#f5bd18]/50"
+                        ? "border-gold bg-black" 
+                        : "border-white/10 bg-black hover:border-gold/50"
                     }`}
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div>
                         <div className="flex flex-wrap items-center gap-3">
-                          <h3 className="text-lg font-black text-white transition-colors group-hover:text-[#f5bd18]">
+                          <h3 className="text-lg font-black text-white transition-colors group-hover:text-gold">
                             {req.title}
                           </h3>
                           {getStatusBadge(req.status)}
@@ -290,24 +290,24 @@ export default function ClientMaterialsClientPage({ locale }: { locale: Locale }
                         
                         <div className="mt-4 flex flex-wrap items-center gap-4 text-xs font-bold text-white/40">
                           <span className="flex items-center gap-1.5">
-                            <Clock className="h-3.5 w-3.5 text-[#f5bd18]" />
+                            <Clock className="h-3.5 w-3.5 text-gold" />
                             {new Date(req.createdAt).toLocaleDateString(locale, { dateStyle: "medium" })}
                           </span>
                           <span className="flex items-center gap-1.5">
-                            <Truck className="h-3.5 w-3.5 text-[#f5bd18]" />
+                            <Truck className="h-3.5 w-3.5 text-gold" />
                             {req.deliveryMethod === "VENDOR_DELIVERY" 
                               ? (isArabic ? "توصيل للمنزل" : "Home Delivery") 
                               : (isArabic ? "استلام شخصي" : "Self Pickup")}
                           </span>
                           {req.offers.length > 0 && (
-                            <span className="flex items-center gap-1 border border-[#f5bd18]/30 bg-[#f5bd18]/10 px-2 py-0.5 font-black text-[#f5bd18]">
+                            <span className="flex items-center gap-1 border border-gold/30 bg-gold/10 px-2 py-0.5 font-black text-gold">
                               {req.offers.length} {isArabic ? "عروض" : "offers"}
                             </span>
                           )}
                         </div>
                       </div>
 
-                      <div className={`border border-white/10 bg-white/5 p-2 text-white/40 transition-colors group-hover:text-[#f5bd18] ${isArabic ? "rotate-180" : ""}`}>
+                      <div className={`border border-white/10 bg-white/5 p-2 text-white/40 transition-colors group-hover:text-gold ${isArabic ? "rotate-180" : ""}`}>
                         <ChevronRight className="h-5 w-5" />
                       </div>
                     </div>
@@ -359,13 +359,13 @@ export default function ClientMaterialsClientPage({ locale }: { locale: Locale }
 
                 {/* Offers list section */}
                 <div className="space-y-4">
-                  <h4 className="text-xs font-black uppercase tracking-[0.2em] text-[#f5bd18]">
+                  <h4 className="text-xs font-black uppercase tracking-[0.2em] text-gold">
                     {isArabic ? "العروض المستلمة" : "Received Offers"} ({selectedRequest.offers.length})
                   </h4>
 
                   {selectedRequest.offers.length === 0 ? (
                     <div className="flex flex-col items-center justify-center border border-dashed border-white/15 bg-[#121212] p-8 text-center">
-                      <AlertCircle className="mb-3 h-7 w-7 text-[#f5bd18]" />
+                      <AlertCircle className="mb-3 h-7 w-7 text-gold" />
                       <p className="text-base font-black text-white">
                         {isArabic ? "بانتظار تقديم العروض" : "Waiting for vendor bids"}
                       </p>
@@ -385,12 +385,12 @@ export default function ClientMaterialsClientPage({ locale }: { locale: Locale }
                             className={`border p-4 transition-all ${
                               isThisAccepted 
                                 ? "border-emerald-400/40 bg-emerald-400/[0.04]" 
-                                : "border-white/10 bg-white/[0.03] hover:border-[#f5bd18]/40"
+                                : "border-white/10 bg-white/[0.03] hover:border-gold/40"
                             }`}
                           >
                             <div className="flex items-center justify-between gap-4">
                               <div className="flex items-center gap-3">
-                                <div className="flex h-10 w-10 items-center justify-center border border-[#f5bd18]/30 bg-[#f5bd18]/10 font-black text-[#f5bd18]">
+                                <div className="flex h-10 w-10 items-center justify-center border border-gold/30 bg-gold/10 font-black text-gold">
                                   {offer.vendor.storeName?.substring(0, 1) || offer.vendor.user.firstName.substring(0, 1)}
                                 </div>
                                 <div>
@@ -419,14 +419,14 @@ export default function ClientMaterialsClientPage({ locale }: { locale: Locale }
 
                             <div className="mt-4 flex items-center justify-between gap-4 text-xs font-bold">
                               <span className="flex items-center gap-1.5 text-white/45">
-                                <Clock className="h-3.5 w-3.5 text-[#f5bd18]" />
+                                <Clock className="h-3.5 w-3.5 text-gold" />
                                 {isArabic ? `توصيل خلال ${offer.estimatedDeliveryTime} دقيقة` : `In ${offer.estimatedDeliveryTime} mins`}
                               </span>
 
                               {selectedRequest.status === "PENDING" || selectedRequest.status === "OFFERS_RECEIVED" ? (
                                 <button
                                   onClick={() => setAcceptingOffer(offer)}
-                                  className="bg-white px-3.5 py-2 text-xs font-black text-black transition hover:bg-[#f5bd18]"
+                                  className="bg-white px-3.5 py-2 text-xs font-black text-black transition hover:bg-gold"
                                 >
                                   {isArabic ? "قبول العرض" : "Accept Bid"}
                                 </button>
@@ -448,14 +448,14 @@ export default function ClientMaterialsClientPage({ locale }: { locale: Locale }
                 {selectedRequest.order && (
                   <div className="mt-6 space-y-4 border border-white/10 bg-white/5 p-4">
                     <h4 className="flex items-center gap-2 text-sm font-black text-white">
-                      <Truck className="h-4 w-4 text-[#f5bd18]" />
+                      <Truck className="h-4 w-4 text-gold" />
                       {isArabic ? "دورة التوصيل والدفع" : "Delivery & Payment Cycle"}
                     </h4>
                     
                     <div className="grid grid-cols-2 gap-4 text-xs">
                       <div>
                         <span className="block font-black uppercase tracking-[0.14em] text-white/40">{isArabic ? "حالة التوصيل" : "Order Status"}</span>
-                        <span className="mt-1 block font-black text-[#f5bd18]">
+                        <span className="mt-1 block font-black text-gold">
                           {selectedRequest.order.status === "ACCEPTED" && (isArabic ? "تم قبول العرض" : "Accepted")}
                           {selectedRequest.order.status === "PREPARING" && (isArabic ? "قيد التجهيز" : "Preparing")}
                           {selectedRequest.order.status === "SHIPPED" && (isArabic ? "تم الشحن والتوصيل" : "Shipped")}

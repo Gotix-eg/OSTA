@@ -172,13 +172,13 @@ export function HowItWorksCustom({ locale }: { locale: Locale }) {
     >
       {/* ── Hero Section ── */}
       <section className="mx-auto flex max-w-4xl flex-col items-start px-4 py-8 text-start md:items-center md:px-12 md:py-20 md:text-center">
-        <span className="mb-4 inline-flex bg-black px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-[#f5bd18]">
+        <span className="mb-4 inline-flex bg-black px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-gold">
           {isArabic ? "طريقة العمل" : "How it works"}
         </span>
         <h1 className="mb-3 text-4xl font-black uppercase leading-tight tracking-tight text-[#1a1c1c] md:text-7xl">
           {currentCopy.title}{" "}
           <br />
-          <span className="bg-[#1a1c1c] text-[#f5bd18] px-3 inline-block mt-1">
+          <span className="bg-[#1a1c1c] text-gold px-3 inline-block mt-1">
             {currentCopy.titleHighlight}
           </span>
         </h1>
@@ -201,7 +201,7 @@ export function HowItWorksCustom({ locale }: { locale: Locale }) {
                   "min-h-11 shrink-0 border-2 border-[#1a1c1c] px-5 text-xs font-black uppercase transition-all duration-150 md:px-8 md:text-sm",
                   isActive
                     ? "bg-white text-[#1a1c1c] shadow-[4px_4px_0px_#1a1c1c]"
-                    : "bg-[#1a1c1c] text-[#f5bd18] hover:bg-[#1a1c1c]/80"
+                    : "bg-[#1a1c1c] text-gold hover:bg-[#1a1c1c]/80"
                 )}
               >
                 {currentCopy.roles[role].label}
@@ -225,19 +225,19 @@ export function HowItWorksCustom({ locale }: { locale: Locale }) {
               return (
                 <div
                   key={step.number}
-                  className="group flex flex-col gap-4 border border-white/10 p-5 transition-colors duration-300 hover:border-[#f5bd18]/60 md:p-6"
+                  className="group flex flex-col gap-4 border border-white/10 p-5 transition-colors duration-300 hover:border-gold/60 md:p-6"
                   style={{ backgroundColor: "#000000" }}
                 >
                   {/* Number + Icon */}
                   <div className="flex justify-between items-start">
                     <span
-                      className="font-black text-[#f5bd18] leading-none select-none"
+                      className="font-black text-gold leading-none select-none"
                       style={{ fontSize: "42px", opacity: 0.2 }}
                     >
                       {String(step.number).padStart(2, "0")}
                     </span>
                     <Icon
-                      className="text-[#f5bd18] group-hover:scale-110 transition-transform duration-300"
+                      className="text-gold group-hover:scale-110 transition-transform duration-300"
                       size={32}
                       strokeWidth={1.5}
                     />
@@ -273,7 +273,7 @@ export function HowItWorksCustom({ locale }: { locale: Locale }) {
           <h2 className="relative z-10 mb-3 text-3xl font-black uppercase text-white md:text-5xl">
             {currentCopy.ctaTitle}
           </h2>
-          <h2 className="relative z-10 mb-8 text-3xl font-black uppercase text-[#f5bd18] md:mb-10 md:text-5xl">
+          <h2 className="relative z-10 mb-8 text-3xl font-black uppercase text-gold md:mb-10 md:text-5xl">
             {currentCopy.ctaTitleHighlight}
           </h2>
 
@@ -291,7 +291,7 @@ export function HowItWorksCustom({ locale }: { locale: Locale }) {
             </Link>
             <Link
               href={`/${locale}/register/worker`}
-              className="inline-block px-10 py-4 font-black uppercase text-sm border-2 border-[#f5bd18] text-[#f5bd18] hover:bg-[#f5bd18] hover:text-[#1a1c1c] transition-colors duration-200"
+              className="inline-block px-10 py-4 font-black uppercase text-sm border-2 border-gold text-gold hover:bg-gold hover:text-[#1a1c1c] transition-colors duration-200"
             >
               {currentCopy.ctaPartnerBtn}
             </Link>

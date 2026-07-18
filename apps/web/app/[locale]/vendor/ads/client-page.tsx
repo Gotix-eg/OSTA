@@ -199,7 +199,7 @@ export default function VendorAdsClientPage({ locale }: { locale: Locale }) {
 
               <button
                 onClick={() => setShowCreateModal(true)}
-                className="inline-flex h-12 items-center gap-2 bg-[#f5bd18] px-6 font-black text-black transition-all hover:bg-white active:scale-95"
+                className="inline-flex h-12 items-center gap-2 bg-gold px-6 font-black text-black transition-all hover:bg-white active:scale-95"
               >
                 <Plus className="h-5 w-5" />
                 {isArabic ? "إنشاء إعلان ممول" : "Build Sponsored Ad"}
@@ -223,11 +223,11 @@ export default function VendorAdsClientPage({ locale }: { locale: Locale }) {
           <VendorStitchPanel
             eyebrow="Campaigns"
             title={isArabic ? "حملات الترويج للمتجر" : "My Store Campaigns"}
-            action={<Megaphone className="h-5 w-5 text-[#f5bd18]" />}
+            action={<Megaphone className="h-5 w-5 text-gold" />}
           >
             {loading ? (
               <div className="flex h-48 items-center justify-center border border-white/10 bg-[#080808]">
-                <div className="h-9 w-9 animate-spin border-4 border-[#f5bd18] border-t-transparent" />
+                <div className="h-9 w-9 animate-spin border-4 border-gold border-t-transparent" />
               </div>
             ) : campaigns.length === 0 ? (
               <div className="space-y-5">
@@ -247,7 +247,7 @@ export default function VendorAdsClientPage({ locale }: { locale: Locale }) {
                 {campaigns.map((ad) => (
                   <div
                     key={ad.id}
-                    className="border border-white/10 bg-[#080808] p-5 shadow-[3px_3px_0_#1d1600] transition-colors hover:border-[#f5bd18]/70"
+                    className="border border-white/10 bg-[#080808] p-5 shadow-[3px_3px_0_#1d1600] transition-colors hover:border-gold/70"
                   >
                     <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/5 pb-4">
                       <div>
@@ -278,7 +278,7 @@ export default function VendorAdsClientPage({ locale }: { locale: Locale }) {
                       </div>
                       <div className="border border-white/10 bg-black p-3">
                         <span className="block text-[10px] font-bold text-onyx-500 uppercase tracking-wider">{isArabic ? "نقرات" : "Clicks"}</span>
-                        <span className="mt-1 block font-black text-[#f5bd18] text-base">{ad.clicks.toLocaleString(locale)}</span>
+                        <span className="mt-1 block font-black text-gold text-base">{ad.clicks.toLocaleString(locale)}</span>
                       </div>
                       <div className="border border-white/10 bg-black p-3">
                         <span className="block text-[10px] font-bold text-onyx-500 uppercase tracking-wider">{isArabic ? "معدل التحويل" : "CTR"}</span>
@@ -297,11 +297,11 @@ export default function VendorAdsClientPage({ locale }: { locale: Locale }) {
           <VendorStitchPanel
             eyebrow="Boost"
             title={isArabic ? "بوابة مبيعات المتاجر الممولة" : "Merchant Ad Features"}
-            action={<Sparkles className="h-5 w-5 text-[#f5bd18]" />}
+            action={<Sparkles className="h-5 w-5 text-gold" />}
           >
               <div className="space-y-4 text-sm">
                 <div className="flex gap-3">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center border border-[#f5bd18]/60 bg-[#f5bd18] text-xs font-black text-black">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center border border-gold/60 bg-gold text-xs font-black text-black">
                     1
                   </div>
                   <div>
@@ -315,7 +315,7 @@ export default function VendorAdsClientPage({ locale }: { locale: Locale }) {
                 </div>
 
                 <div className="flex gap-3">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center border border-[#f5bd18]/60 bg-[#f5bd18] text-xs font-black text-black">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center border border-gold/60 bg-gold text-xs font-black text-black">
                     2
                   </div>
                   <div>
@@ -329,7 +329,7 @@ export default function VendorAdsClientPage({ locale }: { locale: Locale }) {
                 </div>
 
                 <div className="flex gap-3">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center border border-[#f5bd18]/60 bg-[#f5bd18] text-xs font-black text-black">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center border border-gold/60 bg-gold text-xs font-black text-black">
                     3
                   </div>
                   <div>
@@ -401,7 +401,7 @@ export default function VendorAdsClientPage({ locale }: { locale: Locale }) {
                           setFormPlacement("HOMEPAGE");
                         }
                       }}
-                      className="h-12 w-full border border-white/10 bg-[#121212] px-4 text-white outline-none transition-colors focus:border-[#f5bd18] text-sm"
+                      className="h-12 w-full border border-white/10 bg-[#121212] px-4 text-white outline-none transition-colors focus:border-gold text-sm"
                     >
                       <option value="SPONSORED_PROFILE">{isArabic ? "متجر ممول (Sponsored Store)" : "Sponsored Store"}</option>
                       <option value="BANNER">{isArabic ? "بنر إعلاني للمحل (Store Banner)" : "Store Banner"}</option>
@@ -413,7 +413,7 @@ export default function VendorAdsClientPage({ locale }: { locale: Locale }) {
                     <select
                       value={formPlacement}
                       onChange={(e) => setFormPlacement(e.target.value as any)}
-                      className="h-12 w-full border border-white/10 bg-[#121212] px-4 text-white outline-none transition-colors focus:border-[#f5bd18] text-sm"
+                      className="h-12 w-full border border-white/10 bg-[#121212] px-4 text-white outline-none transition-colors focus:border-gold text-sm"
                     >
                       {formType === "SPONSORED_PROFILE" ? (
                         <option value="SEARCH_TOP">{isArabic ? "صدر نتائج البحث (Search Top)" : "Search Top"}</option>
@@ -435,7 +435,7 @@ export default function VendorAdsClientPage({ locale }: { locale: Locale }) {
                     placeholder={isArabic ? "مثال: محلات النور لقطع الغيار - أصلية ومعتمدة" : "e.g. Al Noor Spare Parts - 100% Certified Supplies"}
                     value={formTitle}
                     onChange={(e) => setFormTitle(e.target.value)}
-                    className="h-12 w-full border border-white/10 bg-[#121212] px-4 text-white outline-none transition-colors focus:border-[#f5bd18] text-sm"
+                    className="h-12 w-full border border-white/10 bg-[#121212] px-4 text-white outline-none transition-colors focus:border-gold text-sm"
                   />
                 </label>
 
@@ -447,7 +447,7 @@ export default function VendorAdsClientPage({ locale }: { locale: Locale }) {
                       placeholder="https://example.com/my-banner.jpg"
                       value={formImageUrl}
                       onChange={(e) => setFormImageUrl(e.target.value)}
-                      className="h-12 w-full border border-white/10 bg-[#121212] px-4 text-white outline-none transition-colors focus:border-[#f5bd18] text-sm"
+                      className="h-12 w-full border border-white/10 bg-[#121212] px-4 text-white outline-none transition-colors focus:border-gold text-sm"
                     />
                   </label>
                 )}
@@ -459,7 +459,7 @@ export default function VendorAdsClientPage({ locale }: { locale: Locale }) {
                     placeholder="https://osta.app/profile/vendor-1"
                     value={formTargetUrl}
                     onChange={(e) => setFormTargetUrl(e.target.value)}
-                    className="h-12 w-full border border-white/10 bg-[#121212] px-4 text-white outline-none transition-colors focus:border-[#f5bd18] text-sm"
+                    className="h-12 w-full border border-white/10 bg-[#121212] px-4 text-white outline-none transition-colors focus:border-gold text-sm"
                   />
                 </label>
 
@@ -474,14 +474,14 @@ export default function VendorAdsClientPage({ locale }: { locale: Locale }) {
                   <button
                     type="button"
                     onClick={() => setShowCreateModal(false)}
-                    className="border border-white/20 bg-transparent px-5 py-3 text-sm font-black uppercase text-white transition-colors hover:border-[#f5bd18] hover:text-[#f5bd18]"
+                    className="border border-white/20 bg-transparent px-5 py-3 text-sm font-black uppercase text-white transition-colors hover:border-gold hover:text-gold"
                   >
                     {isArabic ? "إلغاء" : "Cancel"}
                   </button>
                   <button
                     type="submit"
                     disabled={submitting || success}
-                    className="flex items-center gap-2 border border-[#f5bd18] bg-[#f5bd18] px-6 py-3 text-sm font-black uppercase text-black transition-colors hover:bg-white disabled:opacity-50"
+                    className="flex items-center gap-2 border border-gold bg-gold px-6 py-3 text-sm font-black uppercase text-black transition-colors hover:bg-white disabled:opacity-50"
                   >
                     {submitting && <RefreshCw className="h-4 w-4 animate-spin" />}
                     {isArabic ? "تمويل وتفعيل الحملة" : "Fund & Activate Ad"}

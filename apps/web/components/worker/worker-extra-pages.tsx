@@ -100,16 +100,16 @@ function WorkerModeSwitcher({
       <div className="grid gap-6 xl:grid-cols-[minmax(360px,0.85fr)_minmax(0,1.25fr)]">
         <div className="border border-white/10 bg-[#111] p-6">
           <div className="flex items-center gap-5">
-            <div className="relative h-24 w-24 shrink-0 overflow-hidden border border-[#f5bd18] bg-[#121212] shadow-[4px_4px_0_#f5bd18]">
+            <div className="relative h-24 w-24 shrink-0 overflow-hidden border border-gold bg-[#121212] shadow-[4px_4px_0_#f5bd18]">
               {avatarUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={avatarUrl} alt={fullName} className="h-full w-full object-cover grayscale transition duration-300 hover:grayscale-0" />
               ) : (
-                <div className="flex h-full w-full items-center justify-center bg-[#f5bd18] text-2xl font-black text-black">{initials}</div>
+                <div className="flex h-full w-full items-center justify-center bg-gold text-2xl font-black text-black">{initials}</div>
               )}
             </div>
             <div className="min-w-0">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#f5bd18]">{isArabic ? "بيانات الحساب" : "Account identity"}</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gold">{isArabic ? "بيانات الحساب" : "Account identity"}</p>
               <h2 className="mt-2 truncate text-2xl font-black uppercase text-white">{fullName}</h2>
               <div className="mt-4 space-y-1 text-sm font-bold text-white/65">
                 <p className="truncate">{email || (isArabic ? "لا يوجد بريد" : "No email")}</p>
@@ -128,7 +128,7 @@ function WorkerModeSwitcher({
               const content = (
                 <>
                   <div className="flex w-full items-start gap-4">
-                    <div className={mode.active ? "flex h-12 w-12 shrink-0 items-center justify-center border border-[#f5bd18] bg-[#f5bd18] text-black" : "flex h-12 w-12 shrink-0 items-center justify-center border border-white/15 bg-[#121212] text-[#f5bd18]"}>
+                    <div className={mode.active ? "flex h-12 w-12 shrink-0 items-center justify-center border border-gold bg-gold text-black" : "flex h-12 w-12 shrink-0 items-center justify-center border border-white/15 bg-[#121212] text-gold"}>
                       <Icon className="h-5 w-5" />
                     </div>
                     <div className="min-w-0 flex-1">
@@ -136,14 +136,14 @@ function WorkerModeSwitcher({
                       <p className="mt-2 text-xs leading-5 text-white/50">{mode.note}</p>
                     </div>
                   </div>
-                  <span className={mode.active ? "mt-4 inline-flex shrink-0 bg-white px-4 py-2 text-[10px] font-black uppercase tracking-[0.12em] text-black" : "mt-4 inline-flex shrink-0 border border-white/15 px-4 py-2 text-[10px] font-black uppercase tracking-[0.12em] text-[#f5bd18]"}>
+                  <span className={mode.active ? "mt-4 inline-flex shrink-0 bg-white px-4 py-2 text-[10px] font-black uppercase tracking-[0.12em] text-black" : "mt-4 inline-flex shrink-0 border border-white/15 px-4 py-2 text-[10px] font-black uppercase tracking-[0.12em] text-gold"}>
                     {mode.active ? (isArabic ? "الحالي" : "CURRENT") : isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : isArabic ? "تبديل" : "SWITCH"}
                   </span>
                 </>
               );
 
               return mode.active ? (
-                <div key={mode.key} className="flex min-h-44 flex-col justify-between border border-[#f5bd18] bg-[#121212] p-5">
+                <div key={mode.key} className="flex min-h-44 flex-col justify-between border border-gold bg-[#121212] p-5">
                   {content}
                 </div>
               ) : (
@@ -156,7 +156,7 @@ function WorkerModeSwitcher({
                       void switchRole(mode.targetRole, mode.href);
                     }
                   }}
-                  className="flex min-h-44 flex-col justify-between border border-white/10 bg-[#121212] p-5 text-start transition-colors hover:border-[#f5bd18] disabled:cursor-wait disabled:opacity-70"
+                  className="flex min-h-44 flex-col justify-between border border-white/10 bg-[#121212] p-5 text-start transition-colors hover:border-gold disabled:cursor-wait disabled:opacity-70"
                 >
                   {content}
                 </button>
@@ -206,7 +206,7 @@ export function WorkerRatingsPage({ locale, initialData }: { locale: Locale; ini
           ) : (
             <div className="grid gap-4">
               {data.reviews.map((review, index) => (
-                <div key={review.id} className={index % 2 === 0 ? "border border-white/10 bg-[#111] p-4" : "border border-[#f5bd18]/30 bg-[#2a2207] p-4"}>
+                <div key={review.id} className={index % 2 === 0 ? "border border-white/10 bg-[#111] p-4" : "border border-gold/30 bg-[#2a2207] p-4"}>
                   <div className="flex items-center justify-between gap-3">
                     <div>
                       <p className="text-lg font-black text-white">{review.clientName}</p>
@@ -266,7 +266,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
         side={
           <div className="border border-white/10 bg-black p-5 text-white shadow-[4px_4px_0_#1d1600]">
             <div className="flex items-center gap-4">
-              <div className="flex h-20 w-20 items-center justify-center overflow-hidden border border-[#f5bd18]/50 bg-[#111] text-[#f5bd18]">
+              <div className="flex h-20 w-20 items-center justify-center overflow-hidden border border-gold/50 bg-[#111] text-gold">
                 {data.profile.avatarUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={data.profile.avatarUrl} alt={isArabic ? "صورة الفني" : "Worker avatar"} className="h-full w-full object-cover" />
@@ -276,7 +276,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
               </div>
               <div>
                 <h3 className="text-xl font-black text-white">{fullName}</h3>
-                <p className="mt-1 text-[10px] font-black uppercase tracking-[0.18em] text-[#f5bd18]">OSTA PRO</p>
+                <p className="mt-1 text-[10px] font-black uppercase tracking-[0.18em] text-gold">OSTA PRO</p>
               </div>
             </div>
           </div>
@@ -307,7 +307,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
                 <input
                   value={data.profile[field.key as keyof typeof data.profile] ?? ""}
                   onChange={(event) => setData({ ...data, profile: { ...data.profile, [field.key]: event.target.value } })}
-                  className="h-12 w-full border border-white/10 bg-[#111] px-4 text-white outline-none focus:border-[#f5bd18]"
+                  className="h-12 w-full border border-white/10 bg-[#111] px-4 text-white outline-none focus:border-gold"
                 />
               </label>
             ))}
@@ -327,7 +327,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
                   type="checkbox"
                   checked={safeWorkPreferences[item.key as keyof typeof safeWorkPreferences] as boolean}
                   onChange={(event) => setData({ ...data, workPreferences: { ...data.workPreferences, [item.key]: event.target.checked } })}
-                  className="h-5 w-5 accent-[#f5bd18]"
+                  className="h-5 w-5 accent-gold"
                 />
               </label>
             ))}

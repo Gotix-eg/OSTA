@@ -50,10 +50,10 @@ export function ServicesListing({ locale }: { locale: Locale }) {
   });
 
   return (
-    <div className="min-h-screen w-full bg-[#f5bd18] px-4 pb-28 pt-6 text-[#1a1c1c] md:px-12 md:py-24">
+    <div className="min-h-screen w-full bg-gold px-4 pb-28 pt-6 text-[#1a1c1c] md:px-12 md:py-24">
       {/* Hero Search Section */}
       <div className="mx-auto mb-8 max-w-7xl space-y-5 text-start md:mb-16 md:space-y-8 md:text-center">
-        <span className="inline-flex bg-black px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-[#f5bd18]">
+        <span className="inline-flex bg-black px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-gold">
           {isArabic ? "الخدمات" : "Services"}
         </span>
         <h1 className="font-display-lg text-4xl font-black leading-tight text-[#1a1c1c] md:text-6xl">
@@ -97,7 +97,7 @@ export function ServicesListing({ locale }: { locale: Locale }) {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent md:hidden" />
                   {cat.slug === "electrical" && (
-                    <div className="absolute top-4 left-4 bg-[#f5bd18] text-[#1a1c1c] px-3 py-1 text-xs font-black rounded-none">
+                    <div className="absolute top-4 left-4 bg-gold text-[#1a1c1c] px-3 py-1 text-xs font-black rounded-none">
                       {isArabic ? "عاجل" : "URGENT"}
                     </div>
                   )}
@@ -118,7 +118,7 @@ export function ServicesListing({ locale }: { locale: Locale }) {
               </div>
               <Link 
                 href={`/${locale}/services/${cat.slug}`} 
-                className="mx-5 mb-5 flex min-h-11 items-center gap-2 bg-[#f5bd18] px-4 text-xs font-black uppercase tracking-wider text-black transition-all group-hover:gap-4 md:mx-0 md:mb-0 md:bg-transparent md:px-0 md:text-[#f5bd18]"
+                className="mx-5 mb-5 flex min-h-11 items-center gap-2 bg-gold px-4 text-xs font-black uppercase tracking-wider text-black transition-all group-hover:gap-4 md:mx-0 md:mb-0 md:bg-transparent md:px-0 md:text-gold"
               >
                 {isArabic ? "استكشف الخدمة" : "EXPLORE"} <ArrowRight className="h-4 w-4" />
               </Link>
@@ -130,7 +130,7 @@ export function ServicesListing({ locale }: { locale: Locale }) {
       {/* CTA Banner */}
       <div className="max-w-7xl mx-auto mt-16 bg-[#1a1c1c] p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 border border-white/10 text-white text-start rounded-none">
         <div>
-          <h2 className="text-2xl font-black text-[#f5bd18] mb-2">
+          <h2 className="text-2xl font-black text-gold mb-2">
             {isArabic ? "هل أنت فني محترف؟" : "Are you a master technician?"}
           </h2>
           <h3 className="text-2xl font-black text-white">

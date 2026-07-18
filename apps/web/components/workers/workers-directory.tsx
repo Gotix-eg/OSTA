@@ -119,14 +119,14 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
   ];
 
   return (
-    <div className="min-h-screen bg-[#f5bd18] pb-28 text-[#1a1c1c] font-sans antialiased md:-mx-12 md:-my-12 md:pb-0">
+    <div className="min-h-screen bg-gold pb-28 text-[#1a1c1c] font-sans antialiased md:-mx-12 md:-my-12 md:pb-0">
       <style dangerouslySetInnerHTML={{__html: '.worker-card-dark { background-color: #000000; color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.1); position: relative; display: flex; flex-direction: column; transition: all 0.2s ease-in-out; } .worker-card-light { background-color: #ffffff; color: #000000; border: 1px solid rgba(0, 0, 0, 0.1); position: relative; display: flex; flex-direction: column; transition: all 0.2s ease-in-out; } .worker-card-dark:hover { outline: 3px solid #000000; transform: translateY(-4px); } .worker-card-light:hover { outline: 3px solid #ffffff; transform: translateY(-4px); }' }} />
 
       {/* Black Hero Header Section */}
       <section className="relative overflow-hidden border-b-4 border-black bg-black px-4 py-6 text-start md:px-12 md:py-20 md:text-center">
         <div className="mx-auto max-w-4xl space-y-5 md:space-y-6">
           <div className="space-y-3">
-            <span className="inline-flex bg-[#f5bd18] px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-black">
+            <span className="inline-flex bg-gold px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-black">
               {isArabic ? "الفنيون" : "Workers"}
             </span>
             <h1 className="text-4xl font-black leading-tight text-white md:text-3xl">
@@ -143,7 +143,7 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
               <select 
                 value={selectedSpecialty}
                 onChange={(e) => setSelectedSpecialty(e.target.value)}
-                className="h-12 w-full rounded-none border border-white/20 bg-[#121212] px-4 text-xs font-bold text-white outline-none focus:border-[#f5bd18] focus:ring-0"
+                className="h-12 w-full rounded-none border border-white/20 bg-[#121212] px-4 text-xs font-bold text-white outline-none focus:border-gold focus:ring-0"
               >
                 {CRAFTS.map(craft => (
                   <option key={craft.id} value={craft.id}>{isArabic ? craft.name.ar : craft.name.en}</option>
@@ -156,12 +156,12 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={isArabic ? "الموقع أو اسم الفني" : "Location or worker name"}
-                className="h-12 w-full rounded-none border border-white/20 bg-[#121212] px-4 text-start text-xs font-bold text-white outline-none focus:border-[#f5bd18] focus:ring-0"
+                className="h-12 w-full rounded-none border border-white/20 bg-[#121212] px-4 text-start text-xs font-bold text-white outline-none focus:border-gold focus:ring-0"
               />
             </div>
             <button 
               onClick={() => fetchWorkers()}
-              className="h-12 w-full rounded-none bg-[#f5bd18] px-6 text-xs font-black uppercase text-black transition-all hover:bg-white md:w-1/3"
+              className="h-12 w-full rounded-none bg-gold px-6 text-xs font-black uppercase text-black transition-all hover:bg-white md:w-1/3"
             >
               {isArabic ? "ابحث الآن" : "SEARCH NOW"}
             </button>
@@ -169,7 +169,7 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
 
           {/* Popular Searches */}
           <div className="flex flex-wrap gap-2 text-xs font-bold text-white/60">
-            <span className="text-[#f5bd18]">{isArabic ? "الأكثر طلبًا:" : "Popular:"}</span>
+            <span className="text-gold">{isArabic ? "الأكثر طلبًا:" : "Popular:"}</span>
             <button className="hover:text-white" onClick={() => { setSelectedSpecialty("plumbing"); setSearchQuery(isArabic ? "طوارئ" : "Emergency"); }}>{isArabic ? "سباك طوارئ" : "Emergency Plumber"}</button>
             <span className="text-white/25">|</span>
             <button className="hover:text-white" onClick={() => setSelectedSpecialty("ac")}>{isArabic ? "صيانة تكييف" : "AC Maintenance"}</button>
@@ -253,14 +253,14 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
                     <div>
                       <div className="flex justify-between items-center mb-2">
                         <h3 className="font-black text-lg leading-tight truncate">{worker.name}</h3>
-                        <div className="flex items-center text-[#f5bd18] text-sm font-black">
-                          <Star className="h-4 w-4 fill-current mr-1 text-[#f5bd18]" />
+                        <div className="flex items-center text-gold text-sm font-black">
+                          <Star className="h-4 w-4 fill-current mr-1 text-gold" />
                           <span className={isWhiteCard ? "text-black" : "text-white"}>{worker.rating > 0 ? worker.rating.toFixed(1) : "5.0"}</span>
                         </div>
                       </div>
                       <p className={cn(
                         "text-[10px] font-black px-2 py-0.5 mb-4 inline-block uppercase rounded-none tracking-wider",
-                        isWhiteCard ? "bg-black text-[#f5bd18]" : "bg-[#f5bd18] text-black"
+                        isWhiteCard ? "bg-black text-gold" : "bg-gold text-black"
                       )}>
                         {isArabic ? worker.professionAr : worker.professionEn}
                       </p>
@@ -292,8 +292,8 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
                       className={cn(
                         "w-full py-4 font-black text-sm uppercase tracking-widest transition-all rounded-none mt-2",
                         isWhiteCard 
-                          ? "bg-black text-white hover:bg-[#f5bd18] hover:text-black" 
-                          : "bg-white text-black hover:bg-[#f5bd18] hover:text-black"
+                          ? "bg-black text-white hover:bg-gold hover:text-black" 
+                          : "bg-white text-black hover:bg-gold hover:text-black"
                       )}
                     >
                       {isArabic ? "احجز الآن" : "BOOK PRO NOW"}
@@ -309,7 +309,7 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
       {/* Pagination */}
       <div className="mx-auto hidden max-w-7xl justify-center gap-2 pb-24 md:flex">
         <button className="w-10 h-10 flex items-center justify-center border border-black/20 bg-white hover:bg-black hover:text-white transition-colors font-bold rounded-none">{"<"}</button>
-        <button className="w-10 h-10 flex items-center justify-center border border-black/20 bg-black text-[#f5bd18] font-bold rounded-none">1</button>
+        <button className="w-10 h-10 flex items-center justify-center border border-black/20 bg-black text-gold font-bold rounded-none">1</button>
         <button className="w-10 h-10 flex items-center justify-center border border-black/20 bg-white hover:bg-black hover:text-white transition-colors font-bold rounded-none">2</button>
         <button className="w-10 h-10 flex items-center justify-center border border-black/20 bg-white hover:bg-black hover:text-white transition-colors font-bold rounded-none">3</button>
         <span className="w-10 h-10 flex items-center justify-center text-black font-bold">...</span>
@@ -328,11 +328,11 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
               <X className="h-6 w-6" />
             </button>
             <div className="text-center">
-              <ShieldCheck className="h-16 w-16 text-[#f5bd18] mx-auto mb-6" />
+              <ShieldCheck className="h-16 w-16 text-gold mx-auto mb-6" />
               <h3 className="text-2xl font-black mb-4">
                 {isArabic ? "طلب حجز مباشر" : "Direct Booking Request"}
               </h3>
-              <p className="text-[#f5bd18] font-bold mb-4 text-sm">
+              <p className="text-gold font-bold mb-4 text-sm">
                 {isArabic 
                   ? "حجز مع الفني: " + selectedWorkerForBooking.name
                   : "Booking with Pro: " + selectedWorkerForBooking.name}
@@ -347,7 +347,7 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
                   href={"/login?redirect=" + encodeURIComponent(
                     "/" + locale + "/client/new-request?workerId=" + selectedWorkerForBooking.id
                   )}
-                  className="bg-[#f5bd18] text-black py-3 text-sm font-black w-full text-center rounded-none shadow-lg"
+                  className="bg-gold text-black py-3 text-sm font-black w-full text-center rounded-none shadow-lg"
                 >
                   {isArabic ? "تسجيل الدخول كعميل" : "Login as Client"}
                 </Link>

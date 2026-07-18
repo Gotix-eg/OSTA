@@ -170,7 +170,7 @@ function DashboardBlock({
       <div className="mb-6 flex items-end justify-between gap-4">
         <div>
           {eyebrow && (
-            <p className="mb-1 text-xs font-black uppercase tracking-[0.05em] text-[#f5bd18]">
+            <p className="mb-1 text-xs font-black uppercase tracking-[0.05em] text-gold">
               {eyebrow}
             </p>
           )}
@@ -199,7 +199,7 @@ function SubpageHero({
   return (
     <ObsidianBlock className="relative mb-6 overflow-hidden p-6 md:p-8">
       <div className="relative z-10 max-w-3xl">
-        <span className="mb-2 inline-block bg-[#f5bd18] px-2 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-black">
+        <span className="mb-2 inline-block bg-gold px-2 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-black">
           {eyebrow}
         </span>
         <h1 className="text-4xl font-black leading-none text-white md:text-7xl">{title}</h1>
@@ -212,7 +212,7 @@ function SubpageHero({
           </Link>
         )}
       </div>
-      <Wrench className="absolute -bottom-8 -end-8 h-36 w-36 text-[#f5bd18]/10" />
+      <Wrench className="absolute -bottom-8 -end-8 h-36 w-36 text-gold/10" />
     </ObsidianBlock>
   );
 }
@@ -231,10 +231,10 @@ function MiniMetric({
 }) {
   return (
     <ObsidianBlock className="flex min-h-32 flex-col items-center justify-center gap-2 p-4 text-center">
-      <Icon className="h-6 w-6 text-[#f5bd18]" />
+      <Icon className="h-6 w-6 text-gold" />
       <p className="text-[10px] font-black uppercase tracking-[0.08em] text-white/45">{note}</p>
       <p className="text-sm font-black text-white">{label}</p>
-      <p className="max-w-full truncate text-xs font-bold text-[#f5bd18]">{value}</p>
+      <p className="max-w-full truncate text-xs font-bold text-gold">{value}</p>
     </ObsidianBlock>
   );
 }
@@ -249,7 +249,7 @@ function SoftCard({ children, className }: { children: ReactNode; className?: st
 
 function SoftBadge({ label }: { label: string; tone?: string }) {
   return (
-    <span className="inline-flex bg-[#f5bd18]/15 px-2 py-1 text-[10px] font-black text-[#f5bd18]">
+    <span className="inline-flex bg-gold/15 px-2 py-1 text-[10px] font-black text-gold">
       {label}
     </span>
   );
@@ -287,7 +287,7 @@ function ProgressRail({
           className={cn(
             "flex flex-col items-center justify-center gap-2 border-b-2 pb-3 text-center transition md:border md:p-4",
             index === current
-              ? "border-[#f5bd18] text-black md:bg-black md:text-white"
+              ? "border-gold text-black md:bg-black md:text-white"
               : index < current
                 ? "border-black/40 text-black md:bg-black/80 md:text-white"
                 : "border-black/10 text-black/45 md:bg-black/10",
@@ -298,9 +298,9 @@ function ProgressRail({
               className={cn(
                 "flex h-8 w-8 items-center justify-center text-sm font-black",
                 index === current
-                  ? "bg-[#f5bd18] text-black"
+                  ? "bg-gold text-black"
                   : index < current
-                    ? "bg-black text-[#f5bd18]"
+                    ? "bg-black text-gold"
                     : "border border-black/10 bg-black/10 text-black/45",
               )}
             >
@@ -467,22 +467,22 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
 
   if (!ready) {
     return (
-      <div className="-m-4 min-h-screen bg-[#f5bd18] p-6 text-sm font-bold text-black sm:-m-6 lg:-m-8">
+      <div className="-m-4 min-h-screen bg-gold p-6 text-sm font-bold text-black sm:-m-6 lg:-m-8">
         {isArabic ? "جارٍ تجهيز نموذج الطلب..." : "Preparing request flow..."}
       </div>
     );
   }
 
   return (
-    <div className="-m-4 min-h-screen bg-[#f5bd18] pb-24 text-black sm:-m-6 lg:-m-8">
-      <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-white/10 bg-black/80 px-4 text-[#f5bd18] backdrop-blur-md lg:hidden">
+    <div className="-m-4 min-h-screen bg-gold pb-24 text-black sm:-m-6 lg:-m-8">
+      <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-white/10 bg-black/80 px-4 text-gold backdrop-blur-md lg:hidden">
         <div className="flex items-center gap-3">
           <button type="button" className="flex h-10 w-10 items-center justify-center">
             <Menu className="h-5 w-5" />
           </button>
           <span className="text-xl font-black uppercase tracking-[0.02em]">OSTA</span>
         </div>
-        <div className="h-8 w-8 rounded-full border border-[#f5bd18]/30 bg-white/10" />
+        <div className="h-8 w-8 rounded-full border border-gold/30 bg-white/10" />
       </header>
 
       <div className="mx-auto max-w-[1280px] px-4 py-6 md:px-8 md:py-10">
@@ -616,9 +616,9 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
           >
             {/* Selected Service Header (Visible in all steps after selection) */}
             {selectedService && (
-              <div className="mb-8 flex items-center justify-between border border-[#f5bd18]/35 bg-[#f5bd18]/10 p-4">
+              <div className="mb-8 flex items-center justify-between border border-gold/35 bg-gold/10 p-4">
                 <div className="flex items-center gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center bg-[#f5bd18] text-black">
+                  <div className="flex h-12 w-12 items-center justify-center bg-gold text-black">
                     {selectedCategory?.id === "electricity" && (
                       <WandSparkles className="h-6 w-6" />
                     )}
@@ -627,7 +627,7 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
                     )}
                   </div>
                   <div>
-                    <p className="text-xs font-black uppercase tracking-[0.08em] text-[#f5bd18]">
+                    <p className="text-xs font-black uppercase tracking-[0.08em] text-gold">
                       {selectedCategory?.name[locale]}
                     </p>
                     <p className="text-xl font-bold text-white">
@@ -677,13 +677,13 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
                             className={cn(
                               "min-h-36 border p-4 text-start transition active:scale-95",
                               draft.categoryId === category.id
-                                ? "border-[#f5bd18]/70 bg-[#f5bd18]/10 text-white"
+                                ? "border-gold/70 bg-gold/10 text-white"
                                 : index % 2 === 0
-                                  ? "border-white/10 bg-[#121212] hover:border-[#f5bd18]/60"
-                                  : "border-white/10 bg-[#171717] hover:border-[#f5bd18]/60",
+                                  ? "border-white/10 bg-[#121212] hover:border-gold/60"
+                                  : "border-white/10 bg-[#171717] hover:border-gold/60",
                             )}
                           >
-                            <div className={cn("mb-3 flex h-10 w-10 items-center justify-center", draft.categoryId === category.id ? "bg-[#f5bd18] text-black" : "bg-[#f5bd18]/15 text-[#f5bd18]")}>
+                            <div className={cn("mb-3 flex h-10 w-10 items-center justify-center", draft.categoryId === category.id ? "bg-gold text-black" : "bg-gold/15 text-gold")}>
                               <Wrench className="h-5 w-5" />
                             </div>
                             <p
@@ -727,10 +727,10 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
                               className={cn(
                                 "border p-4 text-start transition active:scale-95",
                                 draft.serviceId === service.id
-                                  ? "border-[#f5bd18]/70 bg-[#f5bd18]/10"
+                                  ? "border-gold/70 bg-gold/10"
                                   : index % 2 === 0
-                                    ? "border-white/10 bg-[#121212] hover:border-[#f5bd18]/60"
-                                    : "border-white/10 bg-[#171717] hover:border-[#f5bd18]/60",
+                                    ? "border-white/10 bg-[#121212] hover:border-gold/60"
+                                    : "border-white/10 bg-[#171717] hover:border-gold/60",
                               )}
                             >
                               <p className="text-lg font-black text-white">
@@ -769,7 +769,7 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
                       onChange={(event) =>
                         setDraft({ ...draft, title: event.target.value })
                       }
-                      className="h-12 w-full border border-white/10 bg-[#121212] px-4 text-sm font-semibold text-white placeholder:text-white/25 outline-none transition focus:border-[#f5bd18]"
+                      className="h-12 w-full border border-white/10 bg-[#121212] px-4 text-sm font-semibold text-white placeholder:text-white/25 outline-none transition focus:border-gold"
                       placeholder={
                         isArabic
                           ? "مثال: عطل كهرباء مفاجئ في المطبخ"
@@ -785,7 +785,7 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
                       onChange={(event) =>
                         setDraft({ ...draft, description: event.target.value })
                       }
-                      className="w-full border border-white/10 bg-[#121212] px-4 py-3 text-sm font-semibold text-white placeholder:text-white/25 outline-none transition focus:border-[#f5bd18]"
+                      className="w-full border border-white/10 bg-[#121212] px-4 py-3 text-sm font-semibold text-white placeholder:text-white/25 outline-none transition focus:border-gold"
                       placeholder={
                         isArabic
                           ? "اكتب تفاصيل المشكلة والأعراض الحالية وأي محاولة سابقة للحل"
@@ -801,7 +801,7 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
                       onChange={(event) =>
                         setDraft({ ...draft, mediaNotes: event.target.value })
                       }
-                      className="w-full border border-white/10 bg-[#121212] px-4 py-3 text-sm font-semibold text-white placeholder:text-white/25 outline-none transition focus:border-[#f5bd18]"
+                      className="w-full border border-white/10 bg-[#121212] px-4 py-3 text-sm font-semibold text-white placeholder:text-white/25 outline-none transition focus:border-gold"
                       placeholder={
                         isArabic
                           ? "ما الذي تنوي إرفاقه؟"
@@ -857,10 +857,10 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
                       <div key={item.id}>
                         <label
                           className={cn(
-                            "relative block cursor-pointer border p-5 transition hover:border-[#f5bd18]/70 active:scale-[0.98]",
+                            "relative block cursor-pointer border p-5 transition hover:border-gold/70 active:scale-[0.98]",
                             item.tone,
                             item.value
-                              ? "border-[#f5bd18] bg-[#f5bd18]/10"
+                              ? "border-gold bg-gold/10"
                               : "border-white/10",
                           )}
                         >
@@ -906,11 +906,11 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
                             }}
                           />
                           <div className="flex items-center justify-between">
-                            <div className="flex h-12 w-12 items-center justify-center bg-[#f5bd18]/15 text-[#f5bd18]">
+                            <div className="flex h-12 w-12 items-center justify-center bg-gold/15 text-gold">
                               <Icon className="h-5 w-5" />
                             </div>
                             {item.value && (
-                              <div className="bg-[#f5bd18] px-3 py-1 text-[10px] font-black text-black">
+                              <div className="bg-gold px-3 py-1 text-[10px] font-black text-black">
                                 {item.value}
                               </div>
                             )}
@@ -968,7 +968,7 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
                                   ) as HTMLInputElement;
                                   input?.click();
                                 }}
-                                className="flex h-20 w-20 cursor-pointer items-center justify-center border-2 border-dashed border-white/15 bg-[#121212] text-white/35 hover:border-[#f5bd18] hover:text-[#f5bd18]"
+                                className="flex h-20 w-20 cursor-pointer items-center justify-center border-2 border-dashed border-white/15 bg-[#121212] text-white/35 hover:border-gold hover:text-gold"
                               >
                                 <ImagePlus className="h-6 w-6" />
                               </div>
@@ -1009,8 +1009,8 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
                         className={cn(
                           "border px-5 py-3 text-sm font-black transition active:scale-95",
                           draft.addressMode === item.key
-                            ? "border-[#f5bd18] bg-[#f5bd18] text-black shadow-[3px_3px_0_#000]"
-                            : "border-white/10 bg-[#121212] text-white/55 hover:border-[#f5bd18]/60 hover:text-white",
+                            ? "border-gold bg-gold text-black shadow-[3px_3px_0_#000]"
+                            : "border-white/10 bg-[#121212] text-white/55 hover:border-gold/60 hover:text-white",
                         )}
                       >
                         {item.label}
@@ -1030,10 +1030,10 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
                           className={cn(
                             "border p-4 text-start transition active:scale-[0.98]",
                             draft.savedAddress === address.id
-                              ? "border-[#f5bd18] bg-[#f5bd18]/10 text-white"
+                              ? "border-gold bg-gold/10 text-white"
                               : index % 2 === 0
-                                ? "border-white/10 bg-[#121212] hover:border-[#f5bd18]/60"
-                                : "border-white/10 bg-[#171717] hover:border-[#f5bd18]/60",
+                                ? "border-white/10 bg-[#121212] hover:border-gold/60"
+                                : "border-white/10 bg-[#171717] hover:border-gold/60",
                           )}
                         >
                           <p
@@ -1060,7 +1060,7 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
                               governorate: event.target.value,
                             })
                           }
-                          className="h-12 w-full border border-white/10 bg-[#121212] px-4 text-sm font-semibold text-white outline-none transition focus:border-[#f5bd18]"
+                          className="h-12 w-full border border-white/10 bg-[#121212] px-4 text-sm font-semibold text-white outline-none transition focus:border-gold"
                         />
                       </Field>
                       <Field label={isArabic ? "المدينة" : "City"}>
@@ -1069,7 +1069,7 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
                           onChange={(event) =>
                             setDraft({ ...draft, city: event.target.value })
                           }
-                          className="h-12 w-full border border-white/10 bg-[#121212] px-4 text-sm font-semibold text-white outline-none transition focus:border-[#f5bd18]"
+                          className="h-12 w-full border border-white/10 bg-[#121212] px-4 text-sm font-semibold text-white outline-none transition focus:border-gold"
                         />
                       </Field>
                       <Field label={isArabic ? "الحي" : "District"}>
@@ -1078,7 +1078,7 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
                           onChange={(event) =>
                             setDraft({ ...draft, district: event.target.value })
                           }
-                          className="h-12 w-full border border-white/10 bg-[#121212] px-4 text-sm font-semibold text-white outline-none transition focus:border-[#f5bd18]"
+                          className="h-12 w-full border border-white/10 bg-[#121212] px-4 text-sm font-semibold text-white outline-none transition focus:border-gold"
                         />
                       </Field>
                       <Field label={isArabic ? "الشارع" : "Street"}>
@@ -1087,7 +1087,7 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
                           onChange={(event) =>
                             setDraft({ ...draft, street: event.target.value })
                           }
-                          className="h-12 w-full border border-white/10 bg-[#121212] px-4 text-sm font-semibold text-white outline-none transition focus:border-[#f5bd18]"
+                          className="h-12 w-full border border-white/10 bg-[#121212] px-4 text-sm font-semibold text-white outline-none transition focus:border-gold"
                         />
                       </Field>
                     </div>
@@ -1096,7 +1096,7 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
 
                 <div className="overflow-hidden border border-white/10 bg-black p-5 text-white shadow-[4px_4px_0_#000]">
                   <div className="flex items-center gap-3 mb-5">
-                    <div className="flex h-12 w-12 items-center justify-center bg-[#f5bd18]/15 text-[#f5bd18]">
+                    <div className="flex h-12 w-12 items-center justify-center bg-gold/15 text-gold">
                       <MapPin className="h-5 w-5" />
                     </div>
                     <div>
@@ -1201,16 +1201,16 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
                         className={cn(
                           "flex w-full items-center gap-3 border p-4 text-start transition active:scale-[0.98]",
                           draft.timing === item.key
-                            ? "border-[#f5bd18] bg-[#f5bd18]/10 text-white"
-                            : `border-white/10 ${item.tone} text-white/65 hover:border-[#f5bd18]/60 hover:text-white`,
+                            ? "border-gold bg-gold/10 text-white"
+                            : `border-white/10 ${item.tone} text-white/65 hover:border-gold/60 hover:text-white`,
                         )}
                       >
                         <div
                           className={cn(
                             "flex h-11 w-11 items-center justify-center",
                             draft.timing === item.key
-                              ? "bg-[#f5bd18] text-black"
-                              : "bg-[#f5bd18]/15 text-[#f5bd18]",
+                              ? "bg-gold text-black"
+                              : "bg-gold/15 text-gold",
                           )}
                         >
                           <Icon className="h-5 w-5" />
@@ -1232,7 +1232,7 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
                               customDate: event.target.value,
                             })
                           }
-                          className="h-12 w-full border border-white/10 bg-[#121212] px-4 text-sm font-semibold text-white outline-none transition focus:border-[#f5bd18]"
+                          className="h-12 w-full border border-white/10 bg-[#121212] px-4 text-sm font-semibold text-white outline-none transition focus:border-gold"
                         />
                       </Field>
                       <Field
@@ -1246,7 +1246,7 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
                               customWindow: event.target.value,
                             })
                           }
-                          className="h-12 w-full border border-white/10 bg-[#121212] px-4 text-sm font-semibold text-white placeholder:text-white/25 outline-none transition focus:border-[#f5bd18]"
+                          className="h-12 w-full border border-white/10 bg-[#121212] px-4 text-sm font-semibold text-white placeholder:text-white/25 outline-none transition focus:border-gold"
                           placeholder={isArabic ? "٦ مساءً - ٨ مساءً" : "6pm - 8pm"}
                         />
                       </Field>
@@ -1330,7 +1330,7 @@ export function NewRequestPage({ locale }: { locale: Locale }) {
               <button
                 type="button"
                 onClick={() => setStep((current) => Math.max(current - 1, 0))}
-                className="border border-white/10 bg-[#121212] px-6 py-3 text-sm font-black text-white/70 transition hover:border-[#f5bd18]/60 hover:text-white disabled:opacity-40"
+                className="border border-white/10 bg-[#121212] px-6 py-3 text-sm font-black text-white/70 transition hover:border-gold/60 hover:text-white disabled:opacity-40"
               >
                 {copy.back}
               </button>

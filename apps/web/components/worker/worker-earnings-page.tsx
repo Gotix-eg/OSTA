@@ -63,7 +63,7 @@ export function WorkerEarningsPage({ locale, initialData }: { locale: Locale; in
             {data.chart.map((item, index) => (
               <div key={item.label} className="flex flex-col items-center gap-3">
                 <div className="flex h-60 w-full items-end border border-white/10 bg-[#111] p-3">
-                  <div className={index % 2 === 0 ? "w-full bg-[#f5bd18]" : "w-full bg-white"} style={{ height: `${Math.max((item.amount / maxChartValue) * 220, 28)}px` }} />
+                  <div className={index % 2 === 0 ? "w-full bg-gold" : "w-full bg-white"} style={{ height: `${Math.max((item.amount / maxChartValue) * 220, 28)}px` }} />
                 </div>
                 <div className="text-center">
                   <p className="text-sm font-black text-white">{item.label}</p>
@@ -90,7 +90,7 @@ export function WorkerEarningsPage({ locale, initialData }: { locale: Locale; in
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="border border-white/10 bg-white/5 p-4">
                 <p className="text-[10px] font-black uppercase tracking-[0.18em] text-white/35">{isArabic ? "النمو" : "Growth"}</p>
-                <p className="mt-2 text-2xl font-black text-[#f5bd18]">+{formatNumber(locale, data.growth)}%</p>
+                <p className="mt-2 text-2xl font-black text-gold">+{formatNumber(locale, data.growth)}%</p>
               </div>
               <div className="border border-white/10 bg-white/5 p-4">
                 <p className="text-[10px] font-black uppercase tracking-[0.18em] text-white/35">{isArabic ? "القيود" : "Entries"}</p>
@@ -108,9 +108,9 @@ export function WorkerEarningsPage({ locale, initialData }: { locale: Locale; in
       >
         <div className="grid gap-4">
           {data.transactions.map((item, index) => (
-            <div key={item.id} className={index % 2 === 0 ? "flex flex-wrap items-center justify-between gap-3 border border-white/10 bg-[#111] p-4" : "flex flex-wrap items-center justify-between gap-3 border border-[#f5bd18]/30 bg-[#2a2207] p-4"}>
+            <div key={item.id} className={index % 2 === 0 ? "flex flex-wrap items-center justify-between gap-3 border border-white/10 bg-[#111] p-4" : "flex flex-wrap items-center justify-between gap-3 border border-gold/30 bg-[#2a2207] p-4"}>
               <div className="flex items-center gap-3">
-                <div className="flex h-11 w-11 items-center justify-center border border-[#f5bd18]/35 bg-[#f5bd18]/10 text-[#f5bd18]">
+                <div className="flex h-11 w-11 items-center justify-center border border-gold/35 bg-gold/10 text-gold">
                   {item.type === "bonus" ? <Sparkles className="h-5 w-5" /> : item.type === "withdrawal" ? <CalendarDays className="h-5 w-5" /> : <Banknote className="h-5 w-5" />}
                 </div>
                 <div>
@@ -118,7 +118,7 @@ export function WorkerEarningsPage({ locale, initialData }: { locale: Locale; in
                   <p className="mt-1 text-xs font-black uppercase tracking-[0.16em] text-white/35">{item.type}</p>
                 </div>
               </div>
-              <p className={item.amount < 0 ? "text-lg font-black text-red-300" : "text-lg font-black text-[#f5bd18]"}>{formatCurrency(locale, item.amount)}</p>
+              <p className={item.amount < 0 ? "text-lg font-black text-red-300" : "text-lg font-black text-gold"}>{formatCurrency(locale, item.amount)}</p>
             </div>
           ))}
         </div>

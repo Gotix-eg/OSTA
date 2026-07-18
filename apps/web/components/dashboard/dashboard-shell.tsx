@@ -58,7 +58,7 @@ const iconSets: Record<DashboardRole, Array<NavItem["icon"]>> = {
   client: [Home, Briefcase, FolderClock, Store, Package, Heart, Wallet, Settings],
   worker: [Home, FolderClock, Briefcase, CreditCard, Megaphone, BarChart3, Settings],
   vendor: [Home, Bell, Briefcase, Wrench, Package, Megaphone, Wallet, Settings],
-  admin: [Home, ShieldCheck, Users, FolderClock, Store, Wrench, CreditCard, Megaphone, SlidersHorizontal, Grid3X3, Image, Settings]
+  admin: [Home, ShieldCheck, Users, FolderClock, Store, Wrench, CreditCard, Megaphone, SlidersHorizontal, Grid3X3, Image, UserCircle2, Settings]
 };
 
 const roleThemes: Record<DashboardRole, { tag: string; accent: string; orb: string; ring: string }> = {
@@ -195,7 +195,7 @@ export function DashboardShell({
       client: ["/client", "/client/new-request", "/client/my-requests", "/client/stores", "/client/materials", "/client/favorites", "/client/wallet", "/client/settings"],
       worker: ["/worker", "/worker/requests/incoming", "/worker/requests/active", "/worker/earnings", "/worker/ads", "/worker/ratings", "/worker/settings"],
       vendor: ["/vendor", "/vendor/requests", "/vendor/active-orders", "/vendor/materials", "/vendor/inventory", "/vendor/ads", "/vendor/wallet", "/vendor/settings"],
-      admin: ["/admin", "/admin/workers/pending", "/admin/clients", "/admin/requests", "/admin/vendors", "/admin/workers", "/admin/finance", "/admin/ads", "/admin/pricing", "/admin/services", "/admin/media", "/admin/settings"]
+      admin: ["/admin", "/admin/workers/pending", "/admin/clients", "/admin/requests", "/admin/vendors", "/admin/workers", "/admin/finance", "/admin/ads", "/admin/pricing", "/admin/services", "/admin/media", "/admin/avatars", "/admin/settings"]
     };
 
     const roleRoutes = routes[role];
@@ -214,7 +214,7 @@ export function DashboardShell({
     <div
       className={cn(
         "min-h-screen text-foreground",
-        isStitchDashboard ? (isAdminDashboard ? "admin-stitch-scope bg-[#050505] text-white" : "bg-[#f5bd18]") : "dashboard-shell-bg"
+        isStitchDashboard ? (isAdminDashboard ? "admin-stitch-scope bg-[#050505] text-white" : "bg-gold") : "dashboard-shell-bg"
       )}
     >
       {!isStitchDashboard ? (
@@ -230,12 +230,12 @@ export function DashboardShell({
         </aside>
 
         {mobileOpen ? (
-            <div className={cn("fixed inset-0 z-[10000] flex items-end justify-center lg:hidden", isAdminDashboard ? "bg-[#050505]" : "bg-[#f5bd18]")}>
-            <div className="pointer-events-none fixed right-8 top-24 h-32 w-32 rounded-full bg-[#f5bd18]/25 blur-[80px]" />
-            <div className="pointer-events-none fixed bottom-32 left-4 h-44 w-44 rounded-full bg-[#f5bd18]/10 blur-[90px]" />
+            <div className={cn("fixed inset-0 z-[10000] flex items-end justify-center lg:hidden", isAdminDashboard ? "bg-[#050505]" : "bg-gold")}>
+            <div className="pointer-events-none fixed right-8 top-24 h-32 w-32 rounded-full bg-gold/25 blur-[80px]" />
+            <div className="pointer-events-none fixed bottom-32 left-4 h-44 w-44 rounded-full bg-gold/10 blur-[90px]" />
             <div className="relative flex h-[min(92dvh,49.75rem)] w-full max-w-md animate-slideUp flex-col overflow-hidden rounded-t-[2.5rem] border border-white/10 bg-black text-white shadow-2xl">
               <header className="flex h-16 shrink-0 items-center justify-between border-b border-white/10 bg-black/80 px-4 backdrop-blur-xl">
-                  <span className={cn("text-2xl font-black tracking-tight", isAdminDashboard ? "text-[#f5bd18]" : "text-[#775a00]")}>OSTA</span>
+                  <span className={cn("text-2xl font-black tracking-tight", isAdminDashboard ? "text-gold" : "text-[#775a00]")}>OSTA</span>
                 <button
                   type="button"
                   onClick={() => setMobileOpen(false)}
@@ -248,7 +248,7 @@ export function DashboardShell({
 
               <section className="flex shrink-0 items-center gap-4 px-4 pb-6 pt-8">
                 <div className="relative">
-                  <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl border-2 border-[#775a00] bg-[#121212] text-[#f5bd18]">
+                  <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl border-2 border-[#775a00] bg-[#121212] text-gold">
                     <UserCircle2 className="h-10 w-10" />
                   </div>
                   <span className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-[#775a00] text-white">
@@ -284,11 +284,11 @@ export function DashboardShell({
                           className={cn(
                             "flex min-h-[6.5rem] flex-col items-center justify-center gap-2 rounded-xl border p-3 text-center transition-all active:scale-95",
                             active
-                              ? "border-[#f5bd18] bg-[#f5bd18] text-black shadow-[4px_4px_0_#000]"
-                              : "border-white/5 bg-[#121212] text-white hover:border-[#f5bd18]/50"
+                              ? "border-gold bg-gold text-black shadow-[4px_4px_0_#000]"
+                              : "border-white/5 bg-[#121212] text-white hover:border-gold/50"
                           )}
                         >
-                          <Icon className={cn("h-8 w-8", active ? "text-black" : "text-[#f5bd18]")} />
+                          <Icon className={cn("h-8 w-8", active ? "text-black" : "text-gold")} />
                           <span className="max-w-full truncate text-xs font-black">{item.label}</span>
                         </Link>
                       );
@@ -309,12 +309,12 @@ export function DashboardShell({
                         onClick={() => setMobileOpen(false)}
                         className={cn(
                           "flex items-center justify-between rounded-xl border border-white/5 bg-[#121212] p-4 text-white transition-colors hover:bg-white/5",
-                          active && "border-[#f5bd18]/60"
+                          active && "border-gold/60"
                         )}
                       >
                         <span className="flex min-w-0 items-center gap-4">
-                          <Icon className="h-5 w-5 shrink-0 text-[#f5bd18]" />
-                          <span className={cn("truncate text-sm font-black", active ? "text-[#f5bd18]" : "text-white")}>{item.label}</span>
+                          <Icon className="h-5 w-5 shrink-0 text-gold" />
+                          <span className={cn("truncate text-sm font-black", active ? "text-gold" : "text-white")}>{item.label}</span>
                         </span>
                         <ArrowUpRight className="h-4 w-4 shrink-0 text-white/25" />
                       </Link>
@@ -327,7 +327,7 @@ export function DashboardShell({
                     className="flex items-center justify-between rounded-xl border border-white/5 bg-[#121212] p-4 text-white transition-colors hover:bg-white/5"
                   >
                     <span className="flex items-center gap-4">
-                    <ShieldCheck className="h-5 w-5 text-[#f5bd18]" />
+                    <ShieldCheck className="h-5 w-5 text-gold" />
                       <span className="text-sm font-black">{locale === "ar" ? "مركز المساعدة" : "Help center"}</span>
                     </span>
                     <ArrowUpRight className="h-4 w-4 text-white/25" />
@@ -368,7 +368,7 @@ export function DashboardShell({
                 onClick={() => setMobileOpen(true)}
                 className={cn(
                   "inline-flex h-11 w-11 items-center justify-center border lg:hidden",
-                  isStitchDashboard ? "rounded bg-transparent text-[#f5bd18] border-transparent" : "rounded-full border-gold-700/15 bg-white/50 text-onyx-950"
+                  isStitchDashboard ? "rounded bg-transparent text-gold border-transparent" : "rounded-full border-gold-700/15 bg-white/50 text-onyx-950"
                 )}
               >
                 <Menu className="h-5 w-5" />
@@ -385,7 +385,7 @@ export function DashboardShell({
                   <div
                     className={cn(
                       "hidden h-11 w-11 items-center justify-center sm:flex",
-                      isStitchDashboard ? "rounded-lg bg-[#100e08] text-[#f5bd18]" : "rounded-2xl bg-onyx-800/50 text-foreground shadow-xl"
+                      isStitchDashboard ? "rounded-lg bg-[#100e08] text-gold" : "rounded-2xl bg-onyx-800/50 text-foreground shadow-xl"
                     )}
                   >
                     <LayoutDashboard className="h-5 w-5" />
@@ -414,7 +414,7 @@ export function DashboardShell({
                   className={cn(
                     "inline-flex h-11 items-center justify-center px-4 text-[10px] font-bold uppercase tracking-widest transition-all duration-300",
                     isStitchDashboard
-                      ? cn("hidden rounded border bg-white text-black shadow-[4px_4px_0_#000] hover:-translate-y-0.5 sm:inline-flex lg:inline-flex", isAdminDashboard ? "border-[#f5bd18]" : "border-black")
+                      ? cn("hidden rounded border bg-white text-black shadow-[4px_4px_0_#000] hover:-translate-y-0.5 sm:inline-flex lg:inline-flex", isAdminDashboard ? "border-gold" : "border-black")
                       : "rounded-full border border-white/5 bg-white/5 text-white shadow-xl hover:bg-white/10"
                   )}
                 />
@@ -426,11 +426,11 @@ export function DashboardShell({
                   className={cn(
                     "flex items-center gap-3 border p-1.5 pe-4",
                     isStitchDashboard
-                      ? "h-11 rounded border-[#f5bd18] bg-black/20 p-0 pe-0 sm:h-12 sm:w-12 sm:overflow-hidden"
+                      ? "h-11 rounded border-gold bg-black/20 p-0 pe-0 sm:h-12 sm:w-12 sm:overflow-hidden"
                       : "rounded-full border-white/5 bg-white/5 shadow-xl"
                   )}
                 >
-                  <div className={cn("flex h-9 w-9 items-center justify-center", isStitchDashboard ? "h-10 w-10 rounded-full border border-[#f5bd18] bg-black text-[#f5bd18] sm:h-12 sm:w-12" : cn("rounded-full shadow-inner", theme.orb, theme.ring))}>
+                  <div className={cn("flex h-9 w-9 items-center justify-center", isStitchDashboard ? "h-10 w-10 rounded-full border border-gold bg-black text-gold sm:h-12 sm:w-12" : cn("rounded-full shadow-inner", theme.orb, theme.ring))}>
                     <UserCircle2 className="h-5 w-5" />
                   </div>
                   <div className={cn("text-start", isStitchDashboard ? "hidden" : "")}>
@@ -466,7 +466,7 @@ export function DashboardShell({
                 <Link
                   key={item.href}
                   href={item.href as `/${string}`}
-                  className={cn("flex flex-col items-center justify-center gap-1 text-[11px] font-black", active ? "text-[#f5bd18]" : "text-white/60")}
+                  className={cn("flex flex-col items-center justify-center gap-1 text-[11px] font-black", active ? "text-gold" : "text-white/60")}
                 >
                   <Icon className="h-5 w-5" />
                   <span className="max-w-full truncate">{item.label}</span>
@@ -522,7 +522,7 @@ function SidebarContent({
           <img src="/logo.svg" alt="Ostafy" className={cn("h-10 w-auto object-contain", isStitchSidebar ? "brightness-0 invert" : "")} />
         </div>
 
-        <p className={cn("mt-1 text-xs font-black uppercase tracking-[0.24em]", isStitchSidebar ? "text-[#f5bd18]" : "hidden")}>
+        <p className={cn("mt-1 text-xs font-black uppercase tracking-[0.24em]", isStitchSidebar ? "text-gold" : "hidden")}>
           {isAdminDashboard
             ? "OSTA ADMIN"
             : isWorkerDashboard
@@ -561,14 +561,14 @@ function SidebarContent({
                 isStitchSidebar
                   ? active
                     ? cn(
-                        "text-[#f5bd18]",
+                        "text-gold",
                         isAdminDashboard
-                          ? "border-[#f5bd18] bg-[#f5bd18] text-black shadow-[6px_6px_0_#2f2400]"
-                          : "border-b-2 border-[#f5bd18] bg-transparent"
+                          ? "border-gold bg-gold text-black shadow-[6px_6px_0_#2f2400]"
+                          : "border-b-2 border-gold bg-transparent"
                       )
                     : cn(
                         "border-transparent bg-transparent text-white/70 hover:bg-white/5 hover:text-white",
-                        isAdminDashboard && "hover:border-[#f5bd18]/40"
+                        isAdminDashboard && "hover:border-gold/40"
                       )
                   : active
                     ? "rounded-2xl border-gold-500/20 bg-gold-500 text-onyx-950 shadow-gold"
@@ -576,7 +576,7 @@ function SidebarContent({
               )}
             >
                 <span className="flex items-center gap-3">
-                <span className={cn("flex h-9 w-9 items-center justify-center transition-all duration-300", isStitchSidebar ? "rounded-none" : "rounded-xl", active ? (isAdminDashboard ? "bg-black text-[#f5bd18]" : "bg-white/10") : "bg-white/5 group-hover:bg-white/10") }>
+                <span className={cn("flex h-9 w-9 items-center justify-center transition-all duration-300", isStitchSidebar ? "rounded-none" : "rounded-xl", active ? (isAdminDashboard ? "bg-black text-gold" : "bg-white/10") : "bg-white/5 group-hover:bg-white/10") }>
                   <Icon className="h-4 w-4" />
                 </span>
                 {item.label}
@@ -593,7 +593,7 @@ function SidebarContent({
             <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">{locale === "ar" ? "صحة المنصة" : "Platform health"}</p>
             <p className="mt-2 text-3xl font-bold text-white">98%</p>
           </div>
-          <div className={cn("flex h-11 w-11 items-center justify-center", isClientDashboard ? "rounded-lg bg-[#f5bd18] text-[#100e08]" : cn("rounded-2xl shadow-inner", theme.orb, theme.ring))}>
+          <div className={cn("flex h-11 w-11 items-center justify-center", isClientDashboard ? "rounded-lg bg-gold text-[#100e08]" : cn("rounded-2xl shadow-inner", theme.orb, theme.ring))}>
             <ShieldCheck className="h-6 w-6" />
           </div>
         </div>

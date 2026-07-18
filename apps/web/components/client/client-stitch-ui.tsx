@@ -32,7 +32,7 @@ export function ClientStitchHero({
       <div className="absolute inset-y-0 end-0 hidden w-1/3 bg-[linear-gradient(135deg,rgba(245,189,24,0.26),transparent)] lg:block" />
       <div className="relative z-10 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
         <div className="max-w-3xl">
-          <p className="text-xs font-black uppercase tracking-[0.28em] text-[#f5bd18]">{eyebrow}</p>
+          <p className="text-xs font-black uppercase tracking-[0.28em] text-gold">{eyebrow}</p>
           <h1 className="mt-4 text-4xl font-black uppercase leading-none tracking-tight text-white sm:text-5xl lg:text-6xl">
             {title}
           </h1>
@@ -41,7 +41,7 @@ export function ClientStitchHero({
 
         <div className="flex shrink-0 items-center gap-4">
           {Icon ? (
-            <div className="hidden h-16 w-16 items-center justify-center border border-[#f5bd18] bg-[#121212] text-[#f5bd18] sm:flex">
+            <div className="hidden h-16 w-16 items-center justify-center border border-gold bg-[#121212] text-gold sm:flex">
               <Icon className="h-8 w-8" />
             </div>
           ) : null}
@@ -78,10 +78,10 @@ export function ClientStitchMetric({
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           <p className={cn("text-[10px] font-black uppercase tracking-[0.22em]", dark ? "text-white/45" : "text-black/45")}>{label}</p>
-          <p className={cn("mt-4 truncate text-3xl font-black leading-none", dark ? "text-[#f5bd18]" : "text-black")}>{value}</p>
+          <p className={cn("mt-4 truncate text-3xl font-black leading-none", dark ? "text-gold" : "text-black")}>{value}</p>
           {note ? <p className={cn("mt-3 truncate text-xs font-bold", dark ? "text-white/45" : "text-black/50")}>{note}</p> : null}
         </div>
-        <div className={cn("flex h-11 w-11 shrink-0 items-center justify-center", dark ? "bg-[#f5bd18] text-black" : "bg-black text-[#f5bd18]")}>
+        <div className={cn("flex h-11 w-11 shrink-0 items-center justify-center", dark ? "bg-gold text-black" : "bg-black text-gold")}>
           <Icon className="h-5 w-5" />
         </div>
       </div>
@@ -103,7 +103,7 @@ export function ClientStitchPanel({
   return (
     <section className={cn("border border-white/10 bg-black p-5 text-white shadow-[6px_6px_0_#1a1c1c] sm:p-6 lg:p-8", className)}>
       <div className="mb-6">
-        {eyebrow ? <p className="text-[10px] font-black uppercase tracking-[0.24em] text-[#f5bd18]">{eyebrow}</p> : null}
+        {eyebrow ? <p className="text-[10px] font-black uppercase tracking-[0.24em] text-gold">{eyebrow}</p> : null}
         <h2 className="mt-2 text-2xl font-black uppercase leading-tight text-white sm:text-3xl">{title}</h2>
       </div>
       {children}
@@ -119,7 +119,7 @@ export function ClientStitchBadge({
   tone?: "gold" | "dark" | "success" | "danger" | "muted";
 }) {
   const tones = {
-    gold: "border-[#f5bd18] bg-[#f5bd18] text-black",
+    gold: "border-gold bg-gold text-black",
     dark: "border-white/15 bg-[#121212] text-white",
     success: "border-emerald-400/40 bg-emerald-400/10 text-emerald-300",
     danger: "border-red-400/40 bg-red-400/10 text-red-300",

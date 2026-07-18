@@ -78,7 +78,7 @@ export function ContactForm({ locale }: { locale: Locale }) {
     >
       {/* ── Hero Header ── */}
       <div className="mx-auto max-w-[1280px] px-4 pb-6 pt-6 md:px-12 md:pb-8 md:pt-10">
-        <span className="mb-4 inline-flex bg-black px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-[#f5bd18]">
+        <span className="mb-4 inline-flex bg-black px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-gold">
           {isArabic ? "الدعم" : "Support"}
         </span>
         <h1 className="mb-3 text-4xl font-black uppercase leading-tight tracking-tight text-[#1a1c1c] md:text-7xl">
@@ -121,7 +121,7 @@ export function ContactForm({ locale }: { locale: Locale }) {
                         <p className="text-xs font-black uppercase tracking-widest text-white/60 mb-1">
                           {label}
                         </p>
-                        <p className="font-black text-white text-lg group-hover:text-[#f5bd18] transition-colors duration-200" dir="ltr">
+                        <p className="font-black text-white text-lg group-hover:text-gold transition-colors duration-200" dir="ltr">
                           {value}
                         </p>
                       </div>
@@ -187,7 +187,7 @@ export function ContactForm({ locale }: { locale: Locale }) {
                   className="w-20 h-20 flex items-center justify-center"
                   style={{ backgroundColor: "#1a1c1c" }}
                 >
-                  <Send size={32} className="text-[#f5bd18]" />
+                  <Send size={32} className="text-gold" />
                 </div>
                 <h3 className="font-black text-[#1a1c1c] uppercase text-3xl">{c.successTitle}</h3>
                 <p className="text-[#1a1c1c]/70 max-w-sm">{c.successSub}</p>

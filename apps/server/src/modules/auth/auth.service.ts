@@ -6,6 +6,7 @@ import { ApiError } from "../../utils/ApiError.js";
 import { hashPassword, verifyPassword } from "../../utils/password.js";
 import { signAccessToken, signRefreshToken, verifyRefreshToken } from "../../utils/tokens.js";
 import { sendPasswordResetEmail, sendWelcomeEmail, sendVerificationEmail } from "../../utils/email.js";
+import { getRandomWorkerAvatar } from "../../lib/avatar-library.js";
 
 export type RegisterInput = {
   role: "CLIENT" | "WORKER" | "VENDOR";
@@ -138,6 +139,11 @@ async function createSession(userId: string, role: UserRole) {
 
 export const authService = {
   async register(input: RegisterInput) {
+    // Workers who skip the profile-photo step get a random avatar from the
+    // admin-approved library so they never show up with a blank photo.
+    const workerAvatarFallback =
+      input.role === "WORKER" && !input.avatarUrl ? await getRandomWorkerAvatar(input.profession) : null;
+
     const existingUser = await prisma.user.findFirst({
       where: {
         OR: [{ phone: input.phone }, ...(input.email ? [{ email: input.email }] : [])]
@@ -164,7 +170,7 @@ export const authService = {
           where: { id: existingUser.id },
           data: {
             role: "WORKER",
-            avatarUrl: input.avatarUrl || existingUser.avatarUrl,
+            avatarUrl: input.avatarUrl || existingUser.avatarUrl || workerAvatarFallback || undefined,
             workerProfile: {
               create: {
                 nationalIdNumber: input.nationalIdNumber,
@@ -309,7 +315,7 @@ export const authService = {
         passwordHash,
         role: input.role,
         status: "ACTIVE",
-        avatarUrl: input.avatarUrl,
+        avatarUrl: input.avatarUrl || workerAvatarFallback || undefined,
         clientProfile:
           input.role === "CLIENT"
             ? {
@@ -598,24 +604,36 @@ export const authService = {
       throw new ApiError(404, "User not found", "USER_NOT_FOUND");
     }
 
-    // Auto-alert technicians who don't have a profile photo
+    // Workers who never uploaded a profile photo get a random one from the
+    // admin-approved avatar library, so they're never left with a blank photo.
     if (user.role === "WORKER" && !user.avatarUrl) {
-      const existingNotification = await prisma.notification.findFirst({
-        where: {
-          userId: user.id,
-          title: "تنبيه: الصورة الشخصية مطلوبة"
-        }
-      });
+      const randomAvatar = await getRandomWorkerAvatar(user.workerProfile?.profession);
 
-      if (!existingNotification) {
-        await prisma.notification.create({
-          data: {
+      if (randomAvatar) {
+        const updated = await prisma.user.update({
+          where: { id: user.id },
+          data: { avatarUrl: randomAvatar }
+        });
+        user.avatarUrl = updated.avatarUrl;
+      } else {
+        // No avatars configured yet — fall back to nudging the worker to add their own.
+        const existingNotification = await prisma.notification.findFirst({
+          where: {
             userId: user.id,
-            type: "SYSTEM",
-            title: "تنبيه: الصورة الشخصية مطلوبة",
-            body: "من فضلك أضف صورتك الشخصية لتفعيل وتوثيق حساب الفني الخاص بك."
+            title: "تنبيه: الصورة الشخصية مطلوبة"
           }
         });
+
+        if (!existingNotification) {
+          await prisma.notification.create({
+            data: {
+              userId: user.id,
+              type: "SYSTEM",
+              title: "تنبيه: الصورة الشخصية مطلوبة",
+              body: "من فضلك أضف صورتك الشخصية لتفعيل وتوثيق حساب الفني الخاص بك."
+            }
+          });
+        }
       }
     }
 

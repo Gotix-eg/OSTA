@@ -89,7 +89,7 @@ export function ClientFavoritesPage({ locale, initialData }: { locale: Locale; i
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <h2 className="text-2xl font-black uppercase text-white">{worker.name}</h2>
-                    <p className="mt-2 text-sm font-bold text-[#f5bd18]">{worker.specialty}</p>
+                    <p className="mt-2 text-sm font-bold text-gold">{worker.specialty}</p>
                   </div>
                   <ClientStitchBadge tone={worker.availability === "Online now" ? "gold" : "muted"}>
                     {isArabic ? (worker.availability === "Online now" ? "متصل الآن" : worker.availability === "Available tomorrow" ? "متاح غدًا" : "اليوم 7 مساءً") : worker.availability}
@@ -124,7 +124,7 @@ export function ClientWalletPage({ locale, initialData }: { locale: Locale; init
     <div className="space-y-6 lg:space-y-8">
       <section className="relative overflow-hidden border border-white/10 bg-black p-6 text-white shadow-[6px_6px_0_#1a1c1c] sm:p-8 lg:p-10">
         <p className="text-xs font-black uppercase tracking-[0.28em] text-white/45">{isArabic ? "الرصيد المتاح" : "Available balance"}</p>
-        <h1 className="mt-4 text-5xl font-black leading-none text-[#f5bd18] sm:text-6xl lg:text-7xl">
+        <h1 className="mt-4 text-5xl font-black leading-none text-gold sm:text-6xl lg:text-7xl">
           {formatCurrency(locale, data.balance)}
         </h1>
         <div className="mt-8 flex flex-wrap gap-3">
@@ -171,7 +171,7 @@ export function ClientWalletPage({ locale, initialData }: { locale: Locale; init
                     <p className="mt-1 text-xs font-bold uppercase tracking-widest text-white/35">{formatDate(locale, item.createdAt)}</p>
                   </div>
                   <div className="text-end">
-                    <p className={item.amount < 0 ? "text-lg font-black text-red-300" : "text-lg font-black text-[#f5bd18]"}>{formatCurrency(locale, item.amount)}</p>
+                    <p className={item.amount < 0 ? "text-lg font-black text-red-300" : "text-lg font-black text-gold"}>{formatCurrency(locale, item.amount)}</p>
                     <p className="mt-1 text-xs uppercase tracking-[0.18em] text-white/35">{item.type}</p>
                   </div>
                 </div>
@@ -186,12 +186,12 @@ export function ClientWalletPage({ locale, initialData }: { locale: Locale; init
 
 function SettingsMetric({ label, value, icon: Icon, iconText, muted }: { label: string; value: string; icon?: LucideIcon; iconText?: string; muted?: boolean }) {
   return (
-    <article className="group flex items-center justify-between gap-4 border border-white/10 bg-black p-6 text-white transition-colors hover:border-[#f5bd18]">
+    <article className="group flex items-center justify-between gap-4 border border-white/10 bg-black p-6 text-white transition-colors hover:border-gold">
       <div className="min-w-0">
         <p className="truncate text-[10px] font-black uppercase tracking-[0.18em] text-white/40">{label}</p>
         <h2 className="mt-2 truncate text-xl font-black uppercase text-white">{value}</h2>
       </div>
-      <div className={cn("flex h-12 w-12 shrink-0 items-center justify-center border border-white/20 text-white transition-colors group-hover:bg-white group-hover:text-black", iconText ? "border-[#f5bd18] bg-[#f5bd18] text-black" : muted ? "text-white/40" : "")}>
+      <div className={cn("flex h-12 w-12 shrink-0 items-center justify-center border border-white/20 text-white transition-colors group-hover:bg-white group-hover:text-black", iconText ? "border-gold bg-gold text-black" : muted ? "text-white/40" : "")}>
         {Icon ? <Icon className="h-5 w-5" /> : <span className="text-sm font-black">{iconText}</span>}
       </div>
     </article>
@@ -202,7 +202,7 @@ function SettingsPanel({ title, icon: Icon, children }: { title: string; icon: L
   return (
     <section className="border border-white/10 bg-black p-6 text-white">
       <div className="mb-6 flex items-center gap-3 border-b border-white/10 pb-4">
-        <Icon className="h-5 w-5 text-[#f5bd18]" />
+        <Icon className="h-5 w-5 text-gold" />
         <h2 className="text-xl font-black uppercase tracking-wide text-white">{title}</h2>
       </div>
       {children}
@@ -219,7 +219,7 @@ function SettingsInput({ label, value, onChange, type = "text", readOnly }: { la
         onChange={(event) => onChange?.(event.target.value)}
         readOnly={readOnly}
         type={type}
-        className="w-full border border-white/10 bg-[#121212] px-4 py-3 text-sm font-bold text-white outline-none transition-colors focus:border-[#f5bd18] read-only:text-white/80"
+        className="w-full border border-white/10 bg-[#121212] px-4 py-3 text-sm font-bold text-white outline-none transition-colors focus:border-gold read-only:text-white/80"
       />
     </label>
   );
@@ -227,12 +227,12 @@ function SettingsInput({ label, value, onChange, type = "text", readOnly }: { la
 
 function SettingsToggle({ label, note, checked, onChange }: { label: string; note: string; checked: boolean; onChange: (checked: boolean) => void }) {
   return (
-    <button type="button" onClick={() => onChange(!checked)} className="flex w-full items-center justify-between gap-4 border border-white/5 bg-[#121212] p-4 text-start transition-colors hover:border-[#f5bd18]/50">
+    <button type="button" onClick={() => onChange(!checked)} className="flex w-full items-center justify-between gap-4 border border-white/5 bg-[#121212] p-4 text-start transition-colors hover:border-gold/50">
       <span className="min-w-0">
         <span className="block text-sm font-black uppercase text-white">{label}</span>
         <span className="mt-1 block text-xs leading-5 text-white/40">{note}</span>
       </span>
-      <span className={cn("relative h-6 w-12 shrink-0 transition-colors", checked ? "bg-[#f5bd18]" : "bg-white/20")}>
+      <span className={cn("relative h-6 w-12 shrink-0 transition-colors", checked ? "bg-gold" : "bg-white/20")}>
         <span className={cn("absolute top-1 h-4 w-4 bg-black transition-transform", checked ? "translate-x-7 rtl:-translate-x-7" : "translate-x-1 rtl:-translate-x-1")} />
       </span>
     </button>
@@ -242,7 +242,7 @@ function SettingsToggle({ label, note, checked, onChange }: { label: string; not
 function SettingsCheck({ label, checked, onChange }: { label: string; checked: boolean; onChange: (checked: boolean) => void }) {
   return (
     <button type="button" onClick={() => onChange(!checked)} className="flex w-full items-center gap-4 py-3 text-start">
-      <span className={cn("relative flex h-6 w-6 shrink-0 items-center justify-center border-2", checked ? "border-[#f5bd18] bg-[#f5bd18]" : "border-white/20")}>
+      <span className={cn("relative flex h-6 w-6 shrink-0 items-center justify-center border-2", checked ? "border-gold bg-gold" : "border-white/20")}>
         {checked ? <Check className="h-4 w-4 text-black" /> : null}
       </span>
       <span className="text-sm font-black uppercase text-white">{label}</span>
@@ -254,7 +254,7 @@ function SettingsFooterCard({ icon: Icon, title, text }: { icon: LucideIcon; tit
   return (
     <article className="space-y-4">
       <div className="flex h-10 w-10 items-center justify-center border border-white/10 bg-black">
-        <Icon className="h-5 w-5 text-[#f5bd18]" />
+        <Icon className="h-5 w-5 text-gold" />
       </div>
       <h3 className="text-sm font-black uppercase text-black">{title}</h3>
       <p className="text-xs leading-5 text-black/60">{text}</p>
@@ -341,21 +341,21 @@ function SettingsRoleSwitcher({
     <section className="border border-white/10 bg-black p-6 text-white shadow-[4px_4px_0_#000]">
       <div className="mb-5 flex flex-wrap items-start justify-between gap-4 border-b border-white/10 pb-4">
         <div className="flex min-w-0 items-center gap-4">
-          <div className="relative h-16 w-16 shrink-0 overflow-hidden border border-[#f5bd18] bg-[#121212] shadow-[3px_3px_0_#f5bd18]">
+          <div className="relative h-16 w-16 shrink-0 overflow-hidden border border-gold bg-[#121212] shadow-[3px_3px_0_#f5bd18]">
             {avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={avatarUrl} alt={fullName} className="h-full w-full object-cover grayscale transition duration-300 hover:grayscale-0" />
             ) : (
-              <div className="flex h-full w-full items-center justify-center bg-[#f5bd18] text-xl font-black text-black">{initials}</div>
+              <div className="flex h-full w-full items-center justify-center bg-gold text-xl font-black text-black">{initials}</div>
             )}
           </div>
           <div className="min-w-0">
-            <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#f5bd18]">{labels.modeTitle}</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.22em] text-gold">{labels.modeTitle}</p>
             <h2 className="mt-1 truncate text-lg font-black uppercase text-white">{fullName}</h2>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-white/55">{labels.modeNote}</p>
           </div>
         </div>
-        <span className="border border-[#f5bd18] bg-[#f5bd18] px-3 py-2 text-[10px] font-black uppercase tracking-[0.16em] text-black">{labels.current}</span>
+        <span className="border border-gold bg-gold px-3 py-2 text-[10px] font-black uppercase tracking-[0.16em] text-black">{labels.current}</span>
       </div>
       {error ? <div className="mb-4 border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm font-bold text-red-200">{error}</div> : null}
       <div className="grid gap-3 md:grid-cols-3">
@@ -364,21 +364,21 @@ function SettingsRoleSwitcher({
           const isPending = pendingRole === role.targetRole;
           const content = (
             <>
-              <div className={cn("flex h-11 w-11 shrink-0 items-center justify-center border", role.active ? "border-[#f5bd18] bg-[#f5bd18] text-black" : "border-white/15 bg-[#121212] text-[#f5bd18]")}>
+              <div className={cn("flex h-11 w-11 shrink-0 items-center justify-center border", role.active ? "border-gold bg-gold text-black" : "border-white/15 bg-[#121212] text-gold")}>
                 <Icon className="h-5 w-5" />
               </div>
               <div className="min-w-0 flex-1">
                 <h3 className="truncate text-sm font-black uppercase text-white">{role.title}</h3>
                 <p className="mt-1 line-clamp-2 text-xs leading-5 text-white/45">{role.note}</p>
               </div>
-              <span className={cn("shrink-0 px-3 py-2 text-[10px] font-black uppercase tracking-[0.12em]", role.active ? "bg-white text-black" : "border border-white/15 text-[#f5bd18]")}>
+              <span className={cn("shrink-0 px-3 py-2 text-[10px] font-black uppercase tracking-[0.12em]", role.active ? "bg-white text-black" : "border border-white/15 text-gold")}>
                 {role.active ? labels.current : isPending ? labels.switching : labels.switchTo}
               </span>
             </>
           );
 
           return role.active ? (
-            <div key={role.key} className="flex items-center gap-4 border border-[#f5bd18] bg-[#121212] p-4">
+            <div key={role.key} className="flex items-center gap-4 border border-gold bg-[#121212] p-4">
               {content}
             </div>
           ) : (
@@ -391,7 +391,7 @@ function SettingsRoleSwitcher({
                   void switchRole(role.targetRole, role.href);
                 }
               }}
-              className="flex items-center gap-4 border border-white/10 bg-[#121212] p-4 text-start transition-colors hover:border-[#f5bd18] disabled:cursor-wait disabled:opacity-70"
+              className="flex items-center gap-4 border border-white/10 bg-[#121212] p-4 text-start transition-colors hover:border-gold disabled:cursor-wait disabled:opacity-70"
             >
               {content}
             </button>
@@ -475,10 +475,10 @@ export function ClientSettingsPage({ locale, initialData }: { locale: Locale; in
   };
 
   return (
-    <div className="relative -m-4 min-h-screen bg-[#f5bd18] p-4 text-[#1a1c1c] sm:-m-6 sm:p-6 lg:-m-8 lg:p-8" dir={isArabic ? "rtl" : "ltr"}>
+    <div className="relative -m-4 min-h-screen bg-gold p-4 text-[#1a1c1c] sm:-m-6 sm:p-6 lg:-m-8 lg:p-8" dir={isArabic ? "rtl" : "ltr"}>
       <div className="mx-auto max-w-[1280px] space-y-6 lg:space-y-12">
         <section className="border border-white/10 bg-black p-6 text-white shadow-[4px_4px_0_#000] sm:p-8">
-          <p className="mb-2 text-[10px] font-black uppercase tracking-[0.24em] text-[#f5bd18]">{labels.heroEyebrow}</p>
+          <p className="mb-2 text-[10px] font-black uppercase tracking-[0.24em] text-gold">{labels.heroEyebrow}</p>
           <h1 className="text-3xl font-black uppercase leading-tight text-white sm:text-4xl">{labels.heroTitle}</h1>
           <p className="mt-3 max-w-3xl text-sm leading-6 text-white/60 sm:text-base">{labels.heroText}</p>
         </section>
@@ -505,7 +505,7 @@ export function ClientSettingsPage({ locale, initialData }: { locale: Locale; in
                   <input
                     value={data.profile.phone.replace(/^\+?20\s?/, "")}
                     onChange={(event) => setData({ ...data, profile: { ...data.profile, phone: event.target.value } })}
-                    className="min-w-0 flex-1 border border-white/10 bg-[#121212] px-4 py-3 text-sm font-bold text-white outline-none transition-colors focus:border-[#f5bd18]"
+                    className="min-w-0 flex-1 border border-white/10 bg-[#121212] px-4 py-3 text-sm font-bold text-white outline-none transition-colors focus:border-gold"
                     type="tel"
                   />
                 </div>
@@ -561,7 +561,7 @@ export function ClientSettingsPage({ locale, initialData }: { locale: Locale; in
                 </div>
                 <div className="flex border border-white/10 bg-[#121212] p-1">
                   {["AR", "EN"].map((code) => (
-                    <button key={code} type="button" className={cn("px-4 py-1 text-xs font-black", languageCode === code ? "bg-[#f5bd18] text-black" : "text-white")}>
+                    <button key={code} type="button" className={cn("px-4 py-1 text-xs font-black", languageCode === code ? "bg-gold text-black" : "text-white")}>
                       {code}
                     </button>
                   ))}
@@ -572,7 +572,7 @@ export function ClientSettingsPage({ locale, initialData }: { locale: Locale; in
                   <p className="text-xs font-black uppercase">{labels.addresses}</p>
                   <p className="mt-1 text-xs text-white/60">{labels.sites}</p>
                 </div>
-                <span className="bg-[#f5bd18] px-3 py-1 text-sm font-black text-black">{formatNumber(locale, data.addresses.length)}</span>
+                <span className="bg-gold px-3 py-1 text-sm font-black text-black">{formatNumber(locale, data.addresses.length)}</span>
               </div>
             </div>
           </section>
@@ -600,7 +600,7 @@ export function ClientSettingsPage({ locale, initialData }: { locale: Locale; in
           <div className="border border-white/10 bg-black p-6 text-white md:col-span-2">
             <p className="text-[10px] font-black uppercase tracking-[0.18em] text-white/40">{labels.supportEyebrow}</p>
             <h2 className="mt-2 text-xl font-black uppercase text-white">{labels.supportTitle}</h2>
-            <button type="button" className="mt-5 inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.12em] text-[#f5bd18]">
+            <button type="button" className="mt-5 inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.12em] text-gold">
               {labels.supportAction}
               <PhoneCall className="h-4 w-4" />
             </button>

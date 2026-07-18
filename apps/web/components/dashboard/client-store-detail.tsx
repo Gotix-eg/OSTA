@@ -59,7 +59,7 @@ function ProductCard({
   const name = isArabic ? product.nameAr : (product.nameEn || product.nameAr);
 
   return (
-    <article className="group overflow-hidden rounded-[32px] bg-black text-white transition active:scale-[0.98] lg:rounded-none lg:border lg:border-white/10 lg:shadow-[5px_5px_0_#1a1c1c] lg:hover:-translate-y-0.5 lg:hover:border-[#f5bd18]/60">
+    <article className="group overflow-hidden rounded-[32px] bg-black text-white transition active:scale-[0.98] lg:rounded-none lg:border lg:border-white/10 lg:shadow-[5px_5px_0_#1a1c1c] lg:hover:-translate-y-0.5 lg:hover:border-gold/60">
       <div className="relative h-64 w-full overflow-hidden bg-[#121212] lg:h-48">
         {product.imageUrl ? (
           <img src={product.imageUrl} alt={name} className="h-full w-full object-cover transition duration-500 lg:grayscale lg:group-hover:scale-110 lg:group-hover:grayscale-0" />
@@ -68,17 +68,17 @@ function ProductCard({
             <ImageOff className="h-10 w-10" />
           </div>
         )}
-        <span className={cn("absolute end-3 top-3 rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] lg:rounded-none", product.inStock ? "bg-[#f5bd18] text-black" : "border border-white/15 bg-black text-white/45")}>
+        <span className={cn("absolute end-3 top-3 rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] lg:rounded-none", product.inStock ? "bg-gold text-black" : "border border-white/15 bg-black text-white/45")}>
           {product.inStock ? (isArabic ? "متاح" : "In stock") : (isArabic ? "غير متاح" : "Out")}
         </span>
       </div>
 
       <div className="p-6 text-start lg:p-4">
-        <p className="text-xl font-black leading-snug text-[#f5bd18] lg:text-base lg:text-white lg:group-hover:text-[#f5bd18]">{name}</p>
+        <p className="text-xl font-black leading-snug text-gold lg:text-base lg:text-white lg:group-hover:text-gold">{name}</p>
         {product.description && (
           <p className="mt-2 line-clamp-2 text-sm font-semibold leading-5 text-white/55 lg:text-xs">{product.description}</p>
         )}
-        <p className="mt-4 text-2xl font-black text-white lg:text-[#f5bd18]">{formatPrice(product.price, locale)}</p>
+        <p className="mt-4 text-2xl font-black text-white lg:text-gold">{formatPrice(product.price, locale)}</p>
 
         <div className="mt-6 lg:mt-4">
           {cartQty === 0 ? (
@@ -86,18 +86,18 @@ function ProductCard({
               type="button"
               onClick={onAdd}
               disabled={!product.inStock}
-              className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#f5bd18] py-2.5 text-sm font-black text-black transition active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 lg:rounded-none lg:bg-white lg:shadow-[3px_3px_0_#f5bd18] lg:active:translate-x-1 lg:active:translate-y-1 lg:active:scale-100 lg:active:shadow-none"
+              className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-gold py-2.5 text-sm font-black text-black transition active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 lg:rounded-none lg:bg-white lg:shadow-[3px_3px_0_#f5bd18] lg:active:translate-x-1 lg:active:translate-y-1 lg:active:scale-100 lg:active:shadow-none"
             >
               <Plus className="h-4 w-4" />
               {isArabic ? "أضف للسلة" : "Add to Cart"}
             </button>
           ) : (
-            <div className="flex items-center justify-between rounded-xl bg-[#f5bd18] px-2 py-1 text-black lg:rounded-none lg:border lg:border-[#f5bd18]">
-              <button type="button" onClick={onRemove} className="flex h-8 w-8 items-center justify-center rounded-lg bg-black text-[#f5bd18] transition hover:bg-white hover:text-black lg:rounded-none">
+            <div className="flex items-center justify-between rounded-xl bg-gold px-2 py-1 text-black lg:rounded-none lg:border lg:border-gold">
+              <button type="button" onClick={onRemove} className="flex h-8 w-8 items-center justify-center rounded-lg bg-black text-gold transition hover:bg-white hover:text-black lg:rounded-none">
                 <Minus className="h-4 w-4" />
               </button>
               <span className="text-lg font-black">{cartQty}</span>
-              <button type="button" onClick={onAdd} className="flex h-8 w-8 items-center justify-center rounded-lg bg-black text-[#f5bd18] transition hover:bg-white hover:text-black lg:rounded-none">
+              <button type="button" onClick={onAdd} className="flex h-8 w-8 items-center justify-center rounded-lg bg-black text-gold transition hover:bg-white hover:text-black lg:rounded-none">
                 <Plus className="h-4 w-4" />
               </button>
             </div>
@@ -171,7 +171,7 @@ function CartPanel({
       <div className="border-b border-white/10 bg-white/[0.03] p-5">
         <div className="flex items-center justify-between">
           <h3 className="flex items-center gap-2 text-lg font-black text-white">
-            <ShoppingCart className="h-5 w-5 text-[#f5bd18]" />
+            <ShoppingCart className="h-5 w-5 text-gold" />
             {isArabic ? "سلة المشتريات" : "Your Cart"}
           </h3>
           <button type="button" onClick={onClear} className="border-b border-red-300 text-xs font-black text-red-300">
@@ -197,11 +197,11 @@ function CartPanel({
               <p className="text-xs font-semibold text-white/45">{formatPrice(item.product.price, locale)} × {item.qty}</p>
             </div>
             <div className="flex items-center gap-2 shrink-0">
-              <button type="button" onClick={() => onChangeQty(item.product.id, -1)} className="flex h-7 w-7 items-center justify-center border border-white/10 text-white/65 hover:border-[#f5bd18] hover:text-[#f5bd18]">
+              <button type="button" onClick={() => onChangeQty(item.product.id, -1)} className="flex h-7 w-7 items-center justify-center border border-white/10 text-white/65 hover:border-gold hover:text-gold">
                 <Minus className="h-3 w-3" />
               </button>
               <span className="w-5 text-center text-sm font-black">{item.qty}</span>
-              <button type="button" onClick={() => onChangeQty(item.product.id, 1)} className="flex h-7 w-7 items-center justify-center border border-white/10 text-white/65 hover:border-[#f5bd18] hover:text-[#f5bd18]">
+              <button type="button" onClick={() => onChangeQty(item.product.id, 1)} className="flex h-7 w-7 items-center justify-center border border-white/10 text-white/65 hover:border-gold hover:text-gold">
                 <Plus className="h-3 w-3" />
               </button>
               <button type="button" onClick={() => onRemoveItem(item.product.id)} className="flex h-7 w-7 items-center justify-center text-red-300 hover:bg-red-400/10">
@@ -224,7 +224,7 @@ function CartPanel({
           </div>
           <div className="flex items-center justify-between pt-2 text-lg font-black text-white">
             <span>{isArabic ? "الإجمالي" : "Total"}</span>
-            <span className="text-[#f5bd18]">{formatPrice(total + (cart.length > 0 ? 50 : 0), locale)}</span>
+            <span className="text-gold">{formatPrice(total + (cart.length > 0 ? 50 : 0), locale)}</span>
           </div>
         </div>
 
@@ -240,7 +240,7 @@ function CartPanel({
                 className={cn(
                   "border px-3 py-2 text-sm font-black transition",
                   paymentMethod === method
-                    ? "border-[#f5bd18] bg-[#f5bd18] text-black"
+                    ? "border-gold bg-gold text-black"
                     : "border-white/10 bg-white/5 text-white/60 hover:border-white/30"
                 )}
               >
@@ -260,7 +260,7 @@ function CartPanel({
             onChange={e => setNotes(e.target.value)}
             rows={2}
             placeholder={isArabic ? "العنوان، الطابق، أي تعليمات..." : "Address, floor, any instructions..."}
-            className="w-full border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-white placeholder:text-white/30 focus:border-[#f5bd18] focus:outline-none"
+            className="w-full border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-white placeholder:text-white/30 focus:border-gold focus:outline-none"
           />
         </label>
 
@@ -272,7 +272,7 @@ function CartPanel({
           type="button"
           onClick={handleOrder}
           disabled={submitting || cart.length === 0}
-          className="inline-flex min-h-12 w-full items-center justify-center gap-2 bg-[#f5bd18] py-3 text-sm font-black text-black shadow-[4px_4px_0_#2a2a2a] transition active:translate-x-1 active:translate-y-1 active:shadow-none disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex min-h-12 w-full items-center justify-center gap-2 bg-gold py-3 text-sm font-black text-black shadow-[4px_4px_0_#2a2a2a] transition active:translate-x-1 active:translate-y-1 active:shadow-none disabled:cursor-not-allowed disabled:opacity-60"
         >
           {submitting ? (isArabic ? "جاري الإرسال..." : "Placing order...") : (isArabic ? "تأكيد الطلب" : "Place Order")}
         </button>
@@ -334,7 +334,7 @@ export function ClientStoreDetailPage({ locale, vendorId }: { locale: Locale; ve
 
   if (loading) {
     return (
-      <div className="-m-4 min-h-screen bg-[#f5bd18] p-4 sm:-m-6 sm:p-6 lg:-m-8 lg:p-8">
+      <div className="-m-4 min-h-screen bg-gold p-4 sm:-m-6 sm:p-6 lg:-m-8 lg:p-8">
         <div className="h-40 animate-pulse border border-white/10 bg-black shadow-[6px_6px_0_#1a1c1c]" />
         <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {[1, 2, 3, 4].map(i => <div key={i} className="h-64 animate-pulse border border-white/10 bg-black shadow-[5px_5px_0_#1a1c1c]" />)}
@@ -344,15 +344,15 @@ export function ClientStoreDetailPage({ locale, vendorId }: { locale: Locale; ve
   }
 
   return (
-    <div className="-m-4 min-h-screen bg-[#f5bd18] pb-24 text-black sm:-m-6 lg:-m-8 lg:p-8 lg:pb-8">
-      <header className="sticky top-0 z-30 flex items-center justify-between bg-[#f5bd18] p-4 lg:hidden">
+    <div className="-m-4 min-h-screen bg-gold pb-24 text-black sm:-m-6 lg:-m-8 lg:p-8 lg:pb-8">
+      <header className="sticky top-0 z-30 flex items-center justify-between bg-gold p-4 lg:hidden">
         <Link href={`/${locale}/client/stores`} className="inline-flex items-center gap-3">
-          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-black text-[#f5bd18] shadow-lg">
+          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-black text-gold shadow-lg">
             {isArabic ? <ChevronRight className="h-6 w-6" /> : <ChevronLeft className="h-6 w-6" />}
           </span>
           <span className="text-lg font-black">{isArabic ? "العودة للمتاجر" : "Back to Stores"}</span>
         </Link>
-        <button type="button" className="flex h-10 w-10 items-center justify-center rounded-xl bg-black text-[#f5bd18]">
+        <button type="button" className="flex h-10 w-10 items-center justify-center rounded-xl bg-black text-gold">
           <Menu className="h-5 w-5" />
         </button>
       </header>
@@ -370,7 +370,7 @@ export function ClientStoreDetailPage({ locale, vendorId }: { locale: Locale; ve
             <div className="relative z-10 flex min-h-32 items-end justify-between gap-6">
               <div>
                 <div className="mb-3 flex items-center gap-3">
-                  <span className={cn("px-2 py-1 text-xs font-black uppercase", vendor.isOpen ? "bg-[#f5bd18] text-black" : "border border-white/15 bg-black text-white/55")}>
+                  <span className={cn("px-2 py-1 text-xs font-black uppercase", vendor.isOpen ? "bg-gold text-black" : "border border-white/15 bg-black text-white/55")}>
                     {vendor.isOpen ? (isArabic ? "مفتوح" : "Open") : (isArabic ? "مغلق" : "Closed")}
                   </span>
                   <span className="inline-flex items-center gap-1 text-sm font-bold text-white/55">
@@ -379,7 +379,7 @@ export function ClientStoreDetailPage({ locale, vendorId }: { locale: Locale; ve
                   </span>
                 </div>
                 <h1 className="text-5xl font-black leading-none text-white">{shopName}</h1>
-                {vendor.category && <p className="mt-3 text-lg font-black text-[#f5bd18]">{vendor.category}</p>}
+                {vendor.category && <p className="mt-3 text-lg font-black text-gold">{vendor.category}</p>}
               </div>
               <div className="flex flex-wrap gap-3">
                 <button type="button" className="inline-flex min-h-12 items-center gap-2 bg-white px-6 text-sm font-black text-black shadow-[4px_4px_0_#f5bd18]">
@@ -415,7 +415,7 @@ export function ClientStoreDetailPage({ locale, vendorId }: { locale: Locale; ve
         <div className="mb-6 grid gap-4 lg:hidden">
           <a href="#store-request" className="flex items-center justify-between rounded-[20px] border border-black/20 bg-black/10 p-5 text-start">
             <div className="flex items-center gap-4">
-              <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-black text-[#f5bd18]">
+              <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-black text-gold">
                 <MessageSquarePlus className="h-6 w-6" />
               </span>
               <span>
@@ -448,7 +448,7 @@ export function ClientStoreDetailPage({ locale, vendorId }: { locale: Locale; ve
               />
             ) : (
               <div className="hidden flex-col items-center justify-center border-2 border-dashed border-black/10 bg-black p-8 text-center text-white shadow-[5px_5px_0_#1a1c1c] xl:flex">
-                <ShoppingCart className="h-10 w-10 text-[#f5bd18]" />
+                <ShoppingCart className="h-10 w-10 text-gold" />
                 <p className="mt-3 text-sm font-semibold leading-6 text-white/50">
                   {isArabic ? "أضف المزيد من المنتجات" : "Add more products"}
                 </p>
@@ -457,7 +457,7 @@ export function ClientStoreDetailPage({ locale, vendorId }: { locale: Locale; ve
             {vendor && (
               <div className="hidden border border-white/10 bg-black p-4 text-white shadow-[5px_5px_0_#1a1c1c] xl:block">
                 <div className="flex items-center gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center bg-[#f5bd18] text-black">
+                  <div className="flex h-12 w-12 items-center justify-center bg-gold text-black">
                     <Verified className="h-6 w-6" />
                   </div>
                   <div>
@@ -495,7 +495,7 @@ export function ClientStoreDetailPage({ locale, vendorId }: { locale: Locale; ve
 
           {products.length === 0 ? (
             <div className="flex flex-col items-center justify-center rounded-[32px] bg-black py-16 text-center text-white lg:rounded-none lg:border lg:border-dashed lg:border-white/15 lg:shadow-[5px_5px_0_#1a1c1c]">
-              <Store className="h-10 w-10 text-[#f5bd18]" />
+              <Store className="h-10 w-10 text-gold" />
               <p className="mt-3 text-sm font-black text-white/60">
                 {isArabic ? "لا توجد منتجات متاحة في هذا المتجر حالياً" : "No products available in this store yet"}
               </p>
@@ -573,7 +573,7 @@ function CustomRequestForm({ locale, vendorId }: { locale: Locale; vendorId: str
         <button
           type="button"
           onClick={() => { setSuccess(false); setOpen(false); }}
-          className="mt-4 border-b border-[#f5bd18] text-sm font-black text-[#f5bd18]"
+          className="mt-4 border-b border-gold text-sm font-black text-gold"
         >
           {isArabic ? "حسناً" : "OK"}
         </button>
@@ -588,7 +588,7 @@ function CustomRequestForm({ locale, vendorId }: { locale: Locale; vendorId: str
         onClick={() => setOpen(!open)}
         className="flex w-full items-center gap-3 p-5"
       >
-        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-black text-[#f5bd18] lg:h-10 lg:w-10 lg:rounded-none lg:border lg:border-[#f5bd18] lg:bg-[#121212]">
+        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-black text-gold lg:h-10 lg:w-10 lg:rounded-none lg:border lg:border-gold lg:bg-[#121212]">
           <MessageSquarePlus className="h-5 w-5" />
         </div>
         <div className="flex-1 text-start">
@@ -599,7 +599,7 @@ function CustomRequestForm({ locale, vendorId }: { locale: Locale; vendorId: str
             {isArabic ? "اكتب طلبك وأبعته للمحل مباشرة" : "Write what you need and send it directly"}
           </p>
         </div>
-        <ChevronRight className={cn("h-5 w-5 text-black/45 transition lg:text-white/45", open && "rotate-90 text-black lg:text-[#f5bd18]")} />
+        <ChevronRight className={cn("h-5 w-5 text-black/45 transition lg:text-white/45", open && "rotate-90 text-black lg:text-gold")} />
       </button>
 
       {open && (
@@ -615,7 +615,7 @@ function CustomRequestForm({ locale, vendorId }: { locale: Locale; vendorId: str
               placeholder={isArabic
                 ? "مثال: عاوز فلتر زيت لموتوسيكل هوندا 2020 + شمعات..."
                 : "e.g. I need an oil filter for Honda 2020 + spark plugs..."}
-              className="w-full rounded-xl border border-black/10 bg-white/45 px-4 py-3 text-sm font-semibold text-black placeholder:text-black/35 focus:border-black focus:outline-none lg:rounded-none lg:border-white/10 lg:bg-white/5 lg:text-white lg:placeholder:text-white/30 lg:focus:border-[#f5bd18]"
+              className="w-full rounded-xl border border-black/10 bg-white/45 px-4 py-3 text-sm font-semibold text-black placeholder:text-black/35 focus:border-black focus:outline-none lg:rounded-none lg:border-white/10 lg:bg-white/5 lg:text-white lg:placeholder:text-white/30 lg:focus:border-gold"
             />
           </label>
 
@@ -628,7 +628,7 @@ function CustomRequestForm({ locale, vendorId }: { locale: Locale; vendorId: str
               value={phone}
               onChange={e => setPhone(e.target.value)}
               placeholder={isArabic ? "01xxxxxxxxx" : "01xxxxxxxxx"}
-              className="h-11 w-full rounded-xl border border-black/10 bg-white/45 px-4 text-sm font-semibold text-black placeholder:text-black/35 focus:border-black focus:outline-none lg:rounded-none lg:border-white/10 lg:bg-white/5 lg:text-white lg:placeholder:text-white/30 lg:focus:border-[#f5bd18]"
+              className="h-11 w-full rounded-xl border border-black/10 bg-white/45 px-4 text-sm font-semibold text-black placeholder:text-black/35 focus:border-black focus:outline-none lg:rounded-none lg:border-white/10 lg:bg-white/5 lg:text-white lg:placeholder:text-white/30 lg:focus:border-gold"
             />
           </label>
 
@@ -640,7 +640,7 @@ function CustomRequestForm({ locale, vendorId }: { locale: Locale; vendorId: str
             type="button"
             onClick={handleSend}
             disabled={sending}
-            className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-black py-3 text-sm font-black text-[#f5bd18] transition active:scale-95 disabled:opacity-60 lg:rounded-none lg:bg-white lg:text-black lg:shadow-[4px_4px_0_#f5bd18] lg:active:translate-x-1 lg:active:translate-y-1 lg:active:scale-100 lg:active:shadow-none"
+            className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-black py-3 text-sm font-black text-gold transition active:scale-95 disabled:opacity-60 lg:rounded-none lg:bg-white lg:text-black lg:shadow-[4px_4px_0_#f5bd18] lg:active:translate-x-1 lg:active:translate-y-1 lg:active:scale-100 lg:active:shadow-none"
           >
             {sending ? (
               <Loader2 className="h-4 w-4 animate-spin" />

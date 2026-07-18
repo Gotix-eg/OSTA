@@ -1218,7 +1218,7 @@ export function VendorInventoryPage({ locale }: { locale: Locale }) {
           className={cn(
             "pb-3.5 px-6 text-sm font-semibold tracking-wide border-b-2 transition-all relative top-[2px]",
             activeTab === "products"
-              ? "border-[#f5bd18] text-[#f5bd18] font-bold"
+              ? "border-gold text-gold font-bold"
               : "border-transparent text-onyx-500 hover:text-onyx-200"
           )}
         >
@@ -1230,7 +1230,7 @@ export function VendorInventoryPage({ locale }: { locale: Locale }) {
           className={cn(
             "pb-3.5 px-6 text-sm font-semibold tracking-wide border-b-2 transition-all relative top-[2px]",
             activeTab === "integrations"
-              ? "border-[#f5bd18] text-[#f5bd18] font-bold"
+              ? "border-gold text-gold font-bold"
               : "border-transparent text-onyx-500 hover:text-onyx-200"
           )}
         >

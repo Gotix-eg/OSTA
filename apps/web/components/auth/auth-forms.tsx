@@ -145,14 +145,14 @@ function StepIndicator({ current, total }: { current: number; total: number }) {
               className={cn(
                 "flex h-9 w-9 items-center justify-center rounded-none border text-sm font-black transition duration-300",
                 active
-                  ? "border-[#f5bd18] bg-[#f5bd18] text-black"
+                  ? "border-gold bg-gold text-black"
                   : "border-white/15 bg-[#121212] text-white/35"
               )}
             >
               {active && index < current ? <Check className="h-4 w-4" /> : index + 1}
             </div>
             {index < total - 1 ? (
-              <div className={cn("h-px flex-1", active ? "bg-[#f5bd18]" : "bg-white/10")} />
+              <div className={cn("h-px flex-1", active ? "bg-gold" : "bg-white/10")} />
             ) : null}
           </div>
         );
@@ -198,7 +198,7 @@ function InputField({
           name={name}
           autoComplete={autoComplete}
           className={cn(
-            "min-h-28 w-full rounded-none border bg-[#121212] px-4 py-4 text-sm font-semibold text-white outline-none transition-colors placeholder:text-white/20 focus:border-[#f5bd18]",
+            "min-h-28 w-full rounded-none border bg-[#121212] px-4 py-4 text-sm font-semibold text-white outline-none transition-colors placeholder:text-white/20 focus:border-gold",
             errorText ? "border-red-500" : "border-white/20"
           )}
         />
@@ -211,7 +211,7 @@ function InputField({
           name={name}
           autoComplete={autoComplete}
           className={cn(
-            "h-14 w-full rounded-none border bg-[#121212] px-4 text-sm font-semibold text-white outline-none transition-colors placeholder:text-white/20 focus:border-[#f5bd18]",
+            "h-14 w-full rounded-none border bg-[#121212] px-4 text-sm font-semibold text-white outline-none transition-colors placeholder:text-white/20 focus:border-gold",
             errorText ? "border-red-500" : "border-white/20"
           )}
         />
@@ -256,7 +256,7 @@ function OtpBoxes({ value, onChange }: { value: string; onChange: (value: string
               refs.current[index - 1]?.focus();
             }
           }}
-          className="h-16 w-12 rounded-none border border-white/20 bg-[#121212] text-center text-2xl font-black text-[#f5bd18] outline-none transition-colors focus:border-[#f5bd18] sm:w-16"
+          className="h-16 w-12 rounded-none border border-white/20 bg-[#121212] text-center text-2xl font-black text-gold outline-none transition-colors focus:border-gold sm:w-16"
         />
       ))}
     </div>
@@ -399,8 +399,8 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
                 className={cn(
                   "flex-1 rounded-none py-4 text-[10px] font-black uppercase tracking-widest transition-all duration-150",
                   isActive
-                    ? "border-b-2 border-[#f5bd18] text-[#f5bd18] md:border-b-0 md:bg-[#f5bd18] md:text-black"
-                    : "text-white/50 hover:bg-white/5 hover:text-[#f5bd18]",
+                    ? "border-b-2 border-gold text-gold md:border-b-0 md:bg-gold md:text-black"
+                    : "text-white/50 hover:bg-white/5 hover:text-gold",
                   idx > 0 && (isArabic ? "border-r border-white/10" : "border-l border-white/10")
                 )}
               >
@@ -415,8 +415,8 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
         {/* Phone Input */}
         <div className="space-y-2 text-start">
           <label className="mb-2 flex justify-between text-xs font-black uppercase tracking-widest text-white/60 md:text-white/70">
-            <span className={isAdmin ? "text-[#f5bd18]" : ""}>{loginLabels.phone}</span>
-            {isAdmin ? <Phone size={14} className="hidden text-[#f5bd18] md:block" /> : <Phone size={14} className="hidden text-[#f5bd18] md:block" />}
+            <span className={isAdmin ? "text-gold" : ""}>{loginLabels.phone}</span>
+            {isAdmin ? <Phone size={14} className="hidden text-gold md:block" /> : <Phone size={14} className="hidden text-gold md:block" />}
           </label>
           <div className="relative">
             {isAdmin ? (
@@ -436,7 +436,7 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
               name="phone"
               dir="ltr"
               className={cn(
-                "w-full rounded-none bg-[#121212] p-4 font-semibold text-white transition-colors placeholder:text-white/20 focus:border-[#f5bd18] focus:outline-none focus:ring-0",
+                "w-full rounded-none bg-[#121212] p-4 font-semibold text-white transition-colors placeholder:text-white/20 focus:border-gold focus:outline-none focus:ring-0",
                 isAdmin ? "ps-12 md:ps-12" : "ps-12 md:ps-4",
                 phoneError ? "border-2 border-red-500" : "border border-white/20"
               )}
@@ -450,8 +450,8 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
         {/* Password Input */}
         <div className="space-y-2 text-start">
           <label className="mb-2 flex justify-between text-xs font-black uppercase tracking-widest text-white/60 md:text-white/70">
-            <span className={isAdmin ? "text-[#f5bd18]" : ""}>{loginLabels.password}</span>
-            {isAdmin ? <Lock size={14} className="hidden text-[#f5bd18] md:block" /> : <Lock size={14} className="hidden text-[#f5bd18] md:block" />}
+            <span className={isAdmin ? "text-gold" : ""}>{loginLabels.password}</span>
+            {isAdmin ? <Lock size={14} className="hidden text-gold md:block" /> : <Lock size={14} className="hidden text-gold md:block" />}
           </label>
           <div className="relative">
             {isAdmin ? (
@@ -470,14 +470,14 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
               autoComplete="current-password"
               name="password"
               className={cn(
-                "w-full rounded-none bg-[#121212] p-4 pe-12 ps-12 font-semibold text-white transition-colors placeholder:text-white/20 focus:border-[#f5bd18] focus:outline-none focus:ring-0 md:ps-4",
+                "w-full rounded-none bg-[#121212] p-4 pe-12 ps-12 font-semibold text-white transition-colors placeholder:text-white/20 focus:border-gold focus:outline-none focus:ring-0 md:ps-4",
                 passwordError ? "border-2 border-red-500" : "border border-white/20"
               )}
             />
             <button
               type="button"
               onClick={() => setShowPassword((current) => !current)}
-              className="absolute inset-y-0 end-4 flex items-center text-white/50 hover:text-[#f5bd18] transition-colors"
+              className="absolute inset-y-0 end-4 flex items-center text-white/50 hover:text-gold transition-colors"
               aria-label={showPassword ? (isArabic ? "إخفاء كلمة المرور" : "Hide password") : (isArabic ? "إظهار كلمة المرور" : "Show password")}
             >
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -495,13 +495,13 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
               type="checkbox"
               checked={remember}
               onChange={(e) => setRemember(e.target.checked)}
-              className="rounded-none bg-transparent border-white/20 text-[#f5bd18] focus:ring-0 focus:ring-offset-0 cursor-pointer h-4 w-4"
+              className="rounded-none bg-transparent border-white/20 text-gold focus:ring-0 focus:ring-offset-0 cursor-pointer h-4 w-4"
             />
             <span className="leading-tight transition-colors group-hover:text-white">
               {loginLabels.remember}
             </span>
           </label>
-          <Link href={`/${locale}/forgot-password`} className="text-end leading-tight transition-colors hover:text-[#f5bd18]">
+          <Link href={`/${locale}/forgot-password`} className="text-end leading-tight transition-colors hover:text-gold">
             {loginLabels.forgot}
           </Link>
         </div>
@@ -512,7 +512,7 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
           disabled={isSubmitting}
           className={cn(
             "mt-4 w-full rounded-none py-5 text-sm font-black uppercase text-black transition-all",
-            isAdmin ? "bg-[#f5bd18] tracking-[0.18em] hover:brightness-110 active:scale-[0.98]" : "bg-[#f5bd18]"
+            isAdmin ? "bg-gold tracking-[0.18em] hover:brightness-110 active:scale-[0.98]" : "bg-gold"
           )}
           style={{
             boxShadow: "4px 4px 0px #000000",
@@ -539,7 +539,7 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
             className="w-full rounded-none border border-white/20 bg-transparent py-4 text-xs font-black uppercase tracking-widest text-white transition-colors hover:bg-white/5"
           >
             <span className="inline-flex items-center justify-center gap-3">
-              <Fingerprint className="h-5 w-5 text-[#f5bd18]" />
+              <Fingerprint className="h-5 w-5 text-gold" />
               {isArabic ? "تحقق بالبصمة" : "Biometric Auth"}
             </span>
           </button>
@@ -568,7 +568,7 @@ function FormSkeleton({ locale }: { locale: Locale }) {
       {/* Title / Section Header Skeleton */}
       <div className="space-y-3">
         <div className="h-6 w-32 bg-white/10" />
-        <div className="h-px w-16 bg-[#f5bd18]/40" />
+        <div className="h-px w-16 bg-gold/40" />
       </div>
 
       <div className="space-y-6">
@@ -622,9 +622,9 @@ function FormSkeleton({ locale }: { locale: Locale }) {
         </div>
 
         {/* Button skeleton */}
-        <div className="flex h-14 w-full items-center justify-center gap-2 border border-[#f5bd18]/20 bg-[#f5bd18]/15">
-          <Loader2 className="h-5 w-5 animate-spin text-[#f5bd18]" />
-          <span className="text-sm font-black text-[#f5bd18]/80">
+        <div className="flex h-14 w-full items-center justify-center gap-2 border border-gold/20 bg-gold/15">
+          <Loader2 className="h-5 w-5 animate-spin text-gold" />
+          <span className="text-sm font-black text-gold/80">
             {isArabic ? "جاري التحضير..." : "Preparing..."}
           </span>
         </div>
@@ -746,7 +746,7 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
     return (
       <div className="space-y-8 animate-fadeIn">
         <div className="text-center space-y-3">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center border border-[#f5bd18]/40 bg-[#f5bd18]/10 text-[#f5bd18]">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center border border-gold/40 bg-gold/10 text-gold">
              <ShieldCheck className="h-8 w-8" />
           </div>
           <h2 className="text-2xl font-black text-white">{isArabic ? "أدخل رمز التحقق" : "Verify Your Email"}</h2>
@@ -773,7 +773,7 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
              type="button"
              onClick={handleVerifyOtp}
              disabled={otpSubmitting || otpCode.length < 6}
-             className="h-14 w-full bg-[#f5bd18] text-sm font-black uppercase text-black shadow-[4px_4px_0_#000] transition-transform active:translate-x-1 active:translate-y-1 active:shadow-none disabled:opacity-50"
+             className="h-14 w-full bg-gold text-sm font-black uppercase text-black shadow-[4px_4px_0_#000] transition-transform active:translate-x-1 active:translate-y-1 active:shadow-none disabled:opacity-50"
            >
              {otpSubmitting ? (isArabic ? "... جاري التحقق" : "Verifying...") : isArabic ? "تفعيل الحساب" : "Activate Account"}
            </button>
@@ -793,7 +793,7 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
       ) : (
         <div className="space-y-6">
           <div className="space-y-6 border border-white/10 bg-white/[0.02] p-6">
-            <h3 className="border-b border-white/10 pb-3 text-sm font-black uppercase tracking-[0.18em] text-[#f5bd18]">
+            <h3 className="border-b border-white/10 pb-3 text-sm font-black uppercase tracking-[0.18em] text-gold">
               {isArabic ? "البيانات الأساسية" : "Basic Information"}
             </h3>
             
@@ -832,7 +832,7 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
           <label className="group flex cursor-pointer items-center gap-3 border border-white/10 bg-white/[0.02] p-4">
             <div className="relative flex h-5 w-5 items-center justify-center">
                 <input type="checkbox" checked={state.acceptedTerms} onChange={(e) => setState({ ...state, acceptedTerms: e.target.checked })} className="peer h-full w-full opacity-0 absolute cursor-pointer" />
-                <div className="h-full w-full border border-white/20 bg-[#121212] transition peer-checked:border-[#f5bd18] peer-checked:bg-[#f5bd18]" />
+                <div className="h-full w-full border border-white/20 bg-[#121212] transition peer-checked:border-gold peer-checked:bg-gold" />
                 <Check className="pointer-events-none absolute h-3.5 w-3.5 text-black opacity-0 transition peer-checked:opacity-100" />
             </div>
             <span className="text-sm font-semibold text-white/50 transition group-hover:text-white">{copy.terms}</span>
@@ -842,7 +842,7 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
               type="button" 
               onClick={handleRegister} 
               disabled={isSubmitting}
-              className="flex h-14 w-full items-center justify-center gap-2 bg-[#f5bd18] text-sm font-black uppercase text-black shadow-[4px_4px_0_#000] transition-transform active:translate-x-1 active:translate-y-1 active:shadow-none disabled:opacity-50"
+              className="flex h-14 w-full items-center justify-center gap-2 bg-gold text-sm font-black uppercase text-black shadow-[4px_4px_0_#000] transition-transform active:translate-x-1 active:translate-y-1 active:shadow-none disabled:opacity-50"
           >
             {isSubmitting ? (isArabic ? "جاري إنشاء الحساب..." : "Creating Account...") : (isArabic ? "إنشاء الحساب" : "Create Account")}
             {!isSubmitting && <ArrowUpRight className="h-5 w-5" />}
@@ -951,7 +951,7 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
       ) : (
         <div className="space-y-6">
           <div className="space-y-6 border border-white/10 bg-white/[0.02] p-6">
-            <h3 className="border-b border-white/10 pb-3 text-sm font-black uppercase tracking-[0.18em] text-[#f5bd18]">
+            <h3 className="border-b border-white/10 pb-3 text-sm font-black uppercase tracking-[0.18em] text-gold">
               {isArabic ? "البيانات الشخصية" : "Personal Information"}
             </h3>
             
@@ -982,7 +982,7 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
           </div>
 
           <div className="space-y-6 border border-white/10 bg-white/[0.02] p-6">
-            <h3 className="border-b border-white/10 pb-3 text-sm font-black uppercase tracking-[0.18em] text-[#f5bd18]">
+            <h3 className="border-b border-white/10 pb-3 text-sm font-black uppercase tracking-[0.18em] text-gold">
               {isArabic ? "مستندات التوثيق" : "Verification Documents"}
             </h3>
             
@@ -1014,7 +1014,7 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
           <label className="group flex cursor-pointer items-center gap-3 border border-white/10 bg-white/[0.02] p-4">
             <div className="relative flex h-5 w-5 items-center justify-center">
                 <input type="checkbox" checked={state.acceptedTerms} onChange={(e) => setState({ ...state, acceptedTerms: e.target.checked })} className="peer h-full w-full opacity-0 absolute cursor-pointer" />
-                <div className="h-full w-full border border-white/20 bg-[#121212] transition peer-checked:border-[#f5bd18] peer-checked:bg-[#f5bd18]" />
+                <div className="h-full w-full border border-white/20 bg-[#121212] transition peer-checked:border-gold peer-checked:bg-gold" />
                 <Check className="pointer-events-none absolute h-3.5 w-3.5 text-black opacity-0 transition peer-checked:opacity-100" />
             </div>
             <span className="text-sm font-semibold text-white/50 transition group-hover:text-white">{copy.terms}</span>
@@ -1024,7 +1024,7 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
               type="button" 
               onClick={handleRegister} 
               disabled={isSubmitting}
-              className="flex h-14 w-full items-center justify-center gap-2 bg-[#f5bd18] text-sm font-black uppercase text-black shadow-[4px_4px_0_#000] transition-transform active:translate-x-1 active:translate-y-1 active:shadow-none disabled:opacity-50"
+              className="flex h-14 w-full items-center justify-center gap-2 bg-gold text-sm font-black uppercase text-black shadow-[4px_4px_0_#000] transition-transform active:translate-x-1 active:translate-y-1 active:shadow-none disabled:opacity-50"
           >
             {isSubmitting ? (isArabic ? "جاري إرسال الطلب..." : "Submitting Application...") : (isArabic ? "إرسال طلب الانضمام" : "Submit Application")}
             {!isSubmitting && <ArrowUpRight className="h-5 w-5" />}
@@ -1144,7 +1144,7 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
       ) : (
         <div className="space-y-6">
           <div className="space-y-6 border border-white/10 bg-white/[0.02] p-6">
-            <h3 className="border-b border-white/10 pb-3 text-sm font-black uppercase tracking-[0.18em] text-[#f5bd18]">
+            <h3 className="border-b border-white/10 pb-3 text-sm font-black uppercase tracking-[0.18em] text-gold">
               {isArabic ? "بيانات المتجر" : "Store Information"}
             </h3>
             
@@ -1167,7 +1167,7 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
           </div>
 
           <div className="space-y-6 border border-white/10 bg-white/[0.02] p-6">
-            <h3 className="border-b border-white/10 pb-3 text-sm font-black uppercase tracking-[0.18em] text-[#f5bd18]">
+            <h3 className="border-b border-white/10 pb-3 text-sm font-black uppercase tracking-[0.18em] text-gold">
               {isArabic ? "البيانات الشخصية" : "Owner Information"}
             </h3>
             
@@ -1204,7 +1204,7 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
           </div>
 
           <div className="space-y-6 border border-white/10 bg-white/[0.02] p-6">
-            <h3 className="border-b border-white/10 pb-3 text-sm font-black uppercase tracking-[0.18em] text-[#f5bd18]">
+            <h3 className="border-b border-white/10 pb-3 text-sm font-black uppercase tracking-[0.18em] text-gold">
               {isArabic ? "مستندات التوثيق" : "Verification Documents"}
             </h3>
             
@@ -1246,7 +1246,7 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
           <label className="group flex cursor-pointer items-center gap-3 border border-white/10 bg-white/[0.02] p-4">
             <div className="relative flex h-5 w-5 items-center justify-center">
                 <input type="checkbox" checked={state.acceptedTerms} onChange={(e) => setState({ ...state, acceptedTerms: e.target.checked })} className="peer h-full w-full opacity-0 absolute cursor-pointer" />
-                <div className="h-full w-full border border-white/20 bg-[#121212] transition peer-checked:border-[#f5bd18] peer-checked:bg-[#f5bd18]" />
+                <div className="h-full w-full border border-white/20 bg-[#121212] transition peer-checked:border-gold peer-checked:bg-gold" />
                 <Check className="pointer-events-none absolute h-3.5 w-3.5 text-black opacity-0 transition peer-checked:opacity-100" />
             </div>
             <span className="text-sm font-semibold text-white/50 transition group-hover:text-white">{copy.terms}</span>
@@ -1256,7 +1256,7 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
               type="button" 
               onClick={handleRegister} 
               disabled={isSubmitting}
-              className="flex h-14 w-full items-center justify-center gap-2 bg-[#f5bd18] text-sm font-black uppercase text-black shadow-[4px_4px_0_#000] transition-transform active:translate-x-1 active:translate-y-1 active:shadow-none disabled:opacity-50"
+              className="flex h-14 w-full items-center justify-center gap-2 bg-gold text-sm font-black uppercase text-black shadow-[4px_4px_0_#000] transition-transform active:translate-x-1 active:translate-y-1 active:shadow-none disabled:opacity-50"
           >
             {isSubmitting ? (isArabic ? "جاري إنشاء الحساب..." : "Creating Account...") : (isArabic ? "إنشاء حساب المتجر" : "Create Store Account")}
             {!isSubmitting && <ArrowUpRight className="h-5 w-5" />}

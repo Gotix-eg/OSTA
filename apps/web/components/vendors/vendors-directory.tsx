@@ -93,11 +93,11 @@ export function VendorsDirectory({ locale }: { locale: Locale }) {
   }, [searchQuery, locale, vendors, activeCategory, selectedCity, isArabic]);
 
   return (
-    <div className="w-full bg-[#f5bd18] pb-28 text-[#1a1c1c] font-sans md:pb-0">
+    <div className="w-full bg-gold pb-28 text-[#1a1c1c] font-sans md:pb-0">
       {/* Hero Section */}
       <section className="mx-auto flex w-full max-w-7xl flex-col justify-center border-b-4 border-black px-4 py-6 text-start md:px-12 md:py-20">
         <div className="w-full">
-          <div className="mb-4 inline-block bg-black px-3 py-1 text-[10px] font-black uppercase tracking-widest text-[#f5bd18] md:px-4 md:text-xs">
+          <div className="mb-4 inline-block bg-black px-3 py-1 text-[10px] font-black uppercase tracking-widest text-gold md:px-4 md:text-xs">
             {isArabic ? "سلسلة التوريد الممتازة" : "Premium Supply Chain"}
           </div>
           <h1 className="font-display-lg mb-3 text-4xl font-black leading-tight text-black md:mb-4 md:text-6xl">
@@ -126,7 +126,7 @@ export function VendorsDirectory({ locale }: { locale: Locale }) {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-12 w-full border border-white/20 bg-[#121212] px-12 text-start text-xs font-bold uppercase text-white placeholder:text-white/30 transition-colors focus:border-[#f5bd18] focus:ring-0"
+              className="h-12 w-full border border-white/20 bg-[#121212] px-12 text-start text-xs font-bold uppercase text-white placeholder:text-white/30 transition-colors focus:border-gold focus:ring-0"
               placeholder={isArabic ? "ابحث عن خامات، قطع غيار، علامات تجارية..." : "Search tools, parts, or brands..."}
             />
           </div>
@@ -134,7 +134,7 @@ export function VendorsDirectory({ locale }: { locale: Locale }) {
             <select 
               value={selectedCity}
               onChange={(e) => setSelectedCity(e.target.value)}
-              className="h-12 rounded-none border border-white/20 bg-[#121212] px-3 text-xs font-bold text-white appearance-none focus:border-[#f5bd18] focus:ring-0 md:px-6"
+              className="h-12 rounded-none border border-white/20 bg-[#121212] px-3 text-xs font-bold text-white appearance-none focus:border-gold focus:ring-0 md:px-6"
             >
               {cities.map(c => (
                 <option key={c.value} value={c.value}>{c.label[locale]}</option>
@@ -143,7 +143,7 @@ export function VendorsDirectory({ locale }: { locale: Locale }) {
             <select 
               value={activeCategory}
               onChange={(e) => setActiveCategory(e.target.value)}
-              className="h-12 rounded-none border border-white/20 bg-[#121212] px-3 text-xs font-bold text-white appearance-none focus:border-[#f5bd18] focus:ring-0 md:px-6"
+              className="h-12 rounded-none border border-white/20 bg-[#121212] px-3 text-xs font-bold text-white appearance-none focus:border-gold focus:ring-0 md:px-6"
             >
               {categories.map(cat => (
                 <option key={cat.id} value={cat.id}>{cat.label[locale]}</option>
@@ -154,7 +154,7 @@ export function VendorsDirectory({ locale }: { locale: Locale }) {
       </section>
 
       {/* Vendor Directory Grid */}
-      <section className="bg-[#f5bd18] px-4 py-8 md:px-12 md:py-20">
+      <section className="bg-gold px-4 py-8 md:px-12 md:py-20">
         <div className="max-w-7xl mx-auto text-start">
           <div className="mb-6 flex items-end justify-between gap-4 border-b border-black/10 pb-4 md:mb-12 md:pb-6">
             <div className="flex items-center gap-4">
@@ -178,14 +178,14 @@ export function VendorsDirectory({ locale }: { locale: Locale }) {
           ) : (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
               {filteredVendors.map((vendor) => (
-                <div key={vendor.id} className="group flex min-h-[300px] flex-col justify-between border border-white/10 bg-black p-5 text-start text-white transition-all hover:border-[#f5bd18] md:min-h-[380px] md:p-6">
+                <div key={vendor.id} className="group flex min-h-[300px] flex-col justify-between border border-white/10 bg-black p-5 text-start text-white transition-all hover:border-gold md:min-h-[380px] md:p-6">
                   <div>
                     <div className="flex justify-between items-start mb-6">
                       <div className="w-16 h-16 bg-[#121212] border border-white/10 flex items-center justify-center">
-                        <Warehouse className="text-[#f5bd18] h-10 w-10" />
+                        <Warehouse className="text-gold h-10 w-10" />
                       </div>
                       <div className="flex flex-col items-end">
-                        <div className="flex items-center gap-1 bg-[#f5bd18] text-black px-2 py-0.5 text-xs font-black">
+                        <div className="flex items-center gap-1 bg-gold text-black px-2 py-0.5 text-xs font-black">
                           <Star className="h-3.5 w-3.5 fill-current" />
                           <span>{vendor.rating > 0 ? vendor.rating.toFixed(1) : "5.0"}</span>
                         </div>
@@ -195,7 +195,7 @@ export function VendorsDirectory({ locale }: { locale: Locale }) {
                       </div>
                     </div>
                     <div className="flex items-center gap-2 mb-2">
-                      <h4 className="text-lg font-black text-white uppercase group-hover:text-[#f5bd18] transition-colors">
+                      <h4 className="text-lg font-black text-white uppercase group-hover:text-gold transition-colors">
                         {isArabic ? (vendor.shopNameAr || vendor.shopName) : vendor.shopName}
                       </h4>
                       {vendor.isOpen && (
@@ -205,7 +205,7 @@ export function VendorsDirectory({ locale }: { locale: Locale }) {
                       )}
                     </div>
                     <p className="text-white/60 text-xs font-bold mb-6 flex items-center gap-1">
-                      <MapPin className="h-4 w-4 text-[#f5bd18]" />
+                      <MapPin className="h-4 w-4 text-gold" />
                       <span>{vendor.city}، {vendor.governorate}</span>
                     </p>
                     <div className="flex flex-wrap gap-2 mb-8">
@@ -226,7 +226,7 @@ export function VendorsDirectory({ locale }: { locale: Locale }) {
                     </Link>
                     <Link 
                       href={`/${locale}/vendors/${vendor.id}/request`} 
-                      className="bg-[#f5bd18] py-3 text-center text-xs font-black uppercase text-black transition-all hover:bg-white md:brutalist-shadow"
+                      className="bg-gold py-3 text-center text-xs font-black uppercase text-black transition-all hover:bg-white md:brutalist-shadow"
                     >
                       {isArabic ? "اطلب تسعير" : "CONTACT"}
                     </Link>
@@ -241,7 +241,7 @@ export function VendorsDirectory({ locale }: { locale: Locale }) {
       {/* Featured Brands */}
       <section className="overflow-hidden border-y-4 border-white/10 bg-black py-10 text-start text-white md:py-16">
         <div className="px-8 md:px-12 max-w-7xl mx-auto mb-8">
-          <h3 className="text-xs font-black text-[#f5bd18] uppercase tracking-[0.3em] mb-2">
+          <h3 className="text-xs font-black text-gold uppercase tracking-[0.3em] mb-2">
             {isArabic ? "شراكات موثوقة" : "Trusted Partnerships"}
           </h3>
           <h4 className="text-2xl font-black text-white">
@@ -260,7 +260,7 @@ export function VendorsDirectory({ locale }: { locale: Locale }) {
       </section>
 
       {/* Become a Vendor CTA */}
-      <section className="border-t-4 border-black bg-[#f5bd18] px-4 py-10 md:px-12 md:py-16">
+      <section className="border-t-4 border-black bg-gold px-4 py-10 md:px-12 md:py-16">
         <div className="max-w-7xl mx-auto bg-black p-8 md:p-12 relative overflow-hidden group border border-white/10 text-white text-start rounded-none">
           <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8">
             <div className="max-w-2xl">
@@ -272,7 +272,7 @@ export function VendorsDirectory({ locale }: { locale: Locale }) {
                   ? "انضم لأكبر شبكة موردين محترفين في مصر وضاعف مبيعاتك مع آلاف الفنيين والعملاء."
                   : "Join Egypt's largest industrial network and expand your reach to thousands of maintenance professionals."}
               </p>
-              <div className="flex flex-wrap gap-4 text-xs font-black text-[#f5bd18]">
+              <div className="flex flex-wrap gap-4 text-xs font-black text-gold">
                 <span>{isArabic ? "✓ بدون رسوم إعداد" : "✓ ZERO SETUP FEE"}</span>
                 <span>{isArabic ? "✓ أدوات طلبات الجملة" : "✓ BULK ORDER TOOLS"}</span>
                 <span>{isArabic ? "✓ مدفوعات آمنة" : "✓ SECURE PAYMENTS"}</span>
@@ -280,7 +280,7 @@ export function VendorsDirectory({ locale }: { locale: Locale }) {
             </div>
             <Link 
               href={`/${locale}/register/vendor`} 
-              className="bg-[#f5bd18] text-black px-12 py-5 text-sm font-black brutalist-shadow hover:bg-white transition-all whitespace-nowrap rounded-none uppercase text-center"
+              className="bg-gold text-black px-12 py-5 text-sm font-black brutalist-shadow hover:bg-white transition-all whitespace-nowrap rounded-none uppercase text-center"
             >
               {isArabic ? "شريك معنا" : "PARTNER WITH US"}
             </Link>

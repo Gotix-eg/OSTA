@@ -155,7 +155,7 @@ export function MobileHeroSlider({ locale }: MobileHeroSliderProps) {
           ))}
           {/* Small elegant Ad badge in the corner */}
           <div className="absolute top-4 right-4 z-40">
-            <span className="border border-white/10 bg-black/70 px-2 py-1 text-[9px] font-black uppercase tracking-wider text-[#f5bd18] shadow-md backdrop-blur-sm">
+            <span className="border border-white/10 bg-black/70 px-2 py-1 text-[9px] font-black uppercase tracking-wider text-gold shadow-md backdrop-blur-sm">
               {isArabic ? "ممول" : "Sponsored"}
             </span>
           </div>
@@ -253,7 +253,7 @@ export function MobileHeroSlider({ locale }: MobileHeroSliderProps) {
               initial={{ y: 10, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.1 }}
-              className="mb-3 inline-block border border-[#f5bd18]/30 bg-black/65 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-[#f5bd18] backdrop-blur-sm"
+              className="mb-3 inline-block border border-gold/30 bg-black/65 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-gold backdrop-blur-sm"
             >
               {isArabic ? current.eyebrowAr : current.eyebrowEn}
             </motion.span>

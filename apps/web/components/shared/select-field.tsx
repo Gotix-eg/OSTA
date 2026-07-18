@@ -36,7 +36,7 @@ export function SelectField({
         onChange={(event) => onChange(event.target.value)}
         className={cn(
           isAuth
-            ? "h-14 w-full appearance-none rounded-none border border-white/20 bg-[#121212] px-4 text-sm font-semibold text-white outline-none transition-colors focus:border-[#f5bd18] disabled:cursor-not-allowed disabled:opacity-50"
+            ? "h-14 w-full appearance-none rounded-none border border-white/20 bg-[#121212] px-4 text-sm font-semibold text-white outline-none transition-colors focus:border-gold disabled:cursor-not-allowed disabled:opacity-50"
             : "h-12 w-full appearance-none rounded-[1.2rem] border border-onyx-700 bg-onyx-800/50 px-4 text-body text-white transition focus:border-primary-400 focus:ring-2 focus:ring-primary-500/30 disabled:cursor-not-allowed disabled:opacity-50",
           !value && (isAuth ? "text-white/35" : "text-onyx-500")
         )}

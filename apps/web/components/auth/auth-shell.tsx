@@ -77,7 +77,7 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
       <header className="fixed inset-x-0 top-0 z-50 h-16 border-b border-white/10 bg-black/80 text-white backdrop-blur-md">
         <nav className="mx-auto flex h-full max-w-7xl items-center justify-between px-4 md:px-12">
           <div className="flex items-center gap-8">
-            <div className="flex items-center gap-4 text-[#f5bd18] md:hidden">
+            <div className="flex items-center gap-4 text-gold md:hidden">
               <Menu className="h-6 w-6" />
               <span className="text-2xl font-black tracking-tight">OSTA</span>
             </div>
@@ -89,7 +89,7 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
                 <Link
                   key={label}
                   href={href as `/${string}`}
-                  className="text-sm font-black uppercase tracking-wide text-white hover:text-[#f5bd18]"
+                  className="text-sm font-black uppercase tracking-wide text-white hover:text-gold"
                 >
                   {label}
                 </Link>
@@ -99,7 +99,7 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
           <div className="flex items-center gap-3">
             <Link
               href={`/${altLocale}${pathname}` as `/${string}`}
-              className="px-1.5 py-2 text-sm font-black uppercase text-[#f5bd18] md:hidden"
+              className="px-1.5 py-2 text-sm font-black uppercase text-gold md:hidden"
             >
               {isArabic ? "الإنجليزية" : "Arabic"}
             </Link>
@@ -145,7 +145,7 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
             dir={isArabic ? "rtl" : "ltr"}
           >
             <div className="mb-10 text-center md:text-start">
-              <h1 className="mb-2 whitespace-nowrap text-[26px] font-black uppercase leading-tight text-[#f5bd18] md:text-5xl">
+              <h1 className="mb-2 whitespace-nowrap text-[26px] font-black uppercase leading-tight text-gold md:text-5xl">
                 {heading}
               </h1>
               <p className="mx-auto max-w-md text-base leading-relaxed text-white/70 md:mx-0 md:text-sm md:font-black md:uppercase md:tracking-[0.2em] md:text-white/50">
@@ -170,7 +170,7 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
                       <Link
                         key={role}
                         href={`/${locale}/register/${role}`}
-                        className="flex-1 border border-white/10 py-2 text-center text-[10px] font-black uppercase text-white transition-all hover:border-[#f5bd18]/40 hover:bg-white/5 md:py-3 md:hover:bg-[#f5bd18] md:hover:text-black"
+                        className="flex-1 border border-white/10 py-2 text-center text-[10px] font-black uppercase text-white transition-all hover:border-gold/40 hover:bg-white/5 md:py-3 md:hover:bg-gold md:hover:text-black"
                       >
                         <span className="md:hidden">{registerPrefix}</span>
                         {registerLabels[role]}
@@ -221,9 +221,9 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
         </div>
       </footer>
 
-      <nav className="fixed bottom-0 z-50 flex h-20 w-full items-center justify-around border-t border-white/10 bg-black/80 px-4 text-[#f5bd18] backdrop-blur-md md:hidden">
+      <nav className="fixed bottom-0 z-50 flex h-20 w-full items-center justify-around border-t border-white/10 bg-black/80 px-4 text-gold backdrop-blur-md md:hidden">
         {bottomLinks.map(({ Icon, label, href }, index) => (
-          <Link key={label} href={href as `/${string}`} className={index === 0 ? "flex flex-col items-center gap-1 text-[#f5bd18]" : "flex flex-col items-center gap-1 text-white/45"}>
+          <Link key={label} href={href as `/${string}`} className={index === 0 ? "flex flex-col items-center gap-1 text-gold" : "flex flex-col items-center gap-1 text-white/45"}>
             <Icon className="h-5 w-5" />
             <span className="text-xs font-black">{label}</span>
           </Link>
@@ -263,20 +263,20 @@ export function AdminAuthShell({ locale, children }: { locale: Locale; children:
       <header className="fixed inset-x-0 top-0 z-50 border-b border-white/5 bg-[#0a0a0a]/80 px-4 py-5 backdrop-blur-md md:px-12">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="h-8 w-2 bg-[#f5bd18]" />
+            <span className="h-8 w-2 bg-gold" />
             <a href={`/${locale}`} className="flex items-center gap-3">
               <img src="/logo.svg" alt="OSTA Logo" className="h-8 w-auto brightness-0 invert" />
-              <span className="text-xl font-black uppercase tracking-tight text-[#f5bd18] md:text-2xl">{labels.brand}</span>
+              <span className="text-xl font-black uppercase tracking-tight text-gold md:text-2xl">{labels.brand}</span>
             </a>
           </div>
           <div className="flex items-center gap-5 md:gap-8">
-            <div className="hidden items-center gap-2 border border-[#f5bd18]/20 bg-[#f5bd18]/5 px-4 py-1.5 md:flex">
-              <span className="h-2 w-2 animate-pulse rounded-full bg-[#f5bd18] shadow-[0_0_8px_#f5bd18]" />
-              <span className="text-[11px] font-black uppercase tracking-[0.18em] text-[#f5bd18]">{labels.status}</span>
+            <div className="hidden items-center gap-2 border border-gold/20 bg-gold/5 px-4 py-1.5 md:flex">
+              <span className="h-2 w-2 animate-pulse rounded-full bg-gold shadow-[0_0_8px_#f5bd18]" />
+              <span className="text-[11px] font-black uppercase tracking-[0.18em] text-gold">{labels.status}</span>
             </div>
             <div className="flex items-center gap-4 text-white/55">
-              <Lock className="h-5 w-5 transition-colors hover:text-[#f5bd18]" />
-              <CircleHelp className="h-5 w-5 transition-colors hover:text-[#f5bd18]" />
+              <Lock className="h-5 w-5 transition-colors hover:text-gold" />
+              <CircleHelp className="h-5 w-5 transition-colors hover:text-gold" />
             </div>
           </div>
         </div>
@@ -284,12 +284,12 @@ export function AdminAuthShell({ locale, children }: { locale: Locale; children:
 
       <section className="relative z-10 flex min-h-screen items-center justify-center px-4 pb-28 pt-24 md:pb-24">
         <div className="w-full max-w-md">
-          <div className="relative overflow-hidden border border-[#f5bd18]/10 bg-[#111111] p-6 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] md:p-12">
-            <Shield className="pointer-events-none absolute end-4 top-4 h-16 w-16 text-[#f5bd18]/20 md:h-20 md:w-20" />
+          <div className="relative overflow-hidden border border-gold/10 bg-[#111111] p-6 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] md:p-12">
+            <Shield className="pointer-events-none absolute end-4 top-4 h-16 w-16 text-gold/20 md:h-20 md:w-20" />
 
             <div className="mb-9 text-center md:mb-10">
               <img src="/logo.svg" alt="OSTA Logo" className="mx-auto mb-5 h-10 w-auto brightness-0 invert" />
-              <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center bg-[#f5bd18] text-black shadow-[4px_4px_0_#fff] md:shadow-none">
+              <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center bg-gold text-black shadow-[4px_4px_0_#fff] md:shadow-none">
                 <ShieldCheck className="h-9 w-9" />
               </div>
               <h1 className="text-3xl font-black uppercase tracking-widest text-white md:text-4xl">
@@ -297,7 +297,7 @@ export function AdminAuthShell({ locale, children }: { locale: Locale; children:
                 <span className="md:hidden">{labels.mobileTitle}</span>
               </h1>
               <div className="mt-4 inline-flex items-center gap-2 border border-white/10 bg-white/5 px-3 py-1">
-                <Activity className="h-4 w-4 text-[#f5bd18]" />
+                <Activity className="h-4 w-4 text-gold" />
                 <p className="text-[11px] font-black uppercase tracking-tight text-white/70">{labels.tier}</p>
               </div>
             </div>
@@ -306,17 +306,17 @@ export function AdminAuthShell({ locale, children }: { locale: Locale; children:
 
             <div className="mt-10 border-t border-white/5 pt-7 md:mt-12 md:pt-8">
               <div className="mb-7 flex items-center justify-center gap-3 text-white/45 md:mb-8">
-                <ShieldCheck className="h-5 w-5 text-[#f5bd18]" />
+                <ShieldCheck className="h-5 w-5 text-gold" />
                 <span className="text-[11px] font-black uppercase tracking-[0.18em]">{labels.ssl}</span>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="border border-white/5 bg-black/50 p-4 text-center">
                   <p className="mb-1 text-[10px] font-black uppercase tracking-tight text-white/30">{labels.node}</p>
-                  <p className="text-sm font-black uppercase text-[#f5bd18]">OS-PRIME-01</p>
+                  <p className="text-sm font-black uppercase text-gold">OS-PRIME-01</p>
                 </div>
                 <div className="border border-white/5 bg-black/50 p-4 text-center">
                   <p className="mb-1 text-[10px] font-black uppercase tracking-tight text-white/30">{labels.region}</p>
-                  <p className="text-sm font-black uppercase text-[#f5bd18]">GLOBAL-SEC</p>
+                  <p className="text-sm font-black uppercase text-gold">GLOBAL-SEC</p>
                 </div>
               </div>
             </div>
@@ -329,11 +329,11 @@ export function AdminAuthShell({ locale, children }: { locale: Locale; children:
           <div className="mt-8 flex flex-col items-center justify-between gap-5 px-2 text-white/25 md:mt-10 md:flex-row">
             <div className="text-[11px] font-black uppercase tracking-[0.24em]">{labels.copyright}</div>
             <div className="flex gap-6 text-[11px] font-black uppercase tracking-widest">
-              <a className="transition-colors hover:text-[#f5bd18]" href={`/${locale}/terms`}>
+              <a className="transition-colors hover:text-gold" href={`/${locale}/terms`}>
                 <Scale className="me-1 inline h-3.5 w-3.5" />
                 {labels.legal}
               </a>
-              <a className="transition-colors hover:text-[#f5bd18]" href={`/${locale}/contact`}>
+              <a className="transition-colors hover:text-gold" href={`/${locale}/contact`}>
                 <FileWarning className="me-1 inline h-3.5 w-3.5" />
                 {labels.breach}
               </a>
@@ -342,7 +342,7 @@ export function AdminAuthShell({ locale, children }: { locale: Locale; children:
         </div>
       </section>
 
-      <div className="fixed bottom-0 left-0 h-1 w-full bg-[#f5bd18] shadow-[0_-5px_15px_rgba(245,189,24,0.3)]" />
+      <div className="fixed bottom-0 left-0 h-1 w-full bg-gold shadow-[0_-5px_15px_rgba(245,189,24,0.3)]" />
     </main>
   );
 }

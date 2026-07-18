@@ -272,13 +272,13 @@ export default function VendorMaterialsClientPage({ locale }: { locale: Locale }
           <VendorStitchPanel
             eyebrow={activeTab === "nearby" ? "Requests" : "Orders"}
             title={activeTab === "nearby" ? (isArabic ? "طلبات الجوار المتاحة للتسعير" : "Nearby Requests Waiting for Quotes") : (isArabic ? "الطلبات والمبيعات المقبولة" : "Accepted Orders & Deliveries")}
-            action={activeTab === "nearby" ? <MapPin className="h-5 w-5 text-[#f5bd18]" /> : <CheckCircle2 className="h-5 w-5 text-[#f5bd18]" />}
+            action={activeTab === "nearby" ? <MapPin className="h-5 w-5 text-gold" /> : <CheckCircle2 className="h-5 w-5 text-gold" />}
           >
             {activeTab === "nearby" ? (
               <>
                 {loading ? (
                   <div className="flex h-48 items-center justify-center border border-white/10 bg-[#080808]">
-                    <div className="h-9 w-9 animate-spin border-4 border-[#f5bd18] border-t-transparent" />
+                    <div className="h-9 w-9 animate-spin border-4 border-gold border-t-transparent" />
                   </div>
                 ) : nearbyRequests.length === 0 ? (
                   <VendorStitchEmpty
@@ -295,14 +295,14 @@ export default function VendorMaterialsClientPage({ locale }: { locale: Locale }
                         onClick={() => setSelectedRequest(req)}
                         className={`group relative cursor-pointer border p-5 shadow-[3px_3px_0_#1d1600] transition-colors ${
                           selectedRequest?.id === req.id 
-                            ? "border-[#f5bd18] bg-[#111111]"
-                            : "border-white/10 bg-[#080808] hover:border-[#f5bd18]/70"
+                            ? "border-gold bg-[#111111]"
+                            : "border-white/10 bg-[#080808] hover:border-gold/70"
                         }`}
                       >
                         <div className="flex items-start justify-between gap-4">
                           <div>
                             <div className="flex flex-wrap items-center gap-3">
-                              <h3 className="font-extrabold text-white text-lg group-hover:text-[#f5bd18] transition-colors">
+                              <h3 className="font-extrabold text-white text-lg group-hover:text-gold transition-colors">
                                 {req.title}
                               </h3>
                               <VendorStitchBadge tone="gold">{isArabic ? "طلب متاح" : "Open request"}</VendorStitchBadge>
@@ -314,11 +314,11 @@ export default function VendorMaterialsClientPage({ locale }: { locale: Locale }
 
                             <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-onyx-500 font-medium">
                               <span className="flex items-center gap-1.5">
-                                <Clock className="h-3.5 w-3.5 text-[#f5bd18]" />
+                                <Clock className="h-3.5 w-3.5 text-gold" />
                                 {new Date(req.createdAt).toLocaleDateString(locale, { dateStyle: "medium" })}
                               </span>
                               <span className="flex items-center gap-1.5">
-                                <Truck className="h-3.5 w-3.5 text-[#f5bd18]" />
+                                <Truck className="h-3.5 w-3.5 text-gold" />
                                 {req.deliveryMethod === "VENDOR_DELIVERY" 
                                   ? (isArabic ? "توصيل للمنزل" : "Home Delivery") 
                                   : (isArabic ? "استلام شخصي" : "Self Pickup")}
@@ -331,7 +331,7 @@ export default function VendorMaterialsClientPage({ locale }: { locale: Locale }
                             </div>
                           </div>
 
-                          <div className={`border border-white/10 bg-black p-2 text-white/45 transition-colors group-hover:border-[#f5bd18] group-hover:text-[#f5bd18] ${isArabic ? "rotate-180" : ""}`}>
+                          <div className={`border border-white/10 bg-black p-2 text-white/45 transition-colors group-hover:border-gold group-hover:text-gold ${isArabic ? "rotate-180" : ""}`}>
                             <ChevronRight className="h-5 w-5" />
                           </div>
                         </div>
@@ -344,7 +344,7 @@ export default function VendorMaterialsClientPage({ locale }: { locale: Locale }
               <>
                 {loading ? (
                   <div className="flex h-48 items-center justify-center border border-white/10 bg-[#080808]">
-                    <div className="h-9 w-9 animate-spin border-4 border-[#f5bd18] border-t-transparent" />
+                    <div className="h-9 w-9 animate-spin border-4 border-gold border-t-transparent" />
                   </div>
                 ) : vendorOrders.length === 0 ? (
                   <VendorStitchEmpty
@@ -379,7 +379,7 @@ export default function VendorMaterialsClientPage({ locale }: { locale: Locale }
                         <div className="grid grid-cols-2 gap-3 border border-white/10 bg-black p-4 text-xs md:grid-cols-4">
                           <div>
                             <span className="block text-onyx-500">{isArabic ? "قيمة الطلب الكلية" : "Total Amount"}</span>
-                            <span className="mt-1 block font-black text-[#f5bd18] text-sm">
+                            <span className="mt-1 block font-black text-gold text-sm">
                               {order.totalAmount} {isArabic ? "ج.م" : "EGP"}
                             </span>
                           </div>
@@ -414,7 +414,7 @@ export default function VendorMaterialsClientPage({ locale }: { locale: Locale }
                               <button
                                 onClick={() => handleUpdateOrderStatus(order.id, "PREPARING")}
                                 disabled={orderUpdatingId === order.id}
-                                className="border border-[#f5bd18] bg-[#f5bd18] px-4 py-2 text-xs font-black uppercase text-black transition-colors hover:bg-white disabled:opacity-50"
+                                className="border border-gold bg-gold px-4 py-2 text-xs font-black uppercase text-black transition-colors hover:bg-white disabled:opacity-50"
                               >
                                 {isArabic ? "بدء التجهيز والتحضير" : "Start Prep"}
                               </button>
@@ -424,7 +424,7 @@ export default function VendorMaterialsClientPage({ locale }: { locale: Locale }
                               <button
                                 onClick={() => handleUpdateOrderStatus(order.id, "SHIPPED")}
                                 disabled={orderUpdatingId === order.id}
-                                className="border border-[#f5bd18] bg-[#f5bd18] px-4 py-2 text-xs font-black uppercase text-black transition-colors hover:bg-white disabled:opacity-50"
+                                className="border border-gold bg-gold px-4 py-2 text-xs font-black uppercase text-black transition-colors hover:bg-white disabled:opacity-50"
                               >
                                 {isArabic ? "تسليم شركة الشحن / بدء التوصيل" : "Ship Order"}
                               </button>
@@ -434,7 +434,7 @@ export default function VendorMaterialsClientPage({ locale }: { locale: Locale }
                               <button
                                 onClick={() => handleUpdateOrderStatus(order.id, "DELIVERED")}
                                 disabled={orderUpdatingId === order.id}
-                                className="border border-[#f5bd18] bg-[#f5bd18] px-4 py-2 text-xs font-black uppercase text-black transition-colors hover:bg-white disabled:opacity-50"
+                                className="border border-gold bg-gold px-4 py-2 text-xs font-black uppercase text-black transition-colors hover:bg-white disabled:opacity-50"
                               >
                                 {isArabic ? "تأكيد التسليم النهائي للعميل" : "Delivered"}
                               </button>
@@ -453,13 +453,13 @@ export default function VendorMaterialsClientPage({ locale }: { locale: Locale }
           <VendorStitchPanel
             eyebrow="Quote"
             title={isArabic ? "تقديم عرض السعر الفوري" : "Quotation Proposal Form"}
-            action={<TrendingUp className="h-5 w-5 text-[#f5bd18]" />}
+            action={<TrendingUp className="h-5 w-5 text-gold" />}
           >
             {selectedRequest ? (
               <div className="space-y-6">
                 <div>
                   <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center border border-[#f5bd18]/60 bg-[#f5bd18] font-black text-black">
+                    <div className="flex h-10 w-10 items-center justify-center border border-gold/60 bg-gold font-black text-black">
                       {selectedRequest.requester.firstName.substring(0, 1)}
                     </div>
                     <div>
@@ -507,7 +507,7 @@ export default function VendorMaterialsClientPage({ locale }: { locale: Locale }
                         placeholder="e.g. 750"
                         value={bidPrice}
                         onChange={(e) => setBidPrice(e.target.value)}
-                        className="h-12 w-full border border-white/10 bg-[#121212] px-4 text-white outline-none transition-colors focus:border-[#f5bd18] text-sm"
+                        className="h-12 w-full border border-white/10 bg-[#121212] px-4 text-white outline-none transition-colors focus:border-gold text-sm"
                       />
                     </label>
 
@@ -518,7 +518,7 @@ export default function VendorMaterialsClientPage({ locale }: { locale: Locale }
                         placeholder="e.g. 50"
                         value={bidDeliveryFee}
                         onChange={(e) => setBidDeliveryFee(e.target.value)}
-                        className="h-12 w-full border border-white/10 bg-[#121212] px-4 text-white outline-none transition-colors focus:border-[#f5bd18] text-sm"
+                        className="h-12 w-full border border-white/10 bg-[#121212] px-4 text-white outline-none transition-colors focus:border-gold text-sm"
                       />
                     </label>
                   </div>
@@ -532,7 +532,7 @@ export default function VendorMaterialsClientPage({ locale }: { locale: Locale }
                       placeholder="e.g. 45"
                       value={bidDeliveryTime}
                       onChange={(e) => setBidDeliveryTime(e.target.value)}
-                      className="h-12 w-full border border-white/10 bg-[#121212] px-4 text-white outline-none transition-colors focus:border-[#f5bd18] text-sm"
+                      className="h-12 w-full border border-white/10 bg-[#121212] px-4 text-white outline-none transition-colors focus:border-gold text-sm"
                     />
                   </label>
 
@@ -543,14 +543,14 @@ export default function VendorMaterialsClientPage({ locale }: { locale: Locale }
                       placeholder={isArabic ? "تفاصيل إضافية مثل: الدهانات أصلية جوتن والأسلاك بضمان السويدي..." : "e.g. paints are original Jotun, copper cables Elsewedy certified..."}
                       value={bidNotes}
                       onChange={(e) => setBidNotes(e.target.value)}
-                      className="w-full resize-none border border-white/10 bg-[#121212] p-4 text-white outline-none transition-colors focus:border-[#f5bd18] text-sm"
+                      className="w-full resize-none border border-white/10 bg-[#121212] p-4 text-white outline-none transition-colors focus:border-gold text-sm"
                     />
                   </label>
 
                   <button
                     type="submit"
                     disabled={bidSubmitting || bidSuccess}
-                    className="mt-4 flex h-12 w-full items-center justify-center gap-2 border border-[#f5bd18] bg-[#f5bd18] font-black uppercase text-black transition-colors hover:bg-white disabled:opacity-50"
+                    className="mt-4 flex h-12 w-full items-center justify-center gap-2 border border-gold bg-gold font-black uppercase text-black transition-colors hover:bg-white disabled:opacity-50"
                   >
                     {bidSubmitting ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                     {isArabic ? "تقديم هذا العرض للعميل" : "Submit Proposal"}
@@ -559,7 +559,7 @@ export default function VendorMaterialsClientPage({ locale }: { locale: Locale }
               </div>
             ) : (
               <div className="flex h-80 flex-col items-center justify-center border border-white/10 bg-[#080808] p-6 text-center text-onyx-500">
-                <Store className="h-8 w-8 mb-3 text-[#f5bd18]/70" />
+                <Store className="h-8 w-8 mb-3 text-gold/70" />
                 <p className="text-sm font-semibold">
                   {isArabic ? "اختر طلبًا متاحًا من الجوار لتجهيز وتقديم عرض السعر والمزايدة عليه فوراً" : "Select an active nearby request from the feed to draft and submit your supply bid"}
                 </p>

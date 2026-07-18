@@ -15,7 +15,7 @@ export function TestModeBanner({ locale }: { locale: Locale }) {
   }
 
   return (
-    <div className="w-full bg-gold-700 px-4 py-2.5 text-center">
+    <div className="w-full bg-gold-800 px-4 py-2.5 text-center">
       <p className="text-xs font-extrabold tracking-wide text-white sm:text-sm md:whitespace-nowrap">
         {isArabic
           ? "الموقع حاليًا في المرحلة التجريبية — يتوفر الآن تسجيل حسابات الفنيين والصنايعية فقط."

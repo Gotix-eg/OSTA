@@ -253,7 +253,7 @@ export function AboutProfileCustom({ locale }: { locale: Locale }) {
                   <Icon
                     size={22}
                     strokeWidth={2}
-                    className="text-black group-hover:text-[#f5bd18] transition-colors duration-300"
+                    className="text-black group-hover:text-gold transition-colors duration-300"
                   />
                 </div>
                 <h4 className="font-black text-white group-hover:text-black uppercase text-xl mb-3 transition-colors duration-300">

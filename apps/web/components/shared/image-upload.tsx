@@ -63,10 +63,10 @@ export function ImageUpload({
       <span className={isAuth ? "text-xs font-black uppercase tracking-widest text-white/70" : "text-sm font-medium text-onyx-200"}>{label}</span>
       <div 
         onClick={() => fileInputRef.current?.click()}
-        className={isAuth ? "relative flex h-32 cursor-pointer flex-col items-center justify-center gap-2 rounded-none border border-dashed border-white/20 bg-[#121212] text-white/45 transition-colors hover:border-[#f5bd18] hover:bg-white/5" : "relative flex h-32 cursor-pointer flex-col items-center justify-center gap-2 rounded-[1.2rem] border-2 border-dashed border-onyx-700 bg-onyx-800/50 text-onyx-400 transition hover:border-primary-400 hover:bg-primary-50"}
+        className={isAuth ? "relative flex h-32 cursor-pointer flex-col items-center justify-center gap-2 rounded-none border border-dashed border-white/20 bg-[#121212] text-white/45 transition-colors hover:border-gold hover:bg-white/5" : "relative flex h-32 cursor-pointer flex-col items-center justify-center gap-2 rounded-[1.2rem] border-2 border-dashed border-onyx-700 bg-onyx-800/50 text-onyx-400 transition hover:border-primary-400 hover:bg-primary-50"}
       >
         {isUploading ? (
-          <span className={isAuth ? "text-sm font-black text-[#f5bd18]" : "text-sm font-medium text-primary-600"}>
+          <span className={isAuth ? "text-sm font-black text-gold" : "text-sm font-medium text-primary-600"}>
             {isArabic ? "جاري الرفع..." : "Uploading..."}
           </span>
         ) : value ? (

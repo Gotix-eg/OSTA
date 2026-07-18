@@ -28,7 +28,7 @@ export function isDataImage(value: unknown): value is string {
   return typeof value === "string" && DATA_IMAGE_PATTERN.test(value);
 }
 
-export async function uploadDataImageToBlob(dataUrl: string, idHint: string) {
+export async function uploadDataImageToBlob(dataUrl: string, idHint: string, folder = "hero-slides") {
   const match = dataUrl.match(DATA_IMAGE_PATTERN);
   if (!match) return dataUrl;
 
@@ -41,7 +41,7 @@ export async function uploadDataImageToBlob(dataUrl: string, idHint: string) {
   const extension = extensionFromContentType(contentType);
   const safeId = idHint.replace(/[^a-zA-Z0-9_-]/g, "-").slice(0, 64) || "slide";
 
-  const blob = await put(`hero-slides/${safeId}-${digest}.${extension}`, buffer, {
+  const blob = await put(`${folder}/${safeId}-${digest}.${extension}`, buffer, {
     access: "public",
     addRandomSuffix: false,
     allowOverwrite: true,

@@ -51,23 +51,23 @@ export function VendorSettingsClientPage({ locale }: { locale: Locale }) {
       <div className="grid gap-4 lg:grid-cols-[0.95fr_1.05fr]">
         <VendorStitchPanel eyebrow={isArabic ? "هوية الحساب" : "Account identity"} title={isArabic ? "بيانات المتجر" : "Store profile"}>
           <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
-            <div className="flex h-24 w-24 shrink-0 items-center justify-center border-2 border-[#f5bd18] bg-[#121212] text-[#f5bd18]">
+            <div className="flex h-24 w-24 shrink-0 items-center justify-center border-2 border-gold bg-[#121212] text-gold">
               <Store className="h-11 w-11" />
             </div>
             <div className="min-w-0">
-              <p className="text-[10px] font-black uppercase tracking-[0.24em] text-[#f5bd18]">{isArabic ? "مورد معتمد" : "Verified vendor"}</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.24em] text-gold">{isArabic ? "مورد معتمد" : "Verified vendor"}</p>
               <h2 className="mt-2 text-3xl font-black uppercase text-white">{isArabic ? "متجر أُسطفاي" : "Ostafy Store"}</h2>
               <p className="mt-2 text-sm font-semibold text-white/45">{isArabic ? "البيانات الحقيقية تظهر من حسابك عند ربط API الإعدادات." : "Live profile data will appear here once the settings API is connected."}</p>
             </div>
           </div>
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
             <div className="border border-white/10 bg-[#121212] p-4">
-              <ShieldCheck className="h-5 w-5 text-[#f5bd18]" />
+              <ShieldCheck className="h-5 w-5 text-gold" />
               <p className="mt-3 text-sm font-black text-white">{isArabic ? "حساب موثق" : "Verified account"}</p>
               <p className="mt-1 text-xs leading-5 text-white/45">{isArabic ? "جاهز لاستقبال طلبات الخامات." : "Ready to receive material orders."}</p>
             </div>
             <div className="border border-white/10 bg-[#121212] p-4">
-              <BriefcaseBusiness className="h-5 w-5 text-[#f5bd18]" />
+              <BriefcaseBusiness className="h-5 w-5 text-gold" />
               <p className="mt-3 text-sm font-black text-white">{isArabic ? "تشغيل تجاري" : "Commercial mode"}</p>
               <p className="mt-1 text-xs leading-5 text-white/45">{isArabic ? "مخزون، مزايدات، إعلانات، ومحفظة." : "Inventory, bids, ads, and wallet."}</p>
             </div>
@@ -83,7 +83,7 @@ export function VendorSettingsClientPage({ locale }: { locale: Locale }) {
               const content = (
                 <>
                   <span className="flex items-center gap-4">
-                    <span className={cn("flex h-11 w-11 items-center justify-center", mode.current ? "bg-black text-[#f5bd18]" : "bg-black/40 text-[#f5bd18]")}>
+                    <span className={cn("flex h-11 w-11 items-center justify-center", mode.current ? "bg-black text-gold" : "bg-black/40 text-gold")}>
                       <Icon className="h-5 w-5" />
                     </span>
                     <span className="text-sm font-black uppercase">{mode.title}</span>
@@ -95,7 +95,7 @@ export function VendorSettingsClientPage({ locale }: { locale: Locale }) {
               );
 
               return mode.current ? (
-                <div key={mode.href} className="flex items-center justify-between border border-[#f5bd18] bg-[#f5bd18] p-4 text-black">
+                <div key={mode.href} className="flex items-center justify-between border border-gold bg-gold p-4 text-black">
                   {content}
                 </div>
               ) : (
@@ -108,7 +108,7 @@ export function VendorSettingsClientPage({ locale }: { locale: Locale }) {
                       void switchRole(mode.targetRole, mode.href);
                     }
                   }}
-                  className="flex items-center justify-between border border-white/10 bg-[#121212] p-4 text-start text-white transition-colors hover:border-[#f5bd18]/60 disabled:cursor-wait disabled:opacity-70"
+                  className="flex items-center justify-between border border-white/10 bg-[#121212] p-4 text-start text-white transition-colors hover:border-gold/60 disabled:cursor-wait disabled:opacity-70"
                 >
                   {content}
                 </button>
