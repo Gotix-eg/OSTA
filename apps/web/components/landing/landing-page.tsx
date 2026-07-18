@@ -1,8 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { 
-  Star, ShieldCheck, X, Search, DollarSign,
+import {
+  Star, ShieldCheck, Shield, Check, X, Search, DollarSign,
 } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
@@ -107,7 +107,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
     titleEn: "Hire a Professional Ostafy in Seconds",
     descAr: "أول منصة تجمع أمهر الفنيين والمتاجر الموثقة في مصر. جودة مضمونة، أسعار عادلة، وتجربة مستخدم فاخرة.",
     descEn: "The first platform connecting skilled pros and verified stores in Egypt. Guaranteed quality, fair prices, and a premium experience.",
-    imageUrl: "https://lh3.googleusercontent.com/aida/AP1WRLvPWTNBI6QHPZstRjBzsdmedQT3X72YzMV1wUJYyabe37kyEjwlG62SdS-6HdpkuM68erjzOO8Sl7fYRrtTuj0nWSH4lhJorjhrnVTdVYMD9-UZp9f1ntjGzPjtYklrkLXZqN97d3BNLFNrgre7enhuKJjgKK19GNUbRzrVFd40xuD6EpwF9PTBqaBIb1VOZkPk65UJV5fMoheg-Id-EfwkvLOAbtD46U9Gdj8YCHlgtwvNCsYoMwmyHNc"
+    imageUrl: "https://images.unsplash.com/photo-1581092160562-40aa08e78837?q=80&w=1600&auto=format&fit=crop"
   };
 
   const activeHeroSlide = slides[0] || defaultSlide;
@@ -324,26 +324,26 @@ export function LandingPage({ locale }: { locale: Locale }) {
           <img 
             alt="Master craftsman working" 
             className="w-full h-full object-cover opacity-80" 
-            src={activeHeroSlide.imageUrl || "https://lh3.googleusercontent.com/aida/AP1WRLPWTNBI6QHPZstRjBzsdmedQT3X72YzMV1wUJYyabe37kyEjwlG62SdS-6HdpkuM68erjzOO8Sl7fYRrtTuj0nWSH4lhJorjhrnVTdVYMD9-UZp9f1ntjGzPjtYklrkLXZqN97d3BNLFNrgre7enhuKJjgKK19GNUbRzrVFd40xuD6EpwF9PTBqaBIb1VOZkPk65UJV5fMoheg-Id-EfwkvLOAbtD46U9Gdj8YCHlgtwvNCsYoMwmyHNc"}
+            src={activeHeroSlide.imageUrl || "https://images.unsplash.com/photo-1581092160562-40aa08e78837?q=80&w=1600&auto=format&fit=crop"}
           />
           <div className="absolute inset-0 bg-gradient-to-b from-[#1a1c1c]/70 via-[#1a1c1c]/50 to-[#1a1c1c]/90" />
         </div>
         
         <div className="relative z-20 max-w-7xl mx-auto px-12 space-y-8">
-          <h1 className="font-display-lg text-5xl md:text-7xl text-white leading-tight font-black tracking-tight">
+          <h1 className="font-display-lg text-5xl md:text-7xl text-white !leading-tight font-black tracking-tight">
             {isArabic ? (
               <>
                 {activeHeroSlide.titleAr ? (
                   activeHeroSlide.titleAr.replace("أُسطفاي", "")
                 ) : "اطلب محترف بنقرة واحدة"}
-                <span className="bg-[#f5bd18] text-[#1a1c1c] px-4 py-1 mx-2">أُسطفاي</span>
+                <span className="inline-block bg-[#f5bd18] text-[#1a1c1c] px-4 pt-[0.3em] pb-1 mx-2">أُسطفاي</span>
               </>
             ) : (
               <>
                 {activeHeroSlide.titleEn ? (
                   activeHeroSlide.titleEn.replace("Ostafy", "")
                 ) : "Hire a Professional in Seconds"}
-                <span className="bg-[#f5bd18] text-[#1a1c1c] px-4 py-1 mx-2">Ostafy</span>
+                <span className="inline-block bg-[#f5bd18] text-[#1a1c1c] px-4 py-1 mx-2">Ostafy</span>
               </>
             )}
             <span className="block mt-6 text-3xl md:text-4xl text-[#f5bd18]">
@@ -376,17 +376,17 @@ export function LandingPage({ locale }: { locale: Locale }) {
           <div className="pt-8 flex items-center justify-center gap-2">
             <div className="flex -space-x-4 rtl:space-x-reverse">
               <div className="w-10 h-10 rounded-full border-2 border-[#f5bd18] bg-neutral-800 overflow-hidden">
-                <img className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQnkfVDVnOUjLI9b30YFBXXjpltn4ESy_tdISPCmkdR3yromB3Lha3ilZ5pRfQhPB97_g7KsqwHJiEG7L67x83kkK15kXHB6ct4YnsanOsenIxnqjtpTaVyFLGu8VN9VIYqeOt0LqH7fO9ktFHjwOxvY0Vn3njIeV5NvIajV9NyLUSCTal_eFDKl60ywDiGbsWlfznbOhDMQUEQqHMhsI1i2rYLxKCUB_01Bo1yGT-5__-DBeqMZsy9TizFFh7GOTO03i97MbYSuc" alt="" />
+                <img className="w-full h-full object-cover" src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=400&auto=format&fit=crop" alt="" />
               </div>
               <div className="w-10 h-10 rounded-full border-2 border-[#f5bd18] bg-neutral-800 overflow-hidden">
-                <img className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBuYZcs1v4UcqsramGj2W74w1tmzYBIisiTarEBc0Uk0UiGoVynoIOrI7SzCz32x1ldvTy8G2v_WChkMsDrRDlXX_fpDCJEe7ZIoqyzu2WOG0GQB5JYmo7FCE7sBUPyQ4XGBVjXG-cdqJW2SVzUGmPU0sYQ32eJU_msjnHry7h-9Qo5LLjZQiNoZ2Rv990BxwX7g-CQxfXuku8GMwHz9DA9jVIl42cLqjdeAY7Gse9kwU3NiMBZHcpQP58d0cDuiKzZzQ-OPbdqxwc" alt="" />
+                <img className="w-full h-full object-cover" src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=400&auto=format&fit=crop" alt="" />
               </div>
               <div className="w-10 h-10 rounded-full border-2 border-[#f5bd18] bg-neutral-800 overflow-hidden">
-                <img className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVPCIqQb66zfGZ6ARRpvz-hLLKgeNQYhwOWu2zjDXp5PNlDkS9oDxnDk8Pn8dgTNOwNETkCXMYbmtRMWIUZYkz0OVIKZussoDQXG47U_VMPD2aoE7frzpgL-o7gT7PefJS5qhRsyXgaG5M6pXlf8o3gLBp6miiOgfBrt33qsOOwhEa2EyqOUfIN888RdacqGX6gG6GNPz8JTD6jDhktOiMmTHjFCJo33Uzczk_drl6JVGnbSS0k_EtPLXVVD58WSzJpBQbkE9UsKg" alt="" />
+                <img className="w-full h-full object-cover" src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?q=80&w=400&auto=format&fit=crop" alt="" />
               </div>
             </div>
             <span className="font-black text-white me-4 text-xs uppercase tracking-wider">
-              {isArabic ? "انضم إلينا أكثر من 50 ألف مستخدم موثوق" : "50K+ TRUSTED USERS ALREADY JOINED"}
+              {isArabic ? "انضم إلى أوائل المستخدمين الموثوقين" : "JOIN OUR TRUSTED EARLY USERS"}
             </span>
           </div>
         </div>
@@ -494,75 +494,13 @@ export function LandingPage({ locale }: { locale: Locale }) {
         </div>
       </section>
 
-      {/* Bento Grid / Sponsored Campaigns */}
-      <section className="py-24 bg-[#f5bd18]">
-        <div className="max-w-7xl mx-auto px-4 md:px-12 grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="md:col-span-2 bg-black border border-white/10 p-12 flex flex-col justify-between min-h-[400px] relative overflow-hidden group rounded-none text-start">
-            <div className="relative z-10">
-              <span className="bg-[#f5bd18] text-[#1a1c1c] px-4 py-1 text-xs font-black uppercase mb-6 inline-block rounded-none">
-                {isArabic ? "عرض خاص" : "HOT OFFER"}
-              </span>
-              <h3 className="text-white text-3xl md:text-5xl font-black leading-tight max-w-md">
-                {isArabic ? "موسم تجديد المنازل هنا." : "Home Renovation Season is Here."}
-              </h3>
-              <p className="text-neutral-400 mt-4 max-w-sm font-light">
-                {isArabic ? "احصل على خصم يصل إلى 30% على خدمات النجارة والدهان هذا الشهر. عرض لفترة محدودة." : "Get up to 30% off on all carpentry and painting services this month. Limited time offer."}
-              </p>
-            </div>
-            <div className="relative z-10 mt-8">
-              <Link href={`/${locale}/register/client`} className="inline-block bg-[#f5bd18] text-[#1a1c1c] font-black px-8 py-3 shadow-md hover:translate-x-2 transition-transform rounded-none">
-                {isArabic ? "اكتشف العرض" : "Explore Offer"}
-              </Link>
-            </div>
-            <div className="absolute right-0 bottom-0 w-1/2 h-full opacity-50 pointer-events-none grayscale group-hover:grayscale-0 transition-all">
-              <img className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQH4ooj5xI6feOkG2l4QQbn4x-h_4HMsBIv6bXNkUzSQ61z1ZiwOx7B1ZySoC2bc_e7DsDcDiI_wwO0PSfTc-Q3jgxYCTbYo2g-D4ZStUXp5t40tVgkEmtxhcneDTBiY0DsowaGDl1spsMB6fjkN6SxugYZvaZQIRuCZN6geWaLZvF5Jb-wt_gBb-Yx4ne1eKMUrF1wW8dhhtYCN_YhwJClgnp71eKHbZG25eucT2i4pLmt74EOn3azrZc5kVb824u1oiooioWyX0" alt="" />
-            </div>
-          </div>
-
-          <div className="bg-black border border-white/10 p-10 flex flex-col justify-between bg-gradient-to-br from-neutral-900 to-black rounded-none text-start">
-            <div>
-              <h3 className="text-white text-2xl font-black">
-                {isArabic ? "سوق المواد وقطع الغيار" : "Materials Market"}
-              </h3>
-              <p className="text-neutral-400 mt-2 font-light">
-                {isArabic ? "احصل على قطع الغيار والمواد الأصلية مباشرة من الموردين المعتمدين." : "Source authentic parts directly from verified vendors."}
-              </p>
-            </div>
-            <ul className="space-y-4 my-8">
-              <li className="flex items-center gap-3 text-white font-semibold">
-                <ShieldCheck className="text-[#f5bd18] h-5 w-5" />
-                <span>{isArabic ? "علامات تجارية موثوقة" : "Verified Brands"}</span>
-              </li>
-              <li className="flex items-center gap-3 text-white font-semibold">
-                <ShieldCheck className="text-[#f5bd18] h-5 w-5" />
-                <span>{isArabic ? "شحن وتوصيل في اليوم التالي" : "Next-day Delivery"}</span>
-              </li>
-            </ul>
-            <Link href={`/${locale}/register/vendor`} className="border border-white/20 text-white font-bold px-6 py-3 hover:bg-white hover:text-black transition-colors text-center rounded-none">
-              {isArabic ? "تصفح السوق" : "Explore Marketplace"}
-            </Link>
-          </div>
-        </div>
-      </section>
-
       {/* Featured Pros */}
       <section className="py-24 bg-[#f9f9f9] max-md:bg-transparent">
         <div className="max-w-7xl mx-auto px-4 md:px-12">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-4 text-start border-b border-neutral-200 pb-6">
-            <div>
-              <span className="text-[#775a00] text-xs font-black tracking-widest uppercase">
-                {isArabic ? "الاحترافيين الموثقين" : "VERIFIED CRAFTSMEN"}
-              </span>
-              <h2 className="text-3xl md:text-5xl text-[#1a1c1c] font-black mt-2">
-                {isArabic ? "أبرز الفنيين المتميزين" : "Featured Professionals"}
-              </h2>
-            </div>
-            <Link 
-              href={`/${locale}/workers`} 
-              className="text-[#1a1c1c] text-xs font-black underline underline-offset-8 hover:text-[#775a00] transition-colors uppercase flex items-center gap-2"
-            >
-              {isArabic ? "عرض جميع الفنيين (المزيد) ➔" : "View All Technicians (More) ➔"}
-            </Link>
+          <div className="mb-12 text-start border-b border-neutral-200 pb-6">
+            <h2 className="text-3xl md:text-5xl text-[#1a1c1c] font-black">
+              {isArabic ? "الأسطوات" : "Profs"}
+            </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -625,6 +563,15 @@ export function LandingPage({ locale }: { locale: Locale }) {
               );
             })}
           </div>
+
+          <div className="mt-8 flex justify-end">
+            <Link
+              href={`/${locale}/workers`}
+              className="bg-[#f5bd18] text-[#1a1c1c] px-8 py-3 text-xs font-black rounded-none sticker-shadow active:translate-x-1 active:translate-y-1 active:shadow-none transition-all uppercase"
+            >
+              {isArabic ? "عرض جميع الأسطوات" : "View All Technicians (More) ➔"}
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -682,7 +629,10 @@ export function LandingPage({ locale }: { locale: Locale }) {
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="grid md:grid-cols-3 gap-12">
             <div className="flex items-start gap-6 p-8 md:border-r border-[#e2e2e2] text-start">
-              <ShieldCheck className="h-12 w-12 text-[#1a1c1c] flex-shrink-0" />
+              <div className="relative h-12 w-12 flex-shrink-0 flex items-center justify-center">
+                <Shield className="h-12 w-12 text-[#f5bd18] absolute inset-0" />
+                <Check className="h-5 w-5 text-[#1a1c1c] relative" strokeWidth={3} />
+              </div>
               <div>
                 <h4 className="font-bold text-lg text-[#1a1c1c] uppercase mb-2">
                   {isArabic ? "أمان كامل" : "Full Security"}
@@ -693,7 +643,10 @@ export function LandingPage({ locale }: { locale: Locale }) {
               </div>
             </div>
             <div className="flex items-start gap-6 p-8 md:border-r border-[#e2e2e2] text-start">
-              <ShieldCheck className="h-12 w-12 text-[#1a1c1c] flex-shrink-0" />
+              <div className="relative h-12 w-12 flex-shrink-0 flex items-center justify-center">
+                <Shield className="h-12 w-12 text-[#f5bd18] absolute inset-0" />
+                <Check className="h-5 w-5 text-[#1a1c1c] relative" strokeWidth={3} />
+              </div>
               <div>
                 <h4 className="font-bold text-lg text-[#1a1c1c] uppercase mb-2">
                   {isArabic ? "ضمان الجودة" : "Quality Guarantee"}
@@ -704,7 +657,10 @@ export function LandingPage({ locale }: { locale: Locale }) {
               </div>
             </div>
             <div className="flex items-start gap-6 p-8 text-start">
-              <ShieldCheck className="h-12 w-12 text-[#1a1c1c] flex-shrink-0" />
+              <div className="relative h-12 w-12 flex-shrink-0 flex items-center justify-center">
+                <Shield className="h-12 w-12 text-[#f5bd18] absolute inset-0" />
+                <Check className="h-5 w-5 text-[#1a1c1c] relative" strokeWidth={3} />
+              </div>
               <div>
                 <h4 className="font-bold text-lg text-[#1a1c1c] uppercase mb-2">
                   {isArabic ? "سوق الخامات" : "Materials Market"}
