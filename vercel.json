@@ -1,13 +1,7 @@
 {
   "version": 2,
-  "buildCommand": "npm run prisma:generate && npm run seed --workspace server && npm run build --workspace web",
+  "buildCommand": "npm run build",
   "installCommand": "npm install",
   "framework": "nextjs",
-  "outputDirectory": "apps/web/.next",
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/server"
-    }
-  ]
+  "outputDirectory": "apps/web/.next"
 }
