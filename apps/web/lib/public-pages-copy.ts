@@ -132,20 +132,32 @@ export const publicPageCopy = {
       },
       privacy: {
         eyebrow: "سياسة الخصوصية",
-        title: "سياسة الخصوصية وحماية البيانات والأمان",
-        description: "نلتزم في أُسطفاي بجمع البيانات اللازمة فقط لضمان الأمان والربط بين العملاء والفنيين.",
+        title: "سياسة الخصوصية وحماية البيانات الشخصية",
+        description: "تلتزم منصة أُسطفاي بالامتثال الكامل لأحكام قانون حماية البيانات الشخصية المصري رقم ١٥١ لسنة ٢٠٢٠ ولائحته التنفيذية لضمان سرية وأمان معلوماتكم.",
         sections: [
           {
-            title: "١) جمع هويات الفنيين للأمان",
-            body: "نقوم بجمع بيانات التحقق الرسمية الخاصة بالفنيين (مثل صورة بطاقة الرقم القومي) بهدف توفير ضمان أمني للعملاء وتسهيل الوصول إليهم عند الحاجة."
+            title: "١) الامتثال للقانون رقم ١٥١ لسنة ٢٠٢٠",
+            body: "تخضع كافة عمليات جمع البيانات ومعالجتها وتخزينها ونقلها لأحكام قانون حماية البيانات الشخصية المصري ولائحته التنفيذية لضمان الخصوصية والسرية الكاملة لكافة أطراف المنصة."
           },
           {
-            title: "٢) مشاركة البيانات عند حدوث مشكلات",
-            body: "يتم تخزين بيانات الهوية بشكل آمن، ولكن تحتفظ المنصة بالحق الكامل في مشاركة صورة بطاقة الفني أو بياناته الموثقة مع العميل المتضرر في حال حدوث أي مشكلة أو نزاع لتسهيل الوصول للفني قانونياً أو ودياً."
+            title: "٢) البيانات التي نقوم بجمعها",
+            body: "نقوم بجمع البيانات الشخصية الأساسية (مثل الاسم، الهاتف، والعنوان للعملاء) بالإضافة إلى بيانات التوثيق الرسمية والهوية (مثل الرقم القومي للأسطوات) لضمان أمان وموثوقية منصتنا."
           },
           {
-            title: "٣) عدم جمع البيانات المالية",
-            body: "لا تقوم المنصة بجمع أو تخزين أي بيانات دفع أو بطاقات ائتمانية خاصة بالعملاء أو الفنيين، حيث يقتصر دورنا على تسهيل التواصل وتقديم الضمانات الأمنية الرسمية المذكورة فقط."
+            title: "٣) الغرض من المعالجة والأساس القانوني",
+            body: "تتم معالجة البيانات بموجب موافقتكم الصريحة أو لتنفيذ العقود وتقديم الخدمة وتسهيل التواصل الآمن والامتثال للمتطلبات التنظيمية ومنع سوء الاستخدام."
+          },
+          {
+            title: "٤) حقوق صاحب البيانات الشخصية",
+            body: "تتمتع بكامل الحقوق في الوصول إلى بياناتك، وتصحيحها، أو طلب مسحها (الحق في النسيان)، أو سحب موافقتك على المعالجة، أو التواصل مع مسؤول حماية البيانات الشخصية بالمنصة."
+          },
+          {
+            title: "٥) مشاركة البيانات وسرية النزاعات",
+            body: "لا نقوم ببيع أو مشاركة بياناتك مع الغير للأغراض التجارية. يُستثنى من ذلك مشاركة بيانات التوثيق للفني مع العميل المتضرر لتسهيل الإجراءات القانونية عند حدوث نزاع."
+          },
+          {
+            title: "٦) أمن البيانات ومسؤول حماية البيانات (DPO)",
+            body: "نتبع أعلى المعايير الفنية والتنظيمية لحماية بياناتكم من التسريب والاختراق، مع التزامنا بإبلاغ مركز حماية البيانات المصري والجهات المعنية خلال ٧٢ ساعة في حال حدوث أي تسريب، وتعيين مسؤول لحماية البيانات للتواصل عبر dpo@ostafy.com."
           }
         ]
       },
@@ -326,20 +338,32 @@ export const publicPageCopy = {
       },
       privacy: {
         eyebrow: "Privacy Policy",
-        title: "Privacy Policy & Security Guarantees",
-        description: "At Ostafy, we only collect data essential for verification, security, and connecting clients with craftsmen.",
+        title: "Privacy Policy & Personal Data Protection",
+        description: "At Ostafy, we are fully committed to complying with the Egyptian Personal Data Protection Law No. 151 of 2020 to guarantee the privacy, confidentiality, and security of your information.",
         sections: [
           {
-            title: "1) Verification Data Collection",
-            body: "We collect official identity verification files from craftsmen (such as national ID card images) to provide security guarantees for clients and enable reliable contact details."
+            title: "1) Compliance with Law 151 of 2020",
+            body: "All data collection, processing, storage, and transfer operations are governed by the Egyptian Personal Data Protection Law and its executive regulations to ensure complete privacy for all users."
           },
           {
-            title: "2) Data Sharing for Security and Disputes",
-            body: "Identity data is stored securely. However, the platform retains the right to share the craftsman's national ID copy and details with the affected client in case of any dispute, facilitating legal or personal resolution."
+            title: "2) Personal Data We Collect",
+            body: "We collect basic contact details (such as name, phone number, and address for clients) along with official identity verification documents (such as national ID card images for professionals) to guarantee platform safety and trust."
           },
           {
-            title: "3) No Financial Data Storage",
-            body: "The platform does not collect, store, or process any payment credentials or credit card details. Our scope is strictly limited to connection facilitation and verification tracking."
+            title: "3) Purpose of Processing & Legal Basis",
+            body: "Data is processed based on your explicit consent, to execute service agreements, to facilitate secure professional matching, to comply with regulatory requirements, and to prevent fraudulent activities."
+          },
+          {
+            title: "4) Your Rights as a Data Subject",
+            body: "You possess the full right to access your processed data, request corrections or amendments, request deletion (the right to be forgotten), restrict processing, or withdraw your consent at any time."
+          },
+          {
+            title: "5) Data Sharing & Dispute Resolution",
+            body: "We do not sell, rent, or share your commercial data with third parties. However, in the event of a serious dispute, the platform reserves the right to share the verified professional's identity info with the affected client to facilitate legal action."
+          },
+          {
+            title: "6) Security Measures & Data Protection Officer (DPO)",
+            body: "We adopt state-of-the-art technical and organizational security measures. We commit to notifying the Egyptian Data Protection Center within 72 hours of any data breach, and we have appointed a Data Protection Officer contactable at dpo@ostafy.com."
           }
         ]
       },
