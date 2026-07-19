@@ -46,7 +46,7 @@ function EgyptPhoneBadge({ locale }: { locale: Locale }) {
   return (
     <span className="flex flex-row items-center gap-1.5" dir="ltr">
       <EgyptFlagIcon className="h-4 w-6 rounded-sm" />
-      <span className="text-xs font-bold text-gold">{isArabic ? "مصر" : "Egypt"}</span>
+      <span className="text-xs font-bold text-gold">{isArabic ? "أم الدنيا" : "Egypt"}</span>
     </span>
   );
 }

@@ -32,7 +32,7 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
   const heading = isLogin
     ? (isArabic ? "أهلاً بك" : "WELCOME BACK")
     : (isArabic ? "إنشأ حسابك علي أُسطفاي" : "CREATE ACCOUNT");
-  const subheading = isArabic ? "" : "Premium Service Portal";
+  const subheading = "";
   const mobileSubheading = isLogin
     ? (isArabic ? "تسجيل دخول آمن للحرفيين والعملاء المعتمدين" : "Secure login for Egypt's elite tradesmen and clients")
     : (isArabic ? "انضم إلى أُسطفاي كعميل أو فني أو مورد" : "Join Ostafy as a client, technician, or vendor");

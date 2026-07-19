@@ -68,12 +68,6 @@ export default async function RegisterChoicePage({ params }: { params: Promise<{
       }
     >
       <div className="space-y-4 animate-fadeIn">
-        {!isArabic && (
-          <h2 className="text-lg font-black uppercase tracking-wider text-white/80 mb-6 text-center md:text-start">
-            Choose Registration Type:
-          </h2>
-        )}
-        
         <div className="grid gap-4">
           {options.map(({ key, title, description, href, Icon }) => (
             <Link
