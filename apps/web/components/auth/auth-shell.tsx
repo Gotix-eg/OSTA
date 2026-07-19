@@ -77,10 +77,10 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
       <header className="fixed inset-x-0 top-0 z-50 h-16 border-b border-white/10 bg-black/80 text-white backdrop-blur-md">
         <nav className="mx-auto flex h-full max-w-7xl items-center justify-between px-4 md:px-12">
           <div className="flex items-center gap-8">
-            <div className="flex items-center gap-4 text-gold md:hidden">
+            <Link href={`/${locale}`} className="flex items-center gap-4 text-gold md:hidden">
               <Menu className="h-6 w-6" />
               <span className="text-2xl font-black tracking-tight">OSTA</span>
-            </div>
+            </Link>
             <Link href={`/${locale}`} className="hidden items-center gap-3 md:flex">
               <img src="/logo.svg" alt="OSTA Logo" className="h-8 w-auto brightness-0 invert" />
             </Link>

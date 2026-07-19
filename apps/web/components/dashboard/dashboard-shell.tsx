@@ -375,7 +375,7 @@ export function DashboardShell({
               </button>
 
               {isStitchDashboard ? (
-                <Link href={`/${locale}/${role}`} className="inline-flex items-center lg:hidden">
+                <Link href={`/${locale}`} className="inline-flex items-center lg:hidden">
                   <img src="/logo.svg" alt="Ostafy" className="h-8 w-auto object-contain brightness-0 invert" />
                 </Link>
               ) : null}
@@ -518,9 +518,9 @@ function SidebarContent({
       ) : null}
 
       <div className={cn("relative flex flex-col border", isStitchSidebar ? "border-0 p-0" : "items-center rounded-[2rem] border-white/5 bg-white/5 p-5 backdrop-blur-xl")}>
-        <div className="flex h-16 shrink-0 items-center justify-center w-full">
+        <Link href={`/${locale}`} className="flex h-16 shrink-0 items-center justify-center w-full">
           <img src="/logo.svg" alt="Ostafy" className={cn("h-10 w-auto object-contain", isStitchSidebar ? "brightness-0 invert" : "")} />
-        </div>
+        </Link>
 
         <p className={cn("mt-1 text-xs font-black uppercase tracking-[0.24em]", isStitchSidebar ? "text-gold" : "hidden")}>
           {isAdminDashboard

@@ -58,13 +58,13 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
       {/* TopNavBar */}
       <header className="sticky top-0 z-50 hidden border-b border-white/10 bg-[#1a1c1c]/90 text-white backdrop-blur-md transition-all duration-300 md:block">
         <nav className="flex justify-between items-center px-4 md:px-12 w-full max-w-7xl mx-auto h-20">
-          <div className="flex items-center gap-4">
+          <Link href={`/${locale}`} className="flex items-center gap-4">
             <img 
               alt="OSTA Logo" 
               className="h-8 md:h-12 w-auto object-contain" 
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuBu1Cr2Qb5XunsgNS63dL1yEu4iHVLV6I3gwxqInM8Qta47OxMPmanPnMaXI4SZTFZ9dd-0mEKbHsea4YqRFxqIE2duNvIPoYz5BsUrqf7JDfyAa2YxISdPTRtHV_FiLJgTl1xPi1VjLTpfwMBV9I8USHf_6dTSqD3mfsO2wIhvkC4TU6ipJSOZaUi3B2soFz85UQDUGwK8hTIeEcpBCPtKvahUwI4bhwqX7vHaLypDKtuHfoAuTOIV-UsxJjXrx4QL9sU0ng_2hvU"
             />
-          </div>
+          </Link>
           <ul className="hidden md:flex gap-8 items-center font-bold text-xs uppercase tracking-wider">
             {links.map((item) => {
               const isActive = item.path === "/" 
