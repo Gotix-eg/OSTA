@@ -24,20 +24,33 @@ export default async function LoginPage({ params }: { params: Promise<{ locale: 
     <PublicShell locale={locale} pathname="/login">
       <div className="flex min-h-[70vh] items-center justify-center py-20 px-4 bg-[#f9f9f9] max-md:bg-gold">
         <div 
-          className="relative z-10 w-full max-w-xl border border-white/10 bg-black p-8 sm:p-12 text-white text-start"
+          className="relative z-10 grid w-full max-w-6xl grid-cols-1 md:grid-cols-2 border border-white/10 bg-black text-white text-start overflow-hidden rounded-none"
           style={{
             boxShadow: "6px 6px 0px #1a1c1c"
           }}
         >
-          <div className="mb-8">
-            <h1 className="text-3xl font-black text-gold uppercase mb-2">
-              {locale === "ar" ? "تسجيل الدخول" : "WELCOME BACK"}
-            </h1>
-            <p className="text-neutral-400 text-sm">
-              {authCopy[locale].loginBody}
-            </p>
+          {/* Photo Column */}
+          <div className="relative hidden md:block min-h-[500px]">
+            <img 
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbfJ-2IS0360vqfuhA-1NqheG3brCUZN76EodMJBKF9vokisslyWi0g1RYa1pqwr0_MOFfrHqLJJDwj3228wWUnrA02sMvWtljZz34nlB9m-lPPKzi9OW3vEu7MFeoJLIwwivipO15TWmhDAjdkRYMHCDAyy6fYNcv6MbRjHrrdWErxNnDtkkgN5nR94neVSIhHYNfrmkUUhNIzrBXIdYsaC3zHiCQ35GBv_nPGbiEWpTnd7ULVnkTwOVpH-yyfmCAUcDgTzMPvOE"
+              alt="Ostafy Login"
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/10 z-10" />
           </div>
-          <LoginForm locale={locale} />
+
+          {/* Form Column */}
+          <div className="p-8 sm:p-12 flex flex-col justify-center">
+            <div className="mb-8">
+              <h1 className="text-3xl font-black text-gold uppercase mb-2">
+                {locale === "ar" ? "تسجيل الدخول" : "WELCOME BACK"}
+              </h1>
+              <p className="text-neutral-400 text-sm">
+                {authCopy[locale].loginBody}
+              </p>
+            </div>
+            <LoginForm locale={locale} />
+          </div>
         </div>
       </div>
     </PublicShell>
