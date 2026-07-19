@@ -79,7 +79,7 @@ const vendorRegisterDefaults: VendorRegisterState = {
   storeName: "",
   firstName: "",
   lastName: "",
-  phone: "",
+  phone: "+20",
   email: "",
   password: "",
   confirmPassword: "",
@@ -95,7 +95,7 @@ const vendorRegisterDefaults: VendorRegisterState = {
 };
 
 const clientRegisterDefaults: ClientRegisterState = {
-  phone: "",
+  phone: "+20",
   otp: "",
   firstName: "",
   lastName: "",
@@ -106,7 +106,7 @@ const clientRegisterDefaults: ClientRegisterState = {
 };
 
 const workerRegisterDefaults: WorkerRegisterState = {
-  phone: "",
+  phone: "+20",
   otp: "",
   firstName: "",
   lastName: "",
@@ -118,6 +118,42 @@ const workerRegisterDefaults: WorkerRegisterState = {
   profession: "",
   acceptedTerms: false
 };
+
+export function formatEgyptianPhone(val: string): string {
+  if (val.length < 3) {
+    return "+20";
+  }
+  
+  let digits = val.replace(/\D/g, "");
+  
+  if (digits.startsWith("20")) {
+    digits = digits.substring(2);
+  }
+  
+  while (digits.startsWith("0")) {
+    digits = digits.substring(1);
+  }
+  
+  digits = digits.substring(0, 10);
+  
+  let formatted = "+20";
+  if (digits.length > 0) {
+    const part1 = digits.substring(0, 3);
+    formatted += " " + part1;
+    
+    if (digits.length > 3) {
+      const part2 = digits.substring(3, 6);
+      formatted += " " + part2;
+    }
+    
+    if (digits.length > 6) {
+      const part3 = digits.substring(6, 10);
+      formatted += " " + part3;
+    }
+  }
+  
+  return formatted;
+}
 
 type AuthSuccessResponse = {
   accessToken: string;
@@ -172,7 +208,9 @@ function InputField({
   helperText,
   errorText,
   name,
-  autoComplete
+  autoComplete,
+  suffix,
+  locale
 }: {
   label: string;
   value: string;
@@ -185,6 +223,8 @@ function InputField({
   errorText?: string;
   name?: string;
   autoComplete?: string;
+  suffix?: React.ReactNode;
+  locale?: string;
 }) {
   return (
     <label className="block space-y-2 text-start">
@@ -203,18 +243,26 @@ function InputField({
           )}
         />
       ) : (
-        <input
-          type={type}
-          value={value}
-          onChange={(event) => onChange(event.target.value)}
-          placeholder={placeholder}
-          name={name}
-          autoComplete={autoComplete}
-          className={cn(
-            "h-14 w-full rounded-none border bg-[#121212] px-4 text-sm font-semibold text-white outline-none transition-colors placeholder:text-white/20 focus:border-gold",
-            errorText ? "border-red-500" : "border-white/20"
+        <div className="relative">
+          {suffix && (
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none select-none">
+              {suffix}
+            </div>
           )}
-        />
+          <input
+            type={type}
+            value={value}
+            onChange={(event) => onChange(event.target.value)}
+            placeholder={placeholder}
+            name={name}
+            autoComplete={autoComplete}
+            className={cn(
+              "h-14 w-full rounded-none border bg-[#121212] text-sm font-semibold text-white outline-none transition-colors placeholder:text-white/20 focus:border-gold",
+              suffix ? (locale === "ar" ? "pl-4 pr-28" : "pl-4 pr-14") : "px-4",
+              errorText ? "border-red-500" : "border-white/20"
+            )}
+          />
+        </div>
       )}
       {errorText ? (
         <p className="text-xs text-red-500 mt-1 select-none font-bold animate-fadeIn">{errorText}</p>
@@ -290,7 +338,7 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
   const copy = authCopy[locale];
   const isArabic = locale === "ar";
   const [showPassword, setShowPassword] = useState(false);
-  const [phone, setPhone] = useState("");
+  const [phone, setPhone] = useState("+20");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(true);
   const [submitted, setSubmitted] = useState(false);
@@ -347,7 +395,7 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
 
     try {
       const payload = await postApiData<AuthSuccessResponse, { phone: string; password: string }>("/auth/login", {
-        phone,
+        phone: phone.replace(/\s+/g, ""),
         password
       });
 
@@ -419,17 +467,18 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
             {isAdmin ? <Phone size={14} className="hidden text-gold md:block" /> : <Phone size={14} className="hidden text-gold md:block" />}
           </label>
           <div className="relative">
-            {isAdmin ? (
-              <Phone size={20} className="absolute start-4 top-1/2 -translate-y-1/2 text-white/45" />
-            ) : (
-              <Phone size={20} className="absolute start-4 top-1/2 -translate-y-1/2 text-white/40 md:hidden" />
-            )}
+            <span className="absolute right-4 top-1/2 -translate-y-1/2 select-none flex flex-row items-center gap-1.5 text-3xl" dir="ltr">
+              <span>🇪🇬</span>
+              {locale === "ar" && (
+                <span className="text-xs font-bold text-gold">أم الدنيا</span>
+              )}
+            </span>
             <input
               id="login-phone"
               type="text"
               value={phone}
               onChange={(e) => {
-                setPhone(e.target.value);
+                setPhone(formatEgyptianPhone(e.target.value));
                 if (phoneError) setPhoneError(null);
               }}
               placeholder={loginLabels.phonePlaceholder}
@@ -439,8 +488,8 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
               aria-invalid={phoneError ? true : undefined}
               aria-describedby={phoneError ? "login-phone-error" : undefined}
               className={cn(
-                "w-full rounded-none bg-[#121212] p-4 font-semibold text-white transition-colors placeholder:text-white/20 focus:border-gold focus:outline-none focus:ring-0",
-                isAdmin ? "ps-12 md:ps-12" : "ps-12 md:ps-4",
+                "w-full rounded-none bg-[#121212] p-4 pl-4 font-semibold text-white transition-colors placeholder:text-white/20 focus:border-gold focus:outline-none focus:ring-0",
+                locale === "ar" ? "pr-28" : "pr-16",
                 phoneError ? "border-2 border-red-500" : "border border-white/20"
               )}
             />
@@ -501,13 +550,13 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
               type="checkbox"
               checked={remember}
               onChange={(e) => setRemember(e.target.checked)}
-              className="rounded-none bg-transparent border-white/20 text-gold focus:ring-0 focus:ring-offset-0 cursor-pointer h-4 w-4"
+              className="rounded-none bg-transparent border-white/20 text-gold accent-gold focus:ring-0 focus:ring-offset-0 cursor-pointer h-4 w-4"
             />
             <span className="leading-tight transition-colors group-hover:text-white">
               {loginLabels.remember}
             </span>
           </label>
-          <Link href={`/${locale}/forgot-password`} className="text-end leading-tight transition-colors hover:text-gold">
+          <Link href={`/${locale}/forgot-password`} className="text-end leading-tight text-gold hover:underline transition-colors">
             {loginLabels.forgot}
           </Link>
         </div>
@@ -560,6 +609,32 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
         {error && (
           <div className="p-4 border border-red-500/20 bg-red-500/5 text-red-500 text-center font-bold rounded-none">
             {error}
+          </div>
+        )}
+
+        {!isAdmin && (
+          <div className="pt-2 text-center text-sm font-semibold text-white/60">
+            {isArabic ? (
+              <>
+                ليس لديك حساب؟{" "}
+                <Link
+                  href={`/${locale}/register`}
+                  className="text-gold hover:underline transition-colors font-bold"
+                >
+                  سجّل الآن
+                </Link>
+              </>
+            ) : (
+              <>
+                Don&apos;t have an account?{" "}
+                <Link
+                  href={`/${locale}/register`}
+                  className="text-gold hover:underline transition-colors font-bold"
+                >
+                  Register Now
+                </Link>
+              </>
+            )}
           </div>
         )}
       </div>
@@ -677,7 +752,8 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
     setError(null);
 
     // Basic Validation
-    if (!state.phone || state.phone.length < 10) {
+    const cleanPhone = state.phone.replace(/\s+/g, "");
+    if (!cleanPhone || cleanPhone.length < 13) {
       setError(isArabic ? "رقم الهاتف غير صحيح" : "Invalid phone number");
       setIsSubmitting(false);
       return;
@@ -707,7 +783,8 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
     try {
       const { email, ...registerData } = state;
       const payload: any = await postApiData<any, any>("/auth/register/client", {
-        ...registerData
+        ...registerData,
+        phone: cleanPhone
       });
 
       if (payload.needsVerification) {
@@ -806,9 +883,18 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
             <InputField
               label={isArabic ? "رقم الهاتف" : "Phone number"}
               value={state.phone}
-              onChange={(phone) => setState({ ...state, phone })}
+              onChange={(phone) => setState({ ...state, phone: formatEgyptianPhone(phone) })}
               placeholder="01x xxxx xxxx"
               helperText={isArabic ? "مثال: 01012345678 (رقم هاتف مصري مكون من 11 رقماً)" : "E.g. 01012345678 (11-digit Egyptian phone number)"}
+              suffix={
+                <span className="flex flex-row items-center gap-1.5 text-3xl" dir="ltr">
+                  <span className="select-none">🇪🇬</span>
+                  {locale === "ar" && (
+                    <span className="text-xs font-bold text-gold">أم الدنيا</span>
+                  )}
+                </span>
+              }
+              locale={locale}
             />
 
             <div className="grid gap-6 sm:grid-cols-2">
@@ -892,7 +978,8 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
     setError(null);
 
     // Validation
-    if (!state.phone || state.phone.length < 10) {
+    const cleanPhone = state.phone.replace(/\s+/g, "");
+    if (!cleanPhone || cleanPhone.length < 13) {
       setError(isArabic ? "رقم الهاتف غير صحيح" : "Invalid phone number");
       setIsSubmitting(false);
       return;
@@ -934,7 +1021,10 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
     }
 
     try {
-      const payload = await postApiData<AuthSuccessResponse, any>("/auth/register/worker", { ...state });
+      const payload = await postApiData<AuthSuccessResponse, any>("/auth/register/worker", {
+        ...state,
+        phone: cleanPhone
+      });
       setSubmitted(true);
       applyAuthSuccess(locale, payload, true);
     } catch (err) {
@@ -964,9 +1054,18 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
             <InputField 
               label={isArabic ? "رقم الهاتف" : "Phone number"} 
               value={state.phone} 
-              onChange={(phone) => setState({ ...state, phone })} 
+              onChange={(phone) => setState({ ...state, phone: formatEgyptianPhone(phone) })} 
               placeholder="01x xxxx xxxx" 
               helperText={isArabic ? "مثال: 01012345678 (رقم هاتف مصري مكون من 11 رقماً)" : "E.g. 01012345678 (11-digit Egyptian phone number)"}
+              suffix={
+                <span className="flex flex-row items-center gap-1.5 text-3xl" dir="ltr">
+                  <span className="select-none">🇪🇬</span>
+                  {locale === "ar" && (
+                    <span className="text-xs font-bold text-gold">أم الدنيا</span>
+                  )}
+                </span>
+              }
+              locale={locale}
             />
 
             <div className="grid gap-6 sm:grid-cols-2">
@@ -1074,7 +1173,8 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
     setError(null);
 
     // Validation
-    if (!state.phone || state.phone.length < 10) {
+    const cleanPhone = state.phone.replace(/\s+/g, "");
+    if (!cleanPhone || cleanPhone.length < 13) {
       setError(isArabic ? "رقم الهاتف غير صحيح" : "Invalid phone number");
       setIsSubmitting(false);
       return;
@@ -1127,7 +1227,10 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
     }
 
     try {
-      const payload = await postApiData<AuthSuccessResponse, any>("/auth/register/vendor", { ...state });
+      const payload = await postApiData<AuthSuccessResponse, any>("/auth/register/vendor", {
+        ...state,
+        phone: cleanPhone
+      });
       setSubmitted(true);
       applyAuthSuccess(locale, payload, true);
     } catch (err) {
@@ -1157,9 +1260,18 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
             <InputField 
               label={isArabic ? "رقم الهاتف" : "Phone number"} 
               value={state.phone} 
-              onChange={(phone) => setState({ ...state, phone })} 
+              onChange={(phone) => setState({ ...state, phone: formatEgyptianPhone(phone) })} 
               placeholder="01x xxxx xxxx" 
               helperText={isArabic ? "مثال: 01012345678 (رقم هاتف مصري مكون من 11 رقماً)" : "E.g. 01012345678 (11-digit Egyptian phone number)"}
+              suffix={
+                <span className="flex flex-row items-center gap-1.5 text-3xl" dir="ltr">
+                  <span className="select-none">🇪🇬</span>
+                  {locale === "ar" && (
+                    <span className="text-xs font-bold text-gold">أم الدنيا</span>
+                  )}
+                </span>
+              }
+              locale={locale}
             />
             <InputField label={isArabic ? "اسم المتجر" : "Store Name"} value={state.storeName} onChange={(n) => setState({ ...state, storeName: n })} placeholder={isArabic ? "الشركة العربية للمستلزمات" : "Arab Supply Co."} />
             <SelectField

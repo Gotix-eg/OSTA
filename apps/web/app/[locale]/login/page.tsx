@@ -22,7 +22,7 @@ export default async function LoginPage({ params }: { params: Promise<{ locale: 
 
   return (
     <PublicShell locale={locale} pathname="/login">
-      <div className="flex min-h-[70vh] items-center justify-center py-20 px-4 bg-[#f9f9f9] max-md:bg-gold">
+      <div className="flex min-h-[70vh] items-center justify-center py-20 px-4 bg-gold">
         <div 
           className="relative z-10 grid w-full max-w-6xl grid-cols-1 md:grid-cols-2 border border-white/10 bg-black text-white text-start overflow-hidden rounded-none"
           style={{

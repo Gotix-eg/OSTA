@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 
 import { PublicContentPage } from "@/components/public/public-pages";
 import { PublicShell } from "@/components/public/public-shell";
-import { isLocale } from "@/lib/locales";
+import { isLocale, type Locale } from "@/lib/locales";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -17,10 +17,15 @@ export default async function BillingPage({ params }: { params: Promise<{ locale
 
   if (!isLocale(locale)) notFound();
 
+  // Disabled for now
+  notFound();
+
+  const validatedLocale = locale as Locale;
+
   return (
-    <PublicShell locale={locale} pathname="/billing">
+    <PublicShell locale={validatedLocale} pathname="/billing">
       <div className="section-shell py-12">
-        <PublicContentPage locale={locale} pageKey="billing" />
+        <PublicContentPage locale={validatedLocale} pageKey="billing" />
       </div>
     </PublicShell>
   );
