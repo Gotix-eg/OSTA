@@ -258,7 +258,8 @@ function InputField({
   errorText,
   name,
   autoComplete,
-  suffix
+  suffix,
+  dir
 }: {
   label: string;
   value: string;
@@ -272,6 +273,7 @@ function InputField({
   name?: string;
   autoComplete?: string;
   suffix?: React.ReactNode;
+  dir?: "ltr" | "rtl";
 }) {
   return (
     <label className="block space-y-2 text-start">
@@ -303,6 +305,7 @@ function InputField({
             placeholder={placeholder}
             name={name}
             autoComplete={autoComplete}
+            dir={dir}
             className={cn(
               "h-14 w-full rounded-none border bg-[#121212] text-sm font-semibold text-white outline-none transition-colors placeholder:text-white/20 focus:border-gold",
               suffix ? "pl-4 pr-24" : "px-4",
@@ -930,6 +933,7 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
               placeholder="01x xxxx xxxx"
               helperText={isArabic ? "مثال: 01012345678 (رقم هاتف مصري مكون من 11 رقماً)" : "E.g. 01012345678 (11-digit Egyptian phone number)"}
               suffix={<EgyptPhoneBadge locale={locale} />}
+              dir="ltr"
             />
 
             <div className="grid gap-6 sm:grid-cols-2">
@@ -937,19 +941,19 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
               <InputField label={isArabic ? "اسم العائلة" : "Last name"} value={state.lastName} onChange={(lastName) => setState({ ...state, lastName })} placeholder={isArabic ? "أحمد" : "Doe"} />
             </div>
             <div className="grid gap-6 sm:grid-cols-2">
-              <InputField 
-                label={isArabic ? "كلمة المرور" : "Password"} 
-                value={state.password} 
-                onChange={(password) => setState({ ...state, password })} 
-                type="password" 
+              <InputField
+                label={isArabic ? "كلمة المرور" : "Password"}
+                value={state.password}
+                onChange={(password) => setState({ ...state, password })}
+                type="password"
                 placeholder="••••••••"
                 helperText={isArabic ? "يجب أن تحتوي على 8 أحرف أو أرقام على الأقل" : "Must be at least 8 characters/numbers"}
               />
-              <InputField 
-                label={isArabic ? "تأكيد كلمة المرور" : "Confirm password"} 
-                value={state.confirmPassword} 
-                onChange={(confirmPassword) => setState({ ...state, confirmPassword })} 
-                type="password" 
+              <InputField
+                label={isArabic ? "تأكيد كلمة المرور" : "Confirm password"}
+                value={state.confirmPassword}
+                onChange={(confirmPassword) => setState({ ...state, confirmPassword })}
+                type="password"
                 placeholder="••••••••"
                 helperText={isArabic ? "أعد كتابة كلمة المرور المدخلة للتأكيد" : "Retype the password to confirm"}
               />
@@ -967,9 +971,9 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
             </span>
           </label>
 
-          <button 
-              type="button" 
-              onClick={handleRegister} 
+          <button
+              type="button"
+              onClick={handleRegister}
               disabled={isSubmitting}
               className="flex h-14 w-full items-center justify-center gap-2 bg-gold text-sm font-black uppercase text-black shadow-[4px_4px_0_#000] transition-transform active:translate-x-1 active:translate-y-1 active:shadow-none disabled:opacity-50"
           >
@@ -1095,6 +1099,7 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
               placeholder="01x xxxx xxxx" 
               helperText={isArabic ? "مثال: 01012345678 (رقم هاتف مصري مكون من 11 رقماً)" : "E.g. 01012345678 (11-digit Egyptian phone number)"}
               suffix={<EgyptPhoneBadge locale={locale} />}
+              dir="ltr"
             />
 
             <div className="grid gap-6 sm:grid-cols-2">
@@ -1295,6 +1300,7 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
               placeholder="01x xxxx xxxx" 
               helperText={isArabic ? "مثال: 01012345678 (رقم هاتف مصري مكون من 11 رقماً)" : "E.g. 01012345678 (11-digit Egyptian phone number)"}
               suffix={<EgyptPhoneBadge locale={locale} />}
+              dir="ltr"
             />
             <InputField label={isArabic ? "اسم المتجر" : "Store Name"} value={state.storeName} onChange={(n) => setState({ ...state, storeName: n })} placeholder={isArabic ? "الشركة العربية للمستلزمات" : "Arab Supply Co."} />
             <SelectField
