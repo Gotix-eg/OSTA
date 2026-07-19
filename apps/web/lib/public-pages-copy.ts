@@ -1,6 +1,6 @@
 import type { Locale } from "./locales";
 
-export type PublicPageKey = "services" | "how-it-works" | "about" | "contact" | "faq" | "terms" | "privacy" | "careers";
+export type PublicPageKey = "services" | "how-it-works" | "about" | "contact" | "faq" | "terms" | "privacy" | "careers" | "billing";
 
 export const publicPageCopy = {
   ar: {
@@ -158,6 +158,37 @@ export const publicPageCopy = {
           {
             title: "٦) أمن البيانات ومسؤول حماية البيانات (DPO)",
             body: "نتبع أعلى المعايير الفنية والتنظيمية لحماية بياناتكم من التسريب والاختراق، مع التزامنا بإبلاغ مركز حماية البيانات المصري والجهات المعنية خلال ٧٢ ساعة في حال حدوث أي تسريب، وتعيين مسؤول لحماية البيانات للتواصل عبر dpo@ostafy.com."
+          }
+        ]
+      },
+      billing: {
+        eyebrow: "سياسة الاشتراكات",
+        title: "سياسة الاشتراكات والفوترة",
+        description: "توضح هذه السياسة الشروط والرسوم المنظمة للاشتراكات الشهرية الخاصة بالمهنيين والأسطوات على منصة أُسطفاي.",
+        sections: [
+          {
+            title: "١) نظام الاشتراك الشهري الثابت",
+            body: "تبلغ قيمة الاشتراك الشهري الثابت للفنيين ومزودي الخدمات ١٥٠ جنيهاً مصرياً فقط، شاملة الرسوم الإدارية، للوصول واستلام طلبات العملاء بشكل كامل."
+          },
+          {
+            title: "٢) دورة الفوترة والتجديد",
+            body: "تُحتسب دورة الاشتراك لمدة ٣٠ يوماً تبدأ من تاريخ التفعيل، ويتجدد الاشتراك تلقائياً عند قيام العضو بسداد الرسوم للفترة التالية."
+          },
+          {
+            title: "٣) وسائل الدفع المقبولة",
+            body: "نوفر وسائل دفع محلية مريحة تشمل المحافظ الإلكترونية للهواتف (مثل فودافون كاش)، شبكة InstaPay للتحويل اللحظي، نقاط Fawry، والبطاقات البنكية (Visa / MasterCard)."
+          },
+          {
+            title: "٤) فترة السماح وتعليق الحساب",
+            body: "نمنح فترة سماح تبلغ ٣ أيام بعد تاريخ انتهاء الاشتراك. في حال عدم السداد بعد انتهاء هذه الفترة، يتم تعليق الحساب مؤقتاً وحجبه من استقبال أي طلبات جديدة حتى تتم تسوية الرسوم."
+          },
+          {
+            title: "٥) سياسة عدم الاسترداد",
+            body: "رسوم الاشتراك الشهري البالغة ١٥٠ جنيهاً مصرياً هي رسوم غير قابلة للاسترداد بمجرد تفعيل الفترة الشهرية وبدء تقديم خدمات المطابقة وتلقي الطلبات."
+          },
+          {
+            title: "٦) إلغاء الاشتراك",
+            body: "يحق لمزود الخدمة إلغاء اشتراكه في أي وقت، وسيظل الحساب فعالاً حتى نهاية الفترة المدفوعة الحالية (٣٠ يوماً) دون فرض أي رسوم تجديد مستقبلية."
           }
         ]
       },
@@ -364,6 +395,37 @@ export const publicPageCopy = {
           {
             title: "6) Security Measures & Data Protection Officer (DPO)",
             body: "We adopt state-of-the-art technical and organizational security measures. We commit to notifying the Egyptian Data Protection Center within 72 hours of any data breach, and we have appointed a Data Protection Officer contactable at dpo@ostafy.com."
+          }
+        ]
+      },
+      billing: {
+        eyebrow: "Billing Policy",
+        title: "Subscription Terms & Billing Policy",
+        description: "This policy governs the subscription models, payments, and billing terms for service providers and independent contractors on the Ostafy platform.",
+        sections: [
+          {
+            title: "1) Flat-Rate Monthly Subscription",
+            body: "The flat-rate fee is EGP 150 per month (inclusive of administrative fees) to access and receive incoming client leads and service requests."
+          },
+          {
+            title: "2) Billing Cycle & Renewal",
+            body: "Your billing cycle is 30 days starting on the day of activation. Subscriptions are renewed upon successful receipt of the billing fee for the next cycle."
+          },
+          {
+            title: "3) Accepted Payment Methods",
+            body: "We accept popular local payment options including Mobile Wallets, InstaPay instant transfers, Fawry points, and major Credit/Debit Cards (Visa/MasterCard)."
+          },
+          {
+            title: "4) Grace Period & Account Suspension",
+            body: "We offer a 3-day grace period post-expiration. If payment is not completed, your account will be temporarily suspended and blocked from new leads until the balance is settled."
+          },
+          {
+            title: "5) No-Refund Policy",
+            body: "The EGP 150 subscription fee is non-refundable once the billing period has commenced and request-matching features have been enabled."
+          },
+          {
+            title: "6) Cancellation Policy",
+            body: "You may cancel your subscription at any time. Upon cancellation, your account will remain active through the end of the current paid billing cycle, and no future charges will apply."
           }
         ]
       },
