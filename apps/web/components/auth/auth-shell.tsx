@@ -55,7 +55,7 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
             boxShadow: "6px 6px 0px #1a1c1c"
           }}
         >
-          <div className="group relative hidden md:block" style={{ minHeight: "600px" }}>
+          <div className="group relative hidden md:block overflow-hidden" style={{ minHeight: "600px" }}>
             <div
               className="absolute inset-0 z-10"
               style={{ background: "linear-gradient(to right, rgba(0,0,0,0.6), transparent)" }}
@@ -66,7 +66,7 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
               fill
               priority
               sizes="(min-width: 768px) 50vw, 0px"
-              className="absolute inset-0 object-cover"
+              className="absolute inset-0 object-cover scale-105 origin-right"
             />
             <div className="absolute bottom-12 left-12 z-20 max-w-md" dir={isArabic ? "rtl" : "ltr"}>
               <h2 className="mb-4 text-4xl font-black leading-tight text-white">

@@ -31,11 +31,11 @@ export default async function LoginPage({ params }: { params: Promise<{ locale: 
           }}
         >
           {/* Photo Column */}
-          <div className="relative hidden md:block min-h-[500px]">
+          <div className="relative hidden md:block min-h-[500px] overflow-hidden">
             <img 
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbfJ-2IS0360vqfuhA-1NqheG3brCUZN76EodMJBKF9vokisslyWi0g1RYa1pqwr0_MOFfrHqLJJDwj3228wWUnrA02sMvWtljZz34nlB9m-lPPKzi9OW3vEu7MFeoJLIwwivipO15TWmhDAjdkRYMHCDAyy6fYNcv6MbRjHrrdWErxNnDtkkgN5nR94neVSIhHYNfrmkUUhNIzrBXIdYsaC3zHiCQ35GBv_nPGbiEWpTnd7ULVnkTwOVpH-yyfmCAUcDgTzMPvOE"
               alt="Ostafy Login"
-              className="absolute inset-0 w-full h-full object-cover"
+              className="absolute inset-0 w-full h-full object-cover scale-105 origin-right"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/10 z-10" />
           </div>
