@@ -31,6 +31,55 @@ import { SelectField } from "@/components/shared/select-field";
 import { ImageUpload } from "@/components/shared/image-upload";
 import { egyptianGovernorates, majorCities, vendorCategories, workerProfessions } from "@/lib/geo-data";
 
+function EgyptFlagIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 3 2" className={className} aria-hidden="true">
+      <rect width="3" height="2" fill="#ce1126" />
+      <rect width="3" height="0.6667" y="0.6667" fill="#fff" />
+      <rect width="3" height="0.6667" y="1.3333" fill="#000" />
+    </svg>
+  );
+}
+
+function EgyptPhoneBadge({ locale }: { locale: Locale }) {
+  const isArabic = locale === "ar";
+  return (
+    <span className="flex flex-row items-center gap-1.5" dir="ltr">
+      <EgyptFlagIcon className="h-4 w-6 rounded-sm" />
+      <span className="text-xs font-bold text-gold">{isArabic ? "مصر" : "Egypt"}</span>
+    </span>
+  );
+}
+
+function TermsConsentText({ locale }: { locale: Locale }) {
+  const isArabic = locale === "ar";
+  const linkClass = "underline underline-offset-2 hover:text-gold transition-colors";
+
+  return isArabic ? (
+    <>
+      أوافق على{" "}
+      <Link href={`/${locale}/terms`} target="_blank" rel="noopener noreferrer" className={linkClass}>
+        الشروط
+      </Link>{" "}
+      و
+      <Link href={`/${locale}/privacy`} target="_blank" rel="noopener noreferrer" className={linkClass}>
+        سياسة الخصوصية
+      </Link>
+    </>
+  ) : (
+    <>
+      I agree to the{" "}
+      <Link href={`/${locale}/terms`} target="_blank" rel="noopener noreferrer" className={linkClass}>
+        terms
+      </Link>{" "}
+      and{" "}
+      <Link href={`/${locale}/privacy`} target="_blank" rel="noopener noreferrer" className={linkClass}>
+        privacy policy
+      </Link>
+    </>
+  );
+}
+
 type ClientRegisterState = {
   phone: string;
   otp: string;
@@ -209,8 +258,7 @@ function InputField({
   errorText,
   name,
   autoComplete,
-  suffix,
-  locale
+  suffix
 }: {
   label: string;
   value: string;
@@ -224,7 +272,6 @@ function InputField({
   name?: string;
   autoComplete?: string;
   suffix?: React.ReactNode;
-  locale?: string;
 }) {
   return (
     <label className="block space-y-2 text-start">
@@ -258,7 +305,7 @@ function InputField({
             autoComplete={autoComplete}
             className={cn(
               "h-14 w-full rounded-none border bg-[#121212] text-sm font-semibold text-white outline-none transition-colors placeholder:text-white/20 focus:border-gold",
-              suffix ? (locale === "ar" ? "pl-4 pr-28" : "pl-4 pr-14") : "px-4",
+              suffix ? "pl-4 pr-24" : "px-4",
               errorText ? "border-red-500" : "border-white/20"
             )}
           />
@@ -467,11 +514,8 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
             {isAdmin ? <Phone size={14} className="hidden text-gold md:block" /> : <Phone size={14} className="hidden text-gold md:block" />}
           </label>
           <div className="relative">
-            <span className="absolute right-4 top-1/2 -translate-y-1/2 select-none flex flex-row items-center gap-1.5 text-3xl" dir="ltr">
-              <span>🇪🇬</span>
-              {locale === "ar" && (
-                <span className="text-xs font-bold text-gold">أم الدنيا</span>
-              )}
+            <span className="absolute right-4 top-1/2 -translate-y-1/2 select-none" dir="ltr">
+              <EgyptPhoneBadge locale={locale} />
             </span>
             <input
               id="login-phone"
@@ -488,8 +532,7 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
               aria-invalid={phoneError ? true : undefined}
               aria-describedby={phoneError ? "login-phone-error" : undefined}
               className={cn(
-                "w-full rounded-none bg-[#121212] p-4 pl-4 font-semibold text-white transition-colors placeholder:text-white/20 focus:border-gold focus:outline-none focus:ring-0",
-                locale === "ar" ? "pr-28" : "pr-16",
+                "w-full rounded-none bg-[#121212] p-4 pl-4 pr-24 font-semibold text-white transition-colors placeholder:text-white/20 focus:border-gold focus:outline-none focus:ring-0",
                 phoneError ? "border-2 border-red-500" : "border border-white/20"
               )}
             />
@@ -886,15 +929,7 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
               onChange={(phone) => setState({ ...state, phone: formatEgyptianPhone(phone) })}
               placeholder="01x xxxx xxxx"
               helperText={isArabic ? "مثال: 01012345678 (رقم هاتف مصري مكون من 11 رقماً)" : "E.g. 01012345678 (11-digit Egyptian phone number)"}
-              suffix={
-                <span className="flex flex-row items-center gap-1.5 text-3xl" dir="ltr">
-                  <span className="select-none">🇪🇬</span>
-                  {locale === "ar" && (
-                    <span className="text-xs font-bold text-gold">أم الدنيا</span>
-                  )}
-                </span>
-              }
-              locale={locale}
+              suffix={<EgyptPhoneBadge locale={locale} />}
             />
 
             <div className="grid gap-6 sm:grid-cols-2">
@@ -927,7 +962,9 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
                 <div className="h-full w-full border border-white/20 bg-[#121212] transition peer-checked:border-gold peer-checked:bg-gold" />
                 <Check className="pointer-events-none absolute h-3.5 w-3.5 text-black opacity-0 transition peer-checked:opacity-100" />
             </div>
-            <span className="text-sm font-semibold text-white/50 transition group-hover:text-white">{copy.terms}</span>
+            <span className="text-sm font-semibold text-white/50 transition group-hover:text-white">
+              <TermsConsentText locale={locale} />
+            </span>
           </label>
 
           <button 
@@ -1057,15 +1094,7 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
               onChange={(phone) => setState({ ...state, phone: formatEgyptianPhone(phone) })} 
               placeholder="01x xxxx xxxx" 
               helperText={isArabic ? "مثال: 01012345678 (رقم هاتف مصري مكون من 11 رقماً)" : "E.g. 01012345678 (11-digit Egyptian phone number)"}
-              suffix={
-                <span className="flex flex-row items-center gap-1.5 text-3xl" dir="ltr">
-                  <span className="select-none">🇪🇬</span>
-                  {locale === "ar" && (
-                    <span className="text-xs font-bold text-gold">أم الدنيا</span>
-                  )}
-                </span>
-              }
-              locale={locale}
+              suffix={<EgyptPhoneBadge locale={locale} />}
             />
 
             <div className="grid gap-6 sm:grid-cols-2">
@@ -1122,7 +1151,9 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
                 <div className="h-full w-full border border-white/20 bg-[#121212] transition peer-checked:border-gold peer-checked:bg-gold" />
                 <Check className="pointer-events-none absolute h-3.5 w-3.5 text-black opacity-0 transition peer-checked:opacity-100" />
             </div>
-            <span className="text-sm font-semibold text-white/50 transition group-hover:text-white">{copy.terms}</span>
+            <span className="text-sm font-semibold text-white/50 transition group-hover:text-white">
+              <TermsConsentText locale={locale} />
+            </span>
           </label>
 
           <button 
@@ -1263,15 +1294,7 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
               onChange={(phone) => setState({ ...state, phone: formatEgyptianPhone(phone) })} 
               placeholder="01x xxxx xxxx" 
               helperText={isArabic ? "مثال: 01012345678 (رقم هاتف مصري مكون من 11 رقماً)" : "E.g. 01012345678 (11-digit Egyptian phone number)"}
-              suffix={
-                <span className="flex flex-row items-center gap-1.5 text-3xl" dir="ltr">
-                  <span className="select-none">🇪🇬</span>
-                  {locale === "ar" && (
-                    <span className="text-xs font-bold text-gold">أم الدنيا</span>
-                  )}
-                </span>
-              }
-              locale={locale}
+              suffix={<EgyptPhoneBadge locale={locale} />}
             />
             <InputField label={isArabic ? "اسم المتجر" : "Store Name"} value={state.storeName} onChange={(n) => setState({ ...state, storeName: n })} placeholder={isArabic ? "الشركة العربية للمستلزمات" : "Arab Supply Co."} />
             <SelectField
@@ -1367,7 +1390,9 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
                 <div className="h-full w-full border border-white/20 bg-[#121212] transition peer-checked:border-gold peer-checked:bg-gold" />
                 <Check className="pointer-events-none absolute h-3.5 w-3.5 text-black opacity-0 transition peer-checked:opacity-100" />
             </div>
-            <span className="text-sm font-semibold text-white/50 transition group-hover:text-white">{copy.terms}</span>
+            <span className="text-sm font-semibold text-white/50 transition group-hover:text-white">
+              <TermsConsentText locale={locale} />
+            </span>
           </label>
 
           <button 
