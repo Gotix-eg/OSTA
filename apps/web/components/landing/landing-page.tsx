@@ -535,17 +535,17 @@ export function LandingPage({ locale }: { locale: Locale }) {
       )}
 
       {/* Featured Ads Section */}
-      <section className="py-24 bg-[#1a1c1c] text-white">
-        <div className="max-w-7xl mx-auto px-4 md:px-12">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-5xl font-black text-gold mb-2">
-              {isArabic ? "إعلانات مميزة" : "Featured Ads"}
-            </h2>
-            <div className="w-24 h-1 bg-gold mx-auto mt-4"></div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {campaigns.length > 0 ? (
-              campaigns.slice(0, 3).map((ad) => (
+      {campaigns.length > 0 && (
+        <section className="py-24 bg-[#1a1c1c] text-white">
+          <div className="max-w-7xl mx-auto px-4 md:px-12">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-5xl font-black text-gold mb-2">
+                {isArabic ? "إعلانات مميزة" : "Featured Ads"}
+              </h2>
+              <div className="w-24 h-1 bg-gold mx-auto mt-4"></div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {campaigns.slice(0, 3).map((ad) => (
                 <div key={ad.id} className="bg-black border border-white/10 p-8 flex flex-col justify-between min-h-[320px] sticker-shadow hover:border-gold transition-all group text-start rounded-none">
                   <div>
                     <span className="bg-gold text-[#1a1c1c] px-3 py-1 text-[10px] font-black uppercase mb-6 inline-block rounded-none">
@@ -567,31 +567,11 @@ export function LandingPage({ locale }: { locale: Locale }) {
                     </Link>
                   )}
                 </div>
-              ))
-            ) : (
-              <div className="md:col-span-3 border-2 border-dashed border-white/20 p-12 md:p-16 flex flex-col items-center justify-center text-center gap-4 rounded-none">
-                <span className="bg-gold text-[#1a1c1c] px-3 py-1 text-[10px] font-black uppercase inline-block rounded-none">
-                  {isArabic ? "مساحة إعلانية" : "AD SPACE"}
-                </span>
-                <h3 className="text-white text-2xl md:text-3xl font-black">
-                  {isArabic ? "هذا المكان لإعلانك" : "Your Ad Could Be Here"}
-                </h3>
-                <p className="text-neutral-400 text-sm max-w-xl">
-                  {isArabic
-                    ? "اعرض منتجاتك أو خدماتك أمام آلاف العملاء والفنيين على أُسطفاي. تواصل معنا لحجز هذه المساحة."
-                    : "Reach thousands of clients and craftsmen on Ostafy. Contact us to book this spot."}
-                </p>
-                <Link
-                  href={`/${locale}/contact`}
-                  className="mt-4 bg-gold text-[#1a1c1c] font-black px-8 py-3 hover:scale-105 transition-transform uppercase rounded-none"
-                >
-                  {isArabic ? "تواصل للإعلان معنا" : "Advertise With Us"}
-                </Link>
-              </div>
-            )}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Featured Pros */}
       <section className="py-24 bg-[#f9f9f9] max-md:bg-transparent">
