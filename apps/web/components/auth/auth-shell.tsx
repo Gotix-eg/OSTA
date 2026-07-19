@@ -43,8 +43,8 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
     : "Connecting professional craftsmen with quality-driven clients across the region.";
   const heading = isLogin
     ? (isArabic ? "أهلاً بك" : "WELCOME BACK")
-    : (isArabic ? "إنشاء حساب" : "CREATE ACCOUNT");
-  const subheading = isArabic ? "بوابة الخدمة المتميزة" : "Premium Service Portal";
+    : (isArabic ? "إنشأ حسابك علي أُسطفاي" : "CREATE ACCOUNT");
+  const subheading = isArabic ? "" : "Premium Service Portal";
   const mobileSubheading = isArabic
     ? "تسجيل دخول آمن للحرفيين والعملاء المعتمدين"
     : "Secure login for Egypt's elite tradesmen and clients";
@@ -161,7 +161,7 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
                 <span className="md:hidden">
                   {mobileSubheading}
                 </span>
-                <span className="hidden md:inline">{subheading}</span>
+                {subheading && <span className="hidden md:inline">{subheading}</span>}
               </p>
             </div>
 
