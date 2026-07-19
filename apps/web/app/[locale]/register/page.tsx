@@ -79,7 +79,7 @@ export default async function RegisterChoicePage({ params }: { params: Promise<{
             <Link
               key={key}
               href={href as `/${string}`}
-              className="group relative flex items-start gap-4 border border-white/10 bg-[#121212] p-5 text-start transition-all hover:border-gold hover:translate-x-1 hover:translate-y-1 hover:shadow-[4px_4px_0px_#f5bd18] duration-200"
+              className="group relative flex items-start gap-4 border border-white/10 bg-[#121212] p-5 text-start transition-all hover:border-gold hover:translate-x-1 hover:translate-y-1 hover:shadow-[4px_4px_0px_#f5bd18] active:border-gold active:translate-x-1 active:translate-y-1 active:shadow-none duration-200"
               style={{
                 boxShadow: "4px 4px 0px #000000"
               }}

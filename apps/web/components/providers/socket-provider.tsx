@@ -8,11 +8,13 @@ import { resolveApiBaseUrl } from "@/lib/api";
 interface SocketContextType {
   socket: Socket | null;
   isConnected: boolean;
+  userId: string | null;
 }
 
 const SocketContext = createContext<SocketContextType>({
   socket: null,
   isConnected: false,
+  userId: null,
 });
 
 export const useSocket = () => useContext(SocketContext);
@@ -21,6 +23,7 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -35,10 +38,12 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
         const user = payload?.data?.user ?? payload?.data;
         if (!cancelled) {
           setIsAuthenticated(Boolean(user?.id));
+          setUserId(user?.id ?? null);
         }
       } catch {
         if (!cancelled) {
           setIsAuthenticated(false);
+          setUserId(null);
         }
       }
     };
@@ -161,7 +166,7 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
   }, [isAuthenticated]);
 
   return (
-    <SocketContext.Provider value={{ socket, isConnected }}>
+    <SocketContext.Provider value={{ socket, isConnected, userId }}>
       {children}
       <ToastNotification />
     </SocketContext.Provider>
