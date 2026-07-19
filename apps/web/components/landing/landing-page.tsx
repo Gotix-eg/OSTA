@@ -49,7 +49,20 @@ export function LandingPage({ locale }: { locale: Locale }) {
   const safeCategories = Array.isArray(liveCategories) ? liveCategories.filter(Boolean) : [];
   
   const [slides, setSlides] = useState<any[]>([]);
-  const [campaigns, setCampaigns] = useState<any[]>([]);
+  const [campaigns, setCampaigns] = useState<any[]>([
+    {
+      id: "sep-promo",
+      badgeAr: "عرض محدود",
+      badgeEn: "LIMITED OFFER",
+      titleAr: "شهر مجاناً للأسطوات الجدد!",
+      titleEn: "Get 1 Month Free!",
+      descAr: "سجل كفني الآن قبل نهاية سبتمبر، واحصل على شهر كامل مجاناً بدون أي رسوم اشتراك!",
+      descEn: "Register as a Pro before the end of September and get 1 month completely free!",
+      btn1TextAr: "سجل الآن كفني",
+      btn1TextEn: "Register as Pro",
+      btn1Link: "/register/worker"
+    }
+  ]);
   const [workers, setWorkers] = useState<any[]>([]);
   const [openRequests, setOpenRequests] = useState<any[]>([]);
   
@@ -75,7 +88,22 @@ export function LandingPage({ locale }: { locale: Locale }) {
       .then(r => r.json())
       .then(payload => {
         if (payload.success && Array.isArray(payload.data)) {
-          setCampaigns(payload.data.filter((c: any) => c.isActive !== false));
+          const apiCampaigns = payload.data.filter((c: any) => c.isActive !== false);
+          setCampaigns([
+            {
+              id: "sep-promo",
+              badgeAr: "عرض محدود",
+              badgeEn: "LIMITED OFFER",
+              titleAr: "شهر مجاناً للأسطوات الجدد!",
+              titleEn: "Get 1 Month Free!",
+              descAr: "سجل كفني الآن قبل نهاية سبتمبر، واحصل على شهر كامل مجاناً بدون أي رسوم اشتراك!",
+              descEn: "Register as a Pro before the end of September and get 1 month completely free!",
+              btn1TextAr: "سجل الآن كفني",
+              btn1TextEn: "Register as Pro",
+              btn1Link: "/register/worker"
+            },
+            ...apiCampaigns
+          ]);
         }
       })
       .catch(() => {});
