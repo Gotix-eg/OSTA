@@ -146,7 +146,7 @@ function StepIndicator({ current, total }: { current: number; total: number }) {
                 "flex h-9 w-9 items-center justify-center rounded-none border text-sm font-black transition duration-300",
                 active
                   ? "border-gold bg-gold text-black"
-                  : "border-white/15 bg-[#121212] text-white/35"
+                  : "border-white/15 bg-[#121212] text-white/60"
               )}
             >
               {active && index < current ? <Check className="h-4 w-4" /> : index + 1}
@@ -219,7 +219,7 @@ function InputField({
       {errorText ? (
         <p className="text-xs text-red-500 mt-1 select-none font-bold animate-fadeIn">{errorText}</p>
       ) : helperText ? (
-        <p className="mt-1 text-xs font-semibold leading-normal text-white/35">{helperText}</p>
+        <p className="mt-1 text-xs font-semibold leading-normal text-white/60">{helperText}</p>
       ) : null}
     </label>
   );
@@ -397,7 +397,7 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
                   setError(null);
                 }}
                 className={cn(
-                  "flex-1 rounded-none py-4 text-[10px] font-black uppercase tracking-widest transition-all duration-150",
+                  "flex-1 rounded-none py-4 text-xs font-black uppercase tracking-widest transition-all duration-150",
                   isActive
                     ? "border-b-2 border-gold text-gold md:border-b-0 md:bg-gold md:text-black"
                     : "text-white/50 hover:bg-white/5 hover:text-gold",
@@ -414,7 +414,7 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
       <div className="grid gap-6">
         {/* Phone Input */}
         <div className="space-y-2 text-start">
-          <label className="mb-2 flex justify-between text-xs font-black uppercase tracking-widest text-white/60 md:text-white/70">
+          <label htmlFor="login-phone" className="mb-2 flex justify-between text-xs font-black uppercase tracking-widest text-white/60 md:text-white/70">
             <span className={isAdmin ? "text-gold" : ""}>{loginLabels.phone}</span>
             {isAdmin ? <Phone size={14} className="hidden text-gold md:block" /> : <Phone size={14} className="hidden text-gold md:block" />}
           </label>
@@ -425,6 +425,7 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
               <Phone size={20} className="absolute start-4 top-1/2 -translate-y-1/2 text-white/40 md:hidden" />
             )}
             <input
+              id="login-phone"
               type="text"
               value={phone}
               onChange={(e) => {
@@ -435,6 +436,8 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
               autoComplete="username"
               name="phone"
               dir="ltr"
+              aria-invalid={phoneError ? true : undefined}
+              aria-describedby={phoneError ? "login-phone-error" : undefined}
               className={cn(
                 "w-full rounded-none bg-[#121212] p-4 font-semibold text-white transition-colors placeholder:text-white/20 focus:border-gold focus:outline-none focus:ring-0",
                 isAdmin ? "ps-12 md:ps-12" : "ps-12 md:ps-4",
@@ -443,13 +446,13 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
             />
           </div>
           {phoneError && (
-            <p className="text-xs text-red-500 mt-1 select-none font-bold animate-fadeIn">{phoneError}</p>
+            <p id="login-phone-error" className="text-xs text-red-500 mt-1 select-none font-bold animate-fadeIn">{phoneError}</p>
           )}
         </div>
 
         {/* Password Input */}
         <div className="space-y-2 text-start">
-          <label className="mb-2 flex justify-between text-xs font-black uppercase tracking-widest text-white/60 md:text-white/70">
+          <label htmlFor="login-password" className="mb-2 flex justify-between text-xs font-black uppercase tracking-widest text-white/60 md:text-white/70">
             <span className={isAdmin ? "text-gold" : ""}>{loginLabels.password}</span>
             {isAdmin ? <Lock size={14} className="hidden text-gold md:block" /> : <Lock size={14} className="hidden text-gold md:block" />}
           </label>
@@ -460,6 +463,7 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
               <Lock size={20} className="absolute start-4 top-1/2 -translate-y-1/2 text-white/40 md:hidden" />
             )}
             <input
+              id="login-password"
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => {
@@ -469,6 +473,8 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
               placeholder={loginLabels.passwordPlaceholder}
               autoComplete="current-password"
               name="password"
+              aria-invalid={passwordError ? true : undefined}
+              aria-describedby={passwordError ? "login-password-error" : undefined}
               className={cn(
                 "w-full rounded-none bg-[#121212] p-4 pe-12 ps-12 font-semibold text-white transition-colors placeholder:text-white/20 focus:border-gold focus:outline-none focus:ring-0 md:ps-4",
                 passwordError ? "border-2 border-red-500" : "border border-white/20"
@@ -477,14 +483,14 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
             <button
               type="button"
               onClick={() => setShowPassword((current) => !current)}
-              className="absolute inset-y-0 end-4 flex items-center text-white/50 hover:text-gold transition-colors"
+              className="absolute inset-y-0 end-2 flex w-11 items-center justify-center text-white/50 hover:text-gold transition-colors"
               aria-label={showPassword ? (isArabic ? "إخفاء كلمة المرور" : "Hide password") : (isArabic ? "إظهار كلمة المرور" : "Show password")}
             >
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
           {passwordError && (
-            <p className="text-xs text-red-500 mt-1 select-none font-bold animate-fadeIn">{passwordError}</p>
+            <p id="login-password-error" className="text-xs text-red-500 mt-1 select-none font-bold animate-fadeIn">{passwordError}</p>
           )}
         </div>
 
@@ -629,7 +635,7 @@ function FormSkeleton({ locale }: { locale: Locale }) {
           </span>
         </div>
 
-        <div className="pt-2 text-center text-sm font-semibold text-white/45">
+        <div className="pt-2 text-center text-sm font-semibold text-white/60">
           {isArabic ? (
             <>
               لديك حساب بالفعل؟{" "}
@@ -848,7 +854,7 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
             {!isSubmitting && <ArrowUpRight className="h-5 w-5" />}
           </button>
 
-          <div className="pt-2 text-center text-sm font-semibold text-white/45">
+          <div className="pt-2 text-center text-sm font-semibold text-white/60">
             {isArabic ? (
               <>
                 لديك حساب بالفعل؟{" "}
@@ -1030,7 +1036,7 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
             {!isSubmitting && <ArrowUpRight className="h-5 w-5" />}
           </button>
 
-          <div className="pt-2 text-center text-sm font-semibold text-white/45">
+          <div className="pt-2 text-center text-sm font-semibold text-white/60">
             {isArabic ? (
               <>
                 لديك حساب بالفعل؟{" "}
@@ -1262,7 +1268,7 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
             {!isSubmitting && <ArrowUpRight className="h-5 w-5" />}
           </button>
 
-          <div className="pt-2 text-center text-sm font-semibold text-white/45">
+          <div className="pt-2 text-center text-sm font-semibold text-white/60">
             {isArabic ? (
               <>
                 لديك حساب بالفعل؟{" "}

@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Activity, CircleHelp, FileWarning, Home, Lock, Menu, Scale, Shield, ShieldCheck, Headphones, Store, User, Wrench } from "lucide-react";
 import type { Locale } from "@/lib/locales";
@@ -103,9 +104,14 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
             >
               {isArabic ? "الإنجليزية" : "Arabic"}
             </Link>
-            <button className="hidden bg-white px-6 py-2 text-sm font-black uppercase text-black shadow-[4px_4px_0_#000] md:inline-flex">
-              {isArabic ? "دخول" : "LOGIN"}
-            </button>
+            {!isLogin && (
+              <Link
+                href={`/${locale}/login`}
+                className="hidden bg-white px-6 py-2 text-sm font-black uppercase text-black shadow-[4px_4px_0_#000] md:inline-flex"
+              >
+                {isArabic ? "دخول" : "LOGIN"}
+              </Link>
+            )}
           </div>
         </nav>
       </header>
@@ -124,10 +130,13 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
               style={{ background: "linear-gradient(to right, rgba(0,0,0,0.6), transparent)" }}
             />
             <div className="absolute inset-0 bg-black/20 z-10 group-hover:opacity-0 transition-opacity duration-700" />
-            <img
+            <Image
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbfJ-2IS0360vqfuhA-1NqheG3brCUZN76EodMJBKF9vokisslyWi0g1RYa1pqwr0_MOFfrHqLJJDwj3228wWUnrA02sMvWtljZz34nlB9m-lPPKzi9OW3vEu7MFeoJLIwwivipO15TWmhDAjdkRYMHCDAyy6fYNcv6MbRjHrrdWErxNnDtkkgN5nR94neVSIhHYNfrmkUUhNIzrBXIdYsaC3zHiCQ35GBv_nPGbiEWpTnd7ULVnkTwOVpH-yyfmCAUcDgTzMPvOE"
               alt="Master craftsman"
-              className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+              fill
+              priority
+              sizes="(min-width: 768px) 50vw, 0px"
+              className="absolute inset-0 object-cover transition-transform duration-1000 group-hover:scale-105"
             />
             <div className="absolute bottom-12 left-12 z-20 max-w-md" dir={isArabic ? "rtl" : "ltr"}>
               <h2 className="mb-4 text-4xl font-black leading-tight text-white">
@@ -160,7 +169,7 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
 
             {isLogin && (
               <div className="mt-10 grid gap-4 border-t border-white/10 pt-6">
-                <p className="mb-2 text-center text-xs font-black uppercase tracking-[0.2em] text-white/40">
+                <p className="mb-2 text-center text-xs font-black uppercase tracking-[0.2em] text-white/60">
                   <span className="md:hidden">{registerPrompt}</span>
                   <span className="hidden md:inline">{desktopRegisterPrompt}</span>
                 </p>
@@ -199,7 +208,7 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
         <div className="mx-auto grid max-w-7xl grid-cols-2 gap-6 px-12">
           <div className="space-y-4">
             <img alt="OSTA Logo" className="h-6 w-auto brightness-0 invert" src="/logo.svg" />
-            <p className="max-w-md text-base leading-relaxed text-white/45">
+            <p className="max-w-md text-base leading-relaxed text-white/60">
               {isArabic
                 ? "سوق أوستا: منظومة متكاملة للعمالة الماهرة والحلول الصناعية، مدعومة بالجودة والتقنية."
                 : "OSTA Marketplace: The premier ecosystem for skilled labor and industrial solutions. Powered by quality, driven by technology."}
@@ -210,12 +219,12 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
           </div>
           <div className="grid grid-cols-2 justify-items-end gap-8">
             <div className="flex flex-col gap-3">
-              <Link className="text-white/45 hover:text-white" href={`/${locale}/privacy`}>{footerLinks.privacy}</Link>
-              <Link className="text-white/45 hover:text-white" href={`/${locale}/terms`}>{footerLinks.terms}</Link>
+              <Link className="text-white/60 hover:text-white" href={`/${locale}/privacy`}>{footerLinks.privacy}</Link>
+              <Link className="text-white/60 hover:text-white" href={`/${locale}/terms`}>{footerLinks.terms}</Link>
             </div>
             <div className="flex flex-col gap-3">
-              <Link className="text-white/45 hover:text-white" href={`/${locale}/contact`}>{footerLinks.contact}</Link>
-              <Link className="text-white/45 hover:text-white" href={`/${locale}/careers`}>{footerLinks.careers}</Link>
+              <Link className="text-white/60 hover:text-white" href={`/${locale}/contact`}>{footerLinks.contact}</Link>
+              <Link className="text-white/60 hover:text-white" href={`/${locale}/careers`}>{footerLinks.careers}</Link>
             </div>
           </div>
         </div>
@@ -223,7 +232,7 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
 
       <nav className="fixed bottom-0 z-50 flex h-20 w-full items-center justify-around border-t border-white/10 bg-black/80 px-4 text-gold backdrop-blur-md md:hidden">
         {bottomLinks.map(({ Icon, label, href }, index) => (
-          <Link key={label} href={href as `/${string}`} className={index === 0 ? "flex flex-col items-center gap-1 text-gold" : "flex flex-col items-center gap-1 text-white/45"}>
+          <Link key={label} href={href as `/${string}`} className={index === 0 ? "flex flex-col items-center gap-1 text-gold" : "flex flex-col items-center gap-1 text-white/60"}>
             <Icon className="h-5 w-5" />
             <span className="text-xs font-black">{label}</span>
           </Link>
@@ -305,7 +314,7 @@ export function AdminAuthShell({ locale, children }: { locale: Locale; children:
             {children}
 
             <div className="mt-10 border-t border-white/5 pt-7 md:mt-12 md:pt-8">
-              <div className="mb-7 flex items-center justify-center gap-3 text-white/45 md:mb-8">
+              <div className="mb-7 flex items-center justify-center gap-3 text-white/60 md:mb-8">
                 <ShieldCheck className="h-5 w-5 text-gold" />
                 <span className="text-[11px] font-black uppercase tracking-[0.18em]">{labels.ssl}</span>
               </div>
@@ -322,7 +331,7 @@ export function AdminAuthShell({ locale, children }: { locale: Locale; children:
             </div>
           </div>
 
-          <p className="mx-auto mt-6 max-w-sm text-center text-[10px] font-bold uppercase leading-relaxed text-white/40 md:hidden">
+          <p className="mx-auto mt-6 max-w-sm text-center text-[10px] font-bold uppercase leading-relaxed text-white/60 md:hidden">
             {labels.mobileCopy}
           </p>
 
