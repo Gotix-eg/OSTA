@@ -25,6 +25,7 @@ export default async function LoginPage({ params }: { params: Promise<{ locale: 
       <div className="flex min-h-[70vh] items-center justify-center py-20 px-4 bg-gold">
         <div 
           className="relative z-10 grid w-full max-w-6xl grid-cols-1 md:grid-cols-2 border border-white/10 bg-black text-white text-start overflow-hidden rounded-none"
+          dir={locale === "ar" ? "rtl" : "ltr"}
           style={{
             boxShadow: "6px 6px 0px #1a1c1c"
           }}

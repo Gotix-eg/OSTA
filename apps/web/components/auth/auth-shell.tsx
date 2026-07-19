@@ -50,9 +50,9 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
       <div className="flex min-h-[70vh] items-center justify-center py-20 px-4 bg-gold">
         <div
           className="relative z-10 grid w-full max-w-xl grid-cols-1 overflow-hidden border border-white/10 bg-black md:max-w-6xl md:grid-cols-2 text-start rounded-none"
+          dir={isArabic ? "rtl" : "ltr"}
           style={{
-            boxShadow: "6px 6px 0px #1a1c1c",
-            direction: "ltr"
+            boxShadow: "6px 6px 0px #1a1c1c"
           }}
         >
           <div className="group relative hidden md:block" style={{ minHeight: "600px" }}>
