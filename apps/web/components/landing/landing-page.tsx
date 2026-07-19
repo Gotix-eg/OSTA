@@ -56,8 +56,8 @@ export function LandingPage({ locale }: { locale: Locale }) {
       badgeEn: "LIMITED OFFER",
       titleAr: "شهر مجاناً للأسطوات الجدد!",
       titleEn: "Get 1 Month Free!",
-      descAr: "سجل كفني الآن قبل نهاية سبتمبر، واحصل على شهر كامل مجاناً بدون أي رسوم اشتراك!",
-      descEn: "Register as a Pro before the end of September and get 1 month completely free!",
+      descAr: "سجل كفني الآن قبل نهاية سبتمبر، واحصل على شهر كامل مجاناً بدون أي رسوم عند البداية الفعلية لأُسطفاي!",
+      descEn: "Register as a Pro before the end of September and get 1 month completely free upon the official launch of Ostafy!",
       btn1TextAr: "سجل الآن كفني",
       btn1TextEn: "Register as Pro",
       btn1Link: "/register/worker"
@@ -96,8 +96,8 @@ export function LandingPage({ locale }: { locale: Locale }) {
               badgeEn: "LIMITED OFFER",
               titleAr: "شهر مجاناً للأسطوات الجدد!",
               titleEn: "Get 1 Month Free!",
-              descAr: "سجل كفني الآن قبل نهاية سبتمبر، واحصل على شهر كامل مجاناً بدون أي رسوم اشتراك!",
-              descEn: "Register as a Pro before the end of September and get 1 month completely free!",
+              descAr: "سجل كفني الآن قبل نهاية سبتمبر، واحصل على شهر كامل مجاناً بدون أي رسوم عند البداية الفعلية لأُسطفاي!",
+              descEn: "Register as a Pro before the end of September and get 1 month completely free upon the official launch of Ostafy!",
               btn1TextAr: "سجل الآن كفني",
               btn1TextEn: "Register as Pro",
               btn1Link: "/register/worker"
