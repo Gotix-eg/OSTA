@@ -52,10 +52,11 @@ export function LandingPage({ locale }: { locale: Locale }) {
   const [campaigns, setCampaigns] = useState<any[]>([
     {
       id: "sep-promo",
-      badgeAr: "عرض محدود",
-      badgeEn: "LIMITED OFFER",
+      badgeAr: "",
+      badgeEn: "",
       titleAr: "شهر مجاناً للأسطوات الجدد!",
       titleEn: "Get 1 Month Free!",
+      imageUrl: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=1200&q=80",
       descAr: "سجل كفني الآن قبل نهاية سبتمبر، واحصل على شهر كامل مجاناً بدون أي رسوم عند البداية الفعلية لأُسطفاي!",
       descEn: "Register as a Pro before the end of September and get 1 month completely free upon the official launch of Ostafy!",
       btn1TextAr: "سجل الآن كفني",
@@ -92,10 +93,11 @@ export function LandingPage({ locale }: { locale: Locale }) {
           setCampaigns([
             {
               id: "sep-promo",
-              badgeAr: "عرض محدود",
-              badgeEn: "LIMITED OFFER",
+              badgeAr: "",
+              badgeEn: "",
               titleAr: "شهر مجاناً للأسطوات الجدد!",
               titleEn: "Get 1 Month Free!",
+              imageUrl: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=1200&q=80",
               descAr: "سجل كفني الآن قبل نهاية سبتمبر، واحصل على شهر كامل مجاناً بدون أي رسوم عند البداية الفعلية لأُسطفاي!",
               descEn: "Register as a Pro before the end of September and get 1 month completely free upon the official launch of Ostafy!",
               btn1TextAr: "سجل الآن كفني",
@@ -233,6 +235,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
         descEn: campaign.descEn,
         badgeAr: campaign.badgeAr || "عرض",
         badgeEn: campaign.badgeEn || "Promo",
+        imageUrl: campaign.imageUrl,
         href: campaign.link || campaign.btn1Link || `/${locale}/services`
       }))
     : [
@@ -244,6 +247,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
           descEn: "First plumbing service",
           badgeAr: "كود: OSTA20",
           badgeEn: "Promo: OSTA20",
+          imageUrl: undefined,
           href: `/${locale}/register/client`
         },
         {
@@ -254,6 +258,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
           descEn: "Industrial installation projects",
           badgeAr: "لفترة محدودة",
           badgeEn: "Limited Time",
+          imageUrl: undefined,
           href: `/${locale}/services`
         }
       ];
@@ -297,23 +302,35 @@ export function LandingPage({ locale }: { locale: Locale }) {
                 <Link
                   key={offer.id}
                   href={offer.href.startsWith("http") ? offer.href : offer.href as `/${string}`}
-                  className="min-w-[280px] snap-center overflow-hidden border border-white/10 bg-black text-start"
+                  className="min-w-[280px] snap-center overflow-hidden border border-white/10 bg-black text-start relative group"
                 >
-                  <div className="flex h-40 items-center justify-center bg-zinc-900 p-4 text-center">
-                    <div>
-                      <h3 className="mb-1 text-3xl font-black text-gold">
+                  <div className="relative flex h-40 items-center justify-center bg-zinc-900 p-4 text-center overflow-hidden">
+                    {offer.imageUrl && (
+                      <>
+                        <img 
+                          src={offer.imageUrl} 
+                          className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-105 transition-transform duration-700" 
+                          alt="" 
+                        />
+                        <div className="absolute inset-0 bg-black/40 z-10" />
+                      </>
+                    )}
+                    <div className="relative z-20">
+                      <h3 className="mb-1 text-2xl font-black text-gold drop-shadow-md">
                         {isArabic ? offer.titleAr : offer.titleEn}
                       </h3>
-                      <p className="text-sm font-bold text-white/60">
+                      <p className="text-xs font-bold text-white drop-shadow">
                         {isArabic ? offer.descAr : offer.descEn}
                       </p>
                     </div>
                   </div>
-                  <div className="bg-black p-4">
-                    <span className="bg-gold px-2 py-1 text-xs font-black uppercase text-black">
-                      {isArabic ? offer.badgeAr : offer.badgeEn}
-                    </span>
-                  </div>
+                  {(isArabic ? offer.badgeAr : offer.badgeEn) ? (
+                    <div className="bg-black p-4">
+                      <span className="bg-gold px-2 py-1 text-xs font-black uppercase text-black">
+                        {isArabic ? offer.badgeAr : offer.badgeEn}
+                      </span>
+                    </div>
+                  ) : null}
                 </Link>
               ))}
             </div>
@@ -487,10 +504,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
           <div className="max-w-7xl mx-auto px-4 md:px-12">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-4 text-start">
               <div>
-                <span className="text-[#1a1c1c]/70 text-xs font-black tracking-widest uppercase">
-                  {isArabic ? "طلبات مباشرة" : "LIVE REQUESTS"}
-                </span>
-                <h2 className="text-3xl md:text-5xl text-[#1a1c1c] font-black mt-2">
+                <h2 className="text-3xl md:text-5xl text-[#1a1c1c] font-black">
                   {isArabic ? "طلبات تبحث عن فني الآن" : "Orders Looking for a Pro"}
                 </h2>
               </div>
@@ -562,40 +576,42 @@ export function LandingPage({ locale }: { locale: Locale }) {
         </section>
       )}
 
-      {/* Featured Ads Section */}
+      {/* Promotional Banner (Full Site Width) */}
       {campaigns.length > 0 && (
-        <section className="py-24 bg-[#1a1c1c] text-white">
-          <div className="max-w-7xl mx-auto px-4 md:px-12">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-5xl font-black text-gold mb-2">
-                {isArabic ? "إعلانات مميزة" : "Featured Ads"}
-              </h2>
-              <div className="w-24 h-1 bg-gold mx-auto mt-4"></div>
+        <section className="relative w-full bg-[#1a1c1c] text-white overflow-hidden border-y border-white/5">
+          <div className="w-full grid grid-cols-1 lg:grid-cols-2 min-h-[480px]">
+            {/* Left Side: Photo */}
+            <div className="relative min-h-[320px] lg:min-h-full w-full overflow-hidden">
+              {campaigns[0].imageUrl && (
+                <img 
+                  src={campaigns[0].imageUrl} 
+                  alt="Ostafy Promotion" 
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-black/80 via-black/20 to-transparent z-10" />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {campaigns.slice(0, 3).map((ad) => (
-                <div key={ad.id} className="bg-black border border-white/10 p-8 flex flex-col justify-between min-h-[320px] sticker-shadow hover:border-gold transition-all group text-start rounded-none">
-                  <div>
-                    <span className="bg-gold text-[#1a1c1c] px-3 py-1 text-[10px] font-black uppercase mb-6 inline-block rounded-none">
-                      {isArabic ? ad.badgeAr || "ممول" : ad.badgeEn || "PROMOTED"}
-                    </span>
-                    <h3 className="text-white text-xl font-black mb-2">
-                      {isArabic ? ad.titleAr : ad.titleEn}
-                    </h3>
-                    <p className="text-neutral-400 text-sm">
-                      {isArabic ? ad.descAr : ad.descEn}
-                    </p>
-                  </div>
-                  {ad.btn1Link && (
-                    <Link 
-                      href={ad.btn1Link.startsWith("http") ? ad.btn1Link : `/${locale}${ad.btn1Link.startsWith("/") ? "" : "/"}${ad.btn1Link}`} 
-                      className="mt-8 w-full bg-gold text-[#1a1c1c] text-center font-black py-3 hover:scale-105 transition-transform uppercase rounded-none"
-                    >
-                      {isArabic ? ad.btn1TextAr || "عرض التفاصيل" : ad.btn1TextEn || "View Details"}
-                    </Link>
-                  )}
-                </div>
-              ))}
+            {/* Right Side: Copy & CTA */}
+            <div className="flex flex-col justify-center items-start p-8 sm:p-12 lg:p-20 z-20 space-y-6 text-start">
+              {(isArabic ? campaigns[0].badgeAr : campaigns[0].badgeEn) ? (
+                <span className="bg-gold text-[#1a1c1c] px-3 py-1 text-xs font-black uppercase tracking-wider rounded-none">
+                  {isArabic ? campaigns[0].badgeAr : campaigns[0].badgeEn}
+                </span>
+              ) : null}
+              <h2 className="text-3xl sm:text-5xl font-black text-white leading-tight">
+                {isArabic ? campaigns[0].titleAr : campaigns[0].titleEn}
+              </h2>
+              <p className="text-neutral-400 text-lg leading-relaxed max-w-xl">
+                {isArabic ? campaigns[0].descAr : campaigns[0].descEn}
+              </p>
+              {campaigns[0].btn1Link && (
+                <Link 
+                  href={campaigns[0].btn1Link.startsWith("http") ? campaigns[0].btn1Link : `/${locale}${campaigns[0].btn1Link.startsWith("/") ? "" : "/"}${campaigns[0].btn1Link}`} 
+                  className="bg-gold text-[#1a1c1c] hover:scale-105 active:scale-95 transition-all text-sm font-black py-4 px-10 uppercase rounded-none sticker-shadow"
+                >
+                  {isArabic ? campaigns[0].btn1TextAr || "سجل الآن كفني" : campaigns[0].btn1TextEn || "Register as Pro"}
+                </Link>
+              )}
             </div>
           </div>
         </section>
