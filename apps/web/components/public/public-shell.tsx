@@ -187,7 +187,7 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
             <h5 className="text-gold font-bold text-sm uppercase mb-6">{isArabic ? "الشركة" : "Company"}</h5>
             <ul className="space-y-4 text-neutral-400 text-sm">
               <li><Link href={`/${locale}/about`} className="hover:text-white transition-colors">{isArabic ? "من نحن" : "About Us"}</Link></li>
-              <li><Link href="#" className="hover:text-white transition-colors">{isArabic ? "كيف نعمل" : "Our Process"}</Link></li>
+              <li><Link href={`/${locale}/how-it-works`} className="hover:text-white transition-colors">{isArabic ? "كيف نعمل" : "Our Process"}</Link></li>
             </ul>
           </div>
           <div>
