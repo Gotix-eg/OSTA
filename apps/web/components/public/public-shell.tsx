@@ -201,8 +201,8 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
           <div>
             <h5 className="text-gold font-bold text-sm uppercase mb-6">{isArabic ? "الشروط" : "Legal"}</h5>
             <ul className="space-y-4 text-neutral-400 text-sm">
-              <li><Link href="#" className="hover:text-white transition-colors">{isArabic ? "شروط الخدمة" : "Terms of Service"}</Link></li>
-              <li><Link href="#" className="hover:text-white transition-colors">{isArabic ? "سياسة الخصوصية" : "Privacy Policy"}</Link></li>
+              <li><Link href={`/${locale}/terms`} className="hover:text-white transition-colors">{isArabic ? "شروط الخدمة" : "Terms of Service"}</Link></li>
+              <li><Link href={`/${locale}/privacy`} className="hover:text-white transition-colors">{isArabic ? "سياسة الخصوصية" : "Privacy Policy"}</Link></li>
             </ul>
           </div>
         </div>
