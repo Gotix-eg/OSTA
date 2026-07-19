@@ -56,17 +56,13 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
           }}
         >
           <div className="group relative hidden md:block overflow-hidden" style={{ minHeight: "600px" }}>
-            <div
-              className="absolute inset-0 z-10"
-              style={{ background: "linear-gradient(to right, rgba(0,0,0,0.6), transparent)" }}
-            />
             <Image
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbfJ-2IS0360vqfuhA-1NqheG3brCUZN76EodMJBKF9vokisslyWi0g1RYa1pqwr0_MOFfrHqLJJDwj3228wWUnrA02sMvWtljZz34nlB9m-lPPKzi9OW3vEu7MFeoJLIwwivipO15TWmhDAjdkRYMHCDAyy6fYNcv6MbRjHrrdWErxNnDtkkgN5nR94neVSIhHYNfrmkUUhNIzrBXIdYsaC3zHiCQ35GBv_nPGbiEWpTnd7ULVnkTwOVpH-yyfmCAUcDgTzMPvOE"
               alt="Master craftsman"
               fill
               priority
               sizes="(min-width: 768px) 50vw, 0px"
-              className="absolute inset-0 object-cover scale-105 origin-right"
+              className="absolute inset-0 object-cover"
             />
             <div className="absolute bottom-12 left-12 z-20 max-w-md" dir={isArabic ? "rtl" : "ltr"}>
               <h2 className="mb-4 text-4xl font-black leading-tight text-white">
