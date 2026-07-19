@@ -9,8 +9,8 @@ export function TestModeBanner({ locale }: { locale: Locale }) {
     <div className="w-full bg-gold-800 px-4 py-2.5 text-center">
       <p className="text-xs font-extrabold tracking-wide text-white sm:text-sm md:whitespace-nowrap">
         {isArabic
-          ? "الموقع حاليًا في المرحلة التجريبية — سجّل الآن كعميل أو فني أو مورد."
-          : "This site is currently in the testing phase — register now as a client, technician, or vendor."}
+          ? "الموقع حاليًا في المرحلة التجريبية — يتوفر الآن تسجيل حسابات الفنيين والصنايعية فقط."
+          : "This site is currently in the testing phase — only worker and pro registration is available for now."}
       </p>
     </div>
   );
