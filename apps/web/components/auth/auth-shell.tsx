@@ -60,14 +60,13 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
               className="absolute inset-0 z-10"
               style={{ background: "linear-gradient(to right, rgba(0,0,0,0.6), transparent)" }}
             />
-            <div className="absolute inset-0 bg-black/20 z-10 group-hover:opacity-0 transition-opacity duration-700" />
             <Image
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbfJ-2IS0360vqfuhA-1NqheG3brCUZN76EodMJBKF9vokisslyWi0g1RYa1pqwr0_MOFfrHqLJJDwj3228wWUnrA02sMvWtljZz34nlB9m-lPPKzi9OW3vEu7MFeoJLIwwivipO15TWmhDAjdkRYMHCDAyy6fYNcv6MbRjHrrdWErxNnDtkkgN5nR94neVSIhHYNfrmkUUhNIzrBXIdYsaC3zHiCQ35GBv_nPGbiEWpTnd7ULVnkTwOVpH-yyfmCAUcDgTzMPvOE"
               alt="Master craftsman"
               fill
               priority
               sizes="(min-width: 768px) 50vw, 0px"
-              className="absolute inset-0 object-cover transition-transform duration-1000 group-hover:scale-105"
+              className="absolute inset-0 object-cover"
             />
             <div className="absolute bottom-12 left-12 z-20 max-w-md" dir={isArabic ? "rtl" : "ltr"}>
               <h2 className="mb-4 text-4xl font-black leading-tight text-white">
