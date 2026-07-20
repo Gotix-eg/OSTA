@@ -33,6 +33,10 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
 
 
 
+  const photoSrc = pathname.includes("/register/client")
+    ? "/images/auth-client.jpg"
+    : "https://lh3.googleusercontent.com/aida-public/AB6AXuAbfJ-2IS0360vqfuhA-1NqheG3brCUZN76EodMJBKF9vokisslyWi0g1RYa1pqwr0_MOFfrHqLJJDwj3228wWUnrA02sMvWtljZz34nlB9m-lPPKzi9OW3vEu7MFeoJLIwwivipO15TWmhDAjdkRYMHCDAyy6fYNcv6MbRjHrrdWErxNnDtkkgN5nR94neVSIhHYNfrmkUUhNIzrBXIdYsaC3zHiCQ35GBv_nPGbiEWpTnd7ULVnkTwOVpH-yyfmCAUcDgTzMPvOE";
+
   return (
     <PublicShell locale={locale} pathname={pathname}>
       <div className="flex min-h-[70vh] items-center justify-center py-20 px-4 bg-gold">
@@ -42,7 +46,7 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
         >
           <div className="relative hidden md:block h-full overflow-hidden">
             <img
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbfJ-2IS0360vqfuhA-1NqheG3brCUZN76EodMJBKF9vokisslyWi0g1RYa1pqwr0_MOFfrHqLJJDwj3228wWUnrA02sMvWtljZz34nlB9m-lPPKzi9OW3vEu7MFeoJLIwwivipO15TWmhDAjdkRYMHCDAyy6fYNcv6MbRjHrrdWErxNnDtkkgN5nR94neVSIhHYNfrmkUUhNIzrBXIdYsaC3zHiCQ35GBv_nPGbiEWpTnd7ULVnkTwOVpH-yyfmCAUcDgTzMPvOE"
+              src={photoSrc}
               alt="Ostafy Auth"
               className="absolute inset-0 w-full h-full object-cover"
             />
