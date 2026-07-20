@@ -205,7 +205,7 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
             </ul>
           </div>
         </div>
-        <div className="mt-12 pt-6 border-t border-white/5 px-4 md:px-12 max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-neutral-400 text-xs">
+        <div className="mt-12 pt-6 px-4 md:px-12 max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-neutral-400 text-xs">
           <span>
             <span className="text-gold">
               {isArabic ? `© ${new Date().getFullYear()} أُسطفاي` : `© ${new Date().getFullYear()} OSTAFY`}
