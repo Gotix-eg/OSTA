@@ -171,7 +171,7 @@ const workerRegisterDefaults: WorkerRegisterState = {
 };
 
 export function formatEgyptianPhone(val: string): string {
-  if (val.length < 3) {
+  if (!val || val.length < 3) {
     return "+20";
   }
 
@@ -1096,10 +1096,10 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
           <p className="text-xs text-white/50">{isArabic ? "جاري مراجعة بياناتك من قبل الإدارة..." : "Your data is being reviewed by the admin..."}</p>
         </div>
       ) : (
-        <div className="space-y-2">
+        <form onSubmit={(e) => { e.preventDefault(); void handleRegister(); }} autoComplete="off" className="space-y-2">
           <div className="grid gap-2 grid-cols-2">
-            <InputField compact label={isArabic ? "الاسم الأول" : "First name"} value={state.firstName} onChange={(firstName) => setState({ ...state, firstName })} placeholder={isArabic ? "محمد" : "John"} />
-            <InputField compact label={isArabic ? "اسم العائلة" : "Last name"} value={state.lastName} onChange={(lastName) => setState({ ...state, lastName })} placeholder={isArabic ? "أحمد" : "Doe"} />
+            <InputField compact label={isArabic ? "الاسم الأول" : "First name"} value={state.firstName} onChange={(firstName) => setState({ ...state, firstName })} placeholder={isArabic ? "محمد" : "John"} name="worker-first-name" autoComplete="off" />
+            <InputField compact label={isArabic ? "اسم العائلة" : "Last name"} value={state.lastName} onChange={(lastName) => setState({ ...state, lastName })} placeholder={isArabic ? "أحمد" : "Doe"} name="worker-last-name" autoComplete="off" />
           </div>
 
           <div className="grid gap-2 grid-cols-2">
@@ -1111,6 +1111,8 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
               placeholder="01012345678" 
               suffix={<EgyptPhoneBadge locale={locale} />}
               dir="ltr"
+              name="worker-phone"
+              autoComplete="off"
             />
             <InputField 
               compact
@@ -1120,6 +1122,8 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
               type="email" 
               placeholder="name@example.com" 
               dir="ltr"
+              name="worker-email"
+              autoComplete="off"
             />
           </div>
 
@@ -1139,6 +1143,8 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
               value={state.nationalIdNumber} 
               onChange={(n) => setState({ ...state, nationalIdNumber: n })} 
               placeholder="2xxxxxxxxxxxxx" 
+              name="worker-national-id"
+              autoComplete="off"
             />
           </div>
 
@@ -1150,6 +1156,8 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
               onChange={(p) => setState({ ...state, password: p })} 
               type="password" 
               placeholder="••••••••"
+              name="worker-password"
+              autoComplete="new-password"
             />
             <InputField 
               compact
@@ -1158,6 +1166,8 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
               onChange={(cp) => setState({ ...state, confirmPassword: cp })} 
               type="password" 
               placeholder="••••••••"
+              name="worker-confirm-password"
+              autoComplete="new-password"
             />
           </div>
 
@@ -1188,7 +1198,7 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
           </button>
 
           {error && <div className="animate-shake border border-red-500/20 bg-red-500/5 p-2 text-center text-[11px] font-bold text-red-500">{error}</div>}
-        </div>
+        </form>
       )}
     </div>
   );
@@ -1285,7 +1295,7 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
           <p className="text-white/50">{isArabic ? "جاري تحويلك إلى لوحة التحكم..." : "Redirecting to dashboard..."}</p>
         </div>
       ) : (
-        <div className="space-y-6">
+        <form onSubmit={(e) => { e.preventDefault(); void handleRegister(); }} autoComplete="off" className="space-y-6">
           <div className="space-y-6">
             <h3 className="border-b border-white/10 pb-3 text-sm font-black uppercase tracking-[0.18em] text-gold">
               {isArabic ? "بيانات المتجر" : "Store Information"}
@@ -1299,8 +1309,10 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
               helperText={isArabic ? "مثال: 01012345678" : "E.g. 01012345678"}
               suffix={<EgyptPhoneBadge locale={locale} />}
               dir="ltr"
+              name="vendor-phone"
+              autoComplete="off"
             />
-            <InputField label={isArabic ? "اسم المتجر" : "Store Name"} value={state.storeName} onChange={(n) => setState({ ...state, storeName: n })} placeholder={isArabic ? "الشركة العربية للمستلزمات" : "Arab Supply Co."} />
+            <InputField label={isArabic ? "اسم المتجر" : "Store Name"} value={state.storeName} onChange={(n) => setState({ ...state, storeName: n })} placeholder={isArabic ? "الشركة العربية للمستلزمات" : "Arab Supply Co."} name="vendor-store-name" autoComplete="off" />
             <SelectField
               label={isArabic ? "تصنيف المتجر" : "Store Category"}
               value={state.category}
@@ -1317,8 +1329,8 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
             </h3>
 
             <div className="grid gap-6 sm:grid-cols-2">
-              <InputField label={isArabic ? "الاسم الأول" : "First name"} value={state.firstName} onChange={(firstName) => setState({ ...state, firstName })} placeholder={isArabic ? "محمد" : "John"} />
-              <InputField label={isArabic ? "اسم العائلة" : "Last name"} value={state.lastName} onChange={(lastName) => setState({ ...state, lastName })} placeholder={isArabic ? "أحمد" : "Doe"} />
+              <InputField label={isArabic ? "الاسم الأول" : "First name"} value={state.firstName} onChange={(firstName) => setState({ ...state, firstName })} placeholder={isArabic ? "محمد" : "John"} name="vendor-first-name" autoComplete="off" />
+              <InputField label={isArabic ? "اسم العائلة" : "Last name"} value={state.lastName} onChange={(lastName) => setState({ ...state, lastName })} placeholder={isArabic ? "أحمد" : "Doe"} name="vendor-last-name" autoComplete="off" />
             </div>
             <InputField
               label={isArabic ? "البريد الإلكتروني" : "Email"}
@@ -1327,6 +1339,8 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
               type="email"
               placeholder="example@mail.com"
               helperText={isArabic ? "البريد الإلكتروني إلزامي ومطلوب للتواصل الرسمي" : "Email is required and mandatory for official communication"}
+              name="vendor-email"
+              autoComplete="off"
             />
             <div className="grid gap-6 sm:grid-cols-2">
               <InputField
@@ -1336,6 +1350,8 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
                 type="password"
                 placeholder="••••••••"
                 helperText={isArabic ? "يجب أن تحتوي على 8 أحرف أو أرقام على الأقل" : "Must be at least 8 characters/numbers"}
+                name="vendor-password"
+                autoComplete="new-password"
               />
               <InputField
                 label={isArabic ? "تأكيد كلمة المرور" : "Confirm password"}
@@ -1344,6 +1360,8 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
                 type="password"
                 placeholder="••••••••"
                 helperText={isArabic ? "أعد كتابة كلمة المرور المدخلة للتأكيد" : "Retype the password to confirm"}
+                name="vendor-confirm-password"
+                autoComplete="new-password"
               />
             </div>
           </div>
@@ -1412,7 +1430,7 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
 
 
           {error && <div className="animate-shake border border-red-500/20 bg-red-500/5 p-4 text-center text-sm font-bold text-red-500">{error}</div>}
-        </div>
+        </form>
       )}
     </div>
   );
