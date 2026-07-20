@@ -310,8 +310,8 @@ function InputField({
             dir={dir}
             className={cn(
               "w-full rounded-none border bg-[#121212] font-semibold text-white outline-none transition-colors placeholder:text-white/20 focus:border-gold",
-              compact ? "h-9 text-xs" : "h-11 text-sm",
-              suffix ? "pl-3 pr-24" : compact ? "px-2.5" : "px-3",
+              compact ? "h-9 text-xs px-2.5" : "h-11 text-sm px-3",
+              suffix ? "pl-2.5 pr-20" : "",
               errorText ? "border-red-500" : "border-white/20"
             )}
           />
@@ -1084,12 +1084,12 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
         </div>
       ) : (
         <div className="space-y-2">
-          <div className="grid gap-2 sm:grid-cols-2">
+          <div className="grid gap-2 grid-cols-2">
             <InputField compact label={isArabic ? "الاسم الأول" : "First name"} value={state.firstName} onChange={(firstName) => setState({ ...state, firstName })} placeholder={isArabic ? "محمد" : "John"} />
             <InputField compact label={isArabic ? "اسم العائلة" : "Last name"} value={state.lastName} onChange={(lastName) => setState({ ...state, lastName })} placeholder={isArabic ? "أحمد" : "Doe"} />
           </div>
 
-          <div className="grid gap-2 sm:grid-cols-2">
+          <div className="grid gap-2 grid-cols-2">
             <InputField 
               compact
               label={isArabic ? "رقم الهاتف" : "Phone number"} 
@@ -1110,7 +1110,7 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
             />
           </div>
 
-          <div className="grid gap-2 sm:grid-cols-2">
+          <div className="grid gap-2 grid-cols-2">
             <InputField 
               compact
               label={isArabic ? "الرقم القومي (14 رقم)" : "National ID (14 digits)"} 
@@ -1128,7 +1128,7 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
             />
           </div>
 
-          <div className="grid gap-2 sm:grid-cols-2">
+          <div className="grid gap-2 grid-cols-2">
             <InputField 
               compact
               label={isArabic ? "تأكيد كلمة المرور" : "Confirm password"} 
@@ -1137,21 +1137,21 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
               type="password" 
               placeholder="••••••••"
             />
-            <div className="flex items-end pb-1">
-              <label className="group flex cursor-pointer items-center gap-2">
-                <div className="relative flex h-4 w-4 shrink-0 items-center justify-center">
+            <div className="flex items-end pb-0.5">
+              <label className="group flex cursor-pointer items-center gap-1.5">
+                <div className="relative flex h-3.5 w-3.5 shrink-0 items-center justify-center">
                     <input type="checkbox" checked={state.acceptedTerms} onChange={(e) => setState({ ...state, acceptedTerms: e.target.checked })} className="peer h-full w-full opacity-0 absolute cursor-pointer" />
                     <div className="h-full w-full border border-white/20 bg-[#121212] transition peer-checked:border-gold peer-checked:bg-gold" />
-                    <Check className="pointer-events-none absolute h-3 w-3 text-black opacity-0 transition peer-checked:opacity-100" />
+                    <Check className="pointer-events-none absolute h-2.5 w-2.5 text-black opacity-0 transition peer-checked:opacity-100" />
                 </div>
-                <span className="text-[11px]">
+                <span className="text-[10px] leading-tight">
                   <TermsConsentText locale={locale} />
                 </span>
               </label>
             </div>
           </div>
 
-          <div className="grid gap-2 sm:grid-cols-2 pt-0.5">
+          <div className="grid gap-2 grid-cols-2 pt-0.5">
             <ImageUpload compact isArabic={isArabic} purpose="registration-document" variant="auth" label={isArabic ? "صورة البطاقة (أمام)" : "ID Front"} value={state.nationalIdFront} onChange={(url) => setState({ ...state, nationalIdFront: url })} />
             <ImageUpload compact isArabic={isArabic} purpose="registration-document" variant="auth" label={isArabic ? "صورة البطاقة (خلف)" : "ID Back"} value={state.nationalIdBack} onChange={(url) => setState({ ...state, nationalIdBack: url })} />
           </div>

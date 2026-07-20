@@ -68,10 +68,10 @@ export function ImageUpload({
         className={
           isAuth
             ? compact
-              ? "relative flex h-14 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-none border border-dashed border-white/20 bg-[#121212] text-white/45 transition-colors hover:border-gold hover:bg-white/5"
+              ? "relative flex h-12 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-none border border-dashed border-white/20 bg-[#121212] text-white/45 transition-colors hover:border-gold hover:bg-white/5"
               : "relative flex h-32 cursor-pointer flex-col items-center justify-center gap-2 rounded-none border border-dashed border-white/20 bg-[#121212] text-white/45 transition-colors hover:border-gold hover:bg-white/5"
             : compact
-            ? "relative flex h-14 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-[1.2rem] border-2 border-dashed border-onyx-700 bg-onyx-800/50 text-onyx-400 transition hover:border-primary-400 hover:bg-primary-50"
+            ? "relative flex h-12 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-[1.2rem] border-2 border-dashed border-onyx-700 bg-onyx-800/50 text-onyx-400 transition hover:border-primary-400 hover:bg-primary-50"
             : "relative flex h-32 cursor-pointer flex-col items-center justify-center gap-2 rounded-[1.2rem] border-2 border-dashed border-onyx-700 bg-onyx-800/50 text-onyx-400 transition hover:border-primary-400 hover:bg-primary-50"
         }
       >

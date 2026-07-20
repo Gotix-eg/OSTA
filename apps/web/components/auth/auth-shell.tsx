@@ -39,12 +39,12 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
 
   return (
     <PublicShell locale={locale} pathname={pathname}>
-      <div className="flex min-h-[70vh] items-center justify-center py-20 px-4 bg-gold">
+      <div className="flex items-center justify-center py-6 md:py-10 px-4 bg-gold min-h-[60vh]">
         <div
-          className="relative z-10 grid w-full max-w-xl grid-cols-1 overflow-hidden border border-white/10 bg-black md:max-w-6xl md:grid-cols-2 md:h-[600px] text-start rounded-none"
+          className="relative z-10 grid w-full max-w-xl grid-cols-1 overflow-hidden border border-white/10 bg-black md:max-w-5xl md:grid-cols-2 md:h-auto text-start rounded-none"
           dir={isArabic ? "rtl" : "ltr"}
         >
-          <div className="relative hidden md:block h-full overflow-hidden">
+          <div className="relative hidden md:block min-h-[480px] overflow-hidden">
             <img
               src={photoSrc}
               alt="Ostafy Auth"
@@ -53,13 +53,13 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
           </div>
 
           <div
-            className="flex flex-col justify-center p-5 md:px-8 md:py-6 md:h-full md:overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            className="flex flex-col justify-center p-4 sm:p-5 md:px-7 md:py-5 md:h-full md:overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
             style={{ backgroundColor: "#000000" }}
             dir={isArabic ? "rtl" : "ltr"}
           >
             {heading && (
-              <div className="mb-3 text-center md:text-start">
-                <h1 className="whitespace-nowrap text-xl font-black uppercase leading-tight text-gold md:text-2xl">
+              <div className="mb-2 text-center md:text-start space-y-0.5">
+                <h1 className="whitespace-nowrap text-lg font-black uppercase leading-tight text-gold md:text-xl">
                   {heading}
                 </h1>
               </div>
