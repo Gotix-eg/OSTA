@@ -280,7 +280,7 @@ function InputField({
   compact?: boolean;
 }) {
   return (
-    <label className={cn("block text-start", compact ? "space-y-1" : "space-y-1.5")}>
+    <label className={cn("block text-start", compact ? "space-y-0.5" : "space-y-1.5")}>
       <span className={cn(compact ? "text-[10px]" : "text-xs", "font-black uppercase tracking-wider text-white")}>{label}</span>
       {textarea ? (
         <textarea
@@ -298,7 +298,7 @@ function InputField({
       ) : (
         <div className="relative">
           {suffix && (
-            <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none select-none">
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none select-none">
               {suffix}
             </div>
           )}
@@ -312,8 +312,8 @@ function InputField({
             dir={dir}
             className={cn(
               "w-full rounded-none border bg-[#121212] font-semibold text-white outline-none transition-colors placeholder:text-white/20 focus:border-gold",
-              compact ? "h-9 text-xs px-2.5" : "h-11 text-sm px-3",
-              suffix ? "pl-2.5 pr-20" : "",
+              compact ? "h-8 text-xs px-2.5" : "h-11 text-sm px-3",
+              suffix ? "pl-2 pr-16" : "",
               errorText ? "border-red-500" : "border-white/20"
             )}
           />
@@ -322,7 +322,7 @@ function InputField({
       {errorText ? (
         <p className="text-xs text-red-500 mt-1 select-none font-bold animate-fadeIn">{errorText}</p>
       ) : helperText ? (
-        <p className="mt-1 text-xs font-semibold leading-none text-white/50">{helperText}</p>
+        <p className="mt-0.5 text-[10px] font-semibold leading-none text-white/50">{helperText}</p>
       ) : null}
     </label>
   );
@@ -1259,8 +1259,8 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
       setIsSubmitting(false);
       return;
     }
-    if (!state.governorate || !state.city || !state.address) {
-      setError(isArabic ? "برجاء إكمال بيانات العنوان" : "Please complete address details");
+    if (!state.governorate || !state.city) {
+      setError(isArabic ? "برجاء اختيار المحافظة والمدينة" : "Please select governorate and city");
       setIsSubmitting(false);
       return;
     }
@@ -1273,6 +1273,7 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
     try {
       const payload = await postApiData<AuthSuccessResponse, any>("/auth/register/vendor", {
         ...state,
+        address: state.address || `${state.governorate}, ${state.city}`,
         phone: cleanPhone
       });
       setSubmitted(true);
@@ -1287,97 +1288,92 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
   if (!ready) return <FormSkeleton locale={locale} />;
 
   return (
-    <div className="space-y-8 animate-fadeIn">
+    <div className="space-y-2 animate-fadeIn">
       {submitted ? (
-        <div className="space-y-4 border border-success/30 bg-success/5 p-10 text-center">
-          <ShieldCheck className="h-16 w-16 text-success mx-auto" />
-          <h3 className="text-2xl font-black text-white">{isArabic ? "تم إرسال الطلب!" : "Account Created!"}</h3>
-          <p className="text-white/50">{isArabic ? "جاري تحويلك إلى لوحة التحكم..." : "Redirecting to dashboard..."}</p>
+        <div className="space-y-2 border border-success/30 bg-success/5 p-4 text-center">
+          <ShieldCheck className="h-10 w-10 text-success mx-auto" />
+          <h3 className="text-base font-black text-white">{isArabic ? "تم إرسال الطلب!" : "Account Created!"}</h3>
+          <p className="text-[11px] text-white/50">{isArabic ? "جاري تحويلك إلى لوحة التحكم..." : "Redirecting to dashboard..."}</p>
         </div>
       ) : (
-        <form onSubmit={(e) => { e.preventDefault(); void handleRegister(); }} autoComplete="off" className="space-y-6">
-          <div className="space-y-6">
-            <h3 className="border-b border-white/10 pb-3 text-sm font-black uppercase tracking-[0.18em] text-gold">
-              {isArabic ? "بيانات المتجر" : "Store Information"}
-            </h3>
-
-            <InputField
-              label={isArabic ? "رقم الهاتف" : "Phone number"}
-              value={state.phone}
-              onChange={(phone) => setState({ ...state, phone: formatEgyptianPhone(phone) })}
-              placeholder="01012345678"
-              helperText={isArabic ? "مثال: 01012345678" : "E.g. 01012345678"}
-              suffix={<EgyptPhoneBadge locale={locale} />}
-              dir="ltr"
-              name="vendor-phone"
-              autoComplete="off"
-            />
-            <InputField label={isArabic ? "اسم المتجر" : "Store Name"} value={state.storeName} onChange={(n) => setState({ ...state, storeName: n })} placeholder={isArabic ? "الشركة العربية للمستلزمات" : "Arab Supply Co."} name="vendor-store-name" autoComplete="off" />
-            <SelectField
-              label={isArabic ? "تصنيف المتجر" : "Store Category"}
-              value={state.category}
-              options={vendorCategories.map(c => ({ value: c.value, label: isArabic ? c.labelAr : c.labelEn }))}
-              onChange={(cat) => setState({ ...state, category: cat })}
-              placeholder={isArabic ? "اختر تصنيف المتجر" : "Select store category"}
-              variant="auth"
-            />
-          </div>
-
-          <div className="space-y-6">
-            <h3 className="border-b border-white/10 pb-3 text-sm font-black uppercase tracking-[0.18em] text-gold">
-              {isArabic ? "البيانات الشخصية" : "Owner Information"}
-            </h3>
-
-            <div className="grid gap-6 sm:grid-cols-2">
-              <InputField label={isArabic ? "الاسم الأول" : "First name"} value={state.firstName} onChange={(firstName) => setState({ ...state, firstName })} placeholder={isArabic ? "محمد" : "John"} name="vendor-first-name" autoComplete="off" />
-              <InputField label={isArabic ? "اسم العائلة" : "Last name"} value={state.lastName} onChange={(lastName) => setState({ ...state, lastName })} placeholder={isArabic ? "أحمد" : "Doe"} name="vendor-last-name" autoComplete="off" />
+        <form onSubmit={(e) => { e.preventDefault(); void handleRegister(); }} autoComplete="off" className="space-y-1.5">
+          <div className="space-y-1">
+            <div className="grid gap-1.5 grid-cols-2">
+              <InputField compact label={isArabic ? "اسم المتجر" : "Store Name"} value={state.storeName} onChange={(n) => setState({ ...state, storeName: n })} placeholder={isArabic ? "الشركة العربية" : "Arab Supply Co."} name="vendor-store-name" autoComplete="off" />
+              <SelectField
+                compact
+                label={isArabic ? "تصنيف المتجر" : "Store Category"}
+                value={state.category}
+                options={vendorCategories.map(c => ({ value: c.value, label: isArabic ? c.labelAr : c.labelEn }))}
+                onChange={(cat) => setState({ ...state, category: cat })}
+                placeholder={isArabic ? "اختر التصنيف" : "Select category"}
+                variant="auth"
+              />
             </div>
-            <InputField
-              label={isArabic ? "البريد الإلكتروني" : "Email"}
-              value={state.email}
-              onChange={(email) => setState({ ...state, email })}
-              type="email"
-              placeholder="example@mail.com"
-              helperText={isArabic ? "البريد الإلكتروني إلزامي ومطلوب للتواصل الرسمي" : "Email is required and mandatory for official communication"}
-              name="vendor-email"
-              autoComplete="off"
-            />
-            <div className="grid gap-6 sm:grid-cols-2">
+
+            <div className="grid gap-1.5 grid-cols-2">
+              <InputField compact label={isArabic ? "الاسم الأول" : "First name"} value={state.firstName} onChange={(firstName) => setState({ ...state, firstName })} placeholder={isArabic ? "محمد" : "John"} name="vendor-first-name" autoComplete="off" />
+              <InputField compact label={isArabic ? "اسم العائلة" : "Last name"} value={state.lastName} onChange={(lastName) => setState({ ...state, lastName })} placeholder={isArabic ? "أحمد" : "Doe"} name="vendor-last-name" autoComplete="off" />
+            </div>
+
+            <div className="grid gap-1.5 grid-cols-2">
               <InputField
+                compact
+                label={isArabic ? "رقم الهاتف" : "Phone number"}
+                value={state.phone}
+                onChange={(phone) => setState({ ...state, phone: formatEgyptianPhone(phone) })}
+                placeholder="01012345678"
+                suffix={<EgyptPhoneBadge locale={locale} />}
+                dir="ltr"
+                name="vendor-phone"
+                autoComplete="off"
+              />
+              <InputField
+                compact
+                label={isArabic ? "البريد الإلكتروني" : "Email address"}
+                value={state.email}
+                onChange={(email) => setState({ ...state, email })}
+                type="email"
+                placeholder="name@example.com"
+                dir="ltr"
+                name="vendor-email"
+                autoComplete="off"
+              />
+            </div>
+
+            <div className="grid gap-1.5 grid-cols-2">
+              <InputField
+                compact
                 label={isArabic ? "كلمة المرور" : "Password"}
                 value={state.password}
                 onChange={(password) => setState({ ...state, password })}
                 type="password"
                 placeholder="••••••••"
-                helperText={isArabic ? "يجب أن تحتوي على 8 أحرف أو أرقام على الأقل" : "Must be at least 8 characters/numbers"}
                 name="vendor-password"
                 autoComplete="new-password"
               />
               <InputField
+                compact
                 label={isArabic ? "تأكيد كلمة المرور" : "Confirm password"}
                 value={state.confirmPassword}
                 onChange={(confirmPassword) => setState({ ...state, confirmPassword })}
                 type="password"
                 placeholder="••••••••"
-                helperText={isArabic ? "أعد كتابة كلمة المرور المدخلة للتأكيد" : "Retype the password to confirm"}
                 name="vendor-confirm-password"
                 autoComplete="new-password"
               />
             </div>
           </div>
 
-          <div className="space-y-6">
-            <h3 className="border-b border-white/10 pb-3 text-sm font-black uppercase tracking-[0.18em] text-gold">
-              {isArabic ? "مستندات التوثيق" : "Verification Documents"}
-            </h3>
-
-            <div className="grid gap-6 sm:grid-cols-2">
-              <ImageUpload isArabic={isArabic} purpose="registration-document" variant="auth" label={isArabic ? "السجل التجاري" : "Commercial Record"} value={state.commercialRecord} onChange={(url) => setState({ ...state, commercialRecord: url })} />
-              <ImageUpload isArabic={isArabic} purpose="registration-document" variant="auth" label={isArabic ? "البطاقة الضريبية" : "Tax Card"} value={state.taxCard} onChange={(url) => setState({ ...state, taxCard: url })} />
+          <div className="space-y-1">
+            <div className="grid gap-1.5 grid-cols-2">
+              <ImageUpload compact isArabic={isArabic} purpose="registration-document" variant="auth" label={isArabic ? "السجل التجاري" : "Commercial Record"} value={state.commercialRecord} onChange={(url) => setState({ ...state, commercialRecord: url })} />
+              <ImageUpload compact isArabic={isArabic} purpose="registration-document" variant="auth" label={isArabic ? "البطاقة الضريبية" : "Tax Card"} value={state.taxCard} onChange={(url) => setState({ ...state, taxCard: url })} />
             </div>
 
-            <div className="grid gap-6 sm:grid-cols-2">
+            <div className="grid gap-1.5 grid-cols-2">
               <SelectField
+                compact
                 label={isArabic ? "المحافظة" : "Governorate"}
                 value={state.governorate}
                 options={egyptianGovernorates.map(g => ({ value: g.value, label: isArabic ? g.labelAr : g.labelEn }))}
@@ -1386,6 +1382,7 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
                 variant="auth"
               />
               <SelectField
+                compact
                 label={isArabic ? "المدينة / المنطقة" : "City / Area"}
                 value={state.city}
                 disabled={!state.governorate}
@@ -1395,24 +1392,15 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
                 variant="auth"
               />
             </div>
-
-            <div className="space-y-3">
-              <span className="text-xs font-black uppercase tracking-widest text-white/70">{isArabic ? "تحديد الموقع على الخريطة" : "Store Location"}</span>
-              <div className="h-64 overflow-hidden border border-white/20">
-                <MapPicker lat={state.latitude} lng={state.longitude} isArabic={isArabic} onChange={(lat, lng) => setState({ ...state, latitude: lat, longitude: lng })} />
-              </div>
-            </div>
-
-            <InputField label={isArabic ? "العنوان التفصيلي" : "Detailed address"} value={state.address} onChange={(address) => setState({ ...state, address })} textarea rows={2} />
           </div>
 
-          <label className="group flex cursor-pointer items-center gap-3 py-2">
-            <div className="relative flex h-5 w-5 items-center justify-center">
+          <label className="group flex cursor-pointer items-center gap-1.5 pt-0.5">
+            <div className="relative flex h-3.5 w-3.5 shrink-0 items-center justify-center">
               <input type="checkbox" checked={state.acceptedTerms} onChange={(e) => setState({ ...state, acceptedTerms: e.target.checked })} className="peer h-full w-full opacity-0 absolute cursor-pointer" />
               <div className="h-full w-full border border-white/20 bg-[#121212] transition peer-checked:border-gold peer-checked:bg-gold" />
-              <Check className="pointer-events-none absolute h-3.5 w-3.5 text-black opacity-0 transition peer-checked:opacity-100" />
+              <Check className="pointer-events-none absolute h-2.5 w-2.5 text-black opacity-0 transition peer-checked:opacity-100" />
             </div>
-            <span className="text-sm">
+            <span className="text-[10px] leading-tight">
               <TermsConsentText locale={locale} />
             </span>
           </label>
@@ -1421,15 +1409,13 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
             type="button"
             onClick={handleRegister}
             disabled={isSubmitting}
-            className="flex w-full py-3 items-center justify-center gap-2 bg-gold text-sm font-black uppercase text-black shadow-[4px_4px_0_#000] transition-transform active:translate-x-1 active:translate-y-1 active:shadow-none disabled:opacity-50"
+            className="flex w-full py-2 items-center justify-center gap-2 bg-gold text-xs font-black uppercase text-black shadow-[2px_2px_0_#000] transition-transform active:translate-x-0.5 active:translate-y-0.5 active:shadow-none disabled:opacity-50 mt-0.5"
           >
             {isSubmitting ? (isArabic ? "جاري إنشاء الحساب..." : "Creating Account...") : (isArabic ? "إنشاء حساب المتجر" : "Create Store Account")}
-            {!isSubmitting && <ArrowUpRight className="h-5 w-5" />}
+            {!isSubmitting && <ArrowUpRight className="h-4 w-4" />}
           </button>
 
-
-
-          {error && <div className="animate-shake border border-red-500/20 bg-red-500/5 p-4 text-center text-sm font-bold text-red-500">{error}</div>}
+          {error && <div className="animate-shake border border-red-500/20 bg-red-500/5 p-2 text-center text-[11px] font-bold text-red-500">{error}</div>}
         </form>
       )}
     </div>

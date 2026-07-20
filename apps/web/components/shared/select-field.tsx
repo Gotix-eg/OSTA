@@ -30,7 +30,7 @@ export function SelectField({
   const isAuth = variant === "auth";
 
   return (
-    <label className={cn("block text-start", compact ? "space-y-1" : "space-y-1.5")}>
+    <label className={cn("block text-start", compact ? "space-y-0.5" : "space-y-1.5")}>
       <span className={isAuth ? cn(compact ? "text-[10px]" : "text-xs", "font-black uppercase tracking-widest text-white") : "text-sm font-medium text-onyx-200"}>{label}</span>
       <select
         value={value}
@@ -39,7 +39,7 @@ export function SelectField({
         className={cn(
           isAuth
             ? compact
-              ? "h-9 w-full appearance-none rounded-none border border-white/20 bg-[#121212] px-2.5 text-xs font-semibold text-white outline-none transition-colors focus:border-gold disabled:cursor-not-allowed disabled:opacity-50"
+              ? "h-8 w-full appearance-none rounded-none border border-white/20 bg-[#121212] px-2 text-xs font-semibold text-white outline-none transition-colors focus:border-gold disabled:cursor-not-allowed disabled:opacity-50"
               : "h-11 w-full appearance-none rounded-none border border-white/20 bg-[#121212] px-3 text-sm font-semibold text-white outline-none transition-colors focus:border-gold disabled:cursor-not-allowed disabled:opacity-50"
             : "h-12 w-full appearance-none rounded-[1.2rem] border border-onyx-700 bg-onyx-800/50 px-4 text-body text-white transition focus:border-primary-400 focus:ring-2 focus:ring-primary-500/30 disabled:cursor-not-allowed disabled:opacity-50",
           !value && (isAuth ? "text-white/35" : "text-onyx-500")

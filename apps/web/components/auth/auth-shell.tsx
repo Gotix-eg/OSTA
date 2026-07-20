@@ -22,14 +22,14 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
   const heading = isLogin
     ? (isArabic ? "أهلاً بك" : "WELCOME BACK")
     : pathname.includes("/register/client")
-    ? (isArabic ? "إنشاء حساب عميل" : "CREATE CLIENT ACCOUNT")
-    : pathname.includes("/register/worker")
-    ? (isArabic ? "إنشاء حساب فني" : "CREATE WORKER ACCOUNT")
-    : pathname.includes("/register/vendor")
-    ? (isArabic ? "إنشاء حساب مورد" : "CREATE VENDOR ACCOUNT")
-    : isRegisterChoice
-    ? (isArabic ? "إنشأ حسابك علي أُسطفاي" : "CREATE YOUR ACCOUNT")
-    : null;
+      ? (isArabic ? "إنشاء حساب عميل" : "CREATE CLIENT ACCOUNT")
+      : pathname.includes("/register/worker")
+        ? (isArabic ? "إنشاء حساب فني" : "CREATE WORKER ACCOUNT")
+        : pathname.includes("/register/vendor")
+          ? (isArabic ? "إنشاء حساب مورد" : "CREATE VENDOR ACCOUNT")
+          : isRegisterChoice
+            ? (isArabic ? "إنشأ حسابك علي أُسطفاي" : "CREATE YOUR ACCOUNT")
+            : null;
 
 
 
@@ -37,6 +37,8 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
     ? "/images/auth-client.jpg"
     : pathname.includes("/register/worker")
     ? "/images/auth-worker.jpg"
+    : pathname.includes("/register/vendor")
+    ? "/images/auth-vendor.jpg"
     : "https://lh3.googleusercontent.com/aida-public/AB6AXuAbfJ-2IS0360vqfuhA-1NqheG3brCUZN76EodMJBKF9vokisslyWi0g1RYa1pqwr0_MOFfrHqLJJDwj3228wWUnrA02sMvWtljZz34nlB9m-lPPKzi9OW3vEu7MFeoJLIwwivipO15TWmhDAjdkRYMHCDAyy6fYNcv6MbRjHrrdWErxNnDtkkgN5nR94neVSIhHYNfrmkUUhNIzrBXIdYsaC3zHiCQ35GBv_nPGbiEWpTnd7ULVnkTwOVpH-yyfmCAUcDgTzMPvOE";
 
   return (
@@ -60,7 +62,22 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
             dir={isArabic ? "rtl" : "ltr"}
           >
             {heading && (
-              <div className="mb-2 text-center md:text-start space-y-0.5">
+              <div className="mb-2 flex items-center gap-2 text-center md:text-start">
+                {pathname.includes("/register/vendor") && (
+                  <div className="flex h-7 w-7 shrink-0 items-center justify-center border border-gold bg-gold/10 text-gold">
+                    <Store className="h-4 w-4" />
+                  </div>
+                )}
+                {pathname.includes("/register/worker") && (
+                  <div className="flex h-7 w-7 shrink-0 items-center justify-center border border-gold bg-gold/10 text-gold">
+                    <Wrench className="h-4 w-4" />
+                  </div>
+                )}
+                {pathname.includes("/register/client") && (
+                  <div className="flex h-7 w-7 shrink-0 items-center justify-center border border-gold bg-gold/10 text-gold">
+                    <User className="h-4 w-4" />
+                  </div>
+                )}
                 <h1 className="whitespace-nowrap text-lg font-black uppercase leading-tight text-gold md:text-xl">
                   {heading}
                 </h1>
