@@ -35,6 +35,8 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
 
   const photoSrc = pathname.includes("/register/client")
     ? "/images/auth-client.jpg"
+    : pathname.includes("/register/worker")
+    ? "/images/auth-worker.jpg"
     : "https://lh3.googleusercontent.com/aida-public/AB6AXuAbfJ-2IS0360vqfuhA-1NqheG3brCUZN76EodMJBKF9vokisslyWi0g1RYa1pqwr0_MOFfrHqLJJDwj3228wWUnrA02sMvWtljZz34nlB9m-lPPKzi9OW3vEu7MFeoJLIwwivipO15TWmhDAjdkRYMHCDAyy6fYNcv6MbRjHrrdWErxNnDtkkgN5nR94neVSIhHYNfrmkUUhNIzrBXIdYsaC3zHiCQ35GBv_nPGbiEWpTnd7ULVnkTwOVpH-yyfmCAUcDgTzMPvOE";
 
   return (
