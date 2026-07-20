@@ -41,14 +41,14 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
     <PublicShell locale={locale} pathname={pathname}>
       <div className="flex items-center justify-center py-6 md:py-10 px-4 bg-gold min-h-[60vh]">
         <div
-          className="relative z-10 grid w-full max-w-xl grid-cols-1 overflow-hidden border border-white/10 bg-black md:max-w-5xl md:grid-cols-2 md:h-auto text-start rounded-none"
+          className="relative z-10 grid w-full max-w-xl grid-cols-1 overflow-hidden border border-white/10 bg-black md:max-w-5xl md:grid-cols-2 md:h-[560px] text-start rounded-none"
           dir={isArabic ? "rtl" : "ltr"}
         >
-          <div className="relative hidden md:block min-h-[480px] overflow-hidden">
+          <div className="relative hidden md:block h-full w-full overflow-hidden">
             <img
               src={photoSrc}
               alt="Ostafy Auth"
-              className="absolute inset-0 w-full h-full object-cover"
+              className="absolute inset-0 h-full w-full object-cover object-center"
             />
           </div>
 
