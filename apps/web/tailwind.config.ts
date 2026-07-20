@@ -48,6 +48,8 @@ const config: Config = {
         success: "#22a85a",
         warning: "#d4880a",
         error:   "#d44422",
+        /* ── INK: Near-black used across public marketing pages ── */
+        ink: "#1a1c1c",
         /* background / foreground are resolved by CSS vars per breakpoint */
         background: "var(--color-bg)",
         foreground: "var(--color-fg)",
