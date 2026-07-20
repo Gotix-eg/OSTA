@@ -478,7 +478,7 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
   return (
     <form onSubmit={(e) => { e.preventDefault(); handleLogin(); }} className={cn("space-y-6 animate-fadeIn", isAdmin && "w-full")}>
       {!isAdmin && (
-        <div className="mb-8 flex w-full overflow-hidden border border-white/10 rounded-none md:border">
+        <div className="mb-6 flex w-full overflow-hidden border border-white/10 rounded-none md:border">
           {(["CLIENT", "WORKER", "VENDOR"] as const).map((role, idx) => {
             const isActive = activeTab === role;
             const label = role === "CLIENT"
@@ -495,7 +495,7 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
                   setError(null);
                 }}
                 className={cn(
-                  "flex-1 rounded-none py-4 text-xs font-black uppercase tracking-widest transition-all duration-150",
+                  "flex-1 rounded-none py-2.5 text-xs font-black uppercase tracking-widest transition-all duration-150",
                   isActive
                     ? "border-b-2 border-gold text-gold md:border-b-0 md:bg-gold md:text-black"
                     : "text-white/50 hover:bg-white/5 hover:text-gold",
@@ -612,7 +612,7 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
           type="submit"
           disabled={isSubmitting}
           className={cn(
-            "mt-4 w-full rounded-none py-5 text-sm font-black uppercase text-black transition-all",
+            "mt-4 w-full rounded-none py-3 text-sm font-black uppercase text-black transition-all",
             isAdmin ? "bg-gold tracking-[0.18em] hover:brightness-110 active:scale-[0.98]" : "bg-gold"
           )}
           style={{

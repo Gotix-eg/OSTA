@@ -1,7 +1,6 @@
 "use client";
 
 import type { ReactNode } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { Activity, CircleHelp, FileWarning, Home, Lock, Menu, Scale, Shield, ShieldCheck, Headphones, Store, User, Wrench } from "lucide-react";
 import type { Locale } from "@/lib/locales";
@@ -19,16 +18,7 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
   const isArabic = locale === "ar";
   const isLogin = pathname === "/login";
 
-  const trustBadges = [
-    { Icon: ShieldCheck, label: isArabic ? "دخول آمن" : "SECURE AUTH" },
-    { Icon: Lock, label: isArabic ? "بيانات محمية" : "DATA PROTECTED" },
-    { Icon: Headphones, label: isArabic ? "دعم مستمر" : "24/7 SUPPORT" },
-  ];
 
-  const heroTitle = isArabic ? "دقة في كل اتصال." : "Precision in Every Connection.";
-  const heroCopy = isArabic
-    ? "نربط الحرفيين المحترفين بالعملاء الباحثين عن الجودة في كل المنطقة."
-    : "Connecting professional craftsmen with quality-driven clients across the region.";
   const heading = isLogin
     ? (isArabic ? "أهلاً بك" : "WELCOME BACK")
     : (isArabic ? "إنشأ حسابك علي أُسطفاي" : "CREATE ACCOUNT");
@@ -36,96 +26,41 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
   const mobileSubheading = isLogin
     ? (isArabic ? "تسجيل دخول آمن للحرفيين والعملاء المعتمدين" : "Secure login for Egypt's elite tradesmen and clients")
     : (isArabic ? "انضم إلى أُسطفاي كعميل أو فني أو مورد" : "Join Ostafy as a client, technician, or vendor");
-  const registerPrompt = isArabic ? "ليس لديك حساب؟" : "Don't have an account?";
-  const desktopRegisterPrompt = isArabic ? "جديد في أوستا؟ سجل كـ:" : "New to OSTA? Register as:";
-  const registerLabels = {
-    client: isArabic ? "عميل" : "Client",
-    worker: isArabic ? "فني" : "Worker",
-    vendor: isArabic ? "مورد" : "Vendor",
-  };
-  const registerPrefix = isArabic ? "تسجيل " : "Register ";
+
 
   return (
     <PublicShell locale={locale} pathname={pathname}>
       <div className="flex min-h-[70vh] items-center justify-center py-20 px-4 bg-gold">
         <div
-          className="relative z-10 grid w-full max-w-xl grid-cols-1 overflow-hidden border border-white/10 bg-black md:max-w-6xl md:grid-cols-2 text-start rounded-none"
+          className="relative z-10 grid w-full max-w-xl grid-cols-1 overflow-hidden border border-white/10 bg-black md:max-w-6xl md:grid-cols-2 md:h-[600px] text-start rounded-none"
           dir={isArabic ? "rtl" : "ltr"}
-          style={{
-            boxShadow: "6px 6px 0px #1a1c1c"
-          }}
         >
-          <div className="group relative hidden md:block overflow-hidden" style={{ minHeight: "600px" }}>
-            <Image
+          <div className="relative hidden md:block h-full overflow-hidden">
+            <img
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbfJ-2IS0360vqfuhA-1NqheG3brCUZN76EodMJBKF9vokisslyWi0g1RYa1pqwr0_MOFfrHqLJJDwj3228wWUnrA02sMvWtljZz34nlB9m-lPPKzi9OW3vEu7MFeoJLIwwivipO15TWmhDAjdkRYMHCDAyy6fYNcv6MbRjHrrdWErxNnDtkkgN5nR94neVSIhHYNfrmkUUhNIzrBXIdYsaC3zHiCQ35GBv_nPGbiEWpTnd7ULVnkTwOVpH-yyfmCAUcDgTzMPvOE"
-              alt="Master craftsman"
-              fill
-              priority
-              sizes="(min-width: 768px) 50vw, 0px"
-              className="absolute inset-0 object-cover"
+              alt="Ostafy Auth"
+              className="absolute inset-0 w-full h-full object-cover"
             />
-            <div className="absolute bottom-12 left-12 z-20 max-w-md" dir={isArabic ? "rtl" : "ltr"}>
-              <h2 className="mb-4 text-4xl font-black leading-tight text-white">
-                {heroTitle}
-              </h2>
-              <p className="text-lg leading-relaxed text-white/70">
-                {heroCopy}
-              </p>
-            </div>
           </div>
 
           <div
-            className="flex flex-col justify-center p-8 md:p-16"
+            className="flex flex-col justify-center p-8 md:p-12 md:h-full md:overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
             style={{ backgroundColor: "#000000" }}
             dir={isArabic ? "rtl" : "ltr"}
           >
-            <div className="mb-10 text-center md:text-start">
-              <h1 className="mb-2 whitespace-nowrap text-[26px] font-black uppercase leading-tight text-gold md:text-5xl">
+            <div className="mb-6 text-center md:text-start">
+              <h1 className="whitespace-nowrap text-[26px] font-black uppercase leading-tight text-gold md:text-5xl">
                 {heading}
               </h1>
-              <p className="mx-auto max-w-md text-base leading-relaxed text-white/70 md:mx-0 md:text-sm md:font-black md:uppercase md:tracking-[0.2em] md:text-white/50">
-                <span className="md:hidden">
-                  {mobileSubheading}
-                </span>
-                {subheading && <span className="hidden md:inline">{subheading}</span>}
-              </p>
+              {!isLogin && (
+                <p className="mt-2 mx-auto max-w-md text-base leading-relaxed text-white/70 md:mx-0 md:text-sm md:font-black md:uppercase md:tracking-[0.2em] md:text-white/50">
+                  <span>{mobileSubheading}</span>
+                  {subheading && <span className="hidden md:inline"> {subheading}</span>}
+                </p>
+              )}
             </div>
 
             {children}
-
-            {isLogin && (
-              <div className="mt-10 grid gap-4 border-t border-white/10 pt-6">
-                <p className="mb-2 text-center text-xs font-black uppercase tracking-[0.2em] text-white/60">
-                  <span className="md:hidden">{registerPrompt}</span>
-                  <span className="hidden md:inline">{desktopRegisterPrompt}</span>
-                </p>
-                <div className="grid grid-cols-1 gap-4 md:flex md:gap-3">
-                  {(["client", "worker", "vendor"] as const).map((role) => {
-                    return (
-                      <Link
-                        key={role}
-                        href={`/${locale}/register/${role}`}
-                        className="flex-1 border border-white/10 py-2 text-center text-[10px] font-black uppercase text-white transition-all hover:border-gold/40 hover:bg-white/5 md:py-3 md:hover:bg-gold md:hover:text-black"
-                      >
-                        <span className="md:hidden">{registerPrefix}</span>
-                        {registerLabels[role]}
-                      </Link>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            <div
-              className="mt-12 flex flex-wrap justify-center gap-8 border-t border-white/5 pt-8 opacity-50"
-            >
-              {trustBadges.map(({ Icon, label }) => (
-                <div key={label} className="flex items-center gap-2">
-                  <Icon size={16} style={{ color: "#f5bd18" }} strokeWidth={2} />
-                  <span className="font-black text-xs uppercase tracking-tight text-white">{label}</span>
-                </div>
-              ))}
-            </div>
           </div>
         </div>
       </div>
