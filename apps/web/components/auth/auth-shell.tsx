@@ -53,13 +53,13 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
           </div>
 
           <div
-            className="flex flex-col justify-center p-8 md:p-10 md:h-full md:overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            className="flex flex-col justify-center p-5 md:px-8 md:py-6 md:h-full md:overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
             style={{ backgroundColor: "#000000" }}
             dir={isArabic ? "rtl" : "ltr"}
           >
             {heading && (
-              <div className="mb-6 text-center md:text-start">
-                <h1 className="whitespace-nowrap text-2xl font-black uppercase leading-tight text-gold md:text-3xl">
+              <div className="mb-3 text-center md:text-start">
+                <h1 className="whitespace-nowrap text-xl font-black uppercase leading-tight text-gold md:text-2xl">
                   {heading}
                 </h1>
               </div>

@@ -8,7 +8,8 @@ export function ImageUpload({
   onChange,
   isArabic,
   purpose,
-  variant = "default"
+  variant = "default",
+  compact = false
 }: {
   label: string;
   value: string;
@@ -16,6 +17,7 @@ export function ImageUpload({
   isArabic: boolean;
   purpose?: "registration-document";
   variant?: "default" | "auth";
+  compact?: boolean;
 }) {
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -59,30 +61,38 @@ export function ImageUpload({
   }
 
   return (
-    <div className="space-y-2 text-start">
-      <span className={isAuth ? "text-xs font-black uppercase tracking-widest text-white/70" : "text-sm font-medium text-onyx-200"}>{label}</span>
+    <div className={compact ? "space-y-0.5 text-start" : "space-y-2 text-start"}>
+      <span className={isAuth ? (compact ? "text-[10px] font-black uppercase tracking-widest text-white/70" : "text-xs font-black uppercase tracking-widest text-white/70") : "text-sm font-medium text-onyx-200"}>{label}</span>
       <div 
         onClick={() => fileInputRef.current?.click()}
-        className={isAuth ? "relative flex h-32 cursor-pointer flex-col items-center justify-center gap-2 rounded-none border border-dashed border-white/20 bg-[#121212] text-white/45 transition-colors hover:border-gold hover:bg-white/5" : "relative flex h-32 cursor-pointer flex-col items-center justify-center gap-2 rounded-[1.2rem] border-2 border-dashed border-onyx-700 bg-onyx-800/50 text-onyx-400 transition hover:border-primary-400 hover:bg-primary-50"}
+        className={
+          isAuth
+            ? compact
+              ? "relative flex h-14 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-none border border-dashed border-white/20 bg-[#121212] text-white/45 transition-colors hover:border-gold hover:bg-white/5"
+              : "relative flex h-32 cursor-pointer flex-col items-center justify-center gap-2 rounded-none border border-dashed border-white/20 bg-[#121212] text-white/45 transition-colors hover:border-gold hover:bg-white/5"
+            : compact
+            ? "relative flex h-14 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-[1.2rem] border-2 border-dashed border-onyx-700 bg-onyx-800/50 text-onyx-400 transition hover:border-primary-400 hover:bg-primary-50"
+            : "relative flex h-32 cursor-pointer flex-col items-center justify-center gap-2 rounded-[1.2rem] border-2 border-dashed border-onyx-700 bg-onyx-800/50 text-onyx-400 transition hover:border-primary-400 hover:bg-primary-50"
+        }
       >
         {isUploading ? (
-          <span className={isAuth ? "text-sm font-black text-gold" : "text-sm font-medium text-primary-600"}>
+          <span className={isAuth ? "text-[10px] font-black text-gold" : "text-[10px] font-medium text-primary-600"}>
             {isArabic ? "جاري الرفع..." : "Uploading..."}
           </span>
         ) : value ? (
           <div className={isAuth ? "relative h-full w-full overflow-hidden" : "relative h-full w-full overflow-hidden rounded-[1.2rem]"}>
             <img src={value} alt="Uploaded" className="h-full w-full object-cover" />
             <div className="absolute inset-0 bg-dark-950/20 flex items-center justify-center opacity-0 transition-opacity hover:opacity-100">
-               <span className="text-white text-sm font-black">{isArabic ? "تغيير الصورة" : "Change image"}</span>
+               <span className="text-white text-[10px] font-black">{isArabic ? "تغيير الصورة" : "Change image"}</span>
             </div>
           </div>
         ) : (
           <>
-             <div className="flex flex-col items-center gap-1">
-                <span className="text-sm font-black uppercase tracking-wide">
+             <div className="flex flex-row items-center justify-center gap-1.5">
+                <span className="text-[10px] font-black uppercase tracking-wide">
                   {isArabic ? "اختر صورة" : "Select image"}
                 </span>
-                <span className="text-xs font-semibold text-white/35">Max 5MB</span>
+                <span className="text-[9px] font-semibold text-white/35">(Max 5MB)</span>
              </div>
           </>
         )}

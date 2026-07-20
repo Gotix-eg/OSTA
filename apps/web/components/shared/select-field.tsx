@@ -15,7 +15,8 @@ export function SelectField({
   options,
   placeholder,
   disabled,
-  variant = "default"
+  variant = "default",
+  compact = false
 }: {
   label: string;
   value: string;
@@ -24,19 +25,22 @@ export function SelectField({
   placeholder?: string;
   disabled?: boolean;
   variant?: "default" | "auth";
+  compact?: boolean;
 }) {
   const isAuth = variant === "auth";
 
   return (
-    <label className="block space-y-2 text-start">
-      <span className={isAuth ? "text-xs font-black uppercase tracking-widest text-white" : "text-sm font-medium text-onyx-200"}>{label}</span>
+    <label className={cn("block text-start", compact ? "space-y-1" : "space-y-1.5")}>
+      <span className={isAuth ? cn(compact ? "text-[10px]" : "text-xs", "font-black uppercase tracking-widest text-white") : "text-sm font-medium text-onyx-200"}>{label}</span>
       <select
         value={value}
         disabled={disabled}
         onChange={(event) => onChange(event.target.value)}
         className={cn(
           isAuth
-            ? "h-11 w-full appearance-none rounded-none border border-white/20 bg-[#121212] px-3 text-sm font-semibold text-white outline-none transition-colors focus:border-gold disabled:cursor-not-allowed disabled:opacity-50"
+            ? compact
+              ? "h-9 w-full appearance-none rounded-none border border-white/20 bg-[#121212] px-2.5 text-xs font-semibold text-white outline-none transition-colors focus:border-gold disabled:cursor-not-allowed disabled:opacity-50"
+              : "h-11 w-full appearance-none rounded-none border border-white/20 bg-[#121212] px-3 text-sm font-semibold text-white outline-none transition-colors focus:border-gold disabled:cursor-not-allowed disabled:opacity-50"
             : "h-12 w-full appearance-none rounded-[1.2rem] border border-onyx-700 bg-onyx-800/50 px-4 text-body text-white transition focus:border-primary-400 focus:ring-2 focus:ring-primary-500/30 disabled:cursor-not-allowed disabled:opacity-50",
           !value && (isAuth ? "text-white/35" : "text-onyx-500")
         )}
