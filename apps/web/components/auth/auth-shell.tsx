@@ -17,15 +17,20 @@ interface AuthShellProps {
 export function AuthShell({ locale, pathname, title, description, children }: AuthShellProps) {
   const isArabic = locale === "ar";
   const isLogin = pathname === "/login";
-
+  const isRegisterChoice = pathname === "/register" || pathname.endsWith("/register");
 
   const heading = isLogin
     ? (isArabic ? "أهلاً بك" : "WELCOME BACK")
-    : (isArabic ? "إنشأ حسابك علي أُسطفاي" : "CREATE ACCOUNT");
-  const subheading = "";
-  const mobileSubheading = isLogin
-    ? (isArabic ? "تسجيل دخول آمن للحرفيين والعملاء المعتمدين" : "Secure login for Egypt's elite tradesmen and clients")
-    : (isArabic ? "انضم إلى أُسطفاي كعميل أو فني أو مورد" : "Join Ostafy as a client, technician, or vendor");
+    : pathname.includes("/register/client")
+    ? (isArabic ? "إنشاء حساب عميل" : "CREATE CLIENT ACCOUNT")
+    : pathname.includes("/register/worker")
+    ? (isArabic ? "إنشاء حساب فني" : "CREATE WORKER ACCOUNT")
+    : pathname.includes("/register/vendor")
+    ? (isArabic ? "إنشاء حساب مورد" : "CREATE VENDOR ACCOUNT")
+    : isRegisterChoice
+    ? (isArabic ? "إنشأ حسابك علي أُسطفاي" : "CREATE YOUR ACCOUNT")
+    : null;
+
 
 
   return (
@@ -44,21 +49,17 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
           </div>
 
           <div
-            className="flex flex-col justify-center p-8 md:p-12 md:h-full md:overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            className="flex flex-col justify-center p-8 md:p-10 md:h-full md:overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
             style={{ backgroundColor: "#000000" }}
             dir={isArabic ? "rtl" : "ltr"}
           >
-            <div className="mb-6 text-center md:text-start">
-              <h1 className="whitespace-nowrap text-[26px] font-black uppercase leading-tight text-gold md:text-5xl">
-                {heading}
-              </h1>
-              {!isLogin && (
-                <p className="mt-2 mx-auto max-w-md text-base leading-relaxed text-white/70 md:mx-0 md:text-sm md:font-black md:uppercase md:tracking-[0.2em] md:text-white/50">
-                  <span>{mobileSubheading}</span>
-                  {subheading && <span className="hidden md:inline"> {subheading}</span>}
-                </p>
-              )}
-            </div>
+            {heading && (
+              <div className="mb-6 text-center md:text-start">
+                <h1 className="whitespace-nowrap text-2xl font-black uppercase leading-tight text-gold md:text-3xl">
+                  {heading}
+                </h1>
+              </div>
+            )}
 
             {children}
           </div>

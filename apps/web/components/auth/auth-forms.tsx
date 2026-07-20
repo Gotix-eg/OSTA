@@ -53,21 +53,21 @@ function EgyptPhoneBadge({ locale }: { locale: Locale }) {
 
 function TermsConsentText({ locale }: { locale: Locale }) {
   const isArabic = locale === "ar";
-  const linkClass = "underline underline-offset-2 hover:text-gold transition-colors";
+  const linkClass = "text-gold underline underline-offset-2 font-bold";
 
   return isArabic ? (
-    <>
+    <span className="text-white font-medium">
       أوافق على{" "}
       <Link href={`/${locale}/terms`} target="_blank" rel="noopener noreferrer" className={linkClass}>
         الشروط
       </Link>{" "}
-      و
+      و{" "}
       <Link href={`/${locale}/privacy`} target="_blank" rel="noopener noreferrer" className={linkClass}>
         سياسة الخصوصية
       </Link>
-    </>
+    </span>
   ) : (
-    <>
+    <span className="text-white font-medium">
       I agree to the{" "}
       <Link href={`/${locale}/terms`} target="_blank" rel="noopener noreferrer" className={linkClass}>
         terms
@@ -76,7 +76,7 @@ function TermsConsentText({ locale }: { locale: Locale }) {
       <Link href={`/${locale}/privacy`} target="_blank" rel="noopener noreferrer" className={linkClass}>
         privacy policy
       </Link>
-    </>
+    </span>
   );
 }
 
@@ -276,8 +276,8 @@ function InputField({
   dir?: "ltr" | "rtl";
 }) {
   return (
-    <label className="block space-y-2 text-start">
-      <span className="text-xs font-black uppercase tracking-widest text-white/70">{label}</span>
+    <label className="block space-y-1.5 text-start">
+      <span className="text-xs font-black uppercase tracking-wider text-white">{label}</span>
       {textarea ? (
         <textarea
           value={value}
@@ -287,7 +287,7 @@ function InputField({
           name={name}
           autoComplete={autoComplete}
           className={cn(
-            "min-h-28 w-full rounded-none border bg-[#121212] px-4 py-4 text-sm font-semibold text-white outline-none transition-colors placeholder:text-white/20 focus:border-gold",
+            "min-h-24 w-full rounded-none border bg-[#121212] px-3 py-2 text-sm font-semibold text-white outline-none transition-colors placeholder:text-white/20 focus:border-gold",
             errorText ? "border-red-500" : "border-white/20"
           )}
         />
@@ -307,8 +307,8 @@ function InputField({
             autoComplete={autoComplete}
             dir={dir}
             className={cn(
-              "h-14 w-full rounded-none border bg-[#121212] text-sm font-semibold text-white outline-none transition-colors placeholder:text-white/20 focus:border-gold",
-              suffix ? "pl-4 pr-24" : "px-4",
+              "h-11 w-full rounded-none border bg-[#121212] text-sm font-semibold text-white outline-none transition-colors placeholder:text-white/20 focus:border-gold",
+              suffix ? "pl-3 pr-24" : "px-3",
               errorText ? "border-red-500" : "border-white/20"
             )}
           />
@@ -317,7 +317,7 @@ function InputField({
       {errorText ? (
         <p className="text-xs text-red-500 mt-1 select-none font-bold animate-fadeIn">{errorText}</p>
       ) : helperText ? (
-        <p className="mt-1 text-xs font-semibold leading-normal text-white/60">{helperText}</p>
+        <p className="mt-1 text-xs font-semibold leading-none text-white/50">{helperText}</p>
       ) : null}
     </label>
   );
@@ -412,7 +412,7 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
       }
     : {
         phone: isArabic ? "رقم الهاتف" : "Phone Number",
-        phonePlaceholder: "+20 1XX XXX XXXX",
+        phonePlaceholder: "01012345678",
         password: isArabic ? "كلمة المرور" : "Password",
         passwordPlaceholder: "••••••••",
         remember: isArabic ? "تذكرني" : "Remember Me",
@@ -512,7 +512,7 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
       <div className="grid gap-6">
         {/* Phone Input */}
         <div className="space-y-2 text-start">
-          <label htmlFor="login-phone" className="mb-2 flex justify-between text-xs font-black uppercase tracking-widest text-white/60 md:text-white/70">
+          <label htmlFor="login-phone" className="mb-2 flex justify-between text-xs font-black uppercase tracking-widest text-white">
             <span className={isAdmin ? "text-gold" : ""}>{loginLabels.phone}</span>
             {isAdmin ? <Phone size={14} className="hidden text-gold md:block" /> : <Phone size={14} className="hidden text-gold md:block" />}
           </label>
@@ -535,7 +535,7 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
               aria-invalid={phoneError ? true : undefined}
               aria-describedby={phoneError ? "login-phone-error" : undefined}
               className={cn(
-                "w-full rounded-none bg-[#121212] p-4 pl-4 pr-24 font-semibold text-white transition-colors placeholder:text-white/20 focus:border-gold focus:outline-none focus:ring-0",
+                "h-11 w-full rounded-none bg-[#121212] px-3 pl-3 pr-24 text-sm font-semibold text-white transition-colors placeholder:text-white/20 focus:border-gold focus:outline-none focus:ring-0",
                 phoneError ? "border-2 border-red-500" : "border border-white/20"
               )}
             />
@@ -547,7 +547,7 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
 
         {/* Password Input */}
         <div className="space-y-2 text-start">
-          <label htmlFor="login-password" className="mb-2 flex justify-between text-xs font-black uppercase tracking-widest text-white/60 md:text-white/70">
+          <label htmlFor="login-password" className="mb-2 flex justify-between text-xs font-black uppercase tracking-widest text-white">
             <span className={isAdmin ? "text-gold" : ""}>{loginLabels.password}</span>
             {isAdmin ? <Lock size={14} className="hidden text-gold md:block" /> : <Lock size={14} className="hidden text-gold md:block" />}
           </label>
@@ -571,7 +571,7 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
               aria-invalid={passwordError ? true : undefined}
               aria-describedby={passwordError ? "login-password-error" : undefined}
               className={cn(
-                "w-full rounded-none bg-[#121212] p-4 pe-12 ps-12 font-semibold text-white transition-colors placeholder:text-white/20 focus:border-gold focus:outline-none focus:ring-0 md:ps-4",
+                "h-11 w-full rounded-none bg-[#121212] px-3 pe-12 ps-12 text-sm font-semibold text-white transition-colors placeholder:text-white/20 focus:border-gold focus:outline-none focus:ring-0 md:ps-3",
                 passwordError ? "border-2 border-red-500" : "border border-white/20"
               )}
             />
@@ -699,7 +699,7 @@ function FormSkeleton({ locale }: { locale: Locale }) {
       </div>
 
       <div className="space-y-6">
-        <div className="space-y-6 border border-white/10 bg-white/[0.02] p-6">
+        <div className="space-y-6">
           {/* Section subtitle */}
           <div className="h-5 w-40 bg-white/10" />
           
@@ -743,7 +743,7 @@ function FormSkeleton({ locale }: { locale: Locale }) {
         </div>
 
         {/* Checkbox skeleton */}
-        <div className="flex items-center gap-3 border border-white/10 bg-white/[0.02] p-4">
+        <div className="flex items-center gap-3 py-2">
           <div className="h-5 w-5 border border-white/10 bg-[#121212]" />
           <div className="h-4 w-64 bg-white/10" />
         </div>
@@ -756,23 +756,7 @@ function FormSkeleton({ locale }: { locale: Locale }) {
           </span>
         </div>
 
-        <div className="pt-2 text-center text-sm font-semibold text-white/60">
-          {isArabic ? (
-            <>
-              لديك حساب بالفعل؟{" "}
-              <Link href={`/${locale}/login`} className="text-gold-500 hover:text-gold-400 underline transition-colors font-bold">
-                تسجيل الدخول
-              </Link>
-            </>
-          ) : (
-            <>
-              Already have an account?{" "}
-              <Link href={`/${locale}/login`} className="text-gold-500 hover:text-gold-400 underline transition-colors font-bold">
-                Sign in
-              </Link>
-            </>
-          )}
-        </div>
+
       </div>
     </div>
   );
@@ -902,7 +886,7 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
              type="button"
              onClick={handleVerifyOtp}
              disabled={otpSubmitting || otpCode.length < 6}
-             className="h-14 w-full bg-gold text-sm font-black uppercase text-black shadow-[4px_4px_0_#000] transition-transform active:translate-x-1 active:translate-y-1 active:shadow-none disabled:opacity-50"
+             className="w-full py-3 bg-gold text-sm font-black uppercase text-black shadow-[4px_4px_0_#000] transition-transform active:translate-x-1 active:translate-y-1 active:shadow-none disabled:opacity-50"
            >
              {otpSubmitting ? (isArabic ? "... جاري التحقق" : "Verifying...") : isArabic ? "تفعيل الحساب" : "Activate Account"}
            </button>
@@ -920,34 +904,39 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
           <p className="text-white/50">{isArabic ? "جاري تحويلك إلى لوحة التحكم..." : "Redirecting to dashboard..."}</p>
         </div>
       ) : (
-        <div className="space-y-6">
-          <div className="space-y-6 border border-white/10 bg-white/[0.02] p-6">
-            <h3 className="border-b border-white/10 pb-3 text-sm font-black uppercase tracking-[0.18em] text-gold">
-              {isArabic ? "البيانات الأساسية" : "Basic Information"}
-            </h3>
+        <div className="space-y-4">
+          <div className="space-y-4">
             
-            <InputField
-              label={isArabic ? "رقم الهاتف" : "Phone number"}
-              value={state.phone}
-              onChange={(phone) => setState({ ...state, phone: formatEgyptianPhone(phone) })}
-              placeholder="01x xxxx xxxx"
-              helperText={isArabic ? "مثال: 01012345678 (رقم هاتف مصري مكون من 11 رقماً)" : "E.g. 01012345678 (11-digit Egyptian phone number)"}
-              suffix={<EgyptPhoneBadge locale={locale} />}
-              dir="ltr"
-            />
+            <div className="grid gap-4 sm:grid-cols-2">
+              <InputField
+                label={isArabic ? "رقم الهاتف" : "Phone number"}
+                value={state.phone}
+                onChange={(phone) => setState({ ...state, phone: formatEgyptianPhone(phone) })}
+                placeholder="01012345678"
+                suffix={<EgyptPhoneBadge locale={locale} />}
+                dir="ltr"
+              />
+              <InputField
+                label={isArabic ? "البريد الإلكتروني" : "Email address"}
+                value={state.email}
+                onChange={(email) => setState({ ...state, email })}
+                type="email"
+                placeholder="name@example.com"
+                dir="ltr"
+              />
+            </div>
 
-            <div className="grid gap-6 sm:grid-cols-2">
+            <div className="grid gap-4 sm:grid-cols-2">
               <InputField label={isArabic ? "الاسم الأول" : "First name"} value={state.firstName} onChange={(firstName) => setState({ ...state, firstName })} placeholder={isArabic ? "محمد" : "John"} />
               <InputField label={isArabic ? "اسم العائلة" : "Last name"} value={state.lastName} onChange={(lastName) => setState({ ...state, lastName })} placeholder={isArabic ? "أحمد" : "Doe"} />
             </div>
-            <div className="grid gap-6 sm:grid-cols-2">
+            <div className="grid gap-4 sm:grid-cols-2">
               <InputField
                 label={isArabic ? "كلمة المرور" : "Password"}
                 value={state.password}
                 onChange={(password) => setState({ ...state, password })}
                 type="password"
                 placeholder="••••••••"
-                helperText={isArabic ? "يجب أن تحتوي على 8 أحرف أو أرقام على الأقل" : "Must be at least 8 characters/numbers"}
               />
               <InputField
                 label={isArabic ? "تأكيد كلمة المرور" : "Confirm password"}
@@ -955,18 +944,17 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
                 onChange={(confirmPassword) => setState({ ...state, confirmPassword })}
                 type="password"
                 placeholder="••••••••"
-                helperText={isArabic ? "أعد كتابة كلمة المرور المدخلة للتأكيد" : "Retype the password to confirm"}
               />
             </div>
           </div>
 
-          <label className="group flex cursor-pointer items-center gap-3 border border-white/10 bg-white/[0.02] p-4">
+          <label className="group flex cursor-pointer items-center gap-3 py-1.5">
             <div className="relative flex h-5 w-5 items-center justify-center">
                 <input type="checkbox" checked={state.acceptedTerms} onChange={(e) => setState({ ...state, acceptedTerms: e.target.checked })} className="peer h-full w-full opacity-0 absolute cursor-pointer" />
                 <div className="h-full w-full border border-white/20 bg-[#121212] transition peer-checked:border-gold peer-checked:bg-gold" />
                 <Check className="pointer-events-none absolute h-3.5 w-3.5 text-black opacity-0 transition peer-checked:opacity-100" />
             </div>
-            <span className="text-sm font-semibold text-white/50 transition group-hover:text-white">
+            <span className="text-sm">
               <TermsConsentText locale={locale} />
             </span>
           </label>
@@ -975,29 +963,13 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
               type="button"
               onClick={handleRegister}
               disabled={isSubmitting}
-              className="flex h-14 w-full items-center justify-center gap-2 bg-gold text-sm font-black uppercase text-black shadow-[4px_4px_0_#000] transition-transform active:translate-x-1 active:translate-y-1 active:shadow-none disabled:opacity-50"
+              className="flex w-full py-3 items-center justify-center gap-2 bg-gold text-sm font-black uppercase text-black shadow-[4px_4px_0_#000] transition-transform active:translate-x-1 active:translate-y-1 active:shadow-none disabled:opacity-50"
           >
             {isSubmitting ? (isArabic ? "جاري إنشاء الحساب..." : "Creating Account...") : (isArabic ? "إنشاء الحساب" : "Create Account")}
             {!isSubmitting && <ArrowUpRight className="h-5 w-5" />}
           </button>
 
-          <div className="pt-2 text-center text-sm font-semibold text-white/60">
-            {isArabic ? (
-              <>
-                لديك حساب بالفعل؟{" "}
-                <Link href={`/${locale}/login`} className="text-gold-500 hover:text-gold-400 underline transition-colors font-bold">
-                  تسجيل الدخول
-                </Link>
-              </>
-            ) : (
-              <>
-                Already have an account?{" "}
-                <Link href={`/${locale}/login`} className="text-gold-500 hover:text-gold-400 underline transition-colors font-bold">
-                  Sign in
-                </Link>
-              </>
-            )}
-          </div>
+
 
           {error && <div className="animate-shake border border-red-500/20 bg-red-500/5 p-4 text-center text-sm font-bold text-red-500">{error}</div>}
         </div>
@@ -1087,7 +1059,7 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
         </div>
       ) : (
         <div className="space-y-6">
-          <div className="space-y-6 border border-white/10 bg-white/[0.02] p-6">
+          <div className="space-y-6">
             <h3 className="border-b border-white/10 pb-3 text-sm font-black uppercase tracking-[0.18em] text-gold">
               {isArabic ? "البيانات الشخصية" : "Personal Information"}
             </h3>
@@ -1096,8 +1068,8 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
               label={isArabic ? "رقم الهاتف" : "Phone number"} 
               value={state.phone} 
               onChange={(phone) => setState({ ...state, phone: formatEgyptianPhone(phone) })} 
-              placeholder="01x xxxx xxxx" 
-              helperText={isArabic ? "مثال: 01012345678 (رقم هاتف مصري مكون من 11 رقماً)" : "E.g. 01012345678 (11-digit Egyptian phone number)"}
+              placeholder="01012345678" 
+              helperText={isArabic ? "مثال: 01012345678" : "E.g. 01012345678"}
               suffix={<EgyptPhoneBadge locale={locale} />}
               dir="ltr"
             />
@@ -1120,7 +1092,7 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
             </div>
           </div>
 
-          <div className="space-y-6 border border-white/10 bg-white/[0.02] p-6">
+          <div className="space-y-6">
             <h3 className="border-b border-white/10 pb-3 text-sm font-black uppercase tracking-[0.18em] text-gold">
               {isArabic ? "مستندات التوثيق" : "Verification Documents"}
             </h3>
@@ -1150,13 +1122,13 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
             </div>
           </div>
 
-          <label className="group flex cursor-pointer items-center gap-3 border border-white/10 bg-white/[0.02] p-4">
+          <label className="group flex cursor-pointer items-center gap-3 py-2">
             <div className="relative flex h-5 w-5 items-center justify-center">
                 <input type="checkbox" checked={state.acceptedTerms} onChange={(e) => setState({ ...state, acceptedTerms: e.target.checked })} className="peer h-full w-full opacity-0 absolute cursor-pointer" />
                 <div className="h-full w-full border border-white/20 bg-[#121212] transition peer-checked:border-gold peer-checked:bg-gold" />
                 <Check className="pointer-events-none absolute h-3.5 w-3.5 text-black opacity-0 transition peer-checked:opacity-100" />
             </div>
-            <span className="text-sm font-semibold text-white/50 transition group-hover:text-white">
+            <span className="text-sm">
               <TermsConsentText locale={locale} />
             </span>
           </label>
@@ -1165,29 +1137,13 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
               type="button" 
               onClick={handleRegister} 
               disabled={isSubmitting}
-              className="flex h-14 w-full items-center justify-center gap-2 bg-gold text-sm font-black uppercase text-black shadow-[4px_4px_0_#000] transition-transform active:translate-x-1 active:translate-y-1 active:shadow-none disabled:opacity-50"
+              className="flex w-full py-3 items-center justify-center gap-2 bg-gold text-sm font-black uppercase text-black shadow-[4px_4px_0_#000] transition-transform active:translate-x-1 active:translate-y-1 active:shadow-none disabled:opacity-50"
           >
             {isSubmitting ? (isArabic ? "جاري إرسال الطلب..." : "Submitting Application...") : (isArabic ? "إرسال طلب الانضمام" : "Submit Application")}
             {!isSubmitting && <ArrowUpRight className="h-5 w-5" />}
           </button>
 
-          <div className="pt-2 text-center text-sm font-semibold text-white/60">
-            {isArabic ? (
-              <>
-                لديك حساب بالفعل؟{" "}
-                <Link href={`/${locale}/login`} className="text-gold-500 hover:text-gold-400 underline transition-colors font-bold">
-                  تسجيل الدخول
-                </Link>
-              </>
-            ) : (
-              <>
-                Already have an account?{" "}
-                <Link href={`/${locale}/login`} className="text-gold-500 hover:text-gold-400 underline transition-colors font-bold">
-                  Sign in
-                </Link>
-              </>
-            )}
-          </div>
+
 
           {error && <div className="animate-shake border border-red-500/20 bg-red-500/5 p-4 text-center text-sm font-bold text-red-500">{error}</div>}
         </div>
@@ -1288,7 +1244,7 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
         </div>
       ) : (
         <div className="space-y-6">
-          <div className="space-y-6 border border-white/10 bg-white/[0.02] p-6">
+          <div className="space-y-6">
             <h3 className="border-b border-white/10 pb-3 text-sm font-black uppercase tracking-[0.18em] text-gold">
               {isArabic ? "بيانات المتجر" : "Store Information"}
             </h3>
@@ -1297,8 +1253,8 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
               label={isArabic ? "رقم الهاتف" : "Phone number"} 
               value={state.phone} 
               onChange={(phone) => setState({ ...state, phone: formatEgyptianPhone(phone) })} 
-              placeholder="01x xxxx xxxx" 
-              helperText={isArabic ? "مثال: 01012345678 (رقم هاتف مصري مكون من 11 رقماً)" : "E.g. 01012345678 (11-digit Egyptian phone number)"}
+              placeholder="01012345678" 
+              helperText={isArabic ? "مثال: 01012345678" : "E.g. 01012345678"}
               suffix={<EgyptPhoneBadge locale={locale} />}
               dir="ltr"
             />
@@ -1313,7 +1269,7 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
             />
           </div>
 
-          <div className="space-y-6 border border-white/10 bg-white/[0.02] p-6">
+          <div className="space-y-6">
             <h3 className="border-b border-white/10 pb-3 text-sm font-black uppercase tracking-[0.18em] text-gold">
               {isArabic ? "البيانات الشخصية" : "Owner Information"}
             </h3>
@@ -1350,7 +1306,7 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
             </div>
           </div>
 
-          <div className="space-y-6 border border-white/10 bg-white/[0.02] p-6">
+          <div className="space-y-6">
             <h3 className="border-b border-white/10 pb-3 text-sm font-black uppercase tracking-[0.18em] text-gold">
               {isArabic ? "مستندات التوثيق" : "Verification Documents"}
             </h3>
@@ -1390,13 +1346,13 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
             <InputField label={isArabic ? "العنوان التفصيلي" : "Detailed address"} value={state.address} onChange={(address) => setState({ ...state, address })} textarea rows={2} />
           </div>
 
-          <label className="group flex cursor-pointer items-center gap-3 border border-white/10 bg-white/[0.02] p-4">
+          <label className="group flex cursor-pointer items-center gap-3 py-2">
             <div className="relative flex h-5 w-5 items-center justify-center">
                 <input type="checkbox" checked={state.acceptedTerms} onChange={(e) => setState({ ...state, acceptedTerms: e.target.checked })} className="peer h-full w-full opacity-0 absolute cursor-pointer" />
                 <div className="h-full w-full border border-white/20 bg-[#121212] transition peer-checked:border-gold peer-checked:bg-gold" />
                 <Check className="pointer-events-none absolute h-3.5 w-3.5 text-black opacity-0 transition peer-checked:opacity-100" />
             </div>
-            <span className="text-sm font-semibold text-white/50 transition group-hover:text-white">
+            <span className="text-sm">
               <TermsConsentText locale={locale} />
             </span>
           </label>
@@ -1405,29 +1361,13 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
               type="button" 
               onClick={handleRegister} 
               disabled={isSubmitting}
-              className="flex h-14 w-full items-center justify-center gap-2 bg-gold text-sm font-black uppercase text-black shadow-[4px_4px_0_#000] transition-transform active:translate-x-1 active:translate-y-1 active:shadow-none disabled:opacity-50"
+              className="flex w-full py-3 items-center justify-center gap-2 bg-gold text-sm font-black uppercase text-black shadow-[4px_4px_0_#000] transition-transform active:translate-x-1 active:translate-y-1 active:shadow-none disabled:opacity-50"
           >
             {isSubmitting ? (isArabic ? "جاري إنشاء الحساب..." : "Creating Account...") : (isArabic ? "إنشاء حساب المتجر" : "Create Store Account")}
             {!isSubmitting && <ArrowUpRight className="h-5 w-5" />}
           </button>
 
-          <div className="pt-2 text-center text-sm font-semibold text-white/60">
-            {isArabic ? (
-              <>
-                لديك حساب بالفعل؟{" "}
-                <Link href={`/${locale}/login`} className="text-gold-500 hover:text-gold-400 underline transition-colors font-bold">
-                  تسجيل الدخول
-                </Link>
-              </>
-            ) : (
-              <>
-                Already have an account?{" "}
-                <Link href={`/${locale}/login`} className="text-gold-500 hover:text-gold-400 underline transition-colors font-bold">
-                  Sign in
-                </Link>
-              </>
-            )}
-          </div>
+
 
           {error && <div className="animate-shake border border-red-500/20 bg-red-500/5 p-4 text-center text-sm font-bold text-red-500">{error}</div>}
         </div>
