@@ -96,6 +96,7 @@ type WorkerRegisterState = {
   otp: string;
   firstName: string;
   lastName: string;
+  email: string;
   nationalIdNumber: string;
   nationalIdFront: string;
   nationalIdBack: string;
@@ -159,6 +160,7 @@ const workerRegisterDefaults: WorkerRegisterState = {
   otp: "",
   firstName: "",
   lastName: "",
+  email: "",
   nationalIdNumber: "",
   nationalIdFront: "",
   nationalIdBack: "",
@@ -172,35 +174,35 @@ export function formatEgyptianPhone(val: string): string {
   if (val.length < 3) {
     return "+20";
   }
-  
+
   let digits = val.replace(/\D/g, "");
-  
+
   if (digits.startsWith("20")) {
     digits = digits.substring(2);
   }
-  
+
   while (digits.startsWith("0")) {
     digits = digits.substring(1);
   }
-  
+
   digits = digits.substring(0, 10);
-  
+
   let formatted = "+20";
   if (digits.length > 0) {
     const part1 = digits.substring(0, 3);
     formatted += " " + part1;
-    
+
     if (digits.length > 3) {
       const part2 = digits.substring(3, 6);
       formatted += " " + part2;
     }
-    
+
     if (digits.length > 6) {
       const part3 = digits.substring(6, 10);
       formatted += " " + part3;
     }
   }
-  
+
   return formatted;
 }
 
@@ -404,29 +406,29 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const loginLabels = isAdmin
     ? {
-        phone: isArabic ? "رقم هاتف المدير" : "Admin Phone Number",
-        phonePlaceholder: "+20 1XX XXX XXXX",
-        password: isArabic ? "كلمة المرور" : "Password",
-        passwordPlaceholder: "••••••••",
-        remember: isArabic ? "حفظ الجلسة الآمنة" : "Keep Secure Session",
-        forgot: isArabic ? "نسيت كلمة المرور؟" : "Forgot Password?",
-        submit: isArabic ? "تسجيل دخول الإدارة" : "Admin Login",
-        submitting: isArabic ? "جاري تسجيل الدخول..." : "Logging in..."
-      }
+      phone: isArabic ? "رقم هاتف المدير" : "Admin Phone Number",
+      phonePlaceholder: "+20 1XX XXX XXXX",
+      password: isArabic ? "كلمة المرور" : "Password",
+      passwordPlaceholder: "••••••••",
+      remember: isArabic ? "حفظ الجلسة الآمنة" : "Keep Secure Session",
+      forgot: isArabic ? "نسيت كلمة المرور؟" : "Forgot Password?",
+      submit: isArabic ? "تسجيل دخول الإدارة" : "Admin Login",
+      submitting: isArabic ? "جاري تسجيل الدخول..." : "Logging in..."
+    }
     : {
-        phone: isArabic ? "رقم الهاتف" : "Phone Number",
-        phonePlaceholder: "01012345678",
-        password: isArabic ? "كلمة المرور" : "Password",
-        passwordPlaceholder: "••••••••",
-        remember: isArabic ? "تذكرني" : "Remember Me",
-        forgot: isArabic ? "نسيت كلمة المرور؟" : "Forgot Password?",
-        submit: isArabic ? "تسجيل الدخول" : "LOGIN",
-        submitting: isArabic ? "جاري تسجيل الدخول..." : "LOGGING IN..."
-      };
+      phone: isArabic ? "رقم الهاتف" : "Phone Number",
+      phonePlaceholder: "01012345678",
+      password: isArabic ? "كلمة المرور" : "Password",
+      passwordPlaceholder: "••••••••",
+      remember: isArabic ? "تذكرني" : "Remember Me",
+      forgot: isArabic ? "نسيت كلمة المرور؟" : "Forgot Password?",
+      submit: isArabic ? "تسجيل الدخول" : "LOGIN",
+      submitting: isArabic ? "جاري تسجيل الدخول..." : "LOGGING IN..."
+    };
 
   async function handleLogin() {
     let isValid = true;
-    
+
     if (!phone.trim()) {
       setPhoneError(isArabic ? "رقم الهاتف مطلوب" : "Phone number is required");
       isValid = false;
@@ -462,8 +464,8 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
           const roleName = activeTab === "CLIENT"
             ? (isArabic ? "عميل" : "client")
             : activeTab === "WORKER"
-            ? (isArabic ? "فني" : "technician")
-            : (isArabic ? "مورد" : "vendor");
+              ? (isArabic ? "فني" : "technician")
+              : (isArabic ? "مورد" : "vendor");
           throw new Error(isArabic ? `هذا الحساب غير مسجل كـ ${roleName}` : `This account is not registered as a ${roleName}`);
         }
       }
@@ -487,8 +489,8 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
             const label = role === "CLIENT"
               ? (isArabic ? "عميل" : "CLIENT")
               : role === "WORKER"
-              ? (isArabic ? "فني" : "PRO")
-              : (isArabic ? "مورد" : "VENDOR");
+                ? (isArabic ? "فني" : "PRO")
+                : (isArabic ? "مورد" : "VENDOR");
             return (
               <button
                 key={role}
@@ -705,7 +707,7 @@ function FormSkeleton({ locale }: { locale: Locale }) {
         <div className="space-y-6">
           {/* Section subtitle */}
           <div className="h-5 w-40 bg-white/10" />
-          
+
           {/* Input 1 */}
           <div className="space-y-2">
             <div className="h-4 w-24 bg-white/10" />
@@ -731,7 +733,7 @@ function FormSkeleton({ locale }: { locale: Locale }) {
             <div className="h-12 w-full border border-white/10 bg-[#121212]" />
             <div className="h-3 w-64 bg-white/5" />
           </div>
-          
+
           {/* Grid inputs 2 */}
           <div className="grid gap-6 sm:grid-cols-2">
             <div className="space-y-2">
@@ -845,7 +847,7 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
       });
 
       setSubmitted(true);
-      
+
       setTimeout(() => {
         applyAuthSuccess(locale, payload, true);
       }, 1500);
@@ -863,36 +865,36 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
       <div className="space-y-8 animate-fadeIn">
         <div className="text-center space-y-3">
           <div className="mx-auto flex h-16 w-16 items-center justify-center border border-gold/40 bg-gold/10 text-gold">
-             <ShieldCheck className="h-8 w-8" />
+            <ShieldCheck className="h-8 w-8" />
           </div>
           <h2 className="text-2xl font-black text-white">{isArabic ? "أدخل رمز التحقق" : "Verify Your Email"}</h2>
           <p className="text-sm leading-relaxed text-white/55">
-            {isArabic 
+            {isArabic
               ? `لقد أرسلنا رمز تحقق مكون من 6 أرقام إلى بريدك الإلكتروني: ${registeredEmail}`
               : `We've sent a 6-digit verification code to your email: ${registeredEmail}`}
           </p>
         </div>
 
         <div className="space-y-6">
-           <OtpBoxes value={otpCode} onChange={(val) => {
-             setOtpCode(val);
-             if (otpError) setOtpError(null);
-           }} />
+          <OtpBoxes value={otpCode} onChange={(val) => {
+            setOtpCode(val);
+            if (otpError) setOtpError(null);
+          }} />
 
-           {otpError && (
-             <div className="border border-red-500/20 bg-red-500/5 p-4 text-center font-bold text-red-500">
-               {otpError}
-             </div>
-           )}
+          {otpError && (
+            <div className="border border-red-500/20 bg-red-500/5 p-4 text-center font-bold text-red-500">
+              {otpError}
+            </div>
+          )}
 
-           <button
-             type="button"
-             onClick={handleVerifyOtp}
-             disabled={otpSubmitting || otpCode.length < 6}
-             className="w-full py-3 bg-gold text-sm font-black uppercase text-black shadow-[4px_4px_0_#000] transition-transform active:translate-x-1 active:translate-y-1 active:shadow-none disabled:opacity-50"
-           >
-             {otpSubmitting ? (isArabic ? "... جاري التحقق" : "Verifying...") : isArabic ? "تفعيل الحساب" : "Activate Account"}
-           </button>
+          <button
+            type="button"
+            onClick={handleVerifyOtp}
+            disabled={otpSubmitting || otpCode.length < 6}
+            className="w-full py-3 bg-gold text-sm font-black uppercase text-black shadow-[4px_4px_0_#000] transition-transform active:translate-x-1 active:translate-y-1 active:shadow-none disabled:opacity-50"
+          >
+            {otpSubmitting ? (isArabic ? "... جاري التحقق" : "Verifying...") : isArabic ? "تفعيل الحساب" : "Activate Account"}
+          </button>
         </div>
       </div>
     );
@@ -909,7 +911,7 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
       ) : (
         <div className="space-y-4">
           <div className="space-y-4">
-            
+
             <div className="grid gap-4 sm:grid-cols-2">
               <InputField
                 label={isArabic ? "رقم الهاتف" : "Phone number"}
@@ -975,9 +977,9 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
 
           <label className="group flex cursor-pointer items-center gap-3 py-1.5">
             <div className="relative flex h-5 w-5 items-center justify-center">
-                <input type="checkbox" checked={state.acceptedTerms} onChange={(e) => setState({ ...state, acceptedTerms: e.target.checked })} className="peer h-full w-full opacity-0 absolute cursor-pointer" />
-                <div className="h-full w-full border border-white/20 bg-[#121212] transition peer-checked:border-gold peer-checked:bg-gold" />
-                <Check className="pointer-events-none absolute h-3.5 w-3.5 text-black opacity-0 transition peer-checked:opacity-100" />
+              <input type="checkbox" checked={state.acceptedTerms} onChange={(e) => setState({ ...state, acceptedTerms: e.target.checked })} className="peer h-full w-full opacity-0 absolute cursor-pointer" />
+              <div className="h-full w-full border border-white/20 bg-[#121212] transition peer-checked:border-gold peer-checked:bg-gold" />
+              <Check className="pointer-events-none absolute h-3.5 w-3.5 text-black opacity-0 transition peer-checked:opacity-100" />
             </div>
             <span className="text-sm">
               <TermsConsentText locale={locale} />
@@ -985,10 +987,10 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
           </label>
 
           <button
-              type="button"
-              onClick={handleRegister}
-              disabled={isSubmitting}
-              className="flex w-full py-3 items-center justify-center gap-2 bg-gold text-sm font-black uppercase text-black shadow-[4px_4px_0_#000] transition-transform active:translate-x-1 active:translate-y-1 active:shadow-none disabled:opacity-50"
+            type="button"
+            onClick={handleRegister}
+            disabled={isSubmitting}
+            className="flex w-full py-3 items-center justify-center gap-2 bg-gold text-sm font-black uppercase text-black shadow-[4px_4px_0_#000] transition-transform active:translate-x-1 active:translate-y-1 active:shadow-none disabled:opacity-50"
           >
             {isSubmitting ? (isArabic ? "جاري إنشاء الحساب..." : "Creating Account...") : (isArabic ? "إنشاء الحساب" : "Create Account")}
             {!isSubmitting && <ArrowUpRight className="h-5 w-5" />}
@@ -1024,6 +1026,17 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
     }
     if (!state.firstName || !state.lastName) {
       setError(isArabic ? "برجاء إدخال الاسم بالكامل" : "Please enter full name");
+      setIsSubmitting(false);
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!state.email) {
+      setError(isArabic ? "البريد الإلكتروني مطلوب" : "Email is required");
+      setIsSubmitting(false);
+      return;
+    }
+    if (!emailRegex.test(state.email)) {
+      setError(isArabic ? "صيغة البريد الإلكتروني غير صحيحة" : "Invalid email format");
       setIsSubmitting(false);
       return;
     }
@@ -1099,6 +1112,18 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
               suffix={<EgyptPhoneBadge locale={locale} />}
               dir="ltr"
             />
+            <InputField 
+              compact
+              label={isArabic ? "البريد الإلكتروني" : "Email address"} 
+              value={state.email} 
+              onChange={(email) => setState({ ...state, email })} 
+              type="email" 
+              placeholder="name@example.com" 
+              dir="ltr"
+            />
+          </div>
+
+          <div className="grid gap-2 grid-cols-2">
             <SelectField
               compact
               label={isArabic ? "المهنة / التخصص" : "Profession / Specialization"}
@@ -1108,9 +1133,6 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
               placeholder={isArabic ? "اختر المهنة" : "Select profession"}
               variant="auth"
             />
-          </div>
-
-          <div className="grid gap-2 grid-cols-2">
             <InputField 
               compact
               label={isArabic ? "الرقم القومي (14 رقم)" : "National ID (14 digits)"} 
@@ -1118,6 +1140,9 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
               onChange={(n) => setState({ ...state, nationalIdNumber: n })} 
               placeholder="2xxxxxxxxxxxxx" 
             />
+          </div>
+
+          <div className="grid gap-2 grid-cols-2">
             <InputField 
               compact
               label={isArabic ? "كلمة المرور" : "Password"} 
@@ -1126,9 +1151,6 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
               type="password" 
               placeholder="••••••••"
             />
-          </div>
-
-          <div className="grid gap-2 grid-cols-2">
             <InputField 
               compact
               label={isArabic ? "تأكيد كلمة المرور" : "Confirm password"} 
@@ -1137,18 +1159,6 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
               type="password" 
               placeholder="••••••••"
             />
-            <div className="flex items-end pb-0.5">
-              <label className="group flex cursor-pointer items-center gap-1.5">
-                <div className="relative flex h-3.5 w-3.5 shrink-0 items-center justify-center">
-                    <input type="checkbox" checked={state.acceptedTerms} onChange={(e) => setState({ ...state, acceptedTerms: e.target.checked })} className="peer h-full w-full opacity-0 absolute cursor-pointer" />
-                    <div className="h-full w-full border border-white/20 bg-[#121212] transition peer-checked:border-gold peer-checked:bg-gold" />
-                    <Check className="pointer-events-none absolute h-2.5 w-2.5 text-black opacity-0 transition peer-checked:opacity-100" />
-                </div>
-                <span className="text-[10px] leading-tight">
-                  <TermsConsentText locale={locale} />
-                </span>
-              </label>
-            </div>
           </div>
 
           <div className="grid gap-2 grid-cols-2 pt-0.5">
@@ -1156,11 +1166,22 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
             <ImageUpload compact isArabic={isArabic} purpose="registration-document" variant="auth" label={isArabic ? "صورة البطاقة (خلف)" : "ID Back"} value={state.nationalIdBack} onChange={(url) => setState({ ...state, nationalIdBack: url })} />
           </div>
 
-          <button 
-              type="button" 
-              onClick={handleRegister} 
-              disabled={isSubmitting}
-              className="flex w-full py-2.5 items-center justify-center gap-2 bg-gold text-xs font-black uppercase text-black shadow-[3px_3px_0_#000] transition-transform active:translate-x-0.5 active:translate-y-0.5 active:shadow-none disabled:opacity-50 mt-1"
+          <label className="group flex cursor-pointer items-center gap-1.5 pt-0.5">
+            <div className="relative flex h-3.5 w-3.5 shrink-0 items-center justify-center">
+                <input type="checkbox" checked={state.acceptedTerms} onChange={(e) => setState({ ...state, acceptedTerms: e.target.checked })} className="peer h-full w-full opacity-0 absolute cursor-pointer" />
+                <div className="h-full w-full border border-white/20 bg-[#121212] transition peer-checked:border-gold peer-checked:bg-gold" />
+                <Check className="pointer-events-none absolute h-2.5 w-2.5 text-black opacity-0 transition peer-checked:opacity-100" />
+            </div>
+            <span className="text-[10px] leading-tight">
+              <TermsConsentText locale={locale} />
+            </span>
+          </label>
+
+          <button
+            type="button"
+            onClick={handleRegister}
+            disabled={isSubmitting}
+            className="flex w-full py-2.5 items-center justify-center gap-2 bg-gold text-xs font-black uppercase text-black shadow-[3px_3px_0_#000] transition-transform active:translate-x-0.5 active:translate-y-0.5 active:shadow-none disabled:opacity-50 mt-1"
           >
             {isSubmitting ? (isArabic ? "جاري إرسال الطلب..." : "Submitting Application...") : (isArabic ? "إرسال طلب الانضمام" : "Submit Application")}
             {!isSubmitting && <ArrowUpRight className="h-4 w-4" />}
@@ -1269,24 +1290,24 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
             <h3 className="border-b border-white/10 pb-3 text-sm font-black uppercase tracking-[0.18em] text-gold">
               {isArabic ? "بيانات المتجر" : "Store Information"}
             </h3>
-            
-            <InputField 
-              label={isArabic ? "رقم الهاتف" : "Phone number"} 
-              value={state.phone} 
-              onChange={(phone) => setState({ ...state, phone: formatEgyptianPhone(phone) })} 
-              placeholder="01012345678" 
+
+            <InputField
+              label={isArabic ? "رقم الهاتف" : "Phone number"}
+              value={state.phone}
+              onChange={(phone) => setState({ ...state, phone: formatEgyptianPhone(phone) })}
+              placeholder="01012345678"
               helperText={isArabic ? "مثال: 01012345678" : "E.g. 01012345678"}
               suffix={<EgyptPhoneBadge locale={locale} />}
               dir="ltr"
             />
             <InputField label={isArabic ? "اسم المتجر" : "Store Name"} value={state.storeName} onChange={(n) => setState({ ...state, storeName: n })} placeholder={isArabic ? "الشركة العربية للمستلزمات" : "Arab Supply Co."} />
             <SelectField
-                label={isArabic ? "تصنيف المتجر" : "Store Category"}
-                value={state.category}
-                options={vendorCategories.map(c => ({ value: c.value, label: isArabic ? c.labelAr : c.labelEn }))}
-                onChange={(cat) => setState({ ...state, category: cat })}
-                placeholder={isArabic ? "اختر تصنيف المتجر" : "Select store category"}
-                variant="auth"
+              label={isArabic ? "تصنيف المتجر" : "Store Category"}
+              value={state.category}
+              options={vendorCategories.map(c => ({ value: c.value, label: isArabic ? c.labelAr : c.labelEn }))}
+              onChange={(cat) => setState({ ...state, category: cat })}
+              placeholder={isArabic ? "اختر تصنيف المتجر" : "Select store category"}
+              variant="auth"
             />
           </div>
 
@@ -1294,33 +1315,33 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
             <h3 className="border-b border-white/10 pb-3 text-sm font-black uppercase tracking-[0.18em] text-gold">
               {isArabic ? "البيانات الشخصية" : "Owner Information"}
             </h3>
-            
+
             <div className="grid gap-6 sm:grid-cols-2">
               <InputField label={isArabic ? "الاسم الأول" : "First name"} value={state.firstName} onChange={(firstName) => setState({ ...state, firstName })} placeholder={isArabic ? "محمد" : "John"} />
               <InputField label={isArabic ? "اسم العائلة" : "Last name"} value={state.lastName} onChange={(lastName) => setState({ ...state, lastName })} placeholder={isArabic ? "أحمد" : "Doe"} />
             </div>
-            <InputField 
-              label={isArabic ? "البريد الإلكتروني" : "Email"} 
-              value={state.email} 
-              onChange={(email) => setState({ ...state, email })} 
-              type="email" 
+            <InputField
+              label={isArabic ? "البريد الإلكتروني" : "Email"}
+              value={state.email}
+              onChange={(email) => setState({ ...state, email })}
+              type="email"
               placeholder="example@mail.com"
               helperText={isArabic ? "البريد الإلكتروني إلزامي ومطلوب للتواصل الرسمي" : "Email is required and mandatory for official communication"}
             />
             <div className="grid gap-6 sm:grid-cols-2">
-              <InputField 
-                label={isArabic ? "كلمة المرور" : "Password"} 
-                value={state.password} 
-                onChange={(password) => setState({ ...state, password })} 
-                type="password" 
+              <InputField
+                label={isArabic ? "كلمة المرور" : "Password"}
+                value={state.password}
+                onChange={(password) => setState({ ...state, password })}
+                type="password"
                 placeholder="••••••••"
                 helperText={isArabic ? "يجب أن تحتوي على 8 أحرف أو أرقام على الأقل" : "Must be at least 8 characters/numbers"}
               />
-              <InputField 
-                label={isArabic ? "تأكيد كلمة المرور" : "Confirm password"} 
-                value={state.confirmPassword} 
-                onChange={(confirmPassword) => setState({ ...state, confirmPassword })} 
-                type="password" 
+              <InputField
+                label={isArabic ? "تأكيد كلمة المرور" : "Confirm password"}
+                value={state.confirmPassword}
+                onChange={(confirmPassword) => setState({ ...state, confirmPassword })}
+                type="password"
                 placeholder="••••••••"
                 helperText={isArabic ? "أعد كتابة كلمة المرور المدخلة للتأكيد" : "Retype the password to confirm"}
               />
@@ -1331,7 +1352,7 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
             <h3 className="border-b border-white/10 pb-3 text-sm font-black uppercase tracking-[0.18em] text-gold">
               {isArabic ? "مستندات التوثيق" : "Verification Documents"}
             </h3>
-            
+
             <div className="grid gap-6 sm:grid-cols-2">
               <ImageUpload isArabic={isArabic} purpose="registration-document" variant="auth" label={isArabic ? "السجل التجاري" : "Commercial Record"} value={state.commercialRecord} onChange={(url) => setState({ ...state, commercialRecord: url })} />
               <ImageUpload isArabic={isArabic} purpose="registration-document" variant="auth" label={isArabic ? "البطاقة الضريبية" : "Tax Card"} value={state.taxCard} onChange={(url) => setState({ ...state, taxCard: url })} />
@@ -1369,20 +1390,20 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
 
           <label className="group flex cursor-pointer items-center gap-3 py-2">
             <div className="relative flex h-5 w-5 items-center justify-center">
-                <input type="checkbox" checked={state.acceptedTerms} onChange={(e) => setState({ ...state, acceptedTerms: e.target.checked })} className="peer h-full w-full opacity-0 absolute cursor-pointer" />
-                <div className="h-full w-full border border-white/20 bg-[#121212] transition peer-checked:border-gold peer-checked:bg-gold" />
-                <Check className="pointer-events-none absolute h-3.5 w-3.5 text-black opacity-0 transition peer-checked:opacity-100" />
+              <input type="checkbox" checked={state.acceptedTerms} onChange={(e) => setState({ ...state, acceptedTerms: e.target.checked })} className="peer h-full w-full opacity-0 absolute cursor-pointer" />
+              <div className="h-full w-full border border-white/20 bg-[#121212] transition peer-checked:border-gold peer-checked:bg-gold" />
+              <Check className="pointer-events-none absolute h-3.5 w-3.5 text-black opacity-0 transition peer-checked:opacity-100" />
             </div>
             <span className="text-sm">
               <TermsConsentText locale={locale} />
             </span>
           </label>
 
-          <button 
-              type="button" 
-              onClick={handleRegister} 
-              disabled={isSubmitting}
-              className="flex w-full py-3 items-center justify-center gap-2 bg-gold text-sm font-black uppercase text-black shadow-[4px_4px_0_#000] transition-transform active:translate-x-1 active:translate-y-1 active:shadow-none disabled:opacity-50"
+          <button
+            type="button"
+            onClick={handleRegister}
+            disabled={isSubmitting}
+            className="flex w-full py-3 items-center justify-center gap-2 bg-gold text-sm font-black uppercase text-black shadow-[4px_4px_0_#000] transition-transform active:translate-x-1 active:translate-y-1 active:shadow-none disabled:opacity-50"
           >
             {isSubmitting ? (isArabic ? "جاري إنشاء الحساب..." : "Creating Account...") : (isArabic ? "إنشاء حساب المتجر" : "Create Store Account")}
             {!isSubmitting && <ArrowUpRight className="h-5 w-5" />}
@@ -1465,61 +1486,61 @@ export function ForgotPasswordForm({ locale }: { locale: Locale }) {
 
       <div className="space-y-6">
         {step === 0 && (
-          <InputField 
-            label={isArabic ? "البريد الإلكتروني" : "Email address"} 
-            value={email} 
-            onChange={setEmail} 
+          <InputField
+            label={isArabic ? "البريد الإلكتروني" : "Email address"}
+            value={email}
+            onChange={setEmail}
             type="email"
-            placeholder="example@mail.com" 
+            placeholder="example@mail.com"
           />
         )}
-        
-        {step === 1 && (
-           <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <div className="space-y-3">
-                <span className="text-sm font-bold text-onyx-300 tracking-wide">
-                  {isArabic ? "رمز التحقق (6 أرقام)" : "Verification Code (6 digits)"}
-                </span>
-                <OtpBoxes value={code} onChange={setCode} />
-              </div>
 
-              <div className="grid gap-6 sm:grid-cols-2 pt-2">
-                <InputField 
-                  label={isArabic ? "كلمة المرور الجديدة" : "New password"} 
-                  value={password} 
-                  onChange={setPassword} 
-                  type="password" 
-                  placeholder="••••••••"
-                  helperText={isArabic ? "يجب أن تحتوي على 8 أحرف أو أرقام على الأقل" : "Must be at least 8 characters/numbers"}
-                />
-                <InputField 
-                  label={isArabic ? "تأكيد كلمة المرور" : "Confirm password"} 
-                  value={confirmPassword} 
-                  onChange={setConfirmPassword} 
-                  type="password" 
-                  placeholder="••••••••"
-                  helperText={isArabic ? "أعد كتابة كلمة المرور المدخلة للتأكيد" : "Retype the password to confirm"}
-                />
-              </div>
-           </div>
+        {step === 1 && (
+          <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="space-y-3">
+              <span className="text-sm font-bold text-onyx-300 tracking-wide">
+                {isArabic ? "رمز التحقق (6 أرقام)" : "Verification Code (6 digits)"}
+              </span>
+              <OtpBoxes value={code} onChange={setCode} />
+            </div>
+
+            <div className="grid gap-6 sm:grid-cols-2 pt-2">
+              <InputField
+                label={isArabic ? "كلمة المرور الجديدة" : "New password"}
+                value={password}
+                onChange={setPassword}
+                type="password"
+                placeholder="••••••••"
+                helperText={isArabic ? "يجب أن تحتوي على 8 أحرف أو أرقام على الأقل" : "Must be at least 8 characters/numbers"}
+              />
+              <InputField
+                label={isArabic ? "تأكيد كلمة المرور" : "Confirm password"}
+                value={confirmPassword}
+                onChange={setConfirmPassword}
+                type="password"
+                placeholder="••••••••"
+                helperText={isArabic ? "أعد كتابة كلمة المرور المدخلة للتأكيد" : "Retype the password to confirm"}
+              />
+            </div>
+          </div>
         )}
 
         <div className="flex items-center justify-between gap-4 pt-4">
-          <button 
-            type="button" 
-            onClick={() => setStep(0)} 
-            disabled={step === 0 || isSubmitting} 
+          <button
+            type="button"
+            onClick={() => setStep(0)}
+            disabled={step === 0 || isSubmitting}
             className="btn-onyx h-12 flex items-center gap-2"
           >
             {isArabic ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
             {copy.back}
           </button>
-          
-          <button 
-             type="button" 
-             onClick={step === 0 ? handleSendCode : handleResetPassword} 
-             disabled={isSubmitting}
-             className="btn-gold h-12 px-8 flex items-center gap-2 group"
+
+          <button
+            type="button"
+            onClick={step === 0 ? handleSendCode : handleResetPassword}
+            disabled={isSubmitting}
+            className="btn-gold h-12 px-8 flex items-center gap-2 group"
           >
             {isSubmitting ? copy.processing : step === 0 ? copy.sendCode : copy.update}
             <div className={cn("transition-transform duration-300", isArabic ? "group-hover:-translate-x-1" : "group-hover:translate-x-1")}>
@@ -1555,16 +1576,16 @@ export function VerifyOtpForm({ locale }: { locale: Locale }) {
   return (
     <div className="space-y-8 animate-fadeIn">
       <div className="space-y-8">
-         <OtpBoxes value={otp} onChange={setOtp} />
-         
-         <div className="flex items-center justify-between text-sm">
-            <p className="text-onyx-500">{copy.timerLabel} <span className="text-gold-500 font-black">{seconds}s</span></p>
-            <button disabled={seconds > 0} onClick={() => setSeconds(60)} className="text-gold-500 font-bold hover:text-gold-400 disabled:text-onyx-700 transition">
-               {copy.resend}
-            </button>
-         </div>
+        <OtpBoxes value={otp} onChange={setOtp} />
 
-         {done && <div className="onyx-card p-4 border-success/30 bg-success/5 text-success text-center font-bold">{copy.success}</div>}
+        <div className="flex items-center justify-between text-sm">
+          <p className="text-onyx-500">{copy.timerLabel} <span className="text-gold-500 font-black">{seconds}s</span></p>
+          <button disabled={seconds > 0} onClick={() => setSeconds(60)} className="text-gold-500 font-bold hover:text-gold-400 disabled:text-onyx-700 transition">
+            {copy.resend}
+          </button>
+        </div>
+
+        {done && <div className="onyx-card p-4 border-success/30 bg-success/5 text-success text-center font-bold">{copy.success}</div>}
       </div>
     </div>
   );
