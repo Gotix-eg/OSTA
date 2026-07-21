@@ -28,6 +28,12 @@ import { cn } from "@/lib/utils";
 
 type Role = "client" | "worker" | "vendor";
 
+const roleImages: Record<Role, string> = {
+  client: "/images/auth-client.jpg",
+  worker: "/images/auth-worker.jpg",
+  vendor: "/images/auth-vendor.jpg",
+};
+
 type StepDef = {
   number: number;
   title: string;
@@ -258,25 +264,29 @@ export function HowItWorksCustom({ locale }: { locale: Locale }) {
 
       {/* ── Final CTA ── */}
       <section className="mx-auto max-w-[1280px] px-4 pb-28 md:px-12 md:pb-20">
-        <div
-          className="relative overflow-hidden border border-white/10 p-6 text-start md:p-16 md:text-center"
-          style={{ backgroundColor: "#000000" }}
-        >
-          <div
-            className="absolute -right-20 -bottom-20 w-80 h-80 rounded-full blur-3xl pointer-events-none"
-            style={{ backgroundColor: "#f5bd18", opacity: 0.08 }}
-          />
+        <div className="grid grid-cols-1 overflow-hidden border border-white/10 bg-black md:grid-cols-2 md:h-[420px]">
+          <div className="relative h-64 w-full overflow-hidden md:h-full">
+            <motion.img
+              key={activeRole}
+              initial={{ opacity: 0, scale: 1.03 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3 }}
+              src={roleImages[activeRole]}
+              alt={activeRole}
+              className="absolute inset-0 h-full w-full object-cover object-center"
+            />
+          </div>
 
-          <h2 className="relative z-10 mb-8 text-3xl font-black uppercase text-white md:mb-10 md:text-5xl">
-            {currentCopy.ctaTitle}
-            {currentCopy.ctaTitleHighlight && (
-              <span className="block text-gold mt-1">
-                {currentCopy.ctaTitleHighlight}
-              </span>
-            )}
-          </h2>
+          <div className="flex flex-col items-start justify-center gap-6 p-8 text-start md:p-12">
+            <h2 className="text-4xl font-black uppercase text-white md:text-6xl">
+              {currentCopy.ctaTitle}
+              {currentCopy.ctaTitleHighlight && (
+                <span className="block text-gold mt-1">
+                  {currentCopy.ctaTitleHighlight}
+                </span>
+              )}
+            </h2>
 
-          <div className="relative z-10 flex flex-col gap-3 md:flex-row md:justify-center md:gap-6">
             <Link
               href={`/${locale}/register/${activeRole}`}
               className="inline-block px-8 py-3.5 font-black uppercase text-lg md:text-xl tracking-wide transition-all duration-150 hover:bg-white"
