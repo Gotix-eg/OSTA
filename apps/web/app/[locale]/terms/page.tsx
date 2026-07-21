@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { PublicContentPage } from "@/components/public/public-pages";
+import { TermsPage as TermsPageContent } from "@/components/public/terms-page";
 import { PublicShell } from "@/components/public/public-shell";
 import { isLocale } from "@/lib/locales";
 
@@ -19,9 +19,7 @@ export default async function TermsPage({ params }: { params: Promise<{ locale: 
 
   return (
     <PublicShell locale={locale} pathname="/terms">
-      <div className="section-shell py-12">
-        <PublicContentPage locale={locale} pageKey="terms" />
-      </div>
+      <TermsPageContent locale={locale} />
     </PublicShell>
   );
 }
