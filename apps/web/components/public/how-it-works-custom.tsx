@@ -30,8 +30,21 @@ type Role = "client" | "worker" | "vendor";
 
 const roleImages: Record<Role, string> = {
   client: "/images/auth-client.jpg",
-  worker: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=800&auto=format&fit=crop",
+  worker: "/images/auth-worker.jpg",
   vendor: "/images/auth-vendor.jpg",
+};
+
+const roleImageAlt: Record<Locale, Record<Role, string>> = {
+  ar: {
+    client: "عميل يستخدم منصة أُسطفاي",
+    worker: "فني محترف على أُسطفاي",
+    vendor: "متجر مورد على أُسطفاي",
+  },
+  en: {
+    client: "OSTA client",
+    worker: "OSTA professional worker",
+    vendor: "OSTA vendor store",
+  },
 };
 
 type StepDef = {
@@ -158,6 +171,7 @@ const copy: Record<string, Copy> = {
           { number: 3, title: "Requests", desc: "Receive bulk material requests directly from project sites to streamline your B2B sales funnel with automated alerts", Icon: Truck },
           { number: 4, title: "Quote", desc: "Provide competitive pricing for materials and logistics to win contracts through volume and reliability", Icon: CreditCard },
           { number: 5, title: "Dispatch", desc: "Coordinate deliveries with precision tracking logistics from your warehouse to the craftsman project location", Icon: Factory },
+          { number: 6, title: "Payout", desc: "Receive your payment and sales earnings directly once the order is confirmed delivered", Icon: Wallet },
         ],
       },
     },
@@ -194,12 +208,15 @@ export function HowItWorksCustom({ locale }: { locale: Locale }) {
       {/* ── Interactive Tabs Section ── */}
       <section className="mx-auto max-w-[1280px] px-4 pb-10 md:px-12 md:pb-20">
         {/* Tabs */}
-        <div className="mb-6 flex gap-3 overflow-x-auto pb-2 [-webkit-overflow-scrolling:touch] md:mb-12 md:flex-wrap md:justify-center md:gap-4">
+        <div role="tablist" aria-label={currentCopy.title} className="mb-6 flex gap-3 overflow-x-auto pb-2 [-webkit-overflow-scrolling:touch] md:mb-12 md:flex-wrap md:justify-center md:gap-4">
           {roleKeys.map((role) => {
             const isActive = activeRole === role;
             return (
               <button
                 key={role}
+                role="tab"
+                aria-selected={isActive}
+                aria-controls={`how-it-works-panel-${role}`}
                 onClick={() => setActiveRole(role)}
                 className={cn(
                   "min-h-11 shrink-0 border-2 border-[#1a1c1c] px-5 text-xs font-black uppercase transition-all duration-150 md:px-8 md:text-sm",
@@ -218,6 +235,8 @@ export function HowItWorksCustom({ locale }: { locale: Locale }) {
         <AnimatePresence mode="wait">
           <motion.div
             key={activeRole}
+            id={`how-it-works-panel-${activeRole}`}
+            role="tabpanel"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -16 }}
@@ -272,7 +291,7 @@ export function HowItWorksCustom({ locale }: { locale: Locale }) {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3 }}
               src={roleImages[activeRole]}
-              alt={activeRole}
+              alt={roleImageAlt[locale]?.[activeRole] ?? roleImageAlt.en[activeRole]}
               className="absolute inset-0 h-full w-full object-cover object-center"
             />
           </div>
@@ -295,7 +314,7 @@ export function HowItWorksCustom({ locale }: { locale: Locale }) {
                 color: "#1a1c1c",
               }}
             >
-              {currentCopy.ctaClientBtn}
+              {activeRole === "client" ? currentCopy.ctaClientBtn : currentCopy.ctaPartnerBtn}
             </Link>
           </div>
         </div>
