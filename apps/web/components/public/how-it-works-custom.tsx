@@ -82,12 +82,12 @@ const copy: Record<string, Copy> = {
     ctaTitleHighlight: "",
     ctaSub: "سجل حسابك الآن وانضم إلى شبكة أُسطفاي المتكاملة",
     ctaClientBtn: "يلا بينا !!",
-    ctaPartnerBtn: "انضم كشريك",
+    ctaPartnerBtn: "يلا بينا !!",
     roles: {
       client: {
         label: "العملاء",
         desc: "احصل على خدمات منزلية فورية ومضمونة من فنيين موثقين",
-        cta: "سجل كعميل الآن",
+        cta: "يلا بينا !!",
         steps: [
           { number: 1, title: "سجل", desc: "أنشئ ملفك الشخصي الآمن في دقائق والتحقق عالي الجودة يضمن بيئة آمنة", Icon: UserCheck },
           { number: 2, title: "اطلب", desc: "انشر متطلبات مشروعك بتفاصيل دقيقة ونظامنا يصنف احتياجاتك لأكثر الأسطوات تأهلاً", Icon: ClipboardList },
@@ -100,7 +100,7 @@ const copy: Record<string, Copy> = {
       worker: {
         label: "العمال",
         desc: "زد من دخلك اليومي واحصل على طلبات عمل حقيقية في منطقتك",
-        cta: "انضم كفني محترف",
+        cta: "يلا بينا !!",
         steps: [
           { number: 1, title: "الملف الشخصي", desc: "اعرض أعمالك وشهاداتك وخبراتك الي بتميزك كأسطى", Icon: UserCircle2 },
           { number: 2, title: "الحرفة", desc: "اختر تخصصاتك وخوارزميتنا تُوجّه العروض المناسبة", Icon: Wrench },
@@ -113,7 +113,7 @@ const copy: Record<string, Copy> = {
       vendor: {
         label: "الموردون",
         desc: "اعرض بضائعك لآلاف الفنيين والعملاء ووفر قطع الغيار اللازمة",
-        cta: "سجل متجرك الآن",
+        cta: "يلا بينا !!",
         steps: [
           { number: 1, title: "سجّل المتجر", desc: "خلي متجرك متاح علي الانترنت", Icon: Store },
           { number: 2, title: "المخزون", desc: "أرفع بضاعتك علي أُسطفاي و خلي الأسطوات يشفوها", Icon: Package },
@@ -132,13 +132,13 @@ const copy: Record<string, Copy> = {
     ctaTitle: "Ready to start your next",
     ctaTitleHighlight: "Masterpiece?",
     ctaSub: "Join OSTA today and be part of the premium industrial network",
-    ctaClientBtn: "Join as a Client",
-    ctaPartnerBtn: "Become a Partner",
+    ctaClientBtn: "يلا بينا !!",
+    ctaPartnerBtn: "يلا بينا !!",
     roles: {
       client: {
         label: "Clients",
         desc: "Get instant, guaranteed home services from verified technicians",
-        cta: "Register as Client Now",
+        cta: "يلا بينا !!",
         steps: [
           { number: 1, title: "Register", desc: "Create your secure profile in minutes with high-integrity verification ensuring a safe environment for all premium service needs", Icon: UserCheck },
           { number: 2, title: "Request", desc: "Post your project requirements with precise details as our system categorizes your needs to match with the most qualified craftsmen", Icon: ClipboardList },
@@ -151,7 +151,7 @@ const copy: Record<string, Copy> = {
       worker: {
         label: "Workers",
         desc: "Boost your daily income and get real maintenance jobs in your area",
-        cta: "Join as Professional Tech",
+        cta: "يلا بينا !!",
         steps: [
           { number: 1, title: "Profile", desc: "Showcase your portfolio certifications and expertise to stand out as a premium craftsman in the industry", Icon: UserCircle2 },
           { number: 2, title: "Trade", desc: "Select your specific trade specialties as our algorithm routes relevant leads that match your high-level skill set", Icon: Wrench },
@@ -164,7 +164,7 @@ const copy: Record<string, Copy> = {
       vendor: {
         label: "Vendors",
         desc: "List your materials and spare parts for thousands of workers and clients",
-        cta: "Register Your Store Now",
+        cta: "يلا بينا !!",
         steps: [
           { number: 1, title: "Register Shop", desc: "Bring your supply store online and onboard your logistics and fulfillment details to our centralized vendor hub", Icon: Store },
           { number: 2, title: "Inventory", desc: "Sync your material catalog allowing craftsmen to see real-time availability of essential trade supplies", Icon: Package },
@@ -314,7 +314,7 @@ export function HowItWorksCustom({ locale }: { locale: Locale }) {
                 color: "#1a1c1c",
               }}
             >
-              {activeRole === "client" ? currentCopy.ctaClientBtn : currentCopy.ctaPartnerBtn}
+              {currentCopy.ctaClientBtn}
             </Link>
           </div>
         </div>
