@@ -121,15 +121,15 @@ export const publicPageCopy = {
         description: "شروط وقواعد استخدام منصة أُسطفاي والحدود التنظيمية للتعامل بين العملاء والفنيين.",
         sections: [
           {
-            title: "١) طبيعة الخدمة والربط",
+            title: "طبيعة الخدمة والربط",
             body: "منصة أُسطفاي هي مجرد وسيط لتوفير وتسهيل الربط بين العملاء والصنايعية (مقدمي الخدمات) فقط. وليس للمنصة أي سلطة إدارية، أو رقابة، أو علاقة عمل مباشرة مع أي من الطرفين، ولا تتدخل في توجيه العمل."
           },
           {
-            title: "٢) الضمان الأمني والتحقق من الهوية",
+            title: "الضمان الأمني والتحقق من الهوية",
             body: "ينحصر دور المنصة في توفير الضمان الأمني للعملاء من خلال التحقق من مستندات الصنايعية والاحتفاظ بنسخة من هوياتهم الرسمية (مثل صورة بطاقة الرقم القومي). وتلتزم المنصة بتقديم هذه البيانات للعميل عند الطلب لمساعدته في التوصل للفني وحل أي مشكلة قد تطرأ قانونياً أو شخصياً."
           },
           {
-            title: "٣) إخلاء المسؤولية عن المدفوعات والتعاملات",
+            title: "إخلاء المسؤولية عن المدفوعات والتعاملات",
             body: "المنصة والموقع غير مسؤولين تماماً عن عمليات الدفع، أو الاتفاقات المالية، أو جودة الخدمات المؤداة، أو أي نزاعات تنشأ عن التعامل المباشر بين العميل والصنايعي خارج نطاق البيانات الموثقة التي يتم تقديمها للضمان الأمني."
           }
         ]
@@ -171,27 +171,27 @@ export const publicPageCopy = {
         description: "توضح هذه السياسة الشروط والرسوم المنظمة للاشتراكات الشهرية الخاصة بالمهنيين والأسطوات على منصة أُسطفاي.",
         sections: [
           {
-            title: "١) نظام الاشتراك الشهري الثابت",
+            title: "نظام الاشتراك الشهري الثابت",
             body: "تبلغ قيمة الاشتراك الشهري الثابت للفنيين ومزودي الخدمات ١٥٠ جنيهاً مصرياً فقط، شاملة الرسوم الإدارية، للوصول واستلام طلبات العملاء بشكل كامل."
           },
           {
-            title: "٢) دورة الفوترة والتجديد",
+            title: "دورة الفوترة والتجديد",
             body: "تُحتسب دورة الاشتراك لمدة ٣٠ يوماً تبدأ من تاريخ التفعيل، ويتجدد الاشتراك تلقائياً عند قيام العضو بسداد الرسوم للفترة التالية."
           },
           {
-            title: "٣) وسائل الدفع المقبولة",
+            title: "وسائل الدفع المقبولة",
             body: "نوفر وسائل دفع محلية مريحة تشمل المحافظ الإلكترونية للهواتف (مثل فودافون كاش)، شبكة InstaPay للتحويل اللحظي، نقاط Fawry، والبطاقات البنكية (Visa / MasterCard)."
           },
           {
-            title: "٤) فترة السماح وتعليق الحساب",
+            title: "فترة السماح وتعليق الحساب",
             body: "نمنح فترة سماح تبلغ ٣ أيام بعد تاريخ انتهاء الاشتراك. في حال عدم السداد بعد انتهاء هذه الفترة، يتم تعليق الحساب مؤقتاً وحجبه من استقبال أي طلبات جديدة حتى تتم تسوية الرسوم."
           },
           {
-            title: "٥) سياسة عدم الاسترداد",
+            title: "سياسة عدم الاسترداد",
             body: "رسوم الاشتراك الشهري البالغة ١٥٠ جنيهاً مصرياً هي رسوم غير قابلة للاسترداد بمجرد تفعيل الفترة الشهرية وبدء تقديم خدمات المطابقة وتلقي الطلبات."
           },
           {
-            title: "٦) إلغاء الاشتراك",
+            title: "إلغاء الاشتراك",
             body: "يحق لمزود الخدمة إلغاء اشتراكه في أي وقت، وسيظل الحساب فعالاً حتى نهاية الفترة المدفوعة الحالية (٣٠ يوماً) دون فرض أي رسوم تجديد مستقبلية."
           }
         ]
@@ -362,15 +362,15 @@ export const publicPageCopy = {
         description: "Rules and guidelines governing the relationship between clients and craftsmen on the Ostafy platform.",
         sections: [
           {
-            title: "1) Nature of Service & Matching",
+            title: "Nature of Service & Matching",
             body: "Ostafy acts solely as a facilitator/broker to match clients with independent craftsmen. The platform holds no authority, direct management, control, or employment relationship over either the client or the craftsman."
           },
           {
-            title: "2) Security Guarantee & Verification Data",
+            title: "Security Guarantee & Verification Data",
             body: "The platform's role is limited to performing identity checks on craftsmen and retaining secure copies of their official documents (such as national ID card images) for security. In case of any dispute or issue, Ostafy will provide this data to the client to assist them in contacting and locating the craftsman."
           },
           {
-            title: "3) Financial & Operational Disclaimer",
+            title: "Financial & Operational Disclaimer",
             body: "The website and platform are entirely exempt from any responsibility or liability regarding payments, pricing agreements, the quality of services performed, or any disputes resulting from direct interactions between the client and the craftsman."
           }
         ]
@@ -412,27 +412,27 @@ export const publicPageCopy = {
         description: "This policy governs the subscription models, payments, and billing terms for service providers and independent contractors on the Ostafy platform.",
         sections: [
           {
-            title: "1) Flat-Rate Monthly Subscription",
+            title: "Flat-Rate Monthly Subscription",
             body: "The flat-rate fee is EGP 150 per month (inclusive of administrative fees) to access and receive incoming client leads and service requests."
           },
           {
-            title: "2) Billing Cycle & Renewal",
+            title: "Billing Cycle & Renewal",
             body: "Your billing cycle is 30 days starting on the day of activation. Subscriptions are renewed upon successful receipt of the billing fee for the next cycle."
           },
           {
-            title: "3) Accepted Payment Methods",
+            title: "Accepted Payment Methods",
             body: "We accept popular local payment options including Mobile Wallets, InstaPay instant transfers, Fawry points, and major Credit/Debit Cards (Visa/MasterCard)."
           },
           {
-            title: "4) Grace Period & Account Suspension",
+            title: "Grace Period & Account Suspension",
             body: "We offer a 3-day grace period post-expiration. If payment is not completed, your account will be temporarily suspended and blocked from new leads until the balance is settled."
           },
           {
-            title: "5) No-Refund Policy",
+            title: "No-Refund Policy",
             body: "The EGP 150 subscription fee is non-refundable once the billing period has commenced and request-matching features have been enabled."
           },
           {
-            title: "6) Cancellation Policy",
+            title: "Cancellation Policy",
             body: "You may cancel your subscription at any time. Upon cancellation, your account will remain active through the end of the current paid billing cycle, and no future charges will apply."
           }
         ]
