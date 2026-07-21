@@ -55,20 +55,6 @@ export function PrivacyPage({ locale }: { locale: Locale }) {
         </div>
       </section>
 
-      {/* ── Table of contents ── */}
-      <section className="mx-auto max-w-3xl px-4 pb-6 md:px-12">
-        <div className="flex gap-2 overflow-x-auto pb-2 [-webkit-overflow-scrolling:touch] md:flex-wrap">
-          {content.sections.map((item, index) => (
-            <a
-              key={item.title}
-              href={`#privacy-section-${index + 1}`}
-              className="min-h-9 shrink-0 whitespace-nowrap border-2 border-[#1a1c1c] bg-white/40 px-3 py-1.5 text-xs font-black text-[#1a1c1c] transition-colors duration-150 hover:bg-[#1a1c1c] hover:text-gold"
-            >
-              {item.title}
-            </a>
-          ))}
-        </div>
-      </section>
 
       {/* ── Sections ── */}
       <section className="mx-auto max-w-3xl px-4 pb-14 md:px-12 md:pb-24">
