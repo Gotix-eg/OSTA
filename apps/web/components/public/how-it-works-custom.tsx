@@ -30,7 +30,7 @@ type Role = "client" | "worker" | "vendor";
 
 const roleImages: Record<Role, string> = {
   client: "/images/auth-client.jpg",
-  worker: "/images/auth-worker.jpg",
+  worker: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=800&auto=format&fit=crop",
   vendor: "/images/auth-vendor.jpg",
 };
 
