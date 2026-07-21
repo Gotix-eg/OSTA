@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
 import {
   UserCheck,
   ClipboardList,
@@ -196,7 +195,7 @@ export function HowItWorksCustom({ locale }: { locale: Locale }) {
         <h1 className="mb-3 text-4xl font-black uppercase leading-tight tracking-tight text-[#1a1c1c] md:text-7xl">
           {currentCopy.title}{" "}
           <br />
-          <span className="bg-[#1a1c1c] text-gold px-3 inline-block mt-1">
+          <span className="bg-[#1a1c1c] text-[#f5bd18] px-3 inline-block mt-1">
             {currentCopy.titleHighlight}
           </span>
         </h1>
@@ -222,7 +221,7 @@ export function HowItWorksCustom({ locale }: { locale: Locale }) {
                   "min-h-11 shrink-0 border-2 border-[#1a1c1c] px-5 text-xs font-black uppercase transition-all duration-150 md:px-8 md:text-sm",
                   isActive
                     ? "bg-white text-[#1a1c1c]"
-                    : "bg-[#1a1c1c] text-gold hover:bg-[#1a1c1c]/80"
+                    : "bg-[#1a1c1c] text-[#f5bd18] hover:bg-[#1a1c1c]/80"
                 )}
               >
                 {currentCopy.roles[role].label}
@@ -232,64 +231,54 @@ export function HowItWorksCustom({ locale }: { locale: Locale }) {
         </div>
 
         {/* Step Cards Grid */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeRole}
-            id={`how-it-works-panel-${activeRole}`}
-            role="tabpanel"
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -16 }}
-            transition={{ duration: 0.3 }}
-            className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-3"
-          >
-            {currentRoleData.steps.map((step) => {
-              const { Icon } = step;
-              return (
-                <div
-                  key={step.number}
-                  className="group flex flex-col gap-4 border border-white/10 p-5 transition-colors duration-300 hover:border-gold/60 md:p-6"
-                  style={{ backgroundColor: "#000000" }}
-                >
-                  {/* Number + Icon */}
-                  <div className="flex justify-between items-start">
-                    <span
-                      className="font-black text-gold leading-none select-none text-3xl md:text-4xl"
-                    >
-                      {String(step.number).padStart(2, "0")}
-                    </span>
-                    <Icon
-                      className="text-gold group-hover:scale-110 transition-transform duration-300"
-                      size={32}
-                      strokeWidth={1.5}
-                    />
-                  </div>
-
-                  {/* Title */}
-                  <h3 className="text-2xl font-black uppercase tracking-wide text-gold md:text-3xl">
-                    {step.title}
-                  </h3>
-
-                  {/* Description */}
-                  <p className="text-sm font-semibold leading-7 text-[#c6c6c6] md:text-base">
-                    {step.desc}
-                  </p>
+        <div
+          id={`how-it-works-panel-${activeRole}`}
+          role="tabpanel"
+          className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-3 opacity-100"
+        >
+          {currentRoleData.steps.map((step) => {
+            const { Icon } = step;
+            return (
+              <div
+                key={step.number}
+                className="group flex flex-col gap-4 border border-white/10 p-5 transition-colors duration-300 hover:border-[#f5bd18]/60 md:p-6"
+                style={{ backgroundColor: "#000000" }}
+              >
+                {/* Number + Icon */}
+                <div className="flex justify-between items-start">
+                  <span
+                    className="font-black text-[#f5bd18] leading-none select-none text-3xl md:text-4xl"
+                  >
+                    {String(step.number).padStart(2, "0")}
+                  </span>
+                  <Icon
+                    className="text-[#f5bd18] group-hover:scale-110 transition-transform duration-300"
+                    size={32}
+                    strokeWidth={1.5}
+                  />
                 </div>
-              );
-            })}
-          </motion.div>
-        </AnimatePresence>
+
+                {/* Title */}
+                <h3 className="text-2xl font-black uppercase tracking-wide text-[#f5bd18] md:text-3xl">
+                  {step.title}
+                </h3>
+
+                {/* Description */}
+                <p className="text-sm font-semibold leading-7 text-[#c6c6c6] md:text-base">
+                  {step.desc}
+                </p>
+              </div>
+            );
+          })}
+        </div>
       </section>
 
       {/* ── Final CTA ── */}
       <section className="mx-auto max-w-[1280px] px-4 pb-28 md:px-12 md:pb-20">
         <div className="grid grid-cols-1 overflow-hidden border border-white/10 bg-black md:grid-cols-2 md:h-[420px]">
           <div className="relative h-64 w-full overflow-hidden md:h-full">
-            <motion.img
+            <img
               key={activeRole}
-              initial={{ opacity: 0, scale: 1.03 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.3 }}
               src={roleImages[activeRole]}
               alt={roleImageAlt[locale]?.[activeRole] ?? roleImageAlt.en[activeRole]}
               className="absolute inset-0 h-full w-full object-cover object-center"
