@@ -58,49 +58,50 @@ const copy: Record<string, Copy> = {
   ar: {
     title: "يُمكِّن",
     titleHighlight: "المحترف",
-    subtitle: "أوستا هو النظام البيئي الصناعي المتكامل الذي يربط الحرفيين المهرة بالموردين الموثوقين والعملاء الباحثين عن الجودة.",
-    ctaTitle: "هل أنت مستعد للبدء؟",
-    ctaTitleHighlight: "ابدأ الآن",
-    ctaSub: "سجل حسابك الآن وانضم إلى شبكة أوستا المتكاملة.",
-    ctaClientBtn: "سجل كعميل",
+    subtitle: "أُسطفاي هو النظام البيئي الصناعي المتكامل الذي يربط الحرفيين المهرة بالموردين الموثوقين والعملاء الباحثين عن الجودة",
+    ctaTitle: "جاهز؟",
+    ctaTitleHighlight: "",
+    ctaSub: "سجل حسابك الآن وانضم إلى شبكة أُسطفاي المتكاملة",
+    ctaClientBtn: "يلا بينا !!",
     ctaPartnerBtn: "انضم كشريك",
     roles: {
       client: {
         label: "العملاء",
-        desc: "احصل على خدمات منزلية فورية ومضمونة من فنيين موثقين.",
+        desc: "احصل على خدمات منزلية فورية ومضمونة من فنيين موثقين",
         cta: "سجل كعميل الآن",
         steps: [
-          { number: 1, title: "سجل", desc: "أنشئ ملفك الشخصي الآمن في دقائق. التحقق عالي الجودة يضمن بيئة آمنة.", Icon: UserCheck },
-          { number: 2, title: "اطلب", desc: "انشر متطلبات مشروعك بتفاصيل دقيقة. نظامنا يصنف احتياجاتك لأكثر الحرفيين تأهلاً.", Icon: ClipboardList },
-          { number: 3, title: "عروض", desc: "استقبل عروضاً شفافة من المحترفين الموثقين. بدون تكاليف خفية.", Icon: FileText },
-          { number: 4, title: "تواصل", desc: "خط تواصل مباشر مع الخبير المختار. ناقش المخططات والجداول الزمنية.", Icon: MessageSquare },
-          { number: 5, title: "اقبل", desc: "أبرم العقد بمصافحة رقمية. تُحتجز الأموال في الضمان لضمان جودة التسليم.", Icon: CheckCircle2 },
-          { number: 6, title: "قيّم", desc: "أكمل حلقة التغذية الراجعة. مراجعتك تبني سمعة أسطواتنا.", Icon: Star },
+          { number: 1, title: "سجل", desc: "أنشئ ملفك الشخصي الآمن في دقائق والتحقق عالي الجودة يضمن بيئة آمنة", Icon: UserCheck },
+          { number: 2, title: "اطلب", desc: "انشر متطلبات مشروعك بتفاصيل دقيقة ونظامنا يصنف احتياجاتك لأكثر الأسطوات تأهلاً", Icon: ClipboardList },
+          { number: 3, title: "عروض", desc: "استقبل عروضاً شفافة من الأسطوات بدون تكاليف خفية", Icon: FileText },
+          { number: 4, title: "تواصل", desc: "خط تواصل مباشر مع الخبير المختار لمناقشة المخططات والجداول الزمنية", Icon: MessageSquare },
+          { number: 5, title: "اقبل", desc: "إختار أفضل عرض من الأسطوات و أبدأ التنفيذ فورا", Icon: CheckCircle2 },
+          { number: 6, title: "قيّم", desc: "كمل جميلك وقيم شغل الأسطى، و خلي غيرك يستفاد", Icon: Star },
         ],
       },
       worker: {
         label: "العمال",
-        desc: "زد من دخلك اليومي واحصل على طلبات عمل حقيقية في منطقتك.",
+        desc: "زد من دخلك اليومي واحصل على طلبات عمل حقيقية في منطقتك",
         cta: "انضم كفني محترف",
         steps: [
-          { number: 1, title: "الملف الشخصي", desc: "اعرض محفظتك وشهاداتك وخبراتك. تميّز كحرفي متميز.", Icon: UserCircle2 },
-          { number: 2, title: "الحرفة", desc: "اختر تخصصاتك الدقيقة. خوارزميتنا تُوجّه العروض المناسبة.", Icon: Wrench },
-          { number: 3, title: "التنبيهات", desc: "إشعارات فورية للمشاريع ذات القيمة العالية في منطقتك.", Icon: Bell },
-          { number: 4, title: "عرض السعر", desc: "قدّم عطاءات احترافية. حدد نطاق عملك والمواد بوضوح.", Icon: ListChecks },
-          { number: 5, title: "التفاوض", desc: "أنهِ الشروط مع العملاء مباشرة بشفافية تامة.", Icon: MessageSquare },
-          { number: 6, title: "المدفوعات", desc: "احصل على أجرك بأمان وفي الوقت المحدد.", Icon: Wallet },
+          { number: 1, title: "الملف الشخصي", desc: "اعرض أعمالك وشهاداتك وخبراتك الي بتميزك كأسطى", Icon: UserCircle2 },
+          { number: 2, title: "الحرفة", desc: "اختر تخصصاتك وخوارزميتنا تُوجّه العروض المناسبة", Icon: Wrench },
+          { number: 3, title: "التنبيهات", desc: "إشعارات فورية للمشاريع ذات القيمة العالية في منطقتك", Icon: Bell },
+          { number: 4, title: "عرض السعر", desc: "قدّم عطاءات احترافية وحدد نطاق عملك والمواد بوضوح", Icon: ListChecks },
+          { number: 5, title: "التفاوض", desc: "أنهِ الشروط مع العملاء مباشرة بشفافية تامة وبدأ الشغلانه", Icon: MessageSquare },
+          { number: 6, title: "المدفوعات", desc: "احصل على أجرك من العميل علي طول، بس ماتنساش تطلب تقيم من العميل و بالمره اعمل صور لشغلك وارفعها علي الصفحه بتعتك", Icon: Wallet },
         ],
       },
       vendor: {
         label: "الموردون",
-        desc: "اعرض بضائعك لآلاف الفنيين والعملاء ووفر قطع الغيار اللازمة.",
+        desc: "اعرض بضائعك لآلاف الفنيين والعملاء ووفر قطع الغيار اللازمة",
         cta: "سجل متجرك الآن",
         steps: [
-          { number: 1, title: "سجّل المتجر", desc: "أحضر متجرك للتوريد عبر الإنترنت مع تفاصيل الشحن.", Icon: Store },
-          { number: 2, title: "المخزون", desc: "زامن كتالوج المواد. اسمح للحرفيين برؤية التوافر الفوري.", Icon: Package },
-          { number: 3, title: "الطلبات", desc: "استقبل طلبات المواد بالجملة مباشرة من مواقع المشاريع.", Icon: Truck },
-          { number: 4, title: "عرض السعر", desc: "قدّم أسعاراً تنافسية للمواد والخدمات اللوجستية.", Icon: CreditCard },
-          { number: 5, title: "الشحن", desc: "نسّق عمليات التوصيل بدقة من المستودع لموقع المشروع.", Icon: Factory },
+          { number: 1, title: "سجّل المتجر", desc: "خلي متجرك متاح علي الانترنت", Icon: Store },
+          { number: 2, title: "المخزون", desc: "أرفع بضاعتك علي أُسطفاي و خلي الأسطوات يشفوها", Icon: Package },
+          { number: 3, title: "الطلبات", desc: "استقبل الطلبات مباشرة من علي أُسطفاي", Icon: Truck },
+          { number: 4, title: "عرض السعر", desc: "قدّم أسعاراً تنافسية للمواد والخدمات اللوجستية", Icon: CreditCard },
+          { number: 5, title: "الشحن", desc: "نسّق عمليات التوصيل من المستودع للعميل", Icon: Factory },
+          { number: 6, title: "المدفوعات", desc: "استلم مستحقاتك وأرباح مبيعاتك مباشرة من العميل", Icon: Wallet },
         ],
       },
     },
@@ -108,49 +109,49 @@ const copy: Record<string, Copy> = {
   en: {
     title: "Empowering the",
     titleHighlight: "Master Builder",
-    subtitle: "OSTA is the premium industrial ecosystem connecting skilled craftsmen, reliable vendors, and quality-seeking clients through a seamless, high-integrity platform.",
+    subtitle: "OSTA is the premium industrial ecosystem connecting skilled craftsmen, reliable vendors, and quality-seeking clients through a seamless, high-integrity platform",
     ctaTitle: "Ready to start your next",
     ctaTitleHighlight: "Masterpiece?",
-    ctaSub: "Join OSTA today and be part of the premium industrial network.",
+    ctaSub: "Join OSTA today and be part of the premium industrial network",
     ctaClientBtn: "Join as a Client",
     ctaPartnerBtn: "Become a Partner",
     roles: {
       client: {
         label: "Clients",
-        desc: "Get instant, guaranteed home services from verified technicians.",
+        desc: "Get instant, guaranteed home services from verified technicians",
         cta: "Register as Client Now",
         steps: [
-          { number: 1, title: "Register", desc: "Create your secure profile in minutes. High-integrity verification ensures a safe environment for all premium service needs.", Icon: UserCheck },
-          { number: 2, title: "Request", desc: "Post your project requirements with precise details. Our system categorizes your needs to match with the most qualified craftsmen.", Icon: ClipboardList },
-          { number: 3, title: "Quotes", desc: "Receive transparent, itemized quotes from verified professionals. No hidden costs, just raw value and expert craftsmanship.", Icon: FileText },
-          { number: 4, title: "Chat", desc: "Direct line of communication with your chosen expert. Discuss blueprints, timelines, and logistics within our secure portal.", Icon: MessageSquare },
-          { number: 5, title: "Accept", desc: "Lock in the contract with a digital handshake. Funds are held in escrow to ensure quality delivery and fair compensation.", Icon: CheckCircle2 },
-          { number: 6, title: "Rate", desc: "Complete the feedback loop. Your review builds the reputation of our master builders and maintains our high standards.", Icon: Star },
+          { number: 1, title: "Register", desc: "Create your secure profile in minutes with high-integrity verification ensuring a safe environment for all premium service needs", Icon: UserCheck },
+          { number: 2, title: "Request", desc: "Post your project requirements with precise details as our system categorizes your needs to match with the most qualified craftsmen", Icon: ClipboardList },
+          { number: 3, title: "Quotes", desc: "Receive transparent itemized quotes from verified professionals with no hidden costs and pure expert craftsmanship", Icon: FileText },
+          { number: 4, title: "Chat", desc: "Direct line of communication with your chosen expert to discuss blueprints timelines and logistics within our secure portal", Icon: MessageSquare },
+          { number: 5, title: "Accept", desc: "Lock in the contract with a digital handshake where funds are held in escrow to ensure quality delivery and fair compensation", Icon: CheckCircle2 },
+          { number: 6, title: "Rate", desc: "Complete the feedback loop where your review builds the reputation of our master builders and maintains our high standards", Icon: Star },
         ],
       },
       worker: {
         label: "Workers",
-        desc: "Boost your daily income and get real maintenance jobs in your area.",
+        desc: "Boost your daily income and get real maintenance jobs in your area",
         cta: "Join as Professional Tech",
         steps: [
-          { number: 1, title: "Profile", desc: "Showcase your portfolio, certifications, and expertise. Stand out as a premium craftsman in the industry.", Icon: UserCircle2 },
-          { number: 2, title: "Trade", desc: "Select your specific trade specialties. Our algorithm routes relevant leads that match your high-level skill set.", Icon: Wrench },
-          { number: 3, title: "Alerts", desc: "Real-time notifications for high-value projects in your area. Never miss an opportunity.", Icon: Bell },
-          { number: 4, title: "Quote", desc: "Submit professional bids using our built-in estimation tools. Clearly define your scope of work and materials.", Icon: ListChecks },
-          { number: 5, title: "Negotiate", desc: "Finalize terms with clients directly. Our platform supports professional transparency at every negotiation stage.", Icon: MessageSquare },
-          { number: 6, title: "Payout", desc: "Get paid securely and on time. Experience the fastest industrial payout cycle in the market.", Icon: Wallet },
+          { number: 1, title: "Profile", desc: "Showcase your portfolio certifications and expertise to stand out as a premium craftsman in the industry", Icon: UserCircle2 },
+          { number: 2, title: "Trade", desc: "Select your specific trade specialties as our algorithm routes relevant leads that match your high-level skill set", Icon: Wrench },
+          { number: 3, title: "Alerts", desc: "Real-time notifications for high-value projects in your area so you never miss an opportunity", Icon: Bell },
+          { number: 4, title: "Quote", desc: "Submit professional bids using our built-in estimation tools to clearly define your scope of work and materials", Icon: ListChecks },
+          { number: 5, title: "Negotiate", desc: "Finalize terms with clients directly as our platform supports professional transparency at every negotiation stage", Icon: MessageSquare },
+          { number: 6, title: "Payout", desc: "Get paid securely and on time experiencing the fastest industrial payout cycle in the market", Icon: Wallet },
         ],
       },
       vendor: {
         label: "Vendors",
-        desc: "List your materials and spare parts for thousands of workers and clients.",
+        desc: "List your materials and spare parts for thousands of workers and clients",
         cta: "Register Your Store Now",
         steps: [
-          { number: 1, title: "Register Shop", desc: "Bring your supply store online. Onboard your logistics and fulfillment details to our centralized vendor hub.", Icon: Store },
-          { number: 2, title: "Inventory", desc: "Sync your material catalog. Allow craftsmen to see real-time availability of essential trade supplies.", Icon: Package },
-          { number: 3, title: "Requests", desc: "Receive bulk material requests directly from project sites. Streamline your B2B sales funnel with automated alerts.", Icon: Truck },
-          { number: 4, title: "Quote", desc: "Provide competitive pricing for materials and logistics. Win contracts through volume and reliability.", Icon: CreditCard },
-          { number: 5, title: "Dispatch", desc: "Coordinate deliveries with precision. Track logistics from your warehouse to the craftsman's project location.", Icon: Factory },
+          { number: 1, title: "Register Shop", desc: "Bring your supply store online and onboard your logistics and fulfillment details to our centralized vendor hub", Icon: Store },
+          { number: 2, title: "Inventory", desc: "Sync your material catalog allowing craftsmen to see real-time availability of essential trade supplies", Icon: Package },
+          { number: 3, title: "Requests", desc: "Receive bulk material requests directly from project sites to streamline your B2B sales funnel with automated alerts", Icon: Truck },
+          { number: 4, title: "Quote", desc: "Provide competitive pricing for materials and logistics to win contracts through volume and reliability", Icon: CreditCard },
+          { number: 5, title: "Dispatch", desc: "Coordinate deliveries with precision tracking logistics from your warehouse to the craftsman project location", Icon: Factory },
         ],
       },
     },
@@ -172,9 +173,6 @@ export function HowItWorksCustom({ locale }: { locale: Locale }) {
     >
       {/* ── Hero Section ── */}
       <section className="mx-auto flex max-w-4xl flex-col items-start px-4 py-8 text-start md:items-center md:px-12 md:py-20 md:text-center">
-        <span className="mb-4 inline-flex bg-black px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-gold">
-          {isArabic ? "طريقة العمل" : "How it works"}
-        </span>
         <h1 className="mb-3 text-4xl font-black uppercase leading-tight tracking-tight text-[#1a1c1c] md:text-7xl">
           {currentCopy.title}{" "}
           <br />
@@ -200,7 +198,7 @@ export function HowItWorksCustom({ locale }: { locale: Locale }) {
                 className={cn(
                   "min-h-11 shrink-0 border-2 border-[#1a1c1c] px-5 text-xs font-black uppercase transition-all duration-150 md:px-8 md:text-sm",
                   isActive
-                    ? "bg-white text-[#1a1c1c] shadow-[4px_4px_0px_#1a1c1c]"
+                    ? "bg-white text-[#1a1c1c]"
                     : "bg-[#1a1c1c] text-gold hover:bg-[#1a1c1c]/80"
                 )}
               >
@@ -231,8 +229,7 @@ export function HowItWorksCustom({ locale }: { locale: Locale }) {
                   {/* Number + Icon */}
                   <div className="flex justify-between items-start">
                     <span
-                      className="font-black text-gold leading-none select-none"
-                      style={{ fontSize: "42px", opacity: 0.2 }}
+                      className="font-black text-gold leading-none select-none text-3xl md:text-4xl"
                     >
                       {String(step.number).padStart(2, "0")}
                     </span>
@@ -244,7 +241,7 @@ export function HowItWorksCustom({ locale }: { locale: Locale }) {
                   </div>
 
                   {/* Title */}
-                  <h3 className="text-xl font-black uppercase tracking-wide text-white">
+                  <h3 className="text-2xl font-black uppercase tracking-wide text-gold md:text-3xl">
                     {step.title}
                   </h3>
 
@@ -270,30 +267,25 @@ export function HowItWorksCustom({ locale }: { locale: Locale }) {
             style={{ backgroundColor: "#f5bd18", opacity: 0.08 }}
           />
 
-          <h2 className="relative z-10 mb-3 text-3xl font-black uppercase text-white md:text-5xl">
+          <h2 className="relative z-10 mb-8 text-3xl font-black uppercase text-white md:mb-10 md:text-5xl">
             {currentCopy.ctaTitle}
-          </h2>
-          <h2 className="relative z-10 mb-8 text-3xl font-black uppercase text-gold md:mb-10 md:text-5xl">
-            {currentCopy.ctaTitleHighlight}
+            {currentCopy.ctaTitleHighlight && (
+              <span className="block text-gold mt-1">
+                {currentCopy.ctaTitleHighlight}
+              </span>
+            )}
           </h2>
 
           <div className="relative z-10 flex flex-col gap-3 md:flex-row md:justify-center md:gap-6">
             <Link
-              href={`/${locale}/register/client`}
-              className="inline-block px-10 py-4 font-black uppercase text-sm transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5"
+              href={`/${locale}/register/${activeRole}`}
+              className="inline-block px-8 py-3.5 font-black uppercase text-lg md:text-xl tracking-wide transition-all duration-150 hover:bg-white"
               style={{
                 backgroundColor: "#f5bd18",
                 color: "#1a1c1c",
-                boxShadow: "4px 4px 0px rgba(255,255,255,0.25)",
               }}
             >
               {currentCopy.ctaClientBtn}
-            </Link>
-            <Link
-              href={`/${locale}/register/worker`}
-              className="inline-block px-10 py-4 font-black uppercase text-sm border-2 border-gold text-gold hover:bg-gold hover:text-[#1a1c1c] transition-colors duration-200"
-            >
-              {currentCopy.ctaPartnerBtn}
             </Link>
           </div>
         </div>

@@ -11,7 +11,7 @@ export function ContactForm({ locale }: { locale: Locale }) {
   const copy = {
     ar: {
       heroTitle: "تواصل معنا",
-      heroSub: "دعم صناعي متميز لخدمات التجارة الراقية. تواصل مع خبراء أوستا اليوم.",
+      heroSub: "دعم صناعي متميز لخدمات التجارة الراقية. تواصل مع خبراء أُسطفاي اليوم.",
       detailsTitle: "بيانات التواصل",
       phone: "واتساب",
       email: "البريد الإلكتروني",

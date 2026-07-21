@@ -95,7 +95,7 @@ export function AuthShell({ locale, pathname, title, description, children }: Au
 export function AdminAuthShell({ locale, children }: { locale: Locale; children: ReactNode }) {
   const isArabic = locale === "ar";
   const labels = {
-    brand: isArabic ? "إدارة أوستا" : "OSTA ADMIN",
+    brand: isArabic ? "إدارة أُسطفاي" : "OSTA ADMIN",
     status: isArabic ? "حالة النظام: مستقرة" : "System Status: Optimal",
     title: isArabic ? "دخول آمن" : "Secure Access",
     tier: isArabic ? "مستوى النظام: تحقق إداري متقدم" : "System Level: Tier 1 Auth Required",
@@ -104,11 +104,11 @@ export function AdminAuthShell({ locale, children }: { locale: Locale; children:
     region: isArabic ? "نطاق الوصول" : "Access Region",
     legal: isArabic ? "السياسات" : "Legal",
     breach: isArabic ? "بوابة البلاغات" : "Breach Portal",
-    copyright: isArabic ? "© 2026 أنظمة أوستا الآمنة" : "© 2026 OSTA Secure Systems",
+    copyright: isArabic ? "© 2026 أنظمة أُسطفاي الآمنة" : "© 2026 OSTA Secure Systems",
     mobileTitle: isArabic ? "بوابة التحكم" : "Access Control",
     watermark: isArabic ? "بوابة آمنة" : "SECURE PORTAL",
     mobileCopy: isArabic
-      ? "الوصول إلى هذا النظام مقصور على موظفي أوستا المخولين فقط. يتم تسجيل كل الأنشطة ومراجعتها."
+      ? "الوصول إلى هذا النظام مقصور على موظفي أُسطفاي المخولين فقط. يتم تسجيل كل الأنشطة ومراجعتها."
       : "Access to this system is restricted to authorized OSTA personnel only. All activities are logged and monitored."
   };
 

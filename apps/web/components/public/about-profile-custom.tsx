@@ -45,8 +45,8 @@ const copy: Record<"ar" | "en", Copy> = {
       { title: "التميز", desc: "التزام بالتدريب التقني المستمر وأحدث المنهجيات الصناعية.", Icon: Trophy },
     ],
 
-    joinTitle: "أنضم لأسطفاي",
-    joinCta: "يلا بينا!!",
+    joinTitle: "أنضم لأُسطفاي",
+    joinCta: "يلا بينا !!",
   },
   en: {
     heroTitle: "REDEFINING CRAFTSMANSHIP FOR THE DIGITAL AGE",

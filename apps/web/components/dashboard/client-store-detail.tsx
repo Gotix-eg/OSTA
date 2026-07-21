@@ -463,7 +463,7 @@ export function ClientStoreDetailPage({ locale, vendorId }: { locale: Locale; ve
                   <div>
                     <p className="font-black">{isArabic ? "بائع موثوق" : "Trusted seller"}</p>
                     <p className="text-sm font-semibold text-white/45">
-                      {isArabic ? "متجر معتمد على أوستا" : "Verified OSTA store"}
+                      {isArabic ? "متجر معتمد على أُسطفاي" : "Verified OSTA store"}
                     </p>
                   </div>
                 </div>
