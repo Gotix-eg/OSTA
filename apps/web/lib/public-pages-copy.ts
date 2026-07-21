@@ -106,20 +106,12 @@ export const publicPageCopy = {
             body: "يخضع كل فني على المنصة لفحص صارم يشمل التحقق من بطاقة الرقم القومي، إثبات السكن، المراجعة الأمنية، والمراجعة الفنية لضمان أعلى مستويات الأمان والموثوقية."
           },
           {
-            title: "ما هي رسوم الاشتراك الخاصة بالصنايعية؟",
-            body: "يدفع مقدم الخدمة اشتراكاً شهرياً ثابتاً يبلغ ١٥٠ جنيهاً مصرياً فقط للوصول الكامل واستقبل طلبات العملاء. ولا نقتطع أي عمولة على الطلبات المنفذة، فالأرباح بالكامل للفني."
-          },
-          {
             title: "كيف تتم الدفوعات مقابل الخدمات؟",
             body: "يتم الاتفاق على تكلفة الخدمة بين العميل والفني مباشرة. وندعم طرق سداد متعددة تشمل المحافظ الإلكترونية، شبكة InstaPay، الدفع نقداً، أو كروت الدفع المباشر."
           },
           {
             title: "ماذا لو لم أكن راضياً عن الخدمة أو حدث خلاف؟",
             body: "رغم أننا جهة ربط ووساطة، نلتزم بمساعدتكم في حل الخلافات ودياً. وفي حال الضرورة، تقدم المنصة صورة من بيانات وهوية الفني الموثقة للعميل المتضرر للمتابعة القانونية."
-          },
-          {
-            title: "كيف يمكنني إلغاء الاشتراك الشهري للفنيين؟",
-            body: "يمكن للفنيين إلغاء التجديد التلقائي للاشتراك الشهري في أي وقت من خلال لوحة التحكم الخاصة بهم، مع بقاء الحساب فعالاً حتى نهاية فترة الـ ٣٠ يوماً المدفوعة."
           }
         ]
       },
@@ -355,20 +347,12 @@ export const publicPageCopy = {
             body: "Every craftsman undergoes a background check including national ID verification, address validation, criminal record checks, and professional reviews to ensure safety and quality."
           },
           {
-            title: "What are the subscription fees for service providers?",
-            body: "Providers pay a flat monthly subscription fee of EGP 150 to access customer leads. We charge zero commission on bookings, meaning craftsmen keep 100% of their earnings."
-          },
-          {
             title: "How are payments for services processed?",
             body: "Pricing is agreed upon directly between the client and the provider. Payments can be settled using mobile cash wallets, InstaPay, cash, or credit/debit cards."
           },
           {
             title: "What happens if there is a dispute or quality issue?",
             body: "While we operate as an intermediary matching platform, we provide dispute assistance and reserve the right to share the verified provider's ID records with the client for legal recourse."
-          },
-          {
-            title: "How can I cancel my subscription?",
-            body: "Providers can cancel their subscription at any time from their dashboard setting. Your account will remain active until the end of the current 30-day billing cycle."
           }
         ]
       },
