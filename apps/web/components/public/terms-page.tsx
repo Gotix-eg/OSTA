@@ -15,10 +15,6 @@ export function TermsPage({ locale }: { locale: Locale }) {
     <div dir={isArabic ? "rtl" : "ltr"} style={{ backgroundColor: "#f5bd18", minHeight: "100vh" }}>
       {/* ── Hero ── */}
       <section className="mx-auto flex max-w-3xl flex-col items-start px-4 py-8 text-start md:items-center md:px-12 md:py-20 md:text-center">
-        <span className="mb-4 inline-flex items-center gap-2 border-2 border-[#1a1c1c] bg-[#1a1c1c] px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.3em] text-gold">
-          <Scale className="h-3.5 w-3.5" strokeWidth={2.5} />
-          {content.eyebrow}
-        </span>
         <h1 className="mb-4 text-4xl font-black uppercase leading-tight tracking-tight text-[#1a1c1c] md:text-6xl">
           {content.title}
         </h1>
