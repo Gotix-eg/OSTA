@@ -140,27 +140,27 @@ export const publicPageCopy = {
         description: "تلتزم منصة أُسطفاي بالامتثال الكامل لأحكام قانون حماية البيانات الشخصية المصري رقم ١٥١ لسنة ٢٠٢٠ ولائحته التنفيذية لضمان سرية وأمان معلوماتكم.",
         sections: [
           {
-            title: "١) الامتثال للقانون رقم ١٥١ لسنة ٢٠٢٠",
+            title: "الامتثال للقانون رقم ١٥١ لسنة ٢٠٢٠",
             body: "تخضع كافة عمليات جمع البيانات ومعالجتها وتخزينها ونقلها لأحكام قانون حماية البيانات الشخصية المصري ولائحته التنفيذية لضمان الخصوصية والسرية الكاملة لكافة أطراف المنصة."
           },
           {
-            title: "٢) البيانات التي نقوم بجمعها",
+            title: "البيانات التي نقوم بجمعها",
             body: "نقوم بجمع البيانات الشخصية الأساسية (مثل الاسم، الهاتف، والعنوان للعملاء) بالإضافة إلى بيانات التوثيق الرسمية والهوية (مثل الرقم القومي للأسطوات) لضمان أمان وموثوقية منصتنا."
           },
           {
-            title: "٣) الغرض من المعالجة والأساس القانوني",
+            title: "الغرض من المعالجة والأساس القانوني",
             body: "تتم معالجة البيانات بموجب موافقتكم الصريحة أو لتنفيذ العقود وتقديم الخدمة وتسهيل التواصل الآمن والامتثال للمتطلبات التنظيمية ومنع سوء الاستخدام."
           },
           {
-            title: "٤) حقوق صاحب البيانات الشخصية",
+            title: "حقوق صاحب البيانات الشخصية",
             body: "تتمتع بكامل الحقوق في الوصول إلى بياناتك، وتصحيحها، أو طلب مسحها (الحق في النسيان)، أو سحب موافقتك على المعالجة، أو التواصل مع مسؤول حماية البيانات الشخصية بالمنصة."
           },
           {
-            title: "٥) مشاركة البيانات وسرية النزاعات",
+            title: "مشاركة البيانات وسرية النزاعات",
             body: "لا نقوم ببيع أو مشاركة بياناتك مع الغير للأغراض التجارية. يُستثنى من ذلك مشاركة بيانات التوثيق للفني مع العميل المتضرر لتسهيل الإجراءات القانونية عند حدوث نزاع."
           },
           {
-            title: "٦) أمن البيانات ومسؤول حماية البيانات (DPO)",
+            title: "أمن البيانات ومسؤول حماية البيانات (DPO)",
             body: "نتبع أعلى المعايير الفنية والتنظيمية لحماية بياناتكم من التسريب والاختراق، مع التزامنا بإبلاغ مركز حماية البيانات المصري والجهات المعنية خلال ٧٢ ساعة في حال حدوث أي تسريب، وتعيين مسؤول لحماية البيانات للتواصل عبر dpo@ostafy.com."
           }
         ]
@@ -381,27 +381,27 @@ export const publicPageCopy = {
         description: "At Ostafy, we are fully committed to complying with the Egyptian Personal Data Protection Law No. 151 of 2020 to guarantee the privacy, confidentiality, and security of your information.",
         sections: [
           {
-            title: "1) Compliance with Law 151 of 2020",
+            title: "Compliance with Law 151 of 2020",
             body: "All data collection, processing, storage, and transfer operations are governed by the Egyptian Personal Data Protection Law and its executive regulations to ensure complete privacy for all users."
           },
           {
-            title: "2) Personal Data We Collect",
+            title: "Personal Data We Collect",
             body: "We collect basic contact details (such as name, phone number, and address for clients) along with official identity verification documents (such as national ID card images for professionals) to guarantee platform safety and trust."
           },
           {
-            title: "3) Purpose of Processing & Legal Basis",
+            title: "Purpose of Processing & Legal Basis",
             body: "Data is processed based on your explicit consent, to execute service agreements, to facilitate secure professional matching, to comply with regulatory requirements, and to prevent fraudulent activities."
           },
           {
-            title: "4) Your Rights as a Data Subject",
+            title: "Your Rights as a Data Subject",
             body: "You possess the full right to access your processed data, request corrections or amendments, request deletion (the right to be forgotten), restrict processing, or withdraw your consent at any time."
           },
           {
-            title: "5) Data Sharing & Dispute Resolution",
+            title: "Data Sharing & Dispute Resolution",
             body: "We do not sell, rent, or share your commercial data with third parties. However, in the event of a serious dispute, the platform reserves the right to share the verified professional's identity info with the affected client to facilitate legal action."
           },
           {
-            title: "6) Security Measures & Data Protection Officer (DPO)",
+            title: "Security Measures & Data Protection Officer (DPO)",
             body: "We adopt state-of-the-art technical and organizational security measures. We commit to notifying the Egyptian Data Protection Center within 72 hours of any data breach, and we have appointed a Data Protection Officer contactable at dpo@ostafy.com."
           }
         ]
