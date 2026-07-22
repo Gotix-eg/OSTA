@@ -56,7 +56,7 @@ type NavItem = {
 
 const iconSets: Record<DashboardRole, Array<NavItem["icon"]>> = {
   client: [Home, Briefcase, FolderClock, Store, Package, Heart, Wallet, Settings],
-  worker: [Home, FolderClock, Briefcase, CreditCard, Megaphone, BarChart3, Settings],
+  worker: [Home, FolderClock, Briefcase, CreditCard, Megaphone, BarChart3, UserCircle2, Settings],
   vendor: [Home, Bell, Briefcase, Wrench, Package, Megaphone, Wallet, Settings],
   admin: [Home, ShieldCheck, Users, FolderClock, Store, Wrench, CreditCard, Megaphone, SlidersHorizontal, Grid3X3, Image, UserCircle2, Settings]
 };
@@ -193,7 +193,7 @@ export function DashboardShell({
   const navItems = useMemo(() => {
     const routes: Record<DashboardRole, string[]> = {
       client: ["/client", "/client/new-request", "/client/my-requests", "/client/stores", "/client/materials", "/client/favorites", "/client/wallet", "/client/settings"],
-      worker: ["/worker", "/worker/requests/incoming", "/worker/requests/active", "/worker/earnings", "/worker/ads", "/worker/ratings", "/worker/settings"],
+      worker: ["/worker", "/worker/requests/incoming", "/worker/requests/active", "/worker/earnings", "/worker/ads", "/worker/ratings", "/worker/profile", "/worker/settings"],
       vendor: ["/vendor", "/vendor/requests", "/vendor/active-orders", "/vendor/materials", "/vendor/inventory", "/vendor/ads", "/vendor/wallet", "/vendor/settings"],
       admin: ["/admin", "/admin/workers/pending", "/admin/clients", "/admin/requests", "/admin/vendors", "/admin/workers", "/admin/finance", "/admin/ads", "/admin/pricing", "/admin/services", "/admin/media", "/admin/avatars", "/admin/settings"]
     };

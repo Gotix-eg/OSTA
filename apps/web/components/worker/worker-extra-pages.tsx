@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import { BriefcaseBusiness, Loader2, Save, ShieldCheck, Sparkles, Star, Store, TimerReset, User, UserCircle2, Wallet } from "lucide-react";
+import { BriefcaseBusiness, Check, Loader2, Save, ShieldCheck, Sparkles, Star, Store, TimerReset, User, UserCircle2 } from "lucide-react";
 
 import {
   WorkerProAction,
@@ -226,19 +226,39 @@ export function WorkerRatingsPage({ locale, initialData }: { locale: Locale; ini
   );
 }
 
+function WorkerSaveControl({ state, onSave, isArabic }: { state: "idle" | "saving" | "saved"; onSave: () => void; isArabic: boolean }) {
+  return (
+    <div className="flex shrink-0 items-center gap-3">
+      {state === "saved" ? (
+        <span className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.14em] text-emerald-300">
+          <Check className="h-4 w-4" />
+          {isArabic ? "تم الحفظ" : "Saved"}
+        </span>
+      ) : null}
+      <WorkerProAction tone="light" onClick={onSave} disabled={state === "saving"}>
+        {state === "saving" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+        {state === "saving" ? (isArabic ? "جارٍ الحفظ" : "Saving") : isArabic ? "حفظ" : "Save"}
+      </WorkerProAction>
+    </div>
+  );
+}
+
 export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; initialData: WorkerSettingsData }) {
   const isArabic = locale === "ar";
   const liveData = useLiveApiData("/workers/settings", initialData);
   const [data, setData] = useState(initialData);
-  const [saved, setSaved] = useState(false);
+  const [saveState, setSaveState] = useState<"idle" | "saving" | "saved">("idle");
 
   useEffect(() => {
     setData(liveData);
   }, [liveData]);
 
   function handleSave() {
-    setSaved(true);
-    window.setTimeout(() => setSaved(false), 2000);
+    setSaveState("saving");
+    window.setTimeout(() => {
+      setSaveState("saved");
+      window.setTimeout(() => setSaveState("idle"), 2000);
+    }, 500);
   }
 
   const safeWorkPreferences = {
@@ -257,44 +277,30 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
   return (
     <WorkerProShell locale={locale}>
       <WorkerProTopStrip locale={locale} title={isArabic ? "الإعدادات" : "Settings"} />
-      <WorkerProHero
-        locale={locale}
-        eyebrow={isArabic ? "إعدادات الفني" : "Worker controls"}
-        title={isArabic ? "لوحة" : "Worker"}
-        highlight={isArabic ? "التشغيل" : "settings"}
-        subtitle={isArabic ? "تحكم في التوفر ووضع الطوارئ ومناطق الخدمة وتفضيلات التحويل." : "Control availability, emergency mode, service areas, and payout preferences."}
-        side={
-          <div className="border border-white/10 bg-black p-5 text-white shadow-[4px_4px_0_#1d1600]">
-            <div className="flex items-center gap-4">
-              <div className="flex h-20 w-20 items-center justify-center overflow-hidden border border-gold/50 bg-[#111] text-gold">
-                {data.profile.avatarUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={data.profile.avatarUrl} alt={isArabic ? "صورة الفني" : "Worker avatar"} className="h-full w-full object-cover" />
-                ) : (
-                  <UserCircle2 className="h-10 w-10" />
-                )}
-              </div>
-              <div>
-                <h3 className="text-xl font-black text-white">{fullName}</h3>
-                <p className="mt-1 text-[10px] font-black uppercase tracking-[0.18em] text-gold">OSTA PRO</p>
-              </div>
-            </div>
+
+      <section className="flex flex-col gap-6 border border-white/10 bg-black p-6 text-white shadow-[5px_5px_0_#1d1600] sm:flex-row sm:items-center sm:justify-between lg:p-8">
+        <div className="flex min-w-0 items-center gap-5">
+          <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden border border-gold bg-[#111] text-gold sm:h-20 sm:w-20">
+            {data.profile.avatarUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={data.profile.avatarUrl} alt={isArabic ? "صورة الفني" : "Worker avatar"} className="h-full w-full object-cover" />
+            ) : (
+              <UserCircle2 className="h-8 w-8 sm:h-10 sm:w-10" />
+            )}
           </div>
-        }
-      />
-
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        <WorkerProMetric label={isArabic ? "التوفر" : "Availability"} value={safeWorkPreferences.isAvailable ? (isArabic ? "مفعل" : "ON") : isArabic ? "متوقف" : "OFF"} note={isArabic ? "ظهور الطلبات" : "job visibility"} icon={Sparkles} index="01" />
-        <WorkerProMetric label={isArabic ? "مناطق الخدمة" : "Service areas"} value={formatNumber(locale, safeWorkPreferences.serviceAreas.length)} note={isArabic ? "نطاق التغطية" : "coverage map"} icon={ShieldCheck} index="02" />
-        <WorkerProMetric label={isArabic ? "جدول التحويل" : "Payout"} value={safePayout.schedule || (isArabic ? "غير محدد" : "Unset")} note={isArabic ? "دورة التحويل" : "transfer cycle"} icon={Wallet} index="03" />
-      </div>
-
-      {saved ? <div className="border border-emerald-400/30 bg-emerald-400/10 px-4 py-3 text-sm font-black text-emerald-200">{isArabic ? "تم الحفظ محلياً" : "Saved locally"}</div> : null}
-
-      <WorkerModeSwitcher locale={locale} fullName={fullName} avatarUrl={data.profile.avatarUrl} email={data.profile.email} phone={data.profile.phone} />
+          <div className="min-w-0">
+            <p className="text-[10px] font-black uppercase tracking-[0.22em] text-gold">{isArabic ? "الملف الشخصي" : "Worker profile"}</p>
+            <h1 className="mt-1 truncate text-2xl font-black uppercase leading-tight text-white sm:text-3xl">{fullName}</h1>
+            <p className="mt-1 truncate text-sm font-semibold text-white/50">
+              {data.profile.email || (isArabic ? "لا يوجد بريد" : "No email")} · {data.profile.phone || (isArabic ? "لا يوجد هاتف" : "No phone")}
+            </p>
+          </div>
+        </div>
+        <WorkerSaveControl state={saveState} onSave={handleSave} isArabic={isArabic} />
+      </section>
 
       <div className="grid gap-6 xl:grid-cols-[1fr_1fr]">
-        <WorkerProPanel title={isArabic ? "الملف الشخصي" : "Profile"} eyebrow={isArabic ? "بيانات الفني" : "worker identity"}>
+        <WorkerProPanel title={isArabic ? "البيانات الشخصية" : "Personal info"} eyebrow={isArabic ? "بيانات الفني" : "worker identity"}>
           <div className="grid gap-4 sm:grid-cols-2">
             {[
               { key: "firstName", label: isArabic ? "الاسم الأول" : "First name" },
@@ -314,7 +320,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
           </div>
         </WorkerProPanel>
 
-        <WorkerProPanel title={isArabic ? "تفضيلات العمل" : "Work preferences"} eyebrow={isArabic ? "خيارات التشغيل" : "ops toggles"}>
+        <WorkerProPanel title={isArabic ? "التوفر والتحويل" : "Availability & payout"} eyebrow={isArabic ? "خيارات التشغيل" : "ops toggles"}>
           <div className="grid gap-4">
             {[
               { key: "isAvailable", label: isArabic ? "متاح للطلبات" : "Available for jobs" },
@@ -331,14 +337,16 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
                 />
               </label>
             ))}
-            <div className="border border-white/10 bg-[#111] p-4">
-              <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/35">{isArabic ? "المناطق" : "Areas"}</p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {safeWorkPreferences.serviceAreas.map((area) => (
-                  <WorkerProBadge key={area} tone="gold">{area}</WorkerProBadge>
-                ))}
+            {safeWorkPreferences.serviceAreas.length > 0 ? (
+              <div className="border border-white/10 bg-[#111] p-4">
+                <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/35">{isArabic ? "المناطق" : "Areas"}</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {safeWorkPreferences.serviceAreas.map((area) => (
+                    <WorkerProBadge key={area} tone="gold">{area}</WorkerProBadge>
+                  ))}
+                </div>
               </div>
-            </div>
+            ) : null}
             <div className="grid gap-3 sm:grid-cols-3">
               {[
                 { label: isArabic ? "الوسيلة" : "Method", value: safePayout.method || (isArabic ? "غير محدد" : "Unset") },
@@ -355,12 +363,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
         </WorkerProPanel>
       </div>
 
-      <div className="flex justify-end">
-        <WorkerProAction tone="dark" onClick={handleSave}>
-          <Save className="h-4 w-4" />
-          {isArabic ? "حفظ" : "Save"}
-        </WorkerProAction>
-      </div>
+      <WorkerModeSwitcher locale={locale} fullName={fullName} avatarUrl={data.profile.avatarUrl} email={data.profile.email} phone={data.profile.phone} />
     </WorkerProShell>
   );
 }

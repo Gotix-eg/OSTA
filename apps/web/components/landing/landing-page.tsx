@@ -349,11 +349,19 @@ export function LandingPage({ locale }: { locale: Locale }) {
               {mobilePros.map((worker) => (
                 <article key={worker.id} className="min-w-[240px] snap-center space-y-4 border border-white/10 bg-black p-4 text-white">
                   <div className="flex items-center gap-3">
-                    <div className="h-16 w-16 border border-white/20 bg-zinc-800">
+                    <Link
+                      href={worker.raw ? `/${locale}/workers/${worker.raw.id}` : `/${locale}/workers`}
+                      className="h-16 w-16 shrink-0 overflow-hidden border border-white/20 bg-zinc-800 transition-opacity hover:opacity-85"
+                    >
                       <img src={worker.image} alt={isArabic ? worker.nameAr : worker.nameEn} className="h-full w-full object-cover" />
-                    </div>
+                    </Link>
                     <div className="min-w-0 text-start">
-                      <p className="truncate text-sm font-black">{isArabic ? worker.nameAr : worker.nameEn}</p>
+                      <Link
+                        href={worker.raw ? `/${locale}/workers/${worker.raw.id}` : `/${locale}/workers`}
+                        className="hover:underline hover:text-gold"
+                      >
+                        <p className="truncate text-sm font-black">{isArabic ? worker.nameAr : worker.nameEn}</p>
+                      </Link>
                       <p className="text-xs font-bold text-gold">{isArabic ? worker.professionAr : worker.professionEn}</p>
                     </div>
                   </div>
@@ -644,13 +652,14 @@ export function LandingPage({ locale }: { locale: Locale }) {
                 className="group bg-white border border-[#e2e2e2] flex flex-col transition-all hover:-translate-y-2 hover:shadow-xl rounded-none text-start overflow-hidden"
               >
                 <div className="h-64 overflow-hidden relative">
-                  {worker.avatarUrl ? (
-                    <img src={avatarImg} alt="" className="w-full h-full object-cover transition-all duration-500" />
-                  ) : (
-                    <img src={avatarImg} alt="" className="w-full h-full object-cover transition-all duration-500" />
-                  )}
+                  <Link
+                    href={isFallbackWorker ? `/${locale}/workers` : `/${locale}/workers/${worker.id}`}
+                    className="block h-full w-full"
+                  >
+                    <img src={avatarImg} alt={worker.name || ""} className="w-full h-full object-cover transition-all duration-500 group-hover:scale-105" />
+                  </Link>
                   <div className={cn(
-                    "absolute top-4 right-4 text-white text-[10px] px-2 py-1 flex items-center gap-1 font-bold rounded-none",
+                    "absolute top-4 right-4 text-white text-[10px] px-2 py-1 flex items-center gap-1 font-bold rounded-none pointer-events-none",
                     worker.isOnline ? "bg-green-500" : "bg-gray-400"
                   )}>
                     {worker.isOnline && <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>}
@@ -660,7 +669,12 @@ export function LandingPage({ locale }: { locale: Locale }) {
                 <div className="p-6">
                   <div className="flex justify-between items-start mb-4">
                     <div>
-                      <h4 className="font-bold text-lg text-[#1a1c1c] truncate">{worker.name}</h4>
+                      <Link
+                        href={isFallbackWorker ? `/${locale}/workers` : `/${locale}/workers/${worker.id}`}
+                        className="font-bold text-lg text-[#1a1c1c] truncate hover:underline block"
+                      >
+                        {worker.name}
+                      </Link>
                       <p className="text-xs text-neutral-500 uppercase font-black tracking-tight mt-0.5">
                         {isArabic ? worker.professionAr : worker.professionEn}
                       </p>

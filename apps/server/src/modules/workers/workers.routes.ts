@@ -694,4 +694,115 @@ router.patch("/settings", catchAsync(async (request, response) => {
   response.status(200).json(successResponse(updated, "Worker settings updated successfully"));
 }));
 
+router.get("/profile", catchAsync(async (request, response) => {
+  const userId = request.auth!.userId;
+
+  const worker = await prisma.workerProfile.findUnique({
+    where: { userId },
+    include: {
+      certificates: { orderBy: { order: "asc" } },
+      serviceItems: { orderBy: { order: "asc" } }
+    }
+  });
+
+  if (!worker) throw new ApiError(404, "Worker profile not found");
+
+  const profile = {
+    bio: worker.bio ?? "",
+    yearsOfExperience: worker.yearsOfExperience,
+    education: worker.education,
+    achievements: worker.achievements,
+    galleryImages: worker.galleryImages,
+    galleryVideoUrl: worker.galleryVideoUrl ?? "",
+    contractInfo: worker.contractInfo ?? "",
+    certificates: worker.certificates.map((c) => ({ id: c.id, title: c.title, year: c.year ?? "", imageUrl: c.imageUrl })),
+    serviceItems: worker.serviceItems.map((s) => ({ id: s.id, name: s.name, price: s.price, note: s.note ?? "" }))
+  };
+
+  response.status(200).json(successResponse(profile, "Worker profile fetched"));
+}));
+
+const workerProfileSchema = z.object({
+  bio: z.string().max(2000).optional(),
+  yearsOfExperience: z.number().int().min(0).max(80).optional(),
+  education: z.array(z.string().max(300)).max(20).optional(),
+  achievements: z.array(z.string().max(300)).max(20).optional(),
+  galleryImages: z.array(z.string().url().max(1000)).max(24).optional(),
+  galleryVideoUrl: z.string().max(1000).optional(),
+  contractInfo: z.string().max(2000).optional(),
+  certificates: z.array(z.object({
+    title: z.string().min(1).max(200),
+    year: z.string().max(20).optional(),
+    imageUrl: z.string().url().max(1000)
+  })).max(20).optional(),
+  serviceItems: z.array(z.object({
+    name: z.string().min(1).max(200),
+    price: z.string().min(1).max(60),
+    note: z.string().max(300).optional()
+  })).max(40).optional()
+});
+
+router.patch("/profile", catchAsync(async (request, response) => {
+  const userId = request.auth!.userId;
+  const body = workerProfileSchema.parse(request.body);
+
+  const worker = await prisma.workerProfile.findUnique({ where: { userId } });
+  if (!worker) throw new ApiError(404, "Worker profile not found");
+
+  await prisma.$transaction(async (tx) => {
+    await tx.workerProfile.update({
+      where: { id: worker.id },
+      data: {
+        bio: body.bio !== undefined ? body.bio.trim() || null : undefined,
+        yearsOfExperience: body.yearsOfExperience,
+        education: body.education?.map((e) => e.trim()).filter(Boolean),
+        achievements: body.achievements?.map((a) => a.trim()).filter(Boolean),
+        galleryImages: body.galleryImages,
+        galleryVideoUrl: body.galleryVideoUrl !== undefined ? body.galleryVideoUrl.trim() || null : undefined,
+        contractInfo: body.contractInfo !== undefined ? body.contractInfo.trim() || null : undefined
+      }
+    });
+
+    if (body.certificates !== undefined) {
+      await tx.workerCertificate.deleteMany({ where: { workerId: worker.id } });
+      if (body.certificates.length > 0) {
+        await tx.workerCertificate.createMany({
+          data: body.certificates.map((c, index) => ({
+            workerId: worker.id,
+            title: c.title.trim(),
+            year: c.year?.trim() || null,
+            imageUrl: c.imageUrl,
+            order: index
+          }))
+        });
+      }
+    }
+
+    if (body.serviceItems !== undefined) {
+      await tx.workerServiceItem.deleteMany({ where: { workerId: worker.id } });
+      if (body.serviceItems.length > 0) {
+        await tx.workerServiceItem.createMany({
+          data: body.serviceItems.map((s, index) => ({
+            workerId: worker.id,
+            name: s.name.trim(),
+            price: s.price.trim(),
+            note: s.note?.trim() || null,
+            order: index
+          }))
+        });
+      }
+    }
+  });
+
+  const updated = await prisma.workerProfile.findUnique({
+    where: { id: worker.id },
+    include: {
+      certificates: { orderBy: { order: "asc" } },
+      serviceItems: { orderBy: { order: "asc" } }
+    }
+  });
+
+  response.status(200).json(successResponse(updated, "Worker profile updated successfully"));
+}));
+
 export const workersRouter = router;

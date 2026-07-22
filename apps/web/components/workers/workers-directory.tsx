@@ -127,7 +127,7 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
         <div className="mx-auto max-w-4xl space-y-5 md:space-y-6">
           <div className="space-y-3">
             <span className="inline-flex bg-gold px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-black">
-              {isArabic ? "الفنيون" : "Workers"}
+              {isArabic ? "الأسطوات" : "Workers"}
             </span>
             <h1 className="text-4xl font-black leading-tight text-white md:text-3xl">
               {isArabic ? "ابحث عن فني محترف" : "Find Expert Workers"}
@@ -233,9 +233,11 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
                   )}
                 >
                   {/* Full-width Image Header */}
-                    <div className="relative h-56 w-full overflow-hidden bg-neutral-800 md:h-64">
-                    <img className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500" src={avatarImg} alt="" />
-                    <div className="absolute top-4 left-4 z-10">
+                  <div className="relative h-56 w-full overflow-hidden bg-neutral-800 md:h-64">
+                    <Link href={"/" + locale + "/workers/" + worker.id} className="block w-full h-full">
+                      <img className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500" src={avatarImg} alt={worker.name} />
+                    </Link>
+                    <div className="absolute top-4 left-4 z-10 pointer-events-none">
                       <span className={cn(
                         "text-[10px] font-black px-2 py-1 flex items-center gap-1 rounded-none",
                         worker.isOnline 
@@ -252,7 +254,12 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
                   <div className="flex flex-grow flex-col justify-between p-5 text-start md:p-6">
                     <div>
                       <div className="flex justify-between items-center mb-2">
-                        <h3 className="font-black text-lg leading-tight truncate">{worker.name}</h3>
+                        <Link
+                          href={"/" + locale + "/workers/" + worker.id}
+                          className="font-black text-lg leading-tight truncate hover:underline hover:text-gold"
+                        >
+                          {worker.name}
+                        </Link>
                         <div className="flex items-center text-gold text-sm font-black">
                           <Star className="h-4 w-4 fill-current mr-1 text-gold" />
                           <span className={isWhiteCard ? "text-black" : "text-white"}>{worker.rating > 0 ? worker.rating.toFixed(1) : "5.0"}</span>

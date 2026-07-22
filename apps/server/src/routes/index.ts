@@ -272,6 +272,8 @@ router.get("/public/workers/:id", async (request, response) => {
         user: { select: { firstName: true, lastName: true, avatarUrl: true, createdAt: true } },
         specializations: { include: { service: { include: { category: true } } } },
         workAreas: true,
+        certificates: { orderBy: { order: "asc" } },
+        serviceItems: { orderBy: { order: "asc" } },
       }
     });
 
@@ -307,6 +309,14 @@ router.get("/public/workers/:id", async (request, response) => {
       isFeatured: worker.subscriptionTier === "featured",
       areas: worker.workAreas.map((wa: any) => wa.area || wa.city),
       bio: worker.bio,
+      yearsOfExperience: worker.yearsOfExperience,
+      education: worker.education,
+      achievements: worker.achievements,
+      galleryImages: worker.galleryImages,
+      galleryVideoUrl: worker.galleryVideoUrl,
+      contractInfo: worker.contractInfo,
+      certificates: worker.certificates.map((c: any) => ({ id: c.id, title: c.title, year: c.year, imageUrl: c.imageUrl })),
+      serviceItems: worker.serviceItems.map((s: any) => ({ id: s.id, name: s.name, price: s.price, note: s.note })),
       joinedAt: worker.user.createdAt,
       reviews: reviews.map(r => ({
         id: r.id,
