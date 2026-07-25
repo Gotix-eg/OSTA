@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 
 import {
   BriefcaseBusiness,
+  Camera,
   Check,
   Cloud,
   CreditCard,
@@ -288,6 +289,40 @@ function SettingsRoleSwitcher({
 }) {
   const [pendingRole, setPendingRole] = useState<"WORKER" | "VENDOR" | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [currentAvatar, setCurrentAvatar] = useState(avatarUrl);
+  const [isUploading, setIsUploading] = useState(false);
+  const isArabic = locale === "ar";
+
+  useEffect(() => {
+    setCurrentAvatar(avatarUrl);
+  }, [avatarUrl]);
+
+  async function handleAvatarUpload(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData
+      });
+      if (!res.ok) throw new Error("Upload failed");
+      const resData = await res.json();
+      setCurrentAvatar(resData.url);
+      await postApiData("/client/settings", {
+        profile: { avatarUrl: resData.url }
+      });
+    } catch (err) {
+      console.error("Avatar upload failed", err);
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  }
+
   const initials = fullName
     .split(" ")
     .filter(Boolean)
@@ -341,13 +376,37 @@ function SettingsRoleSwitcher({
     <section className="border border-white/10 bg-black p-6 text-white">
       <div className="mb-5 flex flex-wrap items-start justify-between gap-4 border-b border-white/10 pb-4">
         <div className="flex min-w-0 items-center gap-4">
-          <div className="relative h-16 w-16 shrink-0 overflow-hidden border border-gold bg-[#121212]">
-            {avatarUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={avatarUrl} alt={fullName} className="h-full w-full object-cover" />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center bg-gold text-xl font-black text-black">{initials}</div>
-            )}
+          <div className="relative group shrink-0">
+            <div
+              onClick={() => fileInputRef.current?.click()}
+              className="relative h-16 w-16 cursor-pointer overflow-hidden border border-gold bg-[#121212] transition hover:border-gold/80"
+            >
+              {currentAvatar ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={currentAvatar} alt={fullName} className="h-full w-full object-cover transition duration-300 group-hover:scale-105" />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center bg-gold text-xl font-black text-black">{initials}</div>
+              )}
+              <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
+                <Camera className="h-4 w-4 text-gold" />
+                <span className="text-[8px] font-black uppercase text-white">{isUploading ? "..." : isArabic ? "تغيير" : "Change"}</span>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-gold text-black shadow-lg transition hover:scale-110 active:scale-95"
+              title={isArabic ? "تغيير الصورة الشخصية" : "Change profile photo"}
+            >
+              <Camera className="h-3 w-3" />
+            </button>
+            <input
+              type="file"
+              accept="image/*"
+              ref={fileInputRef}
+              onChange={(e) => void handleAvatarUpload(e)}
+              className="hidden"
+            />
           </div>
           <div className="min-w-0">
             <p className="text-[10px] font-black uppercase tracking-[0.22em] text-gold">{labels.modeTitle}</p>
