@@ -79,3 +79,24 @@ export function getLocalizedError(errorMsgOrCode: string, locale: Locale): strin
 
   return locale === "ar" ? `حدث خطأ: ${code}` : code;
 }
+
+export function formatPhoneNumber(phone?: string | null): string {
+  if (!phone) return "";
+  let cleaned = phone.trim().replace(/[^\d+]/g, "");
+  if (!cleaned) return "";
+
+  if (cleaned.startsWith("+")) {
+    cleaned = cleaned.substring(1);
+  }
+
+  if (cleaned.startsWith("20")) {
+    const rest = cleaned.substring(2);
+    return `+20 ${rest}`;
+  }
+
+  if (cleaned.startsWith("0")) {
+    return `+20 ${cleaned.substring(1)}`;
+  }
+
+  return `+${cleaned}`;
+}

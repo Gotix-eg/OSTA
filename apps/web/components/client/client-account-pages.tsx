@@ -344,7 +344,7 @@ function SettingsRoleSwitcher({
           <div className="relative h-16 w-16 shrink-0 overflow-hidden border border-gold bg-[#121212]">
             {avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={avatarUrl} alt={fullName} className="h-full w-full object-cover grayscale transition duration-300 hover:grayscale-0" />
+              <img src={avatarUrl} alt={fullName} className="h-full w-full object-cover" />
             ) : (
               <div className="flex h-full w-full items-center justify-center bg-gold text-xl font-black text-black">{initials}</div>
             )}

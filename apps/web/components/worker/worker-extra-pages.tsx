@@ -18,6 +18,7 @@ import { useLiveApiData } from "@/hooks/use-live-api-data";
 import { postApiData } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
 import type { WorkerRatingsData, WorkerSettingsData } from "@/lib/operations-data";
+import { formatPhoneNumber } from "@/lib/utils";
 
 function formatNumber(locale: Locale, value: number) {
   return new Intl.NumberFormat(locale === "ar" ? "ar-EG" : "en-US", { maximumFractionDigits: 0 }).format(value);
@@ -103,7 +104,7 @@ function WorkerModeSwitcher({
             <div className="relative h-24 w-24 shrink-0 overflow-hidden border border-gold bg-[#121212]">
               {avatarUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={avatarUrl} alt={fullName} className="h-full w-full object-cover grayscale transition duration-300 hover:grayscale-0" />
+                <img src={avatarUrl} alt={fullName} className="h-full w-full object-cover" />
               ) : (
                 <div className="flex h-full w-full items-center justify-center bg-gold text-2xl font-black text-black">{initials}</div>
               )}
@@ -113,7 +114,7 @@ function WorkerModeSwitcher({
               <h2 className="mt-2 truncate text-2xl font-black uppercase text-white">{fullName}</h2>
               <div className="mt-4 space-y-1 text-sm font-bold text-white/65">
                 <p className="truncate">{email || (isArabic ? "لا يوجد بريد" : "No email")}</p>
-                <p className="truncate">{phone || (isArabic ? "لا يوجد هاتف" : "No phone")}</p>
+                <p className="truncate text-start" dir="ltr">{formatPhoneNumber(phone) || (isArabic ? "لا يوجد هاتف" : "No phone")}</p>
               </div>
             </div>
           </div>
