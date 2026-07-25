@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-import { AlertCircle, BriefcaseBusiness, Camera, Check, CheckCircle2, Loader2, Save, ShieldCheck, Sparkles, Star, Store, TimerReset, User, UserCircle2 } from "lucide-react";
+import { AlertCircle, BriefcaseBusiness, Camera, Check, CheckCircle2, Loader2, Lock, Save, ShieldCheck, Sparkles, Star, Store, TimerReset, User, UserCircle2 } from "lucide-react";
 
 import {
   WorkerProAction,
@@ -461,30 +461,51 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
 
           <div className="grid gap-4 sm:grid-cols-2">
             <label className="space-y-2">
-              <span className="text-sm font-black text-white/45">{isArabic ? "الاسم الأول" : "First name"}</span>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-black text-white/45">{isArabic ? "الاسم الأول" : "First name"}</span>
+                <span className="inline-flex items-center gap-1 text-[10px] font-black text-white/30 uppercase tracking-wider">
+                  <Lock className="h-3 w-3" />
+                  {isArabic ? "ثابت" : "Locked"}
+                </span>
+              </div>
               <input
                 value={data.profile.firstName ?? ""}
-                onChange={(e) => setData({ ...data, profile: { ...data.profile, firstName: e.target.value } })}
-                className="h-12 w-full border border-white/10 bg-[#111] px-4 text-white outline-none focus:border-gold"
+                readOnly
+                disabled
+                className="h-12 w-full border border-white/10 bg-[#141414] px-4 text-white/50 outline-none cursor-not-allowed select-none font-bold"
               />
             </label>
 
             <label className="space-y-2">
-              <span className="text-sm font-black text-white/45">{isArabic ? "اسم العائلة" : "Last name"}</span>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-black text-white/45">{isArabic ? "اسم العائلة" : "Last name"}</span>
+                <span className="inline-flex items-center gap-1 text-[10px] font-black text-white/30 uppercase tracking-wider">
+                  <Lock className="h-3 w-3" />
+                  {isArabic ? "ثابت" : "Locked"}
+                </span>
+              </div>
               <input
                 value={data.profile.lastName ?? ""}
-                onChange={(e) => setData({ ...data, profile: { ...data.profile, lastName: e.target.value } })}
-                className="h-12 w-full border border-white/10 bg-[#111] px-4 text-white outline-none focus:border-gold"
+                readOnly
+                disabled
+                className="h-12 w-full border border-white/10 bg-[#141414] px-4 text-white/50 outline-none cursor-not-allowed select-none font-bold"
               />
             </label>
 
             <label className="space-y-2 sm:col-span-2">
-              <span className="text-sm font-black text-white/45">{isArabic ? "رقم الهاتف" : "Phone"}</span>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-black text-white/45">{isArabic ? "رقم الهاتف" : "Phone"}</span>
+                <span className="inline-flex items-center gap-1 text-[10px] font-black text-white/30 uppercase tracking-wider">
+                  <Lock className="h-3 w-3" />
+                  {isArabic ? "ثابت" : "Locked"}
+                </span>
+              </div>
               <input
                 value={formatPhoneNumber(data.profile.phone)}
-                onChange={(e) => setData({ ...data, profile: { ...data.profile, phone: e.target.value } })}
+                readOnly
+                disabled
                 dir="ltr"
-                className="h-12 w-full border border-white/10 bg-[#111] px-4 text-white outline-none focus:border-gold text-start font-mono"
+                className="h-12 w-full border border-white/10 bg-[#141414] px-4 text-white/50 outline-none cursor-not-allowed select-none text-start font-mono font-bold"
               />
             </label>
 
@@ -498,13 +519,20 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
             </div>
 
             <label className="space-y-2 sm:col-span-2 pt-2 border-t border-white/10">
-              <span className="text-sm font-black text-white/45">{isArabic ? "رقم بطاقة الرقم القومي" : "National ID Number"}</span>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-black text-white/45">{isArabic ? "رقم بطاقة الرقم القومي" : "National ID Number"}</span>
+                <span className="inline-flex items-center gap-1 text-[10px] font-black text-white/30 uppercase tracking-wider">
+                  <Lock className="h-3 w-3" />
+                  {isArabic ? "ثابت" : "Locked"}
+                </span>
+              </div>
               <input
                 value={data.profile.nationalIdNumber ?? ""}
-                onChange={(e) => setData({ ...data, profile: { ...data.profile, nationalIdNumber: e.target.value } })}
+                readOnly
+                disabled
                 dir="ltr"
                 placeholder="2900101100001"
-                className="h-12 w-full border border-white/10 bg-[#111] px-4 font-mono text-white outline-none focus:border-gold text-start"
+                className="h-12 w-full border border-white/10 bg-[#141414] px-4 font-mono text-white/50 outline-none cursor-not-allowed select-none text-start font-bold"
               />
             </label>
 
