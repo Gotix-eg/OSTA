@@ -394,12 +394,12 @@ export function DashboardShell({
                     className={cn(
                       "min-w-0 flex-1 border px-5 py-3 text-sm",
                       isStitchDashboard
-                        ? "rounded-lg border-[#e5ddc9] bg-[#fff8df] text-[#5a5248]"
+                        ? "rounded-lg border-white/10 bg-black text-white"
                         : "rounded-full border-gold-700/10 bg-white/50 text-onyx-600 shadow-inner"
                     )}
                   >
                     <div className="flex items-center gap-3">
-                      <Search className={cn("h-4 w-4", isStitchDashboard ? "text-[#775a00]" : "text-onyx-600")} />
+                      <Search className={cn("h-4 w-4", isStitchDashboard ? "text-gold" : "text-onyx-600")} />
                       <span className="truncate opacity-60">{copy.search}</span>
                     </div>
                   </div>
