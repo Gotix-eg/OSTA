@@ -663,7 +663,8 @@ router.get("/settings", catchAsync(async (request, response) => {
       nationalIdNumber: user.workerProfile?.nationalIdNumber ?? null,
       nationalIdFront: user.workerProfile?.nationalIdFront ?? null,
       nationalIdBack: user.workerProfile?.nationalIdBack ?? null,
-      selfieWithId: user.workerProfile?.selfieWithId ?? null
+      selfieWithId: user.workerProfile?.selfieWithId ?? null,
+      verificationStatus: user.workerProfile?.verificationStatus ?? "PENDING"
     },
     workPreferences: {
       ...workerSettings.workPreferences,

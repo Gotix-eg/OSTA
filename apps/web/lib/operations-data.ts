@@ -239,6 +239,7 @@ export interface WorkerSettingsData {
     nationalIdFront?: string | null;
     nationalIdBack?: string | null;
     selfieWithId?: string | null;
+    verificationStatus?: string | null;
   };
   workPreferences: {
     isAvailable: boolean;

@@ -537,11 +537,20 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
             </label>
 
             <div className="sm:col-span-2 space-y-3 pt-2">
-              <p className="text-xs font-black uppercase tracking-wider text-gold">{isArabic ? "وثائق الهوية الوطنية" : "National ID Documents"}</p>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <p className="text-xs font-black uppercase tracking-wider text-gold">{isArabic ? "وثائق الهوية الوطنية" : "National ID Documents"}</p>
+                {data.profile.verificationStatus === "VERIFIED" ? (
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/40 bg-emerald-500/15 px-3 py-1 text-xs font-black text-emerald-400">
+                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+                    {isArabic ? "موثقة ومعتمدة من الإدارة ✓" : "Verified & Approved by Admin ✓"}
+                  </span>
+                ) : null}
+              </div>
               <div className="grid gap-3 sm:grid-cols-3">
                 <WorkerIdDocumentCard
                   label={isArabic ? "وجه البطاقة الشخصية" : "ID Front"}
                   imageUrl={data.profile.nationalIdFront}
+                  isLocked={data.profile.verificationStatus === "VERIFIED"}
                   onUpload={async (file) => {
                     const formData = new FormData();
                     formData.append("file", file);
@@ -552,6 +561,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
                 <WorkerIdDocumentCard
                   label={isArabic ? "ظهر البطاقة الشخصية" : "ID Back"}
                   imageUrl={data.profile.nationalIdBack}
+                  isLocked={data.profile.verificationStatus === "VERIFIED"}
                   onUpload={async (file) => {
                     const formData = new FormData();
                     formData.append("file", file);
@@ -562,6 +572,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
                 <WorkerIdDocumentCard
                   label={isArabic ? "سيلفي مع الهوية" : "Selfie with ID"}
                   imageUrl={data.profile.selfieWithId}
+                  isLocked={data.profile.verificationStatus === "VERIFIED"}
                   onUpload={async (file) => {
                     const formData = new FormData();
                     formData.append("file", file);
@@ -802,16 +813,19 @@ export function EmailVerificationField({
 function WorkerIdDocumentCard({
   label,
   imageUrl,
+  isLocked,
   onUpload
 }: {
   label: string;
   imageUrl?: string | null;
+  isLocked?: boolean;
   onUpload: (file: File) => Promise<void>;
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    if (isLocked) return;
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -824,45 +838,65 @@ function WorkerIdDocumentCard({
   }
 
   return (
-    <div className="border border-white/10 bg-[#111] p-3 space-y-2">
+    <div className={cn("border bg-[#111] p-3 space-y-2", isLocked ? "border-emerald-500/30 bg-emerald-950/5" : "border-white/10")}>
       <div className="flex h-10 items-start justify-between gap-2">
         <span className="text-xs font-black text-white/70 leading-snug min-w-0 flex-1">{label}</span>
-        <button
-          type="button"
-          onClick={() => fileInputRef.current?.click()}
-          className="text-[11px] font-black text-gold underline hover:text-gold/80 transition shrink-0 pt-0.5"
-        >
-          {imageUrl ? "تغيير" : "رفع"}
-        </button>
+        {isLocked ? (
+          <span className="inline-flex items-center gap-1 text-[10px] font-black text-emerald-400 bg-emerald-950/40 border border-emerald-500/30 px-2 py-0.5 shrink-0 pt-0.5">
+            <CheckCircle2 className="h-3 w-3 text-emerald-400" />
+            معتمد
+          </span>
+        ) : (
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="text-[11px] font-black text-gold underline hover:text-gold/80 transition shrink-0 pt-0.5"
+          >
+            {imageUrl ? "تغيير" : "رفع"}
+          </button>
+        )}
       </div>
 
       <div
-        onClick={() => fileInputRef.current?.click()}
-        className="relative h-28 w-full cursor-pointer overflow-hidden border border-white/10 bg-[#181818] transition hover:border-gold group flex items-center justify-center"
+        onClick={() => {
+          if (!isLocked) fileInputRef.current?.click();
+        }}
+        className={cn(
+          "relative h-28 w-full overflow-hidden border bg-[#181818] transition flex items-center justify-center",
+          isLocked ? "cursor-default border-emerald-500/20" : "cursor-pointer border-white/10 hover:border-gold group"
+        )}
       >
         {imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={imageUrl} alt={label} className="h-full w-full object-cover transition group-hover:scale-105" />
+          <img src={imageUrl} alt={label} className={cn("h-full w-full object-cover transition", !isLocked && "group-hover:scale-105")} />
         ) : (
           <div className="flex flex-col items-center justify-center h-full text-white/30 space-y-1">
             <Camera className="h-6 w-6 text-gold/60" />
-            <span className="text-[10px] font-bold">انقر لرفع الصورة</span>
+            <span className="text-[10px] font-bold">{isLocked ? "وثيقة رسمية معتمدة" : "انقر لرفع الصورة"}</span>
           </div>
         )}
 
-        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-1.5 text-white text-xs font-bold">
-          <Camera className="h-4 w-4 text-gold" />
-          <span>{isUploading ? "جاري الرفع..." : "تحديث الصورة"}</span>
-        </div>
+        {!isLocked ? (
+          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-1.5 text-white text-xs font-bold">
+            <Camera className="h-4 w-4 text-gold" />
+            <span>{isUploading ? "جاري الرفع..." : "تحديث الصورة"}</span>
+          </div>
+        ) : imageUrl ? (
+          <div className="absolute top-2 right-2 rounded-full bg-emerald-500 p-1 text-black shadow-lg">
+            <CheckCircle2 className="h-3.5 w-3.5 text-black" />
+          </div>
+        ) : null}
       </div>
 
-      <input
-        type="file"
-        accept="image/*"
-        ref={fileInputRef}
-        onChange={(e) => void handleFileChange(e)}
-        className="hidden"
-      />
+      {!isLocked ? (
+        <input
+          type="file"
+          accept="image/*"
+          ref={fileInputRef}
+          onChange={(e) => void handleFileChange(e)}
+          className="hidden"
+        />
+      ) : null}
     </div>
   );
 }
