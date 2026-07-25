@@ -39,8 +39,8 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
           <Link href={`/${locale}`} className="flex items-center justify-center">
             <img
               alt="OSTA Logo"
-              className="h-9 w-auto object-contain"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBu1Cr2Qb5XunsgNS63dL1yEu4iHVLV6I3gwxqInM8Qta47OxMPmanPnMaXI4SZTFZ9dd-0mEKbHsea4YqRFxqIE2duNvIPoYz5BsUrqf7JDfyAa2YxISdPTRtHV_FiLJgTl1xPi1VjLTpfwMBV9I8USHf_6dTSqD3mfsO2wIhvkC4TU6ipJSOZaUi3B2soFz85UQDUGwK8hTIeEcpBCPtKvahUwI4bhwqX7vHaLypDKtuHfoAuTOIV-UsxJjXrx4QL9sU0ng_2hvU"
+              className="h-8 w-auto object-contain"
+              src="/logo.svg"
             />
           </Link>
           <div className="flex items-center gap-2">
@@ -61,8 +61,8 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
           <Link href={`/${locale}`} className="flex items-center gap-4">
             <img 
               alt="OSTA Logo" 
-              className="h-8 md:h-12 w-auto object-contain" 
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBu1Cr2Qb5XunsgNS63dL1yEu4iHVLV6I3gwxqInM8Qta47OxMPmanPnMaXI4SZTFZ9dd-0mEKbHsea4YqRFxqIE2duNvIPoYz5BsUrqf7JDfyAa2YxISdPTRtHV_FiLJgTl1xPi1VjLTpfwMBV9I8USHf_6dTSqD3mfsO2wIhvkC4TU6ipJSOZaUi3B2soFz85UQDUGwK8hTIeEcpBCPtKvahUwI4bhwqX7vHaLypDKtuHfoAuTOIV-UsxJjXrx4QL9sU0ng_2hvU"
+              className="h-8 md:h-10 w-auto object-contain" 
+              src="/logo.svg"
             />
           </Link>
           <ul className="hidden md:flex gap-8 items-center font-bold text-xs uppercase tracking-wider">
@@ -155,7 +155,7 @@ export function PublicFooter({ locale }: { locale: Locale }) {
             <img
               alt="OSTA Logo"
               className="h-8 w-auto object-contain"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBu1Cr2Qb5XunsgNS63dL1yEu4iHVLV6I3gwxqInM8Qta47OxMPmanPnMaXI4SZTFZ9dd-0mEKbHsea4YqRFxqIE2duNvIPoYz5BsUrqf7JDfyAa2YxISdPTRtHV_FiLJgTl1xPi1VjLTpfwMBV9I8USHf_6dTSqD3mfsO2wIhvkC4TU6ipJSOZaUi3B2soFz85UQDUGwK8hTIeEcpBCPtKvahUwI4bhwqX7vHaLypDKtuHfoAuTOIV-UsxJjXrx4QL9sU0ng_2hvU"
+              src="/logo.svg"
             />
           </Link>
           <p className="text-neutral-400 text-xs">
