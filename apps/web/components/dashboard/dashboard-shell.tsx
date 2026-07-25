@@ -523,15 +523,13 @@ function SidebarContent({
         </Link>
 
         <p className={cn("mt-1 text-[10px] font-black uppercase tracking-[0.24em]", isStitchSidebar ? "text-gold" : "hidden")}>
-          {isAdminDashboard
-            ? "OSTA ADMIN"
-            : isWorkerDashboard
-              ? "OSTA PRO"
-              : isVendorDashboard
-                ? "OSTA VENDOR"
-                : locale === "ar"
-                  ? "تشغيل احترافي"
-                  : "Premium Industrial"}
+          {role === "worker"
+            ? locale === "ar" ? "فني / صنايعي" : "Worker"
+            : role === "client"
+              ? locale === "ar" ? "عميل" : "Client"
+              : role === "vendor"
+                ? locale === "ar" ? "مورد" : "Vendor"
+                : locale === "ar" ? "مسؤول" : "Admin"}
         </p>
 
         {!isStitchSidebar ? <div className={cn("mt-5 flex w-full items-center justify-between border px-3 py-3 text-xs", "rounded-2xl border-white/5 bg-white/5 px-4")}>

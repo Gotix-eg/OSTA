@@ -22,7 +22,7 @@ export function VendorStitchTopStrip({ locale, title, actionHref, actionLabel }:
   return (
     <div className="hidden items-center justify-between border-b border-black/20 bg-black px-5 py-3 text-white lg:flex">
       <div>
-        <p className="text-[10px] font-black uppercase tracking-[0.24em] text-gold">OSTA VENDOR</p>
+        <p className="text-[10px] font-black uppercase tracking-[0.24em] text-gold">{locale === "ar" ? "مورد" : "Vendor"}</p>
         <h1 className="mt-1 text-lg font-black uppercase text-white">{title}</h1>
       </div>
       <div className="flex items-center gap-3">
