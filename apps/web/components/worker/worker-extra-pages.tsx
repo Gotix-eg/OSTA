@@ -400,8 +400,23 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
             </button>
           </div>
           <div className="min-w-0">
-            <p className="text-[10px] font-black uppercase tracking-[0.22em] text-gold">{isArabic ? "الملف الشخصي" : "Worker profile"}</p>
-            <h1 className="mt-1 truncate text-2xl font-black uppercase leading-tight text-white sm:text-3xl">{fullName}</h1>
+            <div className="flex flex-wrap items-center gap-2.5">
+              <p className="text-[10px] font-black uppercase tracking-[0.22em] text-gold">{isArabic ? "الملف الشخصي" : "Worker profile"}</p>
+              {data.profile.verificationStatus === "VERIFIED" ? (
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/40 bg-emerald-950/70 px-3 py-0.5 text-xs font-black text-emerald-400 shadow-sm">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/logo.svg" alt="OSTA" className="h-3.5 w-auto object-contain brightness-125" />
+                  <span>{isArabic ? "موثق بواسطة أوسطى" : "Verified by OSTA"}</span>
+                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
+                </span>
+              ) : null}
+            </div>
+            <div className="mt-1 flex items-center gap-2">
+              <h1 className="truncate text-2xl font-black uppercase leading-tight text-white sm:text-3xl">{fullName}</h1>
+              {data.profile.verificationStatus === "VERIFIED" ? (
+                <ShieldCheck className="h-6 w-6 text-emerald-400 shrink-0" />
+              ) : null}
+            </div>
             <p className="mt-1 truncate text-sm font-semibold text-white/50">
               {data.profile.email || (isArabic ? "لا يوجد بريد" : "No email")} · {data.profile.phone || (isArabic ? "لا يوجد هاتف" : "No phone")}
             </p>
