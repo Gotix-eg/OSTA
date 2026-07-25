@@ -494,7 +494,29 @@ function SidebarRoleSwitcher({ locale, currentRole }: { locale: Locale; currentR
   const [open, setOpen] = useState(false);
   const [switchingRole, setSwitchingRole] = useState<string | null>(null);
 
-  const roles = [
+  const [userProfiles, setUserProfiles] = useState<{ hasWorker: boolean; hasClient: boolean; hasVendor: boolean }>({
+    hasWorker: currentRole === "worker",
+    hasClient: true,
+    hasVendor: currentRole === "vendor"
+  });
+
+  useEffect(() => {
+    fetchApiData<{ user?: { hasWorkerProfile?: boolean; hasClientProfile?: boolean; hasVendorProfile?: boolean } }>("/auth/me", {})
+      .then((res) => {
+        if (res?.user) {
+          setUserProfiles({
+            hasWorker: Boolean(res.user.hasWorkerProfile) || currentRole === "worker",
+            hasClient: Boolean(res.user.hasClientProfile) || currentRole === "client",
+            hasVendor: Boolean(res.user.hasVendorProfile) || currentRole === "vendor"
+          });
+        }
+      })
+      .catch(() => {
+        // keep fallback
+      });
+  }, [currentRole]);
+
+  const allRoles = [
     {
       key: "WORKER",
       roleId: "worker",
@@ -518,7 +540,14 @@ function SidebarRoleSwitcher({ locale, currentRole }: { locale: Locale; currentR
     }
   ];
 
-  const currentObj = roles.find((r) => r.roleId === currentRole) || {
+  const registeredRoles = allRoles.filter((r) => {
+    if (r.roleId === "worker") return userProfiles.hasWorker;
+    if (r.roleId === "client") return userProfiles.hasClient;
+    if (r.roleId === "vendor") return userProfiles.hasVendor;
+    return true;
+  });
+
+  const currentObj = allRoles.find((r) => r.roleId === currentRole) || {
     key: currentRole.toUpperCase(),
     roleId: currentRole,
     label: currentRole === "admin" ? (isArabic ? "وضع المسؤول" : "Admin Mode") : (isArabic ? "وضع الفني" : "Worker Mode"),
@@ -562,7 +591,7 @@ function SidebarRoleSwitcher({ locale, currentRole }: { locale: Locale; currentR
 
       {open ? (
         <div className="absolute left-0 right-0 top-full z-50 mt-1 border border-white/15 bg-black p-1 shadow-2xl">
-          {roles.map((r) => {
+          {registeredRoles.map((r) => {
             const Icon = r.icon;
             const isActive = currentRole === r.roleId;
             const isSwitching = switchingRole === r.key;

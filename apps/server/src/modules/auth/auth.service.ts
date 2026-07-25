@@ -80,6 +80,16 @@ function toPublicUser(user: {
   workerProfile?: { yearsOfExperience: number; rating: number; isAvailable: boolean } | null;
   vendorProfile?: { shopName: string; category: string | null; latitude: number | null; longitude: number | null } | null;
 }) {
+  const hasClient = Boolean(user.clientProfile);
+  const hasWorker = Boolean(user.workerProfile);
+  const hasVendor = Boolean(user.vendorProfile);
+
+  const availableRoles: string[] = [];
+  if (hasClient) availableRoles.push("CLIENT");
+  if (hasWorker) availableRoles.push("WORKER");
+  if (hasVendor) availableRoles.push("VENDOR");
+  if (user.role === "ADMIN") availableRoles.push("ADMIN");
+
   return {
     id: user.id,
     role: user.role,
@@ -90,6 +100,10 @@ function toPublicUser(user: {
     avatarUrl: user.avatarUrl,
     preferredLanguage: user.preferredLanguage,
     status: user.status,
+    hasClientProfile: hasClient,
+    hasWorkerProfile: hasWorker,
+    hasVendorProfile: hasVendor,
+    availableRoles,
     profile:
       user.role === "CLIENT"
         ? user.clientProfile
