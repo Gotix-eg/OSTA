@@ -729,15 +729,30 @@ export const authService = {
     return { reset: true };
   },
 
-  async sendEmailVerification(userId: string) {
+  async sendEmailVerification(userId: string, targetEmail?: string) {
     const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user) {
       throw new ApiError(404, "المستخدم غير موجود", "USER_NOT_FOUND");
     }
-    if (!user.email) {
-      throw new ApiError(400, "لا يوجد بريد إلكتروني مرتبط بالحساب", "EMAIL_REQUIRED");
+
+    const newEmail = targetEmail?.trim() || user.email;
+    if (!newEmail || !newEmail.includes("@")) {
+      throw new ApiError(400, "يرجى تقديم بريد إلكتروني صحيح", "INVALID_EMAIL");
     }
-    if (user.emailVerified) {
+
+    const isEmailDifferent = newEmail.toLowerCase() !== user.email?.toLowerCase();
+
+    if (isEmailDifferent) {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          email: newEmail,
+          emailVerified: false
+        }
+      });
+      user.email = newEmail;
+      user.emailVerified = false;
+    } else if (user.emailVerified) {
       throw new ApiError(400, "البريد الإلكتروني موثق بالفعل", "ALREADY_VERIFIED");
     }
 
@@ -753,7 +768,7 @@ export const authService = {
       }
     });
 
-    sendVerificationEmail(user.email, code, user.firstName).catch(err =>
+    sendVerificationEmail(user.email!, code, user.firstName).catch(err =>
       console.error("Failed to send verification email:", err)
     );
 

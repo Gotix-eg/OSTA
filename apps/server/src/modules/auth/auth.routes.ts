@@ -301,7 +301,8 @@ router.patch("/profile", authenticate, catchAsync(async (request, response) => {
 
 router.post("/send-email-verification", authenticate, catchAsync(async (request, response) => {
   const userId = request.auth!.userId;
-  const result = await authService.sendEmailVerification(userId);
+  const { email } = request.body as { email?: string };
+  const result = await authService.sendEmailVerification(userId, email);
   response.status(200).json(successResponse(result, result.message));
 }));
 

@@ -646,7 +646,7 @@ export function EmailVerificationField({
     setMessage(null);
 
     try {
-      await postApiData<{ sent: boolean; message: string }, Record<string, never>>("/auth/send-email-verification", {});
+      await postApiData<{ sent: boolean; message: string }, { email?: string }>("/auth/send-email-verification", { email: email.trim() });
       setShowOtpInput(true);
       setMessage(isArabic ? "تم إرسال رمز التحقق إلى بريدك الإلكتروني" : "Verification code sent to your email");
     } catch (err: any) {
