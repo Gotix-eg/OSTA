@@ -627,18 +627,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
                 </div>
               </div>
             ) : null}
-            <div className="grid gap-3 sm:grid-cols-3">
-              {[
-                { label: isArabic ? "الوسيلة" : "Method", value: safePayout.method || (isArabic ? "غير محدد" : "Unset") },
-                { label: isArabic ? "الجدول" : "Schedule", value: safePayout.schedule || (isArabic ? "غير محدد" : "Unset") },
-                { label: isArabic ? "البنك" : "Bank", value: safePayout.bankLabel || (isArabic ? "غير محدد" : "Unset") }
-              ].map((item) => (
-                <div key={item.label} className="border border-white/10 bg-white/5 p-3">
-                  <p className="text-[10px] font-black uppercase tracking-[0.16em] text-white/35">{item.label}</p>
-                  <p className="mt-2 text-sm font-black text-white">{item.value}</p>
-                </div>
-              ))}
-            </div>
+
 
             <WorkerScheduleSection
               locale={locale}
