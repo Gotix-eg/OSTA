@@ -406,7 +406,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
                 <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/40 bg-emerald-950/70 px-3 py-0.5 text-xs font-black text-emerald-400 shadow-sm">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src="/logo.svg" alt="OSTA" className="h-3.5 w-auto object-contain brightness-125" />
-                  <span>{isArabic ? "موثق بواسطة أوسطى" : "Verified by OSTA"}</span>
+                  <span>{isArabic ? "موثق بواسطة أوسطفاي" : "Verified by OSTA"}</span>
                   <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
                 </span>
               ) : null}
