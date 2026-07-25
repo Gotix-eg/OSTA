@@ -187,23 +187,7 @@ export function formatEgyptianPhone(val: string): string {
 
   digits = digits.substring(0, 10);
 
-  let formatted = "+20";
-  if (digits.length > 0) {
-    const part1 = digits.substring(0, 3);
-    formatted += " " + part1;
-
-    if (digits.length > 3) {
-      const part2 = digits.substring(3, 6);
-      formatted += " " + part2;
-    }
-
-    if (digits.length > 6) {
-      const part3 = digits.substring(6, 10);
-      formatted += " " + part3;
-    }
-  }
-
-  return formatted;
+  return "+20" + digits;
 }
 
 type AuthSuccessResponse = {
@@ -407,7 +391,7 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
   const loginLabels = isAdmin
     ? {
       phone: isArabic ? "رقم هاتف المدير" : "Admin Phone Number",
-      phonePlaceholder: "+20 1XX XXX XXXX",
+      phonePlaceholder: "+201012345678",
       password: isArabic ? "كلمة المرور" : "Password",
       passwordPlaceholder: "••••••••",
       remember: isArabic ? "حفظ الجلسة الآمنة" : "Keep Secure Session",
@@ -417,7 +401,7 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
     }
     : {
       phone: isArabic ? "رقم الهاتف" : "Phone Number",
-      phonePlaceholder: "01012345678",
+      phonePlaceholder: "+201012345678",
       password: isArabic ? "كلمة المرور" : "Password",
       passwordPlaceholder: "••••••••",
       remember: isArabic ? "تذكرني" : "Remember Me",
@@ -788,7 +772,7 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
 
     // Basic Validation
     const cleanPhone = state.phone.replace(/\s+/g, "");
-    if (!cleanPhone || cleanPhone.length < 13) {
+    if (!cleanPhone || cleanPhone.length < 11) {
       setError(isArabic ? "رقم الهاتف غير صحيح" : "Invalid phone number");
       setIsSubmitting(false);
       return;
@@ -917,7 +901,7 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
                 label={isArabic ? "رقم الهاتف" : "Phone number"}
                 value={state.phone}
                 onChange={(phone) => setState({ ...state, phone: formatEgyptianPhone(phone) })}
-                placeholder="01012345678"
+                placeholder="+201012345678"
                 suffix={<EgyptPhoneBadge locale={locale} />}
                 dir="ltr"
                 name="client-register-phone"
@@ -1019,7 +1003,7 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
 
     // Validation
     const cleanPhone = state.phone.replace(/\s+/g, "");
-    if (!cleanPhone || cleanPhone.length < 13) {
+    if (!cleanPhone || cleanPhone.length < 11) {
       setError(isArabic ? "رقم الهاتف غير صحيح" : "Invalid phone number");
       setIsSubmitting(false);
       return;
@@ -1108,7 +1092,7 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
               label={isArabic ? "رقم الهاتف" : "Phone number"} 
               value={state.phone} 
               onChange={(phone) => setState({ ...state, phone: formatEgyptianPhone(phone) })} 
-              placeholder="01012345678" 
+              placeholder="+201012345678" 
               suffix={<EgyptPhoneBadge locale={locale} />}
               dir="ltr"
               name="worker-phone"
@@ -1218,7 +1202,7 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
 
     // Validation
     const cleanPhone = state.phone.replace(/\s+/g, "");
-    if (!cleanPhone || cleanPhone.length < 13) {
+    if (!cleanPhone || cleanPhone.length < 11) {
       setError(isArabic ? "رقم الهاتف غير صحيح" : "Invalid phone number");
       setIsSubmitting(false);
       return;
@@ -1322,7 +1306,7 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
                 label={isArabic ? "رقم الهاتف" : "Phone number"}
                 value={state.phone}
                 onChange={(phone) => setState({ ...state, phone: formatEgyptianPhone(phone) })}
-                placeholder="01012345678"
+                placeholder="+201012345678"
                 suffix={<EgyptPhoneBadge locale={locale} />}
                 dir="ltr"
                 name="vendor-phone"
