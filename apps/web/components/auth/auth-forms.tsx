@@ -196,6 +196,9 @@ type AuthSuccessResponse = {
   user: {
     role: AuthRole;
     firstName: string;
+    hasWorkerProfile?: boolean;
+    hasVendorProfile?: boolean;
+    hasClientProfile?: boolean;
   };
 };
 
@@ -443,11 +446,27 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
         if (payload.user.role !== "ADMIN") {
           throw new Error(isArabic ? "هذا الحساب لا يملك صلاحيات الإدارة" : "This account does not have admin privileges");
         }
-      } else {
-        if (payload.user.role !== activeTab) {
-          const roleName = activeTab === "CLIENT"
+      } else if (payload.user.role !== activeTab) {
+        // Switch session role seamlessly if authorized
+        if (activeTab === "CLIENT") {
+          const switchRes = await postApiData<AuthSuccessResponse, { targetRole: string }>("/auth/switch-role", { targetRole: "CLIENT" });
+          payload.accessToken = switchRes.accessToken;
+          payload.refreshToken = switchRes.refreshToken;
+          payload.user.role = "CLIENT";
+        } else if (activeTab === "WORKER" && payload.user.hasWorkerProfile) {
+          const switchRes = await postApiData<AuthSuccessResponse, { targetRole: string }>("/auth/switch-role", { targetRole: "WORKER" });
+          payload.accessToken = switchRes.accessToken;
+          payload.refreshToken = switchRes.refreshToken;
+          payload.user.role = "WORKER";
+        } else if (activeTab === "VENDOR" && payload.user.hasVendorProfile) {
+          const switchRes = await postApiData<AuthSuccessResponse, { targetRole: string }>("/auth/switch-role", { targetRole: "VENDOR" });
+          payload.accessToken = switchRes.accessToken;
+          payload.refreshToken = switchRes.refreshToken;
+          payload.user.role = "VENDOR";
+        } else {
+          const roleName = (activeTab as string) === "CLIENT"
             ? (isArabic ? "عميل" : "client")
-            : activeTab === "WORKER"
+            : (activeTab as string) === "WORKER"
               ? (isArabic ? "فني" : "technician")
               : (isArabic ? "مورد" : "vendor");
           throw new Error(isArabic ? `هذا الحساب غير مسجل كـ ${roleName}` : `This account is not registered as a ${roleName}`);
