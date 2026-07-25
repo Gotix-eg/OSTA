@@ -659,7 +659,11 @@ router.get("/settings", catchAsync(async (request, response) => {
       lastName: user.lastName,
       phone: user.phone,
       email: user.email,
-      avatarUrl: user.avatarUrl
+      avatarUrl: user.avatarUrl,
+      nationalIdNumber: user.workerProfile?.nationalIdNumber ?? null,
+      nationalIdFront: user.workerProfile?.nationalIdFront ?? null,
+      nationalIdBack: user.workerProfile?.nationalIdBack ?? null,
+      selfieWithId: user.workerProfile?.selfieWithId ?? null
     },
     workPreferences: {
       ...workerSettings.workPreferences,
@@ -675,7 +679,7 @@ router.get("/settings", catchAsync(async (request, response) => {
 
 router.patch("/settings", catchAsync(async (request, response) => {
   const userId = request.auth!.userId;
-  const { notificationsEnabledApp, notificationsEnabledEmail, isAvailable } = request.body;
+  const { notificationsEnabledApp, notificationsEnabledEmail, isAvailable, nationalIdNumber, nationalIdFront, nationalIdBack, selfieWithId } = request.body;
 
   const worker = await prisma.workerProfile.findUnique({
     where: { userId }
@@ -687,7 +691,11 @@ router.patch("/settings", catchAsync(async (request, response) => {
     data: {
       notificationsEnabledApp: notificationsEnabledApp !== undefined ? !!notificationsEnabledApp : undefined,
       notificationsEnabledEmail: notificationsEnabledEmail !== undefined ? !!notificationsEnabledEmail : undefined,
-      isAvailable: isAvailable !== undefined ? !!isAvailable : undefined
+      isAvailable: isAvailable !== undefined ? !!isAvailable : undefined,
+      nationalIdNumber: nationalIdNumber !== undefined ? nationalIdNumber : undefined,
+      nationalIdFront: nationalIdFront !== undefined ? nationalIdFront : undefined,
+      nationalIdBack: nationalIdBack !== undefined ? nationalIdBack : undefined,
+      selfieWithId: selfieWithId !== undefined ? selfieWithId : undefined
     }
   });
 

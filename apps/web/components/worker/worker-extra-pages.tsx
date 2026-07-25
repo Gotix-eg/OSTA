@@ -496,6 +496,53 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
                 onChangeEmail={(val) => setData({ ...data, profile: { ...data.profile, email: val } })}
               />
             </div>
+
+            <label className="space-y-2 sm:col-span-2 pt-2 border-t border-white/10">
+              <span className="text-sm font-black text-white/45">{isArabic ? "رقم بطاقة الرقم القومي" : "National ID Number"}</span>
+              <input
+                value={data.profile.nationalIdNumber ?? ""}
+                onChange={(e) => setData({ ...data, profile: { ...data.profile, nationalIdNumber: e.target.value } })}
+                dir="ltr"
+                placeholder="2900101100001"
+                className="h-12 w-full border border-white/10 bg-[#111] px-4 font-mono text-white outline-none focus:border-gold text-start"
+              />
+            </label>
+
+            <div className="sm:col-span-2 space-y-3 pt-2">
+              <p className="text-xs font-black uppercase tracking-wider text-gold">{isArabic ? "وثائق الهوية الوطنية" : "National ID Documents"}</p>
+              <div className="grid gap-3 sm:grid-cols-3">
+                <WorkerIdDocumentCard
+                  label={isArabic ? "وجه البطاقة الشخصية" : "ID Front"}
+                  imageUrl={data.profile.nationalIdFront}
+                  onUpload={async (file) => {
+                    const formData = new FormData();
+                    formData.append("file", file);
+                    const res = await postApiData<{ url: string }, FormData>("/upload", formData);
+                    setData({ ...data, profile: { ...data.profile, nationalIdFront: res.url } });
+                  }}
+                />
+                <WorkerIdDocumentCard
+                  label={isArabic ? "ظهر البطاقة الشخصية" : "ID Back"}
+                  imageUrl={data.profile.nationalIdBack}
+                  onUpload={async (file) => {
+                    const formData = new FormData();
+                    formData.append("file", file);
+                    const res = await postApiData<{ url: string }, FormData>("/upload", formData);
+                    setData({ ...data, profile: { ...data.profile, nationalIdBack: res.url } });
+                  }}
+                />
+                <WorkerIdDocumentCard
+                  label={isArabic ? "سيلفي مع الهوية" : "Selfie with ID"}
+                  imageUrl={data.profile.selfieWithId}
+                  onUpload={async (file) => {
+                    const formData = new FormData();
+                    formData.append("file", file);
+                    const res = await postApiData<{ url: string }, FormData>("/upload", formData);
+                    setData({ ...data, profile: { ...data.profile, selfieWithId: res.url } });
+                  }}
+                />
+              </div>
+            </div>
           </div>
         </WorkerProPanel>
 
@@ -701,6 +748,74 @@ export function EmailVerificationField({
           </div>
         </div>
       ) : null}
+    </div>
+  );
+}
+
+function WorkerIdDocumentCard({
+  label,
+  imageUrl,
+  onUpload
+}: {
+  label: string;
+  imageUrl?: string | null;
+  onUpload: (file: File) => Promise<void>;
+}) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isUploading, setIsUploading] = useState(false);
+
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    try {
+      await onUpload(file);
+    } finally {
+      setIsUploading(false);
+    }
+  }
+
+  return (
+    <div className="border border-white/10 bg-[#111] p-3 space-y-2">
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-black text-white/70">{label}</span>
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          className="text-[11px] font-black text-gold underline hover:text-gold/80 transition"
+        >
+          {imageUrl ? "تغيير" : "رفع"}
+        </button>
+      </div>
+
+      <div
+        onClick={() => fileInputRef.current?.click()}
+        className="relative h-28 w-full cursor-pointer overflow-hidden border border-white/10 bg-[#181818] transition hover:border-gold group flex items-center justify-center"
+      >
+        {imageUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={imageUrl} alt={label} className="h-full w-full object-cover transition group-hover:scale-105" />
+        ) : (
+          <div className="flex flex-col items-center justify-center h-full text-white/30 space-y-1">
+            <Camera className="h-6 w-6 text-gold/60" />
+            <span className="text-[10px] font-bold">انقر لرفع الصورة</span>
+          </div>
+        )}
+
+        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-1.5 text-white text-xs font-bold">
+          <Camera className="h-4 w-4 text-gold" />
+          <span>{isUploading ? "جاري الرفع..." : "تحديث الصورة"}</span>
+        </div>
+      </div>
+
+      <input
+        type="file"
+        accept="image/*"
+        ref={fileInputRef}
+        onChange={(e) => void handleFileChange(e)}
+        className="hidden"
+      />
     </div>
   );
 }

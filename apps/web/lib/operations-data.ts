@@ -235,6 +235,10 @@ export interface WorkerSettingsData {
     phone: string;
     email: string;
     avatarUrl?: string | null;
+    nationalIdNumber?: string | null;
+    nationalIdFront?: string | null;
+    nationalIdBack?: string | null;
+    selfieWithId?: string | null;
   };
   workPreferences: {
     isAvailable: boolean;
