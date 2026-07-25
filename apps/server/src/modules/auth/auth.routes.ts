@@ -269,12 +269,16 @@ router.patch("/profile", authenticate, catchAsync(async (request, response) => {
   const { firstName, lastName, email, avatarUrl } = request.body;
   const userId = request.auth!.userId;
 
+  const existingUser = await prisma.user.findUnique({ where: { id: userId } });
+  const isNewEmail = email !== undefined && email?.trim().toLowerCase() !== existingUser?.email?.trim().toLowerCase();
+
   const updatedUser = await prisma.user.update({
     where: { id: userId },
     data: {
       firstName: firstName !== undefined ? firstName : undefined,
       lastName: lastName !== undefined ? lastName : undefined,
       email: email !== undefined ? email : undefined,
+      emailVerified: isNewEmail ? false : undefined,
       avatarUrl: avatarUrl !== undefined ? avatarUrl : undefined,
     },
     select: {
@@ -282,6 +286,7 @@ router.patch("/profile", authenticate, catchAsync(async (request, response) => {
       role: true,
       phone: true,
       email: true,
+      emailVerified: true,
       firstName: true,
       lastName: true,
       avatarUrl: true,

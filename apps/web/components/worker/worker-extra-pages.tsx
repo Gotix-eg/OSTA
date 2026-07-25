@@ -608,6 +608,7 @@ export function EmailVerificationField({
   onVerified?: () => void;
 }) {
   const isArabic = locale === "ar";
+  const verifiedEmailRef = useRef(emailVerified ? email.trim().toLowerCase() : "");
   const [verified, setVerified] = useState(emailVerified);
   const [sendingCode, setSendingCode] = useState(false);
   const [verifyingOtp, setVerifyingOtp] = useState(false);
@@ -618,7 +619,21 @@ export function EmailVerificationField({
 
   useEffect(() => {
     setVerified(emailVerified);
-  }, [emailVerified]);
+    if (emailVerified) {
+      verifiedEmailRef.current = email.trim().toLowerCase();
+    }
+  }, [emailVerified, email]);
+
+  const isCurrentlyVerified = verified && email.trim().toLowerCase() === verifiedEmailRef.current;
+
+  function handleInputChange(newVal: string) {
+    onChangeEmail(newVal);
+    if (verified && newVal.trim().toLowerCase() !== verifiedEmailRef.current) {
+      setVerified(false);
+      setShowOtpInput(false);
+      setMessage(null);
+    }
+  }
 
   async function handleSendVerification() {
     if (!email || !email.includes("@")) {
@@ -653,6 +668,7 @@ export function EmailVerificationField({
 
     try {
       await postApiData<{ emailVerified: boolean }, { code: string }>("/auth/verify-email-otp", { code: otpCode.trim() });
+      verifiedEmailRef.current = email.trim().toLowerCase();
       setVerified(true);
       setShowOtpInput(false);
       setMessage(isArabic ? "تم توثيق البريد الإلكتروني بنجاح ✓" : "Email address verified successfully ✓");
@@ -668,7 +684,7 @@ export function EmailVerificationField({
     <div className="space-y-2 w-full">
       <div className="flex items-center justify-between gap-2">
         <span className="text-sm font-black text-white/45">{isArabic ? "البريد الإلكتروني" : "Email"}</span>
-        {verified ? (
+        {isCurrentlyVerified ? (
           <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/40 bg-emerald-500/15 px-3 py-1 text-xs font-black text-emerald-400">
             <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
             {isArabic ? "تم التوثيق ✓" : "Verified ✓"}
@@ -701,13 +717,13 @@ export function EmailVerificationField({
       <div className="relative">
         <input
           value={email}
-          onChange={(e) => onChangeEmail(e.target.value)}
+          onChange={(e) => handleInputChange(e.target.value)}
           dir="ltr"
           type="email"
           placeholder="user@example.com"
           className={cn(
             "h-12 w-full border border-white/10 bg-[#111] px-4 font-mono text-white outline-none focus:border-gold text-start",
-            verified ? "border-emerald-500/40 bg-emerald-950/10" : ""
+            isCurrentlyVerified ? "border-emerald-500/40 bg-emerald-950/10" : ""
           )}
         />
       </div>
