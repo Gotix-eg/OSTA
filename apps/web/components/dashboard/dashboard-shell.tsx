@@ -11,21 +11,26 @@ import {
   BarChart3,
   Bell,
   Briefcase,
+  Check,
+  ChevronDown,
   CreditCard,
   FolderClock,
   Heart,
   Home,
   LayoutDashboard,
+  Loader2,
   LogOut,
   Megaphone,
   Menu,
   Package,
   Search,
   Settings,
+  Shield,
   ShieldCheck,
   SlidersHorizontal,
   Sparkles,
   Store,
+  User,
   UserCircle2,
   Users,
   Wallet,
@@ -34,7 +39,7 @@ import {
   Image,
   X
 } from "lucide-react";
-import { fetchApiData, resolveApiBaseUrl } from "@/lib/api";
+import { fetchApiData, postApiData, resolveApiBaseUrl } from "@/lib/api";
 import { VendorOnboarding } from "./vendor-onboarding";
 
 import { clearAuthSession, logoutAuthSession, type AuthRole } from "@/lib/auth-session";
@@ -265,6 +270,10 @@ export function DashboardShell({
                 </div>
               </section>
 
+              <div className="px-4 pb-4">
+                <SidebarRoleSwitcher locale={locale} currentRole={role} />
+              </div>
+
               <nav className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-4 [-webkit-overflow-scrolling:touch]">
                 <div className="space-y-3">
                   <h3 className="px-2 text-sm font-black text-white/40">
@@ -480,6 +489,115 @@ export function DashboardShell({
   );
 }
 
+function SidebarRoleSwitcher({ locale, currentRole }: { locale: Locale; currentRole: DashboardRole }) {
+  const isArabic = locale === "ar";
+  const [open, setOpen] = useState(false);
+  const [switchingRole, setSwitchingRole] = useState<string | null>(null);
+
+  const roles = [
+    {
+      key: "WORKER",
+      roleId: "worker",
+      label: isArabic ? "وضع الفني" : "Worker Mode",
+      icon: Wrench,
+      href: `/${locale}/worker`
+    },
+    {
+      key: "CLIENT",
+      roleId: "client",
+      label: isArabic ? "وضع العميل" : "Client Mode",
+      icon: User,
+      href: `/${locale}/client`
+    },
+    {
+      key: "VENDOR",
+      roleId: "vendor",
+      label: isArabic ? "وضع المورد" : "Vendor Mode",
+      icon: Store,
+      href: `/${locale}/vendor`
+    }
+  ];
+
+  const currentObj = roles.find((r) => r.roleId === currentRole) || {
+    key: currentRole.toUpperCase(),
+    roleId: currentRole,
+    label: currentRole === "admin" ? (isArabic ? "وضع المسؤول" : "Admin Mode") : (isArabic ? "وضع الفني" : "Worker Mode"),
+    icon: currentRole === "admin" ? Shield : Wrench,
+    href: `/${locale}/${currentRole}`
+  };
+
+  async function handleSwitch(roleKey: "WORKER" | "CLIENT" | "VENDOR", href: string) {
+    if (currentRole === roleKey.toLowerCase()) {
+      setOpen(false);
+      return;
+    }
+
+    setSwitchingRole(roleKey);
+    try {
+      await postApiData<{ role: string }, { targetRole: "WORKER" | "CLIENT" | "VENDOR" }>("/auth/switch-role", { targetRole: roleKey });
+      window.location.assign(href);
+    } catch (err) {
+      console.error("Failed to switch role", err);
+      window.location.assign(href);
+    } finally {
+      setSwitchingRole(null);
+    }
+  }
+
+  const CurrentIcon = currentObj.icon;
+
+  return (
+    <div className="relative mt-2.5 w-full z-40">
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="flex w-full items-center justify-between border border-gold/40 bg-gold/10 px-3.5 py-2.5 text-xs font-black uppercase text-white transition hover:border-gold hover:bg-gold/20 active:scale-[0.99]"
+      >
+        <div className="flex items-center gap-2 min-w-0">
+          <CurrentIcon className="h-4 w-4 shrink-0 text-gold" />
+          <span className="truncate text-gold font-black">{currentObj.label}</span>
+        </div>
+        <ChevronDown className={cn("h-4 w-4 shrink-0 text-gold transition-transform duration-200", open ? "rotate-180" : "")} />
+      </button>
+
+      {open ? (
+        <div className="absolute left-0 right-0 top-full z-50 mt-1 border border-white/15 bg-black p-1 shadow-2xl">
+          {roles.map((r) => {
+            const Icon = r.icon;
+            const isActive = currentRole === r.roleId;
+            const isSwitching = switchingRole === r.key;
+
+            return (
+              <button
+                key={r.key}
+                type="button"
+                disabled={isSwitching}
+                onClick={() => void handleSwitch(r.key as "WORKER" | "CLIENT" | "VENDOR", r.href)}
+                className={cn(
+                  "flex w-full items-center justify-between px-3 py-2.5 text-xs font-bold transition",
+                  isActive
+                    ? "bg-gold/20 text-gold font-black"
+                    : "text-white/80 hover:bg-white/10 hover:text-white"
+                )}
+              >
+                <div className="flex items-center gap-2">
+                  <Icon className={cn("h-3.5 w-3.5", isActive ? "text-gold" : "text-white/60")} />
+                  <span>{r.label}</span>
+                </div>
+                {isSwitching ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin text-gold" />
+                ) : isActive ? (
+                  <Check className="h-3.5 w-3.5 text-gold" />
+                ) : null}
+              </button>
+            );
+          })}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 function SidebarContent({
   locale,
   role,
@@ -521,6 +639,8 @@ function SidebarContent({
         <Link href={`/${locale}`} className="flex h-12 shrink-0 items-center justify-center w-full">
           <img src="/logo.svg" alt="Ostafy" className="h-8 w-auto object-contain" />
         </Link>
+
+        <SidebarRoleSwitcher locale={locale} currentRole={role} />
 
         {!isStitchSidebar ? <div className={cn("mt-5 flex w-full items-center justify-between border px-3 py-3 text-xs", "rounded-2xl border-white/5 bg-white/5 px-4")}>
           <div>
