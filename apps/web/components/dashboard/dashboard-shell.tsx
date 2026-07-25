@@ -496,7 +496,7 @@ function SidebarRoleSwitcher({ locale, currentRole }: { locale: Locale; currentR
 
   const [userProfiles, setUserProfiles] = useState<{ hasWorker: boolean; hasClient: boolean; hasVendor: boolean }>({
     hasWorker: currentRole === "worker",
-    hasClient: true,
+    hasClient: currentRole === "client",
     hasVendor: currentRole === "vendor"
   });
 
@@ -506,7 +506,7 @@ function SidebarRoleSwitcher({ locale, currentRole }: { locale: Locale; currentR
         if (res?.user) {
           setUserProfiles({
             hasWorker: Boolean(res.user.hasWorkerProfile) || currentRole === "worker",
-            hasClient: true,
+            hasClient: Boolean(res.user.hasClientProfile) || currentRole === "client",
             hasVendor: Boolean(res.user.hasVendorProfile) || currentRole === "vendor"
           });
         }
