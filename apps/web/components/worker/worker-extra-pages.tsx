@@ -411,7 +411,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
       </section>
 
       <div className="grid gap-6 xl:grid-cols-[1fr_1fr]">
-        <WorkerProPanel title={isArabic ? "البيانات الشخصية" : "Personal info"} eyebrow={isArabic ? "بيانات الفني" : "worker identity"}>
+        <WorkerProPanel title={isArabic ? "البيانات الشخصية" : "Personal info"}>
           <div className="mb-6 flex flex-col sm:flex-row items-center gap-5 rounded-none border border-white/10 bg-[#111] p-4">
             <div className="relative group shrink-0">
               <div
@@ -478,14 +478,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
               />
             </label>
 
-            <EmailVerificationField
-              locale={locale}
-              email={data.profile.email ?? ""}
-              emailVerified={Boolean((data.profile as any).emailVerified)}
-              onChangeEmail={(val) => setData({ ...data, profile: { ...data.profile, email: val } })}
-            />
-
-            <label className="space-y-2">
+            <label className="space-y-2 sm:col-span-2">
               <span className="text-sm font-black text-white/45">{isArabic ? "رقم الهاتف" : "Phone"}</span>
               <input
                 value={formatPhoneNumber(data.profile.phone)}
@@ -494,10 +487,19 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
                 className="h-12 w-full border border-white/10 bg-[#111] px-4 text-white outline-none focus:border-gold text-start font-mono"
               />
             </label>
+
+            <div className="sm:col-span-2">
+              <EmailVerificationField
+                locale={locale}
+                email={data.profile.email ?? ""}
+                emailVerified={Boolean((data.profile as any).emailVerified)}
+                onChangeEmail={(val) => setData({ ...data, profile: { ...data.profile, email: val } })}
+              />
+            </div>
           </div>
         </WorkerProPanel>
 
-        <WorkerProPanel title={isArabic ? "التوفر والتحويل" : "Availability & payout"} eyebrow={isArabic ? "خيارات التشغيل" : "ops toggles"}>
+        <WorkerProPanel title={isArabic ? "التوفر والتحويل" : "Availability & payout"}>
           <div className="grid gap-4">
             {[
               { key: "isAvailable", label: isArabic ? "متاح للطلبات" : "Available for jobs" },
