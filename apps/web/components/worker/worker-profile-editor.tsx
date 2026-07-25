@@ -194,7 +194,7 @@ export function WorkerProfileEditor({ locale }: { locale: Locale }) {
     <WorkerProShell locale={locale}>
       <WorkerProTopStrip locale={locale} title={isArabic ? "صفحتي الشخصية" : "Public Profile"} />
 
-      <section className="flex flex-col gap-4 border border-white/10 bg-black p-6 text-white shadow-[5px_5px_0_#1d1600] sm:flex-row sm:items-center sm:justify-between lg:p-8">
+      <section className="flex flex-col gap-4 border border-white/10 bg-black p-6 text-white sm:flex-row sm:items-center sm:justify-between lg:p-8">
         <div>
           <p className="text-[10px] font-black uppercase tracking-[0.22em] text-gold">
             {isArabic ? "يظهر هذا في ملفك العام" : "Shown on your public profile"}

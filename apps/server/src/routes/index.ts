@@ -6,6 +6,7 @@ import { clientsRouter } from "../modules/clients/clients.routes.js";
 import { servicesRouter } from "../modules/services/services.routes.js";
 import { workersRouter } from "../modules/workers/workers.routes.js";
 import { successResponse } from "../utils/ApiResponse.js";
+import { isWorkerAvailableNow } from "../utils/worker-availability.util.js";
 import { prisma } from "../lib/prisma.js";
 
 const router = Router();
@@ -250,7 +251,11 @@ router.get("/public/workers", async (request, response) => {
       rating: w.rating,
       ratingCount: w.ratingCount,
       totalJobs: w.totalJobsCompleted,
-      isOnline: w.isOnline,
+      isOnline: isWorkerAvailableNow({
+        isAvailable: w.isAvailable,
+        workingHours: w.workingHours,
+        offDates: w.offDates,
+      }),
       isAvailable: w.isAvailable,
       isFeatured: w.subscriptionTier === "featured",
       isNearby: isFallback,
@@ -304,7 +309,11 @@ router.get("/public/workers/:id", async (request, response) => {
       rating: worker.rating,
       ratingCount: worker.ratingCount,
       totalJobs: worker.totalJobsCompleted,
-      isOnline: worker.isOnline,
+      isOnline: isWorkerAvailableNow({
+        isAvailable: worker.isAvailable,
+        workingHours: worker.workingHours,
+        offDates: worker.offDates,
+      }),
       isAvailable: worker.isAvailable,
       isFeatured: worker.subscriptionTier === "featured",
       areas: worker.workAreas.map((wa: any) => wa.area || wa.city),
