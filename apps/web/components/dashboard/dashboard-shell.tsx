@@ -175,7 +175,7 @@ export function DashboardShell({
         setIsComplete(true);
         return;
       }
-      
+
       const data = await fetchApiData<any>("/auth/me", null);
       const user = data?.user || data;
       if (user?.role === "VENDOR") {
@@ -230,12 +230,12 @@ export function DashboardShell({
         </aside>
 
         {mobileOpen ? (
-            <div className={cn("fixed inset-0 z-[10000] flex items-end justify-center lg:hidden", isAdminDashboard ? "bg-[#050505]" : "bg-gold")}>
+          <div className={cn("fixed inset-0 z-[10000] flex items-end justify-center lg:hidden", isAdminDashboard ? "bg-[#050505]" : "bg-gold")}>
             <div className="pointer-events-none fixed right-8 top-24 h-32 w-32 rounded-full bg-gold/25 blur-[80px]" />
             <div className="pointer-events-none fixed bottom-32 left-4 h-44 w-44 rounded-full bg-gold/10 blur-[90px]" />
             <div className="relative flex h-[min(92dvh,49.75rem)] w-full max-w-md animate-slideUp flex-col overflow-hidden rounded-t-[2.5rem] border border-white/10 bg-black text-white shadow-2xl">
               <header className="flex h-16 shrink-0 items-center justify-between border-b border-white/10 bg-black/80 px-4 backdrop-blur-xl">
-                  <span className={cn("text-2xl font-black tracking-tight", isAdminDashboard ? "text-gold" : "text-[#775a00]")}>OSTA</span>
+                <span className={cn("text-2xl font-black tracking-tight", isAdminDashboard ? "text-gold" : "text-[#775a00]")}>OSTA</span>
                 <button
                   type="button"
                   onClick={() => setMobileOpen(false)}
@@ -327,7 +327,7 @@ export function DashboardShell({
                     className="flex items-center justify-between rounded-xl border border-white/5 bg-[#121212] p-4 text-white transition-colors hover:bg-white/5"
                   >
                     <span className="flex items-center gap-4">
-                    <ShieldCheck className="h-5 w-5 text-gold" />
+                      <ShieldCheck className="h-5 w-5 text-gold" />
                       <span className="text-sm font-black">{locale === "ar" ? "مركز المساعدة" : "Help center"}</span>
                     </span>
                     <ArrowUpRight className="h-4 w-4 text-white/25" />
@@ -376,7 +376,7 @@ export function DashboardShell({
 
               {isStitchDashboard ? (
                 <Link href={`/${locale}`} className="inline-flex items-center lg:hidden">
-                  <img src="/logo.svg" alt="Ostafy" className="h-8 w-auto object-contain brightness-0 invert" />
+                  <img src="/logo.svg" alt="Ostafy" className="h-8 w-auto object-contain" />
                 </Link>
               ) : null}
 
@@ -394,12 +394,12 @@ export function DashboardShell({
                     className={cn(
                       "min-w-0 flex-1 border px-5 py-3 text-sm",
                       isStitchDashboard
-                        ? "rounded-lg border-white/10 bg-black text-white"
+                        ? "rounded-lg border-[#e5ddc9] bg-[#fff8df] text-[#5a5248]"
                         : "rounded-full border-gold-700/10 bg-white/50 text-onyx-600 shadow-inner"
                     )}
                   >
                     <div className="flex items-center gap-3">
-                      <Search className={cn("h-4 w-4", isStitchDashboard ? "text-gold" : "text-onyx-600")} />
+                      <Search className={cn("h-4 w-4", isStitchDashboard ? "text-[#775a00]" : "text-onyx-600")} />
                       <span className="truncate opacity-60">{copy.search}</span>
                     </div>
                   </div>
@@ -519,7 +519,7 @@ function SidebarContent({
 
       <div className={cn("relative flex flex-col border", isStitchSidebar ? "border-0 p-0" : "items-center rounded-[2rem] border-white/5 bg-white/5 p-5 backdrop-blur-xl")}>
         <Link href={`/${locale}`} className="flex h-12 shrink-0 items-center justify-center w-full">
-          <img src="/logo.svg" alt="Ostafy" className={cn("h-8 w-auto object-contain", isStitchSidebar ? "brightness-0 invert" : "")} />
+          <img src="/logo.svg" alt="Ostafy" className="h-8 w-auto object-contain" />
         </Link>
 
         <p className={cn("mt-1 text-[10px] font-black uppercase tracking-[0.24em]", isStitchSidebar ? "text-gold" : "hidden")}>
@@ -561,22 +561,22 @@ function SidebarContent({
                 isStitchSidebar
                   ? active
                     ? cn(
-                        "text-gold",
-                        isAdminDashboard
-                          ? "border-gold bg-gold text-black shadow-[6px_6px_0_#2f2400]"
-                          : "border-b-2 border-gold bg-transparent"
-                      )
+                      "text-gold",
+                      isAdminDashboard
+                        ? "border-gold bg-gold text-black shadow-[6px_6px_0_#2f2400]"
+                        : "border-b-2 border-gold bg-transparent"
+                    )
                     : cn(
-                        "border-transparent bg-transparent text-white/70 hover:bg-white/5 hover:text-white",
-                        isAdminDashboard && "hover:border-gold/40"
-                      )
+                      "border-transparent bg-transparent text-white/70 hover:bg-white/5 hover:text-white",
+                      isAdminDashboard && "hover:border-gold/40"
+                    )
                   : active
                     ? "rounded-2xl border-gold-500/20 bg-gold-500 text-onyx-950 shadow-gold"
                     : "rounded-2xl border-transparent bg-transparent text-white/60 hover:bg-white/5 hover:text-white"
               )}
             >
-                <span className="flex items-center gap-3">
-                <span className={cn("flex h-9 w-9 items-center justify-center transition-all duration-300", isStitchSidebar ? "rounded-none" : "rounded-xl", active ? (isAdminDashboard ? "bg-black text-gold" : "bg-white/10") : "bg-white/5 group-hover:bg-white/10") }>
+              <span className="flex items-center gap-3">
+                <span className={cn("flex h-9 w-9 items-center justify-center transition-all duration-300", isStitchSidebar ? "rounded-none" : "rounded-xl", active ? (isAdminDashboard ? "bg-black text-gold" : "bg-white/10") : "bg-white/5 group-hover:bg-white/10")}>
                   <Icon className="h-4 w-4" />
                 </span>
                 {item.label}

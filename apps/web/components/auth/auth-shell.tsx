@@ -124,8 +124,7 @@ export function AdminAuthShell({ locale, children }: { locale: Locale; children:
           <div className="flex items-center gap-3">
             <span className="h-8 w-2 bg-gold" />
             <a href={`/${locale}`} className="flex items-center gap-3">
-              <img src="/logo.svg" alt="OSTA Logo" className="h-8 w-auto brightness-0 invert" />
-              <span className="text-xl font-black uppercase tracking-tight text-gold md:text-2xl">{labels.brand}</span>
+              <img src="/logo.svg" alt="OSTA Logo" className="h-8 w-auto object-contain" />
             </a>
           </div>
           <div className="flex items-center gap-5 md:gap-8">
@@ -147,7 +146,7 @@ export function AdminAuthShell({ locale, children }: { locale: Locale; children:
             <Shield className="pointer-events-none absolute end-4 top-4 h-16 w-16 text-gold/20 md:h-20 md:w-20" />
 
             <div className="mb-9 text-center md:mb-10">
-              <img src="/logo.svg" alt="OSTA Logo" className="mx-auto mb-5 h-10 w-auto brightness-0 invert" />
+              <img src="/logo.svg" alt="OSTA Logo" className="mx-auto mb-5 h-10 w-auto object-contain" />
               <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center bg-gold text-black shadow-[4px_4px_0_#fff] md:shadow-none">
                 <ShieldCheck className="h-9 w-9" />
               </div>

@@ -217,7 +217,7 @@ export function ServiceWizard({ locale, category }: { locale: Locale; category: 
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
           <div className="flex items-center gap-4">
             <Link href={`/${locale}`} className="flex items-center gap-3">
-              <img src="/logo.svg" alt="Ostafy" className="h-10 w-auto object-contain brightness-0" />
+              <img src="/logo.svg" alt="Ostafy" className="h-10 w-auto object-contain" />
             </Link>
             <div className="h-6 w-px bg-gray-200" />
             <div className="flex items-center gap-2">
