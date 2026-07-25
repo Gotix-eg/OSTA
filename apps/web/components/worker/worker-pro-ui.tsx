@@ -103,7 +103,7 @@ export function WorkerProMetric({ label, value, note, icon: Icon, dark, index }:
 export function WorkerProPanel({ title, action, children, dark = true }: { eyebrow?: string; title: string; action?: ReactNode; children: ReactNode; dark?: boolean }) {
   return (
     <section className={cn("border p-5 lg:p-6", dark ? "border-white/10 bg-black text-white" : "border-black/15 bg-[#f7c21c] text-black")}>
-      <div className="mb-5 flex flex-wrap items-end justify-between gap-4 border-b border-current/15 pb-4">
+      <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
         <div>
           <h2 className={cn("text-2xl font-black uppercase", dark ? "text-white" : "text-black")}>{title}</h2>
         </div>
