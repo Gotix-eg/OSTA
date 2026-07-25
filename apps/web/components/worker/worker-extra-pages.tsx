@@ -631,6 +631,7 @@ export function EmailVerificationField({
     if (verified && newVal.trim().toLowerCase() !== verifiedEmailRef.current) {
       setVerified(false);
       setShowOtpInput(false);
+      setOtpCode("");
       setMessage(null);
     }
   }
@@ -644,6 +645,7 @@ export function EmailVerificationField({
     setSendingCode(true);
     setError(null);
     setMessage(null);
+    setOtpCode("");
 
     try {
       await postApiData<{ sent: boolean; message: string }, { email?: string }>("/auth/send-email-verification", { email: email.trim() });
@@ -671,6 +673,7 @@ export function EmailVerificationField({
       verifiedEmailRef.current = email.trim().toLowerCase();
       setVerified(true);
       setShowOtpInput(false);
+      setOtpCode("");
       setMessage(isArabic ? "تم توثيق البريد الإلكتروني بنجاح ✓" : "Email address verified successfully ✓");
       if (onVerified) onVerified();
     } catch (err: any) {
