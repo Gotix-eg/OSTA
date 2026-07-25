@@ -778,12 +778,12 @@ function WorkerIdDocumentCard({
 
   return (
     <div className="border border-white/10 bg-[#111] p-3 space-y-2">
-      <div className="flex items-center justify-between">
-        <span className="text-xs font-black text-white/70">{label}</span>
+      <div className="flex h-10 items-start justify-between gap-2">
+        <span className="text-xs font-black text-white/70 leading-snug min-w-0 flex-1">{label}</span>
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="text-[11px] font-black text-gold underline hover:text-gold/80 transition"
+          className="text-[11px] font-black text-gold underline hover:text-gold/80 transition shrink-0 pt-0.5"
         >
           {imageUrl ? "تغيير" : "رفع"}
         </button>
