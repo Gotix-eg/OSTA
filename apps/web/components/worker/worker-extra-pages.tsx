@@ -15,7 +15,7 @@ import {
   WorkerProTopStrip
 } from "@/components/worker/worker-pro-ui";
 import { useLiveApiData } from "@/hooks/use-live-api-data";
-import { postApiData } from "@/lib/api";
+import { patchApiData, postApiData } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
 import type { WorkerRatingsData, WorkerSettingsData } from "@/lib/operations-data";
 import { cn, formatPhoneNumber } from "@/lib/utils";
@@ -284,19 +284,24 @@ export function WorkerRatingsPage({ locale, initialData }: { locale: Locale; ini
   );
 }
 
-function WorkerSaveControl({ state, onSave, isArabic }: { state: "idle" | "saving" | "saved"; onSave: () => void; isArabic: boolean }) {
+function WorkerSaveControl({ state, onSave, isArabic, error }: { state: "idle" | "saving" | "saved" | "error"; onSave: () => void; isArabic: boolean; error?: string | null }) {
   return (
-    <div className="flex shrink-0 items-center gap-3">
-      {state === "saved" ? (
-        <span className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.14em] text-emerald-300">
-          <Check className="h-4 w-4" />
-          {isArabic ? "تم الحفظ" : "Saved"}
-        </span>
+    <div className="flex shrink-0 flex-col items-end gap-1.5">
+      <div className="flex items-center gap-3">
+        {state === "saved" ? (
+          <span className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.14em] text-emerald-300">
+            <Check className="h-4 w-4" />
+            {isArabic ? "تم الحفظ" : "Saved"}
+          </span>
+        ) : null}
+        <WorkerProAction tone="light" onClick={onSave} disabled={state === "saving"}>
+          {state === "saving" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+          {state === "saving" ? (isArabic ? "جارٍ الحفظ" : "Saving") : isArabic ? "حفظ" : "Save"}
+        </WorkerProAction>
+      </div>
+      {state === "error" && error ? (
+        <span className="text-xs font-bold text-rose-400">{error}</span>
       ) : null}
-      <WorkerProAction tone="light" onClick={onSave} disabled={state === "saving"}>
-        {state === "saving" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-        {state === "saving" ? (isArabic ? "جارٍ الحفظ" : "Saving") : isArabic ? "حفظ" : "Save"}
-      </WorkerProAction>
     </div>
   );
 }
@@ -305,7 +310,8 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
   const isArabic = locale === "ar";
   const liveData = useLiveApiData("/workers/settings", initialData);
   const [data, setData] = useState(initialData);
-  const [saveState, setSaveState] = useState<"idle" | "saving" | "saved">("idle");
+  const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
+  const [saveError, setSaveError] = useState<string | null>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
 
@@ -341,12 +347,26 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
     }
   }
 
-  function handleSave() {
+  async function handleSave() {
     setSaveState("saving");
-    window.setTimeout(() => {
+    setSaveError(null);
+    try {
+      await patchApiData("/workers/settings", {
+        isAvailable: safeWorkPreferences.isAvailable,
+        workingHours: data.workPreferences.workingHours,
+        offDates: data.workPreferences.offDates,
+        nationalIdFront: data.profile.nationalIdFront,
+        nationalIdBack: data.profile.nationalIdBack,
+        selfieWithId: data.profile.selfieWithId
+      });
+      await patchApiData("/auth/profile", { avatarUrl: data.profile.avatarUrl });
       setSaveState("saved");
       window.setTimeout(() => setSaveState("idle"), 2000);
-    }, 500);
+    } catch (err: any) {
+      console.error("Failed to save worker settings", err);
+      setSaveError(err?.message || (isArabic ? "حدث خطأ أثناء الحفظ" : "Failed to save changes"));
+      setSaveState("error");
+    }
   }
 
   const safeWorkPreferences = {
@@ -422,7 +442,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
             </p>
           </div>
         </div>
-        <WorkerSaveControl state={saveState} onSave={handleSave} isArabic={isArabic} />
+        <WorkerSaveControl state={saveState} onSave={() => void handleSave()} isArabic={isArabic} error={saveError} />
       </section>
 
       <div className="grid gap-6 xl:grid-cols-[1fr_1fr]">
