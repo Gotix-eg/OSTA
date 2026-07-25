@@ -18,7 +18,7 @@ import { useLiveApiData } from "@/hooks/use-live-api-data";
 import { postApiData } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
 import type { WorkerRatingsData, WorkerSettingsData } from "@/lib/operations-data";
-import { formatPhoneNumber } from "@/lib/utils";
+import { cn, formatPhoneNumber } from "@/lib/utils";
 
 function formatNumber(locale: Locale, value: number) {
   return new Intl.NumberFormat(locale === "ar" ? "ar-EG" : "en-US", { maximumFractionDigits: 0 }).format(value);
@@ -312,9 +312,17 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
               <label key={field.key} className="space-y-2">
                 <span className="text-sm font-black text-white/45">{field.label}</span>
                 <input
-                  value={data.profile[field.key as keyof typeof data.profile] ?? ""}
+                  value={
+                    field.key === "phone"
+                      ? formatPhoneNumber(data.profile.phone)
+                      : (data.profile[field.key as keyof typeof data.profile] ?? "")
+                  }
                   onChange={(event) => setData({ ...data, profile: { ...data.profile, [field.key]: event.target.value } })}
-                  className="h-12 w-full border border-white/10 bg-[#111] px-4 text-white outline-none focus:border-gold"
+                  dir={field.key === "phone" || field.key === "email" ? "ltr" : undefined}
+                  className={cn(
+                    "h-12 w-full border border-white/10 bg-[#111] px-4 text-white outline-none focus:border-gold",
+                    field.key === "phone" || field.key === "email" ? "text-start font-mono" : ""
+                  )}
                 />
               </label>
             ))}

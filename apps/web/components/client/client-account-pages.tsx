@@ -505,7 +505,8 @@ export function ClientSettingsPage({ locale, initialData }: { locale: Locale; in
                   <input
                     value={data.profile.phone.replace(/^\+?20\s?/, "")}
                     onChange={(event) => setData({ ...data, profile: { ...data.profile, phone: event.target.value } })}
-                    className="min-w-0 flex-1 border border-white/10 bg-[#121212] px-4 py-3 text-sm font-bold text-white outline-none transition-colors focus:border-gold"
+                    dir="ltr"
+                    className="min-w-0 flex-1 border border-white/10 bg-[#121212] px-4 py-3 text-sm font-bold text-white outline-none transition-colors focus:border-gold text-start font-mono"
                     type="tel"
                   />
                 </div>
