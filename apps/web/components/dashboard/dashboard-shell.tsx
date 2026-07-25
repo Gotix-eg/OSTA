@@ -504,9 +504,9 @@ function SidebarContent({
   return (
     <div
       className={cn(
-        "relative flex h-full min-h-0 flex-col overflow-x-hidden overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch]",
+        "relative flex h-full min-h-0 flex-col overflow-x-hidden overflow-y-auto overscroll-contain [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden",
         isStitchSidebar
-          ? "border-l border-white/10 bg-black/90 px-6 py-6 text-white backdrop-blur-md"
+          ? "border-l border-white/10 bg-black/90 px-4 py-4 text-white backdrop-blur-md"
           : "dashboard-card-dark"
       )}
     >
@@ -518,11 +518,11 @@ function SidebarContent({
       ) : null}
 
       <div className={cn("relative flex flex-col border", isStitchSidebar ? "border-0 p-0" : "items-center rounded-[2rem] border-white/5 bg-white/5 p-5 backdrop-blur-xl")}>
-        <Link href={`/${locale}`} className="flex h-16 shrink-0 items-center justify-center w-full">
-          <img src="/logo.svg" alt="Ostafy" className={cn("h-10 w-auto object-contain", isStitchSidebar ? "brightness-0 invert" : "")} />
+        <Link href={`/${locale}`} className="flex h-12 shrink-0 items-center justify-center w-full">
+          <img src="/logo.svg" alt="Ostafy" className={cn("h-8 w-auto object-contain", isStitchSidebar ? "brightness-0 invert" : "")} />
         </Link>
 
-        <p className={cn("mt-1 text-xs font-black uppercase tracking-[0.24em]", isStitchSidebar ? "text-gold" : "hidden")}>
+        <p className={cn("mt-1 text-[10px] font-black uppercase tracking-[0.24em]", isStitchSidebar ? "text-gold" : "hidden")}>
           {isAdminDashboard
             ? "OSTA ADMIN"
             : isWorkerDashboard
@@ -546,7 +546,7 @@ function SidebarContent({
         </div> : null}
       </div>
 
-      <nav className={cn("relative grid", isStitchSidebar ? "mt-10 gap-4" : "mt-6 gap-2")}>
+      <nav className={cn("relative grid", isStitchSidebar ? "mt-4 gap-1.5" : "mt-6 gap-2")}>
         {navItems.map((item) => {
           const Icon = item.icon;
           const itemPath = stripLocalePrefix(item.href);
