@@ -254,6 +254,8 @@ export interface WorkerSettingsData {
       endTime: string;
     }> | null;
     offDates?: string[];
+    acceptedPaymentMethods?: string[];
+    preferredPaymentMethod?: string | null;
   };
   payout: {
     method: string;
@@ -455,7 +457,9 @@ const workerSettingsFallback: WorkerSettingsData = {
     isAvailable: false,
     acceptsEmergency: false,
     acceptsSameDay: false,
-    serviceAreas: []
+    serviceAreas: [],
+    acceptedPaymentMethods: [],
+    preferredPaymentMethod: null
   },
   payout: {
     method: "",

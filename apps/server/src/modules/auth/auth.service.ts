@@ -162,136 +162,128 @@ export const authService = {
     const existingUser = await prisma.user.findFirst({
       where: {
         OR: [{ phone: input.phone }, ...(input.email ? [{ email: input.email }] : [])]
+      },
+      include: {
+        clientProfile: true,
+        workerProfile: true,
+        vendorProfile: true
       }
     });
 
     if (existingUser) {
-      if (input.role === "WORKER" && existingUser.role === "CLIENT") {
-        const isPasswordCorrect = await verifyPassword(input.password, existingUser.passwordHash);
-        if (!isPasswordCorrect) {
-          throw new ApiError(400, "رقم الهاتف مسجل بالفعل كعميل. يرجى إدخال كلمة المرور الصحيحة لربط حساب الفني الخاص بك.");
-        }
+      if (existingUser.phone !== input.phone) {
+        throw new ApiError(409, "البريد الإلكتروني مسجل بالفعل", "EMAIL_EXISTS");
+      }
 
-        if (input.nationalIdNumber) {
-          const existingWorker = await prisma.workerProfile.findUnique({
-            where: { nationalIdNumber: input.nationalIdNumber }
-          });
-          if (existingWorker) {
-            throw new ApiError(409, "الرقم القومي مسجل بالفعل لحساب آخر.", "NATIONAL_ID_EXISTS");
-          }
-        }
+      const alreadyHasProfile =
+        (input.role === "CLIENT" && existingUser.clientProfile) ||
+        (input.role === "WORKER" && existingUser.workerProfile) ||
+        (input.role === "VENDOR" && existingUser.vendorProfile);
 
-        const updatedUser = await prisma.user.update({
-          where: { id: existingUser.id },
-          data: {
-            role: "WORKER",
-            avatarUrl: input.avatarUrl || existingUser.avatarUrl || workerAvatarFallback || undefined,
-            workerProfile: {
-              create: {
-                nationalIdNumber: input.nationalIdNumber,
-                nationalIdFront: input.nationalIdFront,
-                nationalIdBack: input.nationalIdBack,
-                profession: input.profession,
-                yearsOfExperience: 0,
-                rating: 0,
-                ratingCount: 0,
-                isAvailable: false,
-                totalJobsCompleted: 0,
-                totalEarnings: 0,
-                walletBalance: 0,
-                orderQuota: 0,
-                subscriptionTier: "free",
-                verificationStatus: "PENDING"
-              }
-            },
-            ...(input.governorate && {
-              addresses: {
-                create: {
-                  governorate: input.governorate,
-                  city: input.city || "",
-                  area: (input as any).district || input.city || "",
-                  street: input.address || "",
-                  isDefault: true
-                }
-              }
-            })
-          },
-          include: {
-            clientProfile: true,
-            workerProfile: true,
-            vendorProfile: true
-          }
+      if (alreadyHasProfile) {
+        throw new ApiError(409, "لديك حساب من هذا النوع بالفعل على هذا الرقم", "PROFILE_EXISTS");
+      }
+
+      // Same phone, no profile of this type yet: link the new profile to the
+      // existing account instead of rejecting as a duplicate phone number.
+      const isPasswordCorrect = await verifyPassword(input.password, existingUser.passwordHash);
+      if (!isPasswordCorrect) {
+        throw new ApiError(400, "رقم الهاتف مسجل بالفعل. يرجى إدخال كلمة المرور الصحيحة لربط الحساب الجديد.");
+      }
+
+      if (input.role === "WORKER" && input.nationalIdNumber) {
+        const existingWorker = await prisma.workerProfile.findUnique({
+          where: { nationalIdNumber: input.nationalIdNumber }
         });
-
-        const tokens = await createSession(updatedUser.id, updatedUser.role);
-        return {
-          user: toPublicUser(updatedUser as any),
-          ...tokens
-        };
-      }
-
-      if (input.role === "VENDOR" && existingUser.role === "CLIENT") {
-        const isPasswordCorrect = await verifyPassword(input.password, existingUser.passwordHash);
-        if (!isPasswordCorrect) {
-          throw new ApiError(400, "رقم الهاتف مسجل بالفعل كعميل. يرجى إدخال كلمة المرور الصحيحة لربط حساب المتجر الخاص بك.");
+        if (existingWorker) {
+          throw new ApiError(409, "الرقم القومي مسجل بالفعل لحساب آخر.", "NATIONAL_ID_EXISTS");
         }
+      }
 
-        const updatedUser = await prisma.user.update({
-          where: { id: existingUser.id },
-          data: {
-            role: "VENDOR",
-            avatarUrl: input.avatarUrl || existingUser.avatarUrl,
-            vendorProfile: {
-              create: {
-                shopName: input.shopName || (input.firstName + " " + input.lastName),
-                category: input.category || "",
-                governorate: input.governorate || "cairo",
-                city: input.city || "new-cairo",
-                address: input.address || "",
-                latitude: input.latitude || 30.0444,
-                longitude: input.longitude || 31.2357,
-                commercialRegisterUrl: input.commercialRecord,
-                taxCardUrl: input.taxCard,
-                rating: 0,
-                ratingCount: 0,
-                totalOrders: 0,
-                totalEarnings: 0,
-                walletBalance: 0,
-                orderQuota: 0,
-                isOpen: false,
-                verificationStatus: "PENDING"
-              }
-            },
-            ...(input.governorate && {
-              addresses: {
-                create: {
-                  governorate: input.governorate,
-                  city: input.city || "",
-                  area: (input as any).district || input.city || "",
-                  street: input.address || "",
-                  isDefault: true
+      const updatedUser = await prisma.user.update({
+        where: { id: existingUser.id },
+        data: {
+          role: input.role,
+          avatarUrl: input.avatarUrl || existingUser.avatarUrl || workerAvatarFallback || undefined,
+          clientProfile:
+            input.role === "CLIENT"
+              ? {
+                  create: {
+                    totalRequests: 0,
+                    walletBalance: 0,
+                    isVip: false
+                  }
                 }
+              : undefined,
+          workerProfile:
+            input.role === "WORKER"
+              ? {
+                  create: {
+                    nationalIdNumber: input.nationalIdNumber,
+                    nationalIdFront: input.nationalIdFront,
+                    nationalIdBack: input.nationalIdBack,
+                    profession: input.profession,
+                    yearsOfExperience: 0,
+                    rating: 0,
+                    ratingCount: 0,
+                    isAvailable: false,
+                    totalJobsCompleted: 0,
+                    totalEarnings: 0,
+                    walletBalance: 0,
+                    orderQuota: 0,
+                    subscriptionTier: "free",
+                    verificationStatus: "PENDING"
+                  }
+                }
+              : undefined,
+          vendorProfile:
+            input.role === "VENDOR"
+              ? {
+                  create: {
+                    shopName: input.shopName || (input.firstName + " " + input.lastName),
+                    category: input.category || "",
+                    governorate: input.governorate || "cairo",
+                    city: input.city || "new-cairo",
+                    address: input.address || "",
+                    latitude: input.latitude || 30.0444,
+                    longitude: input.longitude || 31.2357,
+                    commercialRegisterUrl: input.commercialRecord,
+                    taxCardUrl: input.taxCard,
+                    rating: 0,
+                    ratingCount: 0,
+                    totalOrders: 0,
+                    totalEarnings: 0,
+                    walletBalance: 0,
+                    orderQuota: 0,
+                    isOpen: false,
+                    verificationStatus: "PENDING"
+                  }
+                }
+              : undefined,
+          ...(input.governorate && {
+            addresses: {
+              create: {
+                governorate: input.governorate,
+                city: input.city || "",
+                area: (input as any).district || input.city || "",
+                street: input.address || "",
+                isDefault: true
               }
-            })
-          },
-          include: {
-            clientProfile: true,
-            workerProfile: true,
-            vendorProfile: true
-          }
-        });
+            }
+          })
+        },
+        include: {
+          clientProfile: true,
+          workerProfile: true,
+          vendorProfile: true
+        }
+      });
 
-        const tokens = await createSession(updatedUser.id, updatedUser.role);
-        return {
-          user: toPublicUser(updatedUser as any),
-          ...tokens
-        };
-      }
-
-      if (existingUser.phone === input.phone) {
-        throw new ApiError(409, "رقم الهاتف مسجل بالفعل", "PHONE_EXISTS");
-      }
-      throw new ApiError(409, "البريد الإلكتروني مسجل بالفعل", "EMAIL_EXISTS");
+      const tokens = await createSession(updatedUser.id, updatedUser.role);
+      return {
+        user: toPublicUser(updatedUser as any),
+        ...tokens
+      };
     }
 
     if (input.role === "WORKER" && input.nationalIdNumber) {

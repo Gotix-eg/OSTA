@@ -125,6 +125,23 @@ type VendorRegisterState = {
   acceptedTerms: boolean;
 };
 
+export type RegisterPrefill = {
+  phone?: string;
+  firstName?: string;
+  lastName?: string;
+};
+
+function withPrefill<T extends { phone: string; firstName: string; lastName: string }>(defaults: T, initial?: RegisterPrefill): T {
+  if (!initial) return defaults;
+
+  return {
+    ...defaults,
+    phone: initial.phone ? formatEgyptianPhone(initial.phone) : defaults.phone,
+    firstName: initial.firstName ?? defaults.firstName,
+    lastName: initial.lastName ?? defaults.lastName
+  };
+}
+
 const vendorRegisterDefaults: VendorRegisterState = {
   storeName: "",
   firstName: "",
@@ -188,6 +205,12 @@ export function formatEgyptianPhone(val: string): string {
   digits = digits.substring(0, 10);
 
   return "+20" + digits;
+}
+
+const EGYPT_PHONE_REGEX = /^\+20(10|11|12|15)\d{8}$/;
+
+export function isValidEgyptianPhone(phone: string): boolean {
+  return EGYPT_PHONE_REGEX.test(phone);
 }
 
 type AuthSuccessResponse = {
@@ -416,8 +439,12 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
   async function handleLogin() {
     let isValid = true;
 
-    if (!phone.trim()) {
+    const cleanLoginPhone = phone.replace(/\s+/g, "");
+    if (!cleanLoginPhone) {
       setPhoneError(isArabic ? "رقم الهاتف مطلوب" : "Phone number is required");
+      isValid = false;
+    } else if (!isValidEgyptianPhone(cleanLoginPhone)) {
+      setPhoneError(isArabic ? "رقم الهاتف يجب أن يكون رقم مصري صحيح مثل +201012345678" : "Enter a valid Egyptian phone number, e.g. +201012345678");
       isValid = false;
     } else {
       setPhoneError(null);
@@ -437,7 +464,7 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
 
     try {
       const payload = await postApiData<AuthSuccessResponse, { phone: string; password: string }>("/auth/login", {
-        phone: phone.replace(/\s+/g, ""),
+        phone: cleanLoginPhone,
         password
       });
 
@@ -770,10 +797,10 @@ function FormSkeleton({ locale }: { locale: Locale }) {
   );
 }
 
-export function ClientRegisterForm({ locale }: { locale: Locale }) {
+export function ClientRegisterForm({ locale, initial }: { locale: Locale; initial?: RegisterPrefill }) {
   const copy = authCopy[locale];
   const isArabic = locale === "ar";
-  const { ready, state, setState } = useEphemeralState(clientRegisterDefaults);
+  const { ready, state, setState } = useEphemeralState(withPrefill(clientRegisterDefaults, initial));
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -791,7 +818,7 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
 
     // Basic Validation
     const cleanPhone = state.phone.replace(/\s+/g, "");
-    if (!cleanPhone || cleanPhone.length < 11) {
+    if (!isValidEgyptianPhone(cleanPhone)) {
       setError(isArabic ? "رقم الهاتف غير صحيح" : "Invalid phone number");
       setIsSubmitting(false);
       return;
@@ -1008,10 +1035,10 @@ export function ClientRegisterForm({ locale }: { locale: Locale }) {
   );
 }
 
-export function WorkerRegisterForm({ locale }: { locale: Locale }) {
+export function WorkerRegisterForm({ locale, initial }: { locale: Locale; initial?: RegisterPrefill }) {
   const copy = authCopy[locale];
   const isArabic = locale === "ar";
-  const { ready, state, setState } = useEphemeralState(workerRegisterDefaults);
+  const { ready, state, setState } = useEphemeralState(withPrefill(workerRegisterDefaults, initial));
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -1022,7 +1049,7 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
 
     // Validation
     const cleanPhone = state.phone.replace(/\s+/g, "");
-    if (!cleanPhone || cleanPhone.length < 11) {
+    if (!isValidEgyptianPhone(cleanPhone)) {
       setError(isArabic ? "رقم الهاتف غير صحيح" : "Invalid phone number");
       setIsSubmitting(false);
       return;
@@ -1207,10 +1234,10 @@ export function WorkerRegisterForm({ locale }: { locale: Locale }) {
   );
 }
 
-export function VendorRegisterForm({ locale }: { locale: Locale }) {
+export function VendorRegisterForm({ locale, initial }: { locale: Locale; initial?: RegisterPrefill }) {
   const copy = authCopy[locale];
   const isArabic = locale === "ar";
-  const { ready, state, setState } = useEphemeralState(vendorRegisterDefaults);
+  const { ready, state, setState } = useEphemeralState(withPrefill(vendorRegisterDefaults, initial));
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -1221,7 +1248,7 @@ export function VendorRegisterForm({ locale }: { locale: Locale }) {
 
     // Validation
     const cleanPhone = state.phone.replace(/\s+/g, "");
-    if (!cleanPhone || cleanPhone.length < 11) {
+    if (!isValidEgyptianPhone(cleanPhone)) {
       setError(isArabic ? "رقم الهاتف غير صحيح" : "Invalid phone number");
       setIsSubmitting(false);
       return;

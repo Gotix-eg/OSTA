@@ -11,15 +11,18 @@ interface AuthShellProps {
   pathname: string;
   title: string;
   description: string;
+  heading?: string;
   children: ReactNode;
 }
 
-export function AuthShell({ locale, pathname, title, description, children }: AuthShellProps) {
+export function AuthShell({ locale, pathname, title, description, heading: headingOverride, children }: AuthShellProps) {
   const isArabic = locale === "ar";
   const isLogin = pathname === "/login";
   const isRegisterChoice = pathname === "/register" || pathname.endsWith("/register");
 
-  const heading = isLogin
+  const heading = headingOverride
+    ? headingOverride
+    : isLogin
     ? (isArabic ? "أهلاً بك" : "WELCOME BACK")
     : pathname.includes("/register/client")
       ? (isArabic ? "إنشاء حساب عميل" : "CREATE CLIENT ACCOUNT")

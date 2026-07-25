@@ -23,6 +23,7 @@ import {
   Megaphone,
   Menu,
   Package,
+  Plus,
   Search,
   Settings,
   Shield,
@@ -215,6 +216,18 @@ export function DashboardShell({
 
   const currentPath = stripLocalePrefix(pathname || "/");
 
+  const activeNavPath = useMemo(() => {
+    let best: string | null = null;
+    for (const item of navItems) {
+      const itemPath = stripLocalePrefix(item.href);
+      const matches = currentPath === itemPath || currentPath.startsWith(`${itemPath}/`);
+      if (matches && (best === null || itemPath.length > best.length)) {
+        best = itemPath;
+      }
+    }
+    return best;
+  }, [navItems, currentPath]);
+
   return (
     <div
       className={cn(
@@ -231,7 +244,7 @@ export function DashboardShell({
 
       <div className="relative flex min-h-screen">
         <aside className={cn("hidden shrink-0 lg:block", isStitchDashboard ? "fixed right-0 top-0 z-40 h-screen w-64 p-0" : "w-[19.5rem] px-4 py-4")}>
-          <SidebarContent locale={locale} role={role} roleLabel={copy.role} theme={theme} navItems={navItems} currentPath={currentPath} />
+          <SidebarContent locale={locale} role={role} roleLabel={copy.role} theme={theme} navItems={navItems} activeNavPath={activeNavPath} />
         </aside>
 
         {mobileOpen ? (
@@ -283,7 +296,7 @@ export function DashboardShell({
                     {navItems.slice(0, 6).map((item) => {
                       const Icon = item.icon;
                       const itemPath = stripLocalePrefix(item.href);
-                      const active = currentPath === itemPath || currentPath.startsWith(`${itemPath}/`);
+                      const active = itemPath === activeNavPath;
 
                       return (
                         <Link
@@ -309,7 +322,7 @@ export function DashboardShell({
                   {navItems.slice(6).map((item) => {
                     const Icon = item.icon;
                     const itemPath = stripLocalePrefix(item.href);
-                    const active = currentPath === itemPath || currentPath.startsWith(`${itemPath}/`);
+                    const active = itemPath === activeNavPath;
 
                     return (
                       <Link
@@ -469,7 +482,7 @@ export function DashboardShell({
             {navItems.slice(2, 7).map((item) => {
               const Icon = item.icon;
               const itemPath = stripLocalePrefix(item.href);
-              const active = currentPath === itemPath || currentPath.startsWith(`${itemPath}/`);
+              const active = itemPath === activeNavPath;
 
               return (
                 <Link
@@ -499,15 +512,30 @@ function SidebarRoleSwitcher({ locale, currentRole }: { locale: Locale; currentR
     hasClient: currentRole === "client",
     hasVendor: currentRole === "vendor"
   });
+  const [userIdentity, setUserIdentity] = useState<{ phone?: string; firstName?: string; lastName?: string }>({});
 
   useEffect(() => {
-    fetchApiData<{ user?: { hasWorkerProfile?: boolean; hasClientProfile?: boolean; hasVendorProfile?: boolean } }>("/auth/me", {})
+    fetchApiData<{
+      user?: {
+        hasWorkerProfile?: boolean;
+        hasClientProfile?: boolean;
+        hasVendorProfile?: boolean;
+        phone?: string;
+        firstName?: string;
+        lastName?: string;
+      };
+    }>("/auth/me", {})
       .then((res) => {
         if (res?.user) {
           setUserProfiles({
             hasWorker: Boolean(res.user.hasWorkerProfile) || currentRole === "worker",
             hasClient: Boolean(res.user.hasClientProfile) || currentRole === "client",
             hasVendor: Boolean(res.user.hasVendorProfile) || currentRole === "vendor"
+          });
+          setUserIdentity({
+            phone: res.user.phone,
+            firstName: res.user.firstName,
+            lastName: res.user.lastName
           });
         }
       })
@@ -546,6 +574,17 @@ function SidebarRoleSwitcher({ locale, currentRole }: { locale: Locale; currentR
     if (r.roleId === "vendor") return userProfiles.hasVendor;
     return true;
   });
+
+  const missingRoles = allRoles.filter((r) => !registeredRoles.includes(r));
+
+  const addModeHref = (() => {
+    const query = new URLSearchParams();
+    if (userIdentity.phone) query.set("phone", userIdentity.phone);
+    if (userIdentity.firstName) query.set("firstName", userIdentity.firstName);
+    if (userIdentity.lastName) query.set("lastName", userIdentity.lastName);
+    query.set("have", registeredRoles.map((r) => r.roleId).join(","));
+    return `/${locale}/register?${query.toString()}`;
+  })();
 
   const currentObj = allRoles.find((r) => r.roleId === currentRole) || {
     key: currentRole.toUpperCase(),
@@ -621,6 +660,16 @@ function SidebarRoleSwitcher({ locale, currentRole }: { locale: Locale; currentR
               </button>
             );
           })}
+          {missingRoles.length > 0 ? (
+            <Link
+              href={addModeHref}
+              onClick={() => setOpen(false)}
+              className="flex w-full items-center gap-2 border-t border-white/10 px-3 py-2.5 text-xs font-bold text-gold/80 transition hover:bg-gold/10 hover:text-gold"
+            >
+              <Plus className="h-3.5 w-3.5" />
+              <span>{isArabic ? "إضافة وضع جديد" : "Add new mode"}</span>
+            </Link>
+          ) : null}
         </div>
       ) : null}
     </div>
@@ -633,14 +682,14 @@ function SidebarContent({
   roleLabel,
   theme,
   navItems,
-  currentPath
+  activeNavPath
 }: {
   locale: Locale;
   role: DashboardRole;
   roleLabel: string;
   theme: { tag: string; accent: string; orb: string; ring: string };
   navItems: NavItem[];
-  currentPath: string;
+  activeNavPath: string | null;
 }) {
   const isClientDashboard = role === "client";
   const isWorkerDashboard = role === "worker";
@@ -687,7 +736,7 @@ function SidebarContent({
         {navItems.map((item) => {
           const Icon = item.icon;
           const itemPath = stripLocalePrefix(item.href);
-          const active = currentPath === itemPath || currentPath.startsWith(`${itemPath}/`);
+          const active = itemPath === activeNavPath;
 
           return (
             <Link

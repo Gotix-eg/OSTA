@@ -17,14 +17,29 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   };
 }
 
-export default async function RegisterChoicePage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function RegisterChoicePage({
+  params,
+  searchParams
+}: {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<{ phone?: string; firstName?: string; lastName?: string; have?: string }>;
+}) {
   const { locale } = await params;
+  const { phone, firstName, lastName, have } = await searchParams;
 
   if (!isLocale(locale)) {
     notFound();
   }
 
   const isArabic = locale === "ar";
+
+  const prefillQuery = new URLSearchParams();
+  if (phone) prefillQuery.set("phone", phone);
+  if (firstName) prefillQuery.set("firstName", firstName);
+  if (lastName) prefillQuery.set("lastName", lastName);
+  const querySuffix = prefillQuery.toString() ? `?${prefillQuery.toString()}` : "";
+
+  const ownedRoles = new Set((have || "").split(",").map((r) => r.trim().toLowerCase()).filter(Boolean));
 
   const options = [
     {
@@ -33,7 +48,7 @@ export default async function RegisterChoicePage({ params }: { params: Promise<{
       description: isArabic
         ? "اطلب فنيين موثقين، تتبع طلباتك، واحصل على ضمان للخدمات."
         : "Book verified technicians, trace active requests, and get guaranteed work quality.",
-      href: `/${locale}/register/client`,
+      href: `/${locale}/register/client${querySuffix}`,
       Icon: User
     },
     {
@@ -42,7 +57,7 @@ export default async function RegisterChoicePage({ params }: { params: Promise<{
       description: isArabic
         ? "استقبل طلبات يومية، كبّر صنعتك، وتحكم بساعات عملك ودخلك."
         : "Accept daily service jobs, grow your career, set flexible hours, and earn steady income.",
-      href: `/${locale}/register/worker`,
+      href: `/${locale}/register/worker${querySuffix}`,
       Icon: Wrench
     },
     {
@@ -51,20 +66,27 @@ export default async function RegisterChoicePage({ params }: { params: Promise<{
       description: isArabic
         ? "أضف متجرك، وبع الخامات والأدوات للحرفيين والعملاء في منطقتك."
         : "Add your store, and sell materials and tools to technicians and clients near you.",
-      href: `/${locale}/register/vendor`,
+      href: `/${locale}/register/vendor${querySuffix}`,
       Icon: Store
     }
-  ];
+  ].filter((option) => !ownedRoles.has(option.key));
+
+  const isAddingMode = ownedRoles.size > 0;
 
   return (
     <AuthShell
       locale={locale as Locale}
       pathname="/register"
-      title={isArabic ? "انضم إلى أُسطفاي" : "Join Ostafy"}
+      heading={isAddingMode ? (isArabic ? "إضافة وضع جديد" : "ADD A NEW MODE") : undefined}
+      title={isAddingMode ? (isArabic ? "إضافة وضع جديد" : "Add a New Mode") : isArabic ? "انضم إلى أُسطفاي" : "Join Ostafy"}
       description={
-        isArabic
-          ? "اختر نوع الحساب المناسب لك للبدء في استخدام المنصة."
-          : "Select the account type that fits your needs to start using the platform."
+        isAddingMode
+          ? isArabic
+            ? "اختر نوع الحساب الجديد الذي تريد إضافته. بياناتك الأساسية جاهزة بالفعل."
+            : "Choose the new account type you'd like to add. Your basic details are already filled in."
+          : isArabic
+            ? "اختر نوع الحساب المناسب لك للبدء في استخدام المنصة."
+            : "Select the account type that fits your needs to start using the platform."
       }
     >
       <div className="space-y-4 animate-fadeIn">

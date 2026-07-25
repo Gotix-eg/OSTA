@@ -3,7 +3,7 @@ import { z } from "zod";
 export const registerVendorSchema = z.object({
   firstName: z.string().min(2, "الاسم الأول يجب أن يكون حرفين على الأقل"),
   lastName: z.string().min(2, "الاسم الأخير يجب أن يكون حرفين على الأقل"),
-  phone: z.string().min(10, "رقم الهاتف يجب أن يكون 10 أرقام على الأقل"),
+  phone: z.string().regex(/^\+20(10|11|12|15)\d{8}$/, "رقم الهاتف يجب أن يكون رقم مصري صحيح مثل +201012345678"),
   email: z.string().email("البريد الإلكتروني غير صالح").optional(),
   password: z.string().min(8, "كلمة المرور يجب أن تكون 8 أحرف على الأقل"),
   confirmPassword: z.string().min(8),

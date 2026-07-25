@@ -13,8 +13,15 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   };
 }
 
-export default async function RegisterWorkerPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function RegisterWorkerPage({
+  params,
+  searchParams
+}: {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<{ phone?: string; firstName?: string; lastName?: string }>;
+}) {
   const { locale } = await params;
+  const { phone, firstName, lastName } = await searchParams;
 
   if (!isLocale(locale)) {
     notFound();
@@ -31,7 +38,7 @@ export default async function RegisterWorkerPage({ params }: { params: Promise<{
           : "A 5-step professional onboarding flow including work details, service areas, and verification documents."
       }
     >
-      <WorkerRegisterForm locale={locale} />
+      <WorkerRegisterForm locale={locale} initial={{ phone, firstName, lastName }} />
     </AuthShell>
   );
 }

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-import { AlertCircle, BriefcaseBusiness, CalendarDays, Camera, Check, CheckCircle2, Clock, Loader2, Lock, Save, ShieldCheck, Sparkles, Star, Store, TimerReset, Trash2, User, UserCircle2 } from "lucide-react";
+import { AlertCircle, CalendarDays, Camera, Check, CheckCircle2, Clock, Loader2, Lock, Save, ShieldCheck, Sparkles, Star, TimerReset, Trash2, UserCircle2 } from "lucide-react";
 
 import {
   WorkerProAction,
@@ -18,7 +18,7 @@ import { useLiveApiData } from "@/hooks/use-live-api-data";
 import { patchApiData, postApiData } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
 import type { WorkerRatingsData, WorkerSettingsData } from "@/lib/operations-data";
-import { cn, formatPhoneNumber } from "@/lib/utils";
+import { cn, formatPhoneNumber, getLocalizedError } from "@/lib/utils";
 
 function formatNumber(locale: Locale, value: number) {
   return new Intl.NumberFormat(locale === "ar" ? "ar-EG" : "en-US", { maximumFractionDigits: 0 }).format(value);
@@ -28,203 +28,6 @@ function formatDate(locale: Locale, value: string) {
   return new Intl.DateTimeFormat(locale === "ar" ? "ar-EG" : "en-US", {
     dateStyle: "medium"
   }).format(new Date(value));
-}
-
-function WorkerModeSwitcher({
-  locale,
-  fullName,
-  avatarUrl,
-  email,
-  phone
-}: {
-  locale: Locale;
-  fullName: string;
-  avatarUrl?: string | null;
-  email: string;
-  phone: string;
-}) {
-  const isArabic = locale === "ar";
-  const [pendingRole, setPendingRole] = useState<"CLIENT" | "VENDOR" | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [currentAvatar, setCurrentAvatar] = useState(avatarUrl);
-  const [isUploading, setIsUploading] = useState(false);
-
-  useEffect(() => {
-    setCurrentAvatar(avatarUrl);
-  }, [avatarUrl]);
-
-  async function handleAvatarUpload(event: React.ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    setIsUploading(true);
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        body: formData
-      });
-      if (!res.ok) throw new Error("Upload failed");
-      const resData = await res.json();
-      setCurrentAvatar(resData.url);
-      await postApiData("/workers/settings", {
-        profile: { avatarUrl: resData.url }
-      });
-    } catch (err) {
-      console.error("Avatar upload failed", err);
-    } finally {
-      setIsUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = "";
-    }
-  }
-
-  const initials = fullName
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join("") || "O";
-
-  const modes = [
-    {
-      key: "worker",
-      title: isArabic ? "وضع الفني" : "Technician mode",
-      note: isArabic ? "الطلبات الواردة، التنفيذ، الأرباح، والتقييمات." : "Incoming jobs, active work, earnings, and ratings.",
-      icon: BriefcaseBusiness,
-      active: true,
-      targetRole: "WORKER" as const,
-      href: `/${locale}/worker/settings`
-    },
-    {
-      key: "client",
-      title: isArabic ? "وضع العميل" : "Client mode",
-      note: isArabic ? "طلبات الخدمات، المتاجر، المفضلة، والمحفظة." : "Service requests, stores, favorites, and wallet.",
-      icon: User,
-      active: false,
-      targetRole: "CLIENT" as const,
-      href: `/${locale}/client`
-    },
-    {
-      key: "vendor",
-      title: isArabic ? "وضع المورد" : "Vendor mode",
-      note: isArabic ? "الخامات، المخزون، الطلبات، والإعلانات." : "Materials, inventory, orders, and ads management.",
-      icon: Store,
-      active: false,
-      targetRole: "VENDOR" as const,
-      href: `/${locale}/vendor`
-    }
-  ];
-
-  async function switchRole(targetRole: "CLIENT" | "VENDOR", href: string) {
-    setError(null);
-    setPendingRole(targetRole);
-
-    try {
-      await postApiData<{ role: string }, { targetRole: "CLIENT" | "VENDOR" }>("/auth/switch-role", { targetRole });
-      window.location.assign(href);
-    } catch (caught) {
-      setError(caught instanceof Error ? caught.message : isArabic ? "تعذر تبديل وضع التشغيل" : "Could not switch operating mode");
-      setPendingRole(null);
-    }
-  }
-
-  return (
-    <WorkerProPanel title={isArabic ? "وضع التشغيل" : "Operating mode"} eyebrow="OSTA PRO">
-      <div className="grid gap-6 xl:grid-cols-[minmax(360px,0.85fr)_minmax(0,1.25fr)]">
-        <div className="border border-white/10 bg-[#111] p-6">
-          <div className="flex items-center gap-5">
-            <div className="relative group shrink-0">
-              <div
-                onClick={() => fileInputRef.current?.click()}
-                className="relative h-24 w-24 cursor-pointer overflow-hidden border border-gold bg-[#121212] transition hover:border-gold/80"
-              >
-                {currentAvatar ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={currentAvatar} alt={fullName} className="h-full w-full object-cover transition duration-300 group-hover:scale-105" />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center bg-gold text-2xl font-black text-black">{initials}</div>
-                )}
-                <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-                  <Camera className="h-5 w-5 text-gold" />
-                  <span className="text-[9px] font-black uppercase text-white">{isUploading ? (isArabic ? "جاري..." : "Uploading...") : isArabic ? "تغيير" : "Change"}</span>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full bg-gold text-black shadow-lg transition hover:scale-110 active:scale-95"
-                title={isArabic ? "تغيير الصورة الشخصية" : "Change profile photo"}
-              >
-                <Camera className="h-3.5 w-3.5" />
-              </button>
-              <input
-                type="file"
-                accept="image/*"
-                ref={fileInputRef}
-                onChange={(e) => void handleAvatarUpload(e)}
-                className="hidden"
-              />
-            </div>
-            <div className="min-w-0">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gold">{isArabic ? "الملف الشخصي" : "Account identity"}</p>
-              <h2 className="mt-2 truncate text-2xl font-black uppercase text-white">{fullName}</h2>
-              <div className="mt-4 space-y-1 text-sm font-bold text-white/65">
-                <p className="truncate">{email || (isArabic ? "لا يوجد بريد" : "No email")}</p>
-                <p className="truncate text-start" dir="ltr">{formatPhoneNumber(phone) || (isArabic ? "لا يوجد هاتف" : "No phone")}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="grid gap-3">
-          {error ? <div className="border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm font-bold text-red-200">{error}</div> : null}
-          <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
-            {modes.map((mode) => {
-              const Icon = mode.icon;
-              const isPending = pendingRole === mode.targetRole;
-              const content = (
-                <>
-                  <div className="flex w-full items-start gap-4">
-                    <div className={mode.active ? "flex h-12 w-12 shrink-0 items-center justify-center border border-gold bg-gold text-black" : "flex h-12 w-12 shrink-0 items-center justify-center border border-white/15 bg-[#121212] text-gold"}>
-                      <Icon className="h-5 w-5" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <h3 className="text-base font-black uppercase leading-tight text-white">{mode.title}</h3>
-                      <p className="mt-2 text-xs leading-5 text-white/50">{mode.note}</p>
-                    </div>
-                  </div>
-                  <span className={mode.active ? "mt-4 inline-flex shrink-0 bg-white px-4 py-2 text-[10px] font-black uppercase tracking-[0.12em] text-black" : "mt-4 inline-flex shrink-0 border border-white/15 px-4 py-2 text-[10px] font-black uppercase tracking-[0.12em] text-gold"}>
-                    {mode.active ? (isArabic ? "الحالي" : "CURRENT") : isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : isArabic ? "تبديل" : "SWITCH"}
-                  </span>
-                </>
-              );
-
-              return mode.active ? (
-                <div key={mode.key} className="flex min-h-44 flex-col justify-between border border-gold bg-[#121212] p-5">
-                  {content}
-                </div>
-              ) : (
-                <button
-                  key={mode.key}
-                  type="button"
-                  disabled={pendingRole !== null}
-                  onClick={() => {
-                    if (mode.targetRole !== "WORKER") {
-                      void switchRole(mode.targetRole, mode.href);
-                    }
-                  }}
-                  className="flex min-h-44 flex-col justify-between border border-white/10 bg-[#121212] p-5 text-start transition-colors hover:border-gold disabled:cursor-wait disabled:opacity-70"
-                >
-                  {content}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-    </WorkerProPanel>
-  );
 }
 
 export function WorkerRatingsPage({ locale, initialData }: { locale: Locale; initialData: WorkerRatingsData }) {
@@ -355,6 +158,8 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
         isAvailable: safeWorkPreferences.isAvailable,
         workingHours: data.workPreferences.workingHours,
         offDates: data.workPreferences.offDates,
+        acceptedPaymentMethods: safeWorkPreferences.acceptedPaymentMethods,
+        preferredPaymentMethod: safeWorkPreferences.preferredPaymentMethod,
         nationalIdFront: data.profile.nationalIdFront,
         nationalIdBack: data.profile.nationalIdBack,
         selfieWithId: data.profile.selfieWithId
@@ -364,7 +169,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
       window.setTimeout(() => setSaveState("idle"), 2000);
     } catch (err: any) {
       console.error("Failed to save worker settings", err);
-      setSaveError(err?.message || (isArabic ? "حدث خطأ أثناء الحفظ" : "Failed to save changes"));
+      setSaveError(getLocalizedError(err instanceof Error ? err.message : "", locale));
       setSaveState("error");
     }
   }
@@ -373,7 +178,9 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
     isAvailable: data.workPreferences?.isAvailable ?? false,
     acceptsEmergency: data.workPreferences?.acceptsEmergency ?? false,
     acceptsSameDay: data.workPreferences?.acceptsSameDay ?? false,
-    serviceAreas: Array.isArray(data.workPreferences?.serviceAreas) ? data.workPreferences.serviceAreas : []
+    serviceAreas: Array.isArray(data.workPreferences?.serviceAreas) ? data.workPreferences.serviceAreas : [],
+    acceptedPaymentMethods: Array.isArray(data.workPreferences?.acceptedPaymentMethods) ? data.workPreferences.acceptedPaymentMethods : [],
+    preferredPaymentMethod: data.workPreferences?.preferredPaymentMethod ?? null
   };
   const safePayout = {
     method: data.payout?.method ?? "",
@@ -622,21 +429,75 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
 
         <WorkerProPanel title={isArabic ? "نظام شغلي" : "Work preferences & payout"}>
           <div className="grid gap-4">
-            {[
-              { key: "isAvailable", label: isArabic ? "متاح للطلبات" : "Available for jobs" },
-              { key: "acceptsEmergency", label: isArabic ? "يقبل الطوارئ" : "Accept emergency" },
-              { key: "acceptsSameDay", label: isArabic ? "يقبل نفس اليوم" : "Accept same-day" }
-            ].map((item) => (
-              <label key={item.key} className="flex items-center justify-between gap-4 border border-white/10 bg-[#111] p-4">
-                <span className="font-black text-white">{item.label}</span>
-                <input
-                  type="checkbox"
-                  checked={safeWorkPreferences[item.key as keyof typeof safeWorkPreferences] as boolean}
-                  onChange={(event) => setData({ ...data, workPreferences: { ...data.workPreferences, [item.key]: event.target.checked } })}
-                  className="h-5 w-5 accent-gold"
-                />
-              </label>
-            ))}
+            <div className="grid gap-2 sm:grid-cols-3">
+              {[
+                { key: "isAvailable", label: isArabic ? "متاح للطلبات" : "Available for jobs" },
+                { key: "acceptsEmergency", label: isArabic ? "يقبل الطوارئ" : "Accept emergency" },
+                { key: "acceptsSameDay", label: isArabic ? "يقبل نفس اليوم" : "Accept same-day" }
+              ].map((item) => (
+                <label key={item.key} className="flex items-center justify-between gap-2 border border-white/10 bg-[#111] px-3 py-2">
+                  <span className="text-sm font-bold text-white">{item.label}</span>
+                  <input
+                    type="checkbox"
+                    checked={safeWorkPreferences[item.key as keyof typeof safeWorkPreferences] as boolean}
+                    onChange={(event) => setData({ ...data, workPreferences: { ...data.workPreferences, [item.key]: event.target.checked } })}
+                    className="h-4 w-4 accent-gold"
+                  />
+                </label>
+              ))}
+            </div>
+
+            <div className="border border-white/10 bg-[#111] p-4">
+              <p className="font-black text-white">{isArabic ? "ممكن تدفعلي عن طريق:" : "You can pay me via:"}</p>
+              <p className="mt-1 text-xs font-medium text-white/40">{isArabic ? "اختر الطرق المقبولة، وحدد نجمة الطريقة المفضلة لديك" : "Select the accepted methods, then star your preferred one"}</p>
+              <div className="mt-3 grid gap-3 sm:grid-cols-3">
+                {[
+                  { key: "cash", label: isArabic ? "كاش" : "Cash" },
+                  { key: "vodafone_cash", label: isArabic ? "فودافون كاش" : "Vodafone Cash" },
+                  { key: "instapay", label: isArabic ? "انستا باي" : "InstaPay" }
+                ].map((method) => {
+                  const isChecked = safeWorkPreferences.acceptedPaymentMethods.includes(method.key);
+                  const isPreferred = safeWorkPreferences.preferredPaymentMethod === method.key;
+                  return (
+                    <div key={method.key} className="flex items-center justify-between gap-3 border border-white/10 bg-[#141414] p-3">
+                      <label className="flex flex-1 items-center gap-3">
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={(event) => {
+                            const checked = event.target.checked;
+                            const nextMethods = checked
+                              ? [...safeWorkPreferences.acceptedPaymentMethods, method.key]
+                              : safeWorkPreferences.acceptedPaymentMethods.filter((m) => m !== method.key);
+                            const nextPreferred = checked
+                              ? safeWorkPreferences.preferredPaymentMethod
+                              : safeWorkPreferences.preferredPaymentMethod === method.key
+                                ? null
+                                : safeWorkPreferences.preferredPaymentMethod;
+                            setData({ ...data, workPreferences: { ...data.workPreferences, acceptedPaymentMethods: nextMethods, preferredPaymentMethod: nextPreferred } });
+                          }}
+                          className="h-5 w-5 accent-gold"
+                        />
+                        <span className="text-sm font-bold text-white">{method.label}</span>
+                      </label>
+                      <button
+                        type="button"
+                        disabled={!isChecked}
+                        onClick={() => setData({ ...data, workPreferences: { ...data.workPreferences, preferredPaymentMethod: isPreferred ? null : method.key } })}
+                        title={isArabic ? "الطريقة المفضلة" : "Preferred method"}
+                        className={cn(
+                          "flex h-8 w-8 shrink-0 items-center justify-center border transition",
+                          isPreferred ? "border-gold bg-gold text-black" : "border-white/15 text-white/30 hover:text-gold disabled:cursor-not-allowed disabled:opacity-30"
+                        )}
+                      >
+                        <Star className="h-4 w-4" fill={isPreferred ? "currentColor" : "none"} />
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
             {safeWorkPreferences.serviceAreas.length > 0 ? (
               <div className="border border-white/10 bg-[#111] p-4">
                 <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/35">{isArabic ? "المناطق" : "Areas"}</p>
@@ -659,8 +520,6 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
           </div>
         </WorkerProPanel>
       </div>
-
-      <WorkerModeSwitcher locale={locale} fullName={fullName} avatarUrl={data.profile.avatarUrl} email={data.profile.email} phone={data.profile.phone} />
     </WorkerProShell>
   );
 }

@@ -83,6 +83,8 @@ const workerSettings = {
   }
 };
 
+const ALLOWED_PAYMENT_METHODS = ["cash", "vodafone_cash", "instapay"] as const;
+
 const acceptRequestSchema = z.object({
   workerName: z.string().min(2).max(80).optional(),
   price: z.number().optional()
@@ -673,7 +675,9 @@ router.get("/settings", catchAsync(async (request, response) => {
       notificationsEnabledEmail: user.workerProfile?.notificationsEnabledEmail ?? true,
       subscriptionTier: user.workerProfile?.subscriptionTier ?? "free",
       workingHours: user.workerProfile?.workingHours ?? null,
-      offDates: user.workerProfile?.offDates ?? []
+      offDates: user.workerProfile?.offDates ?? [],
+      acceptedPaymentMethods: user.workerProfile?.acceptedPaymentMethods ?? [],
+      preferredPaymentMethod: user.workerProfile?.preferredPaymentMethod ?? null
     }
   };
 
@@ -682,12 +686,28 @@ router.get("/settings", catchAsync(async (request, response) => {
 
 router.patch("/settings", catchAsync(async (request, response) => {
   const userId = request.auth!.userId;
-  const { notificationsEnabledApp, notificationsEnabledEmail, isAvailable, nationalIdNumber, nationalIdFront, nationalIdBack, selfieWithId, workingHours, offDates } = request.body;
+  const { notificationsEnabledApp, notificationsEnabledEmail, isAvailable, nationalIdNumber, nationalIdFront, nationalIdBack, selfieWithId, workingHours, offDates, acceptedPaymentMethods, preferredPaymentMethod } = request.body;
+
+  if (acceptedPaymentMethods !== undefined) {
+    if (!Array.isArray(acceptedPaymentMethods) || acceptedPaymentMethods.some((method: unknown) => !ALLOWED_PAYMENT_METHODS.includes(method as any))) {
+      throw new ApiError(400, "Invalid payment method");
+    }
+  }
 
   const worker = await prisma.workerProfile.findUnique({
     where: { userId }
   });
   if (!worker) throw new ApiError(404, "Worker profile not found");
+
+  if (preferredPaymentMethod !== undefined && preferredPaymentMethod !== null) {
+    if (!ALLOWED_PAYMENT_METHODS.includes(preferredPaymentMethod as any)) {
+      throw new ApiError(400, "Invalid preferred payment method");
+    }
+    const effectiveAcceptedMethods: string[] = acceptedPaymentMethods !== undefined ? acceptedPaymentMethods : worker.acceptedPaymentMethods;
+    if (!effectiveAcceptedMethods.includes(preferredPaymentMethod)) {
+      throw new ApiError(400, "Preferred payment method must be one of the accepted methods");
+    }
+  }
 
   const updated = await prisma.workerProfile.update({
     where: { id: worker.id },
@@ -700,7 +720,9 @@ router.patch("/settings", catchAsync(async (request, response) => {
       nationalIdBack: nationalIdBack !== undefined ? nationalIdBack : undefined,
       selfieWithId: selfieWithId !== undefined ? selfieWithId : undefined,
       workingHours: workingHours !== undefined ? workingHours : undefined,
-      offDates: offDates !== undefined ? offDates : undefined
+      offDates: offDates !== undefined ? offDates : undefined,
+      acceptedPaymentMethods: acceptedPaymentMethods !== undefined ? acceptedPaymentMethods : undefined,
+      preferredPaymentMethod: preferredPaymentMethod !== undefined ? preferredPaymentMethod : undefined
     }
   });
 

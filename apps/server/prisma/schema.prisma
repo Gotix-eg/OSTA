@@ -244,6 +244,8 @@ model WorkerProfile {
   selfieWithId          String?
   workingHours          Json?
   offDates              String[]                 @default([])
+  acceptedPaymentMethods String[]                @default([])
+  preferredPaymentMethod String?
   profession            String?
   nationalIdNumber      String?                  @unique
   criminalRecord        String?
