@@ -338,10 +338,10 @@ function SettingsRoleSwitcher({
   }
 
   return (
-    <section className="border border-white/10 bg-black p-6 text-white shadow-[4px_4px_0_#000]">
+    <section className="border border-white/10 bg-black p-6 text-white">
       <div className="mb-5 flex flex-wrap items-start justify-between gap-4 border-b border-white/10 pb-4">
         <div className="flex min-w-0 items-center gap-4">
-          <div className="relative h-16 w-16 shrink-0 overflow-hidden border border-gold bg-[#121212] shadow-[3px_3px_0_#f5bd18]">
+          <div className="relative h-16 w-16 shrink-0 overflow-hidden border border-gold bg-[#121212]">
             {avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={avatarUrl} alt={fullName} className="h-full w-full object-cover grayscale transition duration-300 hover:grayscale-0" />

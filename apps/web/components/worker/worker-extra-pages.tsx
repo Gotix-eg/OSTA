@@ -100,7 +100,7 @@ function WorkerModeSwitcher({
       <div className="grid gap-6 xl:grid-cols-[minmax(360px,0.85fr)_minmax(0,1.25fr)]">
         <div className="border border-white/10 bg-[#111] p-6">
           <div className="flex items-center gap-5">
-            <div className="relative h-24 w-24 shrink-0 overflow-hidden border border-gold bg-[#121212] shadow-[4px_4px_0_#f5bd18]">
+            <div className="relative h-24 w-24 shrink-0 overflow-hidden border border-gold bg-[#121212]">
               {avatarUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={avatarUrl} alt={fullName} className="h-full w-full object-cover grayscale transition duration-300 hover:grayscale-0" />
@@ -278,7 +278,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
     <WorkerProShell locale={locale}>
       <WorkerProTopStrip locale={locale} title={isArabic ? "الإعدادات" : "Settings"} />
 
-      <section className="flex flex-col gap-6 border border-white/10 bg-black p-6 text-white shadow-[5px_5px_0_#1d1600] sm:flex-row sm:items-center sm:justify-between lg:p-8">
+      <section className="flex flex-col gap-6 border border-white/10 bg-black p-6 text-white sm:flex-row sm:items-center sm:justify-between lg:p-8">
         <div className="flex min-w-0 items-center gap-5">
           <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden border border-gold bg-[#111] text-gold sm:h-20 sm:w-20">
             {data.profile.avatarUrl ? (
