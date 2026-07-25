@@ -8,28 +8,16 @@ import { ArrowUpRight, Crosshair, Search } from "lucide-react";
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
 
-type IconType = ComponentType<{ className?: string }>;
+import { PublicFooter } from "@/components/public/public-shell";
 
-export function WorkerProFooter({ locale }: { locale: Locale }) {
-  const isArabic = locale === "ar";
-  return (
-    <footer className="mt-12 flex flex-col gap-4 border-t border-black/15 pb-4 pt-8 text-xs font-bold text-black/60 lg:flex-row lg:items-center lg:justify-between">
-      <div className="flex flex-wrap gap-5">
-        <Link href={`/${locale}/privacy`} className="hover:text-black transition-colors">{isArabic ? "سياسة الخصوصية" : "Privacy"}</Link>
-        <Link href={`/${locale}/terms`} className="hover:text-black transition-colors">{isArabic ? "شروط الاستخدام" : "Terms"}</Link>
-        <Link href={`/${locale}/contact`} className="hover:text-black transition-colors">{isArabic ? "مركز المساعدة" : "Help center"}</Link>
-      </div>
-      <p className="text-black/60">© 2026 OSTA INDUSTRIAL</p>
-    </footer>
-  );
-}
+type IconType = ComponentType<{ className?: string }>;
 
 export function WorkerProShell({ locale, children }: { locale: Locale; children: ReactNode }) {
   return (
     <div className="relative -m-4 min-h-screen bg-gold p-4 text-black sm:-m-6 sm:p-6 lg:-m-8 lg:p-8" dir={locale === "ar" ? "rtl" : "ltr"}>
       <div className="mx-auto max-w-[1280px] space-y-6 lg:space-y-8">
         {children}
-        <WorkerProFooter locale={locale} />
+        <PublicFooter locale={locale} />
       </div>
     </div>
   );
@@ -37,18 +25,18 @@ export function WorkerProShell({ locale, children }: { locale: Locale; children:
 
 export function WorkerProTopStrip({ locale, title, actionHref, actionLabel }: { locale: Locale; title: string; actionHref?: string; actionLabel?: string }) {
   return (
-    <div className="hidden items-center justify-between border border-white/10 bg-black px-6 py-4 text-white shadow-sm lg:flex">
+    <div className="hidden items-center justify-between border-b border-black/20 bg-black px-5 py-3 text-white lg:flex">
       <div>
         <p className="text-[10px] font-black uppercase tracking-[0.24em] text-gold">OSTA PRO</p>
-        <h1 className="mt-0.5 text-xl font-black uppercase text-white">{title}</h1>
+        <h1 className="mt-1 text-lg font-black uppercase text-white">{title}</h1>
       </div>
       <div className="flex items-center gap-3">
-        <div className="flex h-11 w-72 items-center gap-2 border border-white/10 bg-[#121212] px-3.5 text-xs text-white/40">
-          <Search className="h-4 w-4 text-gold" />
+        <div className="flex h-10 w-72 items-center gap-2 border border-white/10 bg-[#121212] px-3 text-xs text-white/40">
+          <Search className="h-4 w-4" />
           <span>{locale === "ar" ? "ابحث في العمليات..." : "Search operations..."}</span>
         </div>
         {actionHref && actionLabel ? (
-          <Link href={actionHref} className="bg-gold px-5 py-3 text-xs font-black uppercase text-black transition-all hover:bg-white active:scale-95">
+          <Link href={actionHref} className="bg-white px-4 py-3 text-xs font-black uppercase text-black transition-colors hover:bg-gold">
             {actionLabel}
           </Link>
         ) : null}
