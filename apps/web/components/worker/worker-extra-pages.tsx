@@ -402,7 +402,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2.5">
               <p className="text-[10px] font-black uppercase tracking-[0.22em] text-gold">{isArabic ? "الملف الشخصي" : "Worker profile"}</p>
-              {data.profile.verificationStatus === "VERIFIED" ? (
+              {data.profile.verificationStatus === "VERIFIED" && Boolean(data.profile.nationalIdFront && data.profile.nationalIdBack) ? (
                 <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/40 bg-emerald-950/70 px-3 py-0.5 text-xs font-black text-emerald-400 shadow-sm">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src="/logo.svg" alt="OSTA" className="h-3.5 w-auto object-contain brightness-125" />
@@ -413,7 +413,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
             </div>
             <div className="mt-1 flex items-center gap-2">
               <h1 className="truncate text-2xl font-black uppercase leading-tight text-white sm:text-3xl">{fullName}</h1>
-              {data.profile.verificationStatus === "VERIFIED" ? (
+              {data.profile.verificationStatus === "VERIFIED" && Boolean(data.profile.nationalIdFront && data.profile.nationalIdBack) ? (
                 <ShieldCheck className="h-6 w-6 text-emerald-400 shrink-0" />
               ) : null}
             </div>
@@ -554,7 +554,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
             <div className="sm:col-span-2 space-y-3 pt-2">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <p className="text-xs font-black uppercase tracking-wider text-gold">{isArabic ? "وثائق الهوية الوطنية" : "National ID Documents"}</p>
-                {data.profile.verificationStatus === "VERIFIED" ? (
+                {data.profile.verificationStatus === "VERIFIED" && Boolean(data.profile.nationalIdFront && data.profile.nationalIdBack) ? (
                   <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/40 bg-emerald-500/15 px-3 py-1 text-xs font-black text-emerald-400">
                     <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
                     {isArabic ? "موثقة ومعتمدة من الإدارة ✓" : "Verified & Approved by Admin ✓"}
@@ -565,7 +565,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
                 <WorkerIdDocumentCard
                   label={isArabic ? "وجه البطاقة الشخصية" : "ID Front"}
                   imageUrl={data.profile.nationalIdFront}
-                  isLocked={data.profile.verificationStatus === "VERIFIED"}
+                  isLocked={data.profile.verificationStatus === "VERIFIED" && Boolean(data.profile.nationalIdFront)}
                   onUpload={async (file) => {
                     const formData = new FormData();
                     formData.append("file", file);
@@ -576,7 +576,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
                 <WorkerIdDocumentCard
                   label={isArabic ? "ظهر البطاقة الشخصية" : "ID Back"}
                   imageUrl={data.profile.nationalIdBack}
-                  isLocked={data.profile.verificationStatus === "VERIFIED"}
+                  isLocked={data.profile.verificationStatus === "VERIFIED" && Boolean(data.profile.nationalIdBack)}
                   onUpload={async (file) => {
                     const formData = new FormData();
                     formData.append("file", file);
@@ -587,7 +587,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
                 <WorkerIdDocumentCard
                   label={isArabic ? "سيلفي مع الهوية" : "Selfie with ID"}
                   imageUrl={data.profile.selfieWithId}
-                  isLocked={data.profile.verificationStatus === "VERIFIED"}
+                  isLocked={data.profile.verificationStatus === "VERIFIED" && Boolean(data.profile.selfieWithId)}
                   onUpload={async (file) => {
                     const formData = new FormData();
                     formData.append("file", file);
