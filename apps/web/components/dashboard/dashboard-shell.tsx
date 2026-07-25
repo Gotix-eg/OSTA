@@ -284,7 +284,7 @@ export function DashboardShell({
                           className={cn(
                             "flex min-h-[6.5rem] flex-col items-center justify-center gap-2 rounded-xl border p-3 text-center transition-all active:scale-95",
                             active
-                              ? "border-gold bg-gold text-black shadow-[4px_4px_0_#000]"
+                              ? "border-gold bg-gold text-black"
                               : "border-white/5 bg-[#121212] text-white hover:border-gold/50"
                           )}
                         >
@@ -342,7 +342,7 @@ export function DashboardShell({
                     await logoutAuthSession();
                     window.location.replace(role === "admin" ? `/${locale}/login/admin` : `/${locale}/login`);
                   }}
-                  className="flex h-14 w-full items-center justify-center gap-3 bg-white text-sm font-black text-black shadow-[4px_4px_0_#000] active:translate-x-1 active:translate-y-1"
+                  className="flex h-14 w-full items-center justify-center gap-3 bg-white text-sm font-black text-black active:scale-95"
                 >
                   <LogOut className="h-5 w-5" />
                   {locale === "ar" ? "تسجيل الخروج" : "Logout"}
@@ -414,8 +414,8 @@ export function DashboardShell({
                   className={cn(
                     "inline-flex h-11 items-center justify-center px-4 text-[10px] font-bold uppercase tracking-widest transition-all duration-300",
                     isStitchDashboard
-                      ? cn("hidden rounded border bg-white text-black shadow-[4px_4px_0_#000] hover:-translate-y-0.5 sm:inline-flex lg:inline-flex", isAdminDashboard ? "border-gold" : "border-black")
-                      : "rounded-full border border-white/5 bg-white/5 text-white shadow-xl hover:bg-white/10"
+                      ? cn("hidden rounded border bg-white text-black hover:bg-white/90 sm:inline-flex lg:inline-flex", isAdminDashboard ? "border-gold" : "border-black")
+                      : "rounded-full border border-white/5 bg-white/5 text-white hover:bg-white/10"
                   )}
                 />
                 <NotificationsPopover locale={locale} />
@@ -522,16 +522,6 @@ function SidebarContent({
           <img src="/logo.svg" alt="Ostafy" className="h-8 w-auto object-contain" />
         </Link>
 
-        <p className={cn("mt-1 text-[10px] font-black uppercase tracking-[0.24em]", isStitchSidebar ? "text-gold" : "hidden")}>
-          {role === "worker"
-            ? locale === "ar" ? "فني / صنايعي" : "Worker"
-            : role === "client"
-              ? locale === "ar" ? "عميل" : "Client"
-              : role === "vendor"
-                ? locale === "ar" ? "مورد" : "Vendor"
-                : locale === "ar" ? "مسؤول" : "Admin"}
-        </p>
-
         {!isStitchSidebar ? <div className={cn("mt-5 flex w-full items-center justify-between border px-3 py-3 text-xs", "rounded-2xl border-white/5 bg-white/5 px-4")}>
           <div>
             <p className="opacity-40">{locale === "ar" ? "الوضع" : "Mode"}</p>
@@ -561,7 +551,7 @@ function SidebarContent({
                     ? cn(
                       "text-gold",
                       isAdminDashboard
-                        ? "border-gold bg-gold text-black shadow-[6px_6px_0_#2f2400]"
+                        ? "border-gold bg-gold text-black"
                         : "border-b-2 border-gold bg-transparent"
                     )
                     : cn(

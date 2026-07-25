@@ -27,8 +27,7 @@ export function WorkerProTopStrip({ locale, title, actionHref, actionLabel }: { 
   return (
     <div className="hidden items-center justify-between border-b border-black/20 bg-black px-5 py-3 text-white lg:flex">
       <div>
-        <p className="text-[10px] font-black uppercase tracking-[0.24em] text-gold">{locale === "ar" ? "فني / صنايعي" : "Worker"}</p>
-        <h1 className="mt-1 text-lg font-black uppercase text-white">{title}</h1>
+        <h1 className="text-lg font-black uppercase text-white">{title}</h1>
       </div>
       <div className="flex items-center gap-3">
         <div className="flex h-10 w-72 items-center gap-2 border border-white/10 bg-[#121212] px-3 text-xs text-white/40">
@@ -69,7 +68,6 @@ export function WorkerProHero({
       <div className="relative overflow-hidden border border-white/10 bg-black p-6 text-white lg:p-8">
         <div className="absolute inset-0 opacity-25 [background:radial-gradient(circle_at_20%_20%,#f5bd18_0,transparent_32%),linear-gradient(135deg,transparent_0,#171717_70%)]" />
         <div className="relative z-10 max-w-3xl">
-          {eyebrow ? <p className="mb-3 inline-flex border border-gold/60 bg-gold px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-black">{eyebrow}</p> : null}
           <h2 className="text-4xl font-black uppercase leading-none text-white sm:text-5xl lg:text-6xl">
             {title}
             {highlight ? <span className="text-gold"> {highlight}</span> : null}
@@ -102,13 +100,12 @@ export function WorkerProMetric({ label, value, note, icon: Icon, dark, index }:
   );
 }
 
-export function WorkerProPanel({ eyebrow, title, action, children, dark = true }: { eyebrow?: string; title: string; action?: ReactNode; children: ReactNode; dark?: boolean }) {
+export function WorkerProPanel({ title, action, children, dark = true }: { eyebrow?: string; title: string; action?: ReactNode; children: ReactNode; dark?: boolean }) {
   return (
     <section className={cn("border p-5 lg:p-6", dark ? "border-white/10 bg-black text-white" : "border-black/15 bg-[#f7c21c] text-black")}>
       <div className="mb-5 flex flex-wrap items-end justify-between gap-4 border-b border-current/15 pb-4">
         <div>
-          {eyebrow ? <p className={cn("text-[10px] font-black uppercase tracking-[0.22em]", dark ? "text-gold" : "text-black/55")}>{eyebrow}</p> : null}
-          <h2 className={cn("mt-1 text-2xl font-black uppercase", dark ? "text-white" : "text-black")}>{title}</h2>
+          <h2 className={cn("text-2xl font-black uppercase", dark ? "text-white" : "text-black")}>{title}</h2>
         </div>
         {action}
       </div>
