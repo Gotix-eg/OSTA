@@ -676,7 +676,6 @@ export function WorkerDashboardHome({ locale }: { locale: Locale }) {
       <WorkerProTopStrip locale={locale} title={isArabic ? "الرئيسية" : "Dashboard"} actionHref={`/${locale}/worker/requests/incoming`} actionLabel={isArabic ? "طلب جديد" : "New request"} />
       <WorkerProHero
         locale={locale}
-        eyebrow={isArabic ? "لوحة المحترفين" : "Pro dashboard"}
         title={isArabic ? "مرحباً بك،" : "Welcome back,"}
         highlight={isArabic ? "محترف" : "Osama"}
         subtitle={

@@ -56,7 +56,7 @@ export function WorkerProHero({
   side
 }: {
   locale: Locale;
-  eyebrow: string;
+  eyebrow?: string;
   title: string;
   highlight?: string;
   subtitle: string;
@@ -69,7 +69,7 @@ export function WorkerProHero({
       <div className="relative overflow-hidden border border-white/10 bg-black p-6 text-white lg:p-8">
         <div className="absolute inset-0 opacity-25 [background:radial-gradient(circle_at_20%_20%,#f5bd18_0,transparent_32%),linear-gradient(135deg,transparent_0,#171717_70%)]" />
         <div className="relative z-10 max-w-3xl">
-          <p className="mb-3 inline-flex border border-gold/60 bg-gold px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-black">{eyebrow}</p>
+          {eyebrow ? <p className="mb-3 inline-flex border border-gold/60 bg-gold px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-black">{eyebrow}</p> : null}
           <h2 className="text-4xl font-black uppercase leading-none text-white sm:text-5xl lg:text-6xl">
             {title}
             {highlight ? <span className="text-gold"> {highlight}</span> : null}

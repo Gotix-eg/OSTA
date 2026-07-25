@@ -124,7 +124,6 @@ export function WorkerIncomingRequestsPage({ locale, initialData }: { locale: Lo
       <WorkerProTopStrip locale={locale} title={isArabic ? "الطلبات الواردة" : "Service requests"} actionHref={`/${locale}/worker/requests/active`} actionLabel={isArabic ? "النشطة" : "Active jobs"} />
       <WorkerProHero
         locale={locale}
-        eyebrow={isArabic ? "لوحة المحترفين" : "Pro dashboard"}
         title={isArabic ? "طلبات" : "Incoming"}
         highlight={isArabic ? "واردة" : "requests"}
         subtitle={isArabic ? "راجع الطلبات القريبة مع الميزانية والمسافة واتخذ القرار بسرعة." : "Review nearby jobs with budget, distance, and fast accept or reject controls."}
