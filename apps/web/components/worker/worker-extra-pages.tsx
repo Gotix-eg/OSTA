@@ -306,10 +306,40 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
   const liveData = useLiveApiData("/workers/settings", initialData);
   const [data, setData] = useState(initialData);
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved">("idle");
+  const avatarInputRef = useRef<HTMLInputElement>(null);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
 
   useEffect(() => {
     setData(liveData);
   }, [liveData]);
+
+  async function handleAvatarUploadSettings(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    setIsUploadingAvatar(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData
+      });
+      if (!res.ok) throw new Error("Upload failed");
+      const resData = await res.json();
+      setData((prev) => ({
+        ...prev,
+        profile: {
+          ...prev.profile,
+          avatarUrl: resData.url
+        }
+      }));
+    } catch (err) {
+      console.error("Avatar upload failed", err);
+    } finally {
+      setIsUploadingAvatar(false);
+      if (avatarInputRef.current) avatarInputRef.current.value = "";
+    }
+  }
 
   function handleSave() {
     setSaveState("saving");
@@ -331,6 +361,12 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
     bankLabel: data.payout?.bankLabel ?? ""
   };
   const fullName = `${data.profile.firstName} ${data.profile.lastName}`.trim() || "OSTA Pro";
+  const initials = fullName
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join("") || "O";
 
   return (
     <WorkerProShell locale={locale}>
@@ -338,13 +374,30 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
 
       <section className="flex flex-col gap-6 border border-white/10 bg-black p-6 text-white sm:flex-row sm:items-center sm:justify-between lg:p-8">
         <div className="flex min-w-0 items-center gap-5">
-          <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden border border-gold bg-[#111] text-gold sm:h-20 sm:w-20">
-            {data.profile.avatarUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={data.profile.avatarUrl} alt={isArabic ? "صورة الفني" : "Worker avatar"} className="h-full w-full object-cover" />
-            ) : (
-              <UserCircle2 className="h-8 w-8 sm:h-10 sm:w-10" />
-            )}
+          <div className="relative group shrink-0">
+            <div
+              onClick={() => avatarInputRef.current?.click()}
+              className="relative flex h-16 w-16 cursor-pointer items-center justify-center overflow-hidden border border-gold bg-[#111] text-gold sm:h-20 sm:w-20 transition hover:border-gold/80"
+            >
+              {data.profile.avatarUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={data.profile.avatarUrl} alt={isArabic ? "صورة الفني" : "Worker avatar"} className="h-full w-full object-cover transition duration-300 group-hover:scale-105" />
+              ) : (
+                <UserCircle2 className="h-8 w-8 sm:h-10 sm:w-10" />
+              )}
+              <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
+                <Camera className="h-4 w-4 text-gold" />
+                <span className="text-[8px] font-black uppercase text-white">{isUploadingAvatar ? "..." : isArabic ? "تغيير" : "Change"}</span>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => avatarInputRef.current?.click()}
+              className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-gold text-black shadow-lg transition hover:scale-110 active:scale-95"
+              title={isArabic ? "تغيير الصورة الشخصية" : "Change profile photo"}
+            >
+              <Camera className="h-3 w-3" />
+            </button>
           </div>
           <div className="min-w-0">
             <p className="text-[10px] font-black uppercase tracking-[0.22em] text-gold">{isArabic ? "الملف الشخصي" : "Worker profile"}</p>
@@ -359,6 +412,53 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
 
       <div className="grid gap-6 xl:grid-cols-[1fr_1fr]">
         <WorkerProPanel title={isArabic ? "البيانات الشخصية" : "Personal info"} eyebrow={isArabic ? "بيانات الفني" : "worker identity"}>
+          <div className="mb-6 flex flex-col sm:flex-row items-center gap-5 rounded-none border border-white/10 bg-[#111] p-4">
+            <div className="relative group shrink-0">
+              <div
+                onClick={() => avatarInputRef.current?.click()}
+                className="relative h-20 w-20 cursor-pointer overflow-hidden border border-gold bg-[#121212] transition hover:border-gold/80"
+              >
+                {data.profile.avatarUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={data.profile.avatarUrl} alt={fullName} className="h-full w-full object-cover transition duration-300 group-hover:scale-105" />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center bg-gold text-xl font-black text-black">{initials}</div>
+                )}
+                <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
+                  <Camera className="h-4 w-4 text-gold" />
+                  <span className="text-[8px] font-black uppercase text-white">{isUploadingAvatar ? (isArabic ? "جاري..." : "Uploading...") : isArabic ? "تغيير" : "Change"}</span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => avatarInputRef.current?.click()}
+                className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-gold text-black shadow-lg transition hover:scale-110 active:scale-95"
+                title={isArabic ? "تغيير الصورة الشخصية" : "Change profile photo"}
+              >
+                <Camera className="h-3 w-3" />
+              </button>
+              <input
+                type="file"
+                accept="image/*"
+                ref={avatarInputRef}
+                onChange={(e) => void handleAvatarUploadSettings(e)}
+                className="hidden"
+              />
+            </div>
+            <div className="space-y-1 text-center sm:text-start">
+              <span className="text-xs font-black uppercase tracking-wider text-gold">{isArabic ? "الصورة الشخصية" : "Profile Picture"}</span>
+              <p className="text-xs font-medium text-white/50">{isArabic ? "اضغط على الصورة أو زر الكاميرا لرفع صورة جديدة" : "Click avatar or camera icon to upload a new profile image"}</p>
+              <button
+                type="button"
+                onClick={() => avatarInputRef.current?.click()}
+                className="mt-2 inline-flex items-center gap-2 border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-bold text-white transition hover:bg-gold hover:text-black"
+              >
+                <Camera className="h-3.5 w-3.5" />
+                {isArabic ? "تحميل صورة جديدة" : "Upload new photo"}
+              </button>
+            </div>
+          </div>
+
           <div className="grid gap-4 sm:grid-cols-2">
             {[
               { key: "firstName", label: isArabic ? "الاسم الأول" : "First name" },
