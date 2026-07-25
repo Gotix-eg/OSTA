@@ -600,7 +600,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
           </div>
         </WorkerProPanel>
 
-        <WorkerProPanel title={isArabic ? "التوفر والتحويل" : "Availability & payout"}>
+        <WorkerProPanel title={isArabic ? "نظام شغلي" : "Work preferences & payout"}>
           <div className="grid gap-4">
             {[
               { key: "isAvailable", label: isArabic ? "متاح للطلبات" : "Available for jobs" },
