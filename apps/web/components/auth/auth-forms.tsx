@@ -448,7 +448,7 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
         }
       } else if (payload.user.role !== activeTab) {
         // Switch session role seamlessly if authorized
-        if (activeTab === "CLIENT") {
+        if (activeTab === "CLIENT" && payload.user.hasClientProfile) {
           const switchRes = await postApiData<AuthSuccessResponse, { targetRole: string }>("/auth/switch-role", { targetRole: "CLIENT" });
           payload.accessToken = switchRes.accessToken;
           payload.refreshToken = switchRes.refreshToken;

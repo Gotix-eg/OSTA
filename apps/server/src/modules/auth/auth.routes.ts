@@ -337,14 +337,7 @@ router.post("/switch-role", authenticate, catchAsync(async (request, response) =
 
   // Ensure target profile exists
   if (targetRole === "CLIENT" && !user.clientProfile) {
-    await prisma.clientProfile.create({
-      data: {
-        userId: user.id,
-        totalRequests: 0,
-        walletBalance: 0,
-        isVip: false
-      }
-    });
+    throw new ApiError(400, "يجب التسجيل كعميل أولاً لتفعيل وضع العميل");
   } else if (targetRole === "WORKER" && !user.workerProfile) {
     throw new ApiError(400, "يجب التسجيل كفني أولاً وتوثيق المستندات لتفعيل وضع الفني");
   } else if (targetRole === "VENDOR" && !user.vendorProfile) {
