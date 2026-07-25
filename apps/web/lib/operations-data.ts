@@ -246,6 +246,14 @@ export interface WorkerSettingsData {
     acceptsEmergency: boolean;
     acceptsSameDay: boolean;
     serviceAreas: string[];
+    workingHours?: Array<{
+      day: string;
+      enabled: boolean;
+      is24Hours: boolean;
+      startTime: string;
+      endTime: string;
+    }> | null;
+    offDates?: string[];
   };
   payout: {
     method: string;

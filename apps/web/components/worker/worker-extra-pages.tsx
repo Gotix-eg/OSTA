@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-import { AlertCircle, BriefcaseBusiness, Camera, Check, CheckCircle2, Loader2, Lock, Save, ShieldCheck, Sparkles, Star, Store, TimerReset, User, UserCircle2 } from "lucide-react";
+import { AlertCircle, BriefcaseBusiness, CalendarDays, Camera, Check, CheckCircle2, Clock, Loader2, Lock, Save, ShieldCheck, Sparkles, Star, Store, TimerReset, Trash2, User, UserCircle2 } from "lucide-react";
 
 import {
   WorkerProAction,
@@ -639,6 +639,14 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
                 </div>
               ))}
             </div>
+
+            <WorkerScheduleSection
+              locale={locale}
+              workingHours={data.workPreferences.workingHours}
+              offDates={data.workPreferences.offDates}
+              onChangeSchedule={(newSchedule) => setData({ ...data, workPreferences: { ...data.workPreferences, workingHours: newSchedule } })}
+              onChangeOffDates={(newOffDates) => setData({ ...data, workPreferences: { ...data.workPreferences, offDates: newOffDates } })}
+            />
           </div>
         </WorkerProPanel>
       </div>
@@ -912,6 +920,208 @@ function WorkerIdDocumentCard({
           className="hidden"
         />
       ) : null}
+    </div>
+  );
+}
+
+const DEFAULT_DAYS = [
+  { key: "sat", nameAr: "السبت", nameEn: "Saturday" },
+  { key: "sun", nameAr: "الأحد", nameEn: "Sunday" },
+  { key: "mon", nameAr: "الإثنين", nameEn: "Monday" },
+  { key: "tue", nameAr: "الثلاثاء", nameEn: "Tuesday" },
+  { key: "wed", nameAr: "الأربعاء", nameEn: "Wednesday" },
+  { key: "thu", nameAr: "الخميس", nameEn: "Thursday" },
+  { key: "fri", nameAr: "الجمعة", nameEn: "Friday" }
+];
+
+export interface DaySchedule {
+  day: string;
+  enabled: boolean;
+  is24Hours: boolean;
+  startTime: string;
+  endTime: string;
+}
+
+function WorkerScheduleSection({
+  locale,
+  workingHours,
+  offDates,
+  onChangeSchedule,
+  onChangeOffDates
+}: {
+  locale: Locale;
+  workingHours?: DaySchedule[] | null;
+  offDates?: string[];
+  onChangeSchedule: (schedule: DaySchedule[]) => void;
+  onChangeOffDates: (dates: string[]) => void;
+}) {
+  const isArabic = locale === "ar";
+  const [newOffDate, setNewOffDate] = useState("");
+
+  const scheduleMap = new Map<string, DaySchedule>();
+  if (Array.isArray(workingHours)) {
+    workingHours.forEach((item) => scheduleMap.set(item.day, item));
+  }
+
+  const currentSchedule: DaySchedule[] = DEFAULT_DAYS.map((d) => {
+    const existing = scheduleMap.get(d.key);
+    return (
+      existing || {
+        day: d.key,
+        enabled: d.key !== "fri",
+        is24Hours: false,
+        startTime: "08:00",
+        endTime: "21:00"
+      }
+    );
+  });
+
+  const currentOffDates = offDates || [];
+
+  function updateDay(dayKey: string, partial: Partial<DaySchedule>) {
+    const updated = currentSchedule.map((item) => (item.day === dayKey ? { ...item, ...partial } : item));
+    onChangeSchedule(updated);
+  }
+
+  function handleAddOffDate() {
+    if (!newOffDate) return;
+    if (currentOffDates.includes(newOffDate)) return;
+    onChangeOffDates([...currentOffDates, newOffDate]);
+    setNewOffDate("");
+  }
+
+  function handleRemoveOffDate(dateStr: string) {
+    onChangeOffDates(currentOffDates.filter((d) => d !== dateStr));
+  }
+
+  return (
+    <div className="space-y-5 pt-4 border-t border-white/10">
+      <div className="space-y-1">
+        <h3 className="text-xs font-black uppercase text-gold tracking-wider flex items-center gap-2">
+          <Clock className="h-4 w-4 text-gold" />
+          {isArabic ? "جدول أوقات العمل الأسبوعي" : "Weekly Work Schedule"}
+        </h3>
+        <p className="text-xs text-white/50">
+          {isArabic
+            ? "حدد أيام وساعات العمل (مثال: من 08 صباحاً إلى 09 مساءً)، أو اختر (24 ساعة)، أو اضبط الأيام العطلة."
+            : "Set your working days and hours (e.g. 08:00 AM to 09:00 PM), select 24 hours, or set rest days."}
+        </p>
+      </div>
+
+      <div className="space-y-2">
+        {DEFAULT_DAYS.map((dayObj) => {
+          const item = currentSchedule.find((s) => s.day === dayObj.key)!;
+          const dayName = isArabic ? dayObj.nameAr : dayObj.nameEn;
+
+          return (
+            <div
+              key={dayObj.key}
+              className={cn(
+                "border p-3 space-y-2 transition",
+                item.enabled ? "border-white/10 bg-[#141414]" : "border-white/5 bg-[#0d0d0d] opacity-60"
+              )}
+            >
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    checked={item.enabled}
+                    onChange={(e) => updateDay(dayObj.key, { enabled: e.target.checked })}
+                    className="h-4 w-4 accent-gold cursor-pointer"
+                  />
+                  <span className="text-xs font-black text-white">{dayName}</span>
+                  {!item.enabled ? (
+                    <span className="text-[10px] font-black text-rose-400/80 bg-rose-950/40 border border-rose-500/20 px-2 py-0.5">
+                      {isArabic ? "عطلة" : "Off"}
+                    </span>
+                  ) : null}
+                </div>
+
+                {item.enabled ? (
+                  <div className="flex items-center gap-3">
+                    <label className="flex items-center gap-1.5 text-xs text-white/70 cursor-pointer select-none">
+                      <input
+                        type="checkbox"
+                        checked={item.is24Hours}
+                        onChange={(e) => updateDay(dayObj.key, { is24Hours: e.target.checked })}
+                        className="h-3.5 w-3.5 accent-gold"
+                      />
+                      <span className="font-bold text-[11px] text-gold">{isArabic ? "24 ساعة" : "24 Hours"}</span>
+                    </label>
+
+                    {!item.is24Hours ? (
+                      <div className="flex items-center gap-2" dir="ltr">
+                        <input
+                          type="time"
+                          value={item.startTime || "08:00"}
+                          onChange={(e) => updateDay(dayObj.key, { startTime: e.target.value })}
+                          className="h-8 w-24 border border-white/15 bg-black px-2 text-xs font-mono text-white outline-none focus:border-gold"
+                        />
+                        <span className="text-xs text-white/40">-</span>
+                        <input
+                          type="time"
+                          value={item.endTime || "21:00"}
+                          onChange={(e) => updateDay(dayObj.key, { endTime: e.target.value })}
+                          className="h-8 w-24 border border-white/15 bg-black px-2 text-xs font-mono text-white outline-none focus:border-gold"
+                        />
+                      </div>
+                    ) : null}
+                  </div>
+                ) : null}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="space-y-3 pt-2 border-t border-white/10">
+        <h4 className="text-xs font-black uppercase text-gold tracking-wider flex items-center gap-2">
+          <CalendarDays className="h-4 w-4 text-gold" />
+          {isArabic ? "استثناءات وأيام عطلة خاصة (مثال: 20 مارس)" : "Specific Off Dates / Holidays"}
+        </h4>
+
+        <div className="flex gap-2">
+          <input
+            type="date"
+            value={newOffDate}
+            onChange={(e) => setNewOffDate(e.target.value)}
+            className="h-10 border border-white/15 bg-[#141414] px-3 font-mono text-xs text-white outline-none focus:border-gold min-w-0 flex-1"
+          />
+          <button
+            type="button"
+            onClick={handleAddOffDate}
+            className="h-10 px-4 bg-gold font-black text-black text-xs uppercase hover:bg-gold/90 transition shrink-0"
+          >
+            {isArabic ? "+ إضافة استثناء" : "+ Add Off Date"}
+          </button>
+        </div>
+
+        {currentOffDates.length > 0 ? (
+          <div className="flex flex-wrap gap-2 pt-1">
+            {currentOffDates.map((dateStr) => (
+              <span
+                key={dateStr}
+                className="inline-flex items-center gap-2 border border-rose-500/30 bg-rose-950/40 px-3 py-1.5 text-xs font-mono text-rose-300"
+              >
+                <span>{dateStr}</span>
+                <span className="text-[10px] font-black text-rose-400">({isArabic ? "غير متاح" : "Off"})</span>
+                <button
+                  type="button"
+                  onClick={() => handleRemoveOffDate(dateStr)}
+                  className="text-rose-400 hover:text-white font-bold ml-1"
+                  title={isArabic ? "حذف" : "Remove"}
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+          </div>
+        ) : (
+          <p className="text-[11px] text-white/40 italic">
+            {isArabic ? "لا توجد أيام عطلة خاصة مضافة حالياً" : "No specific off dates added yet."}
+          </p>
+        )}
+      </div>
     </div>
   );
 }

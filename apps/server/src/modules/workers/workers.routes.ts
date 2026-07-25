@@ -671,7 +671,9 @@ router.get("/settings", catchAsync(async (request, response) => {
       isAvailable: user.workerProfile?.isAvailable ?? false,
       notificationsEnabledApp: user.workerProfile?.notificationsEnabledApp ?? true,
       notificationsEnabledEmail: user.workerProfile?.notificationsEnabledEmail ?? true,
-      subscriptionTier: user.workerProfile?.subscriptionTier ?? "free"
+      subscriptionTier: user.workerProfile?.subscriptionTier ?? "free",
+      workingHours: user.workerProfile?.workingHours ?? null,
+      offDates: user.workerProfile?.offDates ?? []
     }
   };
 
@@ -680,7 +682,7 @@ router.get("/settings", catchAsync(async (request, response) => {
 
 router.patch("/settings", catchAsync(async (request, response) => {
   const userId = request.auth!.userId;
-  const { notificationsEnabledApp, notificationsEnabledEmail, isAvailable, nationalIdNumber, nationalIdFront, nationalIdBack, selfieWithId } = request.body;
+  const { notificationsEnabledApp, notificationsEnabledEmail, isAvailable, nationalIdNumber, nationalIdFront, nationalIdBack, selfieWithId, workingHours, offDates } = request.body;
 
   const worker = await prisma.workerProfile.findUnique({
     where: { userId }
@@ -696,7 +698,9 @@ router.patch("/settings", catchAsync(async (request, response) => {
       nationalIdNumber: nationalIdNumber !== undefined ? nationalIdNumber : undefined,
       nationalIdFront: nationalIdFront !== undefined ? nationalIdFront : undefined,
       nationalIdBack: nationalIdBack !== undefined ? nationalIdBack : undefined,
-      selfieWithId: selfieWithId !== undefined ? selfieWithId : undefined
+      selfieWithId: selfieWithId !== undefined ? selfieWithId : undefined,
+      workingHours: workingHours !== undefined ? workingHours : undefined,
+      offDates: offDates !== undefined ? offDates : undefined
     }
   });
 

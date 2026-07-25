@@ -242,6 +242,8 @@ model WorkerProfile {
   nationalIdFront       String?
   nationalIdBack        String?
   selfieWithId          String?
+  workingHours          Json?
+  offDates              String[]                 @default([])
   profession            String?
   nationalIdNumber      String?                  @unique
   criminalRecord        String?
