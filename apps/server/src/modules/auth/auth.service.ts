@@ -100,6 +100,7 @@ function toPublicUser(user: {
     avatarUrl: user.avatarUrl,
     preferredLanguage: user.preferredLanguage,
     status: user.status,
+    emailVerified: Boolean((user as any).emailVerified),
     hasClientProfile: hasClient,
     hasWorkerProfile: hasWorker,
     hasVendorProfile: hasVendor,
@@ -726,5 +727,80 @@ export const authService = {
     ]);
 
     return { reset: true };
+  },
+
+  async sendEmailVerification(userId: string) {
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new ApiError(404, "المستخدم غير موجود", "USER_NOT_FOUND");
+    }
+    if (!user.email) {
+      throw new ApiError(400, "لا يوجد بريد إلكتروني مرتبط بالحساب", "EMAIL_REQUIRED");
+    }
+    if (user.emailVerified) {
+      throw new ApiError(400, "البريد الإلكتروني موثق بالفعل", "ALREADY_VERIFIED");
+    }
+
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000);
+
+    await prisma.otpCode.create({
+      data: {
+        userId: user.id,
+        code: await hashPassword(code),
+        type: "EMAIL_VERIFICATION",
+        expiresAt
+      }
+    });
+
+    sendVerificationEmail(user.email, code, user.firstName).catch(err =>
+      console.error("Failed to send verification email:", err)
+    );
+
+    return {
+      sent: true,
+      email: user.email,
+      message: "تم إرسال رمز التحقق إلى بريدك الإلكتروني"
+    };
+  },
+
+  async verifyEmailOtp(userId: string, code: string) {
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new ApiError(404, "المستخدم غير موجود", "USER_NOT_FOUND");
+    }
+
+    const candidateOtps = await prisma.otpCode.findMany({
+      where: {
+        userId: user.id,
+        type: "EMAIL_VERIFICATION",
+        isUsed: false,
+        expiresAt: { gt: new Date() }
+      },
+      orderBy: { createdAt: "desc" },
+      take: 5
+    });
+
+    const otp = candidateOtps.find((record) => otpMatches(record.code, user.id, "EMAIL_VERIFICATION", code));
+
+    if (!otp) {
+      throw new ApiError(400, "رمز التحقق غير صحيح أو منتهي الصلاحية", "INVALID_CODE");
+    }
+
+    await prisma.$transaction([
+      prisma.user.update({
+        where: { id: user.id },
+        data: { emailVerified: true }
+      }),
+      prisma.otpCode.update({
+        where: { id: otp.id },
+        data: { isUsed: true }
+      })
+    ]);
+
+    return {
+      emailVerified: true,
+      message: "تم توثيق البريد الإلكتروني بنجاح"
+    };
   }
 };

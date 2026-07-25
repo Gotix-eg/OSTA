@@ -294,6 +294,19 @@ router.patch("/profile", authenticate, catchAsync(async (request, response) => {
   );
 }));
 
+router.post("/send-email-verification", authenticate, catchAsync(async (request, response) => {
+  const userId = request.auth!.userId;
+  const result = await authService.sendEmailVerification(userId);
+  response.status(200).json(successResponse(result, result.message));
+}));
+
+router.post("/verify-email-otp", authenticate, catchAsync(async (request, response) => {
+  const userId = request.auth!.userId;
+  const { code } = request.body as { code: string };
+  const result = await authService.verifyEmailOtp(userId, code);
+  response.status(200).json(successResponse(result, result.message));
+}));
+
 router.post("/switch-role", authenticate, catchAsync(async (request, response) => {
   const userId = request.auth!.userId;
   const { targetRole: bodyTargetRole } = request.body as { targetRole?: string };

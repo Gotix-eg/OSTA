@@ -38,6 +38,7 @@ import { postApiData } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
 import type { ClientFavoritesData, ClientSettingsData, ClientWalletData } from "@/lib/operations-data";
 import { cn } from "@/lib/utils";
+import { EmailVerificationField } from "@/components/worker/worker-extra-pages";
 
 function formatNumber(locale: Locale, value: number) {
   return new Intl.NumberFormat(locale === "ar" ? "ar-EG" : "en-US", { maximumFractionDigits: 0 }).format(value);
@@ -556,7 +557,12 @@ export function ClientSettingsPage({ locale, initialData }: { locale: Locale; in
           <SettingsPanel title={labels.identity} icon={User}>
             <div className="hidden space-y-6 md:block">
               <SettingsInput label={labels.fullName} value={fullName} readOnly />
-              <SettingsInput label={labels.email} value={data.profile.email} onChange={(value) => setData({ ...data, profile: { ...data.profile, email: value } })} type="email" />
+              <EmailVerificationField
+                locale={locale}
+                email={data.profile.email ?? ""}
+                emailVerified={Boolean((data.profile as any).emailVerified)}
+                onChangeEmail={(val) => setData({ ...data, profile: { ...data.profile, email: val } })}
+              />
               <label className="space-y-2 block">
                 <span className="block text-[10px] font-black uppercase tracking-[0.18em] text-white/40">{labels.phone}</span>
                 <div className="flex gap-2">
@@ -577,9 +583,14 @@ export function ClientSettingsPage({ locale, initialData }: { locale: Locale; in
                 <SettingsInput label={labels.firstName} value={data.profile.firstName} onChange={(value) => setData({ ...data, profile: { ...data.profile, firstName: value } })} />
                 <SettingsInput label={labels.lastName} value={data.profile.lastName} onChange={(value) => setData({ ...data, profile: { ...data.profile, lastName: value } })} />
               </div>
-              <SettingsInput label={labels.email} value={data.profile.email} onChange={(value) => setData({ ...data, profile: { ...data.profile, email: value } })} type="email" />
+              <EmailVerificationField
+                locale={locale}
+                email={data.profile.email ?? ""}
+                emailVerified={Boolean((data.profile as any).emailVerified)}
+                onChangeEmail={(val) => setData({ ...data, profile: { ...data.profile, email: val } })}
+              />
               <SettingsInput label={labels.phone} value={data.profile.phone} onChange={(value) => setData({ ...data, profile: { ...data.profile, phone: value } })} type="tel" />
-              <button type="button" onClick={handleSave} className="mt-2 bg-white px-5 py-4 text-xs font-black uppercase tracking-[0.16em] text-black shadow-[4px_4px_0_#f5bd18] active:translate-x-1 active:translate-y-1 active:shadow-none">
+              <button type="button" onClick={handleSave} className="mt-2 bg-white px-5 py-4 text-xs font-black uppercase tracking-[0.16em] text-black active:translate-x-1 active:translate-y-1">
                 {labels.update}
               </button>
             </div>

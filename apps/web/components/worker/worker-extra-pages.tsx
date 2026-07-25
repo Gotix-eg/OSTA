@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-import { BriefcaseBusiness, Camera, Check, Loader2, Save, ShieldCheck, Sparkles, Star, Store, TimerReset, User, UserCircle2 } from "lucide-react";
+import { AlertCircle, BriefcaseBusiness, Camera, Check, CheckCircle2, Loader2, Save, ShieldCheck, Sparkles, Star, Store, TimerReset, User, UserCircle2 } from "lucide-react";
 
 import {
   WorkerProAction,
@@ -460,29 +460,40 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            {[
-              { key: "firstName", label: isArabic ? "الاسم الأول" : "First name" },
-              { key: "lastName", label: isArabic ? "اسم العائلة" : "Last name" },
-              { key: "email", label: isArabic ? "البريد الإلكتروني" : "Email" },
-              { key: "phone", label: isArabic ? "رقم الهاتف" : "Phone" }
-            ].map((field) => (
-              <label key={field.key} className="space-y-2">
-                <span className="text-sm font-black text-white/45">{field.label}</span>
-                <input
-                  value={
-                    field.key === "phone"
-                      ? formatPhoneNumber(data.profile.phone)
-                      : (data.profile[field.key as keyof typeof data.profile] ?? "")
-                  }
-                  onChange={(event) => setData({ ...data, profile: { ...data.profile, [field.key]: event.target.value } })}
-                  dir={field.key === "phone" || field.key === "email" ? "ltr" : undefined}
-                  className={cn(
-                    "h-12 w-full border border-white/10 bg-[#111] px-4 text-white outline-none focus:border-gold",
-                    field.key === "phone" || field.key === "email" ? "text-start font-mono" : ""
-                  )}
-                />
-              </label>
-            ))}
+            <label className="space-y-2">
+              <span className="text-sm font-black text-white/45">{isArabic ? "الاسم الأول" : "First name"}</span>
+              <input
+                value={data.profile.firstName ?? ""}
+                onChange={(e) => setData({ ...data, profile: { ...data.profile, firstName: e.target.value } })}
+                className="h-12 w-full border border-white/10 bg-[#111] px-4 text-white outline-none focus:border-gold"
+              />
+            </label>
+
+            <label className="space-y-2">
+              <span className="text-sm font-black text-white/45">{isArabic ? "اسم العائلة" : "Last name"}</span>
+              <input
+                value={data.profile.lastName ?? ""}
+                onChange={(e) => setData({ ...data, profile: { ...data.profile, lastName: e.target.value } })}
+                className="h-12 w-full border border-white/10 bg-[#111] px-4 text-white outline-none focus:border-gold"
+              />
+            </label>
+
+            <EmailVerificationField
+              locale={locale}
+              email={data.profile.email ?? ""}
+              emailVerified={Boolean((data.profile as any).emailVerified)}
+              onChangeEmail={(val) => setData({ ...data, profile: { ...data.profile, email: val } })}
+            />
+
+            <label className="space-y-2">
+              <span className="text-sm font-black text-white/45">{isArabic ? "رقم الهاتف" : "Phone"}</span>
+              <input
+                value={formatPhoneNumber(data.profile.phone)}
+                onChange={(e) => setData({ ...data, profile: { ...data.profile, phone: e.target.value } })}
+                dir="ltr"
+                className="h-12 w-full border border-white/10 bg-[#111] px-4 text-white outline-none focus:border-gold text-start font-mono"
+              />
+            </label>
           </div>
         </WorkerProPanel>
 
@@ -531,5 +542,163 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
 
       <WorkerModeSwitcher locale={locale} fullName={fullName} avatarUrl={data.profile.avatarUrl} email={data.profile.email} phone={data.profile.phone} />
     </WorkerProShell>
+  );
+}
+
+export function EmailVerificationField({
+  locale,
+  email,
+  emailVerified,
+  onChangeEmail,
+  onVerified
+}: {
+  locale: Locale;
+  email: string;
+  emailVerified: boolean;
+  onChangeEmail: (val: string) => void;
+  onVerified?: () => void;
+}) {
+  const isArabic = locale === "ar";
+  const [verified, setVerified] = useState(emailVerified);
+  const [sendingCode, setSendingCode] = useState(false);
+  const [verifyingOtp, setVerifyingOtp] = useState(false);
+  const [showOtpInput, setShowOtpInput] = useState(false);
+  const [otpCode, setOtpCode] = useState("");
+  const [message, setMessage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setVerified(emailVerified);
+  }, [emailVerified]);
+
+  async function handleSendVerification() {
+    if (!email || !email.includes("@")) {
+      setError(isArabic ? "برجاء إدخال بريد إلكتروني صحيح أولاً" : "Please enter a valid email address first");
+      return;
+    }
+
+    setSendingCode(true);
+    setError(null);
+    setMessage(null);
+
+    try {
+      await postApiData<{ sent: boolean; message: string }, Record<string, never>>("/auth/send-email-verification", {});
+      setShowOtpInput(true);
+      setMessage(isArabic ? "تم إرسال رمز التحقق إلى بريدك الإلكتروني" : "Verification code sent to your email");
+    } catch (err: any) {
+      setError(err?.message || (isArabic ? "حدث خطأ أثناء إرسال الرمز" : "Failed to send verification code"));
+    } finally {
+      setSendingCode(false);
+    }
+  }
+
+  async function handleVerifyOtp() {
+    if (!otpCode || otpCode.trim().length < 4) {
+      setError(isArabic ? "برجاء إدخال رمز التحقق" : "Please enter the verification code");
+      return;
+    }
+
+    setVerifyingOtp(true);
+    setError(null);
+    setMessage(null);
+
+    try {
+      await postApiData<{ emailVerified: boolean }, { code: string }>("/auth/verify-email-otp", { code: otpCode.trim() });
+      setVerified(true);
+      setShowOtpInput(false);
+      setMessage(isArabic ? "تم توثيق البريد الإلكتروني بنجاح ✓" : "Email address verified successfully ✓");
+      if (onVerified) onVerified();
+    } catch (err: any) {
+      setError(err?.message || (isArabic ? "رمز التحقق غير صحيح أو منتهي الصلاحية" : "Invalid or expired verification code"));
+    } finally {
+      setVerifyingOtp(false);
+    }
+  }
+
+  return (
+    <div className="space-y-2 w-full">
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-sm font-black text-white/45">{isArabic ? "البريد الإلكتروني" : "Email"}</span>
+        {verified ? (
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/40 bg-emerald-500/15 px-3 py-1 text-xs font-black text-emerald-400">
+            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+            {isArabic ? "تم التوثيق ✓" : "Verified ✓"}
+          </span>
+        ) : (
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/40 bg-amber-500/15 px-2.5 py-0.5 text-[11px] font-black text-amber-400">
+              <AlertCircle className="h-3 w-3 text-amber-400" />
+              {isArabic ? "غير موثق" : "Unverified"}
+            </span>
+            <button
+              type="button"
+              disabled={sendingCode}
+              onClick={() => void handleSendVerification()}
+              className="text-[11px] font-black text-gold underline hover:text-gold/80 transition disabled:opacity-50"
+            >
+              {sendingCode ? (
+                <span className="flex items-center gap-1">
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                  {isArabic ? "جاري الإرسال..." : "Sending..."}
+                </span>
+              ) : (
+                isArabic ? "تأكيد البريد الإلكتروني" : "Verify Email"
+              )}
+            </button>
+          </div>
+        )}
+      </div>
+
+      <div className="relative">
+        <input
+          value={email}
+          onChange={(e) => onChangeEmail(e.target.value)}
+          dir="ltr"
+          type="email"
+          placeholder="user@example.com"
+          className={cn(
+            "h-12 w-full border border-white/10 bg-[#111] px-4 font-mono text-white outline-none focus:border-gold text-start",
+            verified ? "border-emerald-500/40 bg-emerald-950/10" : ""
+          )}
+        />
+      </div>
+
+      {message ? <p className="text-xs font-bold text-emerald-400 mt-1">{message}</p> : null}
+      {error ? <p className="text-xs font-bold text-rose-400 mt-1">{error}</p> : null}
+
+      {showOtpInput && !verified ? (
+        <div className="mt-3 border border-gold/40 bg-black/90 p-4 space-y-3 shadow-2xl">
+          <p className="text-xs font-black text-white">
+            {isArabic ? "أدخل رمز التحقق المكون من 6 أرقام المرسل للبريد:" : "Enter the 6-digit verification code sent to email:"}
+          </p>
+          <div className="flex items-center gap-2">
+            <input
+              value={otpCode}
+              onChange={(e) => setOtpCode(e.target.value)}
+              dir="ltr"
+              maxLength={6}
+              placeholder="123456"
+              className="h-10 w-36 border border-white/20 bg-[#151515] px-3 font-mono text-center text-sm tracking-widest text-gold outline-none focus:border-gold"
+            />
+            <button
+              type="button"
+              disabled={verifyingOtp}
+              onClick={() => void handleVerifyOtp()}
+              className="h-10 px-4 bg-gold font-black text-black text-xs uppercase hover:bg-gold/90 transition flex items-center gap-1.5"
+            >
+              {verifyingOtp ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
+              {isArabic ? "تأكيد" : "Verify"}
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowOtpInput(false)}
+              className="h-10 px-3 border border-white/20 text-white/70 text-xs hover:text-white"
+            >
+              {isArabic ? "إلغاء" : "Cancel"}
+            </button>
+          </div>
+        </div>
+      ) : null}
+    </div>
   );
 }
