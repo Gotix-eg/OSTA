@@ -506,7 +506,7 @@ function SidebarRoleSwitcher({ locale, currentRole }: { locale: Locale; currentR
         if (res?.user) {
           setUserProfiles({
             hasWorker: Boolean(res.user.hasWorkerProfile) || currentRole === "worker",
-            hasClient: Boolean(res.user.hasClientProfile) || currentRole === "client",
+            hasClient: true,
             hasVendor: Boolean(res.user.hasVendorProfile) || currentRole === "vendor"
           });
         }
