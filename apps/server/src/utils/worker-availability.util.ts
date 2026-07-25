@@ -9,7 +9,9 @@ interface DaySchedule {
 }
 
 function toMinutes(time: string | undefined): number {
-  const [h, m] = (time || "0:0").split(":").map((n) => parseInt(n, 10) || 0);
+  const parts = (time || "0:0").split(":").map((n) => parseInt(n, 10) || 0);
+  const h = parts[0] ?? 0;
+  const m = parts[1] ?? 0;
   return h * 60 + m;
 }
 
