@@ -164,7 +164,10 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
         nationalIdBack: data.profile.nationalIdBack,
         selfieWithId: data.profile.selfieWithId
       });
-      await patchApiData("/auth/profile", { avatarUrl: data.profile.avatarUrl });
+      await patchApiData("/auth/profile", {
+        email: data.profile.email,
+        avatarUrl: data.profile.avatarUrl
+      });
       setSaveState("saved");
       window.setTimeout(() => setSaveState("idle"), 2000);
     } catch (err: any) {
@@ -355,8 +358,16 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
               <EmailVerificationField
                 locale={locale}
                 email={data.profile.email ?? ""}
-                emailVerified={Boolean((data.profile as any).emailVerified)}
-                onChangeEmail={(val) => setData({ ...data, profile: { ...data.profile, email: val } })}
+                emailVerified={Boolean(data.profile.emailVerified)}
+                onChangeEmail={(val) => setData((prev) => ({
+                  ...prev,
+                  profile: {
+                    ...prev.profile,
+                    email: val,
+                    emailVerified: prev.profile.emailVerified && val.trim().toLowerCase() === (prev.profile.email ?? "").trim().toLowerCase()
+                  }
+                }))}
+                onVerified={() => setData((prev) => ({ ...prev, profile: { ...prev.profile, emailVerified: true } }))}
               />
             </div>
 
@@ -548,13 +559,21 @@ export function EmailVerificationField({
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    setVerified(emailVerified);
-    if (emailVerified) {
-      verifiedEmailRef.current = email.trim().toLowerCase();
+    if (emailVerified && email) {
+      if (!verifiedEmailRef.current || email.trim().toLowerCase() === verifiedEmailRef.current) {
+        verifiedEmailRef.current = email.trim().toLowerCase();
+        setVerified(true);
+      }
+    } else if (!emailVerified) {
+      setVerified(false);
     }
   }, [emailVerified, email]);
 
-  const isCurrentlyVerified = verified && email.trim().toLowerCase() === verifiedEmailRef.current;
+  const isCurrentlyVerified =
+    verified &&
+    emailVerified &&
+    Boolean(verifiedEmailRef.current) &&
+    email.trim().toLowerCase() === verifiedEmailRef.current;
 
   function handleInputChange(newVal: string) {
     onChangeEmail(newVal);

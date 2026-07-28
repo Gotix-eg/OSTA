@@ -34,7 +34,7 @@ import {
   ClientStitchPanel
 } from "@/components/client/client-stitch-ui";
 import { useLiveApiData } from "@/hooks/use-live-api-data";
-import { postApiData } from "@/lib/api";
+import { patchApiData, postApiData } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
 import type { ClientFavoritesData, ClientSettingsData, ClientWalletData } from "@/lib/operations-data";
 import { cn } from "@/lib/utils";
@@ -472,9 +472,20 @@ export function ClientSettingsPage({ locale, initialData }: { locale: Locale; in
     setData(liveData);
   }, [liveData]);
 
-  function handleSave() {
-    setSaved(true);
-    window.setTimeout(() => setSaved(false), 2000);
+  async function handleSave() {
+    try {
+      await patchApiData("/auth/profile", {
+        firstName: data.profile.firstName,
+        lastName: data.profile.lastName,
+        email: data.profile.email,
+        phone: data.profile.phone,
+        avatarUrl: data.profile.avatarUrl
+      });
+      setSaved(true);
+      window.setTimeout(() => setSaved(false), 2000);
+    } catch (err) {
+      console.error("Failed to save client profile", err);
+    }
   }
 
   const fullName = `${data.profile.firstName} ${data.profile.lastName}`.trim() || "OSTA Client";
@@ -560,8 +571,16 @@ export function ClientSettingsPage({ locale, initialData }: { locale: Locale; in
               <EmailVerificationField
                 locale={locale}
                 email={data.profile.email ?? ""}
-                emailVerified={Boolean((data.profile as any).emailVerified)}
-                onChangeEmail={(val) => setData({ ...data, profile: { ...data.profile, email: val } })}
+                emailVerified={Boolean(data.profile.emailVerified)}
+                onChangeEmail={(val) => setData((prev) => ({
+                  ...prev,
+                  profile: {
+                    ...prev.profile,
+                    email: val,
+                    emailVerified: prev.profile.emailVerified && val.trim().toLowerCase() === (prev.profile.email ?? "").trim().toLowerCase()
+                  }
+                }))}
+                onVerified={() => setData((prev) => ({ ...prev, profile: { ...prev.profile, emailVerified: true } }))}
               />
               <label className="space-y-2 block">
                 <span className="block text-[10px] font-black uppercase tracking-[0.18em] text-white/40">{labels.phone}</span>
@@ -586,8 +605,16 @@ export function ClientSettingsPage({ locale, initialData }: { locale: Locale; in
               <EmailVerificationField
                 locale={locale}
                 email={data.profile.email ?? ""}
-                emailVerified={Boolean((data.profile as any).emailVerified)}
-                onChangeEmail={(val) => setData({ ...data, profile: { ...data.profile, email: val } })}
+                emailVerified={Boolean(data.profile.emailVerified)}
+                onChangeEmail={(val) => setData((prev) => ({
+                  ...prev,
+                  profile: {
+                    ...prev.profile,
+                    email: val,
+                    emailVerified: prev.profile.emailVerified && val.trim().toLowerCase() === (prev.profile.email ?? "").trim().toLowerCase()
+                  }
+                }))}
+                onVerified={() => setData((prev) => ({ ...prev, profile: { ...prev.profile, emailVerified: true } }))}
               />
               <SettingsInput label={labels.phone} value={data.profile.phone} onChange={(value) => setData({ ...data, profile: { ...data.profile, phone: value } })} type="tel" />
               <button type="button" onClick={handleSave} className="mt-2 bg-white px-5 py-4 text-xs font-black uppercase tracking-[0.16em] text-black active:translate-x-1 active:translate-y-1">

@@ -93,6 +93,7 @@ export interface ClientSettingsData {
     firstName: string;
     lastName: string;
     email: string;
+    emailVerified?: boolean;
     phone: string;
     avatarUrl?: string | null;
   };
@@ -234,6 +235,7 @@ export interface WorkerSettingsData {
     lastName: string;
     phone: string;
     email: string;
+    emailVerified?: boolean;
     avatarUrl?: string | null;
     nationalIdNumber?: string | null;
     nationalIdFront?: string | null;
@@ -392,6 +394,7 @@ const clientSettingsFallback: ClientSettingsData = {
     firstName: "",
     lastName: "",
     email: "",
+    emailVerified: false,
     phone: "",
     avatarUrl: null
   },
@@ -451,6 +454,7 @@ const workerSettingsFallback: WorkerSettingsData = {
     lastName: "",
     phone: "",
     email: "",
+    emailVerified: false,
     avatarUrl: null
   },
   workPreferences: {

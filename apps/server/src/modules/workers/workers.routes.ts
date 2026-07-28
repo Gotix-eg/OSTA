@@ -661,6 +661,7 @@ router.get("/settings", catchAsync(async (request, response) => {
       lastName: user.lastName,
       phone: user.phone,
       email: user.email,
+      emailVerified: user.emailVerified,
       avatarUrl: user.avatarUrl,
       nationalIdNumber: user.workerProfile?.nationalIdNumber ?? null,
       nationalIdFront: user.workerProfile?.nationalIdFront ?? null,

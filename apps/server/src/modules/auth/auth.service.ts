@@ -735,6 +735,16 @@ export const authService = {
     const isEmailDifferent = newEmail.toLowerCase() !== user.email?.toLowerCase();
 
     if (isEmailDifferent) {
+      const existingUserWithEmail = await prisma.user.findFirst({
+        where: {
+          email: { equals: newEmail, mode: "insensitive" },
+          id: { not: user.id }
+        }
+      });
+      if (existingUserWithEmail) {
+        throw new ApiError(400, "البريد الإلكتروني مستخدم بالفعل بواسطة حساب آخر", "EMAIL_ALREADY_EXISTS");
+      }
+
       await prisma.user.update({
         where: { id: user.id },
         data: {
