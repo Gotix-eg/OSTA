@@ -93,7 +93,9 @@ export interface ClientSettingsData {
     firstName: string;
     lastName: string;
     email: string;
+    emailVerified?: boolean;
     phone: string;
+    avatarUrl?: string | null;
   };
   preferences: {
     language: string;
@@ -233,12 +235,29 @@ export interface WorkerSettingsData {
     lastName: string;
     phone: string;
     email: string;
+    emailVerified?: boolean;
+    avatarUrl?: string | null;
+    nationalIdNumber?: string | null;
+    nationalIdFront?: string | null;
+    nationalIdBack?: string | null;
+    selfieWithId?: string | null;
+    verificationStatus?: string | null;
   };
   workPreferences: {
     isAvailable: boolean;
     acceptsEmergency: boolean;
     acceptsSameDay: boolean;
     serviceAreas: string[];
+    workingHours?: Array<{
+      day: string;
+      enabled: boolean;
+      is24Hours: boolean;
+      startTime: string;
+      endTime: string;
+    }> | null;
+    offDates?: string[];
+    acceptedPaymentMethods?: string[];
+    preferredPaymentMethod?: string | null;
   };
   payout: {
     method: string;
@@ -375,7 +394,9 @@ const clientSettingsFallback: ClientSettingsData = {
     firstName: "",
     lastName: "",
     email: "",
-    phone: ""
+    emailVerified: false,
+    phone: "",
+    avatarUrl: null
   },
   preferences: {
     language: "ar",
@@ -432,13 +453,17 @@ const workerSettingsFallback: WorkerSettingsData = {
     firstName: "",
     lastName: "",
     phone: "",
-    email: ""
+    email: "",
+    emailVerified: false,
+    avatarUrl: null
   },
   workPreferences: {
     isAvailable: false,
     acceptsEmergency: false,
     acceptsSameDay: false,
-    serviceAreas: []
+    serviceAreas: [],
+    acceptedPaymentMethods: [],
+    preferredPaymentMethod: null
   },
   payout: {
     method: "",

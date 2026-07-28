@@ -17,8 +17,15 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   };
 }
 
-export default async function RegisterClientPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function RegisterClientPage({
+  params,
+  searchParams
+}: {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<{ phone?: string; firstName?: string; lastName?: string }>;
+}) {
   const { locale } = await params;
+  const { phone, firstName, lastName } = await searchParams;
 
   if (!isLocale(locale)) {
     notFound();
@@ -35,7 +42,7 @@ export default async function RegisterClientPage({ params }: { params: Promise<{
           : "Start as a client with a short flow covering verification and personal details."
       }
     >
-      <ClientRegisterForm locale={locale} />
+      <ClientRegisterForm locale={locale} initial={{ phone, firstName, lastName }} />
     </AuthShell>
   );
 }

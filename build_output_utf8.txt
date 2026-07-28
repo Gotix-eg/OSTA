@@ -1,0 +1,100 @@
+﻿npx : ΓÇó turbo 2.9.9
+At line:1 char:1
++ npx turbo build --filter=web > build_output.txt 2>&1
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (ΓÇó turbo 2.9.9:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+ WARNING  No locally installed `turbo` found in your repository. Using globally installed version (2.9.9). Using a 
+specified version in your repository will result in more predictable behavior.
+
+   ΓÇó Packages in scope: web
+   ΓÇó Running build in 1 packages
+   ΓÇó Remote caching disabled
+
+web:build: cache miss, executing 021d85c7aec358b0
+web:build: 
+web:build: > web@0.1.0 build
+web:build: > next build
+web:build: 
+web:build:   Γû▓ Next.js 14.2.35
+web:build:   - Environments: .env.local
+web:build: 
+web:build:    Creating an optimized production build ...
+web:build:  ΓÜá Found lockfile missing swc dependencies, patching...
+web:build: npm error code ENOWORKSPACES
+web:build: npm error This command does not support workspaces.
+web:build: npm error A complete log of this run can be found in: C:\Users\hp\npm-cache\_logs\2026-05-07T12_51_57_928Z-debug-0.log
+web:build:  Γ¿» Failed to patch lockfile, please try uninstalling and reinstalling next in this workspace
+web:build: TypeError: fetch failed
+web:build:     at node:internal/deps/undici/undici:13178:13
+web:build:     at processTicksAndRejections (node:internal/process/task_queues:95:5)
+web:build:     at runNextTicks (node:internal/process/task_queues:64:3)
+web:build:     at process.processImmediate (node:internal/timers:454:9)
+web:build:     at async fetchPkgInfo (C:\2nta\OSTA\node_modules\next\dist\lib\patch-incorrect-lockfile.js:66:17)
+web:build:     at async Promise.all (index 1)
+web:build:     at async patchIncorrectLockfile (C:\2nta\OSTA\node_modules\next\dist\lib\patch-incorrect-lockfile.js:162:26) {
+web:build:   [cause]: ConnectTimeoutError: Connect Timeout Error (attempted addresses: 104.16.5.34:443)
+web:build:       at onConnectTimeout (node:internal/deps/undici/undici:2331:28)
+web:build:       at node:internal/deps/undici/undici:2283:50
+web:build:       at Immediate._onImmediate (node:internal/deps/undici/undici:2313:37)
+web:build:       at process.processImmediate (node:internal/timers:483:21) {
+web:build:     code: 'UND_ERR_CONNECT_TIMEOUT'
+web:build:   }
+web:build: }
+web:build:  Γ£ô Compiled successfully
+web:build:    Linting and checking validity of types ...
+web:build: 
+web:build: ./components/client/new-request-page.tsx
+web:build: 529:29  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+web:build: 
+web:build: ./components/dashboard/client-store-detail.tsx
+web:build: 66:11  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+web:build: 346:17  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+web:build: 
+web:build: ./components/dashboard/client-stores.tsx
+web:build: 70:11  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+web:build: 
+web:build: ./components/dashboard/vendor-inventory.tsx
+web:build: 126:11  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+web:build: 210:11  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+web:build: 
+web:build: ./components/landing/landing-page.tsx
+web:build: 158:21  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+web:build: 203:19  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+web:build: 
+web:build: ./components/public/services-listing.tsx
+web:build: 97:17  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+web:build: 
+web:build: ./components/shared/image-upload.tsx
+web:build: 66:13  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+web:build: 
+web:build: info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/basic-features/eslint#disabling-rules
+web:build:    Collecting page data ...
+web:build: 
+web:build: > Build error occurred
+web:build: Error: Page "/[locale]/client/request/[id]" is missing "generateStaticParams()" so it cannot be used with "output: export" config.
+web:build:     at C:\2nta\OSTA\node_modules\next\dist\build\index.js:1297:59
+web:build:     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+web:build:     at async Span.traceAsyncFn (C:\2nta\OSTA\node_modules\next\dist\trace\trace.js:154:20)
+web:build:     at async Promise.all (index 20)
+web:build:     at async C:\2nta\OSTA\node_modules\next\dist\build\index.js:1175:17
+web:build:     at async Span.traceAsyncFn (C:\2nta\OSTA\node_modules\next\dist\trace\trace.js:154:20)
+web:build:     at async C:\2nta\OSTA\node_modules\next\dist\build\index.js:1098:124
+web:build:     at async Span.traceAsyncFn (C:\2nta\OSTA\node_modules\next\dist\trace\trace.js:154:20)
+web:build:     at async build (C:\2nta\OSTA\node_modules\next\dist\build\index.js:368:9)
+web:build: npm error Lifecycle script `build` failed with error:
+web:build: npm error code 1
+web:build: npm error path C:\2nta\OSTA\apps\web
+web:build: npm error workspace web@0.1.0
+web:build: npm error location C:\2nta\OSTA\apps\web
+web:build: npm error command failed
+web:build: npm error command C:\Windows\system32\cmd.exe /d /s /c next build
+ ERROR  web#build: command (C:\2nta\OSTA\apps\web) C:\Program Files\nodejs\npm.cmd run build exited (1)
+
+ Tasks:    0 successful, 1 total
+Cached:    0 cached, 1 total
+  Time:    1m0.777s 
+Failed:    web#build
+
+ ERROR  run failed: command  exited (1)

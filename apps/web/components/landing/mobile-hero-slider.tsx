@@ -135,27 +135,27 @@ export function MobileHeroSlider({ locale }: MobileHeroSliderProps) {
   if (isCampaign) {
     const linkUrl = current.btn1Link ? (current.btn1Link.startsWith("http") ? current.btn1Link : `/${locale}${current.btn1Link.startsWith("/") ? "" : "/"}${current.btn1Link}`) : "#";
     return (
-      <div className="relative w-full overflow-hidden md:hidden" style={{ minHeight: "88svh" }}>
+      <div className="relative h-[430px] w-full overflow-hidden bg-black md:hidden">
         <Link href={linkUrl} className="absolute inset-0 z-30 cursor-pointer">
           {/* Background Image with cross-fade */}
           {slides.map((slide, idx) => (
             <div
               key={slide.id}
               className={cn(
-                "absolute inset-0 bg-contain bg-no-repeat bg-center bg-onyx-950 transition-opacity duration-700",
+                "absolute inset-0 bg-contain bg-no-repeat bg-center bg-black transition-opacity duration-700",
                 idx === currentIndex ? "opacity-100" : "opacity-0"
               )}
               style={{
                 backgroundImage: slide.imageUrl
                   ? `url('${cleanImageUrl(slide.imageUrl)}')`
                   : "none",
-                backgroundColor: "oklch(93% 0.12 85)",
+                backgroundColor: "#000000",
               }}
             />
           ))}
           {/* Small elegant Ad badge in the corner */}
-          <div className="absolute top-24 right-4 z-40">
-            <span className="px-2 py-0.5 rounded bg-black/60 backdrop-blur-sm border border-white/10 text-gold-500 text-[9px] font-black uppercase tracking-wider shadow-md">
+          <div className="absolute top-4 right-4 z-40">
+            <span className="border border-white/10 bg-black/70 px-2 py-1 text-[9px] font-black uppercase tracking-wider text-gold shadow-md backdrop-blur-sm">
               {isArabic ? "ممول" : "Sponsored"}
             </span>
           </div>
@@ -163,14 +163,14 @@ export function MobileHeroSlider({ locale }: MobileHeroSliderProps) {
 
         {/* Dots + nav overlaid on the bottom */}
         {slides.length > 1 && (
-          <div className="absolute bottom-6 left-0 right-0 z-40 flex items-center justify-between px-6">
+          <div className="absolute bottom-5 left-0 right-0 z-40 flex items-center justify-between px-5">
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 e.preventDefault();
                 goPrev();
               }}
-              className="h-10 w-10 rounded-full flex items-center justify-center transition-all active:scale-90 bg-black/30 text-white"
+              className="flex h-9 w-9 items-center justify-center border border-white/10 bg-black/45 text-white transition-all active:scale-90"
               aria-label="Previous slide"
             >
               {isArabic ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
@@ -204,7 +204,7 @@ export function MobileHeroSlider({ locale }: MobileHeroSliderProps) {
                 e.preventDefault();
                 goNext();
               }}
-              className="h-10 w-10 rounded-full flex items-center justify-center transition-all active:scale-90 bg-black/30 text-white"
+              className="flex h-9 w-9 items-center justify-center border border-white/10 bg-black/45 text-white transition-all active:scale-90"
               aria-label="Next slide"
             >
               {isArabic ? <ChevronLeft className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
@@ -216,7 +216,7 @@ export function MobileHeroSlider({ locale }: MobileHeroSliderProps) {
   }
 
   return (
-    <div className="relative w-full overflow-hidden md:hidden" style={{ minHeight: "88svh" }}>
+    <div className="relative h-[430px] w-full overflow-hidden bg-black md:hidden">
       {/* Background Image with cross-fade */}
       {slides.map((slide, idx) => (
         <div
@@ -229,22 +229,15 @@ export function MobileHeroSlider({ locale }: MobileHeroSliderProps) {
             backgroundImage: slide.imageUrl
               ? `url('${cleanImageUrl(slide.imageUrl)}')`
               : "none",
-            backgroundColor: "oklch(93% 0.12 85)", // fallback
+            backgroundColor: "#000000",
           }}
         />
       ))}
 
-      {/* Gradient overlay - bottom fade for text readability */}
-      <div
-        className="absolute inset-0 z-10"
-        style={{
-          background:
-            "linear-gradient(to top, oklch(92% 0.10 85) 0%, oklch(92% 0.10 85 / 0.85) 35%, oklch(92% 0.10 85 / 0.3) 65%, transparent 100%)",
-        }}
-      />
+      <div className="absolute inset-0 z-10 bg-gradient-to-t from-black via-black/55 to-transparent" />
 
       {/* Slide Content */}
-      <div className="relative z-20 flex flex-col justify-end h-full px-6 pb-28 pt-20" style={{ minHeight: "88svh" }}>
+      <div className="relative z-20 flex h-full flex-col justify-end px-5 pb-8 pt-12">
         <AnimatePresence custom={direction} mode="wait">
           <motion.div
             key={currentIndex}
@@ -260,11 +253,7 @@ export function MobileHeroSlider({ locale }: MobileHeroSliderProps) {
               initial={{ y: 10, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.1 }}
-              className="inline-block mb-3 px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest"
-              style={{
-                background: "oklch(45% 0.11 85)",
-                color: "white",
-              }}
+              className="mb-3 inline-block border border-gold/30 bg-black/65 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-gold backdrop-blur-sm"
             >
               {isArabic ? current.eyebrowAr : current.eyebrowEn}
             </motion.span>
@@ -274,8 +263,7 @@ export function MobileHeroSlider({ locale }: MobileHeroSliderProps) {
               initial={{ y: 15, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.15 }}
-              className="text-4xl font-black leading-tight mb-3 whitespace-pre-line"
-              style={{ color: "oklch(10% 0.005 60)" }}
+              className="mb-2 max-w-[19rem] whitespace-pre-line text-4xl font-black leading-[1.05] text-white"
             >
               {isArabic ? current.titleAr : current.titleEn}
             </motion.h1>
@@ -285,8 +273,7 @@ export function MobileHeroSlider({ locale }: MobileHeroSliderProps) {
               initial={{ y: 15, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.2 }}
-              className="text-base mb-6 leading-relaxed max-w-xs"
-              style={{ color: "oklch(25% 0.01 60)" }}
+              className="mb-5 max-w-xs text-base font-bold leading-relaxed text-white/80"
             >
               {isArabic ? current.descAr : current.descEn}
             </motion.p>
@@ -296,15 +283,11 @@ export function MobileHeroSlider({ locale }: MobileHeroSliderProps) {
               initial={{ y: 15, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.25 }}
-              className="flex flex-col gap-3"
+              className="flex flex-wrap gap-3"
             >
               <Link
                 href={current.btn1Link ? (current.btn1Link.startsWith("http") ? current.btn1Link : `/${locale}${current.btn1Link.startsWith("/") ? "" : "/"}${current.btn1Link}`) : "#"}
-                className="block w-full text-center py-4 px-6 rounded-2xl text-base font-extrabold shadow-lg transition-all active:scale-95"
-                style={{
-                  background: "oklch(10% 0.005 60)",
-                  color: "oklch(93% 0.005 60)",
-                }}
+                className="inline-flex min-h-12 items-center justify-center bg-white px-7 py-3 text-sm font-black uppercase text-black shadow-[4px_4px_0_#000] transition-all active:translate-x-1 active:translate-y-1 active:shadow-none"
               >
                 {isArabic ? current.btn1TextAr : current.btn1TextEn}
               </Link>
@@ -312,12 +295,7 @@ export function MobileHeroSlider({ locale }: MobileHeroSliderProps) {
               {(current.btn2Link) && (
                 <Link
                   href={current.btn2Link.startsWith("http") ? current.btn2Link : `/${locale}${current.btn2Link.startsWith("/") ? "" : "/"}${current.btn2Link}`}
-                  className="block w-full text-center py-4 px-6 rounded-2xl text-base font-extrabold border-2 transition-all active:scale-95"
-                  style={{
-                    borderColor: "oklch(10% 0.005 60 / 0.25)",
-                    color: "oklch(10% 0.005 60)",
-                    background: "oklch(10% 0.005 60 / 0.06)",
-                  }}
+                  className="inline-flex min-h-12 items-center justify-center border border-white/30 bg-black/45 px-5 py-3 text-sm font-black uppercase text-white backdrop-blur-sm transition-all active:scale-95"
                 >
                   {isArabic ? current.btn2TextAr : current.btn2TextEn}
                 </Link>
@@ -328,14 +306,10 @@ export function MobileHeroSlider({ locale }: MobileHeroSliderProps) {
 
         {/* Dots + nav */}
         {slides.length > 1 && (
-          <div className="flex items-center justify-between mt-8">
+          <div className="mt-5 flex items-center justify-between">
             <button
               onClick={goPrev}
-              className="h-10 w-10 rounded-full flex items-center justify-center transition-all active:scale-90"
-              style={{
-                background: "oklch(10% 0.005 60 / 0.1)",
-                color: "oklch(10% 0.005 60)",
-              }}
+              className="flex h-9 w-9 items-center justify-center border border-white/10 bg-black/45 text-white transition-all active:scale-90"
               aria-label="Previous slide"
             >
               {isArabic ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
@@ -349,10 +323,7 @@ export function MobileHeroSlider({ locale }: MobileHeroSliderProps) {
                   className="h-2 rounded-full transition-all duration-300"
                   style={{
                     width: idx === currentIndex ? "2rem" : "0.5rem",
-                    background:
-                      idx === currentIndex
-                        ? "oklch(10% 0.005 60)"
-                        : "oklch(10% 0.005 60 / 0.25)",
+                    background: idx === currentIndex ? "#f5bd18" : "rgba(255,255,255,0.35)",
                   }}
                   aria-label={`Go to slide ${idx + 1}`}
                 />
@@ -361,11 +332,7 @@ export function MobileHeroSlider({ locale }: MobileHeroSliderProps) {
 
             <button
               onClick={goNext}
-              className="h-10 w-10 rounded-full flex items-center justify-center transition-all active:scale-90"
-              style={{
-                background: "oklch(10% 0.005 60 / 0.1)",
-                color: "oklch(10% 0.005 60)",
-              }}
+              className="flex h-9 w-9 items-center justify-center border border-white/10 bg-black/45 text-white transition-all active:scale-90"
               aria-label="Next slide"
             >
               {isArabic ? <ChevronLeft className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}

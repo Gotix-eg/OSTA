@@ -25,6 +25,7 @@ const config: Config = {
         },
         /* ── GOLD: Primary accents ── */
         gold: {
+          DEFAULT: "#f5bd18", // Brand gold — canonical value used across the whole app
           50:  "#fffde8",
           100: "#fff9c4",
           200: "#fff176",
@@ -47,6 +48,8 @@ const config: Config = {
         success: "#22a85a",
         warning: "#d4880a",
         error:   "#d44422",
+        /* ── INK: Near-black used across public marketing pages ── */
+        ink: "#1a1c1c",
         /* background / foreground are resolved by CSS vars per breakpoint */
         background: "var(--color-bg)",
         foreground: "var(--color-fg)",
@@ -62,7 +65,7 @@ const config: Config = {
       },
       backgroundImage: {
         "onyx-gradient": "linear-gradient(135deg, #1a1610 0%, #100e08 100%)",
-        "gold-gradient": "linear-gradient(135deg, #f0bb19 0%, #c9930a 100%)",
+        "gold-gradient": "linear-gradient(135deg, #f5bd18 0%, #c9930a 100%)",
         "radial-onyx":   "radial-gradient(circle at center, #2a2520 0%, #100e08 100%)",
       },
       keyframes: {

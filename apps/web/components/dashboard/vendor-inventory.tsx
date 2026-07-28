@@ -19,6 +19,13 @@ import {
   Database
 } from "lucide-react";
 import { fetchApiData, postApiData, patchApiData } from "@/lib/api";
+import {
+  VendorStitchHero,
+  VendorStitchMetric,
+  VendorStitchPanel,
+  VendorStitchShell,
+  VendorStitchTopStrip
+} from "@/components/vendor/vendor-stitch-ui";
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
 import ExcelJS from "exceljs";
@@ -1180,16 +1187,38 @@ export function VendorInventoryPage({ locale }: { locale: Locale }) {
   const inStockCount = products.filter(p => p.inStock).length;
 
   return (
-    <div className="space-y-6">
+    <VendorStitchShell locale={locale}>
+      <VendorStitchTopStrip
+        locale={locale}
+        title={isArabic ? "مخزون المورد" : "Vendor inventory"}
+        actionLabel={isArabic ? "إضافة منتج" : "Add product"}
+      />
+      <VendorStitchHero
+        locale={locale}
+        eyebrow={isArabic ? "كتالوج المتجر" : "Store catalog"}
+        title={isArabic ? "إدارة" : "Inventory"}
+        highlight={isArabic ? "المخزون" : "control"}
+        subtitle={
+          isArabic
+            ? `${products.length} منتج داخل الكتالوج، منهم ${inStockCount} متاح للبيع الآن.`
+            : `${products.length} catalog products, ${inStockCount} available for sale right now.`
+        }
+      />
+      <div className="grid gap-4 sm:grid-cols-3">
+        <VendorStitchMetric label={isArabic ? "إجمالي المنتجات" : "Total products"} value={String(products.length)} note={isArabic ? "داخل المتجر" : "in catalog"} icon={Package} index="01" />
+        <VendorStitchMetric label={isArabic ? "متاح للبيع" : "In stock"} value={String(inStockCount)} note={isArabic ? "جاهز للطلب" : "ready to sell"} icon={Check} index="02" />
+        <VendorStitchMetric label={isArabic ? "نفذ من المخزون" : "Out of stock"} value={String(products.length - inStockCount)} note={isArabic ? "يحتاج تحديث" : "needs update"} icon={AlertTriangle} index="03" />
+      </div>
+      <VendorStitchPanel eyebrow={isArabic ? "تشغيل المخزون" : "Inventory operations"} title={isArabic ? "الكتالوج والربط" : "Catalog and integrations"}>
       {/* Dynamic Navigation Tabs */}
-      <div className="flex border-b border-onyx-800">
+      <div className="flex border-b border-white/10">
         <button
           type="button"
           onClick={() => setActiveTab("products")}
           className={cn(
             "pb-3.5 px-6 text-sm font-semibold tracking-wide border-b-2 transition-all relative top-[2px]",
             activeTab === "products"
-              ? "border-primary-500 text-white font-bold"
+              ? "border-gold text-gold font-bold"
               : "border-transparent text-onyx-500 hover:text-onyx-200"
           )}
         >
@@ -1201,7 +1230,7 @@ export function VendorInventoryPage({ locale }: { locale: Locale }) {
           className={cn(
             "pb-3.5 px-6 text-sm font-semibold tracking-wide border-b-2 transition-all relative top-[2px]",
             activeTab === "integrations"
-              ? "border-primary-500 text-white font-bold"
+              ? "border-gold text-gold font-bold"
               : "border-transparent text-onyx-500 hover:text-onyx-200"
           )}
         >
@@ -1246,20 +1275,6 @@ export function VendorInventoryPage({ locale }: { locale: Locale }) {
                 {isArabic ? "إضافة منتج" : "Add Product"}
               </button>
             </div>
-          </div>
-
-          {/* Stats */}
-          <div className="grid gap-3 sm:grid-cols-3">
-            {[
-              { label: isArabic ? "إجمالي المنتجات" : "Total Products", value: products.length },
-              { label: isArabic ? "متاح للبيع" : "In Stock", value: inStockCount },
-              { label: isArabic ? "نفذ من المخزون" : "Out of Stock", value: products.length - inStockCount },
-            ].map(item => (
-              <div key={item.label} className="rounded-[1.4rem] border border-onyx-700/70 bg-onyx-800/50 p-4 shadow-soft">
-                <p className="text-xs uppercase tracking-[0.22em] text-onyx-500">{item.label}</p>
-                <p className="mt-2 text-3xl font-semibold text-white">{item.value}</p>
-              </div>
-            ))}
           </div>
 
           {/* Product grid */}
@@ -1324,6 +1339,7 @@ export function VendorInventoryPage({ locale }: { locale: Locale }) {
       {showExcelModal && (
         <BulkExcelModal locale={locale} onClose={() => setShowExcelModal(false)} onAdded={handleBulkAdded} />
       )}
-    </div>
+      </VendorStitchPanel>
+    </VendorStitchShell>
   );
 }

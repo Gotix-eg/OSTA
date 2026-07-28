@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowUpRight, Layers3, ShieldCheck, UserCircle2, Sparkles } from "lucide-react";
+import { ArrowUpRight, Layers3, ShieldCheck, UserCircle2, Sparkles, Scale, Lock, Eye } from "lucide-react";
 import { publicPageCopy, type PublicPageKey } from "@/lib/public-pages-copy";
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
 
-const iconMap = [Layers3, ShieldCheck, UserCircle2];
+const iconMap = [ShieldCheck, UserCircle2, Scale, Sparkles, Eye, Lock];
 
 export function PublicContentPage({ locale, pageKey }: { locale: Locale; pageKey: PublicPageKey }) {
   const isArabic = locale === "ar";

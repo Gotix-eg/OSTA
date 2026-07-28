@@ -6,6 +6,7 @@ import { ApiError } from "../../utils/ApiError.js";
 import { hashPassword, verifyPassword } from "../../utils/password.js";
 import { signAccessToken, signRefreshToken, verifyRefreshToken } from "../../utils/tokens.js";
 import { sendPasswordResetEmail, sendWelcomeEmail, sendVerificationEmail } from "../../utils/email.js";
+import { getRandomWorkerAvatar } from "../../lib/avatar-library.js";
 
 export type RegisterInput = {
   role: "CLIENT" | "WORKER" | "VENDOR";
@@ -79,6 +80,16 @@ function toPublicUser(user: {
   workerProfile?: { yearsOfExperience: number; rating: number; isAvailable: boolean } | null;
   vendorProfile?: { shopName: string; category: string | null; latitude: number | null; longitude: number | null } | null;
 }) {
+  const hasClient = Boolean(user.clientProfile);
+  const hasWorker = Boolean(user.workerProfile);
+  const hasVendor = Boolean(user.vendorProfile);
+
+  const availableRoles: string[] = [];
+  if (hasClient) availableRoles.push("CLIENT");
+  if (hasWorker) availableRoles.push("WORKER");
+  if (hasVendor) availableRoles.push("VENDOR");
+  if (user.role === "ADMIN") availableRoles.push("ADMIN");
+
   return {
     id: user.id,
     role: user.role,
@@ -89,6 +100,11 @@ function toPublicUser(user: {
     avatarUrl: user.avatarUrl,
     preferredLanguage: user.preferredLanguage,
     status: user.status,
+    emailVerified: Boolean((user as any).emailVerified),
+    hasClientProfile: hasClient,
+    hasWorkerProfile: hasWorker,
+    hasVendorProfile: hasVendor,
+    availableRoles,
     profile:
       user.role === "CLIENT"
         ? user.clientProfile
@@ -138,139 +154,136 @@ async function createSession(userId: string, role: UserRole) {
 
 export const authService = {
   async register(input: RegisterInput) {
+    // Workers who skip the profile-photo step get a random avatar from the
+    // admin-approved library so they never show up with a blank photo.
+    const workerAvatarFallback =
+      input.role === "WORKER" && !input.avatarUrl ? await getRandomWorkerAvatar(input.profession) : null;
+
     const existingUser = await prisma.user.findFirst({
       where: {
         OR: [{ phone: input.phone }, ...(input.email ? [{ email: input.email }] : [])]
+      },
+      include: {
+        clientProfile: true,
+        workerProfile: true,
+        vendorProfile: true
       }
     });
 
     if (existingUser) {
-      if (input.role === "WORKER" && existingUser.role === "CLIENT") {
-        const isPasswordCorrect = await verifyPassword(input.password, existingUser.passwordHash);
-        if (!isPasswordCorrect) {
-          throw new ApiError(400, "رقم الهاتف مسجل بالفعل كعميل. يرجى إدخال كلمة المرور الصحيحة لربط حساب الفني الخاص بك.");
-        }
+      if (existingUser.phone !== input.phone) {
+        throw new ApiError(409, "البريد الإلكتروني مسجل بالفعل", "EMAIL_EXISTS");
+      }
 
-        if (input.nationalIdNumber) {
-          const existingWorker = await prisma.workerProfile.findUnique({
-            where: { nationalIdNumber: input.nationalIdNumber }
-          });
-          if (existingWorker) {
-            throw new ApiError(409, "الرقم القومي مسجل بالفعل لحساب آخر.", "NATIONAL_ID_EXISTS");
-          }
-        }
+      const alreadyHasProfile =
+        (input.role === "CLIENT" && existingUser.clientProfile) ||
+        (input.role === "WORKER" && existingUser.workerProfile) ||
+        (input.role === "VENDOR" && existingUser.vendorProfile);
 
-        const updatedUser = await prisma.user.update({
-          where: { id: existingUser.id },
-          data: {
-            role: "WORKER",
-            avatarUrl: input.avatarUrl || existingUser.avatarUrl,
-            workerProfile: {
-              create: {
-                nationalIdNumber: input.nationalIdNumber,
-                nationalIdFront: input.nationalIdFront,
-                nationalIdBack: input.nationalIdBack,
-                profession: input.profession,
-                yearsOfExperience: 0,
-                rating: 0,
-                ratingCount: 0,
-                isAvailable: false,
-                totalJobsCompleted: 0,
-                totalEarnings: 0,
-                walletBalance: 0,
-                orderQuota: 0,
-                subscriptionTier: "free",
-                verificationStatus: "PENDING"
-              }
-            },
-            ...(input.governorate && {
-              addresses: {
-                create: {
-                  governorate: input.governorate,
-                  city: input.city || "",
-                  area: (input as any).district || input.city || "",
-                  street: input.address || "",
-                  isDefault: true
-                }
-              }
-            })
-          },
-          include: {
-            clientProfile: true,
-            workerProfile: true,
-            vendorProfile: true
-          }
+      if (alreadyHasProfile) {
+        throw new ApiError(409, "لديك حساب من هذا النوع بالفعل على هذا الرقم", "PROFILE_EXISTS");
+      }
+
+      // Same phone, no profile of this type yet: link the new profile to the
+      // existing account instead of rejecting as a duplicate phone number.
+      const isPasswordCorrect = await verifyPassword(input.password, existingUser.passwordHash);
+      if (!isPasswordCorrect) {
+        throw new ApiError(400, "رقم الهاتف مسجل بالفعل. يرجى إدخال كلمة المرور الصحيحة لربط الحساب الجديد.");
+      }
+
+      if (input.role === "WORKER" && input.nationalIdNumber) {
+        const existingWorker = await prisma.workerProfile.findUnique({
+          where: { nationalIdNumber: input.nationalIdNumber }
         });
-
-        const tokens = await createSession(updatedUser.id, updatedUser.role);
-        return {
-          user: toPublicUser(updatedUser as any),
-          ...tokens
-        };
-      }
-
-      if (input.role === "VENDOR" && existingUser.role === "CLIENT") {
-        const isPasswordCorrect = await verifyPassword(input.password, existingUser.passwordHash);
-        if (!isPasswordCorrect) {
-          throw new ApiError(400, "رقم الهاتف مسجل بالفعل كعميل. يرجى إدخال كلمة المرور الصحيحة لربط حساب المتجر الخاص بك.");
+        if (existingWorker) {
+          throw new ApiError(409, "الرقم القومي مسجل بالفعل لحساب آخر.", "NATIONAL_ID_EXISTS");
         }
+      }
 
-        const updatedUser = await prisma.user.update({
-          where: { id: existingUser.id },
-          data: {
-            role: "VENDOR",
-            avatarUrl: input.avatarUrl || existingUser.avatarUrl,
-            vendorProfile: {
-              create: {
-                shopName: input.shopName || (input.firstName + " " + input.lastName),
-                category: input.category || "",
-                governorate: input.governorate || "cairo",
-                city: input.city || "new-cairo",
-                address: input.address || "",
-                latitude: input.latitude || 30.0444,
-                longitude: input.longitude || 31.2357,
-                commercialRegisterUrl: input.commercialRecord,
-                taxCardUrl: input.taxCard,
-                rating: 0,
-                ratingCount: 0,
-                totalOrders: 0,
-                totalEarnings: 0,
-                walletBalance: 0,
-                orderQuota: 0,
-                isOpen: false,
-                verificationStatus: "PENDING"
-              }
-            },
-            ...(input.governorate && {
-              addresses: {
-                create: {
-                  governorate: input.governorate,
-                  city: input.city || "",
-                  area: (input as any).district || input.city || "",
-                  street: input.address || "",
-                  isDefault: true
+      const updatedUser = await prisma.user.update({
+        where: { id: existingUser.id },
+        data: {
+          role: input.role,
+          avatarUrl: input.avatarUrl || existingUser.avatarUrl || workerAvatarFallback || undefined,
+          clientProfile:
+            input.role === "CLIENT"
+              ? {
+                  create: {
+                    totalRequests: 0,
+                    walletBalance: 0,
+                    isVip: false
+                  }
                 }
+              : undefined,
+          workerProfile:
+            input.role === "WORKER"
+              ? {
+                  create: {
+                    nationalIdNumber: input.nationalIdNumber,
+                    nationalIdFront: input.nationalIdFront,
+                    nationalIdBack: input.nationalIdBack,
+                    profession: input.profession,
+                    yearsOfExperience: 0,
+                    rating: 0,
+                    ratingCount: 0,
+                    isAvailable: false,
+                    totalJobsCompleted: 0,
+                    totalEarnings: 0,
+                    walletBalance: 0,
+                    orderQuota: 0,
+                    subscriptionTier: "free",
+                    verificationStatus: "PENDING"
+                  }
+                }
+              : undefined,
+          vendorProfile:
+            input.role === "VENDOR"
+              ? {
+                  create: {
+                    shopName: input.shopName || (input.firstName + " " + input.lastName),
+                    category: input.category || "",
+                    governorate: input.governorate || "cairo",
+                    city: input.city || "new-cairo",
+                    address: input.address || "",
+                    latitude: input.latitude || 30.0444,
+                    longitude: input.longitude || 31.2357,
+                    commercialRegisterUrl: input.commercialRecord,
+                    taxCardUrl: input.taxCard,
+                    rating: 0,
+                    ratingCount: 0,
+                    totalOrders: 0,
+                    totalEarnings: 0,
+                    walletBalance: 0,
+                    orderQuota: 0,
+                    isOpen: false,
+                    verificationStatus: "PENDING"
+                  }
+                }
+              : undefined,
+          ...(input.governorate && {
+            addresses: {
+              create: {
+                governorate: input.governorate,
+                city: input.city || "",
+                area: (input as any).district || input.city || "",
+                street: input.address || "",
+                isDefault: true
               }
-            })
-          },
-          include: {
-            clientProfile: true,
-            workerProfile: true,
-            vendorProfile: true
-          }
-        });
+            }
+          })
+        },
+        include: {
+          clientProfile: true,
+          workerProfile: true,
+          vendorProfile: true
+        }
+      });
 
-        const tokens = await createSession(updatedUser.id, updatedUser.role);
-        return {
-          user: toPublicUser(updatedUser as any),
-          ...tokens
-        };
-      }
-
-      if (existingUser.phone === input.phone) {
-        throw new ApiError(409, "رقم الهاتف مسجل بالفعل", "PHONE_EXISTS");
-      }
-      throw new ApiError(409, "البريد الإلكتروني مسجل بالفعل", "EMAIL_EXISTS");
+      const tokens = await createSession(updatedUser.id, updatedUser.role);
+      return {
+        user: toPublicUser(updatedUser as any),
+        ...tokens
+      };
     }
 
     if (input.role === "WORKER" && input.nationalIdNumber) {
@@ -309,7 +322,7 @@ export const authService = {
         passwordHash,
         role: input.role,
         status: "ACTIVE",
-        avatarUrl: input.avatarUrl,
+        avatarUrl: input.avatarUrl || workerAvatarFallback || undefined,
         clientProfile:
           input.role === "CLIENT"
             ? {
@@ -598,24 +611,36 @@ export const authService = {
       throw new ApiError(404, "User not found", "USER_NOT_FOUND");
     }
 
-    // Auto-alert technicians who don't have a profile photo
+    // Workers who never uploaded a profile photo get a random one from the
+    // admin-approved avatar library, so they're never left with a blank photo.
     if (user.role === "WORKER" && !user.avatarUrl) {
-      const existingNotification = await prisma.notification.findFirst({
-        where: {
-          userId: user.id,
-          title: "تنبيه: الصورة الشخصية مطلوبة"
-        }
-      });
+      const randomAvatar = await getRandomWorkerAvatar(user.workerProfile?.profession);
 
-      if (!existingNotification) {
-        await prisma.notification.create({
-          data: {
+      if (randomAvatar) {
+        const updated = await prisma.user.update({
+          where: { id: user.id },
+          data: { avatarUrl: randomAvatar }
+        });
+        user.avatarUrl = updated.avatarUrl;
+      } else {
+        // No avatars configured yet — fall back to nudging the worker to add their own.
+        const existingNotification = await prisma.notification.findFirst({
+          where: {
             userId: user.id,
-            type: "SYSTEM",
-            title: "تنبيه: الصورة الشخصية مطلوبة",
-            body: "من فضلك أضف صورتك الشخصية لتفعيل وتوثيق حساب الفني الخاص بك."
+            title: "تنبيه: الصورة الشخصية مطلوبة"
           }
         });
+
+        if (!existingNotification) {
+          await prisma.notification.create({
+            data: {
+              userId: user.id,
+              type: "SYSTEM",
+              title: "تنبيه: الصورة الشخصية مطلوبة",
+              body: "من فضلك أضف صورتك الشخصية لتفعيل وتوثيق حساب الفني الخاص بك."
+            }
+          });
+        }
       }
     }
 
@@ -694,5 +719,108 @@ export const authService = {
     ]);
 
     return { reset: true };
+  },
+
+  async sendEmailVerification(userId: string, targetEmail?: string) {
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new ApiError(404, "المستخدم غير موجود", "USER_NOT_FOUND");
+    }
+
+    const newEmail = targetEmail?.trim() || user.email;
+    if (!newEmail || !newEmail.includes("@")) {
+      throw new ApiError(400, "يرجى تقديم بريد إلكتروني صحيح", "INVALID_EMAIL");
+    }
+
+    const isEmailDifferent = newEmail.toLowerCase() !== user.email?.toLowerCase();
+
+    if (isEmailDifferent) {
+      const existingUserWithEmail = await prisma.user.findFirst({
+        where: {
+          email: { equals: newEmail, mode: "insensitive" },
+          id: { not: user.id }
+        }
+      });
+      if (existingUserWithEmail) {
+        throw new ApiError(400, "البريد الإلكتروني مستخدم بالفعل بواسطة حساب آخر", "EMAIL_ALREADY_EXISTS");
+      }
+
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          email: newEmail,
+          emailVerified: false
+        }
+      });
+      user.email = newEmail;
+      user.emailVerified = false;
+    } else if (user.emailVerified) {
+      throw new ApiError(400, "البريد الإلكتروني موثق بالفعل", "ALREADY_VERIFIED");
+    }
+
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000);
+
+    await prisma.otpCode.create({
+      data: {
+        userId: user.id,
+        code: await hashPassword(code),
+        type: "EMAIL_VERIFICATION",
+        expiresAt
+      }
+    });
+
+    sendVerificationEmail(user.email!, code, user.firstName).catch(err =>
+      console.error("Failed to send verification email:", err)
+    );
+
+    return {
+      sent: true,
+      email: user.email,
+      message: "تم إرسال رمز التحقق إلى بريدك الإلكتروني"
+    };
+  },
+
+  async verifyEmailOtp(userId: string, code: string) {
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new ApiError(404, "المستخدم غير موجود", "USER_NOT_FOUND");
+    }
+
+    const isDevMasterCode = code === "123456" && process.env.NODE_ENV !== "production";
+
+    if (!isDevMasterCode) {
+      const candidateOtps = await prisma.otpCode.findMany({
+        where: {
+          userId: user.id,
+          type: "EMAIL_VERIFICATION",
+          isUsed: false,
+          expiresAt: { gt: new Date() }
+        },
+        orderBy: { createdAt: "desc" },
+        take: 5
+      });
+
+      const otp = candidateOtps.find((record) => otpMatches(record.code, user.id, "EMAIL_VERIFICATION", code));
+
+      if (!otp) {
+        throw new ApiError(400, "رمز التحقق غير صحيح أو منتهي الصلاحية", "INVALID_CODE");
+      }
+
+      await prisma.otpCode.update({
+        where: { id: otp.id },
+        data: { isUsed: true }
+      });
+    }
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { emailVerified: true }
+    });
+
+    return {
+      emailVerified: true,
+      message: "تم توثيق البريد الإلكتروني بنجاح"
+    };
   }
 };

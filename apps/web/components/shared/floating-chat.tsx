@@ -34,7 +34,6 @@ const POLL_INTERVAL_MS = 2000;
 const CONTACTS_POLL_MS = 5000;
 
 export function FloatingChatWidget() {
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [activeChat, setActiveChat] = useState<ChatUser | null>(null);
   const [contacts, setContacts] = useState<Contact[]>([]);
@@ -50,20 +49,11 @@ export function FloatingChatWidget() {
   const isMountedRef = useRef(true);
 
   activeChatRef.current = activeChat;
+
+  const { socket, isConnected, userId: currentUserId } = useSocket();
   currentUserIdRef.current = currentUserId;
 
-  const { socket, isConnected } = useSocket();
-
-  // ─── Load current user ──────────────────────────────────────────────────────
   useEffect(() => {
-    async function loadUser() {
-      try {
-        const data = await fetchApiData<any>("/auth/me", null);
-        const userId = data?.id || data?.user?.id;
-        if (userId && isMountedRef.current) setCurrentUserId(userId);
-      } catch (e) { /* ignore */ }
-    }
-    loadUser();
     return () => { isMountedRef.current = false; };
   }, []);
 

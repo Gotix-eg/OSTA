@@ -42,81 +42,83 @@ export function ServicesListing({ locale }: { locale: Locale }) {
   const categories = useLiveApiData<ServiceCategory[]>("/services/categories", []);
 
   const [searchQuery, setSearchQuery] = useState("");
+  const safeCategories = Array.isArray(categories) ? categories.filter(Boolean) : [];
 
-  const filteredCategories = categories.filter(cat => {
-    const name = isArabic ? cat.nameAr : cat.nameEn;
+  const filteredCategories = safeCategories.filter(cat => {
+    const name = isArabic ? (cat.nameAr || cat.nameEn || "") : (cat.nameEn || cat.nameAr || "");
     return name.toLowerCase().includes(searchQuery.toLowerCase());
   });
 
   return (
-    <div className="bg-[#f5bd18] min-h-screen py-24 px-4 md:px-12 w-full text-[#1a1c1c]">
+    <div className="min-h-screen w-full bg-gold px-4 pb-28 pt-6 text-[#1a1c1c] md:px-12 md:py-24">
       {/* Hero Search Section */}
-      <div className="max-w-7xl mx-auto mb-16 text-center space-y-8">
-        <h1 className="font-display-lg text-4xl md:text-6xl text-[#1a1c1c] font-black leading-tight">
-          {isArabic ? (
-            <>
-              ماذا يمكننا أن نفعل لك؟
-              <span className="block text-2xl md:text-3xl mt-4 font-bold text-[#1a1c1c]/80">What can we do for you?</span>
-            </>
-          ) : (
-            <>
-              What can we do for you?
-              <span className="block text-2xl md:text-3xl mt-4 font-bold text-[#1a1c1c]/80" dir="rtl">ماذا يمكننا أن نفعل لك؟</span>
-            </>
-          )}
+      <div className="mx-auto mb-8 max-w-7xl space-y-5 text-start md:mb-16 md:space-y-8 md:text-center">
+        <span className="inline-flex bg-black px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-gold">
+          {isArabic ? "الخدمات" : "Services"}
+        </span>
+        <h1 className="font-display-lg text-4xl font-black leading-tight text-[#1a1c1c] md:text-6xl">
+          {isArabic ? "ماذا يمكننا أن نفعل لك؟" : "What can we do for you?"}
         </h1>
-        <div className="relative max-w-2xl mx-auto group">
-          <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none z-25">
-            <Search className="text-[#1a1c1c] h-6 w-6" />
+        <p className="max-w-2xl text-base font-bold leading-7 text-[#1a1c1c]/75 md:mx-auto md:text-lg md:leading-8">
+          {isArabic
+            ? "اختر الخدمة المناسبة، وابحث عن فنيين موثوقين بالقرب منك."
+            : "Choose the right service and find verified professionals near you."}
+        </p>
+        <div className="group relative mx-auto max-w-2xl">
+          <div className="pointer-events-none absolute inset-y-0 left-4 z-25 flex items-center rtl:left-auto rtl:right-4">
+            <Search className="h-5 w-5 text-[#1a1c1c] md:h-6 md:w-6" />
           </div>
           <input 
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-14 pr-24 py-5 bg-white border-4 border-[#1a1c1c] font-bold text-lg focus:ring-0 focus:outline-none placeholder:text-[#1a1c1c]/40 transition-all rounded-none text-black"
+            className="h-14 w-full border-2 border-[#1a1c1c] bg-white px-12 text-sm font-black text-black placeholder:text-[#1a1c1c]/40 transition-all focus:outline-none focus:ring-0 md:h-auto md:border-4 md:py-5 md:pl-14 md:pr-24 md:text-lg"
             placeholder={isArabic ? "ابحث عن خدمة (سباكة، كهرباء، نجارة)..." : "Search for experts (e.g., Plumbing, Electrician)..."}
           />
-          <button className="absolute right-4 top-1/2 -translate-y-1/2 bg-[#1a1c1c] text-white px-6 py-2 font-black uppercase text-sm hover:bg-[#1a1c1c]/80 transition-colors rounded-none">
+          <button className="absolute right-2 top-1/2 h-10 -translate-y-1/2 bg-[#1a1c1c] px-4 text-xs font-black uppercase text-white transition-colors hover:bg-[#1a1c1c]/80 rtl:left-2 rtl:right-auto md:right-4 md:px-6 md:text-sm">
             {isArabic ? "ابدأ" : "GO"}
           </button>
         </div>
       </div>
 
       {/* Services Bento/Grid */}
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
         {filteredCategories.map((cat) => {
-          const imgUrl = serviceImages[cat.slug] || serviceImages[cat.icon] || cat.imageUrl || "https://images.unsplash.com/photo-1581092160562-40aa08e78837?q=80&w=800&auto=format&fit=crop";
+          const imgUrl = cat.imageUrl || serviceImages[cat.slug] || serviceImages[cat.icon] || "https://images.unsplash.com/photo-1581092160562-40aa08e78837?q=80&w=800&auto=format&fit=crop";
           const desc = serviceDescriptions[cat.slug] || serviceDescriptions[cat.icon] || { ar: "صيانة منزلية عالية الجودة وأعمال تشطيبات معتمدة.", en: "High-quality home maintenance and verified craftsmanship." };
           return (
-            <div key={cat.id} className="obsidian-card p-6 flex flex-col justify-between group rounded-none bg-black border border-white/10 text-white min-h-[460px]">
+            <div key={cat.id} className="group flex min-h-[320px] flex-col justify-between overflow-hidden rounded-none border border-white/10 bg-black text-white md:min-h-[460px] md:p-6">
               <div>
-                <div className="aspect-video w-full overflow-hidden mb-6 relative">
+                <div className="relative mb-4 aspect-[16/10] w-full overflow-hidden md:mb-6 md:aspect-video">
                   <img 
                     src={imgUrl} 
                     alt="" 
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent md:hidden" />
                   {cat.slug === "electrical" && (
-                    <div className="absolute top-4 left-4 bg-[#f5bd18] text-[#1a1c1c] px-3 py-1 text-xs font-black rounded-none">
-                      URGENT
+                    <div className="absolute top-4 left-4 bg-gold text-[#1a1c1c] px-3 py-1 text-xs font-black rounded-none">
+                      {isArabic ? "عاجل" : "URGENT"}
                     </div>
                   )}
                   {cat.slug === "appliances" && (
                     <div className="absolute top-4 left-4 bg-white text-[#1a1c1c] px-3 py-1 text-xs font-black rounded-none">
-                      FEATURED
+                      {isArabic ? "مميز" : "FEATURED"}
                     </div>
                   )}
                 </div>
-                <h3 className="text-2xl font-black text-white mb-2 font-mono">
-                  {cat.nameEn} / {cat.nameAr}
+                <div className="px-5 pb-5 md:px-0 md:pb-0">
+                <h3 className="mb-2 text-2xl font-black text-white">
+                  {isArabic ? cat.nameAr : cat.nameEn}
                 </h3>
-                <p className="text-neutral-400 text-sm font-light leading-relaxed mb-6">
+                <p className="mb-5 text-sm font-semibold leading-relaxed text-neutral-400 md:mb-6 md:font-light">
                   {isArabic ? desc.ar : desc.en}
                 </p>
+                </div>
               </div>
               <Link 
                 href={`/${locale}/services/${cat.slug}`} 
-                className="flex items-center gap-2 text-[#f5bd18] font-black group-hover:gap-4 transition-all uppercase tracking-wider text-xs"
+                className="mx-5 mb-5 flex min-h-11 items-center gap-2 bg-gold px-4 text-xs font-black uppercase tracking-wider text-black transition-all group-hover:gap-4 md:mx-0 md:mb-0 md:bg-transparent md:px-0 md:text-gold"
               >
                 {isArabic ? "استكشف الخدمة" : "EXPLORE"} <ArrowRight className="h-4 w-4" />
               </Link>
@@ -128,9 +130,17 @@ export function ServicesListing({ locale }: { locale: Locale }) {
       {/* CTA Banner */}
       <div className="max-w-7xl mx-auto mt-16 bg-[#1a1c1c] p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 border border-white/10 text-white text-start rounded-none">
         <div>
-          <h2 className="text-2xl font-black text-[#f5bd18] mb-2">Are you a master technician?</h2>
-          <h2 className="text-2xl font-black text-white">{isArabic ? "هل أنت فني محترف؟" : "Are you a professional pro?"}</h2>
-          <p className="text-neutral-400 mt-4 text-sm font-light">Join the elite network of OSTA craftsmen and grow your business.</p>
+          <h2 className="text-2xl font-black text-gold mb-2">
+            {isArabic ? "هل أنت فني محترف؟" : "Are you a master technician?"}
+          </h2>
+          <h3 className="text-2xl font-black text-white">
+            {isArabic ? "انضم إلى شبكة فنيين أُسطفاي" : "Join the OSTA craftsman network"}
+          </h3>
+          <p className="text-neutral-400 mt-4 text-sm font-light">
+            {isArabic
+              ? "وسع شغلك، واستقبل طلبات مناسبة، وابنِ سمعتك مع عملاء حقيقيين."
+              : "Grow your business, receive qualified requests, and build your reputation with real clients."}
+          </p>
         </div>
         <Link 
           href={`/${locale}/register/worker`} 

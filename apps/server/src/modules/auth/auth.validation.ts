@@ -1,6 +1,9 @@
 import { z } from "zod";
 
-const phoneSchema = z.string().min(10, "يجب أن يتكون رقم الهاتف من 10 أرقام على الأقل").max(20, "رقم الهاتف طويل جداً");
+const EGYPT_PHONE_REGEX = /^\+20(10|11|12|15)\d{8}$/;
+const phoneSchema = z
+  .string()
+  .regex(EGYPT_PHONE_REGEX, "رقم الهاتف يجب أن يكون رقم مصري صحيح مثل +201012345678");
 const passwordSchema = z.string().min(8, "يجب أن تتكون كلمة المرور من 8 أحرف على الأقل").max(64, "كلمة المرور طويلة جداً");
 
 export const registerSchema = z

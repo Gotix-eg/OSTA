@@ -21,7 +21,12 @@ export default async function LoginPage({ params }: { params: Promise<{ locale: 
   }
 
   return (
-    <AuthShell locale={locale} pathname="/login" title={authCopy[locale].loginTitle} description={authCopy[locale].loginBody}>
+    <AuthShell
+      locale={locale}
+      pathname="/login"
+      title={locale === "ar" ? "تسجيل الدخول" : "WELCOME BACK"}
+      description={authCopy[locale].loginBody}
+    >
       <LoginForm locale={locale} />
     </AuthShell>
   );

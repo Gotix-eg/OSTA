@@ -83,6 +83,8 @@ const workerSettings = {
   }
 };
 
+const ALLOWED_PAYMENT_METHODS = ["cash", "vodafone_cash", "instapay"] as const;
+
 const acceptRequestSchema = z.object({
   workerName: z.string().min(2).max(80).optional(),
   price: z.number().optional()
@@ -658,13 +660,25 @@ router.get("/settings", catchAsync(async (request, response) => {
       firstName: user.firstName,
       lastName: user.lastName,
       phone: user.phone,
-      email: user.email
+      email: user.email,
+      emailVerified: user.emailVerified,
+      avatarUrl: user.avatarUrl,
+      nationalIdNumber: user.workerProfile?.nationalIdNumber ?? null,
+      nationalIdFront: user.workerProfile?.nationalIdFront ?? null,
+      nationalIdBack: user.workerProfile?.nationalIdBack ?? null,
+      selfieWithId: user.workerProfile?.selfieWithId ?? null,
+      verificationStatus: user.workerProfile?.verificationStatus ?? "PENDING"
     },
     workPreferences: {
+      ...workerSettings.workPreferences,
       isAvailable: user.workerProfile?.isAvailable ?? false,
       notificationsEnabledApp: user.workerProfile?.notificationsEnabledApp ?? true,
       notificationsEnabledEmail: user.workerProfile?.notificationsEnabledEmail ?? true,
-      subscriptionTier: user.workerProfile?.subscriptionTier ?? "free"
+      subscriptionTier: user.workerProfile?.subscriptionTier ?? "free",
+      workingHours: user.workerProfile?.workingHours ?? null,
+      offDates: user.workerProfile?.offDates ?? [],
+      acceptedPaymentMethods: user.workerProfile?.acceptedPaymentMethods ?? [],
+      preferredPaymentMethod: user.workerProfile?.preferredPaymentMethod ?? null
     }
   };
 
@@ -673,23 +687,161 @@ router.get("/settings", catchAsync(async (request, response) => {
 
 router.patch("/settings", catchAsync(async (request, response) => {
   const userId = request.auth!.userId;
-  const { notificationsEnabledApp, notificationsEnabledEmail, isAvailable } = request.body;
+  const { notificationsEnabledApp, notificationsEnabledEmail, isAvailable, nationalIdNumber, nationalIdFront, nationalIdBack, selfieWithId, workingHours, offDates, acceptedPaymentMethods, preferredPaymentMethod } = request.body;
+
+  if (acceptedPaymentMethods !== undefined) {
+    if (!Array.isArray(acceptedPaymentMethods) || acceptedPaymentMethods.some((method: unknown) => !ALLOWED_PAYMENT_METHODS.includes(method as any))) {
+      throw new ApiError(400, "Invalid payment method");
+    }
+  }
 
   const worker = await prisma.workerProfile.findUnique({
     where: { userId }
   });
   if (!worker) throw new ApiError(404, "Worker profile not found");
 
+  if (preferredPaymentMethod !== undefined && preferredPaymentMethod !== null) {
+    if (!ALLOWED_PAYMENT_METHODS.includes(preferredPaymentMethod as any)) {
+      throw new ApiError(400, "Invalid preferred payment method");
+    }
+    const effectiveAcceptedMethods: string[] = acceptedPaymentMethods !== undefined ? acceptedPaymentMethods : worker.acceptedPaymentMethods;
+    if (!effectiveAcceptedMethods.includes(preferredPaymentMethod)) {
+      throw new ApiError(400, "Preferred payment method must be one of the accepted methods");
+    }
+  }
+
   const updated = await prisma.workerProfile.update({
     where: { id: worker.id },
     data: {
       notificationsEnabledApp: notificationsEnabledApp !== undefined ? !!notificationsEnabledApp : undefined,
       notificationsEnabledEmail: notificationsEnabledEmail !== undefined ? !!notificationsEnabledEmail : undefined,
-      isAvailable: isAvailable !== undefined ? !!isAvailable : undefined
+      isAvailable: isAvailable !== undefined ? !!isAvailable : undefined,
+      nationalIdNumber: nationalIdNumber !== undefined ? nationalIdNumber : undefined,
+      nationalIdFront: nationalIdFront !== undefined ? nationalIdFront : undefined,
+      nationalIdBack: nationalIdBack !== undefined ? nationalIdBack : undefined,
+      selfieWithId: selfieWithId !== undefined ? selfieWithId : undefined,
+      workingHours: workingHours !== undefined ? workingHours : undefined,
+      offDates: offDates !== undefined ? offDates : undefined,
+      acceptedPaymentMethods: acceptedPaymentMethods !== undefined ? acceptedPaymentMethods : undefined,
+      preferredPaymentMethod: preferredPaymentMethod !== undefined ? preferredPaymentMethod : undefined
     }
   });
 
   response.status(200).json(successResponse(updated, "Worker settings updated successfully"));
+}));
+
+router.get("/profile", catchAsync(async (request, response) => {
+  const userId = request.auth!.userId;
+
+  const worker = await prisma.workerProfile.findUnique({
+    where: { userId },
+    include: {
+      certificates: { orderBy: { order: "asc" } },
+      serviceItems: { orderBy: { order: "asc" } }
+    }
+  });
+
+  if (!worker) throw new ApiError(404, "Worker profile not found");
+
+  const profile = {
+    bio: worker.bio ?? "",
+    yearsOfExperience: worker.yearsOfExperience,
+    education: worker.education,
+    achievements: worker.achievements,
+    galleryImages: worker.galleryImages,
+    galleryVideoUrl: worker.galleryVideoUrl ?? "",
+    contractInfo: worker.contractInfo ?? "",
+    certificates: worker.certificates.map((c) => ({ id: c.id, title: c.title, year: c.year ?? "", imageUrl: c.imageUrl })),
+    serviceItems: worker.serviceItems.map((s) => ({ id: s.id, name: s.name, price: s.price, note: s.note ?? "" }))
+  };
+
+  response.status(200).json(successResponse(profile, "Worker profile fetched"));
+}));
+
+const workerProfileSchema = z.object({
+  bio: z.string().max(2000).optional(),
+  yearsOfExperience: z.number().int().min(0).max(80).optional(),
+  education: z.array(z.string().max(300)).max(20).optional(),
+  achievements: z.array(z.string().max(300)).max(20).optional(),
+  galleryImages: z.array(z.string().url().max(1000)).max(24).optional(),
+  galleryVideoUrl: z.string().max(1000).optional(),
+  contractInfo: z.string().max(2000).optional(),
+  certificates: z.array(z.object({
+    title: z.string().min(1).max(200),
+    year: z.string().max(20).optional(),
+    imageUrl: z.string().url().max(1000)
+  })).max(20).optional(),
+  serviceItems: z.array(z.object({
+    name: z.string().min(1).max(200),
+    price: z.string().min(1).max(60).refine(
+      (val) => /^\d+(\.\d{1,2})?$/.test(val.trim()) || /^\d+(\.\d{1,2})?\s*(ج\.م|EGP)$/i.test(val.trim()),
+      { message: "السعر يجب أن يكون رقماً بالجنيه المصري (مثال: 150)" }
+    ),
+    note: z.string().max(300).optional()
+  })).max(40).optional()
+});
+
+router.patch("/profile", catchAsync(async (request, response) => {
+  const userId = request.auth!.userId;
+  const body = workerProfileSchema.parse(request.body);
+
+  const worker = await prisma.workerProfile.findUnique({ where: { userId } });
+  if (!worker) throw new ApiError(404, "Worker profile not found");
+
+  await prisma.$transaction(async (tx) => {
+    await tx.workerProfile.update({
+      where: { id: worker.id },
+      data: {
+        bio: body.bio !== undefined ? body.bio.trim() || null : undefined,
+        yearsOfExperience: body.yearsOfExperience,
+        education: body.education?.map((e) => e.trim()).filter(Boolean),
+        achievements: body.achievements?.map((a) => a.trim()).filter(Boolean),
+        galleryImages: body.galleryImages,
+        galleryVideoUrl: body.galleryVideoUrl !== undefined ? body.galleryVideoUrl.trim() || null : undefined,
+        contractInfo: body.contractInfo !== undefined ? body.contractInfo.trim() || null : undefined
+      }
+    });
+
+    if (body.certificates !== undefined) {
+      await tx.workerCertificate.deleteMany({ where: { workerId: worker.id } });
+      if (body.certificates.length > 0) {
+        await tx.workerCertificate.createMany({
+          data: body.certificates.map((c, index) => ({
+            workerId: worker.id,
+            title: c.title.trim(),
+            year: c.year?.trim() || null,
+            imageUrl: c.imageUrl,
+            order: index
+          }))
+        });
+      }
+    }
+
+    if (body.serviceItems !== undefined) {
+      await tx.workerServiceItem.deleteMany({ where: { workerId: worker.id } });
+      if (body.serviceItems.length > 0) {
+        await tx.workerServiceItem.createMany({
+          data: body.serviceItems.map((s, index) => ({
+            workerId: worker.id,
+            name: s.name.trim(),
+            price: s.price.trim(),
+            note: s.note?.trim() || null,
+            order: index
+          }))
+        });
+      }
+    }
+  });
+
+  const updated = await prisma.workerProfile.findUnique({
+    where: { id: worker.id },
+    include: {
+      certificates: { orderBy: { order: "asc" } },
+      serviceItems: { orderBy: { order: "asc" } }
+    }
+  });
+
+  response.status(200).json(successResponse(updated, "Worker profile updated successfully"));
 }));
 
 export const workersRouter = router;

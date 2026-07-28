@@ -10,6 +10,7 @@ import { prisma } from "../../lib/prisma.js";
 import { catchAsync } from "../../utils/catchAsync.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { normalizeHeroSlidesForStorage, normalizeCampaignsForStorage } from "./hero-slides.storage.js";
+import { getAvatarLibrary, saveAvatarLibrary } from "../../lib/avatar-library.js";
 
 const router = Router();
 
@@ -1193,6 +1194,26 @@ router.put("/campaigns", authenticate, requireRoles(UserRole.ADMIN), catchAsync(
   });
 
   res.json(successResponse(normalized.campaigns, "Sponsored campaigns saved"));
+}));
+
+// ──────────────────────────────────────────────────────────────────────────────
+// Worker Avatar Library — admin-approved photos randomly assigned to workers
+// who complete registration without uploading a profile photo.
+// ──────────────────────────────────────────────────────────────────────────────
+
+// GET /api/admin/avatars — Get current avatar library
+router.get("/avatars", authenticate, requireRoles(UserRole.ADMIN), catchAsync(async (_req, res) => {
+  const avatars = await getAvatarLibrary();
+  res.json(successResponse(avatars, "Avatar library fetched"));
+}));
+
+// PUT /api/admin/avatars — Save avatar library
+router.put("/avatars", authenticate, requireRoles(UserRole.ADMIN), catchAsync(async (req, res) => {
+  const { avatars } = req.body;
+  if (!Array.isArray(avatars)) throw new ApiError(400, "avatars must be an array");
+
+  const saved = await saveAvatarLibrary(avatars);
+  res.json(successResponse(saved, "Avatar library saved"));
 }));
 
 export const adminRouter = router;

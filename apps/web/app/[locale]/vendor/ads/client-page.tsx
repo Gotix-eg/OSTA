@@ -4,19 +4,25 @@ import { useEffect, useState } from "react";
 import { 
   Megaphone, 
   Plus, 
-  BarChart3, 
   Eye, 
   MousePointerClick, 
   Percent, 
   Wallet, 
   AlertCircle, 
   CheckCircle2, 
-  Clock, 
   RefreshCw,
-  Sparkles,
-  Store
+  Sparkles
 } from "lucide-react";
 import { DashboardShell } from "@/components/dashboard/dashboard-shell";
+import {
+  VendorStitchAction,
+  VendorStitchBadge,
+  VendorStitchEmpty,
+  VendorStitchMetric,
+  VendorStitchPanel,
+  VendorStitchShell,
+  VendorStitchTopStrip
+} from "@/components/vendor/vendor-stitch-ui";
 import { fetchApiData, postApiData } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
 
@@ -145,28 +151,24 @@ export default function VendorAdsClientPage({ locale }: { locale: Locale }) {
   }
 
   const getStatusBadge = (status: string) => {
-    const states: Record<string, { labelAr: string; labelEn: string; classes: string }> = {
-      PENDING: { labelAr: "معلق - بانتظار الموافقة", labelEn: "Pending Approval", classes: "bg-gold-500/10 text-gold-500 border border-gold-500/20" },
-      ACTIVE: { labelAr: "نشط وممول", labelEn: "Active & Funded", classes: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-emerald-500/5 shadow-lg" },
-      PAUSED: { labelAr: "موقوف مؤقتاً", labelEn: "Paused", classes: "bg-white/10 text-white/60 border border-white/10" },
-      FINISHED: { labelAr: "مكتمل ومنتهي", labelEn: "Completed", classes: "bg-white/5 text-white/40 border border-white/5" }
+    const states: Record<string, { labelAr: string; labelEn: string; tone: "gold" | "green" | "muted" }> = {
+      PENDING: { labelAr: "معلق - بانتظار الموافقة", labelEn: "Pending Approval", tone: "gold" },
+      ACTIVE: { labelAr: "نشط وممول", labelEn: "Active & Funded", tone: "green" },
+      PAUSED: { labelAr: "موقوف مؤقتاً", labelEn: "Paused", tone: "muted" },
+      FINISHED: { labelAr: "مكتمل ومنتهي", labelEn: "Completed", tone: "muted" }
     };
-    const s = states[status] || { labelAr: status, labelEn: status, classes: "bg-white/5 text-white/70" };
-    return (
-      <span className={`px-3 py-1 rounded-full text-xs font-bold ${s.classes}`}>
-        {isArabic ? s.labelAr : s.labelEn}
-      </span>
-    );
+    const s = states[status] || { labelAr: status, labelEn: status, tone: "muted" as const };
+    return <VendorStitchBadge tone={s.tone}>{isArabic ? s.labelAr : s.labelEn}</VendorStitchBadge>;
   };
 
   return (
     <DashboardShell locale={locale} role="vendor">
-      <div className="space-y-8 animate-slideUp">
+      <VendorStitchShell locale={locale}>
+        <VendorStitchTopStrip locale={locale} title={isArabic ? "الإعلانات الممولة" : "Sponsored ads"} />
         
-        {/* Neon Hero Section */}
-        <div className="relative rounded-[2.5rem] border border-white/5 bg-onyx-950/40 p-8 overflow-hidden backdrop-blur-3xl shadow-2xl">
-          <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
-          <div className="absolute -left-24 bottom-0 h-72 w-72 rounded-full bg-gold-500/10 blur-3xl pointer-events-none" />
+        {/* Hero Section */}
+        <div className="relative overflow-hidden border border-white/10 bg-black p-6 text-white shadow-[5px_5px_0_#1d1600] lg:p-8">
+          <div className="absolute inset-0 opacity-25 [background:radial-gradient(circle_at_20%_20%,#f5bd18_0,transparent_32%),linear-gradient(135deg,transparent_0,#171717_70%)]" />
           
           <div className="relative flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             <div>
@@ -190,14 +192,14 @@ export default function VendorAdsClientPage({ locale }: { locale: Locale }) {
               <button
                 onClick={handleRefresh}
                 disabled={refreshing}
-                className="inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-white transition-all hover:bg-white/10 active:scale-95 disabled:opacity-50"
+                className="inline-flex h-12 w-12 items-center justify-center border border-white/10 bg-white/5 text-white transition-all hover:bg-white/10 active:scale-95 disabled:opacity-50"
               >
                 <RefreshCw className={`h-5 w-5 ${refreshing ? "animate-spin" : ""}`} />
               </button>
 
               <button
                 onClick={() => setShowCreateModal(true)}
-                className="inline-flex h-12 items-center gap-2 rounded-2xl bg-emerald-400 px-6 font-bold text-onyx-950 transition-all hover:bg-emerald-300 active:scale-95 shadow-lg shadow-emerald-400/25"
+                className="inline-flex h-12 items-center gap-2 bg-gold px-6 font-black text-black transition-all hover:bg-white active:scale-95"
               >
                 <Plus className="h-5 w-5" />
                 {isArabic ? "إنشاء إعلان ممول" : "Build Sponsored Ad"}
@@ -206,106 +208,46 @@ export default function VendorAdsClientPage({ locale }: { locale: Locale }) {
           </div>
         </div>
 
-        {/* Analytics Neon Cards */}
+        {/* Analytics Cards */}
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          <div className="rounded-2xl border border-white/5 bg-onyx-900/35 p-5 relative overflow-hidden backdrop-blur-md">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 blur-2xl pointer-events-none" />
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="text-xs font-bold text-onyx-500 uppercase tracking-wider">{isArabic ? "مرات ظهور متجرك" : "Store Impressions"}</p>
-                <p className="mt-2 text-3xl font-black text-white">{metrics.impressions.toLocaleString(locale)}</p>
-              </div>
-              <div className="h-10 w-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 border border-emerald-500/20">
-                <Eye className="h-5 w-5" />
-              </div>
-            </div>
-            <span className="text-[10px] text-emerald-400 font-bold block mt-3">↑ 24.5% {isArabic ? "مشاهدات عالية" : "high visibility"}</span>
-          </div>
-
-          <div className="rounded-2xl border border-white/5 bg-onyx-900/35 p-5 relative overflow-hidden backdrop-blur-md">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-gold-500/5 blur-2xl pointer-events-none" />
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="text-xs font-bold text-onyx-500 uppercase tracking-wider">{isArabic ? "النقرات التفاعلية" : "Total Clicks"}</p>
-                <p className="mt-2 text-3xl font-black text-white">{metrics.clicks.toLocaleString(locale)}</p>
-              </div>
-              <div className="h-10 w-10 rounded-xl bg-gold-500/10 flex items-center justify-center text-gold-500 border border-gold-500/20">
-                <MousePointerClick className="h-5 w-5" />
-              </div>
-            </div>
-            <span className="text-[10px] text-gold-400 font-bold block mt-3">↑ 14.2% {isArabic ? "زيادة المبيعات" : "organic click growth"}</span>
-          </div>
-
-          <div className="rounded-2xl border border-white/5 bg-onyx-900/35 p-5 relative overflow-hidden backdrop-blur-md">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-purple-500/5 blur-2xl pointer-events-none" />
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="text-xs font-bold text-onyx-500 uppercase tracking-wider">{isArabic ? "متوسط التفاعل CTR" : "Avg. Click Through Rate"}</p>
-                <p className="mt-2 text-3xl font-black text-white">{metrics.ctr}%</p>
-              </div>
-              <div className="h-10 w-10 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-400 border border-purple-500/20">
-                <Percent className="h-5 w-5" />
-              </div>
-            </div>
-            <span className="text-[10px] text-purple-400 font-bold block mt-3">↑ {isArabic ? "معدل تفاعل ممتاز" : "High conversion rate"}</span>
-          </div>
-
-          <div className="rounded-2xl border border-white/5 bg-onyx-900/35 p-5 relative overflow-hidden backdrop-blur-md">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 blur-2xl pointer-events-none" />
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="text-xs font-bold text-onyx-500 uppercase tracking-wider">{isArabic ? "رصيد المحفظة المتاح" : "Wallet Balance"}</p>
-                <p className="mt-2 text-3xl font-black text-emerald-400">{walletBalance} {isArabic ? "ج.م" : "EGP"}</p>
-              </div>
-              <div className="h-10 w-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 border border-emerald-500/20">
-                <Wallet className="h-5 w-5" />
-              </div>
-            </div>
-            <span className="text-[10px] text-emerald-400 font-bold block mt-3">{isArabic ? "محفظة تجارية نشطة" : "Active corporate wallet"}</span>
-          </div>
+          <VendorStitchMetric icon={Eye} index="01" label={isArabic ? "مرات ظهور متجرك" : "Store Impressions"} value={metrics.impressions.toLocaleString(locale)} note={isArabic ? "مشاهدات عالية" : "high visibility"} />
+          <VendorStitchMetric icon={MousePointerClick} index="02" label={isArabic ? "النقرات التفاعلية" : "Total Clicks"} value={metrics.clicks.toLocaleString(locale)} note={isArabic ? "زيادة المبيعات" : "organic click growth"} />
+          <VendorStitchMetric icon={Percent} index="03" label={isArabic ? "متوسط التفاعل CTR" : "Avg. Click Through Rate"} value={`${metrics.ctr}%`} note={isArabic ? "معدل تفاعل ممتاز" : "high conversion rate"} />
+          <VendorStitchMetric icon={Wallet} index="04" label={isArabic ? "رصيد المحفظة المتاح" : "Wallet Balance"} value={`${walletBalance} ${isArabic ? "ج.م" : "EGP"}`} note={isArabic ? "محفظة تجارية نشطة" : "active vendor wallet"} />
         </div>
 
         {/* Charts & Campaign Management */}
         <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
           
           {/* Active Campaigns Feed */}
-          <div className="space-y-6">
-            <h2 className="text-xl font-bold text-white flex items-center gap-2">
-              <Megaphone className="h-5 w-5 text-emerald-400" />
-              {isArabic ? "حملات الترويج للمتجر" : "My Store Campaigns"}
-            </h2>
-
+          <VendorStitchPanel
+            eyebrow="Campaigns"
+            title={isArabic ? "حملات الترويج للمتجر" : "My Store Campaigns"}
+            action={<Megaphone className="h-5 w-5 text-gold" />}
+          >
             {loading ? (
-              <div className="flex h-48 items-center justify-center rounded-[2rem] border border-white/5 bg-onyx-900/20">
-                <div className="h-8 w-8 animate-spin rounded-full border-4 border-emerald-400 border-t-transparent" />
+              <div className="flex h-48 items-center justify-center border border-white/10 bg-[#080808]">
+                <div className="h-9 w-9 animate-spin border-4 border-gold border-t-transparent" />
               </div>
             ) : campaigns.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-64 rounded-[2.5rem] border border-white/5 bg-onyx-900/20 p-8 text-center backdrop-blur-md">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/5 text-onyx-400 mb-4">
-                  <Megaphone className="h-7 w-7" />
-                </div>
-                <p className="font-bold text-white text-lg">
-                  {isArabic ? "لا توجد حملات إعلانية للمحل حالياً" : "No store campaigns yet"}
-                </p>
-                <p className="mt-2 text-sm text-onyx-400 max-w-sm">
-                  {isArabic 
-                    ? "لم تقم بإنشاء أي حملة ممولة لمتجرك حتى الآن. ابدأ بالترويج لتصدر قائمتك ولتحصل على طلبات خامات مباشرة."
-                    : "You have not launched any sponsored merchant campaigns. Start promoting to get more direct client contracts."}
-                </p>
-                <button
-                  onClick={() => setShowCreateModal(true)}
-                  className="mt-6 inline-flex h-11 items-center gap-2 rounded-xl bg-white/10 px-5 text-sm font-bold text-white hover:bg-white/15"
-                >
+              <div className="space-y-5">
+                <VendorStitchEmpty
+                  title={isArabic ? "لا توجد حملات إعلانية للمحل حالياً" : "No store campaigns yet"}
+                  text={isArabic
+                    ? "ابدأ بالترويج لتصدر قائمة المتاجر وتحصل على طلبات خامات مباشرة."
+                    : "Start promoting to get more direct client material orders."}
+                />
+                <VendorStitchAction onClick={() => setShowCreateModal(true)} tone="light">
                   <Plus className="h-4 w-4 text-emerald-400" />
                   {isArabic ? "بناء أول إعلان ممول لمتجرك" : "Launch Store Campaign"}
-                </button>
+                </VendorStitchAction>
               </div>
             ) : (
               <div className="grid gap-4">
                 {campaigns.map((ad) => (
                   <div
                     key={ad.id}
-                    className="rounded-3xl border border-white/5 bg-onyx-900/20 p-6 space-y-4 hover:border-white/10 transition-all duration-300"
+                    className="border border-white/10 bg-[#080808] p-5 shadow-[3px_3px_0_#1d1600] transition-colors hover:border-gold/70"
                   >
                     <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/5 pb-4">
                       <div>
@@ -329,16 +271,16 @@ export default function VendorAdsClientPage({ locale }: { locale: Locale }) {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-4 text-center py-2">
-                      <div className="bg-white/[0.01] p-3 rounded-2xl border border-white/5">
+                    <div className="grid grid-cols-3 gap-3 pt-4 text-center">
+                      <div className="border border-white/10 bg-black p-3">
                         <span className="block text-[10px] font-bold text-onyx-500 uppercase tracking-wider">{isArabic ? "مشاهدات" : "Views"}</span>
                         <span className="mt-1 block font-black text-white text-base">{ad.views.toLocaleString(locale)}</span>
                       </div>
-                      <div className="bg-white/[0.01] p-3 rounded-2xl border border-white/5">
+                      <div className="border border-white/10 bg-black p-3">
                         <span className="block text-[10px] font-bold text-onyx-500 uppercase tracking-wider">{isArabic ? "نقرات" : "Clicks"}</span>
-                        <span className="mt-1 block font-black text-emerald-400 text-base">{ad.clicks.toLocaleString(locale)}</span>
+                        <span className="mt-1 block font-black text-gold text-base">{ad.clicks.toLocaleString(locale)}</span>
                       </div>
-                      <div className="bg-white/[0.01] p-3 rounded-2xl border border-white/5">
+                      <div className="border border-white/10 bg-black p-3">
                         <span className="block text-[10px] font-bold text-onyx-500 uppercase tracking-wider">{isArabic ? "معدل التحويل" : "CTR"}</span>
                         <span className="mt-1 block font-black text-gold-400 text-base">
                           {ad.views > 0 ? ((ad.clicks / ad.views) * 100).toFixed(1) : 0}%
@@ -349,25 +291,17 @@ export default function VendorAdsClientPage({ locale }: { locale: Locale }) {
                 ))}
               </div>
             )}
-          </div>
+          </VendorStitchPanel>
 
           {/* Futuristic Sparkle Preview Deck */}
-          <div className="space-y-6">
-            <h2 className="text-xl font-bold text-white flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-emerald-400" />
-              {isArabic ? "بوابة مبيعات المتاجر الممولة" : "Merchant Ad Features"}
-            </h2>
-
-            <div className="rounded-[2.5rem] border border-white/5 bg-onyx-900/35 p-6 backdrop-blur-md space-y-6 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/[0.02] blur-3xl pointer-events-none" />
-              
-              <h3 className="font-extrabold text-white text-base">
-                {isArabic ? "مزايا حملات الترويج للمتاجر" : "Why promote your store on Ostafy?"}
-              </h3>
-
+          <VendorStitchPanel
+            eyebrow="Boost"
+            title={isArabic ? "بوابة مبيعات المتاجر الممولة" : "Merchant Ad Features"}
+            action={<Sparkles className="h-5 w-5 text-gold" />}
+          >
               <div className="space-y-4 text-sm">
                 <div className="flex gap-3">
-                  <div className="h-8 w-8 rounded-lg bg-emerald-500/10 flex items-center justify-center shrink-0 text-emerald-400 font-bold text-xs border border-emerald-500/20">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center border border-gold/60 bg-gold text-xs font-black text-black">
                     1
                   </div>
                   <div>
@@ -381,7 +315,7 @@ export default function VendorAdsClientPage({ locale }: { locale: Locale }) {
                 </div>
 
                 <div className="flex gap-3">
-                  <div className="h-8 w-8 rounded-lg bg-emerald-500/10 flex items-center justify-center shrink-0 text-emerald-400 font-bold text-xs border border-emerald-500/20">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center border border-gold/60 bg-gold text-xs font-black text-black">
                     2
                   </div>
                   <div>
@@ -395,7 +329,7 @@ export default function VendorAdsClientPage({ locale }: { locale: Locale }) {
                 </div>
 
                 <div className="flex gap-3">
-                  <div className="h-8 w-8 rounded-lg bg-emerald-500/10 flex items-center justify-center shrink-0 text-emerald-400 font-bold text-xs border border-emerald-500/20">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center border border-gold/60 bg-gold text-xs font-black text-black">
                     3
                   </div>
                   <div>
@@ -410,7 +344,7 @@ export default function VendorAdsClientPage({ locale }: { locale: Locale }) {
               </div>
 
               {/* Wallet Quick Recharge note */}
-              <div className="rounded-2xl border border-white/5 bg-white/[0.02] p-4 flex items-center justify-between gap-4 text-xs">
+              <div className="mt-6 flex items-center justify-between gap-4 border border-white/10 bg-[#080808] p-4 text-xs">
                 <div className="flex items-center gap-2">
                   <Wallet className="h-4 w-4 text-gold-500" />
                   <div>
@@ -420,18 +354,15 @@ export default function VendorAdsClientPage({ locale }: { locale: Locale }) {
                     </span>
                   </div>
                 </div>
-                <span className="bg-gold-500/10 text-gold-400 font-bold px-2 py-1 rounded-md text-[10px]">
-                  {isArabic ? "دفع آمن" : "Secure Payment"}
-                </span>
+                <VendorStitchBadge tone="gold">{isArabic ? "دفع آمن" : "Secure Payment"}</VendorStitchBadge>
               </div>
-            </div>
-          </div>
+          </VendorStitchPanel>
         </div>
 
         {/* Create Campaign Modal */}
         {showCreateModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-md">
-            <div className="w-full max-w-xl rounded-[2.5rem] border border-white/5 bg-onyx-950 p-6 sm:p-8 shadow-2xl relative animate-slideUp">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
+            <div className="w-full max-w-xl border border-white/10 bg-black p-6 shadow-[6px_6px_0_#1d1600] sm:p-8">
               <h2 className="text-2xl font-black text-white">
                 {isArabic ? "منشئ الحملات الإعلانية للمحل" : "Create Store Sponsored Ad"}
               </h2>
@@ -443,14 +374,14 @@ export default function VendorAdsClientPage({ locale }: { locale: Locale }) {
 
               <form onSubmit={handleCreateCampaign} className="mt-6 space-y-4">
                 {error && (
-                  <div className="rounded-xl bg-error/10 border border-error/20 p-3 text-sm text-error flex items-center gap-2">
+                  <div className="flex items-center gap-2 border border-error/30 bg-error/10 p-3 text-sm text-error">
                     <AlertCircle className="h-4 w-4 shrink-0" />
                     <span>{error}</span>
                   </div>
                 )}
 
                 {success && (
-                  <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-3 text-sm text-emerald-400 flex items-center gap-2">
+                  <div className="flex items-center gap-2 border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-300">
                     <CheckCircle2 className="h-4 w-4 shrink-0" />
                     <span>{isArabic ? "تم إرسال إعلانك بنجاح وهو بانتظار التفعيل الفوري!" : "Store campaign created successfully and is pending approval!"}</span>
                   </div>
@@ -470,7 +401,7 @@ export default function VendorAdsClientPage({ locale }: { locale: Locale }) {
                           setFormPlacement("HOMEPAGE");
                         }
                       }}
-                      className="h-12 w-full rounded-xl border border-white/5 bg-white/5 px-4 text-white focus:border-emerald-500/30 focus:bg-white/10 outline-none text-sm transition-all"
+                      className="h-12 w-full border border-white/10 bg-[#121212] px-4 text-white outline-none transition-colors focus:border-gold text-sm"
                     >
                       <option value="SPONSORED_PROFILE">{isArabic ? "متجر ممول (Sponsored Store)" : "Sponsored Store"}</option>
                       <option value="BANNER">{isArabic ? "بنر إعلاني للمحل (Store Banner)" : "Store Banner"}</option>
@@ -482,7 +413,7 @@ export default function VendorAdsClientPage({ locale }: { locale: Locale }) {
                     <select
                       value={formPlacement}
                       onChange={(e) => setFormPlacement(e.target.value as any)}
-                      className="h-12 w-full rounded-xl border border-white/5 bg-white/5 px-4 text-white focus:border-emerald-500/30 focus:bg-white/10 outline-none text-sm transition-all"
+                      className="h-12 w-full border border-white/10 bg-[#121212] px-4 text-white outline-none transition-colors focus:border-gold text-sm"
                     >
                       {formType === "SPONSORED_PROFILE" ? (
                         <option value="SEARCH_TOP">{isArabic ? "صدر نتائج البحث (Search Top)" : "Search Top"}</option>
@@ -504,7 +435,7 @@ export default function VendorAdsClientPage({ locale }: { locale: Locale }) {
                     placeholder={isArabic ? "مثال: محلات النور لقطع الغيار - أصلية ومعتمدة" : "e.g. Al Noor Spare Parts - 100% Certified Supplies"}
                     value={formTitle}
                     onChange={(e) => setFormTitle(e.target.value)}
-                    className="h-12 w-full rounded-xl border border-white/5 bg-white/5 px-4 text-white focus:border-emerald-500/30 focus:bg-white/10 outline-none text-sm transition-all"
+                    className="h-12 w-full border border-white/10 bg-[#121212] px-4 text-white outline-none transition-colors focus:border-gold text-sm"
                   />
                 </label>
 
@@ -516,7 +447,7 @@ export default function VendorAdsClientPage({ locale }: { locale: Locale }) {
                       placeholder="https://example.com/my-banner.jpg"
                       value={formImageUrl}
                       onChange={(e) => setFormImageUrl(e.target.value)}
-                      className="h-12 w-full rounded-xl border border-white/5 bg-white/5 px-4 text-white focus:border-emerald-500/30 focus:bg-white/10 outline-none text-sm transition-all"
+                      className="h-12 w-full border border-white/10 bg-[#121212] px-4 text-white outline-none transition-colors focus:border-gold text-sm"
                     />
                   </label>
                 )}
@@ -528,11 +459,11 @@ export default function VendorAdsClientPage({ locale }: { locale: Locale }) {
                     placeholder="https://osta.app/profile/vendor-1"
                     value={formTargetUrl}
                     onChange={(e) => setFormTargetUrl(e.target.value)}
-                    className="h-12 w-full rounded-xl border border-white/5 bg-white/5 px-4 text-white focus:border-emerald-500/30 focus:bg-white/10 outline-none text-sm transition-all"
+                    className="h-12 w-full border border-white/10 bg-[#121212] px-4 text-white outline-none transition-colors focus:border-gold text-sm"
                   />
                 </label>
 
-                <div className="rounded-2xl border border-white/5 bg-white/[0.01] p-4 flex items-center justify-between text-xs">
+                <div className="flex items-center justify-between border border-white/10 bg-[#080808] p-4 text-xs">
                   <span className="text-onyx-400 font-medium">{isArabic ? "تكلفة ورسوم الحملة الإعلانية:" : "Campaign Advertising Fees:"}</span>
                   <span className="font-extrabold text-emerald-400 text-sm">
                     {formType === "BANNER" ? 500 : 250} {isArabic ? "ج.م" : "EGP"}
@@ -543,14 +474,14 @@ export default function VendorAdsClientPage({ locale }: { locale: Locale }) {
                   <button
                     type="button"
                     onClick={() => setShowCreateModal(false)}
-                    className="rounded-xl border border-white/10 bg-transparent px-5 py-3 text-sm font-bold text-white hover:bg-white/5 transition-all"
+                    className="border border-white/20 bg-transparent px-5 py-3 text-sm font-black uppercase text-white transition-colors hover:border-gold hover:text-gold"
                   >
                     {isArabic ? "إلغاء" : "Cancel"}
                   </button>
                   <button
                     type="submit"
                     disabled={submitting || success}
-                    className="rounded-xl bg-emerald-400 px-6 py-3 text-sm font-bold text-onyx-950 hover:bg-emerald-300 disabled:opacity-50 transition-all flex items-center gap-2"
+                    className="flex items-center gap-2 border border-gold bg-gold px-6 py-3 text-sm font-black uppercase text-black transition-colors hover:bg-white disabled:opacity-50"
                   >
                     {submitting && <RefreshCw className="h-4 w-4 animate-spin" />}
                     {isArabic ? "تمويل وتفعيل الحملة" : "Fund & Activate Ad"}
@@ -560,7 +491,7 @@ export default function VendorAdsClientPage({ locale }: { locale: Locale }) {
             </div>
           </div>
         )}
-      </div>
+      </VendorStitchShell>
     </DashboardShell>
   );
 }

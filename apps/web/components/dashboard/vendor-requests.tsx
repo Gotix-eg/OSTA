@@ -6,6 +6,14 @@ import {
   User, Phone, ChevronDown, ChevronUp, Inbox
 } from "lucide-react";
 import { fetchApiData, patchApiData } from "@/lib/api";
+import {
+  VendorStitchEmpty,
+  VendorStitchHero,
+  VendorStitchMetric,
+  VendorStitchPanel,
+  VendorStitchShell,
+  VendorStitchTopStrip
+} from "@/components/vendor/vendor-stitch-ui";
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
 
@@ -84,7 +92,7 @@ function RequestCard({ req, locale, onReply, onStatusUpdate }: {
 
   return (
     <div className={cn(
-      "rounded-[1.6rem] border bg-onyx-800/50 shadow-soft transition",
+      "border bg-black text-white shadow-[4px_4px_0_#1d1600] transition",
       req.status === "PENDING" ? "border-sun-300" : "border-onyx-700/70"
     )}>
       {/* Header */}
@@ -242,23 +250,29 @@ export function VendorRequestsPage({ locale }: { locale: Locale }) {
   const pendingCount = requests.filter(r => r.status === "PENDING").length;
 
   return (
-    <div>
-      <div className="mb-6">
-        <p className="text-xs font-semibold uppercase tracking-[0.28em] text-primary-700">
-          {isArabic ? "طلبات العملاء" : "Customer Requests"}
-        </p>
-        <h1 className="mt-2 text-3xl font-semibold text-white">
-          {isArabic ? "الطلبات المخصصة" : "Custom Requests"}
-        </h1>
-        <p className="mt-2 text-onyx-400">
-          {isArabic
-            ? `${requests.length} طلب — ${pendingCount} بانتظار الرد`
-            : `${requests.length} requests — ${pendingCount} pending`}
-        </p>
-
+    <VendorStitchShell locale={locale}>
+      <VendorStitchTopStrip locale={locale} title={isArabic ? "طلبات العملاء" : "Customer requests"} />
+      <VendorStitchHero
+        locale={locale}
+        eyebrow={isArabic ? "طلبات مباشرة للمتجر" : "Direct store requests"}
+        title={isArabic ? "طلبات" : "Custom"}
+        highlight={isArabic ? "العملاء" : "requests"}
+        subtitle={
+          isArabic
+            ? `${requests.length} طلب مخصص للمتجر، منهم ${pendingCount} بانتظار الرد.`
+            : `${requests.length} custom store requests, ${pendingCount} waiting for a reply.`
+        }
+      />
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <VendorStitchMetric label={isArabic ? "إجمالي الطلبات" : "Total requests"} value={String(requests.length)} note={isArabic ? "داخل المتجر" : "store inbox"} icon={MessageSquare} index="01" />
+        <VendorStitchMetric label={isArabic ? "بانتظار الرد" : "Pending"} value={String(pendingCount)} note={isArabic ? "تحتاج متابعة" : "needs reply"} icon={Clock} index="02" />
+        <VendorStitchMetric label={isArabic ? "تم الرد" : "Replied"} value={String(requests.filter((r) => r.status === "REPLIED").length)} note={isArabic ? "عروض مرسلة" : "offers sent"} icon={Send} index="03" />
+        <VendorStitchMetric label={isArabic ? "طلبات مقبولة" : "Accepted"} value={String(requests.filter((r) => r.status === "ACCEPTED").length)} note={isArabic ? "قيد التنفيذ" : "in flow"} icon={CheckCircle2} index="04" />
+      </div>
+      <VendorStitchPanel eyebrow={isArabic ? "صندوق الطلبات" : "Request inbox"} title={isArabic ? "الطلبات المخصصة" : "Custom requests"}>
         {/* Subscription Status Card */}
         {stats && (
-          <div className="mt-4 flex flex-wrap gap-3">
+          <div className="mb-5 flex flex-wrap gap-3">
              {stats.trialExpiresAt && new Date(stats.trialExpiresAt) > new Date() ? (
                <div className="flex items-center gap-2 rounded-xl bg-primary-50 px-4 py-2 border border-primary-100">
                  <div className="h-2 w-2 rounded-full bg-primary-500 animate-pulse" />
@@ -279,24 +293,19 @@ export function VendorRequestsPage({ locale }: { locale: Locale }) {
              )}
           </div>
         )}
-      </div>
-
       {loading ? (
         <div className="space-y-4">
           {[1, 2, 3].map(i => (
-            <div key={i} className="h-24 animate-pulse rounded-[1.6rem] bg-onyx-800/50" />
+            <div key={i} className="h-24 animate-pulse border border-white/10 bg-[#121212]" />
           ))}
         </div>
       ) : requests.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-[2rem] border border-dashed border-onyx-700 bg-onyx-800/50 py-20 text-center">
-          <Inbox className="h-12 w-12 text-onyx-600" />
-          <p className="mt-4 text-lg font-semibold text-onyx-200">
-            {isArabic ? "لا توجد طلبات بعد" : "No requests yet"}
-          </p>
-          <p className="mt-2 text-sm text-onyx-400">
-            {isArabic ? "ستظهر هنا طلبات العملاء المرسلة لمتجرك" : "Customer requests sent to your store will appear here"}
-          </p>
-        </div>
+        <VendorStitchEmpty
+          title={isArabic ? "لا توجد طلبات بعد" : "No requests yet"}
+          text={isArabic ? "ستظهر هنا طلبات العملاء المرسلة لمتجرك." : "Customer requests sent to your store will appear here."}
+          actionLabel={isArabic ? "افتح المتجر" : "Open store"}
+          actionHref={`/${locale}/vendor`}
+        />
       ) : (
         <div className="space-y-4">
           {requests.map(req => (
@@ -310,6 +319,7 @@ export function VendorRequestsPage({ locale }: { locale: Locale }) {
           ))}
         </div>
       )}
-    </div>
+      </VendorStitchPanel>
+    </VendorStitchShell>
   );
 }

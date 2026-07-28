@@ -242,6 +242,10 @@ model WorkerProfile {
   nationalIdFront       String?
   nationalIdBack        String?
   selfieWithId          String?
+  workingHours          Json?
+  offDates              String[]                 @default([])
+  acceptedPaymentMethods String[]                @default([])
+  preferredPaymentMethod String?
   profession            String?
   nationalIdNumber      String?                  @unique
   criminalRecord        String?
@@ -252,6 +256,11 @@ model WorkerProfile {
   level                 WorkerLevel              @default(NEW)
   yearsOfExperience     Int                      @default(0)
   bio                   String?
+  education             String[]                 @default([])
+  achievements          String[]                 @default([])
+  galleryImages         String[]                 @default([])
+  galleryVideoUrl       String?
+  contractInfo          String?
   rating                Float                    @default(0)
   ratingCount           Int                      @default(0)
   totalJobsCompleted    Int                      @default(0)
@@ -287,11 +296,39 @@ model WorkerProfile {
   bankAccount           BankAccount?
   tools                 WorkerTool[]
   favoritedBy           FavoriteWorker[]
+  certificates          WorkerCertificate[]
+  serviceItems          WorkerServiceItem[]
 
   @@index([verificationStatus])
   @@index([isAvailable])
   @@index([level])
   @@index([rating])
+}
+
+model WorkerCertificate {
+  id        String        @id @default(cuid())
+  workerId  String
+  title     String
+  year      String?
+  imageUrl  String
+  order     Int           @default(0)
+  createdAt DateTime      @default(now())
+  worker    WorkerProfile @relation(fields: [workerId], references: [id], onDelete: Cascade)
+
+  @@index([workerId])
+}
+
+model WorkerServiceItem {
+  id        String        @id @default(cuid())
+  workerId  String
+  name      String
+  price     String
+  note      String?
+  order     Int           @default(0)
+  createdAt DateTime      @default(now())
+  worker    WorkerProfile @relation(fields: [workerId], references: [id], onDelete: Cascade)
+
+  @@index([workerId])
 }
 
 model ServiceCategory {

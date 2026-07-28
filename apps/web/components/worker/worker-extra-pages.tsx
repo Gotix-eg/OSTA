@@ -1,21 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-import { Save, ShieldCheck, Sparkles, Star, TimerReset, Wallet } from "lucide-react";
+import { AlertCircle, CalendarDays, Camera, Check, CheckCircle2, Clock, Loader2, Lock, Save, ShieldCheck, Sparkles, Star, TimerReset, Trash2, UserCircle2 } from "lucide-react";
 
 import {
-  DashboardBlock,
-  EmptyState,
-  MiniMetric,
-  SoftBadge,
-  SoftCard,
-  SplitInfo,
-  SubpageHero
-} from "@/components/dashboard/dashboard-subpage-primitives";
+  WorkerProAction,
+  WorkerProBadge,
+  WorkerProEmpty,
+  WorkerProHero,
+  WorkerProMetric,
+  WorkerProPanel,
+  WorkerProShell,
+  WorkerProTopStrip
+} from "@/components/worker/worker-pro-ui";
 import { useLiveApiData } from "@/hooks/use-live-api-data";
+import { patchApiData, postApiData } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
 import type { WorkerRatingsData, WorkerSettingsData } from "@/lib/operations-data";
+import { cn, formatPhoneNumber, getLocalizedError } from "@/lib/utils";
 
 function formatNumber(locale: Locale, value: number) {
   return new Intl.NumberFormat(locale === "ar" ? "ar-EG" : "en-US", { maximumFractionDigits: 0 }).format(value);
@@ -32,56 +35,76 @@ export function WorkerRatingsPage({ locale, initialData }: { locale: Locale; ini
   const data = useLiveApiData("/workers/ratings", initialData);
 
   return (
-    <div>
-      <SubpageHero
+    <WorkerProShell locale={locale}>
+      <WorkerProTopStrip locale={locale} title={isArabic ? "التقييمات" : "Ratings"} />
+      <WorkerProHero
+        locale={locale}
         eyebrow={isArabic ? "السمعة المهنية" : "Reputation rail"}
-        title={isArabic ? "التقييمات" : "Ratings"}
-        subtitle={
-          isArabic
-            ? "تابع آراء العملاء والشارات ومؤشرات الثقة من طبقة جودة أوضح وأقوى."
-            : "Track client feedback, earned badges, and trust signals from a richer quality layer."
-        }
-        tone="accent"
+        title={isArabic ? "تقييمات" : "Ratings"}
+        highlight={isArabic ? "الفني" : "signal"}
+        subtitle={isArabic ? "تابع آراء العملاء والشارات ومؤشرات الثقة من طبقة جودة واضحة." : "Track client feedback, earned badges, and trust signals from a focused quality layer."}
       />
 
-      <div className="mb-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <MiniMetric label={isArabic ? "التقييم العام" : "Overall"} value={formatNumber(locale, data.summary.overallRating)} note={isArabic ? "المؤشر الرئيسي" : "headline rating"} icon={Star} tone="dark" />
-        <MiniMetric label={isArabic ? "عدد المراجعات" : "Reviews"} value={formatNumber(locale, data.summary.totalReviews)} note={isArabic ? "إجمالي الآراء" : "total feedback"} icon={Sparkles} tone="accent" />
-        <MiniMetric label={isArabic ? "العملاء المتكررون" : "Repeat clients"} value={`${formatNumber(locale, data.summary.repeatClientsRate)}%`} note={isArabic ? "معدل الولاء" : "loyalty rate"} icon={TimerReset} tone="sun" />
-        <MiniMetric label={isArabic ? "خمس نجوم" : "Five stars"} value={formatNumber(locale, data.summary.fiveStars)} note={isArabic ? "إشارة ثقة قوية" : "premium signal"} icon={ShieldCheck} tone="primary" />
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <WorkerProMetric label={isArabic ? "التقييم العام" : "Overall"} value={formatNumber(locale, data.summary.overallRating)} note={isArabic ? "المؤشر الرئيسي" : "headline rating"} icon={Star} index="01" />
+        <WorkerProMetric label={isArabic ? "عدد المراجعات" : "Reviews"} value={formatNumber(locale, data.summary.totalReviews)} note={isArabic ? "إجمالي الآراء" : "total feedback"} icon={Sparkles} index="02" />
+        <WorkerProMetric label={isArabic ? "عملاء متكررون" : "Repeat clients"} value={`${formatNumber(locale, data.summary.repeatClientsRate)}%`} note={isArabic ? "معدل الولاء" : "loyalty rate"} icon={TimerReset} index="03" />
+        <WorkerProMetric label={isArabic ? "خمس نجوم" : "Five stars"} value={formatNumber(locale, data.summary.fiveStars)} note={isArabic ? "ثقة قوية" : "premium signal"} icon={ShieldCheck} index="04" />
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
-        <DashboardBlock title={isArabic ? "الشارات المكتسبة" : "Earned badges"} eyebrow={isArabic ? "علامات الثقة" : "trust marks"}>
+      <div className="grid gap-6 xl:grid-cols-[0.85fr_1.15fr]">
+        <WorkerProPanel title={isArabic ? "الشارات المكتسبة" : "Earned badges"} eyebrow={isArabic ? "علامات الثقة" : "trust marks"}>
           <div className="flex flex-wrap gap-3">
             {data.badges.map((badge, index) => (
-              <SoftBadge key={badge} label={badge} tone={index % 3 === 0 ? "accent" : index % 3 === 1 ? "sun" : "primary"} />
+              <WorkerProBadge key={badge} tone={index % 3 === 0 ? "gold" : index % 3 === 1 ? "green" : "muted"}>{badge}</WorkerProBadge>
             ))}
           </div>
-        </DashboardBlock>
+        </WorkerProPanel>
 
-        <DashboardBlock title={isArabic ? "أحدث المراجعات" : "Recent reviews"} eyebrow={isArabic ? "صوت العميل" : "client voice"}>
+        <WorkerProPanel title={isArabic ? "أحدث المراجعات" : "Recent reviews"} eyebrow={isArabic ? "صوت العميل" : "client voice"}>
           {data.reviews.length === 0 ? (
-            <EmptyState>{isArabic ? "لا توجد مراجعات بعد" : "No reviews yet"}</EmptyState>
+            <WorkerProEmpty title={isArabic ? "لا توجد مراجعات بعد" : "No reviews yet"} text={isArabic ? "بعد إكمال أول خدمة سيظهر تقييم العميل هنا." : "After your first completed job, client reviews will appear here."} />
           ) : (
             <div className="grid gap-4">
               {data.reviews.map((review, index) => (
-                <div key={review.id} className={index % 2 === 0 ? "onyx-card p-4" : "onyx-card bg-onyx-800/80 p-4"}>
+                <div key={review.id} className={index % 2 === 0 ? "border border-white/10 bg-[#111] p-4" : "border border-gold/30 bg-[#2a2207] p-4"}>
                   <div className="flex items-center justify-between gap-3">
                     <div>
-                      <p className="text-lg font-semibold text-white">{review.clientName}</p>
-                      <p className="mt-1 text-sm text-onyx-400">{review.service}</p>
+                      <p className="text-lg font-black text-white">{review.clientName}</p>
+                      <p className="mt-1 text-sm text-white/45">{review.service}</p>
                     </div>
-                    <SoftBadge label={isArabic ? `${review.rating} نجوم` : `${review.rating} stars`} tone={review.rating === 5 ? "success" : "sun"} />
+                    <WorkerProBadge tone={review.rating === 5 ? "green" : "gold"}>{isArabic ? `${review.rating} نجوم` : `${review.rating} stars`}</WorkerProBadge>
                   </div>
-                  <p className="mt-4 text-sm leading-7 text-onyx-300">{review.comment}</p>
-                  <p className="mt-3 text-xs uppercase tracking-[0.18em] text-onyx-500">{formatDate(locale, review.createdAt)}</p>
+                  <p className="mt-4 text-sm leading-7 text-white/60">{review.comment}</p>
+                  <p className="mt-3 text-[10px] font-black uppercase tracking-[0.18em] text-white/35">{formatDate(locale, review.createdAt)}</p>
                 </div>
               ))}
             </div>
           )}
-        </DashboardBlock>
+        </WorkerProPanel>
       </div>
+    </WorkerProShell>
+  );
+}
+
+function WorkerSaveControl({ state, onSave, isArabic, error }: { state: "idle" | "saving" | "saved" | "error"; onSave: () => void; isArabic: boolean; error?: string | null }) {
+  return (
+    <div className="flex shrink-0 flex-col items-end gap-1.5">
+      <div className="flex items-center gap-3">
+        {state === "saved" ? (
+          <span className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.14em] text-emerald-300">
+            <Check className="h-4 w-4" />
+            {isArabic ? "تم الحفظ" : "Saved"}
+          </span>
+        ) : null}
+        <WorkerProAction tone="light" onClick={onSave} disabled={state === "saving"}>
+          {state === "saving" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+          {state === "saving" ? (isArabic ? "جارٍ الحفظ" : "Saving") : isArabic ? "حفظ" : "Save"}
+        </WorkerProAction>
+      </div>
+      {state === "error" && error ? (
+        <span className="text-xs font-bold text-rose-400">{error}</span>
+      ) : null}
     </div>
   );
 }
@@ -90,89 +113,901 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
   const isArabic = locale === "ar";
   const liveData = useLiveApiData("/workers/settings", initialData);
   const [data, setData] = useState(initialData);
-  const [saved, setSaved] = useState(false);
+  const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
 
   useEffect(() => {
     setData(liveData);
   }, [liveData]);
 
-  function handleSave() {
-    setSaved(true);
-    window.setTimeout(() => setSaved(false), 2000);
+  async function handleAvatarUploadSettings(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    setIsUploadingAvatar(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData
+      });
+      if (!res.ok) throw new Error("Upload failed");
+      const resData = await res.json();
+      setData((prev) => ({
+        ...prev,
+        profile: {
+          ...prev.profile,
+          avatarUrl: resData.url
+        }
+      }));
+    } catch (err) {
+      console.error("Avatar upload failed", err);
+    } finally {
+      setIsUploadingAvatar(false);
+      if (avatarInputRef.current) avatarInputRef.current.value = "";
+    }
+  }
+
+  async function handleSave() {
+    setSaveState("saving");
+    setSaveError(null);
+    try {
+      await patchApiData("/workers/settings", {
+        isAvailable: safeWorkPreferences.isAvailable,
+        workingHours: data.workPreferences.workingHours,
+        offDates: data.workPreferences.offDates,
+        acceptedPaymentMethods: safeWorkPreferences.acceptedPaymentMethods,
+        preferredPaymentMethod: safeWorkPreferences.preferredPaymentMethod,
+        nationalIdFront: data.profile.nationalIdFront,
+        nationalIdBack: data.profile.nationalIdBack,
+        selfieWithId: data.profile.selfieWithId
+      });
+      await patchApiData("/auth/profile", {
+        email: data.profile.email,
+        avatarUrl: data.profile.avatarUrl
+      });
+      setSaveState("saved");
+      window.setTimeout(() => setSaveState("idle"), 2000);
+    } catch (err: any) {
+      console.error("Failed to save worker settings", err);
+      setSaveError(getLocalizedError(err instanceof Error ? err.message : "", locale));
+      setSaveState("error");
+    }
+  }
+
+  const safeWorkPreferences = {
+    isAvailable: data.workPreferences?.isAvailable ?? false,
+    acceptsEmergency: data.workPreferences?.acceptsEmergency ?? false,
+    acceptsSameDay: data.workPreferences?.acceptsSameDay ?? false,
+    serviceAreas: Array.isArray(data.workPreferences?.serviceAreas) ? data.workPreferences.serviceAreas : [],
+    acceptedPaymentMethods: Array.isArray(data.workPreferences?.acceptedPaymentMethods) ? data.workPreferences.acceptedPaymentMethods : [],
+    preferredPaymentMethod: data.workPreferences?.preferredPaymentMethod ?? null
+  };
+  const safePayout = {
+    method: data.payout?.method ?? "",
+    schedule: data.payout?.schedule ?? "",
+    bankLabel: data.payout?.bankLabel ?? ""
+  };
+  const fullName = `${data.profile.firstName} ${data.profile.lastName}`.trim() || "OSTA Pro";
+  const initials = fullName
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join("") || "O";
+
+  return (
+    <WorkerProShell locale={locale}>
+      <WorkerProTopStrip locale={locale} title={isArabic ? "الإعدادات" : "Settings"} />
+
+      <section className="flex flex-col gap-6 border border-white/10 bg-black p-6 text-white sm:flex-row sm:items-center sm:justify-between lg:p-8">
+        <div className="flex min-w-0 items-center gap-5">
+          <div className="relative group shrink-0">
+            <div
+              onClick={() => avatarInputRef.current?.click()}
+              className="relative flex h-16 w-16 cursor-pointer items-center justify-center overflow-hidden border border-gold bg-[#111] text-gold sm:h-20 sm:w-20 transition hover:border-gold/80"
+            >
+              {data.profile.avatarUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={data.profile.avatarUrl} alt={isArabic ? "صورة الفني" : "Worker avatar"} className="h-full w-full object-cover transition duration-300 group-hover:scale-105" />
+              ) : (
+                <UserCircle2 className="h-8 w-8 sm:h-10 sm:w-10" />
+              )}
+              <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
+                <Camera className="h-4 w-4 text-gold" />
+                <span className="text-[8px] font-black uppercase text-white">{isUploadingAvatar ? "..." : isArabic ? "تغيير" : "Change"}</span>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => avatarInputRef.current?.click()}
+              className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-gold text-black shadow-lg transition hover:scale-110 active:scale-95"
+              title={isArabic ? "تغيير الصورة الشخصية" : "Change profile photo"}
+            >
+              <Camera className="h-3 w-3" />
+            </button>
+          </div>
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2.5">
+              <p className="text-[10px] font-black uppercase tracking-[0.22em] text-gold">{isArabic ? "الملف الشخصي" : "Worker profile"}</p>
+              {data.profile.verificationStatus === "VERIFIED" && Boolean(data.profile.nationalIdFront && data.profile.nationalIdBack) ? (
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/40 bg-emerald-950/70 px-3 py-0.5 text-xs font-black text-emerald-400 shadow-sm">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/logo.svg" alt="OSTA" className="h-3.5 w-auto object-contain brightness-125" />
+                  <span>{isArabic ? "موثق بواسطة أوسطفاي" : "Verified by OSTA"}</span>
+                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
+                </span>
+              ) : null}
+            </div>
+            <div className="mt-1 flex items-center gap-2">
+              <h1 className="truncate text-2xl font-black uppercase leading-tight text-white sm:text-3xl">{fullName}</h1>
+              {data.profile.verificationStatus === "VERIFIED" && Boolean(data.profile.nationalIdFront && data.profile.nationalIdBack) ? (
+                <ShieldCheck className="h-6 w-6 text-emerald-400 shrink-0" />
+              ) : null}
+            </div>
+            <p className="mt-1 truncate text-sm font-semibold text-white/50">
+              {data.profile.email || (isArabic ? "لا يوجد بريد" : "No email")} · {data.profile.phone || (isArabic ? "لا يوجد هاتف" : "No phone")}
+            </p>
+          </div>
+        </div>
+        <WorkerSaveControl state={saveState} onSave={() => void handleSave()} isArabic={isArabic} error={saveError} />
+      </section>
+
+      <div className="grid gap-6 xl:grid-cols-[1fr_1fr]">
+        <WorkerProPanel title={isArabic ? "البيانات الشخصية" : "Personal info"}>
+          <div className="mb-6 flex flex-col sm:flex-row items-center gap-5 rounded-none border border-white/10 bg-[#111] p-4">
+            <div className="relative group shrink-0">
+              <div
+                onClick={() => avatarInputRef.current?.click()}
+                className="relative h-20 w-20 cursor-pointer overflow-hidden border border-gold bg-[#121212] transition hover:border-gold/80"
+              >
+                {data.profile.avatarUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={data.profile.avatarUrl} alt={fullName} className="h-full w-full object-cover transition duration-300 group-hover:scale-105" />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center bg-gold text-xl font-black text-black">{initials}</div>
+                )}
+                <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
+                  <Camera className="h-4 w-4 text-gold" />
+                  <span className="text-[8px] font-black uppercase text-white">{isUploadingAvatar ? (isArabic ? "جاري..." : "Uploading...") : isArabic ? "تغيير" : "Change"}</span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => avatarInputRef.current?.click()}
+                className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-gold text-black shadow-lg transition hover:scale-110 active:scale-95"
+                title={isArabic ? "تغيير الصورة الشخصية" : "Change profile photo"}
+              >
+                <Camera className="h-3 w-3" />
+              </button>
+              <input
+                type="file"
+                accept="image/*"
+                ref={avatarInputRef}
+                onChange={(e) => void handleAvatarUploadSettings(e)}
+                className="hidden"
+              />
+            </div>
+            <div className="space-y-1 text-center sm:text-start">
+              <span className="text-xs font-black uppercase tracking-wider text-gold">{isArabic ? "الصورة الشخصية" : "Profile Picture"}</span>
+              <p className="text-xs font-medium text-white/50">{isArabic ? "اضغط على الصورة أو زر الكاميرا لرفع صورة جديدة" : "Click avatar or camera icon to upload a new profile image"}</p>
+              <button
+                type="button"
+                onClick={() => avatarInputRef.current?.click()}
+                className="mt-2 inline-flex items-center gap-2 border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-bold text-white transition hover:bg-gold hover:text-black"
+              >
+                <Camera className="h-3.5 w-3.5" />
+                {isArabic ? "تحميل صورة جديدة" : "Upload new photo"}
+              </button>
+            </div>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <label className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-black text-white/45">{isArabic ? "الاسم الأول" : "First name"}</span>
+                <span className="inline-flex items-center gap-1 text-[10px] font-black text-white/30 uppercase tracking-wider">
+                  <Lock className="h-3 w-3" />
+                  {isArabic ? "ثابت" : "Locked"}
+                </span>
+              </div>
+              <input
+                value={data.profile.firstName ?? ""}
+                readOnly
+                disabled
+                className="h-12 w-full border border-white/10 bg-[#141414] px-4 text-white/50 outline-none cursor-not-allowed select-none font-bold"
+              />
+            </label>
+
+            <label className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-black text-white/45">{isArabic ? "اسم العائلة" : "Last name"}</span>
+                <span className="inline-flex items-center gap-1 text-[10px] font-black text-white/30 uppercase tracking-wider">
+                  <Lock className="h-3 w-3" />
+                  {isArabic ? "ثابت" : "Locked"}
+                </span>
+              </div>
+              <input
+                value={data.profile.lastName ?? ""}
+                readOnly
+                disabled
+                className="h-12 w-full border border-white/10 bg-[#141414] px-4 text-white/50 outline-none cursor-not-allowed select-none font-bold"
+              />
+            </label>
+
+            <label className="space-y-2 sm:col-span-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-black text-white/45">{isArabic ? "رقم الهاتف" : "Phone"}</span>
+                <span className="inline-flex items-center gap-1 text-[10px] font-black text-white/30 uppercase tracking-wider">
+                  <Lock className="h-3 w-3" />
+                  {isArabic ? "ثابت" : "Locked"}
+                </span>
+              </div>
+              <input
+                value={formatPhoneNumber(data.profile.phone)}
+                readOnly
+                disabled
+                dir="ltr"
+                className="h-12 w-full border border-white/10 bg-[#141414] px-4 text-white/50 outline-none cursor-not-allowed select-none text-start font-mono font-bold"
+              />
+            </label>
+
+            <div className="sm:col-span-2">
+              <EmailVerificationField
+                locale={locale}
+                email={data.profile.email ?? ""}
+                emailVerified={Boolean(data.profile.emailVerified)}
+                onChangeEmail={(val) => setData((prev) => ({
+                  ...prev,
+                  profile: {
+                    ...prev.profile,
+                    email: val,
+                    emailVerified: prev.profile.emailVerified && val.trim().toLowerCase() === (prev.profile.email ?? "").trim().toLowerCase()
+                  }
+                }))}
+                onVerified={() => setData((prev) => ({ ...prev, profile: { ...prev.profile, emailVerified: true } }))}
+              />
+            </div>
+
+            <label className="space-y-2 sm:col-span-2 pt-2 border-t border-white/10">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-black text-white/45">{isArabic ? "رقم بطاقة الرقم القومي" : "National ID Number"}</span>
+                <span className="inline-flex items-center gap-1 text-[10px] font-black text-white/30 uppercase tracking-wider">
+                  <Lock className="h-3 w-3" />
+                  {isArabic ? "ثابت" : "Locked"}
+                </span>
+              </div>
+              <input
+                value={data.profile.nationalIdNumber ?? ""}
+                readOnly
+                disabled
+                dir="ltr"
+                placeholder="2900101100001"
+                className="h-12 w-full border border-white/10 bg-[#141414] px-4 font-mono text-white/50 outline-none cursor-not-allowed select-none text-start font-bold"
+              />
+            </label>
+
+            <div className="sm:col-span-2 space-y-3 pt-2">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <p className="text-xs font-black uppercase tracking-wider text-gold">{isArabic ? "وثائق الهوية الوطنية" : "National ID Documents"}</p>
+                {data.profile.verificationStatus === "VERIFIED" && Boolean(data.profile.nationalIdFront && data.profile.nationalIdBack) ? (
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/40 bg-emerald-500/15 px-3 py-1 text-xs font-black text-emerald-400">
+                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+                    {isArabic ? "موثقة ومعتمدة من الإدارة ✓" : "Verified & Approved by Admin ✓"}
+                  </span>
+                ) : null}
+              </div>
+              <div className="grid gap-3 sm:grid-cols-3">
+                <WorkerIdDocumentCard
+                  label={isArabic ? "وجه البطاقة الشخصية" : "ID Front"}
+                  imageUrl={data.profile.nationalIdFront}
+                  isLocked={data.profile.verificationStatus === "VERIFIED" && Boolean(data.profile.nationalIdFront)}
+                  onUpload={async (file) => {
+                    const formData = new FormData();
+                    formData.append("file", file);
+                    const res = await postApiData<{ url: string }, FormData>("/upload", formData);
+                    setData({ ...data, profile: { ...data.profile, nationalIdFront: res.url } });
+                  }}
+                />
+                <WorkerIdDocumentCard
+                  label={isArabic ? "ظهر البطاقة الشخصية" : "ID Back"}
+                  imageUrl={data.profile.nationalIdBack}
+                  isLocked={data.profile.verificationStatus === "VERIFIED" && Boolean(data.profile.nationalIdBack)}
+                  onUpload={async (file) => {
+                    const formData = new FormData();
+                    formData.append("file", file);
+                    const res = await postApiData<{ url: string }, FormData>("/upload", formData);
+                    setData({ ...data, profile: { ...data.profile, nationalIdBack: res.url } });
+                  }}
+                />
+                <WorkerIdDocumentCard
+                  label={isArabic ? "سيلفي مع الهوية" : "Selfie with ID"}
+                  imageUrl={data.profile.selfieWithId}
+                  isLocked={data.profile.verificationStatus === "VERIFIED" && Boolean(data.profile.selfieWithId)}
+                  onUpload={async (file) => {
+                    const formData = new FormData();
+                    formData.append("file", file);
+                    const res = await postApiData<{ url: string }, FormData>("/upload", formData);
+                    setData({ ...data, profile: { ...data.profile, selfieWithId: res.url } });
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        </WorkerProPanel>
+
+        <WorkerProPanel title={isArabic ? "نظام شغلي" : "Work preferences & payout"}>
+          <div className="grid gap-4">
+            <div className="grid gap-2 sm:grid-cols-3">
+              {[
+                { key: "isAvailable", label: isArabic ? "متاح للطلبات" : "Available for jobs" },
+                { key: "acceptsEmergency", label: isArabic ? "يقبل الطوارئ" : "Accept emergency" },
+                { key: "acceptsSameDay", label: isArabic ? "يقبل نفس اليوم" : "Accept same-day" }
+              ].map((item) => (
+                <label key={item.key} className="flex items-center justify-between gap-2 border border-white/10 bg-[#111] px-3 py-2">
+                  <span className="text-sm font-bold text-white">{item.label}</span>
+                  <input
+                    type="checkbox"
+                    checked={safeWorkPreferences[item.key as keyof typeof safeWorkPreferences] as boolean}
+                    onChange={(event) => setData({ ...data, workPreferences: { ...data.workPreferences, [item.key]: event.target.checked } })}
+                    className="h-4 w-4 accent-gold"
+                  />
+                </label>
+              ))}
+            </div>
+
+            <div className="border border-white/10 bg-[#111] p-4">
+              <p className="font-black text-white">{isArabic ? "ممكن تدفعلي عن طريق:" : "You can pay me via:"}</p>
+              <p className="mt-1 text-xs font-medium text-white/40">{isArabic ? "اختر الطرق المقبولة، وحدد نجمة الطريقة المفضلة لديك" : "Select the accepted methods, then star your preferred one"}</p>
+              <div className="mt-3 grid gap-3 sm:grid-cols-3">
+                {[
+                  { key: "cash", label: isArabic ? "كاش" : "Cash" },
+                  { key: "vodafone_cash", label: isArabic ? "فودافون كاش" : "Vodafone Cash" },
+                  { key: "instapay", label: isArabic ? "انستا باي" : "InstaPay" }
+                ].map((method) => {
+                  const isChecked = safeWorkPreferences.acceptedPaymentMethods.includes(method.key);
+                  const isPreferred = safeWorkPreferences.preferredPaymentMethod === method.key;
+                  return (
+                    <div key={method.key} className="flex items-center justify-between gap-3 border border-white/10 bg-[#141414] p-3">
+                      <label className="flex flex-1 items-center gap-3">
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={(event) => {
+                            const checked = event.target.checked;
+                            const nextMethods = checked
+                              ? [...safeWorkPreferences.acceptedPaymentMethods, method.key]
+                              : safeWorkPreferences.acceptedPaymentMethods.filter((m) => m !== method.key);
+                            const nextPreferred = checked
+                              ? safeWorkPreferences.preferredPaymentMethod
+                              : safeWorkPreferences.preferredPaymentMethod === method.key
+                                ? null
+                                : safeWorkPreferences.preferredPaymentMethod;
+                            setData({ ...data, workPreferences: { ...data.workPreferences, acceptedPaymentMethods: nextMethods, preferredPaymentMethod: nextPreferred } });
+                          }}
+                          className="h-5 w-5 accent-gold"
+                        />
+                        <span className="text-sm font-bold text-white">{method.label}</span>
+                      </label>
+                      <button
+                        type="button"
+                        disabled={!isChecked}
+                        onClick={() => setData({ ...data, workPreferences: { ...data.workPreferences, preferredPaymentMethod: isPreferred ? null : method.key } })}
+                        title={isArabic ? "الطريقة المفضلة" : "Preferred method"}
+                        className={cn(
+                          "flex h-8 w-8 shrink-0 items-center justify-center border transition",
+                          isPreferred ? "border-gold bg-gold text-black" : "border-white/15 text-white/30 hover:text-gold disabled:cursor-not-allowed disabled:opacity-30"
+                        )}
+                      >
+                        <Star className="h-4 w-4" fill={isPreferred ? "currentColor" : "none"} />
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {safeWorkPreferences.serviceAreas.length > 0 ? (
+              <div className="border border-white/10 bg-[#111] p-4">
+                <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/35">{isArabic ? "المناطق" : "Areas"}</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {safeWorkPreferences.serviceAreas.map((area) => (
+                    <WorkerProBadge key={area} tone="gold">{area}</WorkerProBadge>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
+
+            <WorkerScheduleSection
+              locale={locale}
+              workingHours={data.workPreferences.workingHours}
+              offDates={data.workPreferences.offDates}
+              onChangeSchedule={(newSchedule) => setData({ ...data, workPreferences: { ...data.workPreferences, workingHours: newSchedule } })}
+              onChangeOffDates={(newOffDates) => setData({ ...data, workPreferences: { ...data.workPreferences, offDates: newOffDates } })}
+            />
+          </div>
+        </WorkerProPanel>
+      </div>
+    </WorkerProShell>
+  );
+}
+
+export function EmailVerificationField({
+  locale,
+  email,
+  emailVerified,
+  onChangeEmail,
+  onVerified
+}: {
+  locale: Locale;
+  email: string;
+  emailVerified: boolean;
+  onChangeEmail: (val: string) => void;
+  onVerified?: () => void;
+}) {
+  const isArabic = locale === "ar";
+  const verifiedEmailRef = useRef(emailVerified ? email.trim().toLowerCase() : "");
+  const [verified, setVerified] = useState(emailVerified);
+  const [sendingCode, setSendingCode] = useState(false);
+  const [verifyingOtp, setVerifyingOtp] = useState(false);
+  const [showOtpInput, setShowOtpInput] = useState(false);
+  const [otpCode, setOtpCode] = useState("");
+  const [message, setMessage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (emailVerified && email) {
+      if (!verifiedEmailRef.current || email.trim().toLowerCase() === verifiedEmailRef.current) {
+        verifiedEmailRef.current = email.trim().toLowerCase();
+        setVerified(true);
+      }
+    } else if (!emailVerified) {
+      setVerified(false);
+    }
+  }, [emailVerified, email]);
+
+  const isCurrentlyVerified =
+    verified &&
+    emailVerified &&
+    Boolean(verifiedEmailRef.current) &&
+    email.trim().toLowerCase() === verifiedEmailRef.current;
+
+  function handleInputChange(newVal: string) {
+    onChangeEmail(newVal);
+    if (verified && newVal.trim().toLowerCase() !== verifiedEmailRef.current) {
+      setVerified(false);
+      setShowOtpInput(false);
+      setOtpCode("");
+      setMessage(null);
+    }
+  }
+
+  async function handleSendVerification() {
+    if (!email || !email.includes("@")) {
+      setError(isArabic ? "برجاء إدخال بريد إلكتروني صحيح أولاً" : "Please enter a valid email address first");
+      return;
+    }
+
+    setSendingCode(true);
+    setError(null);
+    setMessage(null);
+    setOtpCode("");
+
+    try {
+      await postApiData<{ sent: boolean; message: string }, { email?: string }>("/auth/send-email-verification", { email: email.trim() });
+      setShowOtpInput(true);
+      setMessage(isArabic ? "تم إرسال رمز التحقق إلى بريدك الإلكتروني" : "Verification code sent to your email");
+    } catch (err: any) {
+      setError(err?.message || (isArabic ? "حدث خطأ أثناء إرسال الرمز" : "Failed to send verification code"));
+    } finally {
+      setSendingCode(false);
+    }
+  }
+
+  async function handleVerifyOtp() {
+    if (!otpCode || otpCode.trim().length < 4) {
+      setError(isArabic ? "برجاء إدخال رمز التحقق" : "Please enter the verification code");
+      return;
+    }
+
+    setVerifyingOtp(true);
+    setError(null);
+    setMessage(null);
+
+    try {
+      await postApiData<{ emailVerified: boolean }, { code: string }>("/auth/verify-email-otp", { code: otpCode.trim() });
+      verifiedEmailRef.current = email.trim().toLowerCase();
+      setVerified(true);
+      setShowOtpInput(false);
+      setOtpCode("");
+      setMessage(isArabic ? "تم توثيق البريد الإلكتروني بنجاح ✓" : "Email address verified successfully ✓");
+      if (onVerified) onVerified();
+    } catch (err: any) {
+      setError(err?.message || (isArabic ? "رمز التحقق غير صحيح أو منتهي الصلاحية" : "Invalid or expired verification code"));
+    } finally {
+      setVerifyingOtp(false);
+    }
   }
 
   return (
-    <div>
-      <SubpageHero
-        eyebrow={isArabic ? "إعدادات العامل" : "Worker controls"}
-        title={isArabic ? "الإعدادات" : "Settings"}
-        subtitle={
-          isArabic
-            ? "تحكم في التوفر ووضع الطوارئ ومناطق الخدمة وتفضيلات التحويل من لوحة أوضح."
-            : "Control availability, emergency mode, service areas, and payout preferences from a cleaner control panel."
-        }
-        tone="dark"
-      />
-
-      <div className="mb-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        <MiniMetric label={isArabic ? "التوفر" : "Availability"} value={data.workPreferences.isAvailable ? (isArabic ? "مفعل" : "ON") : isArabic ? "متوقف" : "OFF"} note={isArabic ? "ظهور الطلبات" : "job visibility"} icon={Sparkles} tone="accent" />
-        <MiniMetric label={isArabic ? "مناطق الخدمة" : "Service areas"} value={formatNumber(locale, data.workPreferences.serviceAreas.length)} note={isArabic ? "نطاق التغطية" : "coverage map"} icon={ShieldCheck} tone="sun" />
-        <MiniMetric label={isArabic ? "جدول التحويل" : "Payout"} value={data.payout.schedule} note={isArabic ? "دورة التحويل" : "transfer cycle"} icon={Wallet} tone="primary" />
+    <div className="space-y-2 w-full">
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-sm font-black text-white/45">{isArabic ? "البريد الإلكتروني" : "Email"}</span>
+        {isCurrentlyVerified ? (
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/40 bg-emerald-500/15 px-3 py-1 text-xs font-black text-emerald-400">
+            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+            {isArabic ? "تم التوثيق ✓" : "Verified ✓"}
+          </span>
+        ) : (
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/40 bg-amber-500/15 px-2.5 py-0.5 text-[11px] font-black text-amber-400">
+              <AlertCircle className="h-3 w-3 text-amber-400" />
+              {isArabic ? "غير موثق" : "Unverified"}
+            </span>
+            <button
+              type="button"
+              disabled={sendingCode}
+              onClick={() => void handleSendVerification()}
+              className="text-[11px] font-black text-gold underline hover:text-gold/80 transition disabled:opacity-50"
+            >
+              {sendingCode ? (
+                <span className="flex items-center gap-1">
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                  {isArabic ? "جاري الإرسال..." : "Sending..."}
+                </span>
+              ) : (
+                isArabic ? "تأكيد البريد الإلكتروني" : "Verify Email"
+              )}
+            </button>
+          </div>
+        )}
       </div>
 
-      {saved ? <div className="mb-4 rounded-[1.2rem] border border-success/20 bg-success/10 px-4 py-3 text-sm text-success">{isArabic ? "تم الحفظ محليًا" : "Saved locally"}</div> : null}
+      <div className="relative">
+        <input
+          value={email}
+          onChange={(e) => handleInputChange(e.target.value)}
+          dir="ltr"
+          type="email"
+          placeholder="user@example.com"
+          className={cn(
+            "h-12 w-full border border-white/10 bg-[#111] px-4 font-mono text-white outline-none focus:border-gold text-start",
+            isCurrentlyVerified ? "border-emerald-500/40 bg-emerald-950/10" : ""
+          )}
+        />
+      </div>
 
-      <div className="grid gap-6 xl:grid-cols-[1fr_1fr]">
-        <DashboardBlock title={isArabic ? "الملف الشخصي" : "Profile"} eyebrow={isArabic ? "بيانات العامل" : "worker identity"}>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <label className="space-y-2"><span className="text-sm text-onyx-400">{isArabic ? "الاسم الأول" : "First name"}</span><input value={data.profile.firstName} onChange={(event) => setData({ ...data, profile: { ...data.profile, firstName: event.target.value } })} className="h-12 w-full rounded-[1rem] border border-onyx-700 bg-onyx-800/50 px-4" /></label>
-            <label className="space-y-2"><span className="text-sm text-onyx-400">{isArabic ? "اسم العائلة" : "Last name"}</span><input value={data.profile.lastName} onChange={(event) => setData({ ...data, profile: { ...data.profile, lastName: event.target.value } })} className="h-12 w-full rounded-[1rem] border border-onyx-700 bg-onyx-800/50 px-4" /></label>
-            <label className="space-y-2"><span className="text-sm text-onyx-400">{isArabic ? "البريد الإلكتروني" : "Email"}</span><input value={data.profile.email} onChange={(event) => setData({ ...data, profile: { ...data.profile, email: event.target.value } })} className="h-12 w-full rounded-[1rem] border border-onyx-700 bg-onyx-800/50 px-4" /></label>
-            <label className="space-y-2"><span className="text-sm text-onyx-400">{isArabic ? "رقم الهاتف" : "Phone"}</span><input value={data.profile.phone} onChange={(event) => setData({ ...data, profile: { ...data.profile, phone: event.target.value } })} className="h-12 w-full rounded-[1rem] border border-onyx-700 bg-onyx-800/50 px-4" /></label>
-          </div>
-        </DashboardBlock>
+      {message ? <p className="text-xs font-bold text-emerald-400 mt-1">{message}</p> : null}
+      {error ? <p className="text-xs font-bold text-rose-400 mt-1">{error}</p> : null}
 
-        <DashboardBlock title={isArabic ? "تفضيلات العمل" : "Work preferences"} eyebrow={isArabic ? "خيارات التشغيل" : "ops toggles"}>
-          <div className="grid gap-4">
-            {[
-              { key: "isAvailable", label: isArabic ? "متاح للطلبات" : "Available for jobs" },
-              { key: "acceptsEmergency", label: isArabic ? "يقبل الطوارئ" : "Accept emergency" },
-              { key: "acceptsSameDay", label: isArabic ? "يقبل نفس اليوم" : "Accept same-day" }
-            ].map((item) => (
-              <label key={item.key} className="onyx-card flex items-center justify-between gap-4 p-4">
-                <span className="font-medium text-white">{item.label}</span>
-                <input
-                  type="checkbox"
-                  checked={data.workPreferences[item.key as keyof typeof data.workPreferences] as boolean}
-                  onChange={(event) => setData({ ...data, workPreferences: { ...data.workPreferences, [item.key]: event.target.checked } })}
-                  className="h-4 w-4"
-                />
-              </label>
-            ))}
-            <SoftCard>
-              <p className="text-xs uppercase tracking-[0.22em] text-onyx-500">{isArabic ? "المناطق" : "Areas"}</p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {data.workPreferences.serviceAreas.map((area) => (
-                  <SoftBadge key={area} label={area} tone="accent" />
-                ))}
-              </div>
-            </SoftCard>
-            <SplitInfo
-              items={[
-                { label: isArabic ? "الوسيلة" : "Method", value: data.payout.method },
-                { label: isArabic ? "الجدول" : "Schedule", value: data.payout.schedule },
-                { label: isArabic ? "البنك" : "Bank", value: data.payout.bankLabel }
-              ]}
+      {showOtpInput && !verified ? (
+        <div className="mt-3 border border-gold/40 bg-black/90 p-4 space-y-3 shadow-2xl">
+          <p className="text-xs font-black text-white">
+            {isArabic ? "أدخل رمز التحقق المكون من 6 أرقام المرسل للبريد:" : "Enter the 6-digit verification code sent to email:"}
+          </p>
+          <div className="flex items-center gap-2">
+            <input
+              value={otpCode}
+              onChange={(e) => setOtpCode(e.target.value)}
+              dir="ltr"
+              maxLength={6}
+              placeholder="123456"
+              className="h-10 w-36 border border-white/20 bg-[#151515] px-3 font-mono text-center text-sm tracking-widest text-gold outline-none focus:border-gold"
             />
+            <button
+              type="button"
+              disabled={verifyingOtp}
+              onClick={() => void handleVerifyOtp()}
+              className="h-10 px-4 bg-gold font-black text-black text-xs uppercase hover:bg-gold/90 transition flex items-center gap-1.5"
+            >
+              {verifyingOtp ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
+              {isArabic ? "تأكيد" : "Verify"}
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowOtpInput(false)}
+              className="h-10 px-3 border border-white/20 text-white/70 text-xs hover:text-white"
+            >
+              {isArabic ? "إلغاء" : "Cancel"}
+            </button>
           </div>
-        </DashboardBlock>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function WorkerIdDocumentCard({
+  label,
+  imageUrl,
+  isLocked,
+  onUpload
+}: {
+  label: string;
+  imageUrl?: string | null;
+  isLocked?: boolean;
+  onUpload: (file: File) => Promise<void>;
+}) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isUploading, setIsUploading] = useState(false);
+
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    if (isLocked) return;
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    try {
+      await onUpload(file);
+    } finally {
+      setIsUploading(false);
+    }
+  }
+
+  return (
+    <div className={cn("border bg-[#111] p-3 space-y-2", isLocked ? "border-emerald-500/30 bg-emerald-950/5" : "border-white/10")}>
+      <div className="flex h-10 items-start justify-between gap-2">
+        <span className="text-xs font-black text-white/70 leading-snug min-w-0 flex-1">{label}</span>
+        {isLocked ? (
+          <span className="inline-flex items-center gap-1 text-[10px] font-black text-emerald-400 bg-emerald-950/40 border border-emerald-500/30 px-2 py-0.5 shrink-0 pt-0.5">
+            <CheckCircle2 className="h-3 w-3 text-emerald-400" />
+            معتمد
+          </span>
+        ) : (
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="text-[11px] font-black text-gold underline hover:text-gold/80 transition shrink-0 pt-0.5"
+          >
+            {imageUrl ? "تغيير" : "رفع"}
+          </button>
+        )}
       </div>
 
-      <div className="mt-6 flex justify-end">
-        <button type="button" onClick={handleSave} className="inline-flex items-center gap-2 rounded-full bg-dark-950 px-5 py-3 text-sm font-semibold text-white shadow-soft">
-          <Save className="h-4 w-4" />
-          {isArabic ? "حفظ" : "Save"}
-        </button>
+      <div
+        onClick={() => {
+          if (!isLocked) fileInputRef.current?.click();
+        }}
+        className={cn(
+          "relative h-28 w-full overflow-hidden border bg-[#181818] transition flex items-center justify-center",
+          isLocked ? "cursor-default border-emerald-500/20" : "cursor-pointer border-white/10 hover:border-gold group"
+        )}
+      >
+        {imageUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={imageUrl} alt={label} className={cn("h-full w-full object-cover transition", !isLocked && "group-hover:scale-105")} />
+        ) : (
+          <div className="flex flex-col items-center justify-center h-full text-white/30 space-y-1">
+            <Camera className="h-6 w-6 text-gold/60" />
+            <span className="text-[10px] font-bold">{isLocked ? "وثيقة رسمية معتمدة" : "انقر لرفع الصورة"}</span>
+          </div>
+        )}
+
+        {!isLocked ? (
+          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-1.5 text-white text-xs font-bold">
+            <Camera className="h-4 w-4 text-gold" />
+            <span>{isUploading ? "جاري الرفع..." : "تحديث الصورة"}</span>
+          </div>
+        ) : imageUrl ? (
+          <div className="absolute top-2 right-2 rounded-full bg-emerald-500 p-1 text-black shadow-lg">
+            <CheckCircle2 className="h-3.5 w-3.5 text-black" />
+          </div>
+        ) : null}
+      </div>
+
+      {!isLocked ? (
+        <input
+          type="file"
+          accept="image/*"
+          ref={fileInputRef}
+          onChange={(e) => void handleFileChange(e)}
+          className="hidden"
+        />
+      ) : null}
+    </div>
+  );
+}
+
+const DEFAULT_DAYS = [
+  { key: "sat", nameAr: "السبت", nameEn: "Saturday" },
+  { key: "sun", nameAr: "الأحد", nameEn: "Sunday" },
+  { key: "mon", nameAr: "الإثنين", nameEn: "Monday" },
+  { key: "tue", nameAr: "الثلاثاء", nameEn: "Tuesday" },
+  { key: "wed", nameAr: "الأربعاء", nameEn: "Wednesday" },
+  { key: "thu", nameAr: "الخميس", nameEn: "Thursday" },
+  { key: "fri", nameAr: "الجمعة", nameEn: "Friday" }
+];
+
+export interface DaySchedule {
+  day: string;
+  enabled: boolean;
+  is24Hours: boolean;
+  startTime: string;
+  endTime: string;
+}
+
+function WorkerScheduleSection({
+  locale,
+  workingHours,
+  offDates,
+  onChangeSchedule,
+  onChangeOffDates
+}: {
+  locale: Locale;
+  workingHours?: DaySchedule[] | null;
+  offDates?: string[];
+  onChangeSchedule: (schedule: DaySchedule[]) => void;
+  onChangeOffDates: (dates: string[]) => void;
+}) {
+  const isArabic = locale === "ar";
+  const [newOffDate, setNewOffDate] = useState("");
+
+  const scheduleMap = new Map<string, DaySchedule>();
+  if (Array.isArray(workingHours)) {
+    workingHours.forEach((item) => scheduleMap.set(item.day, item));
+  }
+
+  const currentSchedule: DaySchedule[] = DEFAULT_DAYS.map((d) => {
+    const existing = scheduleMap.get(d.key);
+    return (
+      existing || {
+        day: d.key,
+        enabled: d.key !== "fri",
+        is24Hours: false,
+        startTime: "08:00",
+        endTime: "21:00"
+      }
+    );
+  });
+
+  const currentOffDates = offDates || [];
+
+  function updateDay(dayKey: string, partial: Partial<DaySchedule>) {
+    const updated = currentSchedule.map((item) => (item.day === dayKey ? { ...item, ...partial } : item));
+    onChangeSchedule(updated);
+  }
+
+  function handleAddOffDate() {
+    if (!newOffDate) return;
+    if (currentOffDates.includes(newOffDate)) return;
+    onChangeOffDates([...currentOffDates, newOffDate]);
+    setNewOffDate("");
+  }
+
+  function handleRemoveOffDate(dateStr: string) {
+    onChangeOffDates(currentOffDates.filter((d) => d !== dateStr));
+  }
+
+  return (
+    <div className="space-y-5 pt-4 border-t border-white/10">
+      <div className="space-y-1">
+        <h3 className="text-xs font-black uppercase text-gold tracking-wider flex items-center gap-2">
+          <Clock className="h-4 w-4 text-gold" />
+          {isArabic ? "جدول أوقات العمل الأسبوعي" : "Weekly Work Schedule"}
+        </h3>
+        <p className="text-xs text-white/50">
+          {isArabic
+            ? "حدد أيام وساعات العمل (مثال: من 08 صباحاً إلى 09 مساءً)، أو اختر (24 ساعة)، أو اضبط الأيام العطلة."
+            : "Set your working days and hours (e.g. 08:00 AM to 09:00 PM), select 24 hours, or set rest days."}
+        </p>
+      </div>
+
+      <div className="space-y-2">
+        {DEFAULT_DAYS.map((dayObj) => {
+          const item = currentSchedule.find((s) => s.day === dayObj.key)!;
+          const dayName = isArabic ? dayObj.nameAr : dayObj.nameEn;
+
+          return (
+            <div
+              key={dayObj.key}
+              className={cn(
+                "border p-3 space-y-2 transition",
+                item.enabled ? "border-white/10 bg-[#141414]" : "border-white/5 bg-[#0d0d0d] opacity-60"
+              )}
+            >
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    checked={item.enabled}
+                    onChange={(e) => updateDay(dayObj.key, { enabled: e.target.checked })}
+                    className="h-4 w-4 accent-gold cursor-pointer"
+                  />
+                  <span className="text-xs font-black text-white">{dayName}</span>
+                  {!item.enabled ? (
+                    <span className="text-[10px] font-black text-rose-400/80 bg-rose-950/40 border border-rose-500/20 px-2 py-0.5">
+                      {isArabic ? "عطلة" : "Off"}
+                    </span>
+                  ) : null}
+                </div>
+
+                {item.enabled ? (
+                  <div className="flex items-center gap-3">
+                    <label className="flex items-center gap-1.5 text-xs text-white/70 cursor-pointer select-none">
+                      <input
+                        type="checkbox"
+                        checked={item.is24Hours}
+                        onChange={(e) => updateDay(dayObj.key, { is24Hours: e.target.checked })}
+                        className="h-3.5 w-3.5 accent-gold"
+                      />
+                      <span className="font-bold text-[11px] text-gold">{isArabic ? "24 ساعة" : "24 Hours"}</span>
+                    </label>
+
+                    {!item.is24Hours ? (
+                      <div className="flex items-center gap-2" dir="ltr">
+                        <input
+                          type="time"
+                          value={item.startTime || "08:00"}
+                          onChange={(e) => updateDay(dayObj.key, { startTime: e.target.value })}
+                          className="h-8 w-24 border border-white/15 bg-black px-2 text-xs font-mono text-white outline-none focus:border-gold"
+                        />
+                        <span className="text-xs text-white/40">-</span>
+                        <input
+                          type="time"
+                          value={item.endTime || "21:00"}
+                          onChange={(e) => updateDay(dayObj.key, { endTime: e.target.value })}
+                          className="h-8 w-24 border border-white/15 bg-black px-2 text-xs font-mono text-white outline-none focus:border-gold"
+                        />
+                      </div>
+                    ) : null}
+                  </div>
+                ) : null}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="space-y-3 pt-2 border-t border-white/10">
+        <h4 className="text-xs font-black uppercase text-gold tracking-wider flex items-center gap-2">
+          <CalendarDays className="h-4 w-4 text-gold" />
+          {isArabic ? "استثناءات وأيام عطلة خاصة (مثال: 20 مارس)" : "Specific Off Dates / Holidays"}
+        </h4>
+
+        <div className="flex gap-2">
+          <input
+            type="date"
+            value={newOffDate}
+            onChange={(e) => setNewOffDate(e.target.value)}
+            className="h-10 border border-white/15 bg-[#141414] px-3 font-mono text-xs text-white outline-none focus:border-gold min-w-0 flex-1"
+          />
+          <button
+            type="button"
+            onClick={handleAddOffDate}
+            className="h-10 px-4 bg-gold font-black text-black text-xs uppercase hover:bg-gold/90 transition shrink-0"
+          >
+            {isArabic ? "+ إضافة استثناء" : "+ Add Off Date"}
+          </button>
+        </div>
+
+        {currentOffDates.length > 0 ? (
+          <div className="flex flex-wrap gap-2 pt-1">
+            {currentOffDates.map((dateStr) => (
+              <span
+                key={dateStr}
+                className="inline-flex items-center gap-2 border border-rose-500/30 bg-rose-950/40 px-3 py-1.5 text-xs font-mono text-rose-300"
+              >
+                <span>{dateStr}</span>
+                <span className="text-[10px] font-black text-rose-400">({isArabic ? "غير متاح" : "Off"})</span>
+                <button
+                  type="button"
+                  onClick={() => handleRemoveOffDate(dateStr)}
+                  className="text-rose-400 hover:text-white font-bold ml-1"
+                  title={isArabic ? "حذف" : "Remove"}
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+          </div>
+        ) : (
+          <p className="text-[11px] text-white/40 italic">
+            {isArabic ? "لا توجد أيام عطلة خاصة مضافة حالياً" : "No specific off dates added yet."}
+          </p>
+        )}
       </div>
     </div>
   );

@@ -14,6 +14,7 @@ import { prisma } from "../../lib/prisma.js";
 import { catchAsync } from "../../utils/catchAsync.js";
 import { sendAppNotification } from "../../utils/notification.util.js";
 import { sendNewRequestNotificationEmail } from "../../utils/email.js";
+import { isWorkerAvailableNow } from "../../utils/worker-availability.util.js";
 
 const router = Router();
 
@@ -647,12 +648,20 @@ router.get(
       },
     });
 
+    const favoritesAvailability = favorites.map((f) =>
+      isWorkerAvailableNow({
+        isAvailable: f.worker.isAvailable,
+        workingHours: f.worker.workingHours,
+        offDates: f.worker.offDates,
+      }),
+    );
+
     response.status(200).json(
       successResponse(
         {
           summary: {
             totalFavorites: favorites.length,
-            onlineNow: favorites.filter((f) => f.worker.isOnline).length,
+            onlineNow: favoritesAvailability.filter(Boolean).length,
             avgRating:
               favorites.length > 0
                 ? favorites.reduce(
@@ -661,14 +670,14 @@ router.get(
                   ) / favorites.length
                 : 0,
           },
-          workers: favorites.map((f) => ({
+          workers: favorites.map((f, i) => ({
             id: f.worker.id,
             name: `${f.worker.user.firstName} ${f.worker.user.lastName}`,
             specialty: f.worker.specializations[0]?.service.nameEn || "general",
             rating: f.worker.rating,
             completedJobs: f.worker.totalJobsCompleted,
             area: f.worker.workAreas[0]?.area || "Unknown",
-            availability: f.worker.isAvailable ? "available" : "busy",
+            availability: favoritesAvailability[i] ? "available" : "busy",
           })),
         },
         "Favorite workers fetched",
@@ -747,7 +756,9 @@ router.get(
         firstName: true,
         lastName: true,
         email: true,
+        emailVerified: true,
         phone: true,
+        avatarUrl: true,
         preferredLanguage: true,
       },
     });
@@ -773,7 +784,9 @@ router.get(
             firstName: user.firstName,
             lastName: user.lastName,
             email: user.email || "",
+            emailVerified: user.emailVerified,
             phone: user.phone,
+            avatarUrl: user.avatarUrl,
           },
           preferences: {
             language: user.preferredLanguage || "ar",

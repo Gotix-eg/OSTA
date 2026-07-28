@@ -151,6 +151,7 @@ export async function POST(request: NextRequest) {
 
   const purpose = formData.get("purpose");
   const isRegistrationDocumentUpload = purpose === "registration-document";
+  const isAvatarLibraryUpload = purpose === "avatar-library";
   const token = request.cookies.get("osta_access_token")?.value;
   const isAuthenticated = Boolean(token && (await verifyJwt(token)));
 
@@ -174,7 +175,11 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const folder = isRegistrationDocumentUpload ? "registration-documents" : "uploads";
+    const folder = isRegistrationDocumentUpload
+      ? "registration-documents"
+      : isAvatarLibraryUpload
+        ? "avatar-library"
+        : "uploads";
     const blob = await put(`${folder}/${Date.now()}-${safeFilename(file.name)}`, file, {
       access: "public",
       contentType: file.type,

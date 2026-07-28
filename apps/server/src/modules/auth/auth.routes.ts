@@ -269,12 +269,16 @@ router.patch("/profile", authenticate, catchAsync(async (request, response) => {
   const { firstName, lastName, email, avatarUrl } = request.body;
   const userId = request.auth!.userId;
 
+  const existingUser = await prisma.user.findUnique({ where: { id: userId } });
+  const isNewEmail = email !== undefined && email?.trim().toLowerCase() !== existingUser?.email?.trim().toLowerCase();
+
   const updatedUser = await prisma.user.update({
     where: { id: userId },
     data: {
       firstName: firstName !== undefined ? firstName : undefined,
       lastName: lastName !== undefined ? lastName : undefined,
       email: email !== undefined ? email : undefined,
+      emailVerified: isNewEmail ? false : undefined,
       avatarUrl: avatarUrl !== undefined ? avatarUrl : undefined,
     },
     select: {
@@ -282,6 +286,7 @@ router.patch("/profile", authenticate, catchAsync(async (request, response) => {
       role: true,
       phone: true,
       email: true,
+      emailVerified: true,
       firstName: true,
       lastName: true,
       avatarUrl: true,
@@ -292,6 +297,20 @@ router.patch("/profile", authenticate, catchAsync(async (request, response) => {
   response.status(200).json(
     successResponse({ user: updatedUser }, "Profile updated successfully")
   );
+}));
+
+router.post("/send-email-verification", authenticate, catchAsync(async (request, response) => {
+  const userId = request.auth!.userId;
+  const { email } = request.body as { email?: string };
+  const result = await authService.sendEmailVerification(userId, email);
+  response.status(200).json(successResponse(result, result.message));
+}));
+
+router.post("/verify-email-otp", authenticate, catchAsync(async (request, response) => {
+  const userId = request.auth!.userId;
+  const { code } = request.body as { code: string };
+  const result = await authService.verifyEmailOtp(userId, code);
+  response.status(200).json(successResponse(result, result.message));
 }));
 
 router.post("/switch-role", authenticate, catchAsync(async (request, response) => {
@@ -337,14 +356,7 @@ router.post("/switch-role", authenticate, catchAsync(async (request, response) =
 
   // Ensure target profile exists
   if (targetRole === "CLIENT" && !user.clientProfile) {
-    await prisma.clientProfile.create({
-      data: {
-        userId: user.id,
-        totalRequests: 0,
-        walletBalance: 0,
-        isVip: false
-      }
-    });
+    throw new ApiError(400, "يجب التسجيل كعميل أولاً لتفعيل وضع العميل");
   } else if (targetRole === "WORKER" && !user.workerProfile) {
     throw new ApiError(400, "يجب التسجيل كفني أولاً وتوثيق المستندات لتفعيل وضع الفني");
   } else if (targetRole === "VENDOR" && !user.vendorProfile) {

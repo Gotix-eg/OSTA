@@ -19,6 +19,7 @@ export function useLiveApiData<T>(path: string, initialData: T) {
       try {
         const response = await fetch(`${resolveApiBaseUrl()}${path}`, {
           credentials: "include",
+          cache: "no-store",
           headers: {
             "Accept": "application/json"
           },

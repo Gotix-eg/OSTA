@@ -13,8 +13,15 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   };
 }
 
-export default async function RegisterVendorPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function RegisterVendorPage({
+  params,
+  searchParams
+}: {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<{ phone?: string; firstName?: string; lastName?: string }>;
+}) {
   const { locale } = await params;
+  const { phone, firstName, lastName } = await searchParams;
 
   if (!isLocale(locale)) {
     notFound();
@@ -31,7 +38,7 @@ export default async function RegisterVendorPage({ params }: { params: Promise<{
           : "Register as a parts vendor. Add your store details and define your area to receive requests."
       }
     >
-      <VendorRegisterForm locale={locale} />
+      <VendorRegisterForm locale={locale} initial={{ phone, firstName, lastName }} />
     </AuthShell>
   );
 }
