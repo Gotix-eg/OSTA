@@ -133,7 +133,10 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
         method: "POST",
         body: formData
       });
-      if (!res.ok) throw new Error("Upload failed");
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || "Upload failed");
+      }
       const resData = await res.json();
       setData((prev) => ({
         ...prev,
@@ -142,6 +145,9 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
           avatarUrl: resData.url
         }
       }));
+      await patchApiData("/auth/profile", {
+        avatarUrl: resData.url
+      }).catch((err) => console.error("Auto-save avatar failed", err));
     } catch (err) {
       console.error("Avatar upload failed", err);
     } finally {
@@ -206,7 +212,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
         <div className="flex min-w-0 items-center gap-5">
           <div className="relative group shrink-0">
             <div
-              onClick={() => avatarInputRef.current?.click()}
+              onClick={() => !isUploadingAvatar && avatarInputRef.current?.click()}
               className="relative flex h-16 w-16 cursor-pointer items-center justify-center overflow-hidden border border-gold bg-[#111] text-gold sm:h-20 sm:w-20 transition hover:border-gold/80"
             >
               {data.profile.avatarUrl ? (
@@ -215,18 +221,25 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
               ) : (
                 <UserCircle2 className="h-8 w-8 sm:h-10 sm:w-10" />
               )}
-              <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
-                <Camera className="h-4 w-4 text-gold" />
-                <span className="text-[8px] font-black uppercase text-white">{isUploadingAvatar ? "..." : isArabic ? "تغيير" : "Change"}</span>
-              </div>
+              {isUploadingAvatar ? (
+                <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center gap-1 z-10">
+                  <Loader2 className="h-5 w-5 animate-spin text-gold" />
+                </div>
+              ) : (
+                <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
+                  <Camera className="h-4 w-4 text-gold" />
+                  <span className="text-[8px] font-black uppercase text-white">{isArabic ? "تغيير" : "Change"}</span>
+                </div>
+              )}
             </div>
             <button
               type="button"
+              disabled={isUploadingAvatar}
               onClick={() => avatarInputRef.current?.click()}
-              className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-gold text-black shadow-lg transition hover:scale-110 active:scale-95"
+              className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-gold text-black shadow-lg transition hover:scale-110 active:scale-95 disabled:opacity-50"
               title={isArabic ? "تغيير الصورة الشخصية" : "Change profile photo"}
             >
-              <Camera className="h-3 w-3" />
+              {isUploadingAvatar ? <Loader2 className="h-3 w-3 animate-spin" /> : <Camera className="h-3 w-3" />}
             </button>
           </div>
           <div className="min-w-0">
@@ -260,7 +273,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
           <div className="mb-6 flex flex-col sm:flex-row items-center gap-5 rounded-none border border-white/10 bg-[#111] p-4">
             <div className="relative group shrink-0">
               <div
-                onClick={() => avatarInputRef.current?.click()}
+                onClick={() => !isUploadingAvatar && avatarInputRef.current?.click()}
                 className="relative h-20 w-20 cursor-pointer overflow-hidden border border-gold bg-[#121212] transition hover:border-gold/80"
               >
                 {data.profile.avatarUrl ? (
@@ -269,18 +282,25 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
                 ) : (
                   <div className="flex h-full w-full items-center justify-center bg-gold text-xl font-black text-black">{initials}</div>
                 )}
-                <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
-                  <Camera className="h-4 w-4 text-gold" />
-                  <span className="text-[8px] font-black uppercase text-white">{isUploadingAvatar ? (isArabic ? "جاري..." : "Uploading...") : isArabic ? "تغيير" : "Change"}</span>
-                </div>
+                {isUploadingAvatar ? (
+                  <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center gap-1 z-10">
+                    <Loader2 className="h-5 w-5 animate-spin text-gold" />
+                  </div>
+                ) : (
+                  <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
+                    <Camera className="h-4 w-4 text-gold" />
+                    <span className="text-[8px] font-black uppercase text-white">{isArabic ? "تغيير" : "Change"}</span>
+                  </div>
+                )}
               </div>
               <button
                 type="button"
+                disabled={isUploadingAvatar}
                 onClick={() => avatarInputRef.current?.click()}
-                className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-gold text-black shadow-lg transition hover:scale-110 active:scale-95"
+                className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-gold text-black shadow-lg transition hover:scale-110 active:scale-95 disabled:opacity-50"
                 title={isArabic ? "تغيير الصورة الشخصية" : "Change profile photo"}
               >
-                <Camera className="h-3 w-3" />
+                {isUploadingAvatar ? <Loader2 className="h-3 w-3 animate-spin" /> : <Camera className="h-3 w-3" />}
               </button>
               <input
                 type="file"
@@ -295,11 +315,12 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
               <p className="text-xs font-medium text-white/50">{isArabic ? "اضغط على الصورة أو زر الكاميرا لرفع صورة جديدة" : "Click avatar or camera icon to upload a new profile image"}</p>
               <button
                 type="button"
+                disabled={isUploadingAvatar}
                 onClick={() => avatarInputRef.current?.click()}
-                className="mt-2 inline-flex items-center gap-2 border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-bold text-white transition hover:bg-gold hover:text-black"
+                className="mt-2 inline-flex items-center gap-2 border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-bold text-white transition hover:bg-gold hover:text-black disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <Camera className="h-3.5 w-3.5" />
-                {isArabic ? "تحميل صورة جديدة" : "Upload new photo"}
+                {isUploadingAvatar ? <Loader2 className="h-3.5 w-3.5 animate-spin text-gold" /> : <Camera className="h-3.5 w-3.5" />}
+                {isUploadingAvatar ? (isArabic ? "جارٍ الرفع..." : "Uploading...") : isArabic ? "تحميل صورة جديدة" : "Upload new photo"}
               </button>
             </div>
           </div>
@@ -404,33 +425,57 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
                   label={isArabic ? "وجه البطاقة الشخصية" : "ID Front"}
                   imageUrl={data.profile.nationalIdFront}
                   isLocked={data.profile.verificationStatus === "VERIFIED" && Boolean(data.profile.nationalIdFront)}
+                  isArabic={isArabic}
                   onUpload={async (file) => {
                     const formData = new FormData();
                     formData.append("file", file);
-                    const res = await postApiData<{ url: string }, FormData>("/upload", formData);
-                    setData({ ...data, profile: { ...data.profile, nationalIdFront: res.url } });
+                    const res = await fetch("/api/upload", { method: "POST", body: formData });
+                    if (!res.ok) {
+                      const errData = await res.json().catch(() => ({}));
+                      throw new Error(errData.error || (isArabic ? "فشل رفع الصورة" : "Upload failed"));
+                    }
+                    const resData = await res.json();
+                    const nextProfile = { ...data.profile, nationalIdFront: resData.url };
+                    setData((prev) => ({ ...prev, profile: nextProfile }));
+                    await patchApiData("/workers/settings", { nationalIdFront: resData.url }).catch((err) => console.error("Auto-save ID front failed", err));
                   }}
                 />
                 <WorkerIdDocumentCard
                   label={isArabic ? "ظهر البطاقة الشخصية" : "ID Back"}
                   imageUrl={data.profile.nationalIdBack}
                   isLocked={data.profile.verificationStatus === "VERIFIED" && Boolean(data.profile.nationalIdBack)}
+                  isArabic={isArabic}
                   onUpload={async (file) => {
                     const formData = new FormData();
                     formData.append("file", file);
-                    const res = await postApiData<{ url: string }, FormData>("/upload", formData);
-                    setData({ ...data, profile: { ...data.profile, nationalIdBack: res.url } });
+                    const res = await fetch("/api/upload", { method: "POST", body: formData });
+                    if (!res.ok) {
+                      const errData = await res.json().catch(() => ({}));
+                      throw new Error(errData.error || (isArabic ? "فشل رفع الصورة" : "Upload failed"));
+                    }
+                    const resData = await res.json();
+                    const nextProfile = { ...data.profile, nationalIdBack: resData.url };
+                    setData((prev) => ({ ...prev, profile: nextProfile }));
+                    await patchApiData("/workers/settings", { nationalIdBack: resData.url }).catch((err) => console.error("Auto-save ID back failed", err));
                   }}
                 />
                 <WorkerIdDocumentCard
                   label={isArabic ? "سيلفي مع الهوية" : "Selfie with ID"}
                   imageUrl={data.profile.selfieWithId}
                   isLocked={data.profile.verificationStatus === "VERIFIED" && Boolean(data.profile.selfieWithId)}
+                  isArabic={isArabic}
                   onUpload={async (file) => {
                     const formData = new FormData();
                     formData.append("file", file);
-                    const res = await postApiData<{ url: string }, FormData>("/upload", formData);
-                    setData({ ...data, profile: { ...data.profile, selfieWithId: res.url } });
+                    const res = await fetch("/api/upload", { method: "POST", body: formData });
+                    if (!res.ok) {
+                      const errData = await res.json().catch(() => ({}));
+                      throw new Error(errData.error || (isArabic ? "فشل رفع الصورة" : "Upload failed"));
+                    }
+                    const resData = await res.json();
+                    const nextProfile = { ...data.profile, selfieWithId: resData.url };
+                    setData((prev) => ({ ...prev, profile: nextProfile }));
+                    await patchApiData("/workers/settings", { selfieWithId: resData.url }).catch((err) => console.error("Auto-save selfie failed", err));
                   }}
                 />
               </div>
@@ -724,79 +769,99 @@ function WorkerIdDocumentCard({
   label,
   imageUrl,
   isLocked,
+  isArabic = true,
   onUpload
 }: {
   label: string;
   imageUrl?: string | null;
   isLocked?: boolean;
+  isArabic?: boolean;
   onUpload: (file: File) => Promise<void>;
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    if (isLocked) return;
+    if (isLocked || isUploading) return;
     const file = e.target.files?.[0];
     if (!file) return;
 
     setIsUploading(true);
+    setUploadError(null);
     try {
       await onUpload(file);
+    } catch (err: any) {
+      setUploadError(err?.message || (isArabic ? "حدث خطأ أثناء رفع الصورة" : "Failed to upload image"));
     } finally {
       setIsUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
     }
   }
 
   return (
-    <div className={cn("border bg-[#111] p-3 space-y-2", isLocked ? "border-emerald-500/30 bg-emerald-950/5" : "border-white/10")}>
+    <div className={cn("border bg-[#111] p-3 space-y-2 relative flex flex-col justify-between", isLocked ? "border-emerald-500/30 bg-emerald-950/5" : "border-white/10")}>
       <div className="flex h-10 items-start justify-between gap-2">
         <span className="text-xs font-black text-white/70 leading-snug min-w-0 flex-1">{label}</span>
         {isLocked ? (
           <span className="inline-flex items-center gap-1 text-[10px] font-black text-emerald-400 bg-emerald-950/40 border border-emerald-500/30 px-2 py-0.5 shrink-0 pt-0.5">
             <CheckCircle2 className="h-3 w-3 text-emerald-400" />
-            معتمد
+            {isArabic ? "معتمد" : "Verified"}
           </span>
         ) : (
           <button
             type="button"
+            disabled={isUploading}
             onClick={() => fileInputRef.current?.click()}
-            className="text-[11px] font-black text-gold underline hover:text-gold/80 transition shrink-0 pt-0.5"
+            className="text-[11px] font-black text-gold underline hover:text-gold/80 transition shrink-0 pt-0.5 flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {imageUrl ? "تغيير" : "رفع"}
+            {isUploading ? <Loader2 className="h-3 w-3 animate-spin text-gold" /> : null}
+            {isUploading ? (isArabic ? "جارٍ الرفع..." : "Uploading...") : imageUrl ? (isArabic ? "تغيير" : "Change") : (isArabic ? "رفع" : "Upload")}
           </button>
         )}
       </div>
 
       <div
         onClick={() => {
-          if (!isLocked) fileInputRef.current?.click();
+          if (!isLocked && !isUploading) fileInputRef.current?.click();
         }}
         className={cn(
-          "relative h-28 w-full overflow-hidden border bg-[#181818] transition flex items-center justify-center",
-          isLocked ? "cursor-default border-emerald-500/20" : "cursor-pointer border-white/10 hover:border-gold group"
+          "relative h-32 w-full overflow-hidden border bg-[#181818] transition flex items-center justify-center",
+          isLocked || isUploading ? "cursor-default border-emerald-500/20" : "cursor-pointer border-white/10 hover:border-gold group"
         )}
       >
         {imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={imageUrl} alt={label} className={cn("h-full w-full object-cover transition", !isLocked && "group-hover:scale-105")} />
+          <img src={imageUrl} alt={label} className={cn("h-full w-full object-cover transition", !isLocked && !isUploading && "group-hover:scale-105")} />
         ) : (
-          <div className="flex flex-col items-center justify-center h-full text-white/30 space-y-1">
+          <div className="flex flex-col items-center justify-center h-full text-white/30 space-y-1.5 p-2 text-center">
             <Camera className="h-6 w-6 text-gold/60" />
-            <span className="text-[10px] font-bold">{isLocked ? "وثيقة رسمية معتمدة" : "انقر لرفع الصورة"}</span>
+            <span className="text-[10px] font-bold">{isLocked ? (isArabic ? "وثيقة رسمية معتمدة" : "Official Verified Document") : (isArabic ? "انقر لرفع الصورة" : "Click to upload image")}</span>
           </div>
         )}
 
-        {!isLocked ? (
-          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-1.5 text-white text-xs font-bold">
+        {isUploading ? (
+          <div className="absolute inset-0 bg-black/85 flex flex-col items-center justify-center gap-2 z-20 backdrop-blur-[2px] transition-all">
+            <Loader2 className="h-8 w-8 animate-spin text-gold" />
+            <span className="text-xs font-black text-gold tracking-wide animate-pulse">
+              {isArabic ? "جارٍ رفع الصورة..." : "Uploading photo..."}
+            </span>
+          </div>
+        ) : !isLocked ? (
+          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-1.5 text-white text-xs font-bold z-10">
             <Camera className="h-4 w-4 text-gold" />
-            <span>{isUploading ? "جاري الرفع..." : "تحديث الصورة"}</span>
+            <span>{isArabic ? "تحديث الصورة" : "Update photo"}</span>
           </div>
         ) : imageUrl ? (
-          <div className="absolute top-2 right-2 rounded-full bg-emerald-500 p-1 text-black shadow-lg">
+          <div className="absolute top-2 right-2 rounded-full bg-emerald-500 p-1 text-black shadow-lg z-10">
             <CheckCircle2 className="h-3.5 w-3.5 text-black" />
           </div>
         ) : null}
       </div>
+
+      {uploadError ? (
+        <p className="text-[10px] font-bold text-rose-400 mt-1">{uploadError}</p>
+      ) : null}
 
       {!isLocked ? (
         <input
