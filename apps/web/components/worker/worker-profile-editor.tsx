@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Check, GripVertical, Loader2, Plus, Save, Trash2, Video } from "lucide-react";
+import { AlertCircle, Check, GripVertical, Loader2, Plus, Save, Trash2, Video } from "lucide-react";
 
 import { WorkerProAction, WorkerProPanel, WorkerProShell, WorkerProTopStrip } from "@/components/worker/worker-pro-ui";
 import { ImageUpload } from "@/components/shared/image-upload";
@@ -66,6 +66,7 @@ export function WorkerProfileEditor({ locale }: { locale: Locale }) {
   const [saveError, setSaveError] = useState<string | null>(null);
   const [savingRowIndex, setSavingRowIndex] = useState<number | null>(null);
   const [savedRowIndex, setSavedRowIndex] = useState<number | null>(null);
+  const [rowErrors, setRowErrors] = useState<Record<number, string>>({});
 
   useEffect(() => {
     async function load() {
@@ -103,11 +104,28 @@ export function WorkerProfileEditor({ locale }: { locale: Locale }) {
     setSaveState("saving");
     setSaveError(null);
     try {
-      const invalidPrice = data.serviceItems.find(
-        (s) => s.name.trim() && (!s.price.trim() || !/^\d+(\.\d{1,2})?$/.test(s.price.trim().replace(/\s*(ج\.م|EGP)$/i, "")))
-      );
-      if (invalidPrice) {
-        throw new Error(isArabic ? "يرجى إدخال سعر صحيح بالجنيه المصري (أرقام فقط، مثال: 150)" : "Please enter a valid numeric price in EGP for all services (e.g. 150)");
+      const newRowErrors: Record<number, string> = {};
+      data.serviceItems.forEach((s, idx) => {
+        const hasName = Boolean(s.name.trim());
+        const cleanPrice = s.price.trim().replace(/\s*(ج\.م|EGP)$/i, "");
+        const hasValidPrice = Boolean(cleanPrice && /^\d+(\.\d{1,2})?$/.test(cleanPrice));
+
+        if (hasName || cleanPrice) {
+          if (!hasName && !hasValidPrice) {
+            newRowErrors[idx] = isArabic ? "يرجى إدخال اسم الخدمة والسعر بالجنيه المصري" : "Please enter service name and price in EGP";
+          } else if (!hasName) {
+            newRowErrors[idx] = isArabic ? "يرجى إدخال اسم الخدمة" : "Service name is required";
+          } else if (!hasValidPrice) {
+            newRowErrors[idx] = isArabic ? "يرجى إدخال سعر صحيح بالجنيه المصري (مثال: 150)" : "Valid price in EGP is required (e.g. 150)";
+          }
+        }
+      });
+
+      if (Object.keys(newRowErrors).length > 0) {
+        setRowErrors(newRowErrors);
+        setSaveState("error");
+        setSaveError(isArabic ? "يرجى تصحيح الأخطاء في قائمة الخدمات والأسعار" : "Please fix the errors in your services list");
+        return;
       }
 
       const baseUrl = resolveApiBaseUrl();
@@ -148,18 +166,31 @@ export function WorkerProfileEditor({ locale }: { locale: Locale }) {
     const service = data.serviceItems[index];
     if (!service) return;
 
-    if (!service.name.trim()) {
+    const hasName = Boolean(service.name.trim());
+    const cleanPrice = service.price.trim().replace(/\s*(ج\.م|EGP)$/i, "");
+    const hasValidPrice = Boolean(cleanPrice && /^\d+(\.\d{1,2})?$/.test(cleanPrice));
+
+    if (!hasName || !hasValidPrice) {
+      let errMsg = "";
+      if (!hasName && !hasValidPrice) {
+        errMsg = isArabic ? "يرجى إدخال اسم الخدمة والسعر بالجنيه المصري" : "Please enter service name and valid price in EGP";
+      } else if (!hasName) {
+        errMsg = isArabic ? "يرجى إدخال اسم الخدمة أولاً." : "Please enter the service name first.";
+      } else {
+        errMsg = isArabic ? "يرجى إدخال سعر صحيح بالجنيه المصري (أرقام فقط، مثال: 150)." : "Please enter a valid price in EGP (e.g. 150).";
+      }
+
+      setRowErrors((prev) => ({ ...prev, [index]: errMsg }));
       setSaveState("error");
-      setSaveError(isArabic ? "يرجى إدخال اسم الخدمة أولاً." : "Please enter the service name first.");
+      setSaveError(errMsg);
       return;
     }
 
-    const cleanPrice = service.price.trim().replace(/\s*(ج\.م|EGP)$/i, "");
-    if (!cleanPrice || !/^\d+(\.\d{1,2})?$/.test(cleanPrice)) {
-      setSaveState("error");
-      setSaveError(isArabic ? "يرجى إدخال سعر صحيح بالجنيه المصري (مثال: 150)." : "Please enter a valid price in EGP (e.g. 150).");
-      return;
-    }
+    setRowErrors((prev) => {
+      const next = { ...prev };
+      delete next[index];
+      return next;
+    });
 
     setSavingRowIndex(index);
     setSaveState("saving");
@@ -267,11 +298,25 @@ export function WorkerProfileEditor({ locale }: { locale: Locale }) {
       ...prev,
       serviceItems: prev.serviceItems.map((s, i) => (i === index ? { ...s, ...patch } : s))
     }));
+    if (rowErrors[index]) {
+      setRowErrors((prev) => {
+        const next = { ...prev };
+        delete next[index];
+        return next;
+      });
+    }
   }
 
   async function removeServiceItem(index: number) {
     const updatedItems = data.serviceItems.filter((_, i) => i !== index);
     setData((prev) => ({ ...prev, serviceItems: updatedItems }));
+    if (rowErrors[index]) {
+      setRowErrors((prev) => {
+        const next = { ...prev };
+        delete next[index];
+        return next;
+      });
+    }
 
     try {
       const baseUrl = resolveApiBaseUrl();
@@ -548,71 +593,85 @@ export function WorkerProfileEditor({ locale }: { locale: Locale }) {
           {data.serviceItems.length === 0 && (
             <p className="text-sm font-semibold text-white/40">{isArabic ? "لم تتم إضافة أي خدمات بعد." : "No services added yet."}</p>
           )}
-          {data.serviceItems.map((service, index) => (
-            <div key={index} className="grid gap-2 border border-white/10 bg-[#0d0d0d] p-4 sm:grid-cols-[2fr_1fr_2fr_auto]">
-              <input
-                value={service.name}
-                onChange={(e) => updateServiceItem(index, { name: e.target.value })}
-                placeholder={isArabic ? "اسم الخدمة" : "Service name"}
-                className={textInputClass()}
-              />
-              <div className="relative flex items-center">
+          {data.serviceItems.map((service, index) => {
+            const hasNameError = rowErrors[index] && !service.name.trim();
+            const cleanPrice = service.price.trim().replace(/\s*(ج\.م|EGP)$/i, "");
+            const hasPriceError = rowErrors[index] && (!cleanPrice || !/^\d+(\.\d{1,2})?$/.test(cleanPrice));
+
+            return (
+              <div key={index} className="grid gap-2 border border-white/10 bg-[#0d0d0d] p-4 sm:grid-cols-[2fr_1fr_2fr_auto]">
                 <input
-                  type="text"
-                  inputMode="decimal"
-                  value={service.price}
-                  onChange={(e) => {
-                    const raw = e.target.value;
-                    if (raw === "" || /^\d*\.?\d*$/.test(raw)) {
-                      updateServiceItem(index, { price: raw });
-                    }
-                  }}
-                  placeholder={isArabic ? "السعر" : "Price"}
-                  className={cn(textInputClass(), "pe-12 font-mono")}
+                  value={service.name}
+                  onChange={(e) => updateServiceItem(index, { name: e.target.value })}
+                  placeholder={isArabic ? "اسم الخدمة" : "Service name"}
+                  className={cn(textInputClass(), hasNameError && "border-red-500 focus:border-red-500 bg-red-950/10")}
                 />
-                <span className="absolute end-3 text-xs font-black text-gold pointer-events-none select-none">
-                  {isArabic ? "ج.م" : "EGP"}
-                </span>
+                <div className="relative flex items-center">
+                  <input
+                    type="text"
+                    inputMode="decimal"
+                    value={service.price}
+                    onChange={(e) => {
+                      const raw = e.target.value;
+                      if (raw === "" || /^\d*\.?\d*$/.test(raw)) {
+                        updateServiceItem(index, { price: raw });
+                      }
+                    }}
+                    placeholder={isArabic ? "السعر" : "Price"}
+                    className={cn(textInputClass(), "pe-12 font-mono", hasPriceError && "border-red-500 focus:border-red-500 bg-red-950/10")}
+                  />
+                  <span className="absolute end-3 text-xs font-black text-gold pointer-events-none select-none">
+                    {isArabic ? "ج.م" : "EGP"}
+                  </span>
+                </div>
+                <input
+                  value={service.note}
+                  onChange={(e) => updateServiceItem(index, { note: e.target.value })}
+                  placeholder={isArabic ? "ملاحظة (اختياري)" : "Note (optional)"}
+                  className={textInputClass()}
+                />
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <button
+                    type="button"
+                    disabled={savingRowIndex === index}
+                    onClick={() => void saveSingleServiceRow(index)}
+                    title={isArabic ? "حفظ هذه الخدمة" : "Save this service"}
+                    className={cn(
+                      "flex h-12 px-3 items-center justify-center border text-xs font-bold transition gap-1.5",
+                      savedRowIndex === index
+                        ? "border-emerald-500/50 bg-emerald-500/10 text-emerald-400"
+                        : rowErrors[index]
+                        ? "border-red-500/50 bg-red-500/10 text-red-400"
+                        : "border-gold/40 bg-gold/10 text-gold hover:bg-gold/20"
+                    )}
+                  >
+                    {savingRowIndex === index ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : savedRowIndex === index ? (
+                      <Check className="h-4 w-4 text-emerald-400" />
+                    ) : (
+                      <Save className="h-4 w-4" />
+                    )}
+                    <span className="hidden sm:inline">{savedRowIndex === index ? (isArabic ? "تم" : "Saved") : (isArabic ? "حفظ" : "Save")}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => void removeServiceItem(index)}
+                    title={isArabic ? "حذف" : "Remove"}
+                    className="flex h-12 w-12 items-center justify-center border border-white/10 text-white/40 hover:border-red-400 hover:text-red-400 transition"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+                {rowErrors[index] && (
+                  <div className="sm:col-span-4 mt-1 flex items-center gap-1.5 text-xs font-bold text-red-400 bg-red-500/10 border border-red-500/30 p-2.5">
+                    <AlertCircle className="h-4 w-4 shrink-0 text-red-400" />
+                    <span>{rowErrors[index]}</span>
+                  </div>
+                )}
               </div>
-              <input
-                value={service.note}
-                onChange={(e) => updateServiceItem(index, { note: e.target.value })}
-                placeholder={isArabic ? "ملاحظة (اختياري)" : "Note (optional)"}
-                className={textInputClass()}
-              />
-              <div className="flex items-center gap-1.5 shrink-0">
-                <button
-                  type="button"
-                  disabled={savingRowIndex === index}
-                  onClick={() => void saveSingleServiceRow(index)}
-                  title={isArabic ? "حفظ هذه الخدمة" : "Save this service"}
-                  className={cn(
-                    "flex h-12 px-3 items-center justify-center border text-xs font-bold transition gap-1.5",
-                    savedRowIndex === index
-                      ? "border-emerald-500/50 bg-emerald-500/10 text-emerald-400"
-                      : "border-gold/40 bg-gold/10 text-gold hover:bg-gold/20"
-                  )}
-                >
-                  {savingRowIndex === index ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : savedRowIndex === index ? (
-                    <Check className="h-4 w-4 text-emerald-400" />
-                  ) : (
-                    <Save className="h-4 w-4" />
-                  )}
-                  <span className="hidden sm:inline">{savedRowIndex === index ? (isArabic ? "تم" : "Saved") : (isArabic ? "حفظ" : "Save")}</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => removeServiceItem(index)}
-                  title={isArabic ? "حذف" : "Remove"}
-                  className="flex h-12 w-12 items-center justify-center border border-white/10 text-white/40 hover:border-red-400 hover:text-red-400 transition"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </WorkerProPanel>
     </WorkerProShell>
