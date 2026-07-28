@@ -244,14 +244,20 @@ export function WorkerProfileDetail({ locale, workerId }: { locale: Locale; work
 
           <div className="flex flex-col items-start gap-6 sm:flex-row">
             {/* Avatar */}
-            <div className="h-28 w-28 shrink-0 overflow-hidden border-2 border-white/15 bg-neutral-800 sm:h-36 sm:w-36">
-              {worker.avatarUrl ? (
-                <img src={worker.avatarUrl} alt={worker.name} className="h-full w-full object-cover object-top" />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center text-3xl font-black text-white/40">
-                  {worker.name.charAt(0)}
-                </div>
-              )}
+            <div className="relative shrink-0">
+              <div className="h-28 w-28 overflow-hidden border-2 border-white/15 bg-neutral-800 sm:h-36 sm:w-36">
+                {worker.avatarUrl ? (
+                  <img src={worker.avatarUrl} alt={worker.name} className="h-full w-full object-cover object-top" />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center text-3xl font-black text-white/40">
+                    {worker.name.charAt(0)}
+                  </div>
+                )}
+              </div>
+              <div className="absolute -bottom-2 -end-2 flex items-center gap-1 border-2 border-black bg-gold px-2 py-0.5 text-xs font-black text-ink shadow-md" title={isArabic ? "الهوية موثقة" : "Identity Verified"}>
+                <ShieldCheck className="h-4 w-4 shrink-0 text-ink" strokeWidth={2.5} />
+                <span className="text-[10px] uppercase tracking-wider">{isArabic ? "موثق" : "Verified"}</span>
+              </div>
             </div>
 
             {/* Info */}
@@ -315,16 +321,7 @@ export function WorkerProfileDetail({ locale, workerId }: { locale: Locale; work
             </div>
           </div>
 
-          {/* Primary Contact CTA */}
-          <div className="pt-7">
-            <button
-              onClick={handleBookClick}
-              className="flex w-full items-center justify-center gap-2.5 bg-gold px-8 py-4 text-sm font-black uppercase tracking-wide text-ink transition-all hover:bg-white sm:w-auto sm:min-w-[240px]"
-            >
-              <PhoneCall className="h-4 w-4" />
-              <span>{isArabic ? "التواصل مع الفني" : "Contact Now"}</span>
-            </button>
-          </div>
+
         </div>
       </section>
 
@@ -482,22 +479,6 @@ export function WorkerProfileDetail({ locale, workerId }: { locale: Locale; work
                 </article>
               )}
 
-              {/* Verified Qualification Banner — always true for listed workers */}
-              <article className="border-2 border-gold bg-ink p-5 md:p-7">
-                <div className="space-y-3">
-                  <h3 className="flex items-center gap-3 text-base font-black uppercase text-white md:text-lg">
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center bg-gold text-ink">
-                      <Award className="h-5 w-5" />
-                    </span>
-                    <span>{isArabic ? "الهوية موثقة من المنصة" : "Identity Verified"}</span>
-                  </h3>
-                  <p className="max-w-xl text-sm font-semibold leading-7 text-[#c6c6c6]">
-                    {isArabic
-                      ? "تم التحقق من هوية هذا الفني ووثائقه الرسمية من قبل فريق أُسطفاي قبل ظهوره على المنصة."
-                      : "This technician's identity and official documents have been verified by the Ostafy team before appearing on the platform."}
-                  </p>
-                </div>
-              </article>
 
               {hasContract && (
                 <article className="border-2 border-ink bg-ink p-5 md:p-7">

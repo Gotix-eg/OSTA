@@ -649,10 +649,20 @@ router.get("/settings", catchAsync(async (request, response) => {
   const userId = request.auth!.userId;
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    include: { workerProfile: true }
+    include: {
+      workerProfile: {
+        include: {
+          workAreas: true
+        }
+      }
+    }
   });
 
   if (!user) throw new ApiError(404, "User not found");
+
+  const dbServiceAreas = user.workerProfile?.workAreas?.map(
+    (wa) => wa.area || wa.city || wa.governorate
+  ) ?? [];
 
   const settings = {
     ...workerSettings,
@@ -678,7 +688,8 @@ router.get("/settings", catchAsync(async (request, response) => {
       workingHours: user.workerProfile?.workingHours ?? null,
       offDates: user.workerProfile?.offDates ?? [],
       acceptedPaymentMethods: user.workerProfile?.acceptedPaymentMethods ?? [],
-      preferredPaymentMethod: user.workerProfile?.preferredPaymentMethod ?? null
+      preferredPaymentMethod: user.workerProfile?.preferredPaymentMethod ?? null,
+      serviceAreas: dbServiceAreas.length ? dbServiceAreas : (workerSettings.workPreferences.serviceAreas ?? [])
     }
   };
 
@@ -687,7 +698,7 @@ router.get("/settings", catchAsync(async (request, response) => {
 
 router.patch("/settings", catchAsync(async (request, response) => {
   const userId = request.auth!.userId;
-  const { notificationsEnabledApp, notificationsEnabledEmail, isAvailable, nationalIdNumber, nationalIdFront, nationalIdBack, selfieWithId, workingHours, offDates, acceptedPaymentMethods, preferredPaymentMethod } = request.body;
+  const { notificationsEnabledApp, notificationsEnabledEmail, isAvailable, nationalIdNumber, nationalIdFront, nationalIdBack, selfieWithId, workingHours, offDates, acceptedPaymentMethods, preferredPaymentMethod, serviceAreas } = request.body;
 
   if (acceptedPaymentMethods !== undefined) {
     if (!Array.isArray(acceptedPaymentMethods) || acceptedPaymentMethods.some((method: unknown) => !ALLOWED_PAYMENT_METHODS.includes(method as any))) {
@@ -707,6 +718,34 @@ router.patch("/settings", catchAsync(async (request, response) => {
     const effectiveAcceptedMethods: string[] = acceptedPaymentMethods !== undefined ? acceptedPaymentMethods : worker.acceptedPaymentMethods;
     if (!effectiveAcceptedMethods.includes(preferredPaymentMethod)) {
       throw new ApiError(400, "Preferred payment method must be one of the accepted methods");
+    }
+  }
+
+  if (serviceAreas !== undefined && Array.isArray(serviceAreas)) {
+    await prisma.workerArea.deleteMany({
+      where: { workerId: worker.id }
+    });
+    if (serviceAreas.length > 0) {
+      await prisma.workerArea.createMany({
+        data: serviceAreas.map((areaStr: string) => {
+          const name = String(areaStr).trim();
+          const parts = name.split("-").map((s) => s.trim());
+          if (parts.length >= 2) {
+            return {
+              workerId: worker.id,
+              governorate: parts[0] || "القاهرة",
+              city: parts[1] || parts[0] || "القاهرة",
+              area: parts[2] || parts[1] || parts[0] || "القاهرة"
+            };
+          }
+          return {
+            workerId: worker.id,
+            governorate: name || "القاهرة",
+            city: name || "القاهرة",
+            area: name || "القاهرة"
+          };
+        })
+      });
     }
   }
 

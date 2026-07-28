@@ -44,7 +44,7 @@ export function VendorsDirectory({ locale }: { locale: Locale }) {
   }, []);
 
   const cities = [
-    { value: "ALL", label: { ar: "كل المحافظات", en: "ALL CITIES" } },
+    { value: "ALL", label: { ar: "جميع أنحاء الجمهورية", en: "All Egypt / Nationwide" } },
     { value: "cairo", label: { ar: "القاهرة", en: "CAIRO" } },
     { value: "giza", label: { ar: "الجيزة", en: "GIZA" } },
     { value: "alexandria", label: { ar: "الإسكندرية", en: "ALEXANDRIA" } }

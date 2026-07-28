@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-import { AlertCircle, CalendarDays, Camera, Check, CheckCircle2, Clock, Loader2, Lock, Save, ShieldCheck, Sparkles, Star, TimerReset, Trash2, UserCircle2 } from "lucide-react";
+import { AlertCircle, CalendarDays, Camera, Check, CheckCircle2, Clock, Loader2, Lock, MapPin, Plus, Save, ShieldCheck, Sparkles, Star, TimerReset, Trash2, UserCircle2, X } from "lucide-react";
 
 import {
   WorkerProAction,
@@ -87,24 +87,26 @@ export function WorkerRatingsPage({ locale, initialData }: { locale: Locale; ini
   );
 }
 
-function WorkerSaveControl({ state, onSave, isArabic, error }: { state: "idle" | "saving" | "saved" | "error"; onSave: () => void; isArabic: boolean; error?: string | null }) {
+function WorkerSaveControl({ state, isArabic, error }: { state: "idle" | "saving" | "saved" | "error"; isArabic: boolean; error?: string | null }) {
   return (
     <div className="flex shrink-0 flex-col items-end gap-1.5">
-      <div className="flex items-center gap-3">
-        {state === "saved" ? (
-          <span className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.14em] text-emerald-300">
-            <Check className="h-4 w-4" />
-            {isArabic ? "تم الحفظ" : "Saved"}
+      <div className="flex items-center gap-2">
+        {state === "saving" ? (
+          <span className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/10 px-3.5 py-1.5 text-xs font-black text-gold shadow-sm">
+            <Loader2 className="h-3.5 w-3.5 animate-spin text-gold" />
+            {isArabic ? "جارٍ الحفظ تلقائياً..." : "Auto-saving..."}
           </span>
-        ) : null}
-        <WorkerProAction tone="light" onClick={onSave} disabled={state === "saving"}>
-          {state === "saving" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-          {state === "saving" ? (isArabic ? "جارٍ الحفظ" : "Saving") : isArabic ? "حفظ" : "Save"}
-        </WorkerProAction>
+        ) : state === "error" && error ? (
+          <span className="inline-flex items-center gap-2 rounded-full border border-rose-500/40 bg-rose-950/60 px-3.5 py-1.5 text-xs font-bold text-rose-300">
+            {error}
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-950/60 px-3.5 py-1.5 text-xs font-black text-emerald-400 shadow-sm">
+            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+            {isArabic ? "تم الحفظ تلقائياً ✓" : "Auto-saved ✓"}
+          </span>
+        )}
       </div>
-      {state === "error" && error ? (
-        <span className="text-xs font-bold text-rose-400">{error}</span>
-      ) : null}
     </div>
   );
 }
@@ -117,10 +119,62 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
   const [saveError, setSaveError] = useState<string | null>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     setData(liveData);
   }, [liveData]);
+
+  const triggerAutoSave = useCallback(
+    (updatedData: WorkerSettingsData) => {
+      setSaveState("saving");
+      setSaveError(null);
+
+      if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+
+      debounceTimerRef.current = setTimeout(async () => {
+        try {
+          const safeAreas =
+            Array.isArray(updatedData.workPreferences?.serviceAreas) && updatedData.workPreferences.serviceAreas.length > 0
+              ? updatedData.workPreferences.serviceAreas
+              : [isArabic ? "جميع أنحاء الجمهورية" : "All Egypt / Nationwide"];
+
+          await patchApiData("/workers/settings", {
+            isAvailable: updatedData.workPreferences?.isAvailable ?? false,
+            workingHours: updatedData.workPreferences?.workingHours,
+            offDates: updatedData.workPreferences?.offDates ?? [],
+            acceptedPaymentMethods: updatedData.workPreferences?.acceptedPaymentMethods ?? [],
+            preferredPaymentMethod: updatedData.workPreferences?.preferredPaymentMethod ?? null,
+            serviceAreas: safeAreas,
+            nationalIdFront: updatedData.profile?.nationalIdFront,
+            nationalIdBack: updatedData.profile?.nationalIdBack,
+            selfieWithId: updatedData.profile?.selfieWithId
+          });
+
+          await patchApiData("/auth/profile", {
+            email: updatedData.profile?.email,
+            avatarUrl: updatedData.profile?.avatarUrl
+          });
+
+          setSaveState("saved");
+          setTimeout(() => setSaveState("idle"), 2000);
+        } catch (err: any) {
+          console.error("Failed to auto-save worker settings", err);
+          setSaveError(getLocalizedError(err instanceof Error ? err.message : "", locale));
+          setSaveState("error");
+        }
+      }, 350);
+    },
+    [isArabic, locale]
+  );
+
+  function updateData(updater: WorkerSettingsData | ((prev: WorkerSettingsData) => WorkerSettingsData)) {
+    setData((prev) => {
+      const next = typeof updater === "function" ? updater(prev) : updater;
+      triggerAutoSave(next);
+      return next;
+    });
+  }
 
   async function handleAvatarUploadSettings(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -138,16 +192,13 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
         throw new Error(errData.error || "Upload failed");
       }
       const resData = await res.json();
-      setData((prev) => ({
+      updateData((prev) => ({
         ...prev,
         profile: {
           ...prev.profile,
           avatarUrl: resData.url
         }
       }));
-      await patchApiData("/auth/profile", {
-        avatarUrl: resData.url
-      }).catch((err) => console.error("Auto-save avatar failed", err));
     } catch (err) {
       console.error("Avatar upload failed", err);
     } finally {
@@ -156,38 +207,13 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
     }
   }
 
-  async function handleSave() {
-    setSaveState("saving");
-    setSaveError(null);
-    try {
-      await patchApiData("/workers/settings", {
-        isAvailable: safeWorkPreferences.isAvailable,
-        workingHours: data.workPreferences.workingHours,
-        offDates: data.workPreferences.offDates,
-        acceptedPaymentMethods: safeWorkPreferences.acceptedPaymentMethods,
-        preferredPaymentMethod: safeWorkPreferences.preferredPaymentMethod,
-        nationalIdFront: data.profile.nationalIdFront,
-        nationalIdBack: data.profile.nationalIdBack,
-        selfieWithId: data.profile.selfieWithId
-      });
-      await patchApiData("/auth/profile", {
-        email: data.profile.email,
-        avatarUrl: data.profile.avatarUrl
-      });
-      setSaveState("saved");
-      window.setTimeout(() => setSaveState("idle"), 2000);
-    } catch (err: any) {
-      console.error("Failed to save worker settings", err);
-      setSaveError(getLocalizedError(err instanceof Error ? err.message : "", locale));
-      setSaveState("error");
-    }
-  }
-
   const safeWorkPreferences = {
     isAvailable: data.workPreferences?.isAvailable ?? false,
     acceptsEmergency: data.workPreferences?.acceptsEmergency ?? false,
     acceptsSameDay: data.workPreferences?.acceptsSameDay ?? false,
-    serviceAreas: Array.isArray(data.workPreferences?.serviceAreas) ? data.workPreferences.serviceAreas : [],
+    serviceAreas: Array.isArray(data.workPreferences?.serviceAreas) && data.workPreferences.serviceAreas.length > 0
+      ? data.workPreferences.serviceAreas
+      : [isArabic ? "جميع أنحاء الجمهورية" : "All Egypt / Nationwide"],
     acceptedPaymentMethods: Array.isArray(data.workPreferences?.acceptedPaymentMethods) ? data.workPreferences.acceptedPaymentMethods : [],
     preferredPaymentMethod: data.workPreferences?.preferredPaymentMethod ?? null
   };
@@ -265,7 +291,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
             </p>
           </div>
         </div>
-        <WorkerSaveControl state={saveState} onSave={() => void handleSave()} isArabic={isArabic} error={saveError} />
+        <WorkerSaveControl state={saveState} isArabic={isArabic} error={saveError} />
       </section>
 
       <div className="grid gap-6 xl:grid-cols-[1fr_1fr]">
@@ -380,7 +406,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
                 locale={locale}
                 email={data.profile.email ?? ""}
                 emailVerified={Boolean(data.profile.emailVerified)}
-                onChangeEmail={(val) => setData((prev) => ({
+                onChangeEmail={(val) => updateData((prev) => ({
                   ...prev,
                   profile: {
                     ...prev.profile,
@@ -388,7 +414,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
                     emailVerified: prev.profile.emailVerified && val.trim().toLowerCase() === (prev.profile.email ?? "").trim().toLowerCase()
                   }
                 }))}
-                onVerified={() => setData((prev) => ({ ...prev, profile: { ...prev.profile, emailVerified: true } }))}
+                onVerified={() => updateData((prev) => ({ ...prev, profile: { ...prev.profile, emailVerified: true } }))}
               />
             </div>
 
@@ -435,9 +461,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
                       throw new Error(errData.error || (isArabic ? "فشل رفع الصورة" : "Upload failed"));
                     }
                     const resData = await res.json();
-                    const nextProfile = { ...data.profile, nationalIdFront: resData.url };
-                    setData((prev) => ({ ...prev, profile: nextProfile }));
-                    await patchApiData("/workers/settings", { nationalIdFront: resData.url }).catch((err) => console.error("Auto-save ID front failed", err));
+                    updateData((prev) => ({ ...prev, profile: { ...prev.profile, nationalIdFront: resData.url } }));
                   }}
                 />
                 <WorkerIdDocumentCard
@@ -454,9 +478,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
                       throw new Error(errData.error || (isArabic ? "فشل رفع الصورة" : "Upload failed"));
                     }
                     const resData = await res.json();
-                    const nextProfile = { ...data.profile, nationalIdBack: resData.url };
-                    setData((prev) => ({ ...prev, profile: nextProfile }));
-                    await patchApiData("/workers/settings", { nationalIdBack: resData.url }).catch((err) => console.error("Auto-save ID back failed", err));
+                    updateData((prev) => ({ ...prev, profile: { ...prev.profile, nationalIdBack: resData.url } }));
                   }}
                 />
                 <WorkerIdDocumentCard
@@ -473,9 +495,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
                       throw new Error(errData.error || (isArabic ? "فشل رفع الصورة" : "Upload failed"));
                     }
                     const resData = await res.json();
-                    const nextProfile = { ...data.profile, selfieWithId: resData.url };
-                    setData((prev) => ({ ...prev, profile: nextProfile }));
-                    await patchApiData("/workers/settings", { selfieWithId: resData.url }).catch((err) => console.error("Auto-save selfie failed", err));
+                    updateData((prev) => ({ ...prev, profile: { ...prev.profile, selfieWithId: resData.url } }));
                   }}
                 />
               </div>
@@ -496,7 +516,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
                   <input
                     type="checkbox"
                     checked={safeWorkPreferences[item.key as keyof typeof safeWorkPreferences] as boolean}
-                    onChange={(event) => setData({ ...data, workPreferences: { ...data.workPreferences, [item.key]: event.target.checked } })}
+                    onChange={(event) => updateData((prev) => ({ ...prev, workPreferences: { ...prev.workPreferences, [item.key]: event.target.checked } }))}
                     className="h-4 w-4 accent-gold"
                   />
                 </label>
@@ -530,7 +550,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
                               : safeWorkPreferences.preferredPaymentMethod === method.key
                                 ? null
                                 : safeWorkPreferences.preferredPaymentMethod;
-                            setData({ ...data, workPreferences: { ...data.workPreferences, acceptedPaymentMethods: nextMethods, preferredPaymentMethod: nextPreferred } });
+                            updateData((prev) => ({ ...prev, workPreferences: { ...prev.workPreferences, acceptedPaymentMethods: nextMethods, preferredPaymentMethod: nextPreferred } }));
                           }}
                           className="h-5 w-5 accent-gold"
                         />
@@ -539,7 +559,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
                       <button
                         type="button"
                         disabled={!isChecked}
-                        onClick={() => setData({ ...data, workPreferences: { ...data.workPreferences, preferredPaymentMethod: isPreferred ? null : method.key } })}
+                        onClick={() => updateData((prev) => ({ ...prev, workPreferences: { ...prev.workPreferences, preferredPaymentMethod: isPreferred ? null : method.key } }))}
                         title={isArabic ? "الطريقة المفضلة" : "Preferred method"}
                         className={cn(
                           "flex h-8 w-8 shrink-0 items-center justify-center border transition",
@@ -554,24 +574,19 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
               </div>
             </div>
 
-            {safeWorkPreferences.serviceAreas.length > 0 ? (
-              <div className="border border-white/10 bg-[#111] p-4">
-                <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/35">{isArabic ? "المناطق" : "Areas"}</p>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {safeWorkPreferences.serviceAreas.map((area) => (
-                    <WorkerProBadge key={area} tone="gold">{area}</WorkerProBadge>
-                  ))}
-                </div>
-              </div>
-            ) : null}
+            <WorkerServiceAreasSection
+              isArabic={isArabic}
+              areas={safeWorkPreferences.serviceAreas}
+              onChange={(newAreas) => updateData((prev) => ({ ...prev, workPreferences: { ...prev.workPreferences, serviceAreas: newAreas } }))}
+            />
 
 
             <WorkerScheduleSection
               locale={locale}
               workingHours={data.workPreferences.workingHours}
               offDates={data.workPreferences.offDates}
-              onChangeSchedule={(newSchedule) => setData({ ...data, workPreferences: { ...data.workPreferences, workingHours: newSchedule } })}
-              onChangeOffDates={(newOffDates) => setData({ ...data, workPreferences: { ...data.workPreferences, offDates: newOffDates } })}
+              onChangeSchedule={(newSchedule) => updateData((prev) => ({ ...prev, workPreferences: { ...prev.workPreferences, workingHours: newSchedule } }))}
+              onChangeOffDates={(newOffDates) => updateData((prev) => ({ ...prev, workPreferences: { ...prev.workPreferences, offDates: newOffDates } }))}
             />
           </div>
         </WorkerProPanel>
@@ -1073,6 +1088,190 @@ function WorkerScheduleSection({
             {isArabic ? "لا توجد أيام عطلة خاصة مضافة حالياً" : "No specific off dates added yet."}
           </p>
         )}
+      </div>
+    </div>
+  );
+}
+
+function WorkerServiceAreasSection({
+  isArabic,
+  areas,
+  onChange
+}: {
+  isArabic: boolean;
+  areas: string[];
+  onChange: (newAreas: string[]) => void;
+}) {
+  const [newAreaInput, setNewAreaInput] = useState("");
+
+  const ALL_EGYPT_LABEL = isArabic ? "جميع أنحاء الجمهورية" : "All Egypt / Nationwide";
+
+  const effectiveAreas = areas && areas.length > 0 ? areas : [ALL_EGYPT_LABEL];
+
+  const POPULAR_AREAS = [
+    ALL_EGYPT_LABEL,
+    "القاهرة",
+    "الجيزة",
+    "المعادي",
+    "6 أكتوبر",
+    "الشيخ زايد",
+    "التجمع الخامس",
+    "مدينة نصر",
+    "مصر الجديدة",
+    "الشروق",
+    "الإسكندرية",
+    "سموحة",
+    "المنصورة",
+    "طنطا"
+  ];
+
+  const isAllEgyptSelected = effectiveAreas.some(
+    (a) =>
+      a.trim() === "جميع أنحاء الجمهورية" ||
+      a.trim() === "All Egypt / Nationwide" ||
+      a.toLowerCase().includes("جمهورية") ||
+      a.toLowerCase().includes("all egypt")
+  );
+
+  function handleAddArea(areaToAdd: string) {
+    const trimmed = areaToAdd.trim();
+    if (!trimmed) return;
+
+    // If choosing "جميع أنحاء الجمهورية", replace all other locations with it
+    if (
+      trimmed === "جميع أنحاء الجمهورية" ||
+      trimmed === "All Egypt / Nationwide" ||
+      trimmed.toLowerCase().includes("جمهورية") ||
+      trimmed.toLowerCase().includes("all egypt")
+    ) {
+      onChange([ALL_EGYPT_LABEL]);
+      setNewAreaInput("");
+      return;
+    }
+
+    // If "جميع أنحاء الجمهورية" is currently selected, replace it with the newly chosen specific location
+    if (isAllEgyptSelected) {
+      onChange([trimmed]);
+      setNewAreaInput("");
+      return;
+    }
+
+    if (effectiveAreas.some((a) => a.toLowerCase() === trimmed.toLowerCase())) {
+      setNewAreaInput("");
+      return;
+    }
+
+    onChange([...effectiveAreas, trimmed]);
+    setNewAreaInput("");
+  }
+
+  function handleRemoveArea(areaToRemove: string) {
+    const remaining = effectiveAreas.filter((a) => a !== areaToRemove);
+    if (remaining.length === 0) {
+      // At least one location must be selected, default to All Egypt
+      onChange([ALL_EGYPT_LABEL]);
+    } else {
+      onChange(remaining);
+    }
+  }
+
+  return (
+    <div className="border border-white/10 bg-[#111] p-4 space-y-4">
+      <div>
+        <div className="flex items-center gap-2">
+          <MapPin className="h-4 w-4 text-gold shrink-0" />
+          <h4 className="font-black text-white text-sm">{isArabic ? "مناطق التغطية والخدمة" : "Coverage & Service Areas"}</h4>
+        </div>
+        <p className="mt-1 text-xs font-medium text-white/40">
+          {isArabic ? "أضف المناطق والمافظات التي يمكنك تقديم الخدمات بها لتظهر في نتائج البحث للعملاء." : "Add regions & cities where you can deliver services to appear in client searches."}
+        </p>
+      </div>
+
+      {/* Current active areas list */}
+      <div className="space-y-2">
+        <div className="flex flex-wrap gap-2">
+          {effectiveAreas.map((area) => (
+            <span
+              key={area}
+              className={cn(
+                "inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-black shadow-sm group transition",
+                isAllEgyptSelected
+                  ? "border-emerald-500/50 bg-emerald-950/40 text-emerald-300"
+                  : "border-gold/40 bg-gold/10 text-gold hover:border-gold hover:bg-gold/20"
+              )}
+            >
+              <MapPin className={cn("h-3 w-3", isAllEgyptSelected ? "text-emerald-400" : "text-gold/70")} />
+              <span>{area}</span>
+              <button
+                type="button"
+                onClick={() => handleRemoveArea(area)}
+                className={cn(
+                  "rounded-full p-0.5 transition",
+                  isAllEgyptSelected ? "text-emerald-400/70 hover:bg-emerald-800/40 hover:text-white" : "text-gold/60 hover:bg-gold/30 hover:text-white"
+                )}
+                title={isArabic ? "إزالة" : "Remove"}
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </span>
+          ))}
+        </div>
+
+        {isAllEgyptSelected ? (
+          <p className="text-[11px] font-bold text-emerald-400/90 bg-emerald-950/30 border border-emerald-500/20 px-3 py-1.5 rounded-none">
+            {isArabic
+              ? "ℹ️ التغطية الحالية: جميع أنحاء الجمهورية. لاختيار منطقة أو محافظة محددة، اضغط على المنطقة المطلوبة أدناه وسوف يتم استبدالها."
+              : "ℹ️ Current coverage: Nationwide (All Egypt). To select a specific area instead, click any area below."}
+          </p>
+        ) : (
+          <p className="text-[10px] font-medium text-white/40">
+            {isArabic ? "يجب اختيار منطقة واحدة على الأقل. عند حذف كل المناطق، يتم التعيين تلقائياً إلى جميع أنحاء الجمهورية." : "At least one location must be selected. Deleting all areas defaults to All Egypt."}
+          </p>
+        )}
+      </div>
+
+      {/* Add custom area input */}
+      <div className="flex gap-2">
+        <input
+          type="text"
+          value={newAreaInput}
+          onChange={(e) => setNewAreaInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              handleAddArea(newAreaInput);
+            }
+          }}
+          placeholder={isArabic ? "اكتب اسم المنطقة أو المحافظة..." : "Type area or city name..."}
+          className="h-10 flex-1 border border-white/10 bg-[#161616] px-3 text-xs font-bold text-white placeholder:text-white/30 outline-none focus:border-gold"
+        />
+        <button
+          type="button"
+          disabled={!newAreaInput.trim()}
+          onClick={() => handleAddArea(newAreaInput)}
+          className="h-10 px-4 bg-gold font-black text-black text-xs hover:bg-gold/90 transition flex items-center gap-1 shrink-0 disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          <Plus className="h-4 w-4" />
+          {isArabic ? "إضافة" : "Add"}
+        </button>
+      </div>
+
+      {/* Popular areas suggestions */}
+      <div>
+        <p className="text-[10px] font-black uppercase tracking-wider text-white/40 mb-2">{isArabic ? "مقترحات سريعة للمناطق:" : "Popular Area Suggestions:"}</p>
+        <div className="flex flex-wrap gap-1.5">
+          {POPULAR_AREAS.filter((p) => !effectiveAreas.some((a) => a.toLowerCase() === p.toLowerCase())).map((popular) => (
+            <button
+              key={popular}
+              type="button"
+              onClick={() => handleAddArea(popular)}
+              className="inline-flex items-center gap-1 border border-white/10 bg-[#161616] px-2.5 py-1 text-[11px] font-bold text-white/60 hover:border-gold hover:text-gold transition rounded-full"
+            >
+              <Plus className="h-3 w-3 text-gold/60" />
+              <span>{popular}</span>
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );
