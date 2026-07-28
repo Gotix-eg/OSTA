@@ -239,8 +239,23 @@ export function WorkerProfileEditor({ locale }: { locale: Locale }) {
     }));
   }
 
-  function removeCertificate(index: number) {
-    setData((prev) => ({ ...prev, certificates: prev.certificates.filter((_, i) => i !== index) }));
+  async function removeCertificate(index: number) {
+    const updatedCerts = data.certificates.filter((_, i) => i !== index);
+    setData((prev) => ({ ...prev, certificates: updatedCerts }));
+
+    try {
+      const baseUrl = resolveApiBaseUrl();
+      await fetch(`${baseUrl}/workers/profile`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          certificates: updatedCerts.filter((c) => c.title.trim() && c.imageUrl)
+        })
+      });
+    } catch (err) {
+      console.error("Failed to delete certificate", err);
+    }
   }
 
   function addServiceItem() {
@@ -254,8 +269,28 @@ export function WorkerProfileEditor({ locale }: { locale: Locale }) {
     }));
   }
 
-  function removeServiceItem(index: number) {
-    setData((prev) => ({ ...prev, serviceItems: prev.serviceItems.filter((_, i) => i !== index) }));
+  async function removeServiceItem(index: number) {
+    const updatedItems = data.serviceItems.filter((_, i) => i !== index);
+    setData((prev) => ({ ...prev, serviceItems: updatedItems }));
+
+    try {
+      const baseUrl = resolveApiBaseUrl();
+      await fetch(`${baseUrl}/workers/profile`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          serviceItems: updatedItems
+            .filter((s) => s.name.trim() && s.price.trim())
+            .map((s) => ({
+              ...s,
+              price: s.price.trim().replace(/\s*(ج\.م|EGP)$/i, "")
+            }))
+        })
+      });
+    } catch (err) {
+      console.error("Failed to delete service item", err);
+    }
   }
 
   if (isLoading) {
