@@ -64,6 +64,8 @@ export function WorkerProfileEditor({ locale }: { locale: Locale }) {
   const [loadError, setLoadError] = useState<string | null>(null);
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [savingRowIndex, setSavingRowIndex] = useState<number | null>(null);
+  const [savedRowIndex, setSavedRowIndex] = useState<number | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -139,6 +141,70 @@ export function WorkerProfileEditor({ locale }: { locale: Locale }) {
     } catch (err: any) {
       setSaveState("error");
       setSaveError(err.message || (isArabic ? "فشل حفظ الملف الشخصي." : "Failed to save profile."));
+    }
+  }
+
+  async function saveSingleServiceRow(index: number) {
+    const service = data.serviceItems[index];
+    if (!service) return;
+
+    if (!service.name.trim()) {
+      setSaveState("error");
+      setSaveError(isArabic ? "يرجى إدخال اسم الخدمة أولاً." : "Please enter the service name first.");
+      return;
+    }
+
+    const cleanPrice = service.price.trim().replace(/\s*(ج\.م|EGP)$/i, "");
+    if (!cleanPrice || !/^\d+(\.\d{1,2})?$/.test(cleanPrice)) {
+      setSaveState("error");
+      setSaveError(isArabic ? "يرجى إدخال سعر صحيح بالجنيه المصري (مثال: 150)." : "Please enter a valid price in EGP (e.g. 150).");
+      return;
+    }
+
+    setSavingRowIndex(index);
+    setSaveState("saving");
+    setSaveError(null);
+
+    try {
+      const baseUrl = resolveApiBaseUrl();
+      const res = await fetch(`${baseUrl}/workers/profile`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          bio: data.bio,
+          yearsOfExperience: data.yearsOfExperience,
+          education: data.education.filter((e) => e.trim()),
+          achievements: data.achievements.filter((a) => a.trim()),
+          galleryImages: data.galleryImages.filter(Boolean),
+          galleryVideoUrl: data.galleryVideoUrl,
+          contractInfo: data.contractInfo,
+          certificates: data.certificates.filter((c) => c.title.trim() && c.imageUrl),
+          serviceItems: data.serviceItems
+            .filter((s) => s.name.trim() && s.price.trim())
+            .map((s) => ({
+              ...s,
+              price: s.price.trim().replace(/\s*(ج\.م|EGP)$/i, "")
+            }))
+        })
+      });
+
+      const payload = await res.json();
+      if (!res.ok || !payload.success) {
+        throw new Error(payload.error?.message || payload.message || "Failed to save service line");
+      }
+
+      setSaveState("saved");
+      setSavedRowIndex(index);
+      window.setTimeout(() => {
+        setSaveState("idle");
+        setSavedRowIndex(null);
+      }, 2000);
+    } catch (err: any) {
+      setSaveState("error");
+      setSaveError(err.message || (isArabic ? "فشل حفظ الخدمة." : "Failed to save service line."));
+    } finally {
+      setSavingRowIndex(null);
     }
   }
 
@@ -479,9 +545,37 @@ export function WorkerProfileEditor({ locale }: { locale: Locale }) {
                 placeholder={isArabic ? "ملاحظة (اختياري)" : "Note (optional)"}
                 className={textInputClass()}
               />
-              <button type="button" onClick={() => removeServiceItem(index)} className="flex h-12 w-12 shrink-0 items-center justify-center border border-white/10 text-white/40 hover:border-red-400 hover:text-red-400">
-                <Trash2 className="h-4 w-4" />
-              </button>
+              <div className="flex items-center gap-1.5 shrink-0">
+                <button
+                  type="button"
+                  disabled={savingRowIndex === index}
+                  onClick={() => void saveSingleServiceRow(index)}
+                  title={isArabic ? "حفظ هذه الخدمة" : "Save this service"}
+                  className={cn(
+                    "flex h-12 px-3 items-center justify-center border text-xs font-bold transition gap-1.5",
+                    savedRowIndex === index
+                      ? "border-emerald-500/50 bg-emerald-500/10 text-emerald-400"
+                      : "border-gold/40 bg-gold/10 text-gold hover:bg-gold/20"
+                  )}
+                >
+                  {savingRowIndex === index ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : savedRowIndex === index ? (
+                    <Check className="h-4 w-4 text-emerald-400" />
+                  ) : (
+                    <Save className="h-4 w-4" />
+                  )}
+                  <span className="hidden sm:inline">{savedRowIndex === index ? (isArabic ? "تم" : "Saved") : (isArabic ? "حفظ" : "Save")}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => removeServiceItem(index)}
+                  title={isArabic ? "حذف" : "Remove"}
+                  className="flex h-12 w-12 items-center justify-center border border-white/10 text-white/40 hover:border-red-400 hover:text-red-400 transition"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
             </div>
           ))}
         </div>
