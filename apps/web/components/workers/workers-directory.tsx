@@ -112,10 +112,10 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
   }, [workers, searchQuery, sortBy]);
 
   const defaultAvatars = [
-    "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=400&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=400&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1581578731548-c64695cc6952?q=80&w=400&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400&auto=format&fit=crop"
+    "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=400&auto=format&fit=crop&crop=faces",
+    "https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=400&auto=format&fit=crop&crop=faces",
+    "https://images.unsplash.com/photo-1581578731548-c64695cc6952?q=80&w=400&auto=format&fit=crop&crop=faces",
+    "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400&auto=format&fit=crop&crop=faces"
   ];
 
   return (
@@ -235,7 +235,7 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
                   {/* Full-width Image Header */}
                   <div className="relative h-56 w-full overflow-hidden bg-neutral-800 md:h-64">
                     <Link href={"/" + locale + "/workers/" + worker.id} className="block w-full h-full">
-                      <img className="w-full h-full object-cover transition-all duration-500" src={avatarImg} alt={worker.name} />
+                      <img className="w-full h-full object-cover object-top transition-all duration-500" src={avatarImg} alt={worker.name} />
                     </Link>
                     <div className="absolute top-4 left-4 z-10 pointer-events-none">
                       <span className={cn(

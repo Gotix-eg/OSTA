@@ -246,7 +246,7 @@ export function WorkerProfileDetail({ locale, workerId }: { locale: Locale; work
             {/* Avatar */}
             <div className="h-28 w-28 shrink-0 overflow-hidden border-2 border-white/15 bg-neutral-800 sm:h-36 sm:w-36">
               {worker.avatarUrl ? (
-                <img src={worker.avatarUrl} alt={worker.name} className="h-full w-full object-cover" />
+                <img src={worker.avatarUrl} alt={worker.name} className="h-full w-full object-cover object-top" />
               ) : (
                 <div className="flex h-full w-full items-center justify-center text-3xl font-black text-white/40">
                   {worker.name.charAt(0)}
