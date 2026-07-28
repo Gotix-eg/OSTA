@@ -630,7 +630,7 @@ export function WorkerProfileDetail({ locale, workerId }: { locale: Locale; work
                           {service.note && <span className="block text-xs font-semibold text-white/40">{service.note}</span>}
                         </div>
                         <div className="shrink-0 text-sm font-black text-gold">
-                          {service.price}
+                          {/^\d+(\.\d+)?$/.test(service.price.trim()) ? `${service.price.trim()} ${isArabic ? "ج.م" : "EGP"}` : service.price}
                         </div>
                       </div>
                     ))}

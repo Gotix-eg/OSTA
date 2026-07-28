@@ -773,7 +773,10 @@ const workerProfileSchema = z.object({
   })).max(20).optional(),
   serviceItems: z.array(z.object({
     name: z.string().min(1).max(200),
-    price: z.string().min(1).max(60),
+    price: z.string().min(1).max(60).refine(
+      (val) => /^\d+(\.\d{1,2})?$/.test(val.trim()) || /^\d+(\.\d{1,2})?\s*(ج\.م|EGP)$/i.test(val.trim()),
+      { message: "السعر يجب أن يكون رقماً بالجنيه المصري (مثال: 150)" }
+    ),
     note: z.string().max(300).optional()
   })).max(40).optional()
 });

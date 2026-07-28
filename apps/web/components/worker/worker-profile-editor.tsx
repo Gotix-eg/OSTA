@@ -7,6 +7,7 @@ import { WorkerProAction, WorkerProPanel, WorkerProShell, WorkerProTopStrip } fr
 import { ImageUpload } from "@/components/shared/image-upload";
 import { resolveApiBaseUrl } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
+import { cn } from "@/lib/utils";
 
 interface CertificateDraft {
   title: string;
@@ -100,6 +101,13 @@ export function WorkerProfileEditor({ locale }: { locale: Locale }) {
     setSaveState("saving");
     setSaveError(null);
     try {
+      const invalidPrice = data.serviceItems.find(
+        (s) => s.name.trim() && (!s.price.trim() || !/^\d+(\.\d{1,2})?$/.test(s.price.trim().replace(/\s*(ج\.م|EGP)$/i, "")))
+      );
+      if (invalidPrice) {
+        throw new Error(isArabic ? "يرجى إدخال سعر صحيح بالجنيه المصري (أرقام فقط، مثال: 150)" : "Please enter a valid numeric price in EGP for all services (e.g. 150)");
+      }
+
       const baseUrl = resolveApiBaseUrl();
       const res = await fetch(`${baseUrl}/workers/profile`, {
         method: "PATCH",
@@ -114,7 +122,12 @@ export function WorkerProfileEditor({ locale }: { locale: Locale }) {
           galleryVideoUrl: data.galleryVideoUrl,
           contractInfo: data.contractInfo,
           certificates: data.certificates.filter((c) => c.title.trim() && c.imageUrl),
-          serviceItems: data.serviceItems.filter((s) => s.name.trim() && s.price.trim())
+          serviceItems: data.serviceItems
+            .filter((s) => s.name.trim() && s.price.trim())
+            .map((s) => ({
+              ...s,
+              price: s.price.trim().replace(/\s*(ج\.م|EGP)$/i, "")
+            }))
         })
       });
       const payload = await res.json();
@@ -442,12 +455,24 @@ export function WorkerProfileEditor({ locale }: { locale: Locale }) {
                 placeholder={isArabic ? "اسم الخدمة" : "Service name"}
                 className={textInputClass()}
               />
-              <input
-                value={service.price}
-                onChange={(e) => updateServiceItem(index, { price: e.target.value })}
-                placeholder={isArabic ? "السعر" : "Price"}
-                className={textInputClass()}
-              />
+              <div className="relative flex items-center">
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  value={service.price}
+                  onChange={(e) => {
+                    const raw = e.target.value;
+                    if (raw === "" || /^\d*\.?\d*$/.test(raw)) {
+                      updateServiceItem(index, { price: raw });
+                    }
+                  }}
+                  placeholder={isArabic ? "السعر" : "Price"}
+                  className={cn(textInputClass(), "pe-12 font-mono")}
+                />
+                <span className="absolute end-3 text-xs font-black text-gold pointer-events-none select-none">
+                  {isArabic ? "ج.م" : "EGP"}
+                </span>
+              </div>
               <input
                 value={service.note}
                 onChange={(e) => updateServiceItem(index, { note: e.target.value })}
