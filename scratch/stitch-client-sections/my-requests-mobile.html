@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>OSTA - My Requests</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Outfit:wght@600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-obsidian {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .obsidian-card {
+            background: #000000;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .button-pop {
+            box-shadow: 4px 4px 0px #000000;
+        }
+        .button-pop:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #000000;
+        }
+        body {
+            background-color: #f5bd18; /* The Yellow Void */
+            min-height: 100vh;
+        }
+        .request-list-container {
+            padding-bottom: 100px;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#f9f9f9",
+                        "on-background": "#1a1c1c",
+                        "primary": "#775a00",
+                        "on-primary": "#ffffff",
+                        "primary-fixed": "#ffdf9a",
+                        "primary-container": "#f5bd18",
+                        "on-primary-container": "#684e00",
+                        "secondary": "#5e5e5e",
+                        "on-surface-variant": "#4f4633"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "margin-desktop": "48px",
+                        "gutter": "24px",
+                        "container-max": "1280px",
+                        "base": "8px",
+                        "stack-md": "24px",
+                        "stack-sm": "12px",
+                        "stack-lg": "48px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "label-lg": ["Outfit"],
+                        "display-lg": ["Outfit"],
+                        "headline-sm": ["Outfit"],
+                        "label-md": ["Outfit"],
+                        "headline-md": ["Outfit"],
+                        "headline-lg": ["Outfit"],
+                        "headline-lg-mobile": ["Outfit"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "label-lg": ["14px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "display-lg": ["72px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                        "headline-sm": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "label-md": ["12px", {"lineHeight": "1", "fontWeight": "600"}],
+                        "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "headline-lg": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-body-md text-on-background selection:bg-primary-container">
+<!-- Top App Bar -->
+<header class="fixed top-0 w-full z-50 bg-black/80 backdrop-blur-md text-primary-fixed border-b border-white/10 flex items-center justify-between px-margin-mobile md:px-margin-desktop h-16">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary-fixed cursor-pointer">menu</span>
+<h1 class="font-headline-sm text-headline-sm font-black text-primary-fixed tracking-widest">INDUSTRIAL PRO</h1>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary-fixed">account_balance_wallet</span>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="pt-24 px-margin-mobile request-list-container max-w-md mx-auto">
+<!-- Header Section -->
+<section class="mb-stack-md">
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-black uppercase mb-2">My Requests</h2>
+<p class="text-black font-semibold opacity-80">Manage your ongoing industrial services.</p>
+</section>
+<!-- Filter Chips -->
+<div class="flex gap-2 mb-stack-md overflow-x-auto pb-2 no-scrollbar">
+<button class="px-6 py-2 bg-black text-white font-label-lg text-label-lg uppercase transition-all ring-2 ring-black">All</button>
+<button class="px-6 py-2 bg-transparent border-2 border-black text-black font-label-lg text-label-lg uppercase hover:bg-black/5 transition-all">Active</button>
+<button class="px-6 py-2 bg-transparent border-2 border-black text-black font-label-lg text-label-lg uppercase hover:bg-black/5 transition-all">Completed</button>
+</div>
+<!-- Reference Image Contextual Mockup (Implicit) -->
+<div class="hidden">
+<img alt="Request Dashboard Context" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDpU5Y0M9p9_zRVfjO_xKClpgEasQbh9RZInDo24sakIJKhDTkKIQqCtQhijtRDDqnRtKXzyTOWMfc3Wx0_d0lqJPfoHIRZvekvt7jmCAJ2lklWObmsC6X-pOJJGuZVpBTOLzngRItBBnI93g0LAin44TD-fJMcX720_Uf7t8hFnjaf3cR9ES30T44u0RDLBbgO8M6Y_Q9oL9oLo7baPIqdJ1jE8EOmisNES6UjXeB4XXy9tLfH72mnQJ1RTBBa_o6l04fvQR84Qw8"/>
+</div>
+<!-- Request Cards Stack -->
+<div class="space-y-stack-md">
+<!-- Card 1: In Progress -->
+<div class="obsidian-card p-6 relative group active:scale-[0.98] transition-transform duration-200">
+<div class="flex justify-between items-start mb-4">
+<div>
+<span class="bg-primary-container text-black font-label-md text-[10px] px-2 py-1 uppercase tracking-tighter inline-block mb-2">Urgent</span>
+<h3 class="font-headline-sm text-headline-sm text-white uppercase leading-none">Master Electrician</h3>
+</div>
+<div class="text-right">
+<p class="text-primary-container font-label-lg text-label-lg">$450.00</p>
+</div>
+</div>
+<div class="flex items-center gap-3 mb-6">
+<div class="w-10 h-10 bg-zinc-800 flex items-center justify-center border border-white/10">
+<span class="material-symbols-outlined text-primary-container">engineering</span>
+</div>
+<div>
+<p class="text-white font-label-lg text-label-lg">Alex Foreman</p>
+<p class="text-white/50 text-xs uppercase tracking-widest">In Progress</p>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="flex-1 bg-white text-black py-3 font-label-lg text-label-lg uppercase button-pop active:translate-x-[2px] active:translate-y-[2px]">Track Job</button>
+<button class="w-12 h-12 flex items-center justify-center border-2 border-white text-white"><span class="material-symbols-outlined">chat</span></button>
+</div>
+</div>
+<!-- Card 2: Pending Quote -->
+<div class="obsidian-card p-6 relative group active:scale-[0.98] transition-transform duration-200">
+<div class="flex justify-between items-start mb-4">
+<div>
+<span class="bg-zinc-800 text-white/50 font-label-md text-[10px] px-2 py-1 uppercase tracking-tighter inline-block mb-2">Pending</span>
+<h3 class="font-headline-sm text-headline-sm text-white uppercase leading-none">HVAC Repair</h3>
+</div>
+<div class="text-right">
+<p class="text-white font-label-lg text-label-lg opacity-40">TBD</p>
+</div>
+</div>
+<div class="flex items-center gap-3 mb-6">
+<div class="w-10 h-10 bg-zinc-800 flex items-center justify-center border border-white/10">
+<span class="material-symbols-outlined text-primary-container">ac_unit</span>
+</div>
+<div>
+<p class="text-white font-label-lg text-label-lg">Titan Cooling Co.</p>
+<p class="text-white/50 text-xs uppercase tracking-widest">Awaiting Quote</p>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="flex-1 border-2 border-white text-white py-3 font-label-lg text-label-lg uppercase hover:bg-white hover:text-black transition-colors">View Details</button>
+</div>
+</div>
+<!-- Card 3: Completed -->
+<div class="obsidian-card p-6 relative group opacity-90 active:scale-[0.98] transition-transform duration-200">
+<div class="flex justify-between items-start mb-4">
+<div>
+<span class="bg-zinc-800 text-white/50 font-label-md text-[10px] px-2 py-1 uppercase tracking-tighter inline-block mb-2">2 Days Ago</span>
+<h3 class="font-headline-sm text-headline-sm text-white uppercase leading-none">Plumbing Install</h3>
+</div>
+<div class="text-right">
+<p class="text-white/60 font-label-lg text-label-lg">$1,200.00</p>
+</div>
+</div>
+<div class="flex items-center gap-3 mb-6">
+<div class="w-10 h-10 bg-zinc-800 flex items-center justify-center border border-white/10">
+<span class="material-symbols-outlined text-primary-container">plumbing</span>
+</div>
+<div>
+<p class="text-white font-label-lg text-label-lg">Sarah Jenkins</p>
+<p class="text-white/50 text-xs uppercase tracking-widest">Completed</p>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="flex-1 bg-white/10 text-white py-3 font-label-lg text-label-lg uppercase border border-white/20">Rebook Service</button>
+<button class="w-12 h-12 flex items-center justify-center border border-primary-container text-primary-container"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span></button>
+</div>
+</div>
+<!-- Card 4: New Bids -->
+<div class="obsidian-card p-6 relative group border-primary-container/40 active:scale-[0.98] transition-transform duration-200">
+<div class="flex justify-between items-start mb-4">
+<div>
+<span class="bg-primary-container text-black font-label-md text-[10px] px-2 py-1 uppercase tracking-tighter inline-block mb-2">3 New Bids</span>
+<h3 class="font-headline-sm text-headline-sm text-white uppercase leading-none">Structural Audit</h3>
+</div>
+<div class="text-right">
+<p class="text-primary-container font-label-lg text-label-lg">From $2.1k</p>
+</div>
+</div>
+<div class="flex items-center gap-3 mb-6">
+<div class="w-10 h-10 bg-zinc-800 flex items-center justify-center border border-white/10">
+<span class="material-symbols-outlined text-primary-container">architecture</span>
+</div>
+<div>
+<p class="text-white font-label-lg text-label-lg">Multiple Vendors</p>
+<p class="text-white/50 text-xs uppercase tracking-widest">Action Required</p>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="flex-1 bg-primary-container text-black py-3 font-label-lg text-label-lg uppercase button-pop active:translate-x-[2px] active:translate-y-[2px]">Compare Bids</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar (Mobile Destination Rule Applied) -->
+<nav class="fixed bottom-0 w-full z-50 bg-black/80 backdrop-blur-md text-primary-fixed border-t border-white/10 md:hidden flex justify-around items-center h-20 pb-safe px-4">
+<a class="flex flex-col items-center justify-center text-primary-fixed font-bold" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">engineering</span>
+<span class="font-label-md text-label-md mt-1">Requests</span>
+</a>
+<a class="flex flex-col items-center justify-center text-white/50 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">gavel</span>
+<span class="font-label-md text-label-md mt-1">Market</span>
+</a>
+<a class="flex flex-col items-center justify-center text-white/50 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">storefront</span>
+<span class="font-label-md text-label-md mt-1">Vendors</span>
+</a>
+<a class="flex flex-col items-center justify-center text-white/50 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">star</span>
+<span class="font-label-md text-label-md mt-1">Favs</span>
+</a>
+<a class="flex flex-col items-center justify-center text-white/50 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">wallet</span>
+<span class="font-label-md text-label-md mt-1">Wallet</span>
+</a>
+</nav>
+<!-- Micro-interaction Script -->
+<script>
+        document.querySelectorAll('.obsidian-card').forEach(card => {
+            card.addEventListener('click', function() {
+                // Future expansion: open details
+                console.log('Opening request details...');
+            });
+        });
+
+        // Filter chip logic
+        const chips = document.querySelectorAll('button.font-label-lg');
+        chips.forEach(chip => {
+            chip.addEventListener('click', () => {
+                chips.forEach(c => {
+                    c.classList.remove('bg-black', 'text-white', 'ring-2', 'ring-black');
+                    c.classList.add('bg-transparent', 'border-2', 'border-black', 'text-black');
+                });
+                chip.classList.add('bg-black', 'text-white', 'ring-2', 'ring-black');
+                chip.classList.remove('bg-transparent', 'border-2', 'border-black', 'text-black');
+            });
+        });
+    </script>
+</body></html>

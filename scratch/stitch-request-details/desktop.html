@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>OSTA - Request Details</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&amp;family=Outfit:wght@400;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#775a00",
+                        "on-secondary-fixed": "#1b1b1b",
+                        "primary-fixed": "#ffdf9a",
+                        "on-primary-fixed-variant": "#5a4300",
+                        "surface-tint": "#775a00",
+                        "on-primary-fixed": "#251a00",
+                        "on-background": "#1a1c1c",
+                        "on-secondary-fixed-variant": "#474747",
+                        "on-error-container": "#93000a",
+                        "secondary": "#5e5e5e",
+                        "on-tertiary": "#ffffff",
+                        "surface-dim": "#dadada",
+                        "tertiary-container": "#c7c5c4",
+                        "inverse-primary": "#f6be1a",
+                        "tertiary": "#5f5e5e",
+                        "surface-container-low": "#f3f3f4",
+                        "outline": "#817660",
+                        "surface-variant": "#e2e2e2",
+                        "on-tertiary-fixed-variant": "#474646",
+                        "on-primary-container": "#684e00",
+                        "inverse-on-surface": "#f0f1f1",
+                        "tertiary-fixed-dim": "#c8c6c5",
+                        "on-secondary-container": "#646464",
+                        "on-tertiary-fixed": "#1c1b1b",
+                        "on-tertiary-container": "#525151",
+                        "primary-fixed-dim": "#f6be1a",
+                        "error-container": "#ffdad6",
+                        "surface": "#f9f9f9",
+                        "error": "#ba1a1a",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed": "#e5e2e1",
+                        "on-primary": "#ffffff",
+                        "background": "#f9f9f9",
+                        "primary-container": "#f5bd18",
+                        "secondary-fixed-dim": "#c6c6c6",
+                        "on-surface": "#1a1c1c",
+                        "inverse-surface": "#2f3131",
+                        "outline-variant": "#d3c5ac",
+                        "surface-container-high": "#e8e8e8",
+                        "surface-bright": "#f9f9f9",
+                        "on-error": "#ffffff",
+                        "secondary-fixed": "#e2e2e2",
+                        "surface-container-highest": "#e2e2e2",
+                        "surface-container": "#eeeeee",
+                        "secondary-container": "#e2e2e2",
+                        "on-surface-variant": "#4f4633",
+                        "on-secondary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "container-max": "1280px",
+                        "stack-sm": "12px",
+                        "stack-md": "24px",
+                        "margin-desktop": "48px",
+                        "stack-lg": "48px",
+                        "margin-mobile": "16px",
+                        "base": "8px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Outfit"],
+                        "label-md": ["Outfit"],
+                        "body-lg": ["Inter"],
+                        "label-lg": ["Outfit"],
+                        "headline-sm": ["Outfit"],
+                        "headline-lg": ["Outfit"],
+                        "headline-md": ["Outfit"],
+                        "display-lg": ["Outfit"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "label-md": ["12px", {"lineHeight": "1", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "label-lg": ["14px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "headline-sm": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "headline-lg": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "display-lg": ["72px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #f5bd18; /* OSTA Gold Flood */
+            overflow-x: hidden;
+        }
+        .obsidian-card {
+            background-color: #000000;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.5rem; /* ROUND_FOUR approximation */
+        }
+        .glass-header {
+            background-color: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(20px);
+        }
+        .sticker-shadow {
+            box-shadow: 6px 6px 0px #000000;
+        }
+        .sticker-shadow-white {
+            box-shadow: 6px 6px 0px #ffffff;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-nav-indicator {
+            border-left: 4px solid #f5bd18;
+        }
+    </style>
+</head>
+<body class="font-body-md text-on-surface">
+<!-- Side Navigation -->
+<aside class="fixed left-0 top-0 h-full w-64 hidden md:flex flex-col bg-black border-r border-white/10 z-50 py-stack-md">
+<div class="px-6 mb-stack-lg">
+<h1 class="text-headline-md font-black text-primary-container uppercase tracking-tighter">OSTA</h1>
+<p class="text-label-md text-secondary-fixed-dim mt-1">Professional Dashboard</p>
+</div>
+<nav class="flex-grow flex flex-col gap-base">
+<a class="flex items-center gap-4 px-6 py-3 text-secondary-fixed-dim hover:bg-white/5 hover:text-primary-container transition-all" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-lg">Home</span>
+</a>
+<a class="flex items-center gap-4 px-6 py-3 text-primary-container bg-white/5 active-nav-indicator transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">assignment</span>
+<span class="font-label-lg">My Requests</span>
+</a>
+<a class="flex items-center gap-4 px-6 py-3 text-secondary-fixed-dim hover:bg-white/5 hover:text-primary-container transition-all" href="#">
+<span class="material-symbols-outlined">store</span>
+<span class="font-label-lg">Stores</span>
+</a>
+<a class="flex items-center gap-4 px-6 py-3 text-secondary-fixed-dim hover:bg-white/5 hover:text-primary-container transition-all" href="#">
+<span class="material-symbols-outlined">build</span>
+<span class="font-label-lg">Materials Market</span>
+</a>
+<a class="flex items-center gap-4 px-6 py-3 text-secondary-fixed-dim hover:bg-white/5 hover:text-primary-container transition-all" href="#">
+<span class="material-symbols-outlined">favorite</span>
+<span class="font-label-lg">Favorites</span>
+</a>
+<a class="flex items-center gap-4 px-6 py-3 text-secondary-fixed-dim hover:bg-white/5 hover:text-primary-container transition-all" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-lg">Wallet</span>
+</a>
+</nav>
+<div class="mt-auto px-6 py-stack-md border-t border-white/10 flex items-center gap-3">
+<div class="w-10 h-10 bg-primary-container rounded-full flex items-center justify-center text-black font-bold">JD</div>
+<div class="overflow-hidden">
+<p class="text-label-lg text-white truncate">John Doe</p>
+<p class="text-xs text-secondary-fixed-dim truncate">OSTA Premium</p>
+</div>
+</div>
+</aside>
+<!-- Top Navigation Bar -->
+<header class="md:ml-64 fixed top-0 right-0 left-0 glass-header z-40 border-b border-white/10 px-margin-mobile md:px-margin-desktop h-20 flex justify-between items-center">
+<div class="flex items-center gap-stack-md">
+<div class="md:hidden">
+<span class="material-symbols-outlined text-white">menu</span>
+</div>
+<div class="hidden md:flex bg-white/10 rounded-xl items-center px-4 py-2 w-96 border border-white/5">
+<span class="material-symbols-outlined text-secondary-fixed-dim mr-2">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-white font-body-md w-full" placeholder="Search requests..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-stack-md">
+<button class="relative text-white">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute -top-1 -right-1 w-2 h-2 bg-primary-container rounded-full"></span>
+</button>
+<div class="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-xl border border-white/10">
+<span class="material-symbols-outlined text-primary-container">language</span>
+<span class="text-white font-label-lg">English</span>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="md:ml-64 pt-32 pb-stack-lg px-margin-mobile md:px-margin-desktop min-h-screen">
+<!-- Top Controls: Breadcrumb & Status Alignment -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-stack-lg gap-stack-md">
+<button class="flex items-center gap-2 px-6 py-4 bg-black text-white font-label-lg rounded-xl sticker-shadow-white hover:translate-y-[-2px] transition-transform">
+<span class="material-symbols-outlined">arrow_back</span>
+                BACK TO REQUESTS
+            </button>
+<div class="flex items-center gap-4 obsidian-card px-6 py-3 border-primary-container/30">
+<div class="flex flex-col">
+<span class="text-secondary-fixed-dim text-[10px] uppercase font-bold tracking-widest">Request ID</span>
+<span class="text-primary-container font-headline-sm leading-none">#65201454</span>
+</div>
+<div class="h-8 w-[1px] bg-white/10"></div>
+<div class="flex flex-col">
+<span class="text-secondary-fixed-dim text-[10px] uppercase font-bold tracking-widest">Status</span>
+<span class="text-white font-label-lg uppercase tracking-tight">Active Request</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter items-stretch">
+<!-- Hero Summary Section -->
+<section class="md:col-span-12 obsidian-card p-stack-lg flex flex-col md:flex-row justify-between items-center relative overflow-hidden border-2 border-primary-container/20">
+<div class="z-10 text-center md:text-left">
+<h2 class="text-headline-lg font-headline-lg text-white mb-2 leading-tight">AC Maintenance</h2>
+<p class="text-primary-container font-headline-sm">عطل في التكييف</p>
+</div>
+<div class="mt-stack-lg md:mt-0 flex gap-gutter z-10 w-full md:w-auto">
+<div class="flex-1 md:flex-none flex flex-col items-center justify-center p-6 bg-white/5 border border-white/10 rounded-xl min-w-[140px]">
+<span class="material-symbols-outlined text-primary-container text-4xl mb-2" style="font-variation-settings: 'FILL' 1;">schedule</span>
+<span class="text-white font-headline-sm">TODAY</span>
+<span class="text-secondary-fixed-dim text-[10px] uppercase tracking-widest">Scheduled Timing</span>
+</div>
+<div class="flex-1 md:flex-none flex flex-col items-center justify-center p-6 bg-white/5 border border-white/10 rounded-xl min-w-[140px]">
+<span class="material-symbols-outlined text-primary-container text-4xl mb-2" style="font-variation-settings: 'FILL' 1;">pending_actions</span>
+<span class="text-white font-headline-sm">WAITING</span>
+<span class="text-secondary-fixed-dim text-[10px] uppercase tracking-widest">Current Status</span>
+</div>
+</div>
+</section>
+<!-- Recalibrated Content Grid -->
+<!-- Left Column: Location & Timeline -->
+<section class="md:col-span-5 flex flex-col gap-gutter">
+<div class="obsidian-card overflow-hidden flex flex-col flex-grow">
+<div class="p-stack-md border-b border-white/10 flex justify-between items-center bg-white/5">
+<h3 class="text-white font-headline-sm uppercase tracking-tight">Location &amp; Timeline</h3>
+<span class="material-symbols-outlined text-primary-container">location_on</span>
+</div>
+<div class="h-64 relative grayscale contrast-125">
+<div class="w-full h-full bg-surface-container-high flex items-center justify-center">
+<img alt="Service Location Map" class="w-full h-full object-cover opacity-70" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDs3o7Q-8StJMXr_cP2W2n7M7mDNeVovvwN884Z-3Sxpd5QkPJuH-2tAcwalOedB9Cb74PjPJGUDgKpMQKLN_-kBBLdAiMFX-_Yyd9qm4TIU9s-YUJ_x0bLiS3nsADqURF_dvgqnTQiRXWjbEQCF7H1cabiGvAnRc2lLzQAmhhOUqd8tK_odqGHdzUqgDOvUZihakHgs-5hMmN6Ts22Gk_XOqKPum9cG00p_FveOGzN5CBj7FMcEnJbbNoe_4JJTMSCUp1fBRHrmCo"/>
+</div>
+<div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
+<div class="absolute bottom-6 left-6">
+<p class="text-white font-headline-sm">Cairo, El Marg</p>
+<p class="text-primary-container font-body-md">القاهرة، المرج</p>
+</div>
+</div>
+<div class="p-stack-lg space-y-stack-md">
+<div class="flex items-start gap-4 p-4 bg-white/5 rounded-xl border border-white/5">
+<span class="material-symbols-outlined text-primary-container">history</span>
+<div>
+<p class="text-secondary-fixed-dim text-xs uppercase font-bold tracking-widest">Created Date</p>
+<p class="text-white font-body-md font-bold">2024/07/08 • 12:00 PM</p>
+</div>
+</div>
+<div class="flex items-start gap-4 p-4 bg-white/5 rounded-xl border border-white/5">
+<span class="material-symbols-outlined text-primary-container">update</span>
+<div>
+<p class="text-secondary-fixed-dim text-xs uppercase font-bold tracking-widest">Last Updated</p>
+<p class="text-white font-body-md font-bold">2024/07/08 • 12:45 PM</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Right Column: Issue Context -->
+<section class="md:col-span-7 flex flex-col gap-gutter">
+<div class="obsidian-card flex flex-col flex-grow">
+<div class="p-stack-md border-b border-white/10 flex justify-between items-center bg-white/5">
+<h3 class="text-white font-headline-sm uppercase tracking-tight">Issue Context</h3>
+<span class="material-symbols-outlined text-primary-container">description</span>
+</div>
+<div class="p-stack-lg flex-grow flex flex-col gap-stack-lg">
+<div>
+<label class="text-primary-container font-label-md uppercase tracking-widest block mb-3">Service Type</label>
+<div class="bg-white/5 border border-white/10 p-5 rounded-xl">
+<p class="text-white font-headline-sm">Complete AC Repair &amp; Cooling Service</p>
+<p class="text-secondary-fixed-dim font-body-md mt-1">خدمة تكييف وتبريد شاملة</p>
+</div>
+</div>
+<div>
+<label class="text-primary-container font-label-md uppercase tracking-widest block mb-3">User Description</label>
+<div class="bg-white/5 border border-white/10 p-5 rounded-xl min-h-[100px]">
+<p class="text-white font-body-md leading-relaxed italic">"tiabtiatisiabasitib (تيا بتياتسيبا سيتيب)"</p>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-stack-md">
+<div>
+<label class="text-primary-container font-label-md uppercase tracking-widest block mb-3">Budget / Price</label>
+<div class="bg-white/5 border border-white/10 p-5 rounded-xl h-full flex flex-col justify-center">
+<p class="text-white font-headline-sm">Not Specified</p>
+<p class="text-secondary-fixed-dim font-body-md">غير محدد</p>
+</div>
+</div>
+<div>
+<label class="text-primary-container font-label-md uppercase tracking-widest block mb-3">Media Attachments</label>
+<div class="bg-white/5 border-2 border-white/10 border-dashed p-5 rounded-xl h-full flex items-center justify-center">
+<p class="text-secondary-fixed-dim font-body-md">No files attached</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Integrated Footer Actions -->
+<div class="p-stack-lg border-t border-white/10 bg-white/5 flex flex-col sm:flex-row justify-end gap-stack-md rounded-b-xl">
+<button class="px-8 py-4 border-2 border-white text-white font-label-lg rounded-xl hover:bg-white hover:text-black transition-colors uppercase tracking-widest">
+                            EDIT BUDGET
+                        </button>
+<button class="px-8 py-4 bg-white text-black font-label-lg rounded-xl sticker-shadow hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-none transition-all uppercase tracking-widest font-black">
+                            CANCEL REQUEST
+                        </button>
+</div>
+</div>
+</section>
+</div>
+<!-- System Footer -->
+<footer class="mt-stack-lg border-t border-black/10 pt-stack-md flex flex-col md:flex-row justify-between items-center opacity-70">
+<p class="text-black font-label-md uppercase">© 2024 OSTA Service Ecosystem. High Intensity Reliability.</p>
+<div class="flex gap-stack-md mt-4 md:mt-0">
+<a class="text-black font-label-md hover:underline" href="#">Privacy Policy</a>
+<a class="text-black font-label-md hover:underline" href="#">Support Center</a>
+</div>
+</footer>
+</main>
+<!-- Visual Polish: Noise Grain Overlay -->
+<div class="fixed inset-0 pointer-events-none opacity-[0.02] z-[100]" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAJwgA-g-NpBo8HwmgL5ZXEeiB1zBjTtuDIzoi6wfECFy3GxbBs_7k3vKKMGgO4wpoE14O12YEgnuhP-tBJZ11GIU2Kjpoc1PN1vaIBdHiiW-fn2vWzf3MsY35qHYfOT-d_eunp7iafSZMsEadFIGozrhiFrLwCQp_1rjW87ex7SWFqiOxDJ-aCcPspGuZngPi4CISSEJlP566a33UWLhK4SRRtibJgA_QUR2pu7a1eOGsxwXoHA5CTa_v4WolnRmkNkOIUnUXVvZc');"></div>
+<script>
+        // Micro-interactions for cards
+        document.querySelectorAll('.obsidian-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.borderColor = 'rgba(245, 189, 24, 0.5)';
+                card.style.transition = 'border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+            });
+        });
+    </script>
+</body></html>

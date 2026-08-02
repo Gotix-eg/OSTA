@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Earnings | OSTA INDUSTRIAL</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Outfit:wght@600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error-container": "#93000a",
+                        "primary": "#775a00",
+                        "on-surface-variant": "#4f4633",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#775a00",
+                        "on-tertiary-container": "#525151",
+                        "surface-container-highest": "#e2e2e2",
+                        "surface-container": "#eeeeee",
+                        "on-error": "#ffffff",
+                        "secondary-fixed": "#e2e2e2",
+                        "on-secondary-fixed": "#1b1b1b",
+                        "surface-container-low": "#f3f3f4",
+                        "on-surface": "#1a1c1c",
+                        "surface-bright": "#f9f9f9",
+                        "secondary": "#5e5e5e",
+                        "surface-container-high": "#e8e8e8",
+                        "tertiary": "#5f5e5e",
+                        "surface-dim": "#dadada",
+                        "primary-fixed": "#ffdf9a",
+                        "inverse-primary": "#f6be1a",
+                        "inverse-surface": "#2f3131",
+                        "secondary-container": "#e2e2e2",
+                        "primary-fixed-dim": "#f6be1a",
+                        "outline": "#817660",
+                        "inverse-on-surface": "#f0f1f1",
+                        "on-tertiary-fixed-variant": "#474646",
+                        "background": "#f9f9f9",
+                        "surface-variant": "#e2e2e2",
+                        "primary-container": "#f5bd18",
+                        "outline-variant": "#d3c5ac",
+                        "on-tertiary-fixed": "#1c1b1b",
+                        "tertiary-container": "#c7c5c4",
+                        "on-secondary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-background": "#1a1c1c",
+                        "tertiary-fixed-dim": "#c8c6c5",
+                        "secondary-fixed-dim": "#c6c6c6",
+                        "on-secondary-fixed-variant": "#474747",
+                        "on-primary-fixed": "#251a00",
+                        "tertiary-fixed": "#e5e2e1",
+                        "on-primary-container": "#684e00",
+                        "on-primary-fixed-variant": "#5a4300",
+                        "on-primary": "#ffffff",
+                        "on-secondary-container": "#646464",
+                        "surface": "#f9f9f9"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "stack-sm": "12px",
+                        "stack-md": "24px",
+                        "gutter": "24px",
+                        "container-max": "1280px",
+                        "base": "8px",
+                        "stack-lg": "48px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "48px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Outfit"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Outfit"],
+                        "label-lg": ["Outfit"],
+                        "headline-lg": ["Outfit"],
+                        "body-lg": ["Inter"],
+                        "headline-sm": ["Outfit"],
+                        "display-lg": ["Outfit"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .obsidian-card {
+            background-color: #000000;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .yellow-void {
+            background-color: #f5bd18;
+        }
+        .sticker-shadow {
+            box-shadow: 4px 4px 0px #000000;
+        }
+        .glass-obsidian {
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #000000;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #f5bd18;
+        }
+    </style>
+</head>
+<body class="yellow-void font-body-md text-on-background min-h-screen">
+<!-- Side Navigation Shell -->
+<aside class="h-full w-64 fixed left-0 top-0 border-r border-white/10 bg-[#000000] flex flex-col py-8 z-50">
+<div class="px-6 mb-10">
+<h1 class="font-headline-md text-headline-md font-bold text-primary-container">OSTA PRO</h1>
+<p class="font-label-lg text-label-lg text-white/60 tracking-wider">Expert Contractor</p>
+</div>
+<nav class="flex-1 space-y-2 px-3">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-white transition-colors group" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-lg text-label-lg uppercase tracking-wider">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-white transition-colors group" href="#">
+<span class="material-symbols-outlined">assignment</span>
+<span class="font-label-lg text-label-lg uppercase tracking-wider">Service Requests</span>
+</a>
+<!-- Active State -->
+<a class="flex items-center gap-3 px-4 py-3 text-primary-container border-r-2 border-primary-container bg-white/5 group" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">payments</span>
+<span class="font-label-lg text-label-lg uppercase tracking-wider">Earnings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-white transition-colors group" href="#">
+<span class="material-symbols-outlined">star</span>
+<span class="font-label-lg text-label-lg uppercase tracking-wider">Ratings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-white transition-colors group" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-label-lg text-label-lg uppercase tracking-wider">Schedule</span>
+</a>
+</nav>
+<div class="px-3 pt-6 border-t border-white/10 space-y-2">
+<div class="px-4 py-4 mb-4 obsidian-card rounded-lg flex items-center gap-3 border-white/20">
+<div class="w-10 h-10 rounded-full bg-primary-container/20 flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined">construction</span>
+</div>
+<div class="overflow-hidden">
+<p class="text-white font-bold truncate">Available for Hire</p>
+<p class="text-primary-container text-xs">Status: Online</p>
+</div>
+</div>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-white transition-colors group" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-lg text-label-lg uppercase tracking-wider">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-white transition-colors group" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-lg text-label-lg uppercase tracking-wider">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Top Navigation Shell -->
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] z-40 backdrop-blur-xl border-b border-white/10 bg-[#000000]/80 flex justify-between items-center px-8 h-16">
+<div class="flex items-center gap-8">
+<span class="font-headline-sm text-headline-sm font-black text-primary-container">OSTA INDUSTRIAL</span>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-on-surface-variant">search</span>
+<input class="bg-[#121212] border border-white/20 text-white pl-10 pr-4 py-1.5 focus:border-primary-container focus:ring-0 w-64 transition-all" placeholder="Search transactions..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<button class="text-on-surface-variant hover:text-primary-container transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute -top-1 -right-1 w-2 h-2 bg-primary-container rounded-full"></span>
+</button>
+<button class="text-on-surface-variant hover:text-primary-container transition-colors">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<button class="bg-white text-black px-4 py-1.5 font-bold hover:shadow-[4px_4px_0px_#f5bd18] active:scale-95 transition-all">
+                New Request
+            </button>
+<div class="w-8 h-8 bg-surface-container-highest border border-white/20 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Close up professional portrait of a skilled industrial worker wearing a high-visibility vest and safety goggles, looking confident and professional. The background is a clean, modern workshop with subtle golden highlights that match the Osta Industrial brand identity. The lighting is crisp and detailed, emphasizing expertise and reliability." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHyBOEWvlO11dt6_NQ3u3pcITE3RfComUXtXff-Y1FneXhSZjyVMicipNqUZbuC11IRWhibvPBfAIO5H3YeiQ-LblGT4FqriT77JTkhorw8qLUMyXUtB1iXIizAHZopAMowIFqsuZljdZuDIGZozQXoAljJ2uBSf8aFsAM4pgCHkiI67Y5hB2c30R1WQrH0gObp6ASKSIO4P5NB8VIX-OOwL-AtVykJvK8YKE198Y-v0fIMJ-WRHB5ltggRzJLpzWPMrilRpWN-pI"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-64 pt-24 pb-12 px-8">
+<!-- Header Section -->
+<section class="mb-12">
+<div class="flex items-end justify-between">
+<div>
+<h2 class="font-display-lg text-black font-black uppercase tracking-tighter leading-none mb-2">Earnings</h2>
+<p class="font-body-lg text-black/70 max-w-2xl">Monitor your financial performance, manage payouts, and track your business growth across industrial service requests.</p>
+</div>
+<div class="flex gap-4">
+<button class="border-2 border-black px-6 py-3 font-bold hover:bg-black hover:text-white transition-all uppercase tracking-widest text-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">download</span> Export Data
+                    </button>
+<button class="bg-black text-white px-8 py-3 font-bold sticker-shadow active:translate-x-1 active:translate-y-1 active:shadow-none transition-all uppercase tracking-widest text-sm">
+                        Withdraw Funds
+                    </button>
+</div>
+</div>
+</section>
+<!-- Summary Cards Grid -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter mb-stack-lg">
+<!-- Card: Today -->
+<div class="obsidian-card p-6 flex flex-col justify-between h-48 group hover:border-primary-container transition-colors">
+<div class="flex justify-between items-start">
+<span class="font-label-lg text-label-lg text-white/50 uppercase">Today</span>
+<span class="material-symbols-outlined text-primary-container">today</span>
+</div>
+<div>
+<h3 class="font-headline-lg text-white font-bold">EGP 0</h3>
+<p class="text-white/40 text-sm mt-1">No tasks completed today</p>
+</div>
+</div>
+<!-- Card: This Week -->
+<div class="obsidian-card p-6 flex flex-col justify-between h-48 group hover:border-primary-container transition-colors">
+<div class="flex justify-between items-start">
+<span class="font-label-lg text-label-lg text-white/50 uppercase">This Week</span>
+<span class="material-symbols-outlined text-primary-container">calendar_view_week</span>
+</div>
+<div>
+<h3 class="font-headline-lg text-white font-bold">EGP 0</h3>
+<div class="flex items-center gap-1 text-on-surface-variant text-sm mt-1">
+<span class="material-symbols-outlined text-xs">trending_flat</span>
+<span>Same as last week</span>
+</div>
+</div>
+</div>
+<!-- Card: This Month -->
+<div class="obsidian-card p-6 flex flex-col justify-between h-48 group hover:border-primary-container transition-colors">
+<div class="flex justify-between items-start">
+<span class="font-label-lg text-label-lg text-white/50 uppercase">This Month</span>
+<span class="material-symbols-outlined text-primary-container">trending_up</span>
+</div>
+<div>
+<h3 class="font-headline-lg text-white font-bold">+0%</h3>
+<p class="text-white/40 text-sm mt-1">Growth rate since Oct 1st</p>
+</div>
+</div>
+<!-- Card: Pending Withdrawal -->
+<div class="obsidian-card p-6 flex flex-col justify-between h-48 border-2 border-primary-container/30 relative overflow-hidden">
+<div class="absolute top-0 right-0 w-16 h-16 bg-primary-container/10 -rotate-45 translate-x-8 -translate-y-8"></div>
+<div class="flex justify-between items-start">
+<span class="font-label-lg text-label-lg text-white/50 uppercase">Pending Withdrawal</span>
+<span class="material-symbols-outlined text-primary-container">account_balance_wallet</span>
+</div>
+<div>
+<h3 class="font-headline-lg text-white font-bold">EGP 0</h3>
+<p class="text-primary-container text-xs font-bold uppercase mt-1">Next payout: Nov 1</p>
+</div>
+</div>
+</section>
+<!-- Charts Section (Empty State) -->
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+<!-- Earnings Rhythm (Large Card) -->
+<div class="lg:col-span-2 obsidian-card p-8 flex flex-col">
+<div class="flex items-center justify-between mb-8">
+<div>
+<h4 class="font-headline-sm text-white uppercase tracking-tight">Earnings rhythm</h4>
+<p class="text-white/40 text-sm">Revenue frequency over the last 30 days</p>
+</div>
+<div class="flex gap-2">
+<button class="bg-[#121212] px-3 py-1 text-xs text-white border border-white/10">30D</button>
+<button class="bg-primary-container px-3 py-1 text-xs text-black font-bold">90D</button>
+</div>
+</div>
+<!-- Chart Visualization Placeholder -->
+<div class="flex-1 min-h-[320px] flex flex-col items-center justify-center border-t border-white/5 mt-4 relative overflow-hidden group">
+<!-- Decorative Grid -->
+<div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px); background-size: 40px 40px;"></div>
+<div class="relative z-10 text-center px-12">
+<div class="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4 border border-white/10 group-hover:border-primary-container transition-all">
+<span class="material-symbols-outlined text-white/30 group-hover:text-primary-container text-3xl">insights</span>
+</div>
+<h5 class="text-white font-bold text-lg mb-2">Awaiting Data Points</h5>
+<p class="text-white/40 max-w-xs mx-auto">Once you complete your first service request, your earnings rhythm will appear here as a structural heat-map.</p>
+</div>
+</div>
+</div>
+<!-- Payout Lane (Smaller Card) -->
+<div class="obsidian-card p-8 flex flex-col">
+<h4 class="font-headline-sm text-white uppercase tracking-tight mb-2">Payout lane</h4>
+<p class="text-white/40 text-sm mb-8">Distribution of earnings by category</p>
+<div class="flex-1 flex flex-col items-center justify-center">
+<!-- Circular Empty State -->
+<div class="relative w-48 h-48">
+<svg class="w-full h-full -rotate-90" viewbox="0 0 100 100">
+<circle cx="50" cy="50" fill="none" r="45" stroke="rgba(255,255,255,0.05)" stroke-width="8"></circle>
+<circle class="opacity-30" cx="50" cy="50" fill="none" r="45" stroke="#f5bd18" stroke-dasharray="10 15" stroke-width="2"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center text-center p-4">
+<span class="material-symbols-outlined text-white/20 text-4xl mb-1">donut_large</span>
+<span class="text-white/40 text-[10px] uppercase font-bold tracking-widest">No Traffic</span>
+</div>
+</div>
+<div class="mt-8 w-full space-y-4">
+<div class="flex items-center justify-between text-xs">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 bg-primary-container"></div>
+<span class="text-white/60">Industrial Repair</span>
+</div>
+<span class="text-white">0%</span>
+</div>
+<div class="w-full h-1 bg-white/5"></div>
+<div class="flex items-center justify-between text-xs">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 bg-white/20"></div>
+<span class="text-white/60">Maintenance</span>
+</div>
+<span class="text-white">0%</span>
+</div>
+<div class="w-full h-1 bg-white/5"></div>
+<div class="flex items-center justify-between text-xs">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 bg-white/20"></div>
+<span class="text-white/60">Consultation</span>
+</div>
+<span class="text-white">0%</span>
+</div>
+<div class="w-full h-1 bg-white/5"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Transaction History -->
+<section class="mt-stack-lg">
+<div class="obsidian-card overflow-hidden">
+<div class="px-8 py-6 border-b border-white/10 flex items-center justify-between bg-white/5">
+<h4 class="font-headline-sm text-white uppercase tracking-tight">Recent Ledger</h4>
+<div class="flex items-center gap-4">
+<select class="bg-black border border-white/20 text-white text-xs px-3 py-1.5 focus:ring-primary-container">
+<option>All Types</option>
+<option>Payouts</option>
+<option>Service Income</option>
+</select>
+<button class="text-white/60 hover:text-white transition-colors">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+</div>
+</div>
+<div class="min-h-[400px] flex flex-col items-center justify-center p-12 text-center">
+<div class="w-full h-96 bg-cover bg-center rounded-lg grayscale opacity-20 border border-white/10 mb-8" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCFTxCHtm4jLTvJEL6jcKUiTzf1mxAZGmIyKazH3M3oqpKoPr09wgLcEjeYuMx2HcXdWLg258lwRZD0OtENm443ykhJbQ3_kRKI8aEGgRJSMPrqPer6C0wbmbKZGQour-GQAdkR6-eVMYKwifIfK1mT4REWAR8oCzfvV4DyYlrd_Jlce3lzljM_4gVS4Id32x_TdXXMgneoLkyhyc2WE2pKhG2JYjEzeWcz9ne2f1UZ4ddyhR6SiQhFJGLln_SdcSpqRqSfv3k5pak')"></div>
+<h5 class="text-white font-bold text-xl mb-3">Quiet before the grind</h5>
+<p class="text-white/40 max-w-md mx-auto mb-8">Your transaction ledger is currently empty. Accept your first industrial request to begin populating your earnings history.</p>
+<button class="bg-white text-black px-10 py-3 font-extrabold uppercase tracking-widest text-sm sticker-shadow hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[8px_8px_0px_#f5bd18] transition-all">
+                        Find a Request
+                    </button>
+</div>
+</div>
+</section>
+</main>
+<!-- Floating Action Button -->
+<button class="fixed bottom-10 right-10 w-16 h-16 bg-black text-primary-container rounded-full flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all z-50 border-2 border-primary-container">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">add</span>
+</button>
+<script>
+        // Micro-interaction for cards
+        document.querySelectorAll('.obsidian-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-4px)';
+                card.style.transition = 'all 0.3s cubic-bezier(0.2, 0, 0, 1)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0px)';
+            });
+        });
+
+        // Search bar focus effect
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('scale-105');
+            searchInput.parentElement.style.transition = 'transform 0.3s ease';
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('scale-105');
+        });
+    </script>
+</body></html>

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>OSTA - Favorites</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&amp;family=Outfit:wght@600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+        }
+        .glass-obsidian {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .obsidian-card {
+            background-color: #000000;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .sticker-shadow {
+            box-shadow: 4px 4px 0px #000000;
+        }
+        .active-sticker-shadow {
+            box-shadow: 2px 2px 0px #000000;
+            transform: translate(2px, 2px);
+        }
+        body {
+            background-color: #f5bd18; /* The Yellow Void */
+            min-height: 100vh;
+        }
+        .safe-pb {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#f9f9f9",
+                        "on-error-container": "#93000a",
+                        "on-background": "#1a1c1c",
+                        "secondary-fixed-dim": "#c6c6c6",
+                        "surface-dim": "#dadada",
+                        "surface-container": "#eeeeee",
+                        "inverse-surface": "#2f3131",
+                        "on-tertiary-container": "#525151",
+                        "on-surface-variant": "#4f4633",
+                        "primary": "#775a00",
+                        "on-tertiary-fixed": "#1c1b1b",
+                        "on-error": "#ffffff",
+                        "inverse-on-surface": "#f0f1f1",
+                        "tertiary-fixed": "#e5e2e1",
+                        "on-secondary-fixed": "#1b1b1b",
+                        "on-primary": "#ffffff",
+                        "secondary": "#5e5e5e",
+                        "secondary-container": "#e2e2e2",
+                        "tertiary-fixed-dim": "#c8c6c5",
+                        "tertiary": "#5f5e5e",
+                        "primary-fixed-dim": "#f6be1a",
+                        "primary-fixed": "#ffdf9a",
+                        "tertiary-container": "#c7c5c4",
+                        "outline": "#817660",
+                        "on-surface": "#1a1c1c",
+                        "on-primary-fixed-variant": "#5a4300",
+                        "surface-container-highest": "#e2e2e2",
+                        "outline-variant": "#d3c5ac",
+                        "on-secondary-container": "#646464",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-high": "#e8e8e8",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed-variant": "#474646",
+                        "on-primary-fixed": "#251a00",
+                        "background": "#f9f9f9",
+                        "surface-bright": "#f9f9f9",
+                        "surface-tint": "#775a00",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#f3f3f4",
+                        "on-secondary-fixed-variant": "#474747",
+                        "surface-variant": "#e2e2e2",
+                        "on-secondary": "#ffffff",
+                        "inverse-primary": "#f6be1a",
+                        "secondary-fixed": "#e2e2e2",
+                        "error-container": "#ffdad6",
+                        "on-primary-container": "#684e00",
+                        "primary-container": "#f5bd18"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "margin-desktop": "48px",
+                        "gutter": "24px",
+                        "container-max": "1280px",
+                        "base": "8px",
+                        "stack-md": "24px",
+                        "stack-sm": "12px",
+                        "stack-lg": "48px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "label-lg": ["Outfit"],
+                        "display-lg": ["Outfit"],
+                        "headline-sm": ["Outfit"],
+                        "label-md": ["Outfit"],
+                        "headline-md": ["Outfit"],
+                        "headline-lg": ["Outfit"],
+                        "headline-lg-mobile": ["Outfit"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "label-lg": ["14px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "display-lg": ["72px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                        "headline-sm": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "label-md": ["12px", {"lineHeight": "1", "fontWeight": "600"}],
+                        "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "headline-lg": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="font-body-md text-on-background selection:bg-primary-container selection:text-on-primary-container">
+<!-- Top App Bar -->
+<header class="fixed top-0 w-full z-50 bg-black/80 backdrop-blur-md text-primary-fixed border-b border-white/10 flex items-center justify-between px-margin-mobile h-16">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary-fixed">menu</span>
+<h1 class="font-headline-sm text-headline-sm font-black tracking-widest text-primary-fixed uppercase">INDUSTRIAL PRO</h1>
+</div>
+<span class="material-symbols-outlined text-primary-fixed">account_balance_wallet</span>
+</header>
+<main class="pt-24 pb-32 px-margin-mobile">
+<!-- Title Section -->
+<section class="mb-stack-lg">
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-black uppercase tracking-tighter">Your Favorites</h2>
+<p class="font-body-md text-black/70 mt-2">Verified professionals you've worked with and trusted.</p>
+</section>
+<!-- Bento Favorites List -->
+<div class="grid grid-cols-1 gap-stack-md">
+<!-- Professional Card 1 -->
+<div class="obsidian-card p-stack-sm flex flex-col gap-4 group">
+<div class="relative w-full aspect-[16/9] overflow-hidden bg-zinc-900">
+<img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" data-alt="A professional electrician with a clean-cut look, wearing a branded black polo shirt with gold embroidery, holding a specialized industrial testing tool. He is standing in a modern, well-lit utility room with metallic conduits in the background. High contrast lighting, sharp focus, premium industrial aesthetic with golden-yellow accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8wvrHpDtbFk8bBiUz0JVoLN-o3Dn80Lb7MAGkrSouYy14pfn2h0RDuraQXZPwawJGOajljPXrlnlmr9939ozqmtlft_HUbf4BfPPWaniPU-7O_bJ5olTjdQkBXcdbtAvUIlUMl5uOLxrY_MBpyy-wHql-r0pSk1T3rchFwfNmwTxXSwfxKmLY6FrLVIo0doMHLGQ4rtGEhi-OT3UaH-ZAIHEU9lAsyrD4bmOOhcJKUiMiHhMk3TxSa87PQaF0ERjKt81Z1ik1ZTo"/>
+<div class="absolute top-2 right-2 bg-primary-container text-black px-2 py-1 font-label-md text-label-md">
+                        URGENT READY
+                    </div>
+</div>
+<div class="flex flex-col gap-2 px-2">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-white uppercase">Marcus Sterling</h3>
+<p class="font-label-lg text-label-lg text-primary-fixed uppercase tracking-wider">Master Electrician</p>
+</div>
+<div class="flex items-center gap-1 bg-white/5 px-2 py-1">
+<span class="material-symbols-outlined text-primary-fixed text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-white font-bold text-label-md">4.9</span>
+</div>
+</div>
+<div class="flex gap-2 items-center mt-2">
+<span class="font-label-md text-label-md text-white/50 border border-white/20 px-2 py-1">24/7 SUPPORT</span>
+<span class="font-label-md text-label-md text-white/50 border border-white/20 px-2 py-1">LICENSED</span>
+</div>
+<button class="mt-4 w-full bg-white text-black font-label-lg text-label-lg py-4 transition-all duration-100 active:translate-x-1 active:translate-y-1 sticker-shadow hover:bg-zinc-200">
+                        QUICK BOOK
+                    </button>
+</div>
+</div>
+<!-- Professional Card 2 (Reference Image Integration) -->
+<div class="obsidian-card p-stack-sm flex flex-col gap-4 group">
+<div class="relative w-full aspect-[16/9] overflow-hidden bg-zinc-900">
+<img alt="Industrial favorites view" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQ-CC2eaIZxDXo8pbG7zUAL689UN6zJ1jPIgQ7R-mLbBuAHhKx0o4wLnx8dKmvBL5IyQs3wuoF8YFrQasoET1azRIsH-koVuy39XWvROzJ7U_YomtDuGBLWISEfCFUwb91StbuPf76c_11AmDGFrKX0k2_HdCVLwKDApBu00EtreshMqUkNreA2NbRopc6lbqv0_xPT8oEeuGi_GLkG1q2qEo1yiYu-VMVBPBc8Zo0y7yvB3pJ7Jl3o5pnOh0oKSBj60DA3pKt85c"/>
+<div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="text-white font-label-lg uppercase tracking-widest">View Profile</span>
+</div>
+</div>
+<div class="flex flex-col gap-2 px-2">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-white uppercase">Sarah Vance</h3>
+<p class="font-label-lg text-label-lg text-primary-fixed uppercase tracking-wider">HVAC Specialist</p>
+</div>
+<div class="flex items-center gap-1 bg-white/5 px-2 py-1">
+<span class="material-symbols-outlined text-primary-fixed text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-white font-bold text-label-md">5.0</span>
+</div>
+</div>
+<button class="mt-4 w-full bg-white text-black font-label-lg text-label-lg py-4 transition-all duration-100 active:translate-x-1 active:translate-y-1 sticker-shadow hover:bg-zinc-200">
+                        QUICK BOOK
+                    </button>
+</div>
+</div>
+<!-- Professional Card 3 -->
+<div class="obsidian-card p-stack-sm flex flex-col gap-4 group">
+<div class="relative w-full aspect-[16/9] overflow-hidden bg-zinc-900">
+<img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" data-alt="Close-up of a professional industrial plumber wearing heavy-duty gear, working on a complex pipe system. The lighting is moody and dramatic, with warm orange highlights reflecting off chrome surfaces. The style is hyper-realistic, capturing textures of metal and worn leather, consistent with a high-end trade service brand." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBt_qJDqjqktEFysXN_eHcoqgDFJhWf3Fs3svR8WeSyL2OmKBHovbn0Q6t36hwGJyDtbr8FRDtdHhBYSNSlmf8cx_OrEcb_kP7UJBo_oQMMbYzXUXdRLPZ8hr1y1vL5B6FM-zAC4GDCWULmLi8YvvZy0pHXTWzkAaVccuKzw968dfk7QK0S8K0UFQ6Xx4cQ3sNDiwPZtHmt24gdGoi4h_dFqaSCdtT-2-nYAHOeWxKUYQOUFsl-bXytgWgQVDgUd4CSZYvuyeNEPjk"/>
+</div>
+<div class="flex flex-col gap-2 px-2">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-white uppercase">Elena Rodriguez</h3>
+<p class="font-label-lg text-label-lg text-primary-fixed uppercase tracking-wider">Pipefitter / Plumber</p>
+</div>
+<div class="flex items-center gap-1 bg-white/5 px-2 py-1">
+<span class="material-symbols-outlined text-primary-fixed text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-white font-bold text-label-md">4.8</span>
+</div>
+</div>
+<button class="mt-4 w-full bg-white text-black font-label-lg text-label-lg py-4 transition-all duration-100 active:translate-x-1 active:translate-y-1 sticker-shadow hover:bg-zinc-200">
+                        QUICK BOOK
+                    </button>
+</div>
+</div>
+<!-- Empty State / Add New Hint -->
+<div class="border-2 border-dashed border-black/20 p-stack-lg flex flex-col items-center justify-center text-center gap-4">
+<span class="material-symbols-outlined text-black text-4xl">person_add</span>
+<div>
+<p class="font-headline-sm text-black uppercase">Need more help?</p>
+<p class="font-body-md text-black/60">Explore the market to find more pros.</p>
+</div>
+<button class="border-2 border-black text-black font-label-lg text-label-lg py-3 px-8 uppercase hover:bg-black hover:text-white transition-colors">
+                    Search Market
+                </button>
+</div>
+</div>
+</main>
+<!-- Bottom Nav Bar -->
+<nav class="fixed bottom-0 w-full z-50 bg-black/80 backdrop-blur-md border-t border-white/10 md:hidden flex justify-around items-center h-20 pb-safe px-4">
+<a class="flex flex-col items-center justify-center text-white/50 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">engineering</span>
+<span class="font-label-md text-label-md uppercase mt-1">Requests</span>
+</a>
+<a class="flex flex-col items-center justify-center text-white/50 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">gavel</span>
+<span class="font-label-md text-label-md uppercase mt-1">Market</span>
+</a>
+<a class="flex flex-col items-center justify-center text-white/50 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">storefront</span>
+<span class="font-label-md text-label-md uppercase mt-1">Vendors</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary-fixed font-bold" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-md text-label-md uppercase mt-1">Favs</span>
+</a>
+<a class="flex flex-col items-center justify-center text-white/50 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">wallet</span>
+<span class="font-label-md text-label-md uppercase mt-1">Wallet</span>
+</a>
+</nav>
+<script>
+        // Micro-interaction for buttons
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('mousedown', () => {
+                button.classList.add('active-sticker-shadow');
+                button.classList.remove('sticker-shadow');
+            });
+            button.addEventListener('mouseup', () => {
+                button.classList.remove('active-sticker-shadow');
+                button.classList.add('sticker-shadow');
+            });
+            button.addEventListener('mouseleave', () => {
+                button.classList.remove('active-sticker-shadow');
+                button.classList.add('sticker-shadow');
+            });
+        });
+
+        // Simple scroll parallax effect for the yellow void
+        window.addEventListener('scroll', () => {
+            const scroll = window.pageYOffset;
+            document.body.style.backgroundPosition = `0 ${scroll * 0.5}px`;
+        });
+    </script>
+</body></html>

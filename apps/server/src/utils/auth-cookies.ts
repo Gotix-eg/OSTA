@@ -1,6 +1,16 @@
 import type { Response } from "express";
 
-const isProduction = process.env.NODE_ENV === "production";
+function shouldUseSecureCookies() {
+  if (process.env.NODE_ENV !== "production") {
+    return false;
+  }
+
+  if (process.env.VERCEL === "1") {
+    return true;
+  }
+
+  return (process.env.APP_URL ?? "").startsWith("https://");
+}
 
 export function setAuthCookies(
   response: Response,
@@ -13,7 +23,7 @@ export function setAuthCookies(
   response.cookie("osta_access_token", payload.accessToken, {
     httpOnly: true,
     sameSite: "strict",
-    secure: isProduction,
+    secure: shouldUseSecureCookies(),
     path: "/",
     maxAge: 30 * 24 * 60 * 60 * 1000
   });
@@ -21,7 +31,7 @@ export function setAuthCookies(
   response.cookie("osta_refresh_token", payload.refreshToken, {
     httpOnly: true,
     sameSite: "strict",
-    secure: isProduction,
+    secure: shouldUseSecureCookies(),
     path: "/",
     maxAge: 30 * 24 * 60 * 60 * 1000
   });
@@ -29,7 +39,7 @@ export function setAuthCookies(
   response.cookie("osta_user_role", payload.role, {
     httpOnly: true,
     sameSite: "strict",
-    secure: isProduction,
+    secure: shouldUseSecureCookies(),
     path: "/",
     maxAge: 30 * 24 * 60 * 60 * 1000
   });
@@ -40,7 +50,7 @@ export function clearAuthCookies(response: Response) {
     response.clearCookie(name, {
       httpOnly: true,
       sameSite: "strict",
-      secure: isProduction,
+      secure: shouldUseSecureCookies(),
       path: "/"
     });
   }

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>OSTA - Login | منصة الحرفيين</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&amp;family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-fixed": "#1b1b1b",
+                        "inverse-primary": "#f6be1a",
+                        "primary": "#775a00",
+                        "secondary-container": "#e2e2e2",
+                        "on-secondary-fixed-variant": "#474747",
+                        "on-error-container": "#93000a",
+                        "tertiary-container": "#c7c5c4",
+                        "on-primary-container": "#684e00",
+                        "on-tertiary-container": "#525151",
+                        "error": "#ba1a1a",
+                        "background": "#f9f9f9",
+                        "tertiary-fixed": "#e5e2e1",
+                        "primary-fixed": "#ffdf9a",
+                        "surface-tint": "#775a00",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed-variant": "#5a4300",
+                        "on-error": "#ffffff",
+                        "surface": "#f9f9f9",
+                        "primary-container": "#f5bd18",
+                        "on-surface": "#1a1c1c",
+                        "on-background": "#1a1c1c",
+                        "primary-fixed-dim": "#f6be1a",
+                        "inverse-on-surface": "#f0f1f1",
+                        "on-secondary-container": "#646464",
+                        "inverse-surface": "#2f3131",
+                        "surface-container-low": "#f3f3f4",
+                        "outline-variant": "#d3c5ac",
+                        "tertiary": "#5f5e5e",
+                        "secondary": "#5e5e5e",
+                        "outline": "#817660",
+                        "secondary-fixed-dim": "#c6c6c6",
+                        "on-tertiary-fixed": "#1c1b1b",
+                        "on-primary": "#ffffff",
+                        "surface-dim": "#dadada",
+                        "on-surface-variant": "#4f4633",
+                        "surface-container": "#eeeeee",
+                        "on-primary-fixed": "#251a00",
+                        "tertiary-fixed-dim": "#c8c6c5",
+                        "on-tertiary": "#ffffff",
+                        "surface-variant": "#e2e2e2",
+                        "error-container": "#ffdad6",
+                        "secondary-fixed": "#e2e2e2",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#e8e8e8",
+                        "surface-bright": "#f9f9f9",
+                        "surface-container-highest": "#e2e2e2",
+                        "on-tertiary-fixed-variant": "#474646"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "margin-mobile": "16px",
+                        "container-max": "1280px",
+                        "margin-desktop": "48px",
+                        "stack-sm": "12px",
+                        "stack-lg": "48px",
+                        "base": "8px",
+                        "stack-md": "24px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Outfit"],
+                        "body-lg": ["Inter"],
+                        "label-lg": ["Outfit"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Outfit"],
+                        "headline-lg-mobile": ["Outfit"],
+                        "display-lg": ["Outfit"],
+                        "headline-lg": ["Outfit"],
+                        "headline-sm": ["Outfit"]
+                    },
+                    "fontSize": {
+                        "label-md": ["12px", {"lineHeight": "1", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "label-lg": ["14px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "display-lg": ["72px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                        "headline-lg": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "headline-sm": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-obsidian {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .industrial-shadow {
+            box-shadow: 4px 4px 0px #000000;
+        }
+        .active-tab-glow {
+            border-bottom: 2px solid #f5bd18;
+            color: #f5bd18;
+        }
+        input:focus {
+            outline: none;
+            border-color: #f5bd18 !important;
+            box-shadow: none !important;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-primary-container min-h-screen font-body-md text-on-surface">
+<!-- TopAppBar -->
+<header class="bg-black/80 backdrop-blur-md text-primary-container font-label-lg text-label-lg uppercase fixed top-0 w-full z-50 border-b border-white/10 h-16 px-margin-mobile md:px-margin-desktop flex justify-between items-center">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined cursor-pointer hover:text-primary-fixed hover:opacity-80 transition-opacity active:scale-95">menu</span>
+<span class="font-headline-sm text-headline-sm font-bold text-primary-container tracking-tight">OSTA</span>
+</div>
+<div class="flex items-center gap-6">
+<button class="hover:text-primary-fixed hover:opacity-80 transition-opacity active:scale-95">AR/EN</button>
+</div>
+</header>
+<main class="pt-32 pb-40 flex flex-col items-center justify-center min-h-screen px-margin-mobile">
+<!-- Floating Obsidian Card -->
+<div class="max-w-xl w-full bg-[#000000] p-8 md:p-12 border border-white/10 industrial-shadow relative z-10">
+<div class="text-center mb-stack-lg">
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary-container uppercase mb-2">
+                    WELCOME BACK / أهلاً بك
+                </h1>
+<p class="font-body-md text-body-md text-secondary-container/80 max-w-md mx-auto">
+                    Secure login for Egypt's elite tradesmen and clients / منصة الحرفيين الموثقة
+                </p>
+</div>
+<!-- Tab Switcher -->
+<div class="flex border-b border-white/10 mb-stack-md">
+<button class="flex-1 py-4 font-label-lg text-label-lg active-tab-glow transition-all uppercase tracking-widest" data-tab="client" onclick="switchTab(this)">CLIENT / عميل</button>
+<button class="flex-1 py-4 font-label-lg text-label-lg text-secondary-container/50 hover:text-primary-container transition-all uppercase tracking-widest" data-tab="pro" onclick="switchTab(this)">PRO / فني</button>
+<button class="flex-1 py-4 font-label-lg text-label-lg text-secondary-container/50 hover:text-primary-container transition-all uppercase tracking-widest" data-tab="vendor" onclick="switchTab(this)">VENDOR / مورد</button>
+</div>
+<!-- Login Form -->
+<form class="space-y-stack-md">
+<div>
+<label class="block font-label-md text-label-md text-secondary-container/60 mb-2 uppercase">Phone Number / رقم الهاتف</label>
+<div class="relative">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-secondary-container/40">phone_iphone</span>
+<input class="w-full bg-[#121212] border border-white/20 p-4 pl-12 text-white font-body-md focus:border-primary-container transition-colors" placeholder="+20 1XX XXX XXXX" type="tel"/>
+</div>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-secondary-container/60 mb-2 uppercase">Password / كلمة المرور</label>
+<div class="relative">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-secondary-container/40">lock</span>
+<input class="w-full bg-[#121212] border border-white/20 p-4 pl-12 text-white font-body-md focus:border-primary-container transition-colors" placeholder="••••••••" type="password"/>
+<span class="absolute right-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-secondary-container/40 cursor-pointer hover:text-white">visibility</span>
+</div>
+</div>
+<div class="flex items-center justify-between">
+<label class="flex items-center gap-2 cursor-pointer">
+<input class="w-4 h-4 bg-[#121212] border-white/20 text-primary-container rounded-none focus:ring-0 focus:ring-offset-0" type="checkbox"/>
+<span class="font-label-md text-label-md text-secondary-container/80 uppercase">Remember Me / تذكرني</span>
+</label>
+<a class="font-label-md text-label-md text-primary-container hover:underline uppercase" href="#">Forgot Password? / نسيت كلمة المرور؟</a>
+</div>
+<button class="w-full bg-primary-container hover:bg-primary-fixed-dim text-black font-label-lg text-label-lg py-5 uppercase industrial-shadow active:translate-y-1 transition-all" type="submit">
+                    LOGIN / تسجيل الدخول
+                </button>
+</form>
+<!-- Registration Links -->
+<div class="mt-stack-lg space-y-4 border-t border-white/10 pt-stack-md">
+<p class="font-label-md text-label-md text-secondary-container/40 text-center uppercase mb-4">Don't have an account? / ليس لديك حساب؟</p>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<a class="text-center py-2 border border-white/10 hover:border-primary-container/40 hover:bg-white/5 transition-all text-white font-label-md text-[10px] uppercase" href="#">Register Client</a>
+<a class="text-center py-2 border border-white/10 hover:border-primary-container/40 hover:bg-white/5 transition-all text-white font-label-md text-[10px] uppercase" href="#">Register Worker</a>
+<a class="text-center py-2 border border-white/10 hover:border-primary-container/40 hover:bg-white/5 transition-all text-white font-label-md text-[10px] uppercase" href="#">Register Vendor</a>
+</div>
+</div>
+<!-- Security Badges -->
+<div class="mt-12 grid grid-cols-3 gap-4 text-center">
+<div class="flex flex-col items-center gap-1">
+<span class="material-symbols-outlined text-primary-container/60 text-lg">verified_user</span>
+<span class="font-label-md text-[10px] text-secondary-container/40 uppercase">Secure Auth</span>
+</div>
+<div class="flex flex-col items-center gap-1">
+<span class="material-symbols-outlined text-primary-container/60 text-lg">shield</span>
+<span class="font-label-md text-[10px] text-secondary-container/40 uppercase">Data Protected</span>
+</div>
+<div class="flex flex-col items-center gap-1">
+<span class="material-symbols-outlined text-primary-container/60 text-lg">headset_mic</span>
+<span class="font-label-md text-[10px] text-secondary-container/40 uppercase">24/7 Support</span>
+</div>
+</div>
+</div>
+<!-- Decorative background elements -->
+<div class="fixed inset-0 pointer-events-none overflow-hidden">
+<div class="absolute top-1/4 -right-20 w-96 h-96 bg-black opacity-20 blur-3xl rounded-full"></div>
+<div class="absolute bottom-1/4 -left-20 w-96 h-96 bg-black opacity-20 blur-3xl rounded-full"></div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 bg-black/80 backdrop-blur-md text-primary-container border-t border-white/10 h-20 px-4 pb-safe flex justify-around items-center">
+<a class="flex flex-col items-center justify-center text-primary-container font-bold hover:bg-white/5 transition-colors active:translate-y-0.5 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">home</span>
+<span>Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-secondary-fixed-variant hover:bg-white/5 transition-colors active:translate-y-0.5 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">engineering</span>
+<span>Workers</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-secondary-fixed-variant hover:bg-white/5 transition-colors active:translate-y-0.5 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">storefront</span>
+<span>Vendors</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-secondary-fixed-variant hover:bg-white/5 transition-colors active:translate-y-0.5 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">person</span>
+<span>Profile</span>
+</a>
+</nav>
+<script>
+        function switchTab(el) {
+            // Get all buttons in the tab container
+            const buttons = el.parentElement.querySelectorAll('button');
+            
+            buttons.forEach(btn => {
+                btn.classList.remove('active-tab-glow', 'text-primary-container');
+                btn.classList.add('text-secondary-container/50');
+            });
+
+            el.classList.add('active-tab-glow', 'text-primary-container');
+            el.classList.remove('text-secondary-container/50');
+
+            // Add simple feedback
+            const feedback = el.dataset.tab;
+            console.log('Switched to:', feedback);
+        }
+
+        // Add visual interest to input fields on typing
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', (e) => {
+                if (e.target.value.length > 0) {
+                    e.target.classList.add('border-primary-container/50');
+                } else {
+                    e.target.classList.remove('border-primary-container/50');
+                }
+            });
+        });
+    </script>
+</body></html>

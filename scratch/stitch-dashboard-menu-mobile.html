@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>OSTA - Dashboard Menu</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Outfit:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#e5e2e1",
+                        "surface-dim": "#dadada",
+                        "secondary-fixed-dim": "#c6c6c6",
+                        "primary-fixed": "#ffdf9a",
+                        "on-tertiary-container": "#525151",
+                        "on-surface-variant": "#4f4633",
+                        "inverse-surface": "#2f3131",
+                        "surface-tint": "#775a00",
+                        "outline-variant": "#d3c5ac",
+                        "on-surface": "#1a1c1c",
+                        "on-tertiary-fixed-variant": "#474646",
+                        "tertiary-fixed-dim": "#c8c6c5",
+                        "surface-container-low": "#f3f3f4",
+                        "secondary-container": "#e2e2e2",
+                        "on-secondary-fixed-variant": "#474747",
+                        "on-tertiary-fixed": "#1c1b1b",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-bright": "#f9f9f9",
+                        "surface-variant": "#e2e2e2",
+                        "tertiary": "#5f5e5e",
+                        "on-error": "#ffffff",
+                        "on-secondary-fixed": "#1b1b1b",
+                        "on-background": "#1a1c1c",
+                        "inverse-primary": "#f6be1a",
+                        "on-error-container": "#93000a",
+                        "error": "#ba1a1a",
+                        "tertiary-container": "#c7c5c4",
+                        "on-primary-fixed-variant": "#5a4300",
+                        "error-container": "#ffdad6",
+                        "primary-container": "#f5bd18",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "secondary-fixed": "#e2e2e2",
+                        "outline": "#817660",
+                        "on-secondary-container": "#646464",
+                        "on-primary-fixed": "#251a00",
+                        "inverse-on-surface": "#f0f1f1",
+                        "surface-container": "#eeeeee",
+                        "background": "#f9f9f9",
+                        "on-primary-container": "#684e00",
+                        "surface": "#f9f9f9",
+                        "secondary": "#5e5e5e",
+                        "primary": "#775a00",
+                        "on-primary": "#ffffff",
+                        "surface-container-highest": "#e2e2e2",
+                        "surface-container-high": "#e8e8e8",
+                        "primary-fixed-dim": "#f6be1a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "margin-desktop": "48px",
+                        "stack-md": "24px",
+                        "gutter": "24px",
+                        "stack-sm": "12px",
+                        "container-max": "1280px",
+                        "base": "8px",
+                        "margin-mobile": "16px",
+                        "stack-lg": "48px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Outfit"],
+                        "headline-lg-mobile": ["Outfit"],
+                        "headline-lg": ["Outfit"],
+                        "display-lg": ["Outfit"],
+                        "headline-sm": ["Outfit"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Outfit"],
+                        "label-lg": ["Outfit"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "headline-lg": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "display-lg": ["72px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                        "headline-sm": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "label-md": ["12px", {"lineHeight": "1", "fontWeight": "600"}],
+                        "label-lg": ["14px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #f5bd18; /* Primary OSTA Gold as flood background */
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .obsidian-card {
+            background-color: #000000;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .sticker-shadow {
+            box-shadow: 4px 4px 0px #000000;
+        }
+        .active-sticker-shadow {
+            box-shadow: 4px 4px 0px #775a00;
+        }
+        .glass-header {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="min-h-screen flex items-end md:items-center justify-center p-0 md:p-10">
+<!-- Dashboard Overlay Container -->
+<div class="relative w-full max-w-md mx-auto h-[795px] md:h-[800px] overflow-hidden rounded-t-[40px] md:rounded-[40px] obsidian-card flex flex-col shadow-2xl animate-in slide-in-from-bottom duration-500">
+<!-- Top Navigation Bar (Mocked for context) -->
+<header class="glass-header flex justify-between items-center px-margin-mobile h-16 w-full z-50 border-b border-white/10">
+<span class="text-primary font-bold text-headline-sm tracking-tighter">OSTA</span>
+<button class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white transition-all active:scale-90">
+<span class="material-symbols-outlined">close</span>
+</button>
+</header>
+<!-- User Profile Header -->
+<section class="px-margin-mobile pt-8 pb-6 flex items-center gap-4">
+<div class="relative">
+<div class="w-16 h-16 rounded-xl border-2 border-primary overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional portrait of a middle-aged Arab man with a neat beard, wearing a high-quality navy blue work uniform with a subtle OSTA logo. He is smiling confidently against a soft-focus industrial background with warm golden lighting that matches the brand's premium industrial aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC6xb1ygLRvqJsFXn3wIGBSDn4kZW6C2CCrQ8NxNL6U5_mxDfntM7A3USbG3mUSn5GCBLfh8-DTEuUfrOE92ny6057hDNH2U8tkKjiqkNKhSs3bN64m4kG4Kn96FWo5posJpF9qSY1lsu9ZLo6OEp6rbKlRChhYi8ZHzkdTpNN_gbMdZR9AhzmxKxSnR4VoFAOFiQcxmW0jig6YYizGVshgj-60mHnWMy8zWurWlrrvTVaxtr0sDczVvs_RCsUDxSjhPePb_PFnE88"/>
+</div>
+<div class="absolute -bottom-1 -right-1 bg-primary text-on-primary rounded-full p-1 flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+</div>
+<div class="flex flex-col">
+<h2 class="text-white font-headline-sm text-headline-sm">أحمد حسان</h2>
+<span class="text-primary-fixed-dim font-label-lg text-label-lg uppercase tracking-widest">عميل مميز</span>
+</div>
+</section>
+<!-- Scrollable Navigation Content -->
+<nav class="flex-1 overflow-y-auto px-margin-mobile space-y-6 pb-24">
+<div class="space-y-stack-sm">
+<h3 class="text-white/40 font-label-lg text-label-lg px-2">أقسام لوحة التحكم</h3>
+<div class="grid grid-cols-3 gap-4">
+<!-- Home (Active) -->
+<a class="flex flex-col items-center justify-center gap-2 p-4 bg-primary rounded-xl text-on-primary transition-all active:scale-95 sticker-shadow" href="#">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-label-md text-label-md">الرئيسية</span>
+</a>
+<!-- My Bookings -->
+<a class="flex flex-col items-center justify-center gap-2 p-4 bg-[#121212] rounded-xl text-white border border-white/5 transition-all hover:border-primary/50 active:scale-95" href="#">
+<span class="material-symbols-outlined text-3xl text-primary">event_note</span>
+<span class="font-label-md text-label-md">حجوزاتي</span>
+</a>
+<!-- Wallet -->
+<a class="flex flex-col items-center justify-center gap-2 p-4 bg-[#121212] rounded-xl text-white border border-white/5 transition-all hover:border-primary/50 active:scale-95" href="#">
+<span class="material-symbols-outlined text-3xl text-primary">payments</span>
+<span class="font-label-md text-label-md">المحفظة</span>
+</a>
+<!-- Stores -->
+<a class="flex flex-col items-center justify-center gap-2 p-4 bg-[#121212] rounded-xl text-white border border-white/5 transition-all hover:border-primary/50 active:scale-95" href="#">
+<span class="material-symbols-outlined text-3xl text-primary">storefront</span>
+<span class="font-label-md text-label-md">المتاجر</span>
+</a>
+<!-- Materials Market -->
+<a class="flex flex-col items-center justify-center gap-2 p-4 bg-[#121212] rounded-xl text-white border border-white/5 transition-all hover:border-primary/50 active:scale-95" href="#">
+<span class="material-symbols-outlined text-3xl text-primary">inventory_2</span>
+<span class="font-label-md text-label-md">سوق المواد</span>
+</a>
+<!-- Favorites -->
+<a class="flex flex-col items-center justify-center gap-2 p-4 bg-[#121212] rounded-xl text-white border border-white/5 transition-all hover:border-primary/50 active:scale-95" href="#">
+<span class="material-symbols-outlined text-3xl text-primary">favorite</span>
+<span class="font-label-md text-label-md">المفضلة</span>
+</a>
+</div>
+</div>
+<!-- List Style Links for Secondary Actions -->
+<div class="space-y-2">
+<a class="flex items-center justify-between p-4 bg-[#121212] rounded-xl text-white border border-white/5 hover:bg-white/5 transition-colors group" href="#">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">settings</span>
+<span class="font-label-lg text-label-lg">إعدادات الحساب</span>
+</div>
+<span class="material-symbols-outlined text-white/20">chevron_left</span>
+</a>
+<a class="flex items-center justify-between p-4 bg-[#121212] rounded-xl text-white border border-white/5 hover:bg-white/5 transition-colors group" href="#">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">help_center</span>
+<span class="font-label-lg text-label-lg">مركز المساعدة</span>
+</div>
+<span class="material-symbols-outlined text-white/20">chevron_left</span>
+</a>
+<a class="flex items-center justify-between p-4 bg-[#121212] rounded-xl text-white border border-white/5 hover:bg-white/5 transition-colors group" href="#">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">emergency</span>
+<span class="font-label-lg text-label-lg text-error">خدمات الطوارئ</span>
+</div>
+<span class="material-symbols-outlined text-white/20">chevron_left</span>
+</a>
+</div>
+</nav>
+<!-- Bottom Footer with Logout -->
+<footer class="absolute bottom-0 w-full p-margin-mobile glass-header border-t border-white/10">
+<button class="w-full h-14 bg-white text-black font-headline-sm text-label-lg flex items-center justify-center gap-3 transition-all active:scale-95 sticker-shadow active:translate-x-1 active:translate-y-1">
+<span class="material-symbols-outlined">logout</span>
+                تسجيل الخروج
+            </button>
+</footer>
+</div>
+<!-- Floating Atmosphere Elements -->
+<div class="fixed top-1/4 right-10 w-32 h-32 bg-primary/20 rounded-full blur-[80px] pointer-events-none"></div>
+<div class="fixed bottom-1/4 left-10 w-48 h-48 bg-primary/10 rounded-full blur-[100px] pointer-events-none"></div>
+<script>
+        // Simple micro-interaction for button feedback
+        document.querySelectorAll('a, button').forEach(el => {
+            el.addEventListener('mousedown', () => {
+                el.style.transform = 'scale(0.96)';
+            });
+            el.addEventListener('mouseup', () => {
+                el.style.transform = 'scale(1)';
+            });
+            el.addEventListener('mouseleave', () => {
+                el.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body></html>

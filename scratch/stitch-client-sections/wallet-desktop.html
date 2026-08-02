@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>OSTA | INDUSTRIAL PRO Wallet</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@600;700;800;900&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Outfit:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#f9f9f9",
+                        "on-error-container": "#93000a",
+                        "on-background": "#1a1c1c",
+                        "secondary-fixed-dim": "#c6c6c6",
+                        "surface-dim": "#dadada",
+                        "surface-container": "#eeeeee",
+                        "inverse-surface": "#2f3131",
+                        "on-tertiary-container": "#525151",
+                        "on-surface-variant": "#4f4633",
+                        "primary": "#775a00",
+                        "on-tertiary-fixed": "#1c1b1b",
+                        "on-error": "#ffffff",
+                        "inverse-on-surface": "#f0f1f1",
+                        "tertiary-fixed": "#e5e2e1",
+                        "on-secondary-fixed": "#1b1b1b",
+                        "on-primary": "#ffffff",
+                        "secondary": "#5e5e5e",
+                        "secondary-container": "#e2e2e2",
+                        "tertiary-fixed-dim": "#c8c6c5",
+                        "tertiary": "#5f5e5e",
+                        "primary-fixed-dim": "#f6be1a",
+                        "primary-fixed": "#ffdf9a",
+                        "tertiary-container": "#c7c5c4",
+                        "outline": "#817660",
+                        "on-surface": "#1a1c1c",
+                        "on-primary-fixed-variant": "#5a4300",
+                        "surface-container-highest": "#e2e2e2",
+                        "outline-variant": "#d3c5ac",
+                        "on-secondary-container": "#646464",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-high": "#e8e8e8",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed-variant": "#474646",
+                        "on-primary-fixed": "#251a00",
+                        "background": "#f9f9f9",
+                        "surface-bright": "#f9f9f9",
+                        "surface-tint": "#775a00",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#f3f3f4",
+                        "on-secondary-fixed-variant": "#474747",
+                        "surface-variant": "#e2e2e2",
+                        "on-secondary": "#ffffff",
+                        "inverse-primary": "#f6be1a",
+                        "secondary-fixed": "#e2e2e2",
+                        "error-container": "#ffdad6",
+                        "on-primary-container": "#684e00",
+                        "primary-container": "#f5bd18"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "margin-desktop": "48px",
+                        "gutter": "24px",
+                        "container-max": "1280px",
+                        "base": "8px",
+                        "stack-md": "24px",
+                        "stack-sm": "12px",
+                        "stack-lg": "48px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "label-lg": ["Outfit"],
+                        "display-lg": ["Outfit"],
+                        "headline-sm": ["Outfit"],
+                        "label-md": ["Outfit"],
+                        "headline-md": ["Outfit"],
+                        "headline-lg": ["Outfit"],
+                        "headline-lg-mobile": ["Outfit"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "label-lg": ["14px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "display-lg": ["72px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                        "headline-sm": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "label-md": ["12px", {"lineHeight": "1", "fontWeight": "600"}],
+                        "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "headline-lg": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-obsidian {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+        }
+        .obsidian-card {
+            background-color: #000000;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .hard-shadow {
+            box-shadow: 4px 4px 0px #000000;
+        }
+        .yellow-void {
+            background-color: #f5bd18;
+        }
+        /* Hide scrollbar for clean industrial look */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 10px; }
+    </style>
+</head>
+<body class="yellow-void min-h-screen text-white font-body-md overflow-x-hidden">
+<!-- Top Navigation (Shell) -->
+<header class="fixed top-0 w-full z-50 glass-obsidian border-b border-white/10 flex items-center justify-between px-margin-mobile md:px-margin-desktop h-16">
+<div class="font-headline-sm text-headline-sm font-black text-primary-fixed">INDUSTRIAL PRO</div>
+<div class="hidden md:flex gap-8">
+<a class="text-white/60 font-label-lg text-label-lg uppercase tracking-widest hover:text-white transition-colors" href="#">Requests</a>
+<a class="text-white/60 font-label-lg text-label-lg uppercase tracking-widest hover:text-white transition-colors" href="#">Market</a>
+<a class="text-primary-fixed border-b-2 border-primary-fixed font-label-lg text-label-lg uppercase tracking-widest transition-colors" href="#">Wallet</a>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary-fixed">account_balance_wallet</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-primary-fixed transition-colors">menu</span>
+</div>
+</header>
+<!-- Navigation Drawer (Sidebar) -->
+<aside class="hidden md:flex flex-col p-stack-md bg-on-background fixed left-0 top-0 h-full w-72 border-r border-white/10 z-40 pt-20">
+<div class="flex flex-col items-start gap-2 mb-10">
+<div class="w-12 h-12 bg-primary-container rounded-full overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A portrait of a professional electrician in a black uniform, Alex Foreman, with short hair and a confident expression. The lighting is dramatic and high-contrast, characteristic of a premium industrial workspace. The background is a clean, dark obsidian finish with subtle golden yellow accents that match the OSTA brand identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD71SZ9BdSVhliV2xV6fZGXcjqtdWIIOcPCT7SR2YchdKF7r-cCbP7BPeExPWjq9qCX65ju6tD8wCjBdkUsujcfSVXbvoiEJNHEoL_zgeOkmEi69Osg1-8oFMRtjPSOA8j6DfrR6nWMwN0-qGjo5CTYDe3Pv7n7JxwgZWMGeD5L_m1jZMyxyp-nyxz_1rReu0fRSKt-bsWW9OjoKlKIGQDl6hgibagBHF7YfCJeGMYkE5N8rB_SuiuDUctOpl8nxMUjPYJvCQl2SYw"/>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-primary-fixed leading-none">Alex Foreman</h3>
+<p class="text-white/50 text-sm mt-1">Master Electrician</p>
+</div>
+</div>
+<nav class="flex flex-col gap-2">
+<a class="flex items-center gap-4 p-3 text-white/70 font-label-lg text-label-lg hover:bg-white/10 hover:text-white transition-all active:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">engineering</span> Requests
+            </a>
+<a class="flex items-center gap-4 p-3 text-white/70 font-label-lg text-label-lg hover:bg-white/10 hover:text-white transition-all active:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">gavel</span> Bidding
+            </a>
+<a class="flex items-center gap-4 p-3 text-white/70 font-label-lg text-label-lg hover:bg-white/10 hover:text-white transition-all active:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">storefront</span> Vendors
+            </a>
+<a class="flex items-center gap-4 p-3 text-white/70 font-label-lg text-label-lg hover:bg-white/10 hover:text-white transition-all active:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">verified</span> Favorites
+            </a>
+<a class="flex items-center gap-4 p-3 bg-white/5 text-primary-fixed border-r-4 border-primary-fixed font-label-lg text-label-lg transition-all active:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">payments</span> Wallet
+            </a>
+</nav>
+<div class="mt-auto pt-6 border-t border-white/5">
+<button class="w-full flex items-center justify-between text-white/40 hover:text-white text-sm transition-colors">
+<span>Sign Out</span>
+<span class="material-symbols-outlined">logout</span>
+</button>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="pt-24 pb-32 md:ml-72 px-margin-mobile md:px-margin-desktop min-h-screen">
+<!-- Header Section -->
+<div class="mb-stack-lg flex flex-col md:flex-row justify-between items-end gap-6">
+<div>
+<h1 class="font-headline-lg text-headline-lg text-on-background uppercase tracking-tight">Financial Dashboard</h1>
+<p class="text-on-background/70 font-body-lg max-w-xl">Manage your industrial earnings, vendor payments, and digital wallet credits with military-grade security.</p>
+</div>
+<div class="obsidian-card p-6 flex items-center gap-6 hard-shadow">
+<div class="text-right">
+<p class="text-white/40 text-xs uppercase tracking-widest font-label-lg">Available Balance</p>
+<p class="text-primary-fixed font-display-lg text-[48px] leading-none">$14,820.50</p>
+</div>
+<button class="bg-white text-on-background font-label-lg py-4 px-6 hard-shadow active:translate-y-1 transition-all hover:bg-gray-100 flex items-center gap-2">
+<span class="material-symbols-outlined">add_circle</span> TOP UP
+                </button>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-stack-md items-start">
+<!-- Left Column: Transactions & History -->
+<div class="lg:col-span-8 flex flex-col gap-stack-md">
+<!-- Main Feature Image Card -->
+<div class="obsidian-card relative overflow-hidden group h-96">
+<img alt="Dashboard Overview" class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAcnNU1MWM1OSeRGChY-qCDxMkfruNVYi9EflNhotv5FoFbzOAoCFi8sSYP8WotA_TS98xZR38eJ3MkeU3cO0T9a1e3U_XPuERfB4zwAg_u0pH3pjL3bgbBGYwOz44fBza9tjlen_Ggm7d2cYQrOfSejYV6cE2k_ltymtLIGUOcN65MVzBBj4WcRpEkU3P4Cb6HT39I0rNbEpyMFUWsoK3ar1VNRDtlm6jAfXyGsq4hphOqvIoDUR-DjHhDJUoEknI1IbMVF7DObJ4"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent p-10 flex flex-col justify-end">
+<div class="flex items-center gap-2 mb-4">
+<span class="bg-primary-container text-on-primary-container text-[10px] px-2 py-1 font-bold uppercase tracking-tighter">Premium Service</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-white">INDUSTRIAL OVERVIEW</h2>
+<p class="text-white/70 max-w-lg mt-2">View real-time performance metrics and capital distribution across active trade projects.</p>
+</div>
+</div>
+<!-- Transaction Table -->
+<div class="obsidian-card p-6">
+<div class="flex items-center justify-between mb-8">
+<h3 class="font-headline-sm text-headline-sm text-primary-fixed">Transaction History</h3>
+<div class="flex gap-2">
+<button class="p-2 border border-white/10 hover:border-primary-fixed transition-colors"><span class="material-symbols-outlined">tune</span></button>
+<button class="p-2 border border-white/10 hover:border-primary-fixed transition-colors"><span class="material-symbols-outlined">download</span></button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="border-b border-white/10 text-white/40 font-label-lg text-xs uppercase tracking-widest">
+<th class="pb-4 font-normal">Service / Vendor</th>
+<th class="pb-4 font-normal">Date</th>
+<th class="pb-4 font-normal">Reference</th>
+<th class="pb-4 font-normal">Status</th>
+<th class="pb-4 font-normal text-right">Amount</th>
+</tr>
+</thead>
+<tbody class="text-sm">
+<tr class="border-b border-white/5 hover:bg-white/5 transition-colors group">
+<td class="py-5 flex items-center gap-3">
+<div class="w-10 h-10 bg-white/5 flex items-center justify-center border border-white/10">
+<span class="material-symbols-outlined text-primary-fixed">bolt</span>
+</div>
+<div>
+<p class="font-bold text-white">Central Grid Supplies</p>
+<p class="text-white/40 text-xs">Electrical Hardware</p>
+</div>
+</td>
+<td class="py-5 text-white/70">Oct 24, 2023</td>
+<td class="py-5 text-white/70 font-mono">#TRX-99210</td>
+<td class="py-5">
+<span class="bg-primary-container/20 text-primary-fixed text-[10px] px-2 py-1 uppercase font-bold border border-primary-fixed/20">Cleared</span>
+</td>
+<td class="py-5 text-right font-bold text-white">-$1,240.00</td>
+</tr>
+<tr class="border-b border-white/5 hover:bg-white/5 transition-colors group">
+<td class="py-5 flex items-center gap-3">
+<div class="w-10 h-10 bg-white/5 flex items-center justify-center border border-white/10">
+<span class="material-symbols-outlined text-primary-fixed">account_balance</span>
+</div>
+<div>
+<p class="font-bold text-white">Wallet Top Up</p>
+<p class="text-white/40 text-xs">Direct Deposit</p>
+</div>
+</td>
+<td class="py-5 text-white/70">Oct 22, 2023</td>
+<td class="py-5 text-white/70 font-mono">#DEP-00122</td>
+<td class="py-5">
+<span class="bg-primary-container/20 text-primary-fixed text-[10px] px-2 py-1 uppercase font-bold border border-primary-fixed/20">Completed</span>
+</td>
+<td class="py-5 text-right font-bold text-primary-fixed">+$5,000.00</td>
+</tr>
+<tr class="border-b border-white/5 hover:bg-white/5 transition-colors group">
+<td class="py-5 flex items-center gap-3">
+<div class="w-10 h-10 bg-white/5 flex items-center justify-center border border-white/10">
+<span class="material-symbols-outlined text-primary-fixed">precision_manufacturing</span>
+</div>
+<div>
+<p class="font-bold text-white">Steel Works Ltd</p>
+<p class="text-white/40 text-xs">Custom Fabrication</p>
+</div>
+</td>
+<td class="py-5 text-white/70">Oct 19, 2023</td>
+<td class="py-5 text-white/70 font-mono">#TRX-88129</td>
+<td class="py-5">
+<span class="bg-white/10 text-white/60 text-[10px] px-2 py-1 uppercase font-bold border border-white/20">Processing</span>
+</td>
+<td class="py-5 text-right font-bold text-white">-$3,450.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+<button class="w-full mt-8 py-3 border border-white/10 text-white/50 font-label-lg uppercase tracking-widest hover:text-white hover:border-white transition-all">
+                        Load More Activity
+                    </button>
+</div>
+</div>
+<!-- Right Column: Payment Methods & Quick Actions -->
+<div class="lg:col-span-4 flex flex-col gap-stack-md">
+<!-- Cards Section -->
+<div class="obsidian-card p-6">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-label-lg text-label-lg text-primary-fixed uppercase tracking-widest">Saved Methods</h3>
+<span class="material-symbols-outlined text-white/30 cursor-pointer hover:text-white">settings</span>
+</div>
+<div class="space-y-4">
+<!-- Card 1 -->
+<div class="relative p-6 h-48 bg-gradient-to-br from-[#1a1a1a] to-black border border-white/10 flex flex-col justify-between overflow-hidden group cursor-pointer">
+<div class="absolute -right-4 -top-4 w-32 h-32 bg-primary-fixed/5 rounded-full blur-3xl group-hover:bg-primary-fixed/10 transition-colors"></div>
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-3xl text-primary-fixed">contactless</span>
+<div class="font-black italic text-xl text-white/20">OSTA PLATINUM</div>
+</div>
+<div>
+<p class="text-white font-mono tracking-widest text-lg">**** **** **** 8820</p>
+<div class="flex justify-between items-center mt-4">
+<p class="text-white/40 text-xs uppercase">ALEX FOREMAN</p>
+<p class="text-white/40 text-xs uppercase">12/28</p>
+</div>
+</div>
+</div>
+<!-- Add New Method -->
+<button class="w-full h-24 border-2 border-dashed border-white/10 flex items-center justify-center gap-3 hover:border-primary-fixed hover:bg-white/5 transition-all text-white/40 hover:text-primary-fixed group">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">add_card</span>
+<span class="font-label-lg uppercase tracking-widest">Link New Account</span>
+</button>
+</div>
+</div>
+<!-- Top Up Module -->
+<div class="obsidian-card p-6 border-2 border-primary-fixed/20">
+<h3 class="font-label-lg text-label-lg text-white uppercase tracking-widest mb-6">Quick Top Up</h3>
+<div class="space-y-4">
+<div class="grid grid-cols-3 gap-2">
+<button class="py-3 bg-white/5 border border-white/10 text-white font-bold hover:bg-primary-fixed hover:text-black transition-colors">$100</button>
+<button class="py-3 bg-white/5 border border-white/10 text-white font-bold hover:bg-primary-fixed hover:text-black transition-colors">$500</button>
+<button class="py-3 bg-white/5 border border-white/10 text-white font-bold hover:bg-primary-fixed hover:text-black transition-colors">$1k</button>
+</div>
+<div class="relative">
+<input class="w-full bg-[#121212] border border-white/20 p-4 text-white focus:border-primary-fixed focus:ring-0 transition-colors" placeholder="Custom Amount" type="text"/>
+<span class="absolute right-4 top-1/2 -translate-y-1/2 text-white/30 font-bold">USD</span>
+</div>
+<button class="w-full bg-white text-on-background py-4 font-black uppercase tracking-widest hard-shadow active:translate-y-1 transition-all">
+                            Process Deposit
+                        </button>
+<p class="text-[10px] text-white/30 text-center uppercase tracking-tighter">Secured by OSTA-Vault Technology © 2024</p>
+</div>
+</div>
+<!-- Ad/Promo Card -->
+<div class="relative obsidian-card aspect-square overflow-hidden flex flex-col items-center justify-center text-center p-8">
+<div class="absolute inset-0 z-0 opacity-40">
+<div class="w-full h-full bg-cover bg-center" data-alt="A macro photography shot of industrial steel gears and heavy machinery components, captured with a shallow depth of field. The lighting is warm and golden, reflecting off the metallic surfaces to create a premium, high-end engineering aesthetic. The composition is artistic and abstract, emphasizing quality and structural integrity." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDPbxCHTa2V7DKTGjXMR1thZcErN288RuZCPrprqupQ87BeT9l6zFfgylHAhcu0xLuwkaTCZa4NbufrZQqamreFAO9JCtpFi42hHKK-sL7LoI97Gd3ty2AF7X3I11h2XU69EFS9xg85PkwnaINvTLD0FssONCPsaVErlbPmsWJEeRaoHtoXFhXAPt9k-siaMSHWNBreo_licxIegfUfnk8GNXfKmmD_paUzs2gWiJcvxOUsKwl76wqyijlDEBqcBBQs4G3z4-DPoDA')"></div>
+</div>
+<div class="relative z-10">
+<span class="material-symbols-outlined text-4xl text-primary-fixed mb-4">diamond</span>
+<h4 class="font-headline-sm text-white mb-2">UPGRADE TO PRO</h4>
+<p class="text-white/60 text-sm mb-6">Get 0% fees on all vendor transactions and priority support.</p>
+<button class="px-6 py-2 border-2 border-white text-white font-label-lg hover:bg-white hover:text-black transition-all">LEARN MORE</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Nav (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 glass-obsidian border-t border-white/10 flex justify-around items-center h-20 pb-safe px-4">
+<div class="flex flex-col items-center justify-center text-white/50 font-label-md">
+<span class="material-symbols-outlined">engineering</span>
+<span>Requests</span>
+</div>
+<div class="flex flex-col items-center justify-center text-white/50 font-label-md">
+<span class="material-symbols-outlined">gavel</span>
+<span>Market</span>
+</div>
+<div class="flex flex-col items-center justify-center text-primary-fixed font-bold font-label-md">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">wallet</span>
+<span>Wallet</span>
+</div>
+<div class="flex flex-col items-center justify-center text-white/50 font-label-md">
+<span class="material-symbols-outlined">storefront</span>
+<span>Vendors</span>
+</div>
+<div class="flex flex-col items-center justify-center text-white/50 font-label-md">
+<span class="material-symbols-outlined">star</span>
+<span>Favs</span>
+</div>
+</nav>
+<script>
+        // Micro-interaction for transaction rows
+        document.querySelectorAll('tbody tr').forEach(row => {
+            row.addEventListener('mouseenter', () => {
+                row.querySelector('.material-symbols-outlined').style.fontVariationSettings = "'FILL' 1";
+            });
+            row.addEventListener('mouseleave', () => {
+                row.querySelector('.material-symbols-outlined').style.fontVariationSettings = "'FILL' 0";
+            });
+        });
+
+        // Top Up amount selection
+        document.querySelectorAll('button[class*="bg-white/5"]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelector('input[placeholder="Custom Amount"]').value = this.innerText.replace('$', '').replace('k', '000');
+            });
+        });
+    </script>
+</body></html>

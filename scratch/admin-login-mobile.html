@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>OSTA ADMIN | Secure Portal</title>
+<!-- Fonts & Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;600&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Outfit:wght@100..900&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Shared Tailwind Config -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary": "#775a00",
+                    "tertiary-fixed": "#e5e2e1",
+                    "tertiary": "#5f5e5e",
+                    "secondary-fixed-dim": "#c6c6c6",
+                    "on-tertiary-container": "#525151",
+                    "primary-fixed": "#ffdf9a",
+                    "surface-container": "#eeeeee",
+                    "secondary-fixed": "#e2e2e2",
+                    "outline": "#817660",
+                    "on-primary-fixed": "#251a00",
+                    "surface-container-highest": "#e2e2e2",
+                    "on-tertiary-fixed": "#1c1b1b",
+                    "on-primary": "#ffffff",
+                    "inverse-surface": "#2f3131",
+                    "primary-fixed-dim": "#f6be1a",
+                    "secondary": "#5e5e5e",
+                    "on-background": "#1a1c1c",
+                    "error-container": "#ffdad6",
+                    "error": "#ba1a1a",
+                    "on-error": "#ffffff",
+                    "surface-variant": "#e2e2e2",
+                    "on-secondary-fixed-variant": "#474747",
+                    "surface-container-high": "#e8e8e8",
+                    "on-surface": "#1a1c1c",
+                    "surface-container-low": "#f3f3f4",
+                    "on-surface-variant": "#4f4633",
+                    "on-primary-fixed-variant": "#5a4300",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-container": "#c7c5c4",
+                    "on-primary-container": "#684e00",
+                    "on-secondary-container": "#646464",
+                    "background": "#f9f9f9",
+                    "surface-bright": "#f9f9f9",
+                    "surface": "#f9f9f9",
+                    "surface-dim": "#dadada",
+                    "surface-tint": "#775a00",
+                    "on-tertiary-fixed-variant": "#474646",
+                    "on-secondary-fixed": "#1b1b1b",
+                    "on-secondary": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "inverse-primary": "#f6be1a",
+                    "tertiary-fixed-dim": "#c8c6c5",
+                    "outline-variant": "#d3c5ac",
+                    "secondary-container": "#e2e2e2",
+                    "inverse-on-surface": "#f0f1f1",
+                    "primary-container": "#f5bd18",
+                    "on-tertiary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "margin-mobile": "16px",
+                    "stack-lg": "48px",
+                    "stack-sm": "12px",
+                    "margin-desktop": "48px",
+                    "container-max": "1280px",
+                    "gutter": "24px",
+                    "stack-md": "24px",
+                    "base": "8px"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "display-lg": ["Outfit"],
+                    "body-lg": ["Inter"],
+                    "label-lg": ["Outfit"],
+                    "headline-sm": ["Outfit"],
+                    "headline-md": ["Outfit"],
+                    "label-md": ["Outfit"],
+                    "headline-lg-mobile": ["Outfit"],
+                    "headline-lg": ["Outfit"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "display-lg": ["72px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "label-lg": ["14px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "headline-sm": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "label-md": ["12px", {"lineHeight": "1", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "headline-lg": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #000000;
+            overflow: hidden;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .obsidian-card {
+            background-color: #000000;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .text-glow-yellow {
+            text-shadow: 0 0 10px rgba(245, 189, 24, 0.3);
+        }
+        .shimmer {
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 3s infinite;
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .watermark {
+            position: absolute;
+            bottom: 10%;
+            right: -5%;
+            font-size: 10rem;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.03);
+            text-transform: uppercase;
+            user-select: none;
+            pointer-events: none;
+            transform: rotate(-15deg);
+            z-index: 0;
+            white-space: nowrap;
+        }
+        .field-focus:focus-within {
+            border-color: #f5bd18 !important;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body-md text-on-surface">
+<!-- TopNavBar (Shared Component Identity) -->
+<nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-mobile py-4 bg-black/80 backdrop-blur-md border-b border-white/10">
+<span class="font-headline-sm text-headline-sm font-bold text-primary-container">OSTA ADMIN</span>
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-white opacity-50">lock</span>
+<span class="material-symbols-outlined text-white opacity-50">help</span>
+</div>
+</nav>
+<!-- Main Container -->
+<main class="relative min-h-screen flex items-center justify-center px-margin-mobile pt-20">
+<!-- Background Asset (Simulated Security Grid) -->
+<div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(#f5bd18 0.5px, transparent 0.5px); background-size: 24px 24px;"></div>
+<div class="watermark">SECURE PORTAL</div>
+<!-- Login Container -->
+<div class="w-full max-w-sm z-10 flex flex-col items-center">
+<!-- Logo Section -->
+<div class="mb-stack-lg text-center">
+<div class="mb-4 inline-flex items-center justify-center w-16 h-16 bg-primary-container rounded-none shadow-[4px_4px_0px_#ffffff]">
+<span class="material-symbols-outlined text-black text-4xl" style="font-variation-settings: 'FILL' 1;">shield_person</span>
+</div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-white uppercase tracking-tight">Access Control</h1>
+<p class="text-on-surface-variant font-label-md text-label-md uppercase tracking-widest mt-2 opacity-60">System Level: Tier 1 Auth Required</p>
+</div>
+<!-- Login Form -->
+<div class="w-full obsidian-card p-6 flex flex-col gap-6 relative overflow-hidden">
+<!-- Shimmer effect for premium feel -->
+<div class="absolute inset-0 shimmer pointer-events-none"></div>
+<!-- Input: Admin ID -->
+<div class="flex flex-col gap-2">
+<label class="font-label-lg text-label-lg text-primary-container uppercase">Admin ID</label>
+<div class="field-focus flex items-center bg-[#121212] border border-white/20 px-4 py-3 transition-colors">
+<span class="material-symbols-outlined text-white/40 mr-3">badge</span>
+<input class="bg-transparent border-none focus:ring-0 text-white w-full font-body-md placeholder:text-white/20" placeholder="EMP-XXXXX" type="text"/>
+</div>
+</div>
+<!-- Input: Password -->
+<div class="flex flex-col gap-2">
+<div class="flex justify-between items-center">
+<label class="font-label-lg text-label-lg text-primary-container uppercase">Password</label>
+<a class="text-[10px] text-white/40 uppercase hover:text-white transition-colors" href="#">Reset Keys</a>
+</div>
+<div class="field-focus flex items-center bg-[#121212] border border-white/20 px-4 py-3 transition-colors">
+<span class="material-symbols-outlined text-white/40 mr-3">key</span>
+<input class="bg-transparent border-none focus:ring-0 text-white w-full font-body-md placeholder:text-white/20" placeholder="••••••••••••" type="password"/>
+</div>
+</div>
+<!-- Login Button -->
+<button class="w-full bg-white text-black font-label-lg text-label-lg py-4 uppercase tracking-widest hover:bg-white/90 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all shadow-[4px_4px_0px_#f5bd18]">
+                    Establish Link
+                </button>
+<!-- Divider -->
+<div class="flex items-center gap-4 py-2">
+<div class="h-[1px] flex-1 bg-white/10"></div>
+<span class="font-label-md text-label-md text-white/30 uppercase">OR</span>
+<div class="h-[1px] flex-1 bg-white/10"></div>
+</div>
+<!-- Biometric -->
+<button class="w-full border-2 border-white text-white font-label-lg text-label-lg py-4 flex items-center justify-center gap-3 uppercase tracking-widest hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-primary-container">fingerprint</span>
+                    Biometric Auth
+                </button>
+</div>
+<!-- Security Footer -->
+<div class="mt-stack-md flex flex-col items-center text-center gap-4">
+<div class="flex items-center gap-2 text-primary-container">
+<span class="material-symbols-outlined text-sm">verified_user</span>
+<span class="font-label-md text-label-md uppercase tracking-widest">End-to-End Encrypted</span>
+</div>
+<div class="text-[10px] text-white/40 uppercase max-w-[280px] leading-relaxed">
+                    Access to this system is restricted to authorized OSTA personnel only. All activities are logged and monitored under protocol 44-SEC.
+                </div>
+</div>
+</div>
+</main>
+<!-- Footer (Shared Component) -->
+<footer class="fixed bottom-0 w-full py-stack-sm px-margin-mobile flex flex-col md:flex-row justify-between items-center gap-base bg-black border-t border-white/10">
+<span class="font-label-md text-label-md text-secondary uppercase opacity-50">© 2024 OSTA SECURE SYSTEMS.</span>
+<div class="flex gap-4">
+<a class="font-label-md text-label-md text-secondary hover:text-white transition-colors" href="#">SECURITY POLICY</a>
+<a class="font-label-md text-label-md text-secondary hover:text-white transition-colors" href="#">SYSTEM STATUS</a>
+</div>
+</footer>
+<!-- Micro-interaction Script -->
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const inputs = document.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.addEventListener('focus', () => {
+                    // Visual feedback for high-authority feel
+                    console.log('Authenticating connection focus...');
+                });
+            });
+
+            // Random subtle flicker on the "Secure Portal" watermark for industrial vibe
+            const watermark = document.querySelector('.watermark');
+            setInterval(() => {
+                if (Math.random() > 0.98) {
+                    watermark.style.opacity = '0.08';
+                    setTimeout(() => watermark.style.opacity = '0.03', 50);
+                }
+            }, 100);
+        });
+    </script>
+</body></html>

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>OSTA - طلب جديد</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&amp;family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-surface-variant": "#4f4633",
+                        "on-primary-fixed": "#251a00",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed-dim": "#c8c6c5",
+                        "on-background": "#1a1c1c",
+                        "error": "#ba1a1a",
+                        "on-tertiary-container": "#525151",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed": "#1b1b1b",
+                        "on-tertiary-fixed": "#1c1b1b",
+                        "surface": "#f9f9f9",
+                        "on-secondary-container": "#646464",
+                        "surface-container": "#eeeeee",
+                        "secondary-fixed": "#e2e2e2",
+                        "surface-container-high": "#e8e8e8",
+                        "on-primary-fixed-variant": "#5a4300",
+                        "surface-bright": "#f9f9f9",
+                        "inverse-primary": "#f6be1a",
+                        "tertiary-fixed": "#e5e2e1",
+                        "tertiary-container": "#c7c5c4",
+                        "primary": "#775a00",
+                        "surface-container-highest": "#e2e2e2",
+                        "on-primary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "surface-dim": "#dadada",
+                        "outline-variant": "#d3c5ac",
+                        "on-error-container": "#93000a",
+                        "inverse-on-surface": "#f0f1f1",
+                        "primary-fixed-dim": "#f6be1a",
+                        "primary-fixed": "#ffdf9a",
+                        "primary-container": "#f5bd18",
+                        "surface-tint": "#775a00",
+                        "secondary-container": "#e2e2e2",
+                        "outline": "#817660",
+                        "on-tertiary-fixed-variant": "#474646",
+                        "on-surface": "#1a1c1c",
+                        "secondary-fixed-dim": "#c6c6c6",
+                        "secondary": "#5e5e5e",
+                        "on-primary-container": "#684e00",
+                        "inverse-surface": "#2f3131",
+                        "surface-container-low": "#f3f3f4",
+                        "surface-variant": "#e2e2e2",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed-variant": "#474747",
+                        "on-secondary": "#ffffff",
+                        "tertiary": "#5f5e5e",
+                        "background": "#f9f9f9"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "margin-desktop": "48px",
+                        "stack-md": "24px",
+                        "base": "8px",
+                        "stack-sm": "12px",
+                        "stack-lg": "48px",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "headline-sm": ["Outfit"],
+                        "label-md": ["Outfit"],
+                        "headline-lg": ["Outfit"],
+                        "body-lg": ["Inter"],
+                        "headline-md": ["Outfit"],
+                        "body-md": ["Inter"],
+                        "label-lg": ["Outfit"],
+                        "headline-lg-mobile": ["Outfit"],
+                        "display-lg": ["Outfit"]
+                    },
+                    "fontSize": {
+                        "headline-sm": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "label-md": ["12px", {"lineHeight": "1", "fontWeight": "600"}],
+                        "headline-lg": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "label-lg": ["14px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "display-lg": ["72px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #775a00; border-radius: 2px; }
+        .sticker-shadow { box-shadow: 4px 4px 0px #000000; }
+        .obsidian-card { background: #000000; border: 1px solid rgba(255, 255, 255, 0.1); }
+        .active-step { border-bottom: 2px solid #f5bd18; color: #f5bd18; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-primary-container text-on-background font-body-md min-h-screen pb-20">
+<!-- Top App Bar -->
+<header class="bg-black/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10 px-margin-mobile flex justify-between items-center h-16 w-full">
+<div class="flex items-center gap-base">
+<button class="text-primary p-base active:scale-95 transition-transform">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="text-headline-md font-headline-md font-extrabold text-primary uppercase tracking-tighter">OSTA</h1>
+</div>
+<div class="flex items-center gap-gutter">
+<button class="text-primary">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="w-8 h-8 rounded-full border border-primary/30 bg-secondary-container overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional close-up studio portrait of a middle-eastern man in his 30s with a neat beard, wearing a high-quality dark uniform. The lighting is dramatic and premium with golden highlights against a dark charcoal background, matching the brand's luxurious industrial aesthetic." src="https://www.gstatic.com/labs-code/stitch/stitch-placeholder-300x300.svg"/>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="px-margin-mobile pt-stack-md flex flex-col gap-stack-md max-w-container-max mx-auto">
+<!-- Welcome Hero Section -->
+<section class="obsidian-card p-stack-md relative overflow-hidden">
+<div class="relative z-10">
+<span class="text-label-lg font-label-lg text-primary-fixed block mb-2">بياناتك لا تُحفظ على هذا الجهاز</span>
+<h2 class="text-headline-lg-mobile font-headline-lg-mobile text-white mb-base">طلب جديد</h2>
+<p class="text-body-md text-secondary-fixed/70">ابنِ الطلب خطوة بخطوة مع معاينة مباشرة توضح لك التقدم الحالي.</p>
+</div>
+<!-- Decorative Element -->
+<div class="absolute -right-10 -bottom-10 opacity-10">
+<span class="material-symbols-outlined text-[120px] text-primary">engineering</span>
+</div>
+</section>
+<!-- Progress Stepper (Mobile Optimized Grid) -->
+<nav class="grid grid-cols-4 gap-base mb-base">
+<div class="flex flex-col items-center gap-base active-step pb-base">
+<div class="w-8 h-8 flex items-center justify-center bg-primary text-black font-bold">1</div>
+<span class="text-label-md font-label-md">الخدمة</span>
+</div>
+<div class="flex flex-col items-center gap-base text-on-surface-variant/50 pb-base">
+<div class="w-8 h-8 flex items-center justify-center bg-black/10 border border-black/10 text-on-surface-variant font-bold">2</div>
+<span class="text-label-md font-label-md">المشكلة</span>
+</div>
+<div class="flex flex-col items-center gap-base text-on-surface-variant/50 pb-base">
+<div class="w-8 h-8 flex items-center justify-center bg-black/10 border border-black/10 text-on-surface-variant font-bold">3</div>
+<span class="text-label-md font-label-md">العنوان</span>
+</div>
+<div class="flex flex-col items-center gap-base text-on-surface-variant/50 pb-base">
+<div class="w-8 h-8 flex items-center justify-center bg-black/10 border border-black/10 text-on-surface-variant font-bold">4</div>
+<span class="text-label-md font-label-md">التوقيت</span>
+</div>
+</nav>
+<!-- Dynamic Form Body -->
+<div class="flex flex-col md:flex-row gap-gutter items-start">
+<!-- Category Grid -->
+<section class="flex-1 w-full flex flex-col gap-stack-md">
+<div class="flex justify-between items-end">
+<h3 class="text-headline-sm font-headline-sm text-on-background">اختر الفئة الرئيسية</h3>
+<span class="text-label-lg font-label-lg text-primary">الخدمة المحددة</span>
+</div>
+<div class="grid grid-cols-2 gap-base">
+<!-- Category Item (Carpenter) -->
+<button class="obsidian-card p-stack-sm text-right flex flex-col gap-base transition-all hover:bg-zinc-900 group active:scale-95">
+<div class="w-10 h-10 bg-primary/20 flex items-center justify-center mb-base group-hover:bg-primary transition-colors">
+<span class="material-symbols-outlined text-primary group-hover:text-black">handyman</span>
+</div>
+<span class="text-label-lg font-label-lg text-white">نجار</span>
+<p class="text-[10px] text-secondary-fixed/50 leading-tight">تفصيل، صيانة، تركيب، وضبط الأبواب والمطابخ والأثاث.</p>
+</button>
+<!-- Category Item (Plumber) -->
+<button class="obsidian-card p-stack-sm text-right flex flex-col gap-base transition-all hover:bg-zinc-900 group active:scale-95">
+<div class="w-10 h-10 bg-primary/20 flex items-center justify-center mb-base group-hover:bg-primary transition-colors">
+<span class="material-symbols-outlined text-primary group-hover:text-black">plumbing</span>
+</div>
+<span class="text-label-lg font-label-lg text-white">سباك</span>
+<p class="text-[10px] text-secondary-fixed/50 leading-tight">تسريب؟ انسداد؟ تركيب جديد؟ سباكين موثقين على مدار اليوم.</p>
+</button>
+<!-- Category Item (Electrician) -->
+<button class="obsidian-card p-stack-sm text-right flex flex-col gap-base border-primary/50 bg-primary/10 transition-all hover:bg-zinc-900 group active:scale-95">
+<div class="w-10 h-10 bg-primary flex items-center justify-center mb-base">
+<span class="material-symbols-outlined text-black">electric_bolt</span>
+</div>
+<span class="text-label-lg font-label-lg text-white">كهربائي</span>
+<p class="text-[10px] text-secondary-fixed/50 leading-tight">صيانات منزلية سريعة وتمديدات احترافية للطوارئ.</p>
+</button>
+<!-- Category Item (AC) -->
+<button class="obsidian-card p-stack-sm text-right flex flex-col gap-base transition-all hover:bg-zinc-900 group active:scale-95">
+<div class="w-10 h-10 bg-primary/20 flex items-center justify-center mb-base group-hover:bg-primary transition-colors">
+<span class="material-symbols-outlined text-primary group-hover:text-black">ac_unit</span>
+</div>
+<span class="text-label-lg font-label-lg text-white">تكييفات</span>
+<p class="text-[10px] text-secondary-fixed/50 leading-tight">صيانة وتركيب وغسيل تكييفات وشحن فريون.</p>
+</button>
+<!-- Category Item (Appliances) -->
+<button class="obsidian-card p-stack-sm text-right flex flex-col gap-base transition-all hover:bg-zinc-900 group active:scale-95">
+<div class="w-10 h-10 bg-primary/20 flex items-center justify-center mb-base group-hover:bg-primary transition-colors">
+<span class="material-symbols-outlined text-primary group-hover:text-black">oven_gen</span>
+</div>
+<span class="text-label-lg font-label-lg text-white">أجهزة منزلية</span>
+<p class="text-[10px] text-secondary-fixed/50 leading-tight">إصلاح الثلاجات، الغسالات، والبوتاجازات.</p>
+</button>
+<!-- Category Item (Painter) -->
+<button class="obsidian-card p-stack-sm text-right flex flex-col gap-base transition-all hover:bg-zinc-900 group active:scale-95">
+<div class="w-10 h-10 bg-primary/20 flex items-center justify-center mb-base group-hover:bg-primary transition-colors">
+<span class="material-symbols-outlined text-primary group-hover:text-black">format_paint</span>
+</div>
+<span class="text-label-lg font-label-lg text-white">دهانات</span>
+<p class="text-[10px] text-secondary-fixed/50 leading-tight">تشطيبات داخلية وخارجية بجودة عالية.</p>
+</button>
+</div>
+</section>
+<!-- Sidebar Draft Summary -->
+<aside class="w-full md:w-80 flex flex-col gap-stack-md sticky top-20">
+<div class="obsidian-card p-stack-md">
+<span class="text-label-md font-label-md text-primary bg-primary/10 px-2 py-1 mb-base inline-block">بناء الطلب</span>
+<h4 class="text-headline-sm font-headline-sm text-white mb-stack-sm">ملخص المسودة</h4>
+<div class="space-y-stack-sm border-t border-white/10 pt-stack-sm">
+<div class="flex justify-between items-center">
+<span class="text-label-md text-secondary-fixed/60">الخدمة:</span>
+<span class="text-label-md text-white">لم تُختر بعد</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-label-md text-secondary-fixed/60">العنوان:</span>
+<span class="text-label-md text-white">بانتظار العنوان</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-label-md text-secondary-fixed/60">التوقيت:</span>
+<div class="flex gap-base">
+<span class="bg-primary/20 text-primary text-[10px] px-1">اليوم</span>
+<span class="bg-white/5 text-white/50 text-[10px] px-1">عنوان محفوظ</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Quality Indicators Card -->
+<div class="obsidian-card p-stack-md border-l-4 border-l-primary">
+<span class="text-label-md font-label-md text-secondary-fixed/50 block mb-base">مسار الجودة</span>
+<h4 class="text-label-lg font-label-lg text-white mb-stack-sm">مؤشرات الإرسال</h4>
+<div class="space-y-base">
+<div>
+<span class="text-[10px] text-primary block">وضوح الوصف</span>
+<p class="text-[12px] text-white/80">أضف تفاصيل أكثر لتحسين المطابقة</p>
+</div>
+<div class="h-1 bg-white/10 w-full overflow-hidden">
+<div class="h-full bg-primary w-1/4"></div>
+</div>
+<p class="text-[10px] text-white/40 mt-base italic">نصيحة تشغيلية: اختيار الطوارئ مع عنوان واضح يسرع المطابقة بشكل ملحوظ.</p>
+</div>
+</div>
+</aside>
+</div>
+</main>
+<!-- Footer Action Bar -->
+<footer class="fixed bottom-0 left-0 w-full bg-black/90 backdrop-blur-xl border-t border-white/10 p-margin-mobile flex justify-between items-center z-50">
+<button class="px-gutter py-stack-sm border-2 border-white/20 text-white font-bold hover:bg-white/5 transition-all active:scale-95">
+            السابق
+        </button>
+<button class="px-gutter py-stack-sm bg-white text-black font-bold sticker-shadow hover:bg-secondary-fixed transition-all active:translate-x-1 active:translate-y-1 active:shadow-none">
+            التالي
+        </button>
+</footer>
+<!-- Bottom Navigation Bar (Hidden on Desktop) -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center h-16 md:hidden bg-black/80 backdrop-blur-md z-40 border-t border-white/10 pointer-events-none opacity-0">
+<!-- Kept for structure but suppressed as per mandate for task-focused screens -->
+</nav>
+<script>
+        // Micro-interactions for category selection
+        document.querySelectorAll('.obsidian-card.group').forEach(card => {
+            card.addEventListener('click', function() {
+                document.querySelectorAll('.obsidian-card.group').forEach(c => {
+                    c.classList.remove('border-primary/50', 'bg-primary/10');
+                    c.querySelector('.w-10').classList.remove('bg-primary');
+                    c.querySelector('.w-10').classList.add('bg-primary/20');
+                    c.querySelector('.material-symbols-outlined').classList.remove('text-black');
+                    c.querySelector('.material-symbols-outlined').classList.add('text-primary');
+                });
+                this.classList.add('border-primary/50', 'bg-primary/10');
+                const iconContainer = this.querySelector('.w-10');
+                iconContainer.classList.remove('bg-primary/20');
+                iconContainer.classList.add('bg-primary');
+                const icon = this.querySelector('.material-symbols-outlined');
+                icon.classList.remove('text-primary');
+                icon.classList.add('text-black');
+            });
+        });
+    </script>
+</body></html>

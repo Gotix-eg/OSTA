@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>OSTA PRO - Sponsored Ads Dashboard</title>
+<!-- Google Fonts: Outfit for Headlines, Inter for Body -->
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&amp;family=Inter:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-error-container": "#93000a",
+                    "surface-dim": "#dadada",
+                    "surface-container-highest": "#e2e2e2",
+                    "surface-container-lowest": "#ffffff",
+                    "error": "#ba1a1a",
+                    "on-primary-fixed-variant": "#5a4300",
+                    "on-secondary": "#ffffff",
+                    "primary-fixed": "#ffdf9a",
+                    "on-surface": "#1a1c1c",
+                    "outline": "#817660",
+                    "tertiary-container": "#c7c5c4",
+                    "secondary-fixed": "#e2e2e2",
+                    "on-primary-fixed": "#251a00",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary-container": "#646464",
+                    "error-container": "#ffdad6",
+                    "on-tertiary-container": "#525151",
+                    "on-secondary-fixed": "#1b1b1b",
+                    "on-background": "#1a1c1c",
+                    "tertiary": "#5f5e5e",
+                    "surface-variant": "#e2e2e2",
+                    "on-surface-variant": "#4f4633",
+                    "on-tertiary-fixed": "#1c1b1b",
+                    "secondary-container": "#e2e2e2",
+                    "primary": "#775a00",
+                    "on-error": "#ffffff",
+                    "tertiary-fixed": "#e5e2e1",
+                    "surface-bright": "#f9f9f9",
+                    "on-secondary-fixed-variant": "#474747",
+                    "on-primary-container": "#684e00",
+                    "on-primary": "#ffffff",
+                    "surface-container": "#eeeeee",
+                    "inverse-surface": "#2f3131",
+                    "inverse-on-surface": "#f0f1f1",
+                    "surface-container-low": "#f3f3f4",
+                    "primary-container": "#f5bd18",
+                    "inverse-primary": "#f6be1a",
+                    "secondary": "#5e5e5e",
+                    "background": "#f9f9f9",
+                    "surface": "#f9f9f9",
+                    "secondary-fixed-dim": "#c6c6c6",
+                    "primary-fixed-dim": "#f6be1a",
+                    "tertiary-fixed-dim": "#c8c6c5",
+                    "surface-container-high": "#e8e8e8",
+                    "surface-tint": "#775a00",
+                    "outline-variant": "#d3c5ac",
+                    "on-tertiary-fixed-variant": "#474646"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "stack-lg": "48px",
+                    "margin-desktop": "48px",
+                    "stack-sm": "12px",
+                    "margin-mobile": "16px",
+                    "base": "8px",
+                    "gutter": "24px",
+                    "stack-md": "24px",
+                    "container-max": "1280px"
+            },
+            "fontFamily": {
+                    "label-md": ["Outfit"],
+                    "label-lg": ["Outfit"],
+                    "headline-lg-mobile": ["Outfit"],
+                    "headline-sm": ["Outfit"],
+                    "display-lg": ["Outfit"],
+                    "body-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-md": ["Outfit"],
+                    "headline-lg": ["Outfit"]
+            },
+            "fontSize": {
+                    "label-md": ["12px", {"lineHeight": "1", "fontWeight": "600"}],
+                    "label-lg": ["14px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "headline-sm": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "display-lg": ["72px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "headline-lg": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Custom scrollbar for premium feel */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f9f9f9; }
+        ::-webkit-scrollbar-thumb { background: #775a00; }
+        
+        .premium-border { border: 1px solid rgba(255, 255, 255, 0.1); }
+        .glass-obsidian { background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(20px); }
+        .hard-shadow { box-shadow: 4px 4px 0px #000000; }
+        .yellow-void { background-color: #f5bd18; min-height: 100vh; }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md">
+<!-- Top Navigation (Shell) -->
+<header class="bg-black/80 backdrop-blur-md text-primary border-b border-white/10 docked full-width top-0 z-50 fixed w-full">
+<div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop w-full h-16">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined cursor-pointer md:hidden">menu</span>
+<span class="text-headline-md font-headline-md font-extrabold text-primary uppercase tracking-tighter">OSTA</span>
+</div>
+<nav class="hidden md:flex gap-8">
+<a class="text-on-surface-variant font-label-lg text-label-lg hover:text-primary transition-colors duration-200 uppercase" href="#">Dashboard</a>
+<a class="text-primary border-b-2 border-primary font-label-lg text-label-lg hover:text-primary transition-colors duration-200 uppercase" href="#">Advertising</a>
+<a class="text-on-surface-variant font-label-lg text-label-lg hover:text-primary transition-colors duration-200 uppercase" href="#">Inventory</a>
+<a class="text-on-surface-variant font-label-lg text-label-lg hover:text-primary transition-colors duration-200 uppercase" href="#">Support</a>
+</nav>
+<div class="flex items-center gap-4">
+<div class="hidden md:block text-right">
+<p class="text-label-md font-label-md text-white">Elite Construction Ltd.</p>
+<p class="text-[10px] text-primary-fixed uppercase tracking-widest">Premium Partner</p>
+</div>
+<div class="w-10 h-10 rounded-full bg-primary-container border-2 border-primary overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional business headshot of a construction executive wearing a sharp suit with a backdrop of a modern architectural project. The lighting is dramatic and high-contrast, fitting the premium industrial aesthetic. The color palette features warm golden tones and deep obsidian shadows, reflecting a sense of authority and elite status." src="https://www.gstatic.com/labs-code/stitch/stitch-placeholder-300x300.svg"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Side Navigation (Shell Desktop) -->
+<aside class="fixed left-0 top-0 h-full w-64 hidden md:flex flex-col gap-base py-stack-md bg-black border-r border-white/10 z-40 pt-20">
+<div class="px-6 mb-8">
+<p class="text-primary font-black text-headline-sm font-headline-sm uppercase">OSTA PRO</p>
+<p class="text-secondary text-label-md font-label-md">Ads Management</p>
+</div>
+<nav class="flex-grow">
+<div class="text-secondary px-4 py-3 flex items-center gap-3 hover:bg-white/5 hover:text-primary-fixed-dim transition-colors group cursor-pointer">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-lg text-label-lg">Home</span>
+</div>
+<div class="text-primary bg-surface-container-highest/10 border-l-4 border-primary px-4 py-3 flex items-center gap-3 translate-x-1 transition-transform cursor-pointer">
+<span class="material-symbols-outlined">assignment</span>
+<span class="font-label-lg text-label-lg">Ad Campaigns</span>
+</div>
+<div class="text-secondary px-4 py-3 flex items-center gap-3 hover:bg-white/5 hover:text-primary-fixed-dim transition-colors cursor-pointer">
+<span class="material-symbols-outlined">store</span>
+<span class="font-label-lg text-label-lg">Stores</span>
+</div>
+<div class="text-secondary px-4 py-3 flex items-center gap-3 hover:bg-white/5 hover:text-primary-fixed-dim transition-colors cursor-pointer">
+<span class="material-symbols-outlined">build</span>
+<span class="font-label-lg text-label-lg">Materials Market</span>
+</div>
+<div class="text-secondary px-4 py-3 flex items-center gap-3 hover:bg-white/5 hover:text-primary-fixed-dim transition-colors cursor-pointer">
+<span class="material-symbols-outlined">favorite</span>
+<span class="font-label-lg text-label-lg">Favorites</span>
+</div>
+<div class="text-secondary px-4 py-3 flex items-center gap-3 hover:bg-white/5 hover:text-primary-fixed-dim transition-colors cursor-pointer">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-lg text-label-lg">Wallet</span>
+</div>
+</nav>
+<div class="px-4 mt-auto">
+<div class="bg-primary-container p-4 hard-shadow mb-6">
+<p class="text-black font-bold text-label-md">ADS CREDIT</p>
+<p class="text-black font-extrabold text-headline-sm">£1,240.00</p>
+<button class="mt-3 w-full bg-black text-white py-2 text-label-md font-bold uppercase hover:bg-zinc-800 transition-colors">Top Up</button>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="md:ml-64 pt-20 yellow-void p-margin-mobile md:p-margin-desktop">
+<div class="max-w-container-max mx-auto space-y-stack-lg">
+<!-- Hero Stats Bento Grid -->
+<section>
+<div class="flex justify-between items-end mb-stack-md">
+<div>
+<p class="text-black font-bold text-label-lg uppercase tracking-widest">Sponsored Performance</p>
+<h1 class="text-black font-headline-lg text-headline-lg">Active Campaigns</h1>
+</div>
+<div class="hidden md:flex gap-2">
+<button class="bg-black text-white px-6 py-3 font-label-lg text-label-lg hard-shadow uppercase active:scale-95 transition-transform">Export Report</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter">
+<!-- Metric Card -->
+<div class="bg-black p-8 premium-border flex flex-col justify-between h-48 group hover:border-primary/50 transition-all">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-primary-container">visibility</span>
+<span class="text-on-tertiary-fixed-variant text-label-md font-label-md">+12.5%</span>
+</div>
+<div>
+<p class="text-secondary text-label-md font-label-md uppercase">Impressions</p>
+<p class="text-white text-headline-md font-headline-md">482,901</p>
+</div>
+</div>
+<!-- Metric Card -->
+<div class="bg-black p-8 premium-border flex flex-col justify-between h-48 group hover:border-primary/50 transition-all">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-primary-container">ads_click</span>
+<span class="text-on-tertiary-fixed-variant text-label-md font-label-md">+8.2%</span>
+</div>
+<div>
+<p class="text-secondary text-label-md font-label-md uppercase">Clicks</p>
+<p class="text-white text-headline-md font-headline-md">12,442</p>
+</div>
+</div>
+<!-- Metric Card -->
+<div class="bg-black p-8 premium-border flex flex-col justify-between h-48 group hover:border-primary/50 transition-all">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-primary-container">query_stats</span>
+<span class="text-on-tertiary-fixed-variant text-label-md font-label-md">+0.4%</span>
+</div>
+<div>
+<p class="text-secondary text-label-md font-label-md uppercase">CTR</p>
+<p class="text-white text-headline-md font-headline-md">2.57%</p>
+</div>
+</div>
+<!-- Metric Card - Highlighted -->
+<div class="bg-primary p-8 hard-shadow flex flex-col justify-between h-48 group">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-black" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
+<span class="bg-black text-primary text-[10px] px-2 py-1 font-bold uppercase">Healthy</span>
+</div>
+<div>
+<p class="text-black/70 text-label-md font-label-md uppercase">Wallet Balance</p>
+<p class="text-black text-headline-md font-headline-md">£1,240.00</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Build Section -->
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-stack-lg">
+<!-- Build Form Column -->
+<div class="lg:col-span-2 bg-black p-margin-desktop premium-border space-y-stack-md">
+<div class="border-b border-white/10 pb-stack-sm mb-stack-md">
+<h2 class="text-white font-headline-sm text-headline-sm uppercase tracking-tight">Build Sponsored Ad</h2>
+<p class="text-secondary text-body-md">Configure your placement and target elite projects.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-stack-md">
+<div class="space-y-base">
+<label class="text-primary-fixed text-label-lg font-label-lg uppercase">Ad Type</label>
+<div class="grid grid-cols-1 gap-base">
+<label class="flex items-center gap-4 bg-[#121212] p-4 border border-white/10 hover:border-primary-container cursor-pointer transition-colors group">
+<input checked="" class="text-primary focus:ring-primary bg-black border-white/20" name="ad_type" type="radio"/>
+<div class="flex flex-col">
+<span class="text-white font-bold text-label-lg">Top-of-Search</span>
+<span class="text-secondary text-label-md">Be the first pro clients see.</span>
+</div>
+<span class="material-symbols-outlined ml-auto text-primary opacity-0 group-hover:opacity-100 transition-opacity">search</span>
+</label>
+<label class="flex items-center gap-4 bg-[#121212] p-4 border border-white/10 hover:border-primary-container cursor-pointer transition-colors group">
+<input class="text-primary focus:ring-primary bg-black border-white/20" name="ad_type" type="radio"/>
+<div class="flex flex-col">
+<span class="text-white font-bold text-label-lg">Banner Placement</span>
+<span class="text-secondary text-label-md">High-impact visual discovery.</span>
+</div>
+<span class="material-symbols-outlined ml-auto text-primary opacity-0 group-hover:opacity-100 transition-opacity">view_carousel</span>
+</label>
+</div>
+</div>
+<div class="space-y-stack-md">
+<div class="space-y-base">
+<label class="text-primary-fixed text-label-lg font-label-lg uppercase">Daily Budget</label>
+<div class="relative">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 text-primary font-bold">£</span>
+<input class="w-full bg-[#121212] border border-white/20 text-white pl-8 pr-4 py-3 focus:border-primary-container focus:ring-0 transition-all outline-none" placeholder="50.00" type="number"/>
+</div>
+</div>
+<div class="space-y-base">
+<label class="text-primary-fixed text-label-lg font-label-lg uppercase">Duration</label>
+<select class="w-full bg-[#121212] border border-white/20 text-white px-4 py-3 focus:border-primary-container focus:ring-0 appearance-none outline-none">
+<option>7 Days (Standard)</option>
+<option>14 Days (Recommended)</option>
+<option>30 Days (Best Value)</option>
+<option>Ongoing</option>
+</select>
+</div>
+</div>
+</div>
+<div class="pt-stack-md border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-stack-md">
+<div>
+<p class="text-secondary text-label-md uppercase">Estimated Reach</p>
+<p class="text-white font-bold text-headline-sm">12,000 - 18,000 / week</p>
+</div>
+<button class="w-full md:w-auto bg-primary-container text-black px-12 py-4 font-label-lg text-label-lg font-extrabold hard-shadow uppercase hover:bg-white transition-all active:scale-95">Launch Campaign</button>
+</div>
+</div>
+<!-- Preview Column -->
+<div class="space-y-stack-md">
+<div class="bg-[#121212] p-8 border border-white/10 h-full flex flex-col">
+<div class="mb-stack-md">
+<p class="text-primary-fixed text-label-lg font-label-lg uppercase mb-1">Ad Preview</p>
+<p class="text-secondary text-label-md">How your business appears to clients.</p>
+</div>
+<!-- Mock Ad -->
+<div class="bg-black border-2 border-primary-container p-0 overflow-hidden relative group">
+<div class="absolute top-2 right-2 bg-primary-container text-black text-[10px] px-2 py-1 font-bold z-10">SPONSORED</div>
+<div class="h-40 w-full overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="A cinematic, wide-angle photo of a premium residential construction site at sunset. High-end materials like brushed steel and dark wood are visible. The scene is illuminated by warm site lights against a deep blue dusk sky, perfectly capturing the premium industrial theme with high contrast and sharp details." src="https://www.gstatic.com/labs-code/stitch/stitch-placeholder-300x300.svg"/>
+</div>
+<div class="p-6 space-y-3">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="text-white font-bold text-headline-sm leading-tight">Elite Construction Ltd.</h3>
+<div class="flex items-center gap-2 mt-1">
+<div class="flex text-primary">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<span class="text-secondary text-label-md">(142 Reviews)</span>
+</div>
+</div>
+</div>
+<p class="text-surface-dim text-body-md line-clamp-2">Specializing in high-end structural steel and luxury residential renovations across the greater London area.</p>
+<div class="flex flex-wrap gap-2">
+<span class="bg-zinc-800 text-white text-[10px] px-2 py-1 font-bold uppercase border border-white/10">Structural Steel</span>
+<span class="bg-zinc-800 text-white text-[10px] px-2 py-1 font-bold uppercase border border-white/10">Architectural Design</span>
+</div>
+<button class="w-full bg-white text-black py-3 font-bold uppercase text-label-lg mt-4 transition-colors hover:bg-primary-container">View Portfolio</button>
+</div>
+</div>
+<div class="mt-auto pt-stack-md text-center">
+<p class="text-secondary text-label-md italic">This is a dynamic preview. Actual display may vary by device.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Active Campaigns Table -->
+<section class="bg-black p-margin-desktop premium-border overflow-hidden">
+<div class="flex justify-between items-center mb-stack-md">
+<h2 class="text-white font-headline-sm text-headline-sm uppercase tracking-tight">Active Campaigns</h2>
+<span class="text-primary text-label-lg font-label-lg cursor-pointer hover:underline">View History</span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="border-b border-white/10 text-secondary text-label-md uppercase font-bold">
+<th class="pb-4 font-bold">Campaign Name</th>
+<th class="pb-4 font-bold">Status</th>
+<th class="pb-4 font-bold">Daily Spend</th>
+<th class="pb-4 font-bold">Impressions</th>
+<th class="pb-4 font-bold">CTR</th>
+<th class="pb-4 font-bold text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="text-white divide-y divide-white/5">
+<tr class="group hover:bg-white/5 transition-colors">
+<td class="py-6">
+<p class="font-bold">London West End Push</p>
+<p class="text-secondary text-xs">Top-of-Search • Started Jan 12</p>
+</td>
+<td class="py-6">
+<span class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+<span class="text-label-md uppercase font-bold">Live</span>
+</span>
+</td>
+<td class="py-6 font-mono">£45.00</td>
+<td class="py-6 font-mono">124,002</td>
+<td class="py-6 font-mono text-primary-fixed">3.1%</td>
+<td class="py-6 text-right">
+<button class="p-2 hover:text-primary transition-colors"><span class="material-symbols-outlined">edit</span></button>
+<button class="p-2 hover:text-error transition-colors"><span class="material-symbols-outlined">pause_circle</span></button>
+</td>
+</tr>
+<tr class="group hover:bg-white/5 transition-colors">
+<td class="py-6">
+<p class="font-bold">Luxury Renovation Banner</p>
+<p class="text-secondary text-xs">Banner Placement • Started Jan 05</p>
+</td>
+<td class="py-6">
+<span class="flex items-center gap-2 text-secondary">
+<span class="w-2 h-2 rounded-full bg-zinc-600"></span>
+<span class="text-label-md uppercase font-bold">Paused</span>
+</span>
+</td>
+<td class="py-6 font-mono">£25.00</td>
+<td class="py-6 font-mono">82,910</td>
+<td class="py-6 font-mono text-primary-fixed">1.8%</td>
+<td class="py-6 text-right">
+<button class="p-2 hover:text-primary transition-colors"><span class="material-symbols-outlined">play_circle</span></button>
+<button class="p-2 hover:text-error transition-colors"><span class="material-symbols-outlined">delete</span></button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</div>
+</main>
+<!-- Bottom Nav (Mobile Shell) -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center h-16 md:hidden bg-black/80 backdrop-blur-md text-secondary border-t border-white/10 z-50">
+<div class="flex flex-col items-center justify-center text-secondary">
+<span class="material-symbols-outlined">home</span>
+<span class="text-label-md font-label-md">Home</span>
+</div>
+<div class="flex flex-col items-center justify-center text-primary font-bold scale-110 transition-all duration-300">
+<span class="material-symbols-outlined">assignment_late</span>
+<span class="text-label-md font-label-md">Requests</span>
+</div>
+<div class="flex flex-col items-center justify-center text-secondary">
+<span class="material-symbols-outlined">storefront</span>
+<span class="text-label-md font-label-md">Stores</span>
+</div>
+<div class="flex flex-col items-center justify-center text-secondary">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="text-label-md font-label-md">Market</span>
+</div>
+<div class="flex flex-col items-center justify-center text-secondary">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+<span class="text-label-md font-label-md">Wallet</span>
+</div>
+</nav>
+<script>
+        // Simple micro-interaction for primary button
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('mousedown', () => {
+                button.classList.add('scale-95');
+            });
+            button.addEventListener('mouseup', () => {
+                button.classList.remove('scale-95');
+            });
+            button.addEventListener('mouseleave', () => {
+                button.classList.remove('scale-95');
+            });
+        });
+
+        // Form logic simulation
+        const budgetInput = document.querySelector('input[type="number"]');
+        const reachEstimate = document.querySelector('.text-headline-sm');
+        
+        budgetInput?.addEventListener('input', (e) => {
+            const val = e.target.value || 50;
+            const minReach = Math.floor(val * 240);
+            const maxReach = Math.floor(val * 360);
+            reachEstimate.textContent = `${minReach.toLocaleString()} - ${maxReach.toLocaleString()} / week`;
+        });
+    </script>
+</body></html>

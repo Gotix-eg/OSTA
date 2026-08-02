@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>OSTA Client | Settings</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&amp;family=Inter:wght@400;500&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Outfit:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "on-surface": "#1a1c1c",
+                        "on-error-container": "#93000a",
+                        "tertiary": "#5f5e5e",
+                        "surface-container-high": "#e8e8e8",
+                        "surface-bright": "#f9f9f9",
+                        "surface-container": "#eeeeee",
+                        "on-primary-container": "#684e00",
+                        "error-container": "#ffdad6",
+                        "secondary-container": "#e2e2e2",
+                        "surface-dim": "#dadada",
+                        "surface-tint": "#775a00",
+                        "outline-variant": "#d3c5ac",
+                        "on-tertiary-fixed-variant": "#474646",
+                        "inverse-primary": "#f6be1a",
+                        "secondary-fixed-dim": "#c6c6c6",
+                        "primary-fixed": "#ffdf9a",
+                        "inverse-on-surface": "#f0f1f1",
+                        "primary-fixed-dim": "#f6be1a",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#f3f3f4",
+                        "on-primary-fixed": "#251a00",
+                        "on-secondary-fixed": "#1b1b1b",
+                        "tertiary-fixed-dim": "#c8c6c5",
+                        "surface": "#f9f9f9",
+                        "on-background": "#1a1c1c",
+                        "on-tertiary-fixed": "#1c1b1b",
+                        "on-secondary-fixed-variant": "#474747",
+                        "error": "#ba1a1a",
+                        "on-tertiary-container": "#525151",
+                        "outline": "#817660",
+                        "primary": "#775a00",
+                        "inverse-surface": "#2f3131",
+                        "tertiary-container": "#c7c5c4",
+                        "primary-container": "#f5bd18",
+                        "background": "#f9f9f9",
+                        "surface-container-highest": "#e2e2e2",
+                        "secondary-fixed": "#e2e2e2",
+                        "on-secondary": "#ffffff",
+                        "secondary": "#5e5e5e",
+                        "on-secondary-container": "#646464",
+                        "on-primary-fixed-variant": "#5a4300",
+                        "on-primary": "#ffffff",
+                        "surface-variant": "#e2e2e2",
+                        "on-surface-variant": "#4f4633",
+                        "tertiary-fixed": "#e5e2e1"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "margin-desktop": "48px",
+                        "gutter": "24px",
+                        "stack-md": "24px",
+                        "margin-mobile": "16px",
+                        "stack-sm": "12px",
+                        "stack-lg": "48px",
+                        "container-max": "1280px",
+                        "base": "8px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Outfit"],
+                        "body-md": ["Inter"],
+                        "headline-sm": ["Outfit"],
+                        "headline-lg": ["Outfit"],
+                        "label-md": ["Outfit"],
+                        "label-lg": ["Outfit"],
+                        "headline-md": ["Outfit"],
+                        "body-lg": ["Inter"],
+                        "headline-lg-mobile": ["Outfit"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["72px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-sm": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "headline-lg": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "label-md": ["12px", {"lineHeight": "1", "fontWeight": "600"}],
+                        "label-lg": ["14px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-obsidian {
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+        }
+        .obsidian-card {
+            background-color: #000000;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .hard-shadow {
+            box-shadow: 4px 4px 0px #000000;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #000000;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #f5bd18;
+        }
+    </style>
+</head>
+<body class="bg-primary-container font-body-md text-on-background min-h-screen">
+<!-- SIDEBAR -->
+<nav class="h-screen w-64 fixed left-0 top-0 bg-[#000000] border-r border-white/10 flex flex-col py-stack-md z-50">
+<div class="px-6 mb-10">
+<h1 class="font-headline-md text-headline-md font-bold text-primary-container">OSTA CLIENT</h1>
+<p class="text-[10px] uppercase tracking-[0.2em] text-white/40">Industrial Portal</p>
+</div>
+<div class="flex-grow space-y-2">
+<!-- Navigation Items Mapping -->
+<a class="flex items-center px-6 py-3 text-secondary hover:text-white transition-colors group" href="#">
+<span class="material-symbols-outlined mr-3">dashboard</span>
+<span class="font-label-lg text-label-lg uppercase tracking-wider">Dashboard</span>
+</a>
+<a class="flex items-center px-6 py-3 text-secondary hover:text-white transition-colors group" href="#">
+<span class="material-symbols-outlined mr-3">build</span>
+<span class="font-label-lg text-label-lg uppercase tracking-wider">Service Requests</span>
+</a>
+<a class="flex items-center px-6 py-3 text-secondary hover:text-white transition-colors group" href="#">
+<span class="material-symbols-outlined mr-3">engineering</span>
+<span class="font-label-lg text-label-lg uppercase tracking-wider">Technicians</span>
+</a>
+<a class="flex items-center px-6 py-3 text-secondary hover:text-white transition-colors group" href="#">
+<span class="material-symbols-outlined mr-3">payments</span>
+<span class="font-label-lg text-label-lg uppercase tracking-wider">Financials</span>
+</a>
+<!-- Active State: Settings -->
+<a class="flex items-center px-6 py-3 text-primary-container border-r-2 border-primary-container bg-white/5 group" href="#">
+<span class="material-symbols-outlined mr-3">settings</span>
+<span class="font-label-lg text-label-lg uppercase tracking-wider">Settings</span>
+</a>
+</div>
+<div class="mt-auto px-6 space-y-2 border-t border-white/10 pt-6">
+<a class="flex items-center py-2 text-secondary hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined mr-3 text-sm">help</span>
+<span class="font-label-md text-label-md uppercase">Support</span>
+</a>
+<a class="flex items-center py-2 text-error hover:opacity-80 transition-opacity" href="#">
+<span class="material-symbols-outlined mr-3 text-sm">logout</span>
+<span class="font-label-md text-label-md uppercase">Logout</span>
+</a>
+</div>
+</nav>
+<!-- TOP BAR -->
+<header class="flex justify-between items-center ml-64 px-margin-desktop h-16 w-[calc(100%-16rem)] bg-[#000000]/80 backdrop-blur-md sticky top-0 z-40 border-b border-white/10">
+<div class="flex items-center gap-4">
+<span class="font-headline-sm text-headline-sm font-bold text-primary-container">SETTINGS</span>
+<span class="text-white/40 text-xs font-bold tracking-widest uppercase">/ إعدادات الحساب</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative group hidden md:block">
+<input class="bg-[#121212] border border-white/20 text-white px-4 py-2 text-xs font-label-lg focus:outline-none focus:border-primary-container transition-colors w-64" placeholder="SEARCH CONTROLS..." type="text"/>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-white/40 text-sm">search</span>
+</div>
+<div class="flex items-center gap-4 text-white">
+<button class="material-symbols-outlined hover:text-primary-container transition-colors relative">
+                    notifications
+                    <span class="absolute top-0 right-0 w-1.5 h-1.5 bg-primary-container"></span>
+</button>
+<div class="w-8 h-8 obsidian-card flex items-center justify-center">
+<span class="material-symbols-outlined text-primary-container">account_circle</span>
+</div>
+</div>
+</div>
+</header>
+<!-- MAIN CONTENT -->
+<main class="ml-64 p-margin-desktop">
+<div class="max-w-container-max mx-auto space-y-stack-lg">
+<!-- HEADER SECTION -->
+<section class="obsidian-card p-stack-md relative overflow-hidden">
+<div class="absolute right-0 top-0 h-full w-1/3 opacity-10 pointer-events-none">
+
+</div>
+<div class="relative z-10">
+<h2 class="font-headline-md text-headline-md text-white mb-2">CLIENT CONTROLS</h2>
+<p class="text-white/60 font-body-md max-w-2xl">Manage your global account preferences, service communication channels, and identity data to optimize your OSTA industrial experience.</p>
+</div>
+</section>
+<!-- QUICK ACTION GRID -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Language Card -->
+<div class="obsidian-card p-6 flex items-center justify-between group hover:border-primary-container transition-all">
+<div>
+<p class="text-white/40 text-[10px] font-bold uppercase tracking-widest mb-1">Language</p>
+<h3 class="text-white font-headline-sm">ARABIC (AR)</h3>
+</div>
+<div class="w-12 h-12 flex items-center justify-center bg-primary-container text-black">
+<span class="font-bold text-lg">AR</span>
+</div>
+</div>
+<!-- Addresses Card -->
+<div class="obsidian-card p-6 flex items-center justify-between group hover:border-primary-container transition-all">
+<div>
+<p class="text-white/40 text-[10px] font-bold uppercase tracking-widest mb-1">Saved Addresses</p>
+<h3 class="text-white font-headline-sm">3 SITES</h3>
+</div>
+<div class="w-12 h-12 flex items-center justify-center border border-white/20 group-hover:bg-white group-hover:text-black transition-colors">
+<span class="material-symbols-outlined">location_on</span>
+</div>
+</div>
+<!-- Contact State Card -->
+<div class="obsidian-card p-6 flex items-center justify-between group hover:border-primary-container transition-all">
+<div>
+<p class="text-white/40 text-[10px] font-bold uppercase tracking-widest mb-1">SMS State</p>
+<h3 class="text-white font-headline-sm">OFFLINE</h3>
+</div>
+<div class="w-12 h-12 flex items-center justify-center border border-white/20">
+<span class="material-symbols-outlined text-white/40">sms_failed</span>
+</div>
+</div>
+</div>
+<!-- MAIN SECTIONS SIDE-BY-SIDE -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter">
+<!-- PROFILE: IDENTITY DATA -->
+<div class="obsidian-card p-stack-md space-y-stack-md">
+<div class="flex items-center gap-3 border-b border-white/10 pb-4">
+<span class="material-symbols-outlined text-primary-container" style="font-variation-settings: 'FILL' 1;">person</span>
+<h3 class="text-white font-headline-sm uppercase tracking-wide">Identity Data</h3>
+</div>
+<div class="space-y-6">
+<div class="space-y-2">
+<label class="text-[10px] font-bold uppercase text-white/40 tracking-widest">Full Name</label>
+<input class="w-full bg-[#121212] border border-white/10 px-4 py-3 text-white focus:border-primary-container focus:ring-0 transition-colors font-body-md" type="text" value="Ahmed Tammam"/>
+</div>
+<div class="space-y-2">
+<label class="text-[10px] font-bold uppercase text-white/40 tracking-widest">Email Address</label>
+<input class="w-full bg-[#121212] border border-white/10 px-4 py-3 text-white focus:border-primary-container focus:ring-0 transition-colors font-body-md" type="email" value="ahmed.tammam@industrial-corp.com"/>
+</div>
+<div class="space-y-2">
+<label class="text-[10px] font-bold uppercase text-white/40 tracking-widest">Primary Phone</label>
+<div class="flex gap-2">
+<div class="bg-[#121212] border border-white/10 px-4 py-3 text-white font-body-md">+20</div>
+<input class="flex-grow bg-[#121212] border border-white/10 px-4 py-3 text-white focus:border-primary-container focus:ring-0 transition-colors font-body-md" type="tel" value="100 234 5678"/>
+</div>
+</div>
+</div>
+</div>
+<!-- PREFERENCES: SIGNAL CONTROLS -->
+<div class="obsidian-card p-stack-md space-y-stack-md">
+<div class="flex items-center gap-3 border-b border-white/10 pb-4">
+<span class="material-symbols-outlined text-primary-container" style="font-variation-settings: 'FILL' 1;">tune</span>
+<h3 class="text-white font-headline-sm uppercase tracking-wide">Signal Controls</h3>
+</div>
+<div class="space-y-2">
+<!-- Toggle Item -->
+<div class="flex items-center justify-between p-4 bg-[#121212] border border-white/5">
+<div>
+<p class="text-white font-label-lg uppercase">Push Notifications</p>
+<p class="text-white/40 text-xs mt-1">Real-time status updates on technician arrival</p>
+</div>
+<button class="w-12 h-6 bg-white/20 transition-colors relative group" onclick="this.classList.toggle('bg-primary-container'); this.querySelector('div').classList.toggle('translate-x-6')">
+<div class="absolute left-0.5 top-0.5 w-5 h-5 bg-black transition-transform translate-x-6"></div>
+</button>
+</div>
+<!-- Toggle Item -->
+<div class="flex items-center justify-between p-4 bg-[#121212] border border-white/5">
+<div>
+<p class="text-white font-label-lg uppercase">Email Reports</p>
+<p class="text-white/40 text-xs mt-1">Weekly financial summaries and site analytics</p>
+</div>
+<button class="w-12 h-6 bg-primary-container transition-colors relative group" onclick="this.classList.toggle('bg-primary-container'); this.querySelector('div').classList.toggle('translate-x-6')">
+<div class="absolute left-0.5 top-0.5 w-5 h-5 bg-black transition-transform translate-x-6"></div>
+</button>
+</div>
+<!-- Toggle Item -->
+<div class="flex items-center justify-between p-4 bg-[#121212] border border-white/5">
+<div>
+<p class="text-white font-label-lg uppercase">Two-Factor Auth</p>
+<p class="text-white/40 text-xs mt-1">Enhanced security for financial transactions</p>
+</div>
+<button class="w-12 h-6 bg-white/20 transition-colors relative group" onclick="this.classList.toggle('bg-primary-container'); this.querySelector('div').classList.toggle('translate-x-6')">
+<div class="absolute left-0.5 top-0.5 w-5 h-5 bg-black transition-transform"></div>
+</button>
+</div>
+<!-- Toggle Item -->
+<div class="flex items-center justify-between p-4 bg-[#121212] border border-white/5">
+<div>
+<p class="text-white font-label-lg uppercase">Auto-Rebilling</p>
+<p class="text-white/40 text-xs mt-1">Automatically renew ongoing maintenance contracts</p>
+</div>
+<button class="w-12 h-6 bg-primary-container transition-colors relative group" onclick="this.classList.toggle('bg-primary-container'); this.querySelector('div').classList.toggle('translate-x-6')">
+<div class="absolute left-0.5 top-0.5 w-5 h-5 bg-black transition-transform translate-x-6"></div>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- FOOTER ACTION -->
+<div class="flex justify-end pt-10">
+<button class="bg-white text-black font-headline-sm px-12 py-4 hard-shadow hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all flex items-center gap-4 active:scale-95">
+<span>SAVE ALL CHANGES</span>
+<span class="material-symbols-outlined">save</span>
+</button>
+</div>
+<!-- DECORATIVE BOTTOM SECTION -->
+<footer class="pt-20 border-t border-black/10">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+<div class="space-y-4">
+<div class="w-10 h-10 obsidian-card flex items-center justify-center">
+<span class="material-symbols-outlined text-primary-container">shield</span>
+</div>
+<h4 class="text-black font-label-lg uppercase">Security Protocol</h4>
+<p class="text-black/60 text-xs">All data is encrypted via 256-bit industrial standards.</p>
+</div>
+<div class="space-y-4">
+<div class="w-10 h-10 obsidian-card flex items-center justify-center">
+<span class="material-symbols-outlined text-primary-container">sync</span>
+</div>
+<h4 class="text-black font-label-lg uppercase">Cloud Sync</h4>
+<p class="text-black/60 text-xs">Preferences synced across all technician devices.</p>
+</div>
+<div class="col-span-2 obsidian-card p-6 relative overflow-hidden group">
+<div class="relative z-10 flex flex-col justify-center h-full">
+<p class="text-white/40 text-[10px] font-bold uppercase tracking-widest">OSTA Premium Service</p>
+<h4 class="text-white font-headline-sm">NEED IMMEDIATE ASSISTANCE?</h4>
+<button class="mt-4 text-primary-container font-label-lg uppercase flex items-center gap-2 group-hover:translate-x-2 transition-transform">
+                                CALL DISPATCH <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+<div class="absolute right-0 top-0 bottom-0 w-32 opacity-20">
+<img class="w-full h-full object-cover grayscale brightness-150" data-alt="A macro shot of industrial machinery gears and metallic components illuminated by harsh yellow sparks and high-contrast studio lighting. The style is ultra-realistic with a focus on raw texture, grit, and the heavy obsidian-black surfaces typical of premium heavy industry tool aesthetics." src="https://www.gstatic.com/labs-code/stitch/stitch-placeholder-300x300.svg"/>
+</div>
+</div>
+</div>
+</footer>
+</div>
+</main>
+<!-- MICRO-INTERACTION SCRIPT -->
+<script>
+        // Simple scale effect for navigation items
+        document.querySelectorAll('nav a').forEach(item => {
+            item.addEventListener('mousedown', () => {
+                item.style.transform = 'scale(0.98)';
+            });
+            item.addEventListener('mouseup', () => {
+                item.style.transform = 'scale(1)';
+            });
+        });
+
+        // Search bar focus interaction
+        const searchInput = document.querySelector('input[placeholder="SEARCH CONTROLS..."]');
+        searchInput?.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('ring-2', 'ring-primary-container/20');
+        });
+        searchInput?.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('ring-2', 'ring-primary-container/20');
+        });
+    </script>
+</body></html>
