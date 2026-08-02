@@ -656,7 +656,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
                     href={isFallbackWorker ? `/${locale}/workers` : `/${locale}/workers/${worker.id}`}
                     className="block h-full w-full"
                   >
-                    <img src={avatarImg} alt={worker.name || ""} className="w-full h-full object-cover transition-all duration-500 group-hover:scale-105" />
+                    <img src={avatarImg} alt={worker.name || ""} className="w-full h-full object-cover object-top transition-all duration-500 group-hover:scale-105" />
                   </Link>
                   <div className={cn(
                     "absolute top-4 right-4 text-white text-[10px] px-2 py-1 flex items-center gap-1 font-bold rounded-none pointer-events-none",

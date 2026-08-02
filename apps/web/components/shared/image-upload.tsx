@@ -63,16 +63,18 @@ export function ImageUpload({
 
   return (
     <div className={compact ? "space-y-0.5 text-start" : "space-y-1 text-start"}>
-      <span className={isAuth ? (compact ? "text-[10px] font-black uppercase tracking-widest text-white/70" : "text-xs font-black uppercase tracking-widest text-white/70") : "text-sm font-medium text-onyx-200"}>{label}</span>
+      {label ? (
+        <span className={isAuth ? (compact ? "text-[10px] font-black uppercase tracking-widest text-white/70" : "text-xs font-black uppercase tracking-widest text-white/70") : "text-sm font-medium text-onyx-200"}>{label}</span>
+      ) : null}
       <div 
         onClick={() => fileInputRef.current?.click()}
         className={
           isAuth
             ? compact
-              ? "relative flex h-8 cursor-pointer items-center justify-between px-2.5 rounded-none border border-dashed border-white/20 bg-[#121212] text-white/60 transition-colors hover:border-gold hover:bg-white/5 active:scale-[0.99]"
+              ? "relative flex h-12 cursor-pointer items-center justify-between px-3 rounded-none border border-dashed border-white/20 bg-[#121212] text-white/60 transition-colors hover:border-gold hover:bg-white/5 active:scale-[0.99]"
               : "relative flex h-16 cursor-pointer flex-col items-center justify-center gap-1 rounded-none border border-dashed border-white/20 bg-[#121212] text-white/45 transition-colors hover:border-gold hover:bg-white/5"
             : compact
-              ? "relative flex h-8 cursor-pointer items-center justify-between px-2.5 rounded-lg border border-dashed border-onyx-700 bg-onyx-800/50 text-onyx-400 transition hover:border-primary-400 hover:bg-primary-50 active:scale-[0.99]"
+              ? "relative flex h-12 cursor-pointer items-center justify-between px-3 rounded-lg border border-dashed border-onyx-700 bg-onyx-800/50 text-onyx-400 transition hover:border-primary-400 hover:bg-primary-50 active:scale-[0.99]"
               : "relative flex h-16 cursor-pointer flex-col items-center justify-center gap-1 rounded-[1rem] border-2 border-dashed border-onyx-700 bg-onyx-800/50 text-onyx-400 transition hover:border-primary-400 hover:bg-primary-50"
         }
       >

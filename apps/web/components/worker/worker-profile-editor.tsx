@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AlertCircle, Check, GripVertical, Loader2, Plus, Save, Trash2, Video } from "lucide-react";
 
 import { WorkerProAction, WorkerProPanel, WorkerProShell, WorkerProTopStrip } from "@/components/worker/worker-pro-ui";
@@ -68,6 +68,20 @@ export function WorkerProfileEditor({ locale }: { locale: Locale }) {
   const [savedRowIndex, setSavedRowIndex] = useState<number | null>(null);
   const [rowErrors, setRowErrors] = useState<Record<number, string>>({});
 
+  const [eduRowErrors, setEduRowErrors] = useState<Record<number, string>>({});
+  const [eduSavingRowIndex, setEduSavingRowIndex] = useState<number | null>(null);
+  const [eduSavedRowIndex, setEduSavedRowIndex] = useState<number | null>(null);
+
+  const [achRowErrors, setAchRowErrors] = useState<Record<number, string>>({});
+  const [achSavingRowIndex, setAchSavingRowIndex] = useState<number | null>(null);
+  const [achSavedRowIndex, setAchSavedRowIndex] = useState<number | null>(null);
+
+  const [certRowErrors, setCertRowErrors] = useState<Record<number, string>>({});
+  const [certSavingRowIndex, setCertSavingRowIndex] = useState<number | null>(null);
+  const [certSavedRowIndex, setCertSavedRowIndex] = useState<number | null>(null);
+
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+
   useEffect(() => {
     async function load() {
       setIsLoading(true);
@@ -99,6 +113,63 @@ export function WorkerProfileEditor({ locale }: { locale: Locale }) {
     }
     load();
   }, [isArabic]);
+
+  const triggerAutoSave = useCallback(
+    (updatedData: ProfileDraft) => {
+      setSaveState("saving");
+      setSaveError(null);
+
+      if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+
+      debounceTimerRef.current = setTimeout(async () => {
+        try {
+          const baseUrl = resolveApiBaseUrl();
+          const res = await fetch(`${baseUrl}/workers/profile`, {
+            method: "PATCH",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              bio: updatedData.bio,
+              yearsOfExperience: updatedData.yearsOfExperience,
+              education: updatedData.education.filter((e) => e.trim()),
+              achievements: updatedData.achievements.filter((a) => a.trim()),
+              galleryImages: updatedData.galleryImages.filter(Boolean),
+              galleryVideoUrl: updatedData.galleryVideoUrl,
+              contractInfo: updatedData.contractInfo,
+              certificates: updatedData.certificates.filter((c) => c.title.trim() && c.imageUrl),
+              serviceItems: updatedData.serviceItems
+                .filter((s) => s.name.trim() && s.price.trim())
+                .map((s) => ({
+                  ...s,
+                  price: s.price.trim().replace(/\s*(ج\.م|EGP)$/i, "")
+                }))
+            })
+          });
+
+          const payload = await res.json();
+          if (!res.ok || !payload.success) {
+            throw new Error(payload.error?.message || payload.message || "Failed to save profile");
+          }
+
+          setSaveState("saved");
+          setTimeout(() => setSaveState("idle"), 2000);
+        } catch (err: any) {
+          console.error("Auto-save profile failed", err);
+          setSaveState("error");
+          setSaveError(err.message || (isArabic ? "فشل حفظ الملف الشخصي." : "Failed to save profile."));
+        }
+      }, 400);
+    },
+    [isArabic]
+  );
+
+  function updateData(updater: ProfileDraft | ((prev: ProfileDraft) => ProfileDraft)) {
+    setData((prev) => {
+      const next = typeof updater === "function" ? updater(prev) : updater;
+      triggerAutoSave(next);
+      return next;
+    });
+  }
 
   async function handleSave() {
     setSaveState("saving");
@@ -239,62 +310,195 @@ export function WorkerProfileEditor({ locale }: { locale: Locale }) {
     }
   }
 
+  async function saveSingleEduRow(index: number) {
+    const val = (data.education[index] ?? "").trim();
+    if (!val) {
+      const errMsg = isArabic ? "يرجى كتابة تفاصيل الشهادة أو التدريب أولاً" : "Please enter certification or education details";
+      setEduRowErrors((prev) => ({ ...prev, [index]: errMsg }));
+      return;
+    }
+
+    setEduRowErrors((prev) => {
+      const next = { ...prev };
+      delete next[index];
+      return next;
+    });
+
+    setEduSavingRowIndex(index);
+    setSaveState("saving");
+    try {
+      const baseUrl = resolveApiBaseUrl();
+      const res = await fetch(`${baseUrl}/workers/profile`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          education: data.education.filter((e) => e.trim())
+        })
+      });
+      const payload = await res.json();
+      if (!res.ok || !payload.success) {
+        throw new Error(payload.error?.message || payload.message || "Failed to save entry");
+      }
+      setEduSavedRowIndex(index);
+      setSaveState("saved");
+      setTimeout(() => {
+        setEduSavedRowIndex(null);
+        setSaveState("idle");
+      }, 2000);
+    } catch (err: any) {
+      setEduRowErrors((prev) => ({ ...prev, [index]: err.message || (isArabic ? "فشل حفظ الشهادة" : "Failed to save") }));
+      setSaveState("error");
+    } finally {
+      setEduSavingRowIndex(null);
+    }
+  }
+
+  async function saveSingleAchRow(index: number) {
+    const val = (data.achievements[index] ?? "").trim();
+    if (!val) {
+      const errMsg = isArabic ? "يرجى كتابة عنوان الإنجاز أو الجائزة أولاً" : "Please enter achievement or award details";
+      setAchRowErrors((prev) => ({ ...prev, [index]: errMsg }));
+      return;
+    }
+
+    setAchRowErrors((prev) => {
+      const next = { ...prev };
+      delete next[index];
+      return next;
+    });
+
+    setAchSavingRowIndex(index);
+    setSaveState("saving");
+    try {
+      const baseUrl = resolveApiBaseUrl();
+      const res = await fetch(`${baseUrl}/workers/profile`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          achievements: data.achievements.filter((a) => a.trim())
+        })
+      });
+      const payload = await res.json();
+      if (!res.ok || !payload.success) {
+        throw new Error(payload.error?.message || payload.message || "Failed to save achievement");
+      }
+      setAchSavedRowIndex(index);
+      setSaveState("saved");
+      setTimeout(() => {
+        setAchSavedRowIndex(null);
+        setSaveState("idle");
+      }, 2000);
+    } catch (err: any) {
+      setAchRowErrors((prev) => ({ ...prev, [index]: err.message || (isArabic ? "فشل حفظ الإنجاز" : "Failed to save") }));
+      setSaveState("error");
+    } finally {
+      setAchSavingRowIndex(null);
+    }
+  }
+
+  async function saveSingleCertRow(index: number) {
+    const cert = data.certificates[index];
+    if (!cert) return;
+
+    const hasTitle = Boolean(cert.title.trim());
+    const hasImage = Boolean(cert.imageUrl);
+
+    if (!hasTitle || !hasImage) {
+      let errMsg = "";
+      if (!hasTitle && !hasImage) {
+        errMsg = isArabic ? "يرجى رفع صورة الشهادة وكتابة عنوان الشهادة" : "Please upload certificate image and enter title";
+      } else if (!hasTitle) {
+        errMsg = isArabic ? "يرجى كتابة عنوان الشهادة" : "Please enter certificate title";
+      } else {
+        errMsg = isArabic ? "يرجى رفع صورة الشهادة" : "Please upload certificate image";
+      }
+
+      setCertRowErrors((prev) => ({ ...prev, [index]: errMsg }));
+      return;
+    }
+
+    setCertRowErrors((prev) => {
+      const next = { ...prev };
+      delete next[index];
+      return next;
+    });
+
+    setCertSavingRowIndex(index);
+    setSaveState("saving");
+    try {
+      const baseUrl = resolveApiBaseUrl();
+      const res = await fetch(`${baseUrl}/workers/profile`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          certificates: data.certificates.filter((c) => c.title.trim() && c.imageUrl)
+        })
+      });
+      const payload = await res.json();
+      if (!res.ok || !payload.success) {
+        throw new Error(payload.error?.message || payload.message || "Failed to save certificate");
+      }
+      setCertSavedRowIndex(index);
+      setSaveState("saved");
+      setTimeout(() => {
+        setCertSavedRowIndex(null);
+        setSaveState("idle");
+      }, 2000);
+    } catch (err: any) {
+      setCertRowErrors((prev) => ({ ...prev, [index]: err.message || (isArabic ? "فشل حفظ الشهادة" : "Failed to save") }));
+      setSaveState("error");
+    } finally {
+      setCertSavingRowIndex(null);
+    }
+  }
+
   function updateList<K extends "education" | "achievements">(key: K, index: number, value: string) {
-    setData((prev) => ({ ...prev, [key]: prev[key].map((item, i) => (i === index ? value : item)) }));
+    updateData((prev) => ({ ...prev, [key]: prev[key].map((item, i) => (i === index ? value : item)) }));
   }
 
   function addListItem(key: "education" | "achievements") {
-    setData((prev) => ({ ...prev, [key]: [...prev[key], ""] }));
+    updateData((prev) => ({ ...prev, [key]: [...prev[key], ""] }));
   }
 
   function removeListItem(key: "education" | "achievements", index: number) {
-    setData((prev) => ({ ...prev, [key]: prev[key].filter((_, i) => i !== index) }));
+    updateData((prev) => ({ ...prev, [key]: prev[key].filter((_, i) => i !== index) }));
   }
 
   function addGalleryImage(url: string) {
-    setData((prev) => ({ ...prev, galleryImages: [...prev.galleryImages, url] }));
+    updateData((prev) => ({ ...prev, galleryImages: [...prev.galleryImages, url] }));
   }
 
   function removeGalleryImage(index: number) {
-    setData((prev) => ({ ...prev, galleryImages: prev.galleryImages.filter((_, i) => i !== index) }));
+    updateData((prev) => ({ ...prev, galleryImages: prev.galleryImages.filter((_, i) => i !== index) }));
   }
 
   function addCertificate() {
-    setData((prev) => ({ ...prev, certificates: [...prev.certificates, { title: "", year: "", imageUrl: "" }] }));
+    updateData((prev) => ({ ...prev, certificates: [...prev.certificates, { title: "", year: "", imageUrl: "" }] }));
   }
 
   function updateCertificate(index: number, patch: Partial<CertificateDraft>) {
-    setData((prev) => ({
+    updateData((prev) => ({
       ...prev,
       certificates: prev.certificates.map((c, i) => (i === index ? { ...c, ...patch } : c))
     }));
   }
 
-  async function removeCertificate(index: number) {
-    const updatedCerts = data.certificates.filter((_, i) => i !== index);
-    setData((prev) => ({ ...prev, certificates: updatedCerts }));
-
-    try {
-      const baseUrl = resolveApiBaseUrl();
-      await fetch(`${baseUrl}/workers/profile`, {
-        method: "PATCH",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          certificates: updatedCerts.filter((c) => c.title.trim() && c.imageUrl)
-        })
-      });
-    } catch (err) {
-      console.error("Failed to delete certificate", err);
-    }
+  function removeCertificate(index: number) {
+    updateData((prev) => ({
+      ...prev,
+      certificates: prev.certificates.filter((_, i) => i !== index)
+    }));
   }
 
   function addServiceItem() {
-    setData((prev) => ({ ...prev, serviceItems: [...prev.serviceItems, { name: "", price: "", note: "" }] }));
+    updateData((prev) => ({ ...prev, serviceItems: [...prev.serviceItems, { name: "", price: "", note: "" }] }));
   }
 
   function updateServiceItem(index: number, patch: Partial<ServiceItemDraft>) {
-    setData((prev) => ({
+    updateData((prev) => ({
       ...prev,
       serviceItems: prev.serviceItems.map((s, i) => (i === index ? { ...s, ...patch } : s))
     }));
@@ -307,34 +511,17 @@ export function WorkerProfileEditor({ locale }: { locale: Locale }) {
     }
   }
 
-  async function removeServiceItem(index: number) {
-    const updatedItems = data.serviceItems.filter((_, i) => i !== index);
-    setData((prev) => ({ ...prev, serviceItems: updatedItems }));
+  function removeServiceItem(index: number) {
+    updateData((prev) => ({
+      ...prev,
+      serviceItems: prev.serviceItems.filter((_, i) => i !== index)
+    }));
     if (rowErrors[index]) {
       setRowErrors((prev) => {
         const next = { ...prev };
         delete next[index];
         return next;
       });
-    }
-
-    try {
-      const baseUrl = resolveApiBaseUrl();
-      await fetch(`${baseUrl}/workers/profile`, {
-        method: "PATCH",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          serviceItems: updatedItems
-            .filter((s) => s.name.trim() && s.price.trim())
-            .map((s) => ({
-              ...s,
-              price: s.price.trim().replace(/\s*(ج\.م|EGP)$/i, "")
-            }))
-        })
-      });
-    } catch (err) {
-      console.error("Failed to delete service item", err);
     }
   }
 
@@ -368,16 +555,21 @@ export function WorkerProfileEditor({ locale }: { locale: Locale }) {
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-3">
-          {saveState === "saved" && (
-            <span className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.14em] text-emerald-300">
-              <Check className="h-4 w-4" />
-              {isArabic ? "تم الحفظ" : "Saved"}
+          {saveState === "saving" ? (
+            <span className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/10 px-3.5 py-1.5 text-xs font-black text-gold shadow-sm">
+              <Loader2 className="h-3.5 w-3.5 animate-spin text-gold" />
+              {isArabic ? "جارٍ الحفظ تلقائياً..." : "Auto-saving..."}
+            </span>
+          ) : saveState === "error" && saveError ? (
+            <span className="inline-flex items-center gap-2 rounded-full border border-rose-500/40 bg-rose-950/60 px-3.5 py-1.5 text-xs font-bold text-rose-300">
+              {saveError}
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-950/60 px-3.5 py-1.5 text-xs font-black text-emerald-400 shadow-sm">
+              <Check className="h-3.5 w-3.5 text-emerald-400" />
+              {isArabic ? "تم الحفظ تلقائياً ✓" : "Auto-saved ✓"}
             </span>
           )}
-          <WorkerProAction tone="light" onClick={handleSave} disabled={saveState === "saving"}>
-            {saveState === "saving" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-            {saveState === "saving" ? (isArabic ? "جارٍ الحفظ" : "Saving") : isArabic ? "حفظ" : "Save"}
-          </WorkerProAction>
         </div>
       </section>
 
@@ -395,7 +587,7 @@ export function WorkerProfileEditor({ locale }: { locale: Locale }) {
               <span className={fieldLabelClass()}>{isArabic ? "نبذة تعريفية" : "Bio"}</span>
               <textarea
                 value={data.bio}
-                onChange={(e) => setData((prev) => ({ ...prev, bio: e.target.value }))}
+                onChange={(e) => updateData((prev) => ({ ...prev, bio: e.target.value }))}
                 rows={4}
                 placeholder={isArabic ? "اكتب نبذة مختصرة عن خبرتك وأسلوب عملك..." : "Write a short summary of your experience and how you work..."}
                 className={textareaClass()}
@@ -408,7 +600,7 @@ export function WorkerProfileEditor({ locale }: { locale: Locale }) {
                 min={0}
                 max={80}
                 value={data.yearsOfExperience}
-                onChange={(e) => setData((prev) => ({ ...prev, yearsOfExperience: Math.max(0, Number(e.target.value) || 0) }))}
+                onChange={(e) => updateData((prev) => ({ ...prev, yearsOfExperience: Math.max(0, Number(e.target.value) || 0) }))}
                 className={textInputClass()}
               />
             </label>
@@ -418,7 +610,7 @@ export function WorkerProfileEditor({ locale }: { locale: Locale }) {
         <WorkerProPanel title={isArabic ? "العقد والضمان" : "Contract & Warranty"} eyebrow={isArabic ? "اختياري" : "optional"}>
           <textarea
             value={data.contractInfo}
-            onChange={(e) => setData((prev) => ({ ...prev, contractInfo: e.target.value }))}
+            onChange={(e) => updateData((prev) => ({ ...prev, contractInfo: e.target.value }))}
             rows={5}
             placeholder={isArabic ? "وضّح تفاصيل العقد الرسمي ومدة الضمان التي تقدمها..." : "Describe the formal contract and warranty period you offer..."}
             className={textareaClass()}
@@ -442,17 +634,62 @@ export function WorkerProfileEditor({ locale }: { locale: Locale }) {
               <p className="text-sm font-semibold text-white/40">{isArabic ? "لم تتم إضافة أي شهادات بعد." : "No entries added yet."}</p>
             )}
             {data.education.map((item, index) => (
-              <div key={index} className="flex items-center gap-2">
-                <GripVertical className="h-4 w-4 shrink-0 text-white/20" />
-                <input
-                  value={item}
-                  onChange={(e) => updateList("education", index, e.target.value)}
-                  placeholder={isArabic ? "مثال: شهادة اعتماد تركيب أنظمة • 2020" : "e.g. Certified installation accreditation • 2020"}
-                  className={textInputClass()}
-                />
-                <button type="button" onClick={() => removeListItem("education", index)} className="shrink-0 p-2 text-white/40 hover:text-red-400">
-                  <Trash2 className="h-4 w-4" />
-                </button>
+              <div key={index} className="space-y-1.5">
+                <div className="flex items-center gap-2">
+                  <GripVertical className="h-4 w-4 shrink-0 text-white/20" />
+                  <input
+                    value={item}
+                    onChange={(e) => {
+                      updateList("education", index, e.target.value);
+                      if (eduRowErrors[index]) {
+                        setEduRowErrors((prev) => {
+                          const next = { ...prev };
+                          delete next[index];
+                          return next;
+                        });
+                      }
+                    }}
+                    placeholder={isArabic ? "مثال: شهادة اعتماد تركيب أنظمة • 2020" : "e.g. Certified installation accreditation • 2020"}
+                    className={cn(textInputClass(), eduRowErrors[index] && "border-red-500 focus:border-red-500 bg-red-950/10")}
+                  />
+                  <button
+                    type="button"
+                    disabled={eduSavingRowIndex === index}
+                    onClick={() => void saveSingleEduRow(index)}
+                    title={isArabic ? "حفظ" : "Save"}
+                    className={cn(
+                      "flex h-12 px-3 items-center justify-center border text-xs font-bold transition gap-1.5 shrink-0",
+                      eduSavedRowIndex === index
+                        ? "border-emerald-500/50 bg-emerald-500/10 text-emerald-400"
+                        : eduRowErrors[index]
+                        ? "border-red-500/50 bg-red-500/10 text-red-400"
+                        : "border-gold/40 bg-gold/10 text-gold hover:bg-gold/20"
+                    )}
+                  >
+                    {eduSavingRowIndex === index ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : eduSavedRowIndex === index ? (
+                      <Check className="h-4 w-4 text-emerald-400" />
+                    ) : (
+                      <Save className="h-4 w-4" />
+                    )}
+                    <span className="hidden sm:inline">{eduSavedRowIndex === index ? (isArabic ? "تم" : "Saved") : (isArabic ? "حفظ" : "Save")}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => removeListItem("education", index)}
+                    className="shrink-0 p-2 text-white/40 hover:text-red-400"
+                    title={isArabic ? "حذف" : "Delete"}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+                {eduRowErrors[index] && (
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-red-400 bg-red-500/10 border border-red-500/30 p-2">
+                    <AlertCircle className="h-3.5 w-3.5 shrink-0 text-red-400" />
+                    <span>{eduRowErrors[index]}</span>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -473,17 +710,62 @@ export function WorkerProfileEditor({ locale }: { locale: Locale }) {
               <p className="text-sm font-semibold text-white/40">{isArabic ? "لم تتم إضافة أي إنجازات بعد." : "No entries added yet."}</p>
             )}
             {data.achievements.map((item, index) => (
-              <div key={index} className="flex items-center gap-2">
-                <GripVertical className="h-4 w-4 shrink-0 text-white/20" />
-                <input
-                  value={item}
-                  onChange={(e) => updateList("achievements", index, e.target.value)}
-                  placeholder={isArabic ? "مثال: وسام التميز في جودة التنفيذ" : "e.g. Excellence award for quality of work"}
-                  className={textInputClass()}
-                />
-                <button type="button" onClick={() => removeListItem("achievements", index)} className="shrink-0 p-2 text-white/40 hover:text-red-400">
-                  <Trash2 className="h-4 w-4" />
-                </button>
+              <div key={index} className="space-y-1.5">
+                <div className="flex items-center gap-2">
+                  <GripVertical className="h-4 w-4 shrink-0 text-white/20" />
+                  <input
+                    value={item}
+                    onChange={(e) => {
+                      updateList("achievements", index, e.target.value);
+                      if (achRowErrors[index]) {
+                        setAchRowErrors((prev) => {
+                          const next = { ...prev };
+                          delete next[index];
+                          return next;
+                        });
+                      }
+                    }}
+                    placeholder={isArabic ? "مثال: وسام التميز في جودة التنفيذ" : "e.g. Excellence award for quality of work"}
+                    className={cn(textInputClass(), achRowErrors[index] && "border-red-500 focus:border-red-500 bg-red-950/10")}
+                  />
+                  <button
+                    type="button"
+                    disabled={achSavingRowIndex === index}
+                    onClick={() => void saveSingleAchRow(index)}
+                    title={isArabic ? "حفظ" : "Save"}
+                    className={cn(
+                      "flex h-12 px-3 items-center justify-center border text-xs font-bold transition gap-1.5 shrink-0",
+                      achSavedRowIndex === index
+                        ? "border-emerald-500/50 bg-emerald-500/10 text-emerald-400"
+                        : achRowErrors[index]
+                        ? "border-red-500/50 bg-red-500/10 text-red-400"
+                        : "border-gold/40 bg-gold/10 text-gold hover:bg-gold/20"
+                    )}
+                  >
+                    {achSavingRowIndex === index ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : achSavedRowIndex === index ? (
+                      <Check className="h-4 w-4 text-emerald-400" />
+                    ) : (
+                      <Save className="h-4 w-4" />
+                    )}
+                    <span className="hidden sm:inline">{achSavedRowIndex === index ? (isArabic ? "تم" : "Saved") : (isArabic ? "حفظ" : "Save")}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => removeListItem("achievements", index)}
+                    className="shrink-0 p-2 text-white/40 hover:text-red-400"
+                    title={isArabic ? "حذف" : "Delete"}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+                {achRowErrors[index] && (
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-red-400 bg-red-500/10 border border-red-500/30 p-2">
+                    <AlertCircle className="h-3.5 w-3.5 shrink-0 text-red-400" />
+                    <span>{achRowErrors[index]}</span>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -524,7 +806,7 @@ export function WorkerProfileEditor({ locale }: { locale: Locale }) {
               <Video className="h-4 w-4 shrink-0 text-white/40" />
               <input
                 value={data.galleryVideoUrl}
-                onChange={(e) => setData((prev) => ({ ...prev, galleryVideoUrl: e.target.value }))}
+                onChange={(e) => updateData((prev) => ({ ...prev, galleryVideoUrl: e.target.value }))}
                 placeholder="https://youtube.com/..."
                 className={textInputClass()}
               />
@@ -548,32 +830,88 @@ export function WorkerProfileEditor({ locale }: { locale: Locale }) {
             <p className="text-sm font-semibold text-white/40">{isArabic ? "لم تتم إضافة أي شهادات موثقة بعد." : "No certificates added yet."}</p>
           )}
           {data.certificates.map((cert, index) => (
-            <div key={index} className="grid gap-3 border border-white/10 bg-[#0d0d0d] p-4 sm:grid-cols-[auto_1fr_auto]">
-              <ImageUpload
-                label={isArabic ? "صورة الشهادة" : "Certificate image"}
-                value={cert.imageUrl}
-                onChange={(url) => updateCertificate(index, { imageUrl: url })}
-                isArabic={isArabic}
-                variant="auth"
-                compact
-              />
-              <div className="grid gap-2 sm:grid-cols-2">
+            <div key={index} className="space-y-2 border border-white/10 bg-[#0d0d0d] p-4">
+              <div className="flex flex-col sm:flex-row items-center gap-2.5 w-full">
+                <div className="w-full sm:w-48 shrink-0">
+                  <ImageUpload
+                    label=""
+                    value={cert.imageUrl}
+                    onChange={(url) => {
+                      updateCertificate(index, { imageUrl: url });
+                      if (certRowErrors[index]) {
+                        setCertRowErrors((prev) => {
+                          const next = { ...prev };
+                          delete next[index];
+                          return next;
+                        });
+                      }
+                    }}
+                    isArabic={isArabic}
+                    variant="auth"
+                    compact
+                  />
+                </div>
                 <input
                   value={cert.title}
-                  onChange={(e) => updateCertificate(index, { title: e.target.value })}
-                  placeholder={isArabic ? "عنوان الشهادة" : "Certificate title"}
-                  className={textInputClass()}
+                  onChange={(e) => {
+                    updateCertificate(index, { title: e.target.value });
+                    if (certRowErrors[index]) {
+                      setCertRowErrors((prev) => {
+                        const next = { ...prev };
+                        delete next[index];
+                        return next;
+                      });
+                    }
+                  }}
+                  placeholder={isArabic ? "عنوان الشهادة *" : "Certificate title *"}
+                  className={cn(textInputClass(), "flex-1 min-w-0 h-12", certRowErrors[index] && !cert.title.trim() && "border-red-500 focus:border-red-500 bg-red-950/10")}
                 />
                 <input
                   value={cert.year}
                   onChange={(e) => updateCertificate(index, { year: e.target.value })}
                   placeholder={isArabic ? "السنة" : "Year"}
-                  className={textInputClass()}
+                  className={cn(textInputClass(), "w-full sm:w-28 shrink-0 h-12")}
                 />
+                <div className="flex items-center gap-1.5 shrink-0 w-full sm:w-auto justify-end">
+                  <button
+                    type="button"
+                    disabled={certSavingRowIndex === index}
+                    onClick={() => void saveSingleCertRow(index)}
+                    title={isArabic ? "حفظ" : "Save"}
+                    className={cn(
+                      "flex h-12 px-3 items-center justify-center border text-xs font-bold transition gap-1.5 shrink-0",
+                      certSavedRowIndex === index
+                        ? "border-emerald-500/50 bg-emerald-500/10 text-emerald-400"
+                        : certRowErrors[index]
+                        ? "border-red-500/50 bg-red-500/10 text-red-400"
+                        : "border-gold/40 bg-gold/10 text-gold hover:bg-gold/20"
+                    )}
+                  >
+                    {certSavingRowIndex === index ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : certSavedRowIndex === index ? (
+                      <Check className="h-4 w-4 text-emerald-400" />
+                    ) : (
+                      <Save className="h-4 w-4" />
+                    )}
+                    <span className="hidden sm:inline">{certSavedRowIndex === index ? (isArabic ? "تم" : "Saved") : (isArabic ? "حفظ" : "Save")}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => removeCertificate(index)}
+                    className="flex h-12 w-12 items-center justify-center border border-white/10 text-white/40 hover:border-red-400 hover:text-red-400 transition shrink-0"
+                    title={isArabic ? "حذف" : "Delete"}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
               </div>
-              <button type="button" onClick={() => removeCertificate(index)} className="flex h-12 w-12 shrink-0 items-center justify-center self-start border border-white/10 text-white/40 hover:border-red-400 hover:text-red-400">
-                <Trash2 className="h-4 w-4" />
-              </button>
+              {certRowErrors[index] && (
+                <div className="flex items-center gap-1.5 text-xs font-bold text-red-400 bg-red-500/10 border border-red-500/30 p-2.5">
+                  <AlertCircle className="h-4 w-4 shrink-0 text-red-400" />
+                  <span>{certRowErrors[index]}</span>
+                </div>
+              )}
             </div>
           ))}
         </div>

@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-import { AlertCircle, CalendarDays, Camera, Check, CheckCircle2, Clock, Loader2, Lock, Save, ShieldCheck, Sparkles, Star, TimerReset, Trash2, UserCircle2 } from "lucide-react";
+import { AlertCircle, CalendarDays, Camera, Check, CheckCircle2, Clock, Loader2, Lock, MapPin, Plus, Save, ShieldCheck, Sparkles, Star, TimerReset, Trash2, UserCircle2, X } from "lucide-react";
 
 import {
   WorkerProAction,
@@ -87,24 +87,26 @@ export function WorkerRatingsPage({ locale, initialData }: { locale: Locale; ini
   );
 }
 
-function WorkerSaveControl({ state, onSave, isArabic, error }: { state: "idle" | "saving" | "saved" | "error"; onSave: () => void; isArabic: boolean; error?: string | null }) {
+function WorkerSaveControl({ state, isArabic, error }: { state: "idle" | "saving" | "saved" | "error"; isArabic: boolean; error?: string | null }) {
   return (
     <div className="flex shrink-0 flex-col items-end gap-1.5">
-      <div className="flex items-center gap-3">
-        {state === "saved" ? (
-          <span className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.14em] text-emerald-300">
-            <Check className="h-4 w-4" />
-            {isArabic ? "تم الحفظ" : "Saved"}
+      <div className="flex items-center gap-2">
+        {state === "saving" ? (
+          <span className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/10 px-3.5 py-1.5 text-xs font-black text-gold shadow-sm">
+            <Loader2 className="h-3.5 w-3.5 animate-spin text-gold" />
+            {isArabic ? "جارٍ الحفظ تلقائياً..." : "Auto-saving..."}
           </span>
-        ) : null}
-        <WorkerProAction tone="light" onClick={onSave} disabled={state === "saving"}>
-          {state === "saving" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-          {state === "saving" ? (isArabic ? "جارٍ الحفظ" : "Saving") : isArabic ? "حفظ" : "Save"}
-        </WorkerProAction>
+        ) : state === "error" && error ? (
+          <span className="inline-flex items-center gap-2 rounded-full border border-rose-500/40 bg-rose-950/60 px-3.5 py-1.5 text-xs font-bold text-rose-300">
+            {error}
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-950/60 px-3.5 py-1.5 text-xs font-black text-emerald-400 shadow-sm">
+            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+            {isArabic ? "تم الحفظ تلقائياً ✓" : "Auto-saved ✓"}
+          </span>
+        )}
       </div>
-      {state === "error" && error ? (
-        <span className="text-xs font-bold text-rose-400">{error}</span>
-      ) : null}
     </div>
   );
 }
@@ -117,10 +119,62 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
   const [saveError, setSaveError] = useState<string | null>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     setData(liveData);
   }, [liveData]);
+
+  const triggerAutoSave = useCallback(
+    (updatedData: WorkerSettingsData) => {
+      setSaveState("saving");
+      setSaveError(null);
+
+      if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+
+      debounceTimerRef.current = setTimeout(async () => {
+        try {
+          const safeAreas =
+            Array.isArray(updatedData.workPreferences?.serviceAreas) && updatedData.workPreferences.serviceAreas.length > 0
+              ? updatedData.workPreferences.serviceAreas
+              : [isArabic ? "جميع أنحاء الجمهورية" : "All Egypt / Nationwide"];
+
+          await patchApiData("/workers/settings", {
+            isAvailable: updatedData.workPreferences?.isAvailable ?? false,
+            workingHours: updatedData.workPreferences?.workingHours,
+            offDates: updatedData.workPreferences?.offDates ?? [],
+            acceptedPaymentMethods: updatedData.workPreferences?.acceptedPaymentMethods ?? [],
+            preferredPaymentMethod: updatedData.workPreferences?.preferredPaymentMethod ?? null,
+            serviceAreas: safeAreas,
+            nationalIdFront: updatedData.profile?.nationalIdFront,
+            nationalIdBack: updatedData.profile?.nationalIdBack,
+            selfieWithId: updatedData.profile?.selfieWithId
+          });
+
+          await patchApiData("/auth/profile", {
+            email: updatedData.profile?.email,
+            avatarUrl: updatedData.profile?.avatarUrl
+          });
+
+          setSaveState("saved");
+          setTimeout(() => setSaveState("idle"), 2000);
+        } catch (err: any) {
+          console.error("Failed to auto-save worker settings", err);
+          setSaveError(getLocalizedError(err instanceof Error ? err.message : "", locale));
+          setSaveState("error");
+        }
+      }, 350);
+    },
+    [isArabic, locale]
+  );
+
+  function updateData(updater: WorkerSettingsData | ((prev: WorkerSettingsData) => WorkerSettingsData)) {
+    setData((prev) => {
+      const next = typeof updater === "function" ? updater(prev) : updater;
+      triggerAutoSave(next);
+      return next;
+    });
+  }
 
   async function handleAvatarUploadSettings(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -133,9 +187,12 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
         method: "POST",
         body: formData
       });
-      if (!res.ok) throw new Error("Upload failed");
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || "Upload failed");
+      }
       const resData = await res.json();
-      setData((prev) => ({
+      updateData((prev) => ({
         ...prev,
         profile: {
           ...prev.profile,
@@ -150,38 +207,13 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
     }
   }
 
-  async function handleSave() {
-    setSaveState("saving");
-    setSaveError(null);
-    try {
-      await patchApiData("/workers/settings", {
-        isAvailable: safeWorkPreferences.isAvailable,
-        workingHours: data.workPreferences.workingHours,
-        offDates: data.workPreferences.offDates,
-        acceptedPaymentMethods: safeWorkPreferences.acceptedPaymentMethods,
-        preferredPaymentMethod: safeWorkPreferences.preferredPaymentMethod,
-        nationalIdFront: data.profile.nationalIdFront,
-        nationalIdBack: data.profile.nationalIdBack,
-        selfieWithId: data.profile.selfieWithId
-      });
-      await patchApiData("/auth/profile", {
-        email: data.profile.email,
-        avatarUrl: data.profile.avatarUrl
-      });
-      setSaveState("saved");
-      window.setTimeout(() => setSaveState("idle"), 2000);
-    } catch (err: any) {
-      console.error("Failed to save worker settings", err);
-      setSaveError(getLocalizedError(err instanceof Error ? err.message : "", locale));
-      setSaveState("error");
-    }
-  }
-
   const safeWorkPreferences = {
     isAvailable: data.workPreferences?.isAvailable ?? false,
     acceptsEmergency: data.workPreferences?.acceptsEmergency ?? false,
     acceptsSameDay: data.workPreferences?.acceptsSameDay ?? false,
-    serviceAreas: Array.isArray(data.workPreferences?.serviceAreas) ? data.workPreferences.serviceAreas : [],
+    serviceAreas: Array.isArray(data.workPreferences?.serviceAreas) && data.workPreferences.serviceAreas.length > 0
+      ? data.workPreferences.serviceAreas
+      : [isArabic ? "جميع أنحاء الجمهورية" : "All Egypt / Nationwide"],
     acceptedPaymentMethods: Array.isArray(data.workPreferences?.acceptedPaymentMethods) ? data.workPreferences.acceptedPaymentMethods : [],
     preferredPaymentMethod: data.workPreferences?.preferredPaymentMethod ?? null
   };
@@ -206,7 +238,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
         <div className="flex min-w-0 items-center gap-5">
           <div className="relative group shrink-0">
             <div
-              onClick={() => avatarInputRef.current?.click()}
+              onClick={() => !isUploadingAvatar && avatarInputRef.current?.click()}
               className="relative flex h-16 w-16 cursor-pointer items-center justify-center overflow-hidden border border-gold bg-[#111] text-gold sm:h-20 sm:w-20 transition hover:border-gold/80"
             >
               {data.profile.avatarUrl ? (
@@ -215,18 +247,25 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
               ) : (
                 <UserCircle2 className="h-8 w-8 sm:h-10 sm:w-10" />
               )}
-              <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
-                <Camera className="h-4 w-4 text-gold" />
-                <span className="text-[8px] font-black uppercase text-white">{isUploadingAvatar ? "..." : isArabic ? "تغيير" : "Change"}</span>
-              </div>
+              {isUploadingAvatar ? (
+                <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center gap-1 z-10">
+                  <Loader2 className="h-5 w-5 animate-spin text-gold" />
+                </div>
+              ) : (
+                <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
+                  <Camera className="h-4 w-4 text-gold" />
+                  <span className="text-[8px] font-black uppercase text-white">{isArabic ? "تغيير" : "Change"}</span>
+                </div>
+              )}
             </div>
             <button
               type="button"
+              disabled={isUploadingAvatar}
               onClick={() => avatarInputRef.current?.click()}
-              className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-gold text-black shadow-lg transition hover:scale-110 active:scale-95"
+              className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-gold text-black shadow-lg transition hover:scale-110 active:scale-95 disabled:opacity-50"
               title={isArabic ? "تغيير الصورة الشخصية" : "Change profile photo"}
             >
-              <Camera className="h-3 w-3" />
+              {isUploadingAvatar ? <Loader2 className="h-3 w-3 animate-spin" /> : <Camera className="h-3 w-3" />}
             </button>
           </div>
           <div className="min-w-0">
@@ -252,7 +291,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
             </p>
           </div>
         </div>
-        <WorkerSaveControl state={saveState} onSave={() => void handleSave()} isArabic={isArabic} error={saveError} />
+        <WorkerSaveControl state={saveState} isArabic={isArabic} error={saveError} />
       </section>
 
       <div className="grid gap-6 xl:grid-cols-[1fr_1fr]">
@@ -260,7 +299,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
           <div className="mb-6 flex flex-col sm:flex-row items-center gap-5 rounded-none border border-white/10 bg-[#111] p-4">
             <div className="relative group shrink-0">
               <div
-                onClick={() => avatarInputRef.current?.click()}
+                onClick={() => !isUploadingAvatar && avatarInputRef.current?.click()}
                 className="relative h-20 w-20 cursor-pointer overflow-hidden border border-gold bg-[#121212] transition hover:border-gold/80"
               >
                 {data.profile.avatarUrl ? (
@@ -269,18 +308,25 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
                 ) : (
                   <div className="flex h-full w-full items-center justify-center bg-gold text-xl font-black text-black">{initials}</div>
                 )}
-                <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
-                  <Camera className="h-4 w-4 text-gold" />
-                  <span className="text-[8px] font-black uppercase text-white">{isUploadingAvatar ? (isArabic ? "جاري..." : "Uploading...") : isArabic ? "تغيير" : "Change"}</span>
-                </div>
+                {isUploadingAvatar ? (
+                  <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center gap-1 z-10">
+                    <Loader2 className="h-5 w-5 animate-spin text-gold" />
+                  </div>
+                ) : (
+                  <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
+                    <Camera className="h-4 w-4 text-gold" />
+                    <span className="text-[8px] font-black uppercase text-white">{isArabic ? "تغيير" : "Change"}</span>
+                  </div>
+                )}
               </div>
               <button
                 type="button"
+                disabled={isUploadingAvatar}
                 onClick={() => avatarInputRef.current?.click()}
-                className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-gold text-black shadow-lg transition hover:scale-110 active:scale-95"
+                className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-gold text-black shadow-lg transition hover:scale-110 active:scale-95 disabled:opacity-50"
                 title={isArabic ? "تغيير الصورة الشخصية" : "Change profile photo"}
               >
-                <Camera className="h-3 w-3" />
+                {isUploadingAvatar ? <Loader2 className="h-3 w-3 animate-spin" /> : <Camera className="h-3 w-3" />}
               </button>
               <input
                 type="file"
@@ -295,11 +341,12 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
               <p className="text-xs font-medium text-white/50">{isArabic ? "اضغط على الصورة أو زر الكاميرا لرفع صورة جديدة" : "Click avatar or camera icon to upload a new profile image"}</p>
               <button
                 type="button"
+                disabled={isUploadingAvatar}
                 onClick={() => avatarInputRef.current?.click()}
-                className="mt-2 inline-flex items-center gap-2 border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-bold text-white transition hover:bg-gold hover:text-black"
+                className="mt-2 inline-flex items-center gap-2 border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-bold text-white transition hover:bg-gold hover:text-black disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <Camera className="h-3.5 w-3.5" />
-                {isArabic ? "تحميل صورة جديدة" : "Upload new photo"}
+                {isUploadingAvatar ? <Loader2 className="h-3.5 w-3.5 animate-spin text-gold" /> : <Camera className="h-3.5 w-3.5" />}
+                {isUploadingAvatar ? (isArabic ? "جارٍ الرفع..." : "Uploading...") : isArabic ? "تحميل صورة جديدة" : "Upload new photo"}
               </button>
             </div>
           </div>
@@ -359,7 +406,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
                 locale={locale}
                 email={data.profile.email ?? ""}
                 emailVerified={Boolean(data.profile.emailVerified)}
-                onChangeEmail={(val) => setData((prev) => ({
+                onChangeEmail={(val) => updateData((prev) => ({
                   ...prev,
                   profile: {
                     ...prev.profile,
@@ -367,7 +414,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
                     emailVerified: prev.profile.emailVerified && val.trim().toLowerCase() === (prev.profile.email ?? "").trim().toLowerCase()
                   }
                 }))}
-                onVerified={() => setData((prev) => ({ ...prev, profile: { ...prev.profile, emailVerified: true } }))}
+                onVerified={() => updateData((prev) => ({ ...prev, profile: { ...prev.profile, emailVerified: true } }))}
               />
             </div>
 
@@ -404,33 +451,51 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
                   label={isArabic ? "وجه البطاقة الشخصية" : "ID Front"}
                   imageUrl={data.profile.nationalIdFront}
                   isLocked={data.profile.verificationStatus === "VERIFIED" && Boolean(data.profile.nationalIdFront)}
+                  isArabic={isArabic}
                   onUpload={async (file) => {
                     const formData = new FormData();
                     formData.append("file", file);
-                    const res = await postApiData<{ url: string }, FormData>("/upload", formData);
-                    setData({ ...data, profile: { ...data.profile, nationalIdFront: res.url } });
+                    const res = await fetch("/api/upload", { method: "POST", body: formData });
+                    if (!res.ok) {
+                      const errData = await res.json().catch(() => ({}));
+                      throw new Error(errData.error || (isArabic ? "فشل رفع الصورة" : "Upload failed"));
+                    }
+                    const resData = await res.json();
+                    updateData((prev) => ({ ...prev, profile: { ...prev.profile, nationalIdFront: resData.url } }));
                   }}
                 />
                 <WorkerIdDocumentCard
                   label={isArabic ? "ظهر البطاقة الشخصية" : "ID Back"}
                   imageUrl={data.profile.nationalIdBack}
                   isLocked={data.profile.verificationStatus === "VERIFIED" && Boolean(data.profile.nationalIdBack)}
+                  isArabic={isArabic}
                   onUpload={async (file) => {
                     const formData = new FormData();
                     formData.append("file", file);
-                    const res = await postApiData<{ url: string }, FormData>("/upload", formData);
-                    setData({ ...data, profile: { ...data.profile, nationalIdBack: res.url } });
+                    const res = await fetch("/api/upload", { method: "POST", body: formData });
+                    if (!res.ok) {
+                      const errData = await res.json().catch(() => ({}));
+                      throw new Error(errData.error || (isArabic ? "فشل رفع الصورة" : "Upload failed"));
+                    }
+                    const resData = await res.json();
+                    updateData((prev) => ({ ...prev, profile: { ...prev.profile, nationalIdBack: resData.url } }));
                   }}
                 />
                 <WorkerIdDocumentCard
                   label={isArabic ? "سيلفي مع الهوية" : "Selfie with ID"}
                   imageUrl={data.profile.selfieWithId}
                   isLocked={data.profile.verificationStatus === "VERIFIED" && Boolean(data.profile.selfieWithId)}
+                  isArabic={isArabic}
                   onUpload={async (file) => {
                     const formData = new FormData();
                     formData.append("file", file);
-                    const res = await postApiData<{ url: string }, FormData>("/upload", formData);
-                    setData({ ...data, profile: { ...data.profile, selfieWithId: res.url } });
+                    const res = await fetch("/api/upload", { method: "POST", body: formData });
+                    if (!res.ok) {
+                      const errData = await res.json().catch(() => ({}));
+                      throw new Error(errData.error || (isArabic ? "فشل رفع الصورة" : "Upload failed"));
+                    }
+                    const resData = await res.json();
+                    updateData((prev) => ({ ...prev, profile: { ...prev.profile, selfieWithId: resData.url } }));
                   }}
                 />
               </div>
@@ -451,7 +516,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
                   <input
                     type="checkbox"
                     checked={safeWorkPreferences[item.key as keyof typeof safeWorkPreferences] as boolean}
-                    onChange={(event) => setData({ ...data, workPreferences: { ...data.workPreferences, [item.key]: event.target.checked } })}
+                    onChange={(event) => updateData((prev) => ({ ...prev, workPreferences: { ...prev.workPreferences, [item.key]: event.target.checked } }))}
                     className="h-4 w-4 accent-gold"
                   />
                 </label>
@@ -485,7 +550,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
                               : safeWorkPreferences.preferredPaymentMethod === method.key
                                 ? null
                                 : safeWorkPreferences.preferredPaymentMethod;
-                            setData({ ...data, workPreferences: { ...data.workPreferences, acceptedPaymentMethods: nextMethods, preferredPaymentMethod: nextPreferred } });
+                            updateData((prev) => ({ ...prev, workPreferences: { ...prev.workPreferences, acceptedPaymentMethods: nextMethods, preferredPaymentMethod: nextPreferred } }));
                           }}
                           className="h-5 w-5 accent-gold"
                         />
@@ -494,7 +559,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
                       <button
                         type="button"
                         disabled={!isChecked}
-                        onClick={() => setData({ ...data, workPreferences: { ...data.workPreferences, preferredPaymentMethod: isPreferred ? null : method.key } })}
+                        onClick={() => updateData((prev) => ({ ...prev, workPreferences: { ...prev.workPreferences, preferredPaymentMethod: isPreferred ? null : method.key } }))}
                         title={isArabic ? "الطريقة المفضلة" : "Preferred method"}
                         className={cn(
                           "flex h-8 w-8 shrink-0 items-center justify-center border transition",
@@ -509,24 +574,19 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
               </div>
             </div>
 
-            {safeWorkPreferences.serviceAreas.length > 0 ? (
-              <div className="border border-white/10 bg-[#111] p-4">
-                <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/35">{isArabic ? "المناطق" : "Areas"}</p>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {safeWorkPreferences.serviceAreas.map((area) => (
-                    <WorkerProBadge key={area} tone="gold">{area}</WorkerProBadge>
-                  ))}
-                </div>
-              </div>
-            ) : null}
+            <WorkerServiceAreasSection
+              isArabic={isArabic}
+              areas={safeWorkPreferences.serviceAreas}
+              onChange={(newAreas) => updateData((prev) => ({ ...prev, workPreferences: { ...prev.workPreferences, serviceAreas: newAreas } }))}
+            />
 
 
             <WorkerScheduleSection
               locale={locale}
               workingHours={data.workPreferences.workingHours}
               offDates={data.workPreferences.offDates}
-              onChangeSchedule={(newSchedule) => setData({ ...data, workPreferences: { ...data.workPreferences, workingHours: newSchedule } })}
-              onChangeOffDates={(newOffDates) => setData({ ...data, workPreferences: { ...data.workPreferences, offDates: newOffDates } })}
+              onChangeSchedule={(newSchedule) => updateData((prev) => ({ ...prev, workPreferences: { ...prev.workPreferences, workingHours: newSchedule } }))}
+              onChangeOffDates={(newOffDates) => updateData((prev) => ({ ...prev, workPreferences: { ...prev.workPreferences, offDates: newOffDates } }))}
             />
           </div>
         </WorkerProPanel>
@@ -724,79 +784,99 @@ function WorkerIdDocumentCard({
   label,
   imageUrl,
   isLocked,
+  isArabic = true,
   onUpload
 }: {
   label: string;
   imageUrl?: string | null;
   isLocked?: boolean;
+  isArabic?: boolean;
   onUpload: (file: File) => Promise<void>;
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    if (isLocked) return;
+    if (isLocked || isUploading) return;
     const file = e.target.files?.[0];
     if (!file) return;
 
     setIsUploading(true);
+    setUploadError(null);
     try {
       await onUpload(file);
+    } catch (err: any) {
+      setUploadError(err?.message || (isArabic ? "حدث خطأ أثناء رفع الصورة" : "Failed to upload image"));
     } finally {
       setIsUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
     }
   }
 
   return (
-    <div className={cn("border bg-[#111] p-3 space-y-2", isLocked ? "border-emerald-500/30 bg-emerald-950/5" : "border-white/10")}>
+    <div className={cn("border bg-[#111] p-3 space-y-2 relative flex flex-col justify-between", isLocked ? "border-emerald-500/30 bg-emerald-950/5" : "border-white/10")}>
       <div className="flex h-10 items-start justify-between gap-2">
         <span className="text-xs font-black text-white/70 leading-snug min-w-0 flex-1">{label}</span>
         {isLocked ? (
           <span className="inline-flex items-center gap-1 text-[10px] font-black text-emerald-400 bg-emerald-950/40 border border-emerald-500/30 px-2 py-0.5 shrink-0 pt-0.5">
             <CheckCircle2 className="h-3 w-3 text-emerald-400" />
-            معتمد
+            {isArabic ? "معتمد" : "Verified"}
           </span>
         ) : (
           <button
             type="button"
+            disabled={isUploading}
             onClick={() => fileInputRef.current?.click()}
-            className="text-[11px] font-black text-gold underline hover:text-gold/80 transition shrink-0 pt-0.5"
+            className="text-[11px] font-black text-gold underline hover:text-gold/80 transition shrink-0 pt-0.5 flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {imageUrl ? "تغيير" : "رفع"}
+            {isUploading ? <Loader2 className="h-3 w-3 animate-spin text-gold" /> : null}
+            {isUploading ? (isArabic ? "جارٍ الرفع..." : "Uploading...") : imageUrl ? (isArabic ? "تغيير" : "Change") : (isArabic ? "رفع" : "Upload")}
           </button>
         )}
       </div>
 
       <div
         onClick={() => {
-          if (!isLocked) fileInputRef.current?.click();
+          if (!isLocked && !isUploading) fileInputRef.current?.click();
         }}
         className={cn(
-          "relative h-28 w-full overflow-hidden border bg-[#181818] transition flex items-center justify-center",
-          isLocked ? "cursor-default border-emerald-500/20" : "cursor-pointer border-white/10 hover:border-gold group"
+          "relative h-32 w-full overflow-hidden border bg-[#181818] transition flex items-center justify-center",
+          isLocked || isUploading ? "cursor-default border-emerald-500/20" : "cursor-pointer border-white/10 hover:border-gold group"
         )}
       >
         {imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={imageUrl} alt={label} className={cn("h-full w-full object-cover transition", !isLocked && "group-hover:scale-105")} />
+          <img src={imageUrl} alt={label} className={cn("h-full w-full object-cover transition", !isLocked && !isUploading && "group-hover:scale-105")} />
         ) : (
-          <div className="flex flex-col items-center justify-center h-full text-white/30 space-y-1">
+          <div className="flex flex-col items-center justify-center h-full text-white/30 space-y-1.5 p-2 text-center">
             <Camera className="h-6 w-6 text-gold/60" />
-            <span className="text-[10px] font-bold">{isLocked ? "وثيقة رسمية معتمدة" : "انقر لرفع الصورة"}</span>
+            <span className="text-[10px] font-bold">{isLocked ? (isArabic ? "وثيقة رسمية معتمدة" : "Official Verified Document") : (isArabic ? "انقر لرفع الصورة" : "Click to upload image")}</span>
           </div>
         )}
 
-        {!isLocked ? (
-          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-1.5 text-white text-xs font-bold">
+        {isUploading ? (
+          <div className="absolute inset-0 bg-black/85 flex flex-col items-center justify-center gap-2 z-20 backdrop-blur-[2px] transition-all">
+            <Loader2 className="h-8 w-8 animate-spin text-gold" />
+            <span className="text-xs font-black text-gold tracking-wide animate-pulse">
+              {isArabic ? "جارٍ رفع الصورة..." : "Uploading photo..."}
+            </span>
+          </div>
+        ) : !isLocked ? (
+          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-1.5 text-white text-xs font-bold z-10">
             <Camera className="h-4 w-4 text-gold" />
-            <span>{isUploading ? "جاري الرفع..." : "تحديث الصورة"}</span>
+            <span>{isArabic ? "تحديث الصورة" : "Update photo"}</span>
           </div>
         ) : imageUrl ? (
-          <div className="absolute top-2 right-2 rounded-full bg-emerald-500 p-1 text-black shadow-lg">
+          <div className="absolute top-2 right-2 rounded-full bg-emerald-500 p-1 text-black shadow-lg z-10">
             <CheckCircle2 className="h-3.5 w-3.5 text-black" />
           </div>
         ) : null}
       </div>
+
+      {uploadError ? (
+        <p className="text-[10px] font-bold text-rose-400 mt-1">{uploadError}</p>
+      ) : null}
 
       {!isLocked ? (
         <input
@@ -1008,6 +1088,190 @@ function WorkerScheduleSection({
             {isArabic ? "لا توجد أيام عطلة خاصة مضافة حالياً" : "No specific off dates added yet."}
           </p>
         )}
+      </div>
+    </div>
+  );
+}
+
+function WorkerServiceAreasSection({
+  isArabic,
+  areas,
+  onChange
+}: {
+  isArabic: boolean;
+  areas: string[];
+  onChange: (newAreas: string[]) => void;
+}) {
+  const [newAreaInput, setNewAreaInput] = useState("");
+
+  const ALL_EGYPT_LABEL = isArabic ? "جميع أنحاء الجمهورية" : "All Egypt / Nationwide";
+
+  const effectiveAreas = areas && areas.length > 0 ? areas : [ALL_EGYPT_LABEL];
+
+  const POPULAR_AREAS = [
+    ALL_EGYPT_LABEL,
+    "القاهرة",
+    "الجيزة",
+    "المعادي",
+    "6 أكتوبر",
+    "الشيخ زايد",
+    "التجمع الخامس",
+    "مدينة نصر",
+    "مصر الجديدة",
+    "الشروق",
+    "الإسكندرية",
+    "سموحة",
+    "المنصورة",
+    "طنطا"
+  ];
+
+  const isAllEgyptSelected = effectiveAreas.some(
+    (a) =>
+      a.trim() === "جميع أنحاء الجمهورية" ||
+      a.trim() === "All Egypt / Nationwide" ||
+      a.toLowerCase().includes("جمهورية") ||
+      a.toLowerCase().includes("all egypt")
+  );
+
+  function handleAddArea(areaToAdd: string) {
+    const trimmed = areaToAdd.trim();
+    if (!trimmed) return;
+
+    // If choosing "جميع أنحاء الجمهورية", replace all other locations with it
+    if (
+      trimmed === "جميع أنحاء الجمهورية" ||
+      trimmed === "All Egypt / Nationwide" ||
+      trimmed.toLowerCase().includes("جمهورية") ||
+      trimmed.toLowerCase().includes("all egypt")
+    ) {
+      onChange([ALL_EGYPT_LABEL]);
+      setNewAreaInput("");
+      return;
+    }
+
+    // If "جميع أنحاء الجمهورية" is currently selected, replace it with the newly chosen specific location
+    if (isAllEgyptSelected) {
+      onChange([trimmed]);
+      setNewAreaInput("");
+      return;
+    }
+
+    if (effectiveAreas.some((a) => a.toLowerCase() === trimmed.toLowerCase())) {
+      setNewAreaInput("");
+      return;
+    }
+
+    onChange([...effectiveAreas, trimmed]);
+    setNewAreaInput("");
+  }
+
+  function handleRemoveArea(areaToRemove: string) {
+    const remaining = effectiveAreas.filter((a) => a !== areaToRemove);
+    if (remaining.length === 0) {
+      // At least one location must be selected, default to All Egypt
+      onChange([ALL_EGYPT_LABEL]);
+    } else {
+      onChange(remaining);
+    }
+  }
+
+  return (
+    <div className="border border-white/10 bg-[#111] p-4 space-y-4">
+      <div>
+        <div className="flex items-center gap-2">
+          <MapPin className="h-4 w-4 text-gold shrink-0" />
+          <h4 className="font-black text-white text-sm">{isArabic ? "مناطق التغطية والخدمة" : "Coverage & Service Areas"}</h4>
+        </div>
+        <p className="mt-1 text-xs font-medium text-white/40">
+          {isArabic ? "أضف المناطق والمافظات التي يمكنك تقديم الخدمات بها لتظهر في نتائج البحث للعملاء." : "Add regions & cities where you can deliver services to appear in client searches."}
+        </p>
+      </div>
+
+      {/* Current active areas list */}
+      <div className="space-y-2">
+        <div className="flex flex-wrap gap-2">
+          {effectiveAreas.map((area) => (
+            <span
+              key={area}
+              className={cn(
+                "inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-black shadow-sm group transition",
+                isAllEgyptSelected
+                  ? "border-emerald-500/50 bg-emerald-950/40 text-emerald-300"
+                  : "border-gold/40 bg-gold/10 text-gold hover:border-gold hover:bg-gold/20"
+              )}
+            >
+              <MapPin className={cn("h-3 w-3", isAllEgyptSelected ? "text-emerald-400" : "text-gold/70")} />
+              <span>{area}</span>
+              <button
+                type="button"
+                onClick={() => handleRemoveArea(area)}
+                className={cn(
+                  "rounded-full p-0.5 transition",
+                  isAllEgyptSelected ? "text-emerald-400/70 hover:bg-emerald-800/40 hover:text-white" : "text-gold/60 hover:bg-gold/30 hover:text-white"
+                )}
+                title={isArabic ? "إزالة" : "Remove"}
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </span>
+          ))}
+        </div>
+
+        {isAllEgyptSelected ? (
+          <p className="text-[11px] font-bold text-emerald-400/90 bg-emerald-950/30 border border-emerald-500/20 px-3 py-1.5 rounded-none">
+            {isArabic
+              ? "ℹ️ التغطية الحالية: جميع أنحاء الجمهورية. لاختيار منطقة أو محافظة محددة، اضغط على المنطقة المطلوبة أدناه وسوف يتم استبدالها."
+              : "ℹ️ Current coverage: Nationwide (All Egypt). To select a specific area instead, click any area below."}
+          </p>
+        ) : (
+          <p className="text-[10px] font-medium text-white/40">
+            {isArabic ? "يجب اختيار منطقة واحدة على الأقل. عند حذف كل المناطق، يتم التعيين تلقائياً إلى جميع أنحاء الجمهورية." : "At least one location must be selected. Deleting all areas defaults to All Egypt."}
+          </p>
+        )}
+      </div>
+
+      {/* Add custom area input */}
+      <div className="flex gap-2">
+        <input
+          type="text"
+          value={newAreaInput}
+          onChange={(e) => setNewAreaInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              handleAddArea(newAreaInput);
+            }
+          }}
+          placeholder={isArabic ? "اكتب اسم المنطقة أو المحافظة..." : "Type area or city name..."}
+          className="h-10 flex-1 border border-white/10 bg-[#161616] px-3 text-xs font-bold text-white placeholder:text-white/30 outline-none focus:border-gold"
+        />
+        <button
+          type="button"
+          disabled={!newAreaInput.trim()}
+          onClick={() => handleAddArea(newAreaInput)}
+          className="h-10 px-4 bg-gold font-black text-black text-xs hover:bg-gold/90 transition flex items-center gap-1 shrink-0 disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          <Plus className="h-4 w-4" />
+          {isArabic ? "إضافة" : "Add"}
+        </button>
+      </div>
+
+      {/* Popular areas suggestions */}
+      <div>
+        <p className="text-[10px] font-black uppercase tracking-wider text-white/40 mb-2">{isArabic ? "مقترحات سريعة للمناطق:" : "Popular Area Suggestions:"}</p>
+        <div className="flex flex-wrap gap-1.5">
+          {POPULAR_AREAS.filter((p) => !effectiveAreas.some((a) => a.toLowerCase() === p.toLowerCase())).map((popular) => (
+            <button
+              key={popular}
+              type="button"
+              onClick={() => handleAddArea(popular)}
+              className="inline-flex items-center gap-1 border border-white/10 bg-[#161616] px-2.5 py-1 text-[11px] font-bold text-white/60 hover:border-gold hover:text-gold transition rounded-full"
+            >
+              <Plus className="h-3 w-3 text-gold/60" />
+              <span>{popular}</span>
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );
