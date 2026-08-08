@@ -34,7 +34,9 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
   const [selectedGov, setSelectedGov] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
   const [sortBy, setSortBy] = useState("Top Rated");
-  
+  const [currentPage, setCurrentPage] = useState(1);
+  const WORKERS_PER_PAGE = 9;
+
   const [workers, setWorkers] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -78,6 +80,10 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
     fetchWorkers();
   }, [selectedSpecialty, selectedGov, selectedCity]);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, selectedSpecialty, selectedGov, selectedCity, sortBy]);
+
   const handleBookClick = (worker: any) => {
     if (isLoggedIn) {
       if (isClient) {
@@ -110,6 +116,25 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
     }
     return result;
   }, [workers, searchQuery, sortBy]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredWorkers.length / WORKERS_PER_PAGE));
+  const safeCurrentPage = Math.min(currentPage, totalPages);
+  const paginatedWorkers = filteredWorkers.slice(
+    (safeCurrentPage - 1) * WORKERS_PER_PAGE,
+    safeCurrentPage * WORKERS_PER_PAGE
+  );
+
+  const pageNumbers = useMemo(() => {
+    const pages: (number | "...")[] = [];
+    for (let i = 1; i <= totalPages; i++) {
+      if (i === 1 || i === totalPages || Math.abs(i - safeCurrentPage) <= 1) {
+        pages.push(i);
+      } else if (pages[pages.length - 1] !== "...") {
+        pages.push("...");
+      }
+    }
+    return pages;
+  }, [totalPages, safeCurrentPage]);
 
   const defaultAvatars = [
     "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=400&auto=format&fit=crop&crop=faces",
@@ -216,7 +241,7 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
-            {filteredWorkers.map((worker, index) => {
+            {paginatedWorkers.map((worker, index) => {
               const avatarImg = worker.avatarUrl && !worker.avatarUrl.includes("initials") 
                 ? worker.avatarUrl 
                 : defaultAvatars[index % defaultAvatars.length];
@@ -314,15 +339,40 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
       </section>
 
       {/* Pagination */}
-      <div className="mx-auto hidden max-w-7xl justify-center gap-2 pb-24 md:flex">
-        <button className="w-10 h-10 flex items-center justify-center border border-black/20 bg-white hover:bg-black hover:text-white transition-colors font-bold rounded-none">{"<"}</button>
-        <button className="w-10 h-10 flex items-center justify-center border border-black/20 bg-black text-gold font-bold rounded-none">1</button>
-        <button className="w-10 h-10 flex items-center justify-center border border-black/20 bg-white hover:bg-black hover:text-white transition-colors font-bold rounded-none">2</button>
-        <button className="w-10 h-10 flex items-center justify-center border border-black/20 bg-white hover:bg-black hover:text-white transition-colors font-bold rounded-none">3</button>
-        <span className="w-10 h-10 flex items-center justify-center text-black font-bold">...</span>
-        <button className="w-10 h-10 flex items-center justify-center border border-black/20 bg-white hover:bg-black hover:text-white transition-colors font-bold rounded-none">12</button>
-        <button className="w-10 h-10 flex items-center justify-center border border-black/20 bg-white hover:bg-black hover:text-white transition-colors font-bold rounded-none">{">"}</button>
-      </div>
+      {totalPages > 1 && (
+        <div className="mx-auto hidden max-w-7xl justify-center gap-2 pb-24 md:flex">
+          <button
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            disabled={safeCurrentPage === 1}
+            className="w-10 h-10 flex items-center justify-center border border-black/20 bg-white hover:bg-black hover:text-white transition-colors font-bold rounded-none disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-black"
+          >
+            {"<"}
+          </button>
+          {pageNumbers.map((page, i) =>
+            page === "..." ? (
+              <span key={"ellipsis-" + i} className="w-10 h-10 flex items-center justify-center text-black font-bold">...</span>
+            ) : (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                className={cn(
+                  "w-10 h-10 flex items-center justify-center border border-black/20 font-bold rounded-none transition-colors",
+                  page === safeCurrentPage ? "bg-black text-gold" : "bg-white hover:bg-black hover:text-white"
+                )}
+              >
+                {page}
+              </button>
+            )
+          )}
+          <button
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            disabled={safeCurrentPage === totalPages}
+            className="w-10 h-10 flex items-center justify-center border border-black/20 bg-white hover:bg-black hover:text-white transition-colors font-bold rounded-none disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-black"
+          >
+            {">"}
+          </button>
+        </div>
+      )}
 
       {/* Booking Auth Prompt Modal */}
       {showAuthModal && selectedWorkerForBooking && (
