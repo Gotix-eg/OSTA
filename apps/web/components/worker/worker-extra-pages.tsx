@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { AlertCircle, CalendarDays, Camera, Check, CheckCircle2, Clock, Loader2, Lock, MapPin, Plus, Save, ShieldCheck, Sparkles, Star, TimerReset, Trash2, UserCircle2, X } from "lucide-react";
 
+import { AvatarCropModal } from "@/components/shared/avatar-crop-modal";
 import {
   WorkerProAction,
   WorkerProBadge,
@@ -119,6 +120,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
   const [saveError, setSaveError] = useState<string | null>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const [avatarCropSrc, setAvatarCropSrc] = useState<string | null>(null);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -176,13 +178,23 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
     });
   }
 
-  async function handleAvatarUploadSettings(event: React.ChangeEvent<HTMLInputElement>) {
+  function handleAvatarFileSelected(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) return;
+    setAvatarCropSrc(URL.createObjectURL(file));
+  }
+
+  function closeAvatarCrop() {
+    if (avatarCropSrc) URL.revokeObjectURL(avatarCropSrc);
+    setAvatarCropSrc(null);
+    if (avatarInputRef.current) avatarInputRef.current.value = "";
+  }
+
+  async function handleAvatarCropConfirm(blob: Blob) {
     setIsUploadingAvatar(true);
     try {
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("file", new File([blob], "avatar.jpg", { type: "image/jpeg" }));
       const res = await fetch("/api/upload", {
         method: "POST",
         body: formData
@@ -203,7 +215,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
       console.error("Avatar upload failed", err);
     } finally {
       setIsUploadingAvatar(false);
-      if (avatarInputRef.current) avatarInputRef.current.value = "";
+      closeAvatarCrop();
     }
   }
 
@@ -332,7 +344,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
                 type="file"
                 accept="image/*"
                 ref={avatarInputRef}
-                onChange={(e) => void handleAvatarUploadSettings(e)}
+                onChange={handleAvatarFileSelected}
                 className="hidden"
               />
             </div>
@@ -591,6 +603,15 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
           </div>
         </WorkerProPanel>
       </div>
+
+      {avatarCropSrc ? (
+        <AvatarCropModal
+          imageSrc={avatarCropSrc}
+          isArabic={isArabic}
+          onCancel={closeAvatarCrop}
+          onConfirm={handleAvatarCropConfirm}
+        />
+      ) : null}
     </WorkerProShell>
   );
 }
