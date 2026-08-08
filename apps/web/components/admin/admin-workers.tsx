@@ -3,7 +3,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { createPortal } from "react-dom";
 import {
-  Plus, User, Phone, Search, Loader2, Wrench, Star,
+  Plus, User, Phone, Mail, Search, Loader2, Wrench, Star,
   ShieldCheck, Trash2, Wallet, Eye, X, Edit, Users,
   CheckCircle2, XCircle, Clock3, AlertTriangle, ExternalLink, Settings, UserCheck
 } from "lucide-react";
@@ -470,6 +470,13 @@ export function AdminWorkersManagement({ locale }: { locale: Locale }) {
                           <Phone className="h-3 w-3 text-gold-500/60" />
                           <span dir="ltr" className="font-mono font-bold text-white">{worker.user.phone}</span>
                         </span>
+
+                        {worker.user.email && (
+                          <span className="flex items-center gap-1">
+                            <Mail className="h-3 w-3 text-gold-500/60" />
+                            <span dir="ltr" className="font-mono text-white">{worker.user.email}</span>
+                          </span>
+                        )}
 
                         <span className="flex items-center gap-1 text-gold-500">
                           <Wrench className="h-3 w-3" />
