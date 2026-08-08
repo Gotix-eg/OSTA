@@ -9,7 +9,7 @@ import { RootNavigator } from "./src/navigation/RootNavigator";
 import { SplashScreen } from "./src/screens/common/SplashScreen";
 
 export default function App() {
-  const [splashDone, setSplashDone] = useState(false);
+  const [splashDone, setSplashDone] = useState(true);
 
   useEffect(() => {
     if (!I18nManager.isRTL) {

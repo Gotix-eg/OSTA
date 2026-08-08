@@ -1,12 +1,17 @@
 import nodemailer from "nodemailer";
 
+const host = process.env.SMTP_HOST || "smtp.ipage.com";
+const port = parseInt(process.env.SMTP_PORT || "465");
+const secure = process.env.SMTP_SECURE !== undefined ? process.env.SMTP_SECURE === "true" : port === 465;
+const defaultFrom = process.env.SMTP_FROM || '"OSTA" <info@gotix-eg.com>';
+
 export const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || "smtp.ethereal.email",
-  port: parseInt(process.env.SMTP_PORT || "587"),
-  secure: parseInt(process.env.SMTP_PORT || "587") === 465,
+  host,
+  port,
+  secure,
   auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
+    user: process.env.SMTP_USER || "info@gotix-eg.com",
+    pass: process.env.SMTP_PASS || "AAA@123456789aaa",
   },
   tls: {
     rejectUnauthorized: false
@@ -19,8 +24,8 @@ export async function sendWelcomeEmail(to: string, name: string) {
   console.log(`[EmailService] Attempting to send welcome email to: ${to}`);
 
   const mailOptions = {
-    from: process.env.SMTP_FROM || '"OSTA" <noreply@osta.eg>',
-    replyTo: process.env.SMTP_USER || '"OSTA" <noreply@osta.eg>',
+    from: defaultFrom,
+    replyTo: defaultFrom,
     to,
     subject: "Welcome to OSTA! | أهلاً بك في أُسطى",
     text: `أهلاً بك يا ${name}!\n\nسعداء جداً بانضمامك إلى منصة أُسطى. نحن هنا لنوفر لك أفضل الخدمات المنزلية بكل سهولة وأمان.\nنعدك بتجربة مميزة مع أفضل الفنيين المعتمدين في مصر.\n\nهذه الرسالة مرسلة تلقائياً، برجاء عدم الرد عليها.`,
@@ -52,8 +57,8 @@ export async function sendPasswordResetEmail(to: string, code: string) {
   console.log(`[EmailService] Attempting to send reset code to: ${to}`);
   
   const mailOptions = {
-    from: process.env.SMTP_FROM || '"OSTA" <noreply@osta.eg>',
-    replyTo: process.env.SMTP_USER || '"OSTA" <noreply@osta.eg>',
+    from: defaultFrom,
+    replyTo: defaultFrom,
     to,
     subject: "Reset Your Password | إعادة تعيين كلمة المرور",
     text: `طلب إعادة تعيين كلمة المرور\n\nلقد تلقينا طلباً لإعادة تعيين كلمة المرور الخاصة بحسابك في أُسطى.\n\nرمز التحقق الخاص بك هو:\n${code}\n\nهذا الرمز صالح لمدة ساعة واحدة فقط.\nإذا لم تطلب هذا، يمكنك تجاهل هذه الرسالة بأمان.\n\nمنصة أُسطى - الجودة والضمان.`,
@@ -94,8 +99,8 @@ export async function sendNewRequestNotificationEmail(
   console.log(`[EmailService] Attempting to send new request notification email to: ${to}`);
 
   const mailOptions = {
-    from: process.env.SMTP_FROM || '"OSTA" <noreply@osta.eg>',
-    replyTo: process.env.SMTP_USER || '"OSTA" <noreply@osta.eg>',
+    from: defaultFrom,
+    replyTo: defaultFrom,
     to,
     subject: "New Job Opportunity Available! | فرصة عمل جديدة متاحة",
     text: `أهلاً بك يا ${name}!\n\nهناك فرصة عمل جديدة متاحة في منطقتك تطابق تخصصك:\n\nالخدمة: ${categoryName}\nالعنوان: ${requestTitle}\nالمنطقة: ${area}\n\nسجل الدخول إلى حسابك في أُسطى لعرض التفاصيل وقبول الطلب.\n\nمنصة أُسطى - الجودة والضمان.`,
@@ -131,8 +136,8 @@ export async function sendVerificationEmail(to: string, name: string, code: stri
   console.log(`[EmailService] Attempting to send verification email to: ${to}`);
 
   const mailOptions = {
-    from: process.env.SMTP_FROM || '"OSTA" <noreply@osta.eg>',
-    replyTo: process.env.SMTP_USER || '"OSTA" <noreply@osta.eg>',
+    from: defaultFrom,
+    replyTo: defaultFrom,
     to,
     subject: "Verify Your Email | تأكيد البريد الإلكتروني",
     text: `رمز التحقق الخاص بك لتفعيل الحساب في أُسطى هو:\n${code}\n\nهذا الرمز صالح لمدة ساعة واحدة فقط.\n\nمنصة أُسطى - الجودة والضمان.`,

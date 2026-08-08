@@ -266,11 +266,56 @@ router.get("/me", catchAsync(async (request, response) => {
 }));
 
 router.patch("/profile", authenticate, catchAsync(async (request, response) => {
-  const { firstName, lastName, email, avatarUrl } = request.body;
+  const { firstName, lastName, email, avatarUrl, profession, bio, areas, shopName, shopDescription, category, address } = request.body;
   const userId = request.auth!.userId;
 
   const existingUser = await prisma.user.findUnique({ where: { id: userId } });
   const isNewEmail = email !== undefined && email?.trim().toLowerCase() !== existingUser?.email?.trim().toLowerCase();
+
+  if (profession !== undefined || bio !== undefined) {
+    await prisma.workerProfile.updateMany({
+      where: { userId },
+      data: {
+        ...(profession !== undefined ? { profession } : {}),
+        ...(bio !== undefined ? { bio } : {})
+      }
+    });
+  }
+
+  if (shopName !== undefined || shopDescription !== undefined || category !== undefined || address !== undefined) {
+    await prisma.vendorProfile.updateMany({
+      where: { userId },
+      data: {
+        ...(shopName !== undefined ? { shopName } : {}),
+        ...(shopDescription !== undefined ? { shopDescription } : {}),
+        ...(category !== undefined ? { category } : {}),
+        ...(address !== undefined ? { address } : {})
+      }
+    });
+  }
+
+  if (areas !== undefined && Array.isArray(areas)) {
+    const workerProfile = await prisma.workerProfile.findUnique({
+      where: { userId }
+    });
+    if (workerProfile) {
+      await prisma.workerArea.deleteMany({
+        where: { workerId: workerProfile.id }
+      });
+      for (const areaName of areas) {
+        if (typeof areaName === "string" && areaName.trim()) {
+          await prisma.workerArea.create({
+            data: {
+              workerId: workerProfile.id,
+              governorate: "cairo",
+              city: areaName.trim(),
+              area: areaName.trim()
+            }
+          });
+        }
+      }
+    }
+  }
 
   const updatedUser = await prisma.user.update({
     where: { id: userId },

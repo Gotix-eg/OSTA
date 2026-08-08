@@ -268,6 +268,9 @@ router.get("/public/workers", async (request, response) => {
   }
 });
 
+import { getToken } from "../middleware/auth.middleware.js";
+import { verifyAccessToken } from "../utils/tokens.js";
+
 router.get("/public/workers/:id", async (request, response) => {
   const { id } = request.params;
   try {
@@ -279,10 +282,28 @@ router.get("/public/workers/:id", async (request, response) => {
         workAreas: true,
         certificates: { orderBy: { order: "asc" } },
         serviceItems: { orderBy: { order: "asc" } },
-      }
+      } as any
     });
 
-    if (!worker || worker.verificationStatus !== "VERIFIED" || worker.specializations.length === 0) {
+    if (!worker) {
+      return response.status(404).json({ error: "Worker not found" });
+    }
+
+    let isOwner = false;
+    const token = getToken(request);
+    if (token) {
+      try {
+        const payload = verifyAccessToken(token);
+        if (payload && payload.sub === worker.userId) {
+          isOwner = true;
+        }
+      } catch (err) {
+        // ignore
+      }
+    }
+
+    const specializations = (worker as any).specializations ?? [];
+    if (!isOwner && (worker.verificationStatus !== "VERIFIED" || specializations.length === 0)) {
       return response.status(404).json({ error: "Worker not found" });
     }
 
@@ -300,33 +321,33 @@ router.get("/public/workers/:id", async (request, response) => {
     const result = {
       id: worker.id,
       userId: worker.userId,
-      name: `${worker.user.firstName} ${worker.user.lastName}`,
-      avatarUrl: worker.user.avatarUrl,
-      professionAr: worker.specializations[0]?.service.category.nameAr || "",
-      professionEn: worker.specializations[0]?.service.category.nameEn || "",
-      categoryId: worker.specializations[0]?.service.category.slug || "",
-      serviceId: worker.specializations[0]?.service.id || "",
+      name: `${(worker as any).user?.firstName ?? ""} ${(worker as any).user?.lastName ?? ""}`.trim(),
+      avatarUrl: (worker as any).user?.avatarUrl ?? null,
+      professionAr: specializations[0]?.service?.category?.nameAr || "",
+      professionEn: specializations[0]?.service?.category?.nameEn || "",
+      categoryId: specializations[0]?.service?.category?.slug || "",
+      serviceId: specializations[0]?.service?.id || "",
       rating: worker.rating,
       ratingCount: worker.ratingCount,
       totalJobs: worker.totalJobsCompleted,
       isOnline: isWorkerAvailableNow({
         isAvailable: worker.isAvailable,
-        workingHours: worker.workingHours,
-        offDates: worker.offDates,
+        workingHours: (worker as any).workingHours,
+        offDates: (worker as any).offDates,
       }),
       isAvailable: worker.isAvailable,
-      isFeatured: worker.subscriptionTier === "featured",
-      areas: worker.workAreas.map((wa: any) => wa.area || wa.city),
+      isFeatured: (worker as any).subscriptionTier === "featured",
+      areas: ((worker as any).workAreas ?? []).map((wa: any) => wa.area || wa.city),
       bio: worker.bio,
       yearsOfExperience: worker.yearsOfExperience,
-      education: worker.education,
-      achievements: worker.achievements,
+      education: (worker as any).education ?? [],
+      achievements: (worker as any).achievements ?? [],
       galleryImages: worker.galleryImages,
-      galleryVideoUrl: worker.galleryVideoUrl,
-      contractInfo: worker.contractInfo,
-      certificates: worker.certificates.map((c: any) => ({ id: c.id, title: c.title, year: c.year, imageUrl: c.imageUrl })),
-      serviceItems: worker.serviceItems.map((s: any) => ({ id: s.id, name: s.name, price: s.price, note: s.note })),
-      joinedAt: worker.user.createdAt,
+      galleryVideoUrl: (worker as any).galleryVideoUrl ?? null,
+      contractInfo: (worker as any).contractInfo ?? null,
+      certificates: ((worker as any).certificates ?? []).map((c: any) => ({ id: c.id, title: c.title, year: c.year, imageUrl: c.imageUrl })),
+      serviceItems: ((worker as any).serviceItems ?? []).map((s: any) => ({ id: s.id, name: s.name, price: s.price, note: s.note })),
+      joinedAt: (worker as any).user?.createdAt,
       reviews: reviews.map(r => ({
         id: r.id,
         authorName: `${r.author.firstName} ${r.author.lastName}`,

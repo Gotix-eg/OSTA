@@ -2,6 +2,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
 import helmet from "helmet";
+import { request as httpsRequest } from "https";
 
 import { env } from "./config/env.js";
 import { errorHandler, notFoundHandler } from "./middleware/error.middleware.js";
@@ -48,6 +49,51 @@ export function createApp() {
       credentials: true
     })
   );
+
+  // If PROXY_TO_PRODUCTION is enabled, proxy all api calls to production backend to avoid CORS issues
+  if (process.env.PROXY_TO_PRODUCTION === "true") {
+    app.use("/api", (req, res, next) => {
+      if (req.method === "OPTIONS") {
+        return next();
+      }
+      const targetUrl = `https://www.ostafy.com/api${req.url}`;
+      const parsedUrl = new URL(targetUrl);
+      
+      const headers = { ...req.headers };
+      headers.host = parsedUrl.host;
+      delete headers.origin;
+      delete headers.referer;
+
+      const proxyReq = httpsRequest(
+        {
+          hostname: parsedUrl.hostname,
+          port: 443,
+          path: parsedUrl.pathname + parsedUrl.search,
+          method: req.method,
+          headers: headers,
+        },
+        (proxyRes) => {
+          if (proxyRes.headers) {
+            Object.entries(proxyRes.headers).forEach(([key, val]) => {
+              if (val !== undefined) {
+                res.setHeader(key, val);
+              }
+            });
+          }
+          res.status(proxyRes.statusCode || 200);
+          proxyRes.pipe(res);
+        }
+      );
+
+      proxyReq.on("error", (err) => {
+        console.error("Proxy error:", err);
+        res.status(502).json({ error: "Bad Gateway", message: err.message });
+      });
+
+      req.pipe(proxyReq);
+    });
+  }
+
   app.use(cookieParser());
   app.use(express.json({ limit: "10mb" }));
   app.use(express.urlencoded({ extended: true, limit: "10mb" }));

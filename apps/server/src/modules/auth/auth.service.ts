@@ -770,7 +770,7 @@ export const authService = {
       }
     });
 
-    sendVerificationEmail(user.email!, code, user.firstName).catch(err =>
+    sendVerificationEmail(user.email!, user.firstName, code).catch(err =>
       console.error("Failed to send verification email:", err)
     );
 

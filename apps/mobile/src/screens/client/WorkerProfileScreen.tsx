@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { StyleSheet, Text, View, ScrollView, Pressable, ActivityIndicator } from "react-native";
+import { StyleSheet, Text, View, ScrollView, Pressable, ActivityIndicator, Alert, TextInput, Platform } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 
@@ -9,6 +10,8 @@ import { AppButton } from "../../components/AppButton";
 import { useApiResource } from "../../hooks/useApiResource";
 import { useTheme } from "../../context/ThemeContext";
 import { spacing } from "../../theme/spacing";
+import { useAuth } from "../../context/AuthContext";
+import { apiClient } from "../../api/client";
 
 type RouteParams = {
   workerId: string;
@@ -50,14 +53,103 @@ export function WorkerProfileScreen() {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
   const { workerId } = route.params as RouteParams;
+  const { user } = useAuth();
 
   const profileResource = useApiResource<PublicWorkerProfile | null>(
     `/public/workers/${workerId}`,
     null
   );
 
+  const categories = useApiResource<Array<{ id: string; nameAr: string; slug: string }>>("/services/categories", []);
+
   const worker = profileResource.data;
   const isLoading = profileResource.isLoading;
+
+  const isOwner = user?.id === worker?.userId;
+
+  const [isEditingBio, setIsEditingBio] = useState(false);
+  const [editedBio, setEditedBio] = useState("");
+  const [isSavingBio, setIsSavingBio] = useState(false);
+  const [showProfessionDropdown, setShowProfessionDropdown] = useState(false);
+  const [isSavingProfession, setIsSavingProfession] = useState(false);
+
+  async function handleSaveBio() {
+    setIsSavingBio(true);
+    try {
+      await apiClient.patch("/auth/profile", { bio: editedBio });
+      await profileResource.reload();
+      setIsEditingBio(false);
+      if (Platform.OS === "web") {
+        alert("تم تحديث النبذة التعريفية بنجاح.");
+      } else {
+        Alert.alert("تم التحديث", "تم تحديث النبذة التعريفية بنجاح.");
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "تعذر تحديث النبذة";
+      if (Platform.OS === "web") {
+        alert(`خطأ: ${msg}`);
+      } else {
+        Alert.alert("خطأ", msg);
+      }
+    } finally {
+      setIsSavingBio(false);
+    }
+  }
+
+  async function handleUpdateProfession(newProfession: string) {
+    setShowProfessionDropdown(false);
+    setIsSavingProfession(true);
+    try {
+      await apiClient.patch("/auth/profile", { profession: newProfession });
+      await profileResource.reload();
+      if (Platform.OS === "web") {
+        alert("تم تحديث المهنة بنجاح.");
+      } else {
+        Alert.alert("تم التحديث", "تم تحديث المهنة بنجاح.");
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "تعذر تحديث المهنة";
+      if (Platform.OS === "web") {
+        alert(`خطأ: ${msg}`);
+      } else {
+        Alert.alert("خطأ", msg);
+      }
+    } finally {
+      setIsSavingProfession(false);
+    }
+  }
+
+  const [isEditingAreas, setIsEditingAreas] = useState(false);
+  const [editedAreas, setEditedAreas] = useState("");
+  const [isSavingAreas, setIsSavingAreas] = useState(false);
+
+  async function handleSaveAreas() {
+    setIsSavingAreas(true);
+    const parsedAreas = editedAreas
+      .split(",")
+      .map(a => a.trim())
+      .filter(a => a.length > 0);
+
+    try {
+      await apiClient.patch("/auth/profile", { areas: parsedAreas });
+      await profileResource.reload();
+      setIsEditingAreas(false);
+      if (Platform.OS === "web") {
+        alert("تم تحديث مناطق التغطية بنجاح.");
+      } else {
+        Alert.alert("تم التحديث", "تم تحديث مناطق التغطية بنجاح.");
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "تعذر تحديث مناطق التغطية";
+      if (Platform.OS === "web") {
+        alert(`خطأ: ${msg}`);
+      } else {
+        Alert.alert("خطأ", msg);
+      }
+    } finally {
+      setIsSavingAreas(false);
+    }
+  }
 
   if (isLoading) {
     return (
@@ -108,7 +200,33 @@ export function WorkerProfileScreen() {
               <Text style={styles.nameText}>{worker.name}</Text>
               <Ionicons name="checkmark-circle" size={18} color="#D7A24D" style={{ marginRight: 6 }} />
             </View>
-            <Text style={styles.professionText}>{worker.professionAr || "فني محترف"}</Text>
+            
+            <View style={styles.professionRow}>
+              <Text style={styles.professionText}>{worker.professionAr || "فني محترف"}</Text>
+              {isOwner && (
+                <Pressable onPress={() => setShowProfessionDropdown(!showProfessionDropdown)}>
+                  {isSavingProfession ? (
+                    <ActivityIndicator size="small" color={theme.primary} />
+                  ) : (
+                    <Ionicons name="create-outline" size={16} color={theme.primary} />
+                  )}
+                </Pressable>
+              )}
+            </View>
+            
+            {isOwner && showProfessionDropdown && (
+              <View style={styles.dropdown}>
+                {categories.data.map((cat) => (
+                  <Pressable
+                    key={cat.id}
+                    style={styles.dropdownItem}
+                    onPress={() => handleUpdateProfession(cat.nameAr)}
+                  >
+                    <Text style={styles.dropdownItemText}>{cat.nameAr}</Text>
+                  </Pressable>
+                ))}
+              </View>
+            )}
             
             <View style={styles.statusRow}>
               {worker.isAvailable ? (
@@ -142,27 +260,123 @@ export function WorkerProfileScreen() {
 
       {/* 3. Biography Section */}
       <AppCard style={styles.sectionCard}>
-        <Text style={styles.sectionTitle}>نبذة عن الفني</Text>
-        <Text style={styles.bioText}>
-          {worker.bio || "فني معتمد ومحترف على منصة أسطى، ملتزم بتقديم خدمات صيانة ممتازة وبأعلى مستويات الجودة والأمان لحل جميع مشكلاتك التقنية والمنزلية."}
-        </Text>
+        <View style={styles.sectionTitleRow}>
+          <Text style={styles.sectionTitle}>نبذة عن الفني</Text>
+          {isOwner && !isEditingBio && (
+            <Pressable 
+              style={styles.editBioBtn} 
+              onPress={() => {
+                setEditedBio(worker.bio || "");
+                setIsEditingBio(true);
+              }}
+            >
+              <Ionicons name="create-outline" size={14} color={theme.primary} />
+              <Text style={styles.editBioBtnText}>تعديل</Text>
+            </Pressable>
+          )}
+        </View>
+        
+        {isEditingBio ? (
+          <View style={styles.editBioContainer}>
+            <TextInput
+              style={styles.bioInput}
+              multiline
+              value={editedBio}
+              onChangeText={setEditedBio}
+              placeholder="اكتب نبذة تعريفية عن خبراتك وخدماتك..."
+              placeholderTextColor={theme.muted}
+            />
+            <View style={styles.editBioActions}>
+              <Pressable 
+                style={[styles.bioActionButton, { backgroundColor: theme.primary }]} 
+                onPress={handleSaveBio}
+                disabled={isSavingBio}
+              >
+                {isSavingBio ? (
+                  <ActivityIndicator size="small" color="#FFF" />
+                ) : (
+                  <Text style={styles.bioActionButtonText}>حفظ</Text>
+                )}
+              </Pressable>
+              <Pressable 
+                style={[styles.bioActionButton, { backgroundColor: theme.surfaceAlt, borderWidth: 1, borderColor: theme.border }]} 
+                onPress={() => setIsEditingBio(false)}
+                disabled={isSavingBio}
+              >
+                <Text style={[styles.bioActionButtonText, { color: theme.text }]}>إلغاء</Text>
+              </Pressable>
+            </View>
+          </View>
+        ) : (
+          <Text style={styles.bioText}>
+            {worker.bio || "فني معتمد ومحترف على منصة أسطى، ملتزم بتقديم خدمات صيانة ممتازة وبأعلى مستويات الجودة والأمان لحل جميع مشكلاتك التقنية والمنزلية."}
+          </Text>
+        )}
       </AppCard>
 
       {/* 4. Service Areas Covered */}
       <AppCard style={styles.sectionCard}>
-        <Text style={styles.sectionTitle}>مناطق التغطية</Text>
-        <View style={styles.tagsContainer}>
-          {worker.areas && worker.areas.length > 0 ? (
-            worker.areas.map((area, index) => (
-              <View key={index} style={styles.tag}>
-                <Ionicons name="location-outline" size={12} color={theme.text} style={{ marginLeft: 4 }} />
-                <Text style={styles.tagText}>{area}</Text>
-              </View>
-            ))
-          ) : (
-            <Text style={styles.emptyText}>يغطي جميع مناطق مدينته المسجلة.</Text>
+        <View style={styles.sectionTitleRow}>
+          <Text style={styles.sectionTitle}>مناطق التغطية</Text>
+          {isOwner && !isEditingAreas && (
+            <Pressable 
+              style={styles.editBioBtn} 
+              onPress={() => {
+                setEditedAreas(worker.areas ? worker.areas.join(", ") : "");
+                setIsEditingAreas(true);
+              }}
+            >
+              <Ionicons name="create-outline" size={14} color={theme.primary} />
+              <Text style={styles.editBioBtnText}>تعديل</Text>
+            </Pressable>
           )}
         </View>
+        
+        {isEditingAreas ? (
+          <View style={styles.editBioContainer}>
+            <TextInput
+              style={styles.bioInput}
+              multiline
+              value={editedAreas}
+              onChangeText={setEditedAreas}
+              placeholder="اكتب المناطق مفصولة بفواصل، مثل: مصر الجديدة، مدينة نصر، التجمع الخامس"
+              placeholderTextColor={theme.muted}
+            />
+            <View style={styles.editBioActions}>
+              <Pressable 
+                style={[styles.bioActionButton, { backgroundColor: theme.primary }]} 
+                onPress={handleSaveAreas}
+                disabled={isSavingAreas}
+              >
+                {isSavingAreas ? (
+                  <ActivityIndicator size="small" color="#FFF" />
+                ) : (
+                  <Text style={styles.bioActionButtonText}>حفظ</Text>
+                )}
+              </Pressable>
+              <Pressable 
+                style={[styles.bioActionButton, { backgroundColor: theme.surfaceAlt, borderWidth: 1, borderColor: theme.border }]} 
+                onPress={() => setIsEditingAreas(false)}
+                disabled={isSavingAreas}
+              >
+                <Text style={[styles.bioActionButtonText, { color: theme.text }]}>إلغاء</Text>
+              </Pressable>
+            </View>
+          </View>
+        ) : (
+          <View style={styles.tagsContainer}>
+            {worker.areas && worker.areas.length > 0 ? (
+              worker.areas.map((area, index) => (
+                <View key={index} style={styles.tag}>
+                  <Ionicons name="location-outline" size={12} color={theme.text} style={{ marginLeft: 4 }} />
+                  <Text style={styles.tagText}>{area}</Text>
+                </View>
+              ))
+            ) : (
+              <Text style={styles.emptyText}>يغطي جميع مناطق مدينته المسجلة.</Text>
+            )}
+          </View>
+        )}
       </AppCard>
 
       {/* 5. Reviews Section */}
@@ -215,19 +429,21 @@ export function WorkerProfileScreen() {
       )}
 
       {/* 6. Call To Action (Book Button) */}
-      <View style={styles.actionContainer}>
-        <AppButton 
-          title="اطلب الفني الآن" 
-          onPress={() => {
-            navigation.navigate("CreateRequest", {
-              workerId: worker.id,
-              workerName: worker.name,
-              categoryId: worker.categoryId,
-              categoryNameAr: worker.professionAr
-            });
-          }}
-        />
-      </View>
+      {!isOwner && (
+        <View style={styles.actionContainer}>
+          <AppButton 
+            title="اطلب الفني الآن" 
+            onPress={() => {
+              navigation.navigate("CreateRequest", {
+                workerId: worker.id,
+                workerName: worker.name,
+                categoryId: worker.categoryId,
+                categoryNameAr: worker.professionAr
+              });
+            }}
+          />
+        </View>
+      )}
     </Screen>
   );
 }
@@ -496,5 +712,89 @@ const makeStyles = (theme: ReturnType<typeof useTheme>["theme"]) => StyleSheet.c
   actionContainer: {
     marginTop: spacing.sm,
     marginBottom: spacing.xl
+  },
+  sectionTitleRow: {
+    flexDirection: "row-reverse",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%"
+  },
+  editBioBtn: {
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    backgroundColor: theme.surfaceAlt,
+    borderWidth: 1,
+    borderColor: theme.border,
+    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    gap: 4
+  },
+  editBioBtnText: {
+    color: theme.primary,
+    fontSize: 11,
+    fontWeight: "bold"
+  },
+  editBioContainer: {
+    width: "100%",
+    gap: spacing.sm,
+    marginTop: 4
+  },
+  bioInput: {
+    minHeight: 100,
+    backgroundColor: theme.surfaceAlt,
+    borderWidth: 1,
+    borderColor: theme.border,
+    borderRadius: 8,
+    padding: spacing.sm,
+    color: theme.text,
+    fontSize: 14,
+    textAlign: "right",
+    textAlignVertical: "top"
+  },
+  editBioActions: {
+    flexDirection: "row-reverse",
+    gap: spacing.sm
+  },
+  bioActionButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 16,
+    minWidth: 80,
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  bioActionButtonText: {
+    color: "#FFF",
+    fontSize: 13,
+    fontWeight: "bold"
+  },
+  professionRow: {
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    gap: 6
+  },
+  dropdown: {
+    backgroundColor: theme.surface,
+    borderWidth: 1,
+    borderColor: theme.border,
+    borderRadius: 8,
+    marginTop: 6,
+    width: 200,
+    maxHeight: 180,
+    overflow: "scroll",
+    zIndex: 10
+  },
+  dropdownItem: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.border
+  },
+  dropdownItemText: {
+    color: theme.text,
+    fontSize: 13,
+    textAlign: "center",
+    fontWeight: "600"
   }
 });

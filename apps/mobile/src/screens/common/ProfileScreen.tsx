@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Text, View, StyleSheet, Pressable, Alert, ActivityIndicator, Platform } from "react-native";
+import { Text, View, StyleSheet, Pressable, Alert, ActivityIndicator, Platform, TextInput } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
@@ -16,6 +16,7 @@ import { formatUserName } from "../../utils/formatters";
 import { uploadMedia } from "../../api/upload";
 import { apiClient, unwrapApiData } from "../../api/client";
 import { GuestGate } from "../../components/GuestGate";
+import { useApiResource } from "../../hooks/useApiResource";
 
 export function ProfileScreen() {
   const { user, logout, refreshUser, switchRole, token } = useAuth();
@@ -23,6 +24,60 @@ export function ProfileScreen() {
   const styles = makeStyles(theme);
   const navigation = useNavigation<any>();
   const [isUploading, setIsUploading] = useState(false);
+  const [showProfessionDropdown, setShowProfessionDropdown] = useState(false);
+  const [isUpdatingProfession, setIsUpdatingProfession] = useState(false);
+
+  const [isEditingVendor, setIsEditingVendor] = useState(false);
+  const [editedShopName, setEditedShopName] = useState("");
+  const [editedCategory, setEditedCategory] = useState("");
+  const [editedAddress, setEditedAddress] = useState("");
+  const [editedShopDesc, setEditedShopDesc] = useState("");
+  const [isSavingVendor, setIsSavingVendor] = useState(false);
+
+  function handleStartEditVendor() {
+    setEditedShopName(user?.profile?.shopName || "");
+    setEditedCategory(user?.profile?.category || "");
+    setEditedAddress(user?.profile?.address || "");
+    setEditedShopDesc(user?.profile?.shopDescription || "");
+    setIsEditingVendor(true);
+  }
+
+  async function handleSaveVendor() {
+    setIsSavingVendor(true);
+    try {
+      await apiClient.patch("/auth/profile", {
+        shopName: editedShopName,
+        category: editedCategory,
+        address: editedAddress,
+        shopDescription: editedShopDesc
+      });
+      await refreshUser();
+      setIsEditingVendor(false);
+      showAlert("تم التحديث", "تم تحديث بيانات المتجر بنجاح.");
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : "تعذر تحديث البيانات";
+      showAlert("خطأ", msg);
+    } finally {
+      setIsSavingVendor(false);
+    }
+  }
+
+  const categories = useApiResource<Array<{ id: string; nameAr: string; slug: string }>>("/services/categories", []);
+
+  async function handleUpdateProfession(newProfession: string) {
+    setShowProfessionDropdown(false);
+    setIsUpdatingProfession(true);
+    try {
+      await apiClient.patch("/auth/profile", { profession: newProfession });
+      await refreshUser();
+      showAlert("تم التحديث", "تم تحديث مهنتك بنجاح.");
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : "تعذر تحديث المهنة";
+      showAlert("خطأ", msg);
+    } finally {
+      setIsUpdatingProfession(false);
+    }
+  }
 
   if (!token) {
     return (
@@ -114,12 +169,147 @@ export function ProfileScreen() {
           <Text style={styles.avatarHelpText}>اضغط على الصورة لتعديلها</Text>
         </View>
 
-        <View style={styles.infoBlock}>
-          <Text style={styles.name}>{formatUserName(user?.firstName, user?.lastName) || "مستخدم أُسطى"}</Text>
-          <Text style={styles.meta}>{user?.phone}</Text>
-          {user?.email ? <Text style={styles.meta}>{user.email}</Text> : null}
-        </View>
+        {user?.role === "VENDOR" && isEditingVendor ? (
+          <View style={styles.vendorEditForm}>
+            <Text style={styles.editFormLabel}>اسم المتجر</Text>
+            <TextInput
+              style={styles.vendorInput}
+              value={editedShopName}
+              onChangeText={setEditedShopName}
+              placeholder="اسم المتجر"
+              placeholderTextColor={theme.muted}
+            />
+            
+            <Text style={styles.editFormLabel}>نشاط / تصنيف المتجر</Text>
+            <TextInput
+              style={styles.vendorInput}
+              value={editedCategory}
+              onChangeText={setEditedCategory}
+              placeholder="مثال: قطع غيار، أدوات صحية، دهانات"
+              placeholderTextColor={theme.muted}
+            />
+
+            <Text style={styles.editFormLabel}>العنوان بالتفصيل</Text>
+            <TextInput
+              style={styles.vendorInput}
+              value={editedAddress}
+              onChangeText={setEditedAddress}
+              placeholder="عنوان المتجر"
+              placeholderTextColor={theme.muted}
+            />
+
+            <Text style={styles.editFormLabel}>وصف المتجر</Text>
+            <TextInput
+              style={[styles.vendorInput, { minHeight: 60 }]}
+              multiline
+              value={editedShopDesc}
+              onChangeText={setEditedShopDesc}
+              placeholder="وصف متجرك والمنتجات التي توفرها..."
+              placeholderTextColor={theme.muted}
+            />
+
+            <View style={styles.vendorEditActions}>
+              <Pressable 
+                style={[styles.vendorActionBtn, { backgroundColor: theme.primary }]} 
+                onPress={handleSaveVendor}
+                disabled={isSavingVendor}
+              >
+                {isSavingVendor ? (
+                  <ActivityIndicator size="small" color="#FFF" />
+                ) : (
+                  <Text style={styles.vendorActionBtnText}>حفظ</Text>
+                )}
+              </Pressable>
+              <Pressable 
+                style={[styles.vendorActionBtn, { backgroundColor: theme.surfaceAlt, borderWidth: 1, borderColor: theme.border }]} 
+                onPress={() => setIsEditingVendor(false)}
+                disabled={isSavingVendor}
+              >
+                <Text style={[styles.vendorActionBtnText, { color: theme.text }]}>إلغاء</Text>
+              </Pressable>
+            </View>
+          </View>
+        ) : (
+          <View style={styles.infoBlock}>
+            <Text style={styles.name}>
+              {user?.role === "VENDOR" 
+                ? (user?.profile?.shopName || formatUserName(user?.firstName, user?.lastName) || "متجر أُسطى")
+                : (formatUserName(user?.firstName, user?.lastName) || "مستخدم أُسطى")
+              }
+            </Text>
+            <Text style={styles.meta}>{user?.phone}</Text>
+            {user?.email ? <Text style={styles.meta}>{user.email}</Text> : null}
+
+            {user?.role === "VENDOR" && (
+              <View style={styles.vendorDetails}>
+                <Text style={styles.vendorDetailText}>
+                  النشاط: {user?.profile?.category || "غير محدد"}
+                </Text>
+                <Text style={styles.vendorDetailText}>
+                  العنوان: {user?.profile?.address || "غير محدد"}
+                </Text>
+                {user?.profile?.shopDescription ? (
+                  <Text style={styles.vendorDetailText}>
+                    الوصف: {user.profile.shopDescription}
+                  </Text>
+                ) : null}
+                
+                <Pressable style={styles.editVendorBtn} onPress={handleStartEditVendor}>
+                  <Ionicons name="create-outline" size={16} color={theme.primary} />
+                  <Text style={styles.editVendorBtnText}>تعديل بيانات المتجر</Text>
+                </Pressable>
+              </View>
+            )}
+
+            {user?.role === "WORKER" && (
+              <View style={styles.professionContainer}>
+                <View style={styles.professionRow}>
+                  <Text style={styles.professionText}>
+                    المهنة: {user?.profile?.profession || "غير محددة"}
+                  </Text>
+                  <Pressable 
+                    style={styles.editProfessionBtn} 
+                    onPress={() => setShowProfessionDropdown(!showProfessionDropdown)}
+                    disabled={isUpdatingProfession}
+                  >
+                    {isUpdatingProfession ? (
+                      <ActivityIndicator size="small" color={theme.primary} />
+                    ) : (
+                      <>
+                        <Ionicons name="create-outline" size={14} color={theme.primary} />
+                        <Text style={styles.editProfessionBtnText}>تعديل</Text>
+                      </>
+                    )}
+                  </Pressable>
+                </View>
+
+                {showProfessionDropdown && (
+                  <View style={styles.dropdown}>
+                    {categories.data.map((cat) => (
+                      <Pressable
+                        key={cat.id}
+                        style={styles.dropdownItem}
+                        onPress={() => handleUpdateProfession(cat.nameAr)}
+                      >
+                        <Text style={styles.dropdownItemText}>{cat.nameAr}</Text>
+                      </Pressable>
+                    ))}
+                  </View>
+                )}
+              </View>
+            )}
+          </View>
+        )}
       </AppCard>
+
+      {user?.role === "WORKER" && user?.profile?.id && (
+        <AppButton 
+          title="عرض صفحتي الشخصية كفني" 
+          variant="primary" 
+          onPress={() => navigation.navigate("WorkerProfile", { workerId: user.profile.id })}
+          style={{ marginBottom: spacing.sm }}
+        />
+      )}
       
       {user?.role !== "CLIENT" && (
         <AppButton 
@@ -211,7 +401,8 @@ const makeStyles = (theme: ReturnType<typeof useTheme>["theme"]) => StyleSheet.c
   },
   infoBlock: {
     alignItems: "center",
-    gap: 4
+    gap: 4,
+    width: "100%"
   },
   name: {
     color: theme.text,
@@ -223,5 +414,140 @@ const makeStyles = (theme: ReturnType<typeof useTheme>["theme"]) => StyleSheet.c
     color: theme.muted,
     fontSize: 14,
     textAlign: "center"
+  },
+  professionContainer: {
+    width: "100%",
+    marginTop: spacing.sm,
+    alignItems: "center"
+  },
+  professionRow: {
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: spacing.sm
+  },
+  professionText: {
+    color: theme.primary,
+    fontSize: 14,
+    fontWeight: "bold"
+  },
+  editProfessionBtn: {
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    backgroundColor: theme.surfaceAlt,
+    borderWidth: 1,
+    borderColor: theme.border,
+    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    gap: 4
+  },
+  editProfessionBtnText: {
+    color: theme.primary,
+    fontSize: 11,
+    fontWeight: "bold"
+  },
+  dropdown: {
+    backgroundColor: theme.surface,
+    borderWidth: 1,
+    borderColor: theme.border,
+    borderRadius: 8,
+    marginTop: 6,
+    width: 200,
+    maxHeight: 180,
+    overflow: "scroll",
+    zIndex: 10
+  },
+  dropdownItem: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.border
+  },
+  dropdownItemText: {
+    color: theme.text,
+    fontSize: 13,
+    textAlign: "center",
+    fontWeight: "600"
+  },
+  vendorDetails: {
+    width: "100%",
+    marginTop: spacing.md,
+    backgroundColor: theme.surfaceAlt,
+    borderWidth: 1,
+    borderColor: theme.border,
+    borderRadius: 12,
+    padding: spacing.md,
+    gap: spacing.xs,
+    alignItems: "flex-end"
+  },
+  vendorDetailText: {
+    color: theme.text,
+    fontSize: 13,
+    textAlign: "right",
+    lineHeight: 18,
+    fontWeight: "600"
+  },
+  editVendorBtn: {
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: theme.surface,
+    borderWidth: 1,
+    borderColor: theme.border,
+    borderRadius: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    marginTop: spacing.sm,
+    gap: 8,
+    alignSelf: "center"
+  },
+  editVendorBtnText: {
+    color: theme.primary,
+    fontSize: 13,
+    fontWeight: "bold"
+  },
+  vendorEditForm: {
+    width: "100%",
+    paddingHorizontal: spacing.sm,
+    gap: spacing.xs
+  },
+  editFormLabel: {
+    color: theme.muted,
+    fontSize: 12,
+    fontWeight: "700",
+    textAlign: "right",
+    marginTop: 6
+  },
+  vendorInput: {
+    width: "100%",
+    backgroundColor: theme.surfaceAlt,
+    borderWidth: 1,
+    borderColor: theme.border,
+    borderRadius: 8,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    color: theme.text,
+    fontSize: 14,
+    textAlign: "right"
+  },
+  vendorEditActions: {
+    flexDirection: "row-reverse",
+    gap: spacing.sm,
+    marginTop: spacing.md,
+    justifyContent: "center"
+  },
+  vendorActionBtn: {
+    paddingHorizontal: 24,
+    paddingVertical: 10,
+    borderRadius: 20,
+    minWidth: 100,
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  vendorActionBtnText: {
+    color: "#FFF",
+    fontSize: 14,
+    fontWeight: "bold"
   }
 });

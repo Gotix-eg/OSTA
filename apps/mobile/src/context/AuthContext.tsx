@@ -8,9 +8,9 @@ type AuthContextValue = {
   token: string | null;
   role: UserRole | null;
   isLoading: boolean;
-  login: (phone: string, password: string) => Promise<void>;
+  login: (phone: string, password: string) => Promise<PublicUser>;
   register: (payload: RegisterPayload) => Promise<{ authenticated: boolean; needsVerification: boolean }>;
-  verifyOtp: (code: string, phone?: string, type?: "registration" | "login" | "reset") => Promise<void>;
+  verifyOtp: (code: string, phone?: string, type?: "registration" | "login" | "reset") => Promise<PublicUser>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
   switchRole: (targetRole?: "CLIENT" | "WORKER" | "VENDOR") => Promise<void>;
@@ -66,6 +66,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       throw new Error("Login response did not include a user");
     }
     await applyAuthPayload(data);
+    return data.user;
   }, [applyAuthPayload]);
 
   const register = useCallback(async (payload: RegisterPayload) => {
@@ -91,6 +92,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       throw new Error("OTP response did not include a user");
     }
     await applyAuthPayload(data);
+    return data.user;
   }, [applyAuthPayload, pendingPhone]);
 
   const logout = useCallback(async () => {

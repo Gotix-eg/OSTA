@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Alert, StyleSheet, View } from "react-native";
+import { Alert, StyleSheet, View, Platform } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import { AppButton } from "../../components/AppButton";
@@ -27,9 +27,27 @@ export function LoginScreen({ navigation }: Props) {
   async function handleLogin() {
     setIsSubmitting(true);
     try {
-      await login(phone, password);
+      const loggedInUser = await login(phone, password);
+      const targetRoute = 
+        loggedInUser.role === "WORKER" ? "WorkerTabs" :
+        loggedInUser.role === "VENDOR" ? "VendorTabs" : "ClientTabs";
+
+      const parentNav = navigation.getParent();
+      if (parentNav) {
+        parentNav.reset({
+          index: 0,
+          routes: [{ name: targetRoute }],
+        });
+      } else {
+        navigation.navigate(targetRoute as any);
+      }
     } catch (error) {
-      Alert.alert("تعذر تسجيل الدخول", error instanceof Error ? error.message : "حاول مرة أخرى");
+      const msg = error instanceof Error ? error.message : "حاول مرة أخرى";
+      if (Platform.OS === "web") {
+        alert(`تعذر تسجيل الدخول: ${msg}`);
+      } else {
+        Alert.alert("تعذر تسجيل الدخول", msg);
+      }
     } finally {
       setIsSubmitting(false);
     }

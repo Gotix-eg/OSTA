@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Alert, StyleSheet, View } from "react-native";
+import { Alert, StyleSheet, View, Platform } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import { AppButton } from "../../components/AppButton";
@@ -12,7 +12,7 @@ import { spacing } from "../../theme/spacing";
 
 type Props = NativeStackScreenProps<AuthStackParamList, "Otp">;
 
-export function OtpScreen({ route }: Props) {
+export function OtpScreen({ route, navigation }: Props) {
   const { verifyOtp } = useAuth();
   const [code, setCode] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -20,9 +20,27 @@ export function OtpScreen({ route }: Props) {
   async function handleVerify() {
     setIsSubmitting(true);
     try {
-      await verifyOtp(code, route.params?.phone);
+      const loggedInUser = await verifyOtp(code, route.params?.phone);
+      const targetRoute = 
+        loggedInUser.role === "WORKER" ? "WorkerTabs" :
+        loggedInUser.role === "VENDOR" ? "VendorTabs" : "ClientTabs";
+
+      const parentNav = navigation.getParent();
+      if (parentNav) {
+        parentNav.reset({
+          index: 0,
+          routes: [{ name: targetRoute }],
+        });
+      } else {
+        navigation.navigate(targetRoute as any);
+      }
     } catch (error) {
-      Alert.alert("تعذر التحقق", error instanceof Error ? error.message : "حاول مرة أخرى");
+      const msg = error instanceof Error ? error.message : "حاول مرة أخرى";
+      if (Platform.OS === "web") {
+        alert(`تعذر التحقق: ${msg}`);
+      } else {
+        Alert.alert("تعذر التحقق", msg);
+      }
     } finally {
       setIsSubmitting(false);
     }

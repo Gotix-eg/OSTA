@@ -232,6 +232,20 @@ export function RegisterScreen({ navigation }: Props) {
 
       if (result?.needsVerification) {
         navigation.navigate("Otp", { phone });
+      } else {
+        const targetRoute = 
+          result?.user?.role === "WORKER" ? "WorkerTabs" :
+          result?.user?.role === "VENDOR" ? "VendorTabs" : "ClientTabs";
+
+        const parentNav = navigation.getParent();
+        if (parentNav) {
+          parentNav.reset({
+            index: 0,
+            routes: [{ name: targetRoute }],
+          });
+        } else {
+          navigation.navigate(targetRoute as any);
+        }
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : "حاول مرة أخرى";

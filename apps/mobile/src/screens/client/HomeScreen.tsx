@@ -73,14 +73,28 @@ function getIconName(slug: string): keyof typeof Ionicons.glyphMap {
     carpentry: "hammer-outline",
     ac: "thermometer-outline",
     "ac-maintenance": "thermometer-outline",
+    "ac-technician": "thermometer-outline",
     appliances: "build-outline",
+    "home-appliances": "build-outline",
     painting: "color-palette-outline",
     aluminum: "construct-outline",
     networks: "wifi-outline",
+    "computer-networks": "wifi-outline",
     computer: "desktop-outline",
     "computer-repair": "desktop-outline",
     cctv: "videocam-outline",
-    cameras: "videocam-outline"
+    cameras: "videocam-outline",
+    "camera-installation": "videocam-outline",
+    tiling: "grid-outline",
+    plastering: "layers-outline",
+    ironwork: "hammer-outline",
+    finishing: "home-outline",
+    gypsum: "albums-outline",
+    moving: "bus-outline",
+    cleaning: "sparkles-outline",
+    "car-mechanic": "car-outline",
+    "bike-mechanic": "bicycle-outline",
+    "engine-repair": "construct-outline"
   };
   return mapping[slug] || "settings-outline";
 }
@@ -434,7 +448,7 @@ export function HomeScreen() {
               </View>
 
               <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.workersContainer}>
-                {workers.data.map((worker) => (
+                {workers.data.slice(0, 4).map((worker) => (
                   <AppCard key={worker.id} style={styles.workerCard}>
                     <Pressable
                       onPress={() => navigation.navigate("WorkerProfile", { workerId: worker.id })}

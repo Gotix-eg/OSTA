@@ -685,10 +685,10 @@ router.get("/settings", catchAsync(async (request, response) => {
       notificationsEnabledApp: user.workerProfile?.notificationsEnabledApp ?? true,
       notificationsEnabledEmail: user.workerProfile?.notificationsEnabledEmail ?? true,
       subscriptionTier: user.workerProfile?.subscriptionTier ?? "free",
-      workingHours: user.workerProfile?.workingHours ?? null,
-      offDates: user.workerProfile?.offDates ?? [],
-      acceptedPaymentMethods: user.workerProfile?.acceptedPaymentMethods ?? [],
-      preferredPaymentMethod: user.workerProfile?.preferredPaymentMethod ?? null,
+      workingHours: (user.workerProfile as any)?.workingHours ?? null,
+      offDates: (user.workerProfile as any)?.offDates ?? [],
+      acceptedPaymentMethods: (user.workerProfile as any)?.acceptedPaymentMethods ?? [],
+      preferredPaymentMethod: (user.workerProfile as any)?.preferredPaymentMethod ?? null,
       serviceAreas: dbServiceAreas.length ? dbServiceAreas : (workerSettings.workPreferences.serviceAreas ?? [])
     }
   };
@@ -715,7 +715,7 @@ router.patch("/settings", catchAsync(async (request, response) => {
     if (!ALLOWED_PAYMENT_METHODS.includes(preferredPaymentMethod as any)) {
       throw new ApiError(400, "Invalid preferred payment method");
     }
-    const effectiveAcceptedMethods: string[] = acceptedPaymentMethods !== undefined ? acceptedPaymentMethods : worker.acceptedPaymentMethods;
+    const effectiveAcceptedMethods: string[] = acceptedPaymentMethods !== undefined ? acceptedPaymentMethods : ((worker as any).acceptedPaymentMethods ?? []);
     if (!effectiveAcceptedMethods.includes(preferredPaymentMethod)) {
       throw new ApiError(400, "Preferred payment method must be one of the accepted methods");
     }
@@ -763,7 +763,7 @@ router.patch("/settings", catchAsync(async (request, response) => {
       offDates: offDates !== undefined ? offDates : undefined,
       acceptedPaymentMethods: acceptedPaymentMethods !== undefined ? acceptedPaymentMethods : undefined,
       preferredPaymentMethod: preferredPaymentMethod !== undefined ? preferredPaymentMethod : undefined
-    }
+    } as any
   });
 
   response.status(200).json(successResponse(updated, "Worker settings updated successfully"));
@@ -777,7 +777,7 @@ router.get("/profile", catchAsync(async (request, response) => {
     include: {
       certificates: { orderBy: { order: "asc" } },
       serviceItems: { orderBy: { order: "asc" } }
-    }
+    } as any
   });
 
   if (!worker) throw new ApiError(404, "Worker profile not found");
@@ -790,8 +790,8 @@ router.get("/profile", catchAsync(async (request, response) => {
     galleryImages: worker.galleryImages,
     galleryVideoUrl: worker.galleryVideoUrl ?? "",
     contractInfo: worker.contractInfo ?? "",
-    certificates: worker.certificates.map((c) => ({ id: c.id, title: c.title, year: c.year ?? "", imageUrl: c.imageUrl })),
-    serviceItems: worker.serviceItems.map((s) => ({ id: s.id, name: s.name, price: s.price, note: s.note ?? "" }))
+    certificates: ((worker as any).certificates ?? []).map((c: any) => ({ id: c.id, title: c.title, year: c.year ?? "", imageUrl: c.imageUrl })),
+    serviceItems: ((worker as any).serviceItems ?? []).map((s: any) => ({ id: s.id, name: s.name, price: s.price, note: s.note ?? "" }))
   };
 
   response.status(200).json(successResponse(profile, "Worker profile fetched"));
@@ -838,13 +838,13 @@ router.patch("/profile", catchAsync(async (request, response) => {
         galleryImages: body.galleryImages,
         galleryVideoUrl: body.galleryVideoUrl !== undefined ? body.galleryVideoUrl.trim() || null : undefined,
         contractInfo: body.contractInfo !== undefined ? body.contractInfo.trim() || null : undefined
-      }
+      } as any
     });
 
     if (body.certificates !== undefined) {
-      await tx.workerCertificate.deleteMany({ where: { workerId: worker.id } });
+      await (tx as any).workerCertificate.deleteMany({ where: { workerId: worker.id } });
       if (body.certificates.length > 0) {
-        await tx.workerCertificate.createMany({
+        await (tx as any).workerCertificate.createMany({
           data: body.certificates.map((c, index) => ({
             workerId: worker.id,
             title: c.title.trim(),
@@ -857,9 +857,9 @@ router.patch("/profile", catchAsync(async (request, response) => {
     }
 
     if (body.serviceItems !== undefined) {
-      await tx.workerServiceItem.deleteMany({ where: { workerId: worker.id } });
+      await (tx as any).workerServiceItem.deleteMany({ where: { workerId: worker.id } });
       if (body.serviceItems.length > 0) {
-        await tx.workerServiceItem.createMany({
+        await (tx as any).workerServiceItem.createMany({
           data: body.serviceItems.map((s, index) => ({
             workerId: worker.id,
             name: s.name.trim(),
@@ -877,7 +877,7 @@ router.patch("/profile", catchAsync(async (request, response) => {
     include: {
       certificates: { orderBy: { order: "asc" } },
       serviceItems: { orderBy: { order: "asc" } }
-    }
+    } as any
   });
 
   response.status(200).json(successResponse(updated, "Worker profile updated successfully"));

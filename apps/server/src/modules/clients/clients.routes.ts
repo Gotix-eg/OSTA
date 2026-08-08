@@ -651,8 +651,8 @@ router.get(
     const favoritesAvailability = favorites.map((f) =>
       isWorkerAvailableNow({
         isAvailable: f.worker.isAvailable,
-        workingHours: f.worker.workingHours,
-        offDates: f.worker.offDates,
+        workingHours: (f.worker as any).workingHours,
+        offDates: (f.worker as any).offDates,
       }),
     );
 
