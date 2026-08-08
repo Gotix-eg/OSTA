@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { PublicContentPage } from "@/components/public/public-pages";
+import { BillingPage as BillingPageContent } from "@/components/public/billing-page";
 import { PublicShell } from "@/components/public/public-shell";
-import { isLocale, type Locale } from "@/lib/locales";
+import { isLocale } from "@/lib/locales";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
   return {
-    title: locale === "ar" ? "سياسة رصيد الطلبات والفوترة" : "Order Credit & Billing Policy"
+    title: locale === "ar" ? "سياسة الاشتراكات" : "Order Credit & Billing Policy"
   };
 }
 
@@ -17,13 +17,9 @@ export default async function BillingPage({ params }: { params: Promise<{ locale
 
   if (!isLocale(locale)) notFound();
 
-  const validatedLocale = locale as Locale;
-
   return (
-    <PublicShell locale={validatedLocale} pathname="/billing">
-      <div className="section-shell py-12">
-        <PublicContentPage locale={validatedLocale} pageKey="billing" />
-      </div>
+    <PublicShell locale={locale} pathname="/billing">
+      <BillingPageContent locale={locale} />
     </PublicShell>
   );
 }

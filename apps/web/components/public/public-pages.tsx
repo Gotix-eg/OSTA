@@ -47,7 +47,7 @@ export function PublicContentPage({ locale, pageKey }: { locale: Locale; pageKey
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gold-500 text-onyx-950 shadow-gold/20 shadow-xl mb-8 group-hover:scale-110 transition-transform duration-500">
                 <Icon className="h-6 w-6" />
               </div>
-              <h2 className="text-2xl font-black text-white mb-4 group-hover:text-gold-500 transition-colors">
+              <h2 className="text-2xl font-black theme-text-primary mb-4">
                 {section.title}
               </h2>
               <p className="text-onyx-400 leading-relaxed">
@@ -102,7 +102,7 @@ export function DashboardHubPage({ locale }: { locale: Locale }) {
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gold-500 text-onyx-950 shadow-gold/20 shadow-xl mb-8 group-hover:rotate-12 transition-all duration-500">
                 <Icon className="h-6 w-6" />
               </div>
-              <h2 className="text-2xl font-black text-white mb-4 group-hover:text-gold-500 transition-colors">
+              <h2 className="text-2xl font-black theme-text-primary mb-4">
                 {card.title}
               </h2>
               <p className="text-onyx-400 leading-relaxed mb-8">
