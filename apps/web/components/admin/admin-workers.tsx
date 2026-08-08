@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import {
   Plus, User, Phone, Search, Loader2, Wrench, Star,
   ShieldCheck, Trash2, Wallet, Eye, X, Edit, Users,
-  CheckCircle2, XCircle, Clock3, AlertTriangle, ExternalLink, Settings, FileText, UserCheck, Mail
+  CheckCircle2, XCircle, Clock3, AlertTriangle, ExternalLink, Settings, UserCheck
 } from "lucide-react";
 import { fetchApiData, postApiData, patchApiData, deleteApiData } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
@@ -394,7 +394,7 @@ export function AdminWorkersManagement({ locale }: { locale: Locale }) {
           <Loader2 className="h-10 w-10 animate-spin text-gold-500" />
         </div>
       ) : (
-        <div className="grid gap-6">
+        <div className="grid gap-3">
           {filtered.map(worker => {
             const isTrialActive = worker.trialExpiresAt && new Date(worker.trialExpiresAt) > new Date();
             const trialDaysLeft = worker.trialExpiresAt ? Math.ceil((new Date(worker.trialExpiresAt).getTime() - new Date().getTime()) / (1000 * 3600 * 24)) : 0;
@@ -404,15 +404,15 @@ export function AdminWorkersManagement({ locale }: { locale: Locale }) {
 
             return (
               <div key={worker.id} className={cn(
-                "onyx-card p-6 group transition-all duration-300 bg-onyx-800/30 backdrop-blur-xl border flex flex-col justify-between gap-6",
+                "onyx-card p-3.5 group transition-all duration-300 bg-onyx-800/30 backdrop-blur-xl border flex flex-col gap-3",
                 isPendingVerification ? "border-amber-500/30 hover:border-amber-500/50" :
                   isNoBalance ? "border-rose-500/30 hover:border-rose-500/50" :
                     "border-white/5 hover:border-gold-500/40"
               )}>
-                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
-                  <div className="flex items-center gap-6">
+                <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-4">
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
                     <div className="relative shrink-0">
-                      <div className="h-20 w-20 rounded-2xl bg-onyx-900 border border-onyx-700 overflow-hidden group-hover:border-gold-500/50 transition-all duration-500 flex items-center justify-center">
+                      <div className="h-12 w-12 rounded-xl bg-onyx-900 border border-onyx-700 overflow-hidden group-hover:border-gold-500/50 transition-all duration-500 flex items-center justify-center">
                         <img
                           src={workerPhotoUrl}
                           alt={`${worker.user.firstName} ${worker.user.lastName}`}
@@ -420,234 +420,191 @@ export function AdminWorkersManagement({ locale }: { locale: Locale }) {
                         />
                       </div>
                       {worker.verificationStatus === "VERIFIED" ? (
-                        <div className="absolute -top-2 -right-2 h-7 w-7 rounded-full bg-emerald-500 flex items-center justify-center border-4 border-onyx-950 shadow-lg" title="Verified">
-                          <ShieldCheck className="h-3.5 w-3.5 text-onyx-950" />
+                        <div className="absolute -top-1 -right-1 h-4.5 w-4.5 rounded-full bg-emerald-500 flex items-center justify-center border-2 border-onyx-950" title="Verified">
+                          <ShieldCheck className="h-2.5 w-2.5 text-onyx-950" />
                         </div>
                       ) : worker.verificationStatus === "REJECTED" ? (
-                        <div className="absolute -top-2 -right-2 h-7 w-7 rounded-full bg-red-500 flex items-center justify-center border-4 border-onyx-950 shadow-lg" title="Rejected">
-                          <XCircle className="h-3.5 w-3.5 text-white" />
+                        <div className="absolute -top-1 -right-1 h-4.5 w-4.5 rounded-full bg-red-500 flex items-center justify-center border-2 border-onyx-950" title="Rejected">
+                          <XCircle className="h-2.5 w-2.5 text-white" />
                         </div>
                       ) : (
-                        <div className="absolute -top-2 -right-2 h-7 w-7 rounded-full bg-amber-500 flex items-center justify-center border-4 border-onyx-950 shadow-lg" title="Pending Verification">
-                          <Clock3 className="h-3.5 w-3.5 text-onyx-950" />
+                        <div className="absolute -top-1 -right-1 h-4.5 w-4.5 rounded-full bg-amber-500 flex items-center justify-center border-2 border-onyx-950" title="Pending Verification">
+                          <Clock3 className="h-2.5 w-2.5 text-onyx-950" />
                         </div>
                       )}
                     </div>
-                    <div>
-                      <div className="flex flex-wrap items-center gap-3 mb-2">
-                        <h3 className="text-2xl font-black text-white group-hover:text-gold-500 transition-colors">
+
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-1.5 mb-1">
+                        <h3 className="text-sm font-black text-white group-hover:text-gold-500 transition-colors truncate">
                           {worker.user.firstName} {worker.user.lastName}
                         </h3>
 
                         {worker.verificationStatus === "VERIFIED" ? (
-                          <div className="flex flex-wrap items-center gap-2">
-                            <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1.5">
-                              <CheckCircle2 className="h-3.5 w-3.5" />
-                              {isArabic ? "حساب موثق" : "Verified"}
-                            </span>
-                            {worker.verifiedAt && (
-                              <span className="px-3 py-1 rounded-full text-[11px] font-bold bg-onyx-900 text-emerald-400/90 border border-emerald-500/30 flex items-center gap-1.5">
-                                <Clock3 className="h-3 w-3 text-emerald-400" />
-                                <span>
-                                  {isArabic
-                                    ? `توثيق: ${formatApprovalDateTime(worker.verifiedAt, true)} • بواسطة: ${worker.verifiedBy || "أدمن النظام"}`
-                                    : `Approved: ${formatApprovalDateTime(worker.verifiedAt, false)} by ${worker.verifiedBy || "Admin"}`}
-                                </span>
-                              </span>
-                            )}
-                          </div>
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1 shrink-0">
+                            <CheckCircle2 className="h-3 w-3" />
+                            {isArabic ? "موثق" : "Verified"}
+                          </span>
                         ) : worker.verificationStatus === "REJECTED" ? (
-                          <span className="px-3 py-1 rounded-full text-xs font-bold bg-red-500/10 text-red-400 border border-red-500/20 flex items-center gap-1.5">
-                            <XCircle className="h-3.5 w-3.5" />
-                            {isArabic ? "مرفوض التوثيق" : "Rejected"}
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-500/10 text-red-400 border border-red-500/20 flex items-center gap-1 shrink-0">
+                            <XCircle className="h-3 w-3" />
+                            {isArabic ? "مرفوض" : "Rejected"}
                           </span>
                         ) : (
-                          <span className="px-3 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center gap-1.5 animate-pulse">
-                            <Clock3 className="h-3.5 w-3.5" />
-                            {isArabic ? "بانتظار التوثيق" : "Pending Verification"}
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center gap-1 shrink-0 animate-pulse">
+                            <Clock3 className="h-3 w-3" />
+                            {isArabic ? "بانتظار" : "Pending"}
                           </span>
                         )}
 
                         {isNoBalance && (
-                          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-rose-500/10 text-rose-400 border border-rose-500/20 flex items-center gap-1">
-                            <AlertTriangle className="h-3 w-3" />
-                            {isArabic ? "نفد الرصيد" : "No Balance"}
+                          <span className="px-1.5 py-0.5 rounded-full text-[9px] font-black bg-rose-500/10 text-rose-400 border border-rose-500/20 flex items-center gap-0.5 shrink-0">
+                            <AlertTriangle className="h-2.5 w-2.5" />
+                            {isArabic ? "بدون رصيد" : "No Balance"}
                           </span>
                         )}
                       </div>
 
-                      <div className="flex flex-wrap items-center gap-y-2 gap-x-4 text-onyx-400 text-sm font-medium">
-                        <span className="flex items-center gap-2">
-                          <Phone className="h-4 w-4 text-gold-500/60" />
-                          <span dir="ltr" className="font-mono font-bold text-white tracking-wider">{worker.user.phone}</span>
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-onyx-400 text-xs font-medium">
+                        <span className="flex items-center gap-1">
+                          <Phone className="h-3 w-3 text-gold-500/60" />
+                          <span dir="ltr" className="font-mono font-bold text-white">{worker.user.phone}</span>
                         </span>
 
-                        {worker.user.email && (
-                          <span className="flex items-center gap-2">
-                            <Mail className="h-4 w-4 text-gold-500/60" />
-                            <span className="font-mono text-xs text-onyx-300">{worker.user.email}</span>
-                          </span>
-                        )}
-
-                        <span className="flex items-center gap-1.5 bg-gold-500/10 border border-gold-500/20 px-3 py-1 rounded-full text-gold-500 font-bold text-xs">
-                          <Wrench className="h-3.5 w-3.5" />
+                        <span className="flex items-center gap-1 text-gold-500">
+                          <Wrench className="h-3 w-3" />
                           {(() => {
                             const prof = workerProfessions.find(p => p.value === worker.profession);
                             return isArabic ? (prof?.labelAr || worker.profession || "غير محدد") : (prof?.labelEn || worker.profession || "Unassigned");
                           })()}
                         </span>
 
-                        <span className="flex items-center gap-2 bg-onyx-900 border border-white/5 px-3 py-1 rounded-full text-onyx-300">
-                          <Star className="h-3.5 w-3.5 fill-gold-500 text-gold-500" /> {worker.rating}
+                        <span className="flex items-center gap-1">
+                          <Star className="h-3 w-3 fill-gold-500 text-gold-500" /> {worker.rating}
                         </span>
 
-                        <span className="flex items-center gap-2 bg-onyx-800 px-3 py-1 rounded-full text-onyx-300">
-                          {worker.totalJobsCompleted} {isArabic ? "أوردر مكتمل" : "completed"}
-                        </span>
+                        <span>{worker.totalJobsCompleted} {isArabic ? "مكتمل" : "done"}</span>
+
+                        <span>{isArabic ? `خبرة ${worker.yearsOfExperience ?? 0}س` : `${worker.yearsOfExperience ?? 0}y exp`}</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-6">
-                    <div className="flex flex-col items-end gap-2">
-                      {isTrialActive ? (
-                        <span className="text-[10px] font-black uppercase tracking-widest text-gold-500/80 px-2.5 py-1 rounded-md border border-gold-500/20 bg-gold-500/10">
-                          {isArabic ? `${trialDaysLeft} يوم تجربة متبقية` : `${trialDaysLeft}d Trial Remaining`}
-                        </span>
-                      ) : (
-                        <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500/80 px-2.5 py-1 rounded-md border border-emerald-500/20 bg-emerald-500/10">
-                          {isArabic ? "اشتراك نشط" : "Active Member"}
-                        </span>
-                      )}
-                      <div className="flex gap-3">
-                        <div className={cn(
-                          "px-4 py-2.5 rounded-xl border flex flex-col items-center min-w-[90px]",
-                          worker.orderQuota > 0 ? "bg-emerald-500/10 border-emerald-500/20" : "bg-red-500/10 border-red-500/20"
-                        )}>
-                          <span className="text-[10px] font-bold text-onyx-400 uppercase tracking-tighter mb-0.5">{isArabic ? "رصيد المهام" : "Order Quota"}</span>
-                          <span className={cn("text-lg font-black", worker.orderQuota > 0 ? "text-emerald-400" : "text-red-400")}>
-                            {worker.orderQuota}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="pt-4 border-t border-white/5 flex flex-wrap items-center justify-between gap-3 text-xs">
-                    <div className="flex flex-wrap items-center gap-3 text-onyx-400 font-medium">
-                      <span className="flex items-center gap-1.5">
-                        <FileText className="h-3.5 w-3.5 text-gold-500" />
-                        {isArabic ? `خبرة ${worker.yearsOfExperience ?? 0} سنوات` : `${worker.yearsOfExperience ?? 0} yrs exp`}
+                  <div className="flex items-center gap-3 shrink-0 md:justify-end">
+                    {isTrialActive ? (
+                      <span className="text-[9px] font-black uppercase tracking-wide text-gold-500/80 px-2 py-1 rounded-md border border-gold-500/20 bg-gold-500/10 whitespace-nowrap">
+                        {isArabic ? `${trialDaysLeft}ي تجربة` : `${trialDaysLeft}d trial`}
                       </span>
-                      <span>•</span>
-                      <span>{isArabic ? `الرقم القومي: ${worker.nationalIdNumber || "غير متوفر"}` : `ID: ${worker.nationalIdNumber || "N/A"}`}</span>
-                      {worker.verifiedAt && (
-                        <>
-                          <span>•</span>
-                          <span className="flex items-center gap-1 text-emerald-400/90 font-bold">
-                            <Clock3 className="h-3.5 w-3.5 text-emerald-400" />
-                            <span>
-                              {isArabic
-                                ? `توثيق: ${formatApprovalDateTime(worker.verifiedAt, true)} (${worker.verifiedBy || "أدمن النظام"})`
-                                : `Approved: ${formatApprovalDateTime(worker.verifiedAt, false)} (${worker.verifiedBy || "Admin"})`}
-                            </span>
-                          </span>
-                        </>
-                      )}
-                    </div>
+                    ) : (
+                      <span className="text-[9px] font-black uppercase tracking-wide text-emerald-500/80 px-2 py-1 rounded-md border border-emerald-500/20 bg-emerald-500/10 whitespace-nowrap">
+                        {isArabic ? "نشط" : "Active"}
+                      </span>
+                    )}
 
-                    <div className="flex flex-wrap items-center gap-2">
-                      {/* Impersonate & Edit as Worker Button */}
-                      <button
-                        type="button"
-                        onClick={async () => {
-                          try {
-                            await postApiData(`/admin/workers/${worker.id}/impersonate`, {});
-                            window.location.assign(`/${locale}/worker/profile`);
-                          } catch (err) {
-                            alert(isArabic ? "فشل الدخول بحساب الصنايعي" : "Failed to switch to worker account");
-                          }
-                        }}
-                        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gold-500 text-onyx-950 font-black hover:bg-gold-400 transition-all shadow-md"
-                      >
-                        <UserCheck className="h-3.5 w-3.5" />
-                        <span>{isArabic ? "دخول وتعديل كصنايعي" : "Edit as Worker"}</span>
-                      </button>
-
-                      {/* Public Profile Link Button */}
-                      <a
-                        href={`/${locale}/workers/${worker.id}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-onyx-900 border border-gold-500/20 text-gold-500 hover:bg-gold-500 hover:text-onyx-950 font-bold transition-all"
-                      >
-                        <ExternalLink className="h-3.5 w-3.5" />
-                        <span>{isArabic ? "معاينة الصفحة العامة" : "View Public Page"}</span>
-                      </a>
-
-                      {/* Review & Approve Documents / Add Quota Button */}
-                      {worker.verificationStatus !== "VERIFIED" ? (
-                        <button
-                          onClick={() => {
-                            setSelectedWorker(worker);
-                            setShowDecisionPanel(true);
-                            setDetailsModalOpen(true);
-                          }}
-                          className="btn-gold py-2 px-3.5 text-xs font-black shadow-[0_0_20px_rgba(234,179,8,0.15)] hover:shadow-[0_0_30px_rgba(234,179,8,0.3)] shrink-0 flex items-center gap-1.5 cursor-pointer rounded-xl"
-                        >
-                          <ShieldCheck className="h-3.5 w-3.5" />
-                          <span>{isArabic ? "فحص وتوثيق المستندات" : "Review & Approve Documents"}</span>
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => handleAddQuota(worker.id)}
-                          disabled={actionId === worker.id}
-                          className="btn-onyx py-2 px-3.5 text-xs font-black border-gold-500/20 text-gold-500 hover:bg-gold-500 hover:text-onyx-950 transition-all shrink-0 flex items-center gap-1.5 rounded-xl"
-                        >
-                          {actionId === worker.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Plus className="h-3.5 w-3.5" />}
-                          {isArabic ? "إضافة رصيد (10)" : "Add Quota (+10)"}
-                        </button>
-                      )}
-
-                      {/* Documents Button - Only rendered for already VERIFIED workers */}
-                      {worker.verificationStatus === "VERIFIED" && (
-                        <button
-                          onClick={() => {
-                            setSelectedWorker(worker);
-                            setShowDecisionPanel(false);
-                            setDetailsModalOpen(true);
-                          }}
-                          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-onyx-800 border border-onyx-700 text-gold-500 hover:text-onyx-950 hover:bg-gold-500 transition-all font-bold"
-                          title={isArabic ? "عرض المستندات والملف" : "View Docs & Profile"}
-                        >
-                          <Eye className="h-3.5 w-3.5" />
-                          <span>{isArabic ? "المستندات" : "Docs"}</span>
-                        </button>
-                      )}
-
-                      {/* Quick Edit Profile Settings Button */}
-                      <button
-                        type="button"
-                        onClick={() => openEditModal(worker)}
-                        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-onyx-800 border border-onyx-700 text-white hover:border-gold-500/40 hover:text-gold-500 font-bold transition-all"
-                      >
-                        <Settings className="h-3.5 w-3.5" />
-                        <span>{isArabic ? "تعديل سريع" : "Quick Edit"}</span>
-                      </button>
-
-                      {/* Delete Account Button */}
-                      <button
-                        onClick={() => {
-                          setSelectedWorker(worker);
-                          setDeleteModalOpen(true);
-                        }}
-                        className="h-9 w-9 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 hover:bg-red-500 hover:text-white transition-all shrink-0"
-                        title={isArabic ? "حذف الحساب" : "Delete Account"}
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </button>
+                    <div className={cn(
+                      "px-2.5 py-1 rounded-lg border flex items-center gap-1.5",
+                      worker.orderQuota > 0 ? "bg-emerald-500/10 border-emerald-500/20" : "bg-red-500/10 border-red-500/20"
+                    )}>
+                      <span className="text-[9px] font-bold text-onyx-400 uppercase">{isArabic ? "رصيد" : "Quota"}</span>
+                      <span className={cn("text-sm font-black", worker.orderQuota > 0 ? "text-emerald-400" : "text-red-400")}>
+                        {worker.orderQuota}
+                      </span>
                     </div>
                   </div>
+                </div>
+
+                <div className="pt-2.5 border-t border-white/5 flex flex-wrap items-center justify-end gap-1.5">
+                  {/* Impersonate & Edit as Worker Button */}
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      try {
+                        await postApiData(`/admin/workers/${worker.id}/impersonate`, {});
+                        window.location.assign(`/${locale}/worker/profile`);
+                      } catch (err) {
+                        alert(isArabic ? "فشل الدخول بحساب الصنايعي" : "Failed to switch to worker account");
+                      }
+                    }}
+                    title={isArabic ? "دخول وتعديل كصنايعي" : "Edit as Worker"}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-gold-500 text-onyx-950 font-black text-xs hover:bg-gold-400 transition-all shadow-md"
+                  >
+                    <UserCheck className="h-3.5 w-3.5" />
+                    <span className="hidden lg:inline">{isArabic ? "دخول كصنايعي" : "Edit as Worker"}</span>
+                  </button>
+
+                  {/* Review & Approve Documents / Add Quota Button */}
+                  {worker.verificationStatus !== "VERIFIED" ? (
+                    <button
+                      onClick={() => {
+                        setSelectedWorker(worker);
+                        setShowDecisionPanel(true);
+                        setDetailsModalOpen(true);
+                      }}
+                      title={isArabic ? "فحص وتوثيق المستندات" : "Review & Approve Documents"}
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-amber-500 text-onyx-950 font-black text-xs hover:bg-amber-400 transition-all shadow-md cursor-pointer"
+                    >
+                      <ShieldCheck className="h-3.5 w-3.5" />
+                      <span className="hidden lg:inline">{isArabic ? "فحص وتوثيق" : "Review Docs"}</span>
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handleAddQuota(worker.id)}
+                      disabled={actionId === worker.id}
+                      title={isArabic ? "إضافة رصيد (10)" : "Add Quota (+10)"}
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-onyx-900 border border-gold-500/20 text-gold-500 hover:bg-gold-500 hover:text-onyx-950 transition-all text-xs font-bold"
+                    >
+                      {actionId === worker.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Plus className="h-3.5 w-3.5" />}
+                      <span className="hidden lg:inline">{isArabic ? "إضافة رصيد" : "Add Quota"}</span>
+                    </button>
+                  )}
+
+                  {/* Documents Button - Only rendered for already VERIFIED workers */}
+                  {worker.verificationStatus === "VERIFIED" && (
+                    <button
+                      onClick={() => {
+                        setSelectedWorker(worker);
+                        setShowDecisionPanel(false);
+                        setDetailsModalOpen(true);
+                      }}
+                      className="h-8 w-8 rounded-lg bg-onyx-900 border border-onyx-700 flex items-center justify-center text-gold-500 hover:text-onyx-950 hover:bg-gold-500 transition-all shrink-0"
+                      title={isArabic ? "عرض المستندات والملف" : "View Docs & Profile"}
+                    >
+                      <Eye className="h-3.5 w-3.5" />
+                    </button>
+                  )}
+
+                  {/* Public Profile Link Button */}
+                  <a
+                    href={`/${locale}/workers/${worker.id}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="h-8 w-8 rounded-lg bg-onyx-900 border border-onyx-700 flex items-center justify-center text-onyx-300 hover:text-gold-500 hover:border-gold-500/40 transition-all shrink-0"
+                    title={isArabic ? "معاينة الصفحة العامة" : "View Public Page"}
+                  >
+                    <ExternalLink className="h-3.5 w-3.5" />
+                  </a>
+
+                  {/* Quick Edit Profile Settings Button */}
+                  <button
+                    type="button"
+                    onClick={() => openEditModal(worker)}
+                    className="h-8 w-8 rounded-lg bg-onyx-900 border border-onyx-700 flex items-center justify-center text-onyx-300 hover:text-gold-500 hover:border-gold-500/40 transition-all shrink-0"
+                    title={isArabic ? "تعديل سريع" : "Quick Edit"}
+                  >
+                    <Settings className="h-3.5 w-3.5" />
+                  </button>
+
+                  {/* Delete Account Button */}
+                  <button
+                    onClick={() => {
+                      setSelectedWorker(worker);
+                      setDeleteModalOpen(true);
+                    }}
+                    className="h-8 w-8 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 hover:bg-red-500 hover:text-white transition-all shrink-0"
+                    title={isArabic ? "حذف الحساب" : "Delete Account"}
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
                 </div>
               </div>
             );
