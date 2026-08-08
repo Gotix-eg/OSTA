@@ -1,10 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { AlertCircle, Check, GripVertical, Loader2, Plus, Save, Trash2, Video } from "lucide-react";
+import { AlertCircle, Check, ExternalLink, Eye, GripVertical, Loader2, Plus, Save, Trash2, Video, X } from "lucide-react";
 
 import { WorkerProAction, WorkerProPanel, WorkerProShell, WorkerProTopStrip } from "@/components/worker/worker-pro-ui";
+import { WorkerProfileDetail } from "@/components/workers/worker-profile-detail";
 import { ImageUpload } from "@/components/shared/image-upload";
+import { WorkerVideoPlayer } from "@/components/shared/video-player";
 import { resolveApiBaseUrl } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
@@ -60,6 +62,8 @@ function textareaClass() {
 export function WorkerProfileEditor({ locale }: { locale: Locale }) {
   const isArabic = locale === "ar";
   const [data, setData] = useState<ProfileDraft>(emptyProfile);
+  const [workerId, setWorkerId] = useState<string | null>(null);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
@@ -94,6 +98,7 @@ export function WorkerProfileEditor({ locale }: { locale: Locale }) {
           throw new Error(payload.error?.message || payload.message || "Failed to load profile");
         }
         const d = payload.data;
+        if (d.id) setWorkerId(d.id);
         setData({
           bio: d.bio ?? "",
           yearsOfExperience: d.yearsOfExperience ?? 0,
@@ -555,6 +560,16 @@ export function WorkerProfileEditor({ locale }: { locale: Locale }) {
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-3">
+          {workerId && (
+            <button
+              type="button"
+              onClick={() => setIsPreviewOpen(true)}
+              className="inline-flex items-center gap-2 border border-gold/40 bg-gold/10 px-4 py-2 text-xs font-black uppercase text-gold transition hover:bg-gold hover:text-black"
+            >
+              <Eye className="h-4 w-4" />
+              <span>{isArabic ? "معاينة الملف" : "Preview Profile"}</span>
+            </button>
+          )}
           {saveState === "saving" ? (
             <span className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/10 px-3.5 py-1.5 text-xs font-black text-gold shadow-sm">
               <Loader2 className="h-3.5 w-3.5 animate-spin text-gold" />
@@ -811,6 +826,14 @@ export function WorkerProfileEditor({ locale }: { locale: Locale }) {
                 className={textInputClass()}
               />
             </div>
+            {data.galleryVideoUrl && (
+              <div className="mt-3 overflow-hidden rounded-lg border border-white/10 p-2 bg-[#080808]">
+                <p className="mb-2 text-[10px] font-black uppercase text-gold">
+                  {isArabic ? "معاينة الفيديو:" : "Video Preview:"}
+                </p>
+                <WorkerVideoPlayer videoUrl={data.galleryVideoUrl} isArabic={isArabic} />
+              </div>
+            )}
           </label>
         </div>
       </WorkerProPanel>
@@ -1012,6 +1035,101 @@ export function WorkerProfileEditor({ locale }: { locale: Locale }) {
           })}
         </div>
       </WorkerProPanel>
+
+      {/* Bottom Action Section: Preview Public Page Before Publication */}
+      <section className="border border-white/10 bg-black p-6 text-white sm:p-8">
+        <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2.5">
+              <Eye className="h-6 w-6 text-gold" />
+              <h3 className="text-xl font-black uppercase text-white">
+                {isArabic ? "معاينة الصفحة العامة قبل النشر" : "Preview Public Page Before Publication"}
+              </h3>
+            </div>
+            <p className="max-w-2xl text-sm font-semibold text-white/60">
+              {isArabic
+                ? "تأكد من مظهر ملفك الشخصي وكيف يظهر للعملاء قبل مشاركته أو استقبال الطلبات عبر الصفحة العامة."
+                : "Review your public profile appearance as clients see it before publishing or sharing your profile link."}
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            {workerId && (
+              <a
+                href={`/${locale}/workers/${workerId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 border border-white/20 bg-white/5 px-5 py-3 text-xs font-black uppercase text-white transition hover:border-gold hover:text-gold"
+              >
+                <ExternalLink className="h-4 w-4" />
+                <span>{isArabic ? "فتح في نافذة جديدة" : "Open in New Tab"}</span>
+              </a>
+            )}
+
+            <button
+              type="button"
+              onClick={() => setIsPreviewOpen(true)}
+              disabled={!workerId}
+              className="inline-flex items-center gap-2 border border-black bg-gold px-6 py-3 text-xs font-black uppercase text-black transition hover:bg-yellow-400 disabled:opacity-50"
+            >
+              <Eye className="h-4 w-4" />
+              <span>{isArabic ? "معاينة الصفحة العامة" : "Preview Public Page"}</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Public Profile Preview Modal */}
+      {isPreviewOpen && workerId && (
+        <div className="fixed inset-0 z-50 flex flex-col bg-black/90 backdrop-blur-md">
+          {/* Modal Top Header */}
+          <div className="flex items-center justify-between border-b border-white/10 bg-[#0d0d0d] px-6 py-4 text-white">
+            <div className="flex items-center gap-3">
+              <div className="flex h-9 w-9 items-center justify-center border border-gold/40 bg-gold/10 text-gold">
+                <Eye className="h-5 w-5" />
+              </div>
+              <div>
+                <h2 className="text-base font-black uppercase text-white">
+                  {isArabic ? "معاينة الملف الشخصي العام" : "Public Profile Preview"}
+                </h2>
+                <p className="text-xs text-white/50">
+                  {isArabic ? "هكذا سيظهر ملفك الشخصي للعملاء على المنصة" : "This is how your profile appears to clients"}
+                </p>
+              </div>
+              <span className="ms-2 hidden rounded border border-gold/40 bg-gold/10 px-2.5 py-1 text-[10px] font-black uppercase text-gold sm:inline-block">
+                {isArabic ? "معاينة قبل النشر" : "Pre-Publication Preview"}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <a
+                href={`/${locale}/workers/${workerId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 border border-white/15 bg-white/5 px-3.5 py-2 text-xs font-black uppercase text-white transition hover:border-gold hover:text-gold"
+              >
+                <ExternalLink className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">{isArabic ? "فتح في نافذة جديدة" : "Open full page"}</span>
+              </a>
+              <button
+                type="button"
+                onClick={() => setIsPreviewOpen(false)}
+                className="flex h-9 w-9 items-center justify-center border border-white/20 bg-white/5 text-white transition hover:bg-white/10 hover:text-gold"
+                title={isArabic ? "إغلاق" : "Close"}
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+          </div>
+
+          {/* Modal Content */}
+          <div className="flex-1 overflow-y-auto bg-[#0a0a0a] p-4 sm:p-8">
+            <div className="mx-auto max-w-6xl rounded-lg border border-white/10 bg-black p-4 sm:p-8 shadow-2xl">
+              <WorkerProfileDetail locale={locale} workerId={workerId} />
+            </div>
+          </div>
+        </div>
+      )}
     </WorkerProShell>
   );
 }

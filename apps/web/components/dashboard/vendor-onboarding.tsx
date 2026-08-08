@@ -1,12 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { MapPin, ShoppingBag, ArrowRight, CheckCircle2, ShieldAlert } from "lucide-react";
-import { MapPicker } from "@/components/shared/map-picker";
 import { SelectField } from "@/components/shared/select-field";
 import { vendorCategories, egyptianGovernorates } from "@/lib/geo-data";
 import { patchApiData } from "@/lib/api";
 import { cn } from "@/lib/utils";
+
+const MapPicker = dynamic(() => import("@/components/shared/map-picker").then((m) => m.MapPicker), { ssr: false });
 
 type OnboardingProps = {
   locale: "ar" | "en";

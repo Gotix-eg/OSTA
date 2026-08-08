@@ -166,33 +166,33 @@ export const publicPageCopy = {
         ]
       },
       billing: {
-        eyebrow: "سياسة الاشتراكات",
-        title: "سياسة الاشتراكات والفوترة",
-        description: "توضح هذه السياسة الشروط والرسوم المنظمة للاشتراكات الشهرية الخاصة بالمهنيين والأسطوات على منصة أُسطفاي.",
+        eyebrow: "سياسة الفوترة",
+        title: "سياسة رصيد الطلبات والفوترة",
+        description: "توضح هذه السياسة كيفية شراء الفنيين لرصيد الطلبات وكيفية خصمه عند التواصل مع العملاء على منصة أُسطفاي.",
         sections: [
           {
-            title: "نظام الاشتراك الشهري الثابت",
-            body: "تبلغ قيمة الاشتراك الشهري الثابت للفنيين ومزودي الخدمات ١٥٠ جنيهاً مصرياً فقط، شاملة الرسوم الإدارية، للوصول واستلام طلبات العملاء بشكل كامل."
+            title: "الدفع لكل طلب",
+            body: "بدلاً من الاشتراك الشهري الثابت، يدفع الفني الآن فقط مقابل الطلبات التي يستلمها فعلياً. تكلفة كل طلب ٢٠ جنيهاً مصرياً تُخصم من رصيد طلباتك."
           },
           {
-            title: "دورة الفوترة والتجديد",
-            body: "تُحتسب دورة الاشتراك لمدة ٣٠ يوماً تبدأ من تاريخ التفعيل، ويتجدد الاشتراك تلقائياً عند قيام العضو بسداد الرسوم للفترة التالية."
+            title: "باقات الرصيد والأسعار",
+            body: "يُشترى رصيد الطلبات في باقات ثابتة: ٥ طلبات (١٠٠ جنيه)، ١٠ طلبات (٢٠٠ جنيه)، ١٥ طلباً (٣٠٠ جنيه)، ٢٠ طلباً (٤٠٠ جنيه)، أو ٢٥ طلباً (٥٠٠ جنيه). كل باقة بسعر ثابت ٢٠ جنيهاً للطلب الواحد دون أي رسوم إضافية."
           },
           {
-            title: "وسائل الدفع المقبولة",
-            body: "نوفر وسائل دفع محلية مريحة تشمل المحافظ الإلكترونية للهواتف (مثل فودافون كاش)، شبكة InstaPay للتحويل اللحظي، نقاط Fawry، والبطاقات البنكية (Visa / MasterCard)."
+            title: "متى يُخصم الرصيد",
+            body: "يُخصم طلب واحد (٢٠ جنيهاً) من رصيدك فور قيام العميل بمشاركة بيانات التواصل الخاصة به معك. يتم الخصم بغض النظر عن إتمام الصفقة من عدمه، أو سداد العميل لقيمة الخدمة لاحقاً."
           },
           {
-            title: "فترة السماح وتعليق الحساب",
-            body: "نمنح فترة سماح تبلغ ٣ أيام بعد تاريخ انتهاء الاشتراك. في حال عدم السداد بعد انتهاء هذه الفترة، يتم تعليق الحساب مؤقتاً وحجبه من استقبال أي طلبات جديدة حتى تتم تسوية الرسوم."
+            title: "انتهاء الرصيد",
+            body: "في حال وصول رصيد طلباتك إلى صفر، يظل بإمكانك تصفح الطلبات المتاحة، لكن لن تتمكن من مراسلة العملاء أو الوصول إلى بيانات تواصلهم حتى تقوم بشراء باقة جديدة."
           },
           {
             title: "سياسة عدم الاسترداد",
-            body: "رسوم الاشتراك الشهري البالغة ١٥٠ جنيهاً مصرياً هي رسوم غير قابلة للاسترداد بمجرد تفعيل الفترة الشهرية وبدء تقديم خدمات المطابقة وتلقي الطلبات."
+            body: "الرصيد المخصوم مقابل طلب تمت مشاركة بياناته غير قابل للاسترداد. أما الرصيد غير المستخدم فيظل صالحاً في حسابك لحين استهلاكه."
           },
           {
-            title: "إلغاء الاشتراك",
-            body: "يحق لمزود الخدمة إلغاء اشتراكه في أي وقت، وسيظل الحساب فعالاً حتى نهاية الفترة المدفوعة الحالية (٣٠ يوماً) دون فرض أي رسوم تجديد مستقبلية."
+            title: "شحن الرصيد",
+            body: "يمكنك شراء باقة جديدة في أي وقت من داشبورد الفني باستخدام المحافظ الإلكترونية، إنستاباي، فوري، أو البطاقات البنكية (Visa / MasterCard)."
           }
         ]
       },
@@ -408,32 +408,32 @@ export const publicPageCopy = {
       },
       billing: {
         eyebrow: "Billing Policy",
-        title: "Subscription Terms & Billing Policy",
-        description: "This policy governs the subscription models, payments, and billing terms for service providers and independent contractors on the Ostafy platform.",
+        title: "Order Credit & Billing Policy",
+        description: "This policy explains how workers purchase order credits and how each credit is used to unlock a client's contact details on the Ostafy platform.",
         sections: [
           {
-            title: "Flat-Rate Monthly Subscription",
-            body: "The flat-rate fee is EGP 150 per month (inclusive of administrative fees) to access and receive incoming client leads and service requests."
+            title: "Pay Per Order",
+            body: "Instead of a fixed monthly subscription, workers now pay only for the leads they actually receive. Each order costs EGP 20, deducted from your order credit balance."
           },
           {
-            title: "Billing Cycle & Renewal",
-            body: "Your billing cycle is 30 days starting on the day of activation. Subscriptions are renewed upon successful receipt of the billing fee for the next cycle."
+            title: "Credit Packages & Pricing",
+            body: "Order credits are purchased in fixed packages: 5 orders (EGP 100), 10 orders (EGP 200), 15 orders (EGP 300), 20 orders (EGP 400), or 25 orders (EGP 500). Every package works out to a flat EGP 20 per order, no extra fees."
           },
           {
-            title: "Accepted Payment Methods",
-            body: "We accept popular local payment options including Mobile Wallets, InstaPay instant transfers, Fawry points, and major Credit/Debit Cards (Visa/MasterCard)."
+            title: "When You're Charged",
+            body: "One order credit (EGP 20) is deducted from your balance the moment a client shares their contact details with you. This charge applies whether or not the job is completed, or the client later pays for the service."
           },
           {
-            title: "Grace Period & Account Suspension",
-            body: "We offer a 3-day grace period post-expiration. If payment is not completed, your account will be temporarily suspended and blocked from new leads until the balance is settled."
+            title: "Running Out of Credits",
+            body: "If your order credit balance reaches zero, you can still browse available orders, but you won't be able to message clients or access their contact details until you purchase another package."
           },
           {
             title: "No-Refund Policy",
-            body: "The EGP 150 subscription fee is non-refundable once the billing period has commenced and request-matching features have been enabled."
+            body: "Credit deducted for an order where contact details were shared is non-refundable. Unused credits remain valid on your account until you use them."
           },
           {
-            title: "Cancellation Policy",
-            body: "You may cancel your subscription at any time. Upon cancellation, your account will remain active through the end of the current paid billing cycle, and no future charges will apply."
+            title: "Topping Up",
+            body: "You can buy a new package at any time from your worker dashboard using Mobile Wallets, InstaPay, Fawry points, or Credit/Debit Cards (Visa/MasterCard)."
           }
         ]
       },

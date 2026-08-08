@@ -21,15 +21,18 @@ import {
   Lock
 } from "lucide-react";
 
+import dynamic from "next/dynamic";
+
 import { postApiData } from "@/lib/api";
 import { getDashboardRoute, saveAuthSession, type AuthRole } from "@/lib/auth-session";
 import { authCopy } from "@/lib/copy";
 import type { Locale } from "@/lib/locales";
 import { cn, getLocalizedError } from "@/lib/utils";
-import { MapPicker } from "@/components/shared/map-picker";
 import { SelectField } from "@/components/shared/select-field";
 import { ImageUpload } from "@/components/shared/image-upload";
 import { egyptianGovernorates, majorCities, vendorCategories, workerProfessions } from "@/lib/geo-data";
+
+const MapPicker = dynamic(() => import("@/components/shared/map-picker").then((m) => m.MapPicker), { ssr: false });
 
 function EgyptFlagIcon({ className }: { className?: string }) {
   return (

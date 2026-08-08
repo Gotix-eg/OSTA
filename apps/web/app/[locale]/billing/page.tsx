@@ -8,7 +8,7 @@ import { isLocale, type Locale } from "@/lib/locales";
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
   return {
-    title: locale === "ar" ? "سياسة الاشتراكات والفوترة" : "Subscription & Billing Policy"
+    title: locale === "ar" ? "سياسة رصيد الطلبات والفوترة" : "Order Credit & Billing Policy"
   };
 }
 
@@ -16,9 +16,6 @@ export default async function BillingPage({ params }: { params: Promise<{ locale
   const { locale } = await params;
 
   if (!isLocale(locale)) notFound();
-
-  // Disabled for now
-  notFound();
 
   const validatedLocale = locale as Locale;
 

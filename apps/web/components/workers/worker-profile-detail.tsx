@@ -30,6 +30,7 @@ import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
 import { resolveApiBaseUrl } from "@/lib/api";
 import { getBrowserAuthState } from "@/lib/auth-client";
+import { WorkerVideoPlayer } from "@/components/shared/video-player";
 
 interface ReviewItem {
   id: string;
@@ -539,16 +540,7 @@ export function WorkerProfileDetail({ locale, workerId }: { locale: Locale; work
                       <h3 className="text-sm font-black uppercase text-white">
                         {isArabic ? "فيديو التوثيق" : "Video"}
                       </h3>
-                      <a
-                        href={worker.galleryVideoUrl!}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group relative flex aspect-video max-w-sm items-center justify-center overflow-hidden border border-white/10 bg-black"
-                      >
-                        <div className="flex h-12 w-12 items-center justify-center bg-gold text-ink shadow-lg transition-transform group-hover:scale-110">
-                          <Play className="ml-0.5 h-5 w-5 fill-current" />
-                        </div>
-                      </a>
+                      <WorkerVideoPlayer videoUrl={worker.galleryVideoUrl!} isArabic={isArabic} />
                     </div>
                   )}
                 </article>

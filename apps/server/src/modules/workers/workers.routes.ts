@@ -783,6 +783,7 @@ router.get("/profile", catchAsync(async (request, response) => {
   if (!worker) throw new ApiError(404, "Worker profile not found");
 
   const profile = {
+    id: worker.id,
     bio: worker.bio ?? "",
     yearsOfExperience: worker.yearsOfExperience,
     education: worker.education,

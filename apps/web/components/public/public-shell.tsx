@@ -204,6 +204,7 @@ export function PublicFooter({ locale }: { locale: Locale }) {
           <h5 className="text-gold font-bold text-sm uppercase mb-3">{isArabic ? "الدعم" : "Support"}</h5>
           <ul className="space-y-2 text-neutral-400 text-sm">
             <li><Link href={`/${locale}/faq`} className="hover:text-white transition-colors">{isArabic ? "مركز المساعدة" : "Help Center"}</Link></li>
+            <li><Link href={`/${locale}/billing`} className="hover:text-white transition-colors">{isArabic ? "سياسة الفوترة" : "Billing Policy"}</Link></li>
             <li><Link href={`/${locale}/contact`} className="hover:text-white transition-colors">{isArabic ? "اتصل بنا" : "Contact Support"}</Link></li>
           </ul>
         </div>

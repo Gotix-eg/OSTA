@@ -20,12 +20,15 @@ import {
   Wrench,
 } from "lucide-react";
 
+import dynamic from "next/dynamic";
+
 import { serviceCategories } from "@/lib/shared";
 
 import { postApiData } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
-import { MapPicker } from "@/components/shared/map-picker";
+
+const MapPicker = dynamic(() => import("@/components/shared/map-picker").then((m) => m.MapPicker), { ssr: false });
 
 type CreatedRequest = {
   id: string;

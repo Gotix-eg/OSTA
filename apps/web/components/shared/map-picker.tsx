@@ -1,5 +1,4 @@
 "use client";
-import "leaflet/dist/leaflet.css";
 
 import { useEffect, useState, useMemo } from "react";
 import dynamic from "next/dynamic";
@@ -17,7 +16,7 @@ type MapPickerProps = {
 const MapInternal = dynamic(
   async () => {
     const { MapContainer, TileLayer, Marker, useMapEvents, useMap } = await import("react-leaflet");
-    const L = await import('leaflet');
+    const L = await import("leaflet");
     
 
     const customIcon = L.icon({
