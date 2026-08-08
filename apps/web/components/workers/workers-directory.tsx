@@ -258,7 +258,7 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
                   )}
                 >
                   {/* Full-width Image Header */}
-                  <div className="relative h-56 w-full overflow-hidden bg-neutral-800 md:h-64">
+                  <div className="relative aspect-square w-full overflow-hidden bg-neutral-800">
                     <Link href={"/" + locale + "/workers/" + worker.id} className="block w-full h-full">
                       <img className="w-full h-full object-cover object-center transition-all duration-500" src={avatarImg} alt={worker.name} />
                     </Link>
