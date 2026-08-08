@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import {
   MapPin,
@@ -24,13 +25,16 @@ import {
   Check,
   Play,
   ChevronDown,
-  PhoneCall
+  PhoneCall,
+  Settings,
+  UserCheck
 } from "lucide-react";
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
-import { resolveApiBaseUrl } from "@/lib/api";
+import { resolveApiBaseUrl, patchApiData, postApiData } from "@/lib/api";
 import { getBrowserAuthState } from "@/lib/auth-client";
 import { WorkerVideoPlayer } from "@/components/shared/video-player";
+import { workerProfessions } from "@/lib/geo-data";
 
 interface ReviewItem {
   id: string;
@@ -86,6 +90,7 @@ interface WorkerProfileData {
 
 export function WorkerProfileDetail({ locale, workerId }: { locale: Locale; workerId: string }) {
   const isArabic = locale === "ar";
+  const [mounted, setMounted] = useState(false);
   const [worker, setWorker] = useState<WorkerProfileData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -105,12 +110,32 @@ export function WorkerProfileDetail({ locale, workerId }: { locale: Locale; work
   // Direct Booking States
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [showBookingAuthModal, setShowBookingAuthModal] = useState(false);
 
+  // Admin Edit Modal States
+  const [adminEditModalOpen, setAdminEditModalOpen] = useState(false);
+  const [editFirstName, setEditFirstName] = useState("");
+  const [editLastName, setEditLastName] = useState("");
+  const [editPhone, setEditPhone] = useState("");
+  const [editAvatarUrl, setEditAvatarUrl] = useState("");
+  const [editProfession, setEditProfession] = useState("");
+  const [editBio, setEditBio] = useState("");
+  const [editYearsOfExperience, setEditYearsOfExperience] = useState<number | "">(0);
+  const [editRating, setEditRating] = useState<number | "">(5);
+  const [editTotalJobs, setEditTotalJobs] = useState<number | "">(0);
+  const [editGalleryVideoUrl, setEditGalleryVideoUrl] = useState("");
+  const [editGalleryImagesText, setEditGalleryImagesText] = useState("");
+  const [editEducationText, setEditEducationText] = useState("");
+  const [editAchievementsText, setEditAchievementsText] = useState("");
+  const [saveLoading, setSaveLoading] = useState(false);
+
   useEffect(() => {
+    setMounted(true);
     getBrowserAuthState().then(({ isLoggedIn, role }) => {
       setIsLoggedIn(isLoggedIn);
       setIsClient(role === "CLIENT");
+      setIsAdmin(role === "ADMIN");
     });
   }, []);
 
@@ -148,18 +173,32 @@ export function WorkerProfileDetail({ locale, workerId }: { locale: Locale; work
         const redirectUrl = `/${locale}/client/new-request?workerId=${worker.id}&categoryId=${worker.categoryId}&serviceId=${worker.serviceId}`;
         window.location.assign(redirectUrl);
       } else {
-        alert(isArabic ? "هذا الإجراء متاح لحسابات العملاء فقط." : "Booking is only available for client accounts.");
+        alert(isArabic ? "الحجز المباشر متاح للعملاء فقط." : "Direct booking is available for clients only.");
       }
     } else {
       setShowBookingAuthModal(true);
     }
   };
 
-  const handleCopyLink = () => {
-    if (typeof window !== "undefined") {
-      navigator.clipboard.writeText(window.location.href);
+  const handleCopyLink = async () => {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(window.location.href);
+      } else {
+        const textArea = document.createElement("textarea");
+        textArea.value = window.location.href;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand("copy");
+        textArea.remove();
+      }
       setCopySuccess(true);
-      setTimeout(() => setCopySuccess(false), 2500);
+      setTimeout(() => setCopySuccess(false), 3000);
+    } catch (err) {
+      console.error("Failed to copy URL:", err);
     }
   };
 
@@ -173,7 +212,71 @@ export function WorkerProfileDetail({ locale, workerId }: { locale: Locale; work
     }
   };
 
+  const openAdminEditModal = () => {
+    if (!worker) return;
+    const nameParts = worker.name ? worker.name.trim().split(" ") : ["", ""];
+    setEditFirstName(nameParts[0] || "");
+    setEditLastName(nameParts.slice(1).join(" ") || "");
+    setEditPhone("");
+    setEditAvatarUrl(worker.avatarUrl || "");
+    setEditProfession(worker.professionAr || worker.professionEn || "");
+    setEditBio(worker.bio || "");
+    setEditYearsOfExperience(worker.yearsOfExperience ?? 0);
+    setEditRating(worker.rating ?? 5);
+    setEditTotalJobs(worker.totalJobs ?? 0);
+    setEditGalleryVideoUrl(worker.galleryVideoUrl || "");
+    setEditGalleryImagesText((worker.galleryImages || []).join("\n"));
+    setEditEducationText((worker.education || []).join("\n"));
+    setEditAchievementsText((worker.achievements || []).join("\n"));
+    setAdminEditModalOpen(true);
+  };
 
+  const handleAdminSave = async () => {
+    if (!worker) return;
+    setSaveLoading(true);
+    try {
+      const payload: any = {
+        firstName: editFirstName,
+        lastName: editLastName,
+        profession: editProfession,
+        bio: editBio,
+        yearsOfExperience: Number(editYearsOfExperience || 0),
+        rating: Number(editRating || 5),
+        totalJobsCompleted: Number(editTotalJobs || 0),
+        galleryVideoUrl: editGalleryVideoUrl,
+        galleryImages: editGalleryImagesText.split("\n").map(s => s.trim()).filter(Boolean),
+        education: editEducationText.split("\n").map(s => s.trim()).filter(Boolean),
+        achievements: editAchievementsText.split("\n").map(s => s.trim()).filter(Boolean),
+      };
+      if (editPhone.trim()) {
+        payload.phone = editPhone;
+      }
+      if (editAvatarUrl.trim()) {
+        payload.avatarUrl = editAvatarUrl;
+      }
+
+      await patchApiData(`/admin/workers/${worker.id}`, payload);
+      await fetchProfile();
+      setAdminEditModalOpen(false);
+    } catch (err) {
+      alert(isArabic ? "فشل حفظ التعديلات" : "Failed to save profile changes");
+    } finally {
+      setSaveLoading(false);
+    }
+  };
+
+  const handleImpersonateWorker = async () => {
+    if (!worker) return;
+    setSaveLoading(true);
+    try {
+      await postApiData(`/admin/workers/${worker.id}/impersonate`, {});
+      window.location.assign(`/${locale}/worker/profile`);
+    } catch (err) {
+      alert(isArabic ? "فشل تسجيل الدخول بحساب الصنايعي" : "Failed to switch to worker account");
+    } finally {
+      setSaveLoading(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -235,6 +338,37 @@ export function WorkerProfileDetail({ locale, workerId }: { locale: Locale; work
       {/* Black Hero Header */}
       <section className="relative overflow-hidden border-b-4 border-black bg-black px-4 py-8 text-white md:px-12 md:py-14">
         <div className="mx-auto max-w-5xl">
+          {/* Admin Edit Control Bar */}
+          {isAdmin && (
+            <div className="mb-6 flex flex-wrap items-center justify-between gap-4 border-2 border-gold/40 bg-gold/10 p-4 font-bold text-white shadow-lg">
+              <div className="flex items-center gap-2 text-xs text-gold">
+                <ShieldCheck className="h-5 w-5 text-gold shrink-0" />
+                <span>{isArabic ? "أنت تتصفح هذه الصفحة بصفة مدير (أدمن)" : "You are viewing this profile as Admin"}</span>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3">
+                <button
+                  type="button"
+                  onClick={handleImpersonateWorker}
+                  disabled={saveLoading}
+                  className="inline-flex items-center gap-2 border-2 border-black bg-gold px-4 py-2 text-xs font-black uppercase text-ink transition-all hover:bg-white shadow-md cursor-pointer disabled:opacity-50"
+                >
+                  {saveLoading ? <Loader2 className="h-4 w-4 animate-spin text-ink" /> : <UserCheck className="h-4 w-4" />}
+                  <span>{isArabic ? "الدخول كصنايعي وتعديل الملف (/worker/profile)" : "Login & Edit as Worker"}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={openAdminEditModal}
+                  className="inline-flex items-center gap-2 border-2 border-white/20 bg-onyx-900 px-4 py-2 text-xs font-bold uppercase text-white transition-all hover:bg-onyx-800 shadow-md cursor-pointer"
+                >
+                  <Settings className="h-4 w-4 text-gold" />
+                  <span>{isArabic ? "تعديل سريع (نافذة أدمن)" : "Quick Edit"}</span>
+                </button>
+              </div>
+            </div>
+          )}
+
           <Link
             href={`/${locale}/workers`}
             className="mb-6 inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-gold hover:text-white"
@@ -775,6 +909,233 @@ export function WorkerProfileDetail({ locale, workerId }: { locale: Locale; work
             </div>
           </div>
         </div>
+      )}
+
+      {/* Admin Edit Worker Profile Modal - Portaled to document.body */}
+      {mounted && isAdmin && adminEditModalOpen && createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fadeIn">
+          <div className="bg-onyx-900 border-2 border-gold-500/40 rounded-[2rem] max-w-lg w-full p-8 space-y-6 text-start shadow-2xl relative max-h-[90vh] overflow-y-auto font-sans text-white">
+            <div className="flex items-center justify-between border-b border-white/10 pb-4">
+              <h3 className="text-2xl font-black text-white flex items-center gap-3">
+                <Settings className="h-6 w-6 text-gold-500" />
+                {isArabic ? "تعديل بيانات ورصيد الصنايعي" : "Edit Worker Profile & Settings"}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setAdminEditModalOpen(false)}
+                className="h-10 w-10 rounded-xl bg-onyx-800 border border-onyx-700 flex items-center justify-center text-onyx-400 hover:text-white transition-all"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="space-y-4 text-start">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-bold text-onyx-300 mb-1.5 block">
+                    {isArabic ? "الاسم الأول" : "First Name"}
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full bg-onyx-950 border border-onyx-700 rounded-xl px-4 py-2.5 text-white focus:border-gold-500/50 outline-none text-sm"
+                    value={editFirstName}
+                    onChange={(e) => setEditFirstName(e.target.value)}
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-onyx-300 mb-1.5 block">
+                    {isArabic ? "الاسم الأخير" : "Last Name"}
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full bg-onyx-950 border border-onyx-700 rounded-xl px-4 py-2.5 text-white focus:border-gold-500/50 outline-none text-sm"
+                    value={editLastName}
+                    onChange={(e) => setEditLastName(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-bold text-onyx-300 mb-1.5 block">
+                    {isArabic ? "رقم الهاتف" : "Phone Number"}
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full bg-onyx-950 border border-onyx-700 rounded-xl px-4 py-2.5 text-white focus:border-gold-500/50 outline-none text-sm font-mono text-start"
+                    value={editPhone}
+                    onChange={(e) => setEditPhone(e.target.value)}
+                    placeholder={isArabic ? "أدخل رقم جديد لتحديثه..." : "Phone..."}
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-onyx-300 mb-1.5 block">
+                    {isArabic ? "رابط الصورة الشخصية (Avatar URL)" : "Avatar Image URL"}
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full bg-onyx-950 border border-onyx-700 rounded-xl px-4 py-2.5 text-white focus:border-gold-500/50 outline-none text-sm text-start font-mono"
+                    value={editAvatarUrl}
+                    onChange={(e) => setEditAvatarUrl(e.target.value)}
+                    placeholder="https://..."
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-bold text-onyx-300 mb-1.5 block">
+                    {isArabic ? "المهنة / التخصص" : "Profession / Specialty"}
+                  </label>
+                  <select
+                    className="w-full bg-onyx-950 border border-onyx-700 rounded-xl px-3 py-2.5 text-white focus:border-gold-500/50 outline-none text-sm"
+                    value={editProfession}
+                    onChange={(e) => setEditProfession(e.target.value)}
+                  >
+                    <option value="">{isArabic ? "اختر مهنة..." : "Select profession..."}</option>
+                    {workerProfessions.map(p => (
+                      <option key={p.value} value={p.value} className="bg-onyx-900 text-white">
+                        {isArabic ? p.labelAr : p.labelEn}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-onyx-300 mb-1.5 block">
+                    {isArabic ? "سنوات الخبرة" : "Years of Experience"}
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    className="w-full bg-onyx-950 border border-onyx-700 rounded-xl px-4 py-2.5 text-white focus:border-gold-500/50 outline-none text-sm"
+                    value={editYearsOfExperience}
+                    onChange={(e) => setEditYearsOfExperience(e.target.value === "" ? "" : Number(e.target.value))}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-bold text-onyx-300 mb-1.5 block">
+                    {isArabic ? "التقييم (Rating 0 - 5.0)" : "Rating (0 - 5.0)"}
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="5"
+                    step="0.1"
+                    className="w-full bg-onyx-950 border border-onyx-700 rounded-xl px-4 py-2.5 text-white focus:border-gold-500/50 outline-none text-sm"
+                    value={editRating}
+                    onChange={(e) => setEditRating(e.target.value === "" ? "" : Number(e.target.value))}
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-onyx-300 mb-1.5 block">
+                    {isArabic ? "عدد الأوردرات المكتملة" : "Completed Jobs Count"}
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    className="w-full bg-onyx-950 border border-onyx-700 rounded-xl px-4 py-2.5 text-white focus:border-gold-500/50 outline-none text-sm"
+                    value={editTotalJobs}
+                    onChange={(e) => setEditTotalJobs(e.target.value === "" ? "" : Number(e.target.value))}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-onyx-300 mb-1.5 block">
+                  {isArabic ? "نبذة عن الفني (Bio)" : "Bio / Description"}
+                </label>
+                <textarea
+                  rows={3}
+                  className="w-full bg-onyx-950 border border-onyx-700 rounded-xl p-3 text-white focus:border-gold-500/50 outline-none text-xs leading-relaxed"
+                  value={editBio}
+                  onChange={(e) => setEditBio(e.target.value)}
+                  placeholder={isArabic ? "وصف لخبرات وخدمات الصنايعي..." : "Worker bio..."}
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-onyx-300 mb-1.5 block">
+                  {isArabic ? "رابط فيديو الاستعراض (Video Showcase URL)" : "Video Showcase URL"}
+                </label>
+                <input
+                  type="text"
+                  className="w-full bg-onyx-950 border border-onyx-700 rounded-xl px-4 py-2.5 text-white focus:border-gold-500/50 outline-none text-sm font-mono text-start"
+                  value={editGalleryVideoUrl}
+                  onChange={(e) => setEditGalleryVideoUrl(e.target.value)}
+                  placeholder="https://www.youtube.com/watch?v=..."
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-onyx-300 mb-1.5 block">
+                  {isArabic ? "روابط معرض صور أعمال الصنايعي (سطر لكل صورة)" : "Gallery Photo URLs (one per line)"}
+                </label>
+                <textarea
+                  rows={3}
+                  className="w-full bg-onyx-950 border border-onyx-700 rounded-xl p-3 text-white focus:border-gold-500/50 outline-none text-xs font-mono leading-relaxed text-start"
+                  value={editGalleryImagesText}
+                  onChange={(e) => setEditGalleryImagesText(e.target.value)}
+                  placeholder="https://images.unsplash.com/photo-1&#10;https://images.unsplash.com/photo-2"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-bold text-onyx-300 mb-1.5 block">
+                    {isArabic ? "الشهادات والتعليم (سطر لكل بند)" : "Education & Degrees (one per line)"}
+                  </label>
+                  <textarea
+                    rows={3}
+                    className="w-full bg-onyx-950 border border-onyx-700 rounded-xl p-3 text-white focus:border-gold-500/50 outline-none text-xs leading-relaxed"
+                    value={editEducationText}
+                    onChange={(e) => setEditEducationText(e.target.value)}
+                    placeholder={isArabic ? "دبلوم فني صناعي&#10;دورة توثيق سلامة مهنية" : "Diploma info..."}
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-onyx-300 mb-1.5 block">
+                    {isArabic ? "الإنجازات والجوائز (سطر لكل بند)" : "Achievements & Badges (one per line)"}
+                  </label>
+                  <textarea
+                    rows={3}
+                    className="w-full bg-onyx-950 border border-onyx-700 rounded-xl p-3 text-white focus:border-gold-500/50 outline-none text-xs leading-relaxed"
+                    value={editAchievementsText}
+                    onChange={(e) => setEditAchievementsText(e.target.value)}
+                    placeholder={isArabic ? "وسام التميز 2025&#10;جائزة أفضل فني كهرباء" : "Award info..."}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-3 justify-end pt-4 border-t border-white/10">
+              <button
+                type="button"
+                onClick={() => setAdminEditModalOpen(false)}
+                disabled={saveLoading}
+                className="btn-onyx py-3 px-6 text-sm font-bold"
+              >
+                {isArabic ? "إلغاء" : "Cancel"}
+              </button>
+              <button
+                type="button"
+                onClick={handleAdminSave}
+                disabled={saveLoading}
+                className="btn-gold py-3 px-6 text-sm font-bold"
+              >
+                {saveLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : (isArabic ? "حفظ كافة التعديلات" : "Save All Changes")}
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
       )}
     </div>
   );

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { UserRole } from "@prisma/client";
+import crypto from "node:crypto";
 
 import { z } from "zod";
 import { getCategorySlugFromProfession } from "../../routes/index.js";
@@ -11,6 +12,8 @@ import { catchAsync } from "../../utils/catchAsync.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { normalizeHeroSlidesForStorage, normalizeCampaignsForStorage } from "./hero-slides.storage.js";
 import { getAvatarLibrary, saveAvatarLibrary } from "../../lib/avatar-library.js";
+import { signAccessToken, signRefreshToken } from "../../utils/tokens.js";
+import { setAuthCookies } from "../../utils/auth-cookies.js";
 
 const router = Router();
 
@@ -295,16 +298,23 @@ router.patch("/workers/:id/verify", catchAsync(async (request, response) => {
   const now = new Date();
   const trialExpiresAt = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
 
+  const adminUserId = (request as any).user?.id;
+  const adminUser = adminUserId ? await prisma.user.findUnique({ where: { id: adminUserId } }) : null;
+  const adminName = adminUser ? `${adminUser.firstName} ${adminUser.lastName}` : "أدمن النظام";
+
   const updatedWorker = await prisma.workerProfile.update({
     where: { id: workerId },
     data: payload.status === "VERIFIED"
       ? {
           verificationStatus: "VERIFIED",
           verifiedAt: now,
+          verifiedBy: adminName,
           trialExpiresAt
         }
       : {
-          verificationStatus: "REJECTED"
+          verificationStatus: "REJECTED",
+          verifiedAt: now,
+          verifiedBy: adminName
         },
     include: {
       user: { include: { addresses: { take: 1 } } }
@@ -536,12 +546,80 @@ router.post("/vendors/:id/reset-trial", catchAsync(async (request, response) => 
 router.get("/workers", catchAsync(async (_request, response) => {
   const workers = await prisma.workerProfile.findMany({
     include: {
-      user: { select: { firstName: true, lastName: true, phone: true } }
+      user: { select: { firstName: true, lastName: true, phone: true, email: true, avatarUrl: true } }
     },
     orderBy: { createdAt: "desc" }
   });
   
   response.json(successResponse(workers, "Workers fetched successfully"));
+}));
+
+// POST /api/admin/workers/:id/impersonate — Impersonate worker and switch session to /worker/profile
+router.post("/workers/:id/impersonate", catchAsync(async (request, response) => {
+  const workerId = request.params.id as string;
+  const worker = await prisma.workerProfile.findUnique({
+    where: { id: workerId },
+    include: { user: true }
+  });
+  if (!worker) {
+    throw new ApiError(404, "Worker profile not found");
+  }
+
+  const adminToken = request.cookies?.osta_access_token || (request.headers.authorization ? request.headers.authorization.replace("Bearer ", "") : null);
+
+  const session = await prisma.session.create({
+    data: {
+      userId: worker.userId,
+      refreshToken: crypto.randomUUID(),
+      expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+    }
+  });
+
+  const refreshToken = signRefreshToken({
+    sub: worker.userId,
+    sessionId: session.id,
+    type: "refresh"
+  });
+
+  await prisma.session.update({
+    where: { id: session.id },
+    data: { refreshToken }
+  });
+
+  const accessToken = signAccessToken({
+    sub: worker.userId,
+    role: "WORKER",
+    sessionId: session.id
+  });
+
+  if (adminToken) {
+    response.cookie("osta_admin_backup_token", adminToken, {
+      httpOnly: true,
+      sameSite: "strict",
+      secure: false,
+      path: "/",
+      maxAge: 30 * 24 * 60 * 60 * 1000
+    });
+  }
+
+  response.cookie("osta_impersonating_name", `${worker.user.firstName} ${worker.user.lastName}`, {
+    httpOnly: false,
+    sameSite: "strict",
+    secure: false,
+    path: "/",
+    maxAge: 30 * 24 * 60 * 60 * 1000
+  });
+
+  setAuthCookies(response, {
+    accessToken,
+    refreshToken,
+    role: "WORKER"
+  });
+
+  response.json(successResponse({
+    redirectUrl: `/worker/profile`,
+    workerName: `${worker.user.firstName} ${worker.user.lastName}`
+  }, "Switched to worker profile session successfully"));
 }));
 
 // POST /api/admin/workers/:id/quota — Add +10 orders to worker quota
@@ -575,11 +653,16 @@ router.post("/workers/:id/verify", catchAsync(async (request, response) => {
   const now = new Date();
   const trialExpiresAt = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
   
+  const adminUserId = (request as any).user?.id;
+  const adminUser = adminUserId ? await prisma.user.findUnique({ where: { id: adminUserId } }) : null;
+  const adminName = adminUser ? `${adminUser.firstName} ${adminUser.lastName}` : "أدمن النظام";
+
   const updated = await prisma.workerProfile.update({
     where: { id },
     data: { 
       verificationStatus: "VERIFIED",
       verifiedAt: now,
+      verifiedBy: adminName,
       trialExpiresAt
     },
     include: {
@@ -624,14 +707,33 @@ router.post("/workers/:id/verify", catchAsync(async (request, response) => {
   response.json(successResponse(updated, "Worker verified and 30-day trial started successfully"));
 }));
 
-// PATCH /api/admin/workers/:id — Edit worker profile details (first/last name, phone, profession)
+// PATCH /api/admin/workers/:id — Edit worker profile details and settings
 router.patch("/workers/:id", catchAsync(async (request, response) => {
   const id = request.params.id as string;
-  const { firstName, lastName, phone, profession } = request.body as {
+  const { 
+    firstName, lastName, phone, avatarUrl,
+    profession, bio, yearsOfExperience, orderQuota, verificationStatus, rating,
+    totalJobsCompleted, walletBalance, isOnline, isAvailable, galleryVideoUrl,
+    education, achievements, galleryImages
+  } = request.body as {
     firstName?: string;
     lastName?: string;
     phone?: string;
+    avatarUrl?: string;
     profession?: string;
+    bio?: string;
+    yearsOfExperience?: number;
+    orderQuota?: number;
+    verificationStatus?: any;
+    rating?: number;
+    totalJobsCompleted?: number;
+    walletBalance?: number;
+    isOnline?: boolean;
+    isAvailable?: boolean;
+    galleryVideoUrl?: string;
+    education?: string[];
+    achievements?: string[];
+    galleryImages?: string[];
   };
 
   const worker = await prisma.workerProfile.findUnique({
@@ -642,13 +744,14 @@ router.patch("/workers/:id", catchAsync(async (request, response) => {
     throw new ApiError(404, "Worker profile not found");
   }
 
-  if (firstName || lastName || phone) {
+  if (firstName !== undefined || lastName !== undefined || phone !== undefined || avatarUrl !== undefined) {
     await prisma.user.update({
       where: { id: worker.userId },
       data: {
         firstName: firstName !== undefined ? firstName : undefined,
         lastName: lastName !== undefined ? lastName : undefined,
         phone: phone !== undefined ? phone : undefined,
+        avatarUrl: avatarUrl !== undefined ? avatarUrl : undefined,
       }
     });
   }
@@ -656,14 +759,28 @@ router.patch("/workers/:id", catchAsync(async (request, response) => {
   const updatedWorker = await prisma.workerProfile.update({
     where: { id },
     data: {
-      profession: profession !== undefined ? profession : undefined
+      profession: profession !== undefined ? profession : undefined,
+      bio: bio !== undefined ? bio : undefined,
+      yearsOfExperience: yearsOfExperience !== undefined ? Number(yearsOfExperience) : undefined,
+      orderQuota: orderQuota !== undefined ? Number(orderQuota) : undefined,
+      verificationStatus: verificationStatus !== undefined ? verificationStatus : undefined,
+      rating: rating !== undefined ? Number(rating) : undefined,
+      totalJobsCompleted: totalJobsCompleted !== undefined ? Number(totalJobsCompleted) : undefined,
+      walletBalance: walletBalance !== undefined ? Number(walletBalance) : undefined,
+      isOnline: isOnline !== undefined ? Boolean(isOnline) : undefined,
+      isAvailable: isAvailable !== undefined ? Boolean(isAvailable) : undefined,
+      galleryVideoUrl: galleryVideoUrl !== undefined ? galleryVideoUrl : undefined,
+      education: education !== undefined ? education : undefined,
+      achievements: achievements !== undefined ? achievements : undefined,
+      galleryImages: galleryImages !== undefined ? galleryImages : undefined,
     },
     include: {
       user: {
         select: {
           firstName: true,
           lastName: true,
-          phone: true
+          phone: true,
+          avatarUrl: true
         }
       }
     }

@@ -289,13 +289,13 @@ router.get("/public/workers/:id", async (request, response) => {
       return response.status(404).json({ error: "Worker not found" });
     }
 
-    let isOwner = false;
+    let isOwnerOrAdmin = false;
     const token = getToken(request);
     if (token) {
       try {
         const payload = verifyAccessToken(token);
-        if (payload && payload.sub === worker.userId) {
-          isOwner = true;
+        if (payload && (payload.sub === worker.userId || payload.role === "ADMIN")) {
+          isOwnerOrAdmin = true;
         }
       } catch (err) {
         // ignore
@@ -303,7 +303,7 @@ router.get("/public/workers/:id", async (request, response) => {
     }
 
     const specializations = (worker as any).specializations ?? [];
-    if (!isOwner && (worker.verificationStatus !== "VERIFIED" || specializations.length === 0)) {
+    if (!isOwnerOrAdmin && (worker.verificationStatus !== "VERIFIED" || specializations.length === 0)) {
       return response.status(404).json({ error: "Worker not found" });
     }
 

@@ -64,7 +64,7 @@ const iconSets: Record<DashboardRole, Array<NavItem["icon"]>> = {
   client: [Home, Briefcase, FolderClock, Store, Package, Heart, Wallet, Settings],
   worker: [Home, UserCircle2, FolderClock, Briefcase, CreditCard, Megaphone, BarChart3, Settings],
   vendor: [Home, Bell, Briefcase, Wrench, Package, Megaphone, Wallet, Settings],
-  admin: [Home, ShieldCheck, Users, FolderClock, Store, Wrench, CreditCard, Megaphone, SlidersHorizontal, Grid3X3, Image, UserCircle2, Settings]
+  admin: [Home, Wrench, Users, FolderClock, Store, CreditCard, Megaphone, SlidersHorizontal, Grid3X3, Image, UserCircle2, Settings]
 };
 
 const roleThemes: Record<DashboardRole, { tag: string; accent: string; orb: string; ring: string }> = {
@@ -201,7 +201,7 @@ export function DashboardShell({
       client: ["/client", "/client/new-request", "/client/my-requests", "/client/stores", "/client/materials", "/client/favorites", "/client/wallet", "/client/settings"],
       worker: ["/worker", "/worker/profile", "/worker/requests/incoming", "/worker/requests/active", "/worker/earnings", "/worker/ads", "/worker/ratings", "/worker/settings"],
       vendor: ["/vendor", "/vendor/requests", "/vendor/active-orders", "/vendor/materials", "/vendor/inventory", "/vendor/ads", "/vendor/wallet", "/vendor/settings"],
-      admin: ["/admin", "/admin/workers/pending", "/admin/clients", "/admin/requests", "/admin/vendors", "/admin/workers", "/admin/finance", "/admin/ads", "/admin/pricing", "/admin/services", "/admin/media", "/admin/avatars", "/admin/settings"]
+      admin: ["/admin", "/admin/workers", "/admin/clients", "/admin/requests", "/admin/vendors", "/admin/finance", "/admin/ads", "/admin/pricing", "/admin/services", "/admin/media", "/admin/avatars", "/admin/settings"]
     };
 
     const roleRoutes = routes[role];

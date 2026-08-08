@@ -441,4 +441,32 @@ router.post("/switch-role", authenticate, catchAsync(async (request, response) =
   );
 }));
 
+router.post("/stop-impersonation", catchAsync(async (request: Request, response: Response) => {
+  const adminToken = request.cookies?.osta_admin_backup_token;
+  if (!adminToken) {
+    throw new ApiError(400, "No active impersonation session found");
+  }
+
+  response.cookie("osta_access_token", adminToken, {
+    httpOnly: true,
+    sameSite: "strict",
+    secure: false,
+    path: "/",
+    maxAge: 30 * 24 * 60 * 60 * 1000
+  });
+
+  response.cookie("osta_user_role", "ADMIN", {
+    httpOnly: true,
+    sameSite: "strict",
+    secure: false,
+    path: "/",
+    maxAge: 30 * 24 * 60 * 60 * 1000
+  });
+
+  response.clearCookie("osta_admin_backup_token", { path: "/" });
+  response.clearCookie("osta_impersonating_name", { path: "/" });
+
+  response.status(200).json(successResponse({ redirectUrl: "/admin/workers" }, "Impersonation ended successfully"));
+}));
+
 export const authRouter = router;
