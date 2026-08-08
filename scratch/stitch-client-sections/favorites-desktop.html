@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@600;700;800;900&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Outfit:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface": "#f9f9f9",
+                    "on-error-container": "#93000a",
+                    "on-background": "#1a1c1c",
+                    "secondary-fixed-dim": "#c6c6c6",
+                    "surface-dim": "#dadada",
+                    "surface-container": "#eeeeee",
+                    "inverse-surface": "#2f3131",
+                    "on-tertiary-container": "#525151",
+                    "on-surface-variant": "#4f4633",
+                    "primary": "#775a00",
+                    "on-tertiary-fixed": "#1c1b1b",
+                    "on-error": "#ffffff",
+                    "inverse-on-surface": "#f0f1f1",
+                    "tertiary-fixed": "#e5e2e1",
+                    "on-secondary-fixed": "#1b1b1b",
+                    "on-primary": "#ffffff",
+                    "secondary": "#5e5e5e",
+                    "secondary-container": "#e2e2e2",
+                    "tertiary-fixed-dim": "#c8c6c5",
+                    "tertiary": "#5f5e5e",
+                    "primary-fixed-dim": "#f6be1a",
+                    "primary-fixed": "#ffdf9a",
+                    "tertiary-container": "#c7c5c4",
+                    "outline": "#817660",
+                    "on-surface": "#1a1c1c",
+                    "on-primary-fixed-variant": "#5a4300",
+                    "surface-container-highest": "#e2e2e2",
+                    "outline-variant": "#d3c5ac",
+                    "on-secondary-container": "#646464",
+                    "on-tertiary": "#ffffff",
+                    "surface-container-high": "#e8e8e8",
+                    "error": "#ba1a1a",
+                    "on-tertiary-fixed-variant": "#474646",
+                    "on-primary-fixed": "#251a00",
+                    "background": "#f9f9f9",
+                    "surface-bright": "#f9f9f9",
+                    "surface-tint": "#775a00",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-low": "#f3f3f4",
+                    "on-secondary-fixed-variant": "#474747",
+                    "surface-variant": "#e2e2e2",
+                    "on-secondary": "#ffffff",
+                    "inverse-primary": "#f6be1a",
+                    "secondary-fixed": "#e2e2e2",
+                    "error-container": "#ffdad6",
+                    "on-primary-container": "#684e00",
+                    "primary-container": "#f5bd18"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "margin-desktop": "48px",
+                    "gutter": "24px",
+                    "container-max": "1280px",
+                    "base": "8px",
+                    "stack-md": "24px",
+                    "stack-sm": "12px",
+                    "stack-lg": "48px",
+                    "margin-mobile": "16px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Inter"],
+                    "label-lg": ["Outfit"],
+                    "display-lg": ["Outfit"],
+                    "headline-sm": ["Outfit"],
+                    "label-md": ["Outfit"],
+                    "headline-md": ["Outfit"],
+                    "headline-lg": ["Outfit"],
+                    "headline-lg-mobile": ["Outfit"],
+                    "body-md": ["Inter"]
+            },
+            "fontSize": {
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "label-lg": ["14px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "display-lg": ["72px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "headline-sm": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "label-md": ["12px", {"lineHeight": "1", "fontWeight": "600"}],
+                    "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "headline-lg": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .obsidian-card {
+            background-color: #000000;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .yellow-flood {
+            background-color: #f5bd18;
+        }
+        .sticker-shadow {
+            box-shadow: 4px 4px 0px #000000;
+        }
+        .sticker-shadow-hover:hover {
+            box-shadow: 6px 6px 0px #000000;
+            transform: translate(-2px, -2px);
+        }
+        .glass-nav {
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-primary-container min-h-screen font-body-md text-on-background">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-black/80 backdrop-blur-md border-b border-white/10 flex items-center justify-between px-margin-mobile md:px-margin-desktop h-16 w-full">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary-fixed cursor-pointer">menu</span>
+<h1 class="font-headline-sm text-headline-sm font-black text-primary-fixed uppercase tracking-widest">INDUSTRIAL PRO</h1>
+</div>
+<div class="flex items-center gap-6">
+<nav class="hidden md:flex gap-8">
+<a class="font-label-lg text-label-lg uppercase tracking-widest text-white/60 hover:text-white transition-colors" href="#">Requests</a>
+<a class="font-label-lg text-label-lg uppercase tracking-widest text-white/60 hover:text-white transition-colors" href="#">Market</a>
+<a class="font-label-lg text-label-lg uppercase tracking-widest text-primary-fixed border-b-2 border-primary-fixed pb-1" href="#">Favorites</a>
+</nav>
+<span class="material-symbols-outlined text-primary-fixed cursor-pointer">account_balance_wallet</span>
+</div>
+</header>
+<!-- Sidebar Navigation Drawer -->
+<aside class="hidden md:flex flex-col p-stack-md h-full w-72 fixed left-0 top-0 bg-on-background border-r border-white/10 z-40 pt-20">
+<div class="flex items-center gap-4 mb-10 px-2">
+<div class="w-12 h-12 bg-primary-container rounded-full flex items-center justify-center overflow-hidden border-2 border-primary-fixed">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a master electrician in high-end workwear, looking confident and experienced. The lighting is cinematic and focused, with a blurred industrial workshop in the background using obsidian and yellow tones to match the brand identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2tEF8Pzh5CExOYAFIT9KOSdVh13N_Wi49tuTrRmB1XCoHlnPAKl0kHkBsl24LM-jS_U54vlWioeR8T8COHWABwcsVpGtQXV2bJH-GItgIc0tjxe7t9vb-QUcO2lEiyvxCVFQzAv_KhV7KhAY9ZTUF0ky82ABPTe6kq-XHkJ6oO8SpDDi4WAz9OdckNHE5zcmO-LwpdhEM5Nw-objTDphWh-RFm4JB2Qejpa6NvolIlvPVnjoX7z6CO9eh50jSyXhL1Lso--DZq5M"/>
+</div>
+<div>
+<h3 class="font-label-lg text-label-lg text-primary-fixed">Alex Foreman</h3>
+<p class="text-xs text-white/50 uppercase tracking-tighter">Master Electrician</p>
+</div>
+</div>
+<nav class="flex flex-col gap-2">
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-white/70 hover:bg-white/10 hover:text-white transition-all active:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">engineering</span>
+<span class="font-label-lg text-label-lg">Requests</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-white/70 hover:bg-white/10 hover:text-white transition-all active:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">gavel</span>
+<span class="font-label-lg text-label-lg">Bidding</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-white/70 hover:bg-white/10 hover:text-white transition-all active:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">storefront</span>
+<span class="font-label-lg text-label-lg">Vendors</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg bg-white/5 text-primary-fixed border-r-4 border-primary-fixed transition-all active:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span class="font-label-lg text-label-lg">Favorites</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-white/70 hover:bg-white/10 hover:text-white transition-all active:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-lg text-label-lg">Wallet</span>
+</a>
+</nav>
+<div class="mt-auto obsidian-card p-4 rounded-xl">
+<p class="text-[10px] text-white/40 uppercase tracking-widest mb-2">Premium Status</p>
+<div class="h-1 bg-white/10 w-full mb-3">
+<div class="h-full bg-primary-fixed w-3/4"></div>
+</div>
+<p class="text-xs text-white/80">75% to Next Tier</p>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="md:ml-72 pt-24 pb-32 px-margin-mobile md:px-margin-desktop min-h-screen">
+<!-- Header Section -->
+<div class="mb-stack-lg flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div class="max-w-2xl">
+<span class="bg-black text-primary-fixed px-3 py-1 font-label-md text-label-md uppercase tracking-widest mb-4 inline-block">Directory</span>
+<h2 class="font-headline-lg text-headline-lg text-on-background mb-4">Trusted Professionals</h2>
+<p class="font-body-lg text-body-lg text-on-background/70">Your curated list of top-tier verified industrial experts and service providers ready for immediate deployment.</p>
+</div>
+<div class="flex gap-4">
+<button class="bg-black text-white px-6 py-3 font-label-lg text-label-lg uppercase sticker-shadow sticker-shadow-hover transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">tune</span> Filter Pros
+                </button>
+</div>
+</div>
+<!-- Featured Viewport (Asymmetric Layout) -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-8 mb-12">
+<!-- Large Featured Card -->
+<div class="md:col-span-8 obsidian-card p-0 overflow-hidden flex flex-col md:flex-row relative group">
+<div class="md:w-1/2 h-80 md:h-full relative overflow-hidden">
+<img alt="Gallery Viewport" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQ-CC2eaIZxDXo8pbG7zUAL689UN6zJ1jPIgQ7R-mLbBuAHhKx0o4wLnx8dKmvBL5IyQs3wuoF8YFrQasoET1azRIsH-koVuy39XWvROzJ7U_YomtDuGBLWISEfCFUwb91StbuPf76c_11AmDGFrKX0k2_HdCVLwKDApBu00EtreshMqUkNreA2NbRopc6lbqv0_xPT8oEeuGi_GLkG1q2qEo1yiYu-VMVBPBc8Zo0y7yvB3pJ7Jl3o5pnOh0oKSBj60DA3pKt85c"/>
+<div class="absolute inset-0 bg-gradient-to-r from-black via-black/40 to-transparent"></div>
+</div>
+<div class="md:w-1/2 p-8 flex flex-col justify-center">
+<div class="flex items-center gap-2 mb-4">
+<span class="bg-primary-container text-on-primary-container px-2 py-1 font-label-md text-label-md uppercase">Top Rated</span>
+<div class="flex text-primary-fixed">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<h3 class="font-headline-md text-headline-md text-white mb-2">Modern Systems Inc.</h3>
+<p class="text-white/60 font-body-md mb-6 leading-relaxed">Specializing in high-voltage industrial automation and smart grid integration for logistics hubs and manufacturing plants.</p>
+<div class="flex flex-wrap gap-2 mb-8">
+<span class="border border-white/20 text-white/80 px-3 py-1 text-xs uppercase tracking-widest">Automation</span>
+<span class="border border-white/20 text-white/80 px-3 py-1 text-xs uppercase tracking-widest">High-Voltage</span>
+<span class="border border-white/20 text-white/80 px-3 py-1 text-xs uppercase tracking-widest">24/7 Support</span>
+</div>
+<button class="w-full bg-white text-black py-4 font-label-lg text-label-lg uppercase font-bold sticker-shadow sticker-shadow-hover transition-all">Quick Book</button>
+</div>
+</div>
+<!-- Stats Card -->
+<div class="md:col-span-4 flex flex-col gap-8">
+<div class="bg-black/5 border-2 border-black p-8 flex-1 flex flex-col justify-between">
+<span class="material-symbols-outlined text-4xl text-black">verified_user</span>
+<div>
+<h4 class="font-headline-sm text-headline-sm text-black mb-2">Verified Only</h4>
+<p class="text-black/70">Every professional in your favorites list has undergone a rigorous 50-point background check and certification audit.</p>
+</div>
+</div>
+<div class="obsidian-card p-8 flex-1 flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<span class="text-4xl font-black text-primary-fixed">14</span>
+<span class="material-symbols-outlined text-white/30">favorite</span>
+</div>
+<p class="font-label-lg text-label-lg text-white uppercase tracking-widest">Saved Professionals</p>
+</div>
+</div>
+</div>
+<!-- Directory Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
+<!-- Pro Card 1 -->
+<div class="obsidian-card group hover:border-primary-fixed transition-colors">
+<div class="h-48 w-full relative">
+<img class="w-full h-full object-cover" data-alt="A portrait of a female industrial safety inspector wearing a sleek black branded hardhat and high-visibility gear. She stands in a high-tech facility with glowing blue and yellow control panels in the background. Cinematic lighting with deep shadows and sharp highlights, consistent with an obsidian and yellow professional digital brand." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHo2PoyYjr_guJlNFjgr6HZ3YlOA7CGLHxn3RrI-B0kxC3KA8PIZvCWls0pFbyBfBe0qtAlXjEQbdU8jm7cAkAp8v4Q-yBwdx-xKWKtZE003VfViQ01IqaSYXmqQJXpEphHgpNzW-op00IXungJj1bgSpB3hYNe2y78HMxq2-wQWyWo3dY70kFZOBc8UD4r6JCzsSL2sgF-m7Xwa_GqEb0YW-tMRTojIZBqqdyZiMFGARfnja5GrjfpTMXmTOLFKMZKH3-AxFqmvY"/>
+<div class="absolute top-4 right-4 bg-black/60 backdrop-blur-md px-2 py-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-primary-fixed text-xs" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-white text-xs font-bold">4.9</span>
+</div>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h4 class="font-headline-sm text-headline-sm text-white mb-1">Sarah Jenkins</h4>
+<p class="text-primary-fixed text-xs uppercase tracking-widest font-bold">Safety & Compliance</p>
+</div>
+<span class="material-symbols-outlined text-primary-fixed" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</div>
+<p class="text-white/60 text-sm mb-6 line-clamp-2">Ex-government inspector with 15 years experience in hazardous material handling and OSHA compliance audits.</p>
+<div class="flex gap-3">
+<button class="flex-1 border border-white text-white py-3 font-label-md text-label-md uppercase hover:bg-white hover:text-black transition-colors">Profile</button>
+<button class="flex-1 bg-white text-black py-3 font-label-md text-label-md uppercase font-bold">Book</button>
+</div>
+</div>
+</div>
+<!-- Pro Card 2 -->
+<div class="obsidian-card group hover:border-primary-fixed transition-colors">
+<div class="h-48 w-full relative">
+<img class="w-full h-full object-cover" data-alt="A gritty but clean portrait of a veteran pipefitter welder with striking facial features, illuminated by the orange glow of a welding spark nearby. He wears professional grade protective gear in a dark industrial environment with high-contrast yellow safety stripes. The style is premium industrial brutalism with a focus on expertise and reliability." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDfgi2jNXZYKphkhyv-5mCp4ZG3Yzamp6vlgVx7mX-_CYkUVjA4l0c4Thu0t4Npi49yYQZh-yW5lZsGOLoLHIM4FHSKinKVPotLiwpuG-ojq5L5RwJVBCNELhKAKmOWf6qMwCaTm7ULHsWQIRmsLvzXHNwZ_yXSKBUhRrtRZoM56d6cLTKB0lVJuAQjcXJB9LDNty22VYMWrTLXFSZM0sXRBkxs8oftTWZShnS-YVLy06fg9rooAnHqrZZAq3uikGalIv5TAkd5GHY"/>
+<div class="absolute top-4 right-4 bg-black/60 backdrop-blur-md px-2 py-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-primary-fixed text-xs" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-white text-xs font-bold">5.0</span>
+</div>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h4 class="font-headline-sm text-headline-sm text-white mb-1">Marcus Thorne</h4>
+<p class="text-primary-fixed text-xs uppercase tracking-widest font-bold">Precision Welding</p>
+</div>
+<span class="material-symbols-outlined text-primary-fixed" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</div>
+<p class="text-white/60 text-sm mb-6 line-clamp-2">Specialist in pipeline integrity and underwater structural welding. Certified for nuclear and aerospace grade fabrication.</p>
+<div class="flex gap-3">
+<button class="flex-1 border border-white text-white py-3 font-label-md text-label-md uppercase hover:bg-white hover:text-black transition-colors">Profile</button>
+<button class="flex-1 bg-white text-black py-3 font-label-md text-label-md uppercase font-bold">Book</button>
+</div>
+</div>
+</div>
+<!-- Pro Card 3 -->
+<div class="obsidian-card group hover:border-primary-fixed transition-colors">
+<div class="h-48 w-full relative">
+<img class="w-full h-full object-cover" data-alt="A modern industrial facility manager holding a tablet, standing in front of large silver ventilation systems. The scene is bright but retains the obsidian and yellow color scheme through the equipment and uniforms. The image conveys high-efficiency tech-driven maintenance services in a premium, professional setting with high-end digital photography style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDefXwnAC8dRaXlBnw-Cr8vXb2F7DImMjvrarIdIwhlg9n9SNDxMhTEI9kjOzlcl3GCfJVmLrWh2ZOB6tDc-WAmO4Y6y6iStF0AzInSsLTmWZ5uwSsnKrqEuQz2Q5UW3KNHtzxrcBCXgcwpHMeIa0-GvPOUjArW3vv0N7t0TwXrsFdzrNWYUCH5eZDFXz1G8vSHgx-lK1FjDAqnOyfh03hAL4d_8h0RbKheKIQhTBRYHuPbJGz_lfvb-1qlKS5QeoJ10ziMguFlI9A"/>
+<div class="absolute top-4 right-4 bg-black/60 backdrop-blur-md px-2 py-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-primary-fixed text-xs" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-white text-xs font-bold">4.8</span>
+</div>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h4 class="font-headline-sm text-headline-sm text-white mb-1">Elena Vance</h4>
+<p class="text-primary-fixed text-xs uppercase tracking-widest font-bold">HVAC Specialist</p>
+</div>
+<span class="material-symbols-outlined text-primary-fixed" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</div>
+<p class="text-white/60 text-sm mb-6 line-clamp-2">Industrial climate control systems designer focusing on energy-efficient retrofitting for large scale data centers.</p>
+<div class="flex gap-3">
+<button class="flex-1 border border-white text-white py-3 font-label-md text-label-md uppercase hover:bg-white hover:text-black transition-colors">Profile</button>
+<button class="flex-1 bg-white text-black py-3 font-label-md text-label-md uppercase font-bold">Book</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Pagination/Load More -->
+<div class="mt-16 flex justify-center">
+<button class="bg-black text-primary-fixed px-12 py-4 font-label-lg text-label-lg uppercase tracking-widest sticker-shadow sticker-shadow-hover transition-all">Load More Professionals</button>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 bg-black/80 backdrop-blur-md border-t border-white/10 flex justify-around items-center h-20 pb-safe px-4">
+<div class="flex flex-col items-center justify-center text-white/50 hover:text-white transition-colors">
+<span class="material-symbols-outlined">engineering</span>
+<span class="font-label-md text-label-md">Requests</span>
+</div>
+<div class="flex flex-col items-center justify-center text-white/50 hover:text-white transition-colors">
+<span class="material-symbols-outlined">gavel</span>
+<span class="font-label-md text-label-md">Market</span>
+</div>
+<div class="flex flex-col items-center justify-center text-white/50 hover:text-white transition-colors">
+<span class="material-symbols-outlined">storefront</span>
+<span class="font-label-md text-label-md">Vendors</span>
+</div>
+<div class="flex flex-col items-center justify-center text-primary-fixed font-bold">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-md text-label-md">Favs</span>
+</div>
+<div class="flex flex-col items-center justify-center text-white/50 hover:text-white transition-colors">
+<span class="material-symbols-outlined">wallet</span>
+<span class="font-label-md text-label-md">Wallet</span>
+</div>
+</nav>
+<!-- FAB (Contextual for Quick Booking) -->
+<button class="fixed bottom-24 right-8 w-16 h-16 bg-black text-primary-fixed rounded-full sticker-shadow flex items-center justify-center group z-40 md:bottom-12">
+<span class="material-symbols-outlined text-3xl group-hover:rotate-90 transition-transform duration-300">add</span>
+</button>
+<script>
+        // Micro-interaction for cards
+        document.querySelectorAll('.obsidian-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-4px)';
+                card.style.transition = 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body></html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>OSTA - Store Details</title>
+<!-- Google Fonts: Outfit -->
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 with Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ostaGold: '#f5bd18',
+            ostaBlack: '#000000',
+            ostaDark: '#1a1a1a',
+            ostaGray: '#2a2a2a',
+          },
+          fontFamily: {
+            sans: ['Outfit', 'sans-serif'],
+          },
+          borderRadius: {
+            'osta': '12px',
+          }
+        }
+      }
+    }
+  </script>
+<style data-purpose="custom-typography">
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: #f5bd18; /* Matching the overall brand background in reference */
+    }
+    .arabic-font {
+      font-family: 'Outfit', sans-serif; /* Tailwind sans will handle this if Outfit supports Arabic glyphs, otherwise falls back */
+    }
+  </style>
+</head>
+<body class="min-h-screen text-ostaBlack">
+<!-- BEGIN: MainHeader -->
+<header class="p-4 flex items-center justify-between sticky top-0 bg-ostaGold z-50">
+<div class="flex items-center gap-4">
+<!-- Back Button -->
+<button class="bg-ostaBlack text-ostaGold p-2 rounded-osta shadow-lg" data-purpose="back-button">
+<svg class="h-6 w-6 rotate-180" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M15 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+<span class="font-bold text-lg">العودة للمتاجر</span>
+</div>
+<!-- Logo -->
+<div class="w-24">
+<img alt="OSTA Logo" class="w-full h-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZSPzES17aTsti8hv3eb0L5KLUccNqLtEhN-RaXHRSg6oZf0uNiMVJnRCHEeNrxOpXWKs-jAmLLntOR-xGPGfrIZknJ7aZmw3zP2Hgz4pS50VVER89lUCZhgKJxo6X3DdEEbEjPIurDH_3FMOnNwhurslUhzbdU2y9CUbaDXFUSa5PNzs7WjZGpNKryCx1ooofMu3MYg1462IIxR9tHK0mP47SBNcG-7K3dtY6Goc8yUystK5f8g2wzRu1WiU_VKjATZo8SUfS1j4"/>
+</div>
+<!-- Search/Menu Trigger -->
+<div class="flex gap-2">
+<button class="bg-ostaBlack p-2 rounded-osta text-ostaGold">
+<svg class="h-6 w-6" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M4 6h16M4 12h16m7 6H7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+</div>
+</header>
+<!-- END: MainHeader -->
+<main class="px-4 pb-24">
+<!-- BEGIN: StoreHeroCard -->
+<section class="mt-4" data-purpose="store-hero">
+<div class="bg-ostaDark/20 rounded-[32px] p-8 text-right flex flex-col items-center justify-center relative overflow-hidden min-h-[250px] border border-ostaBlack/10">
+<!-- Store Status Badge -->
+<div class="absolute top-6 right-6 bg-[#4ade80] text-white px-4 py-1 rounded-full text-sm font-bold">
+          مفتوح
+        </div>
+<!-- Store Icon -->
+<div class="mb-4">
+<svg class="h-16 w-16 text-ostaBlack" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></path>
+</svg>
+</div>
+<h1 class="text-3xl font-bold mb-1">test</h1>
+<p class="text-ostaBlack/70 font-medium">أدوات كهربائية وتأسيس</p>
+<div class="flex items-center gap-2 mt-4 text-ostaBlack/60">
+<span>مصر الجديدة</span>
+<svg class="h-4 w-4" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+<path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+</section>
+<!-- END: StoreHeroCard -->
+<!-- BEGIN: QuickActions -->
+<section class="mt-6 space-y-4" data-purpose="action-buttons">
+<!-- Order Directly Button -->
+<button class="w-full bg-ostaDark/10 border border-ostaBlack/20 rounded-[20px] p-5 flex items-center justify-between text-right">
+<div class="flex items-center gap-4">
+<div class="bg-ostaBlack text-ostaGold p-3 rounded-osta">
+<svg class="h-6 w-6" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<h3 class="font-bold text-lg leading-none">اطلب من المتجر</h3>
+<p class="text-sm text-ostaBlack/60">اكتب طلبك وأبعته للمحل مباشرة</p>
+</div>
+</div>
+<svg class="h-5 w-5 rotate-180" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+<!-- Cart Summary Placeholder -->
+<div class="w-full bg-ostaDark/10 border border-ostaBlack/20 rounded-[20px] p-8 flex flex-col items-center justify-center text-ostaBlack/40">
+<svg class="h-12 w-12 mb-2" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></path>
+</svg>
+<p class="font-medium">السلة فارغة — اضغط على المنتج لإضافته</p>
+</div>
+</section>
+<!-- END: QuickActions -->
+<!-- BEGIN: ProductSection -->
+<section class="mt-10" data-purpose="products-grid">
+<div class="flex justify-between items-center mb-6">
+<h2 class="text-xl font-bold">المنتجات (1)</h2>
+</div>
+<!-- Product Grid -->
+<div class="grid grid-cols-1 gap-6">
+<!-- Product Card -->
+<article class="bg-ostaBlack rounded-[32px] overflow-hidden flex flex-col" data-purpose="product-card">
+<!-- Image Container -->
+<div class="h-64 relative">
+<img alt="Electric Switch" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDaoiqvfWMg9uF_44GE8zq0e8eXbCXAur_GACmD61JOQ3QSYF0znKho5fK9w6Aq_FzJ4eNJzA8zIKpmRQSJT7TznviJLR56s97zIdZnbdxpmkWS8dJov2xBOr5ezcvRXUMKHCxWh1dZAjFUEnrpNUM4Yo9h2E7-43bIRim-clT-EwTXRSlLX7e2cqiRgXngJamr3qpXtflR-h32ALc5jCojfKKk-mjB5M5g3L9ns-Zsei1jF8JEUMG5vdD3mW14DYcifY10zrS3pTM"/>
+</div>
+<!-- Content -->
+<div class="p-6 text-right">
+<h3 class="text-ostaGold text-xl font-bold mb-1">مفتاح كهربا</h3>
+<p class="text-white/60 text-sm mb-4">jdkdkkdkdk</p>
+<div class="flex justify-between items-center mb-6">
+<span class="text-white text-2xl font-bold">٤٠٠ ج.م</span>
+</div>
+<!-- Add to Cart Button -->
+<button class="w-full bg-ostaGold text-ostaBlack font-bold py-3 rounded-osta flex items-center justify-center gap-2 transition-transform active:scale-95">
+<svg class="h-5 w-5" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 6v6m0 0v6m0-6h6m-6 0H6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+              أضف للسلة
+            </button>
+</div>
+</article>
+</div>
+</section>
+<!-- END: ProductSection -->
+</main>
+<!-- BEGIN: FloatingChatButton -->
+<button class="fixed bottom-6 left-6 bg-ostaGold p-4 rounded-full shadow-2xl border-4 border-ostaBlack/5 z-50 transition-transform hover:scale-105 active:scale-90" data-purpose="chat-button">
+<svg class="h-8 w-8 text-ostaBlack" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+<!-- END: FloatingChatButton -->
+</body></html>

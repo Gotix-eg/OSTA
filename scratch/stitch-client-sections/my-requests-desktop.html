@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>OSTA | My Requests</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Outfit:wght@600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-obsidian {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+        }
+        .sticker-shadow {
+            box-shadow: 4px 4px 0px #000000;
+        }
+        .obsidian-card {
+            background-color: #000000;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .yellow-void {
+            background-color: #f5bd18;
+        }
+        body {
+            background-color: #f5bd18;
+            min-height: 100vh;
+        }
+        /* Custom Scrollbar for Obsidian Theme */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #f5bd18; }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#f9f9f9",
+                        "on-error-container": "#93000a",
+                        "on-background": "#1a1c1c",
+                        "secondary-fixed-dim": "#c6c6c6",
+                        "surface-dim": "#dadada",
+                        "surface-container": "#eeeeee",
+                        "inverse-surface": "#2f3131",
+                        "on-tertiary-container": "#525151",
+                        "on-surface-variant": "#4f4633",
+                        "primary": "#775a00",
+                        "on-tertiary-fixed": "#1c1b1b",
+                        "on-error": "#ffffff",
+                        "inverse-on-surface": "#f0f1f1",
+                        "tertiary-fixed": "#e5e2e1",
+                        "on-secondary-fixed": "#1b1b1b",
+                        "on-primary": "#ffffff",
+                        "secondary": "#5e5e5e",
+                        "secondary-container": "#e2e2e2",
+                        "tertiary-fixed-dim": "#c8c6c5",
+                        "tertiary": "#5f5e5e",
+                        "primary-fixed-dim": "#f6be1a",
+                        "primary-fixed": "#ffdf9a",
+                        "tertiary-container": "#c7c5c4",
+                        "outline": "#817660",
+                        "on-surface": "#1a1c1c",
+                        "on-primary-fixed-variant": "#5a4300",
+                        "surface-container-highest": "#e2e2e2",
+                        "outline-variant": "#d3c5ac",
+                        "on-secondary-container": "#646464",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-high": "#e8e8e8",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed-variant": "#474646",
+                        "on-primary-fixed": "#251a00",
+                        "background": "#f9f9f9",
+                        "surface-bright": "#f9f9f9",
+                        "surface-tint": "#775a00",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#f3f3f4",
+                        "on-secondary-fixed-variant": "#474747",
+                        "surface-variant": "#e2e2e2",
+                        "on-secondary": "#ffffff",
+                        "inverse-primary": "#f6be1a",
+                        "secondary-fixed": "#e2e2e2",
+                        "error-container": "#ffdad6",
+                        "on-primary-container": "#684e00",
+                        "primary-container": "#f5bd18"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "margin-desktop": "48px",
+                        "gutter": "24px",
+                        "container-max": "1280px",
+                        "base": "8px",
+                        "stack-md": "24px",
+                        "stack-sm": "12px",
+                        "stack-lg": "48px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "label-lg": ["Outfit"],
+                        "display-lg": ["Outfit"],
+                        "headline-sm": ["Outfit"],
+                        "label-md": ["Outfit"],
+                        "headline-md": ["Outfit"],
+                        "headline-lg": ["Outfit"],
+                        "headline-lg-mobile": ["Outfit"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "label-lg": ["14px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "display-lg": ["72px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                        "headline-sm": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "label-md": ["12px", {"lineHeight": "1", "fontWeight": "600"}],
+                        "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "headline-lg": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="font-body-md text-on-background antialiased overflow-x-hidden">
+<!-- Top AppBar (JSON Integration) -->
+<header class="bg-black/80 backdrop-blur-md text-primary-fixed fixed top-0 w-full z-50 border-b border-white/10 flex items-center justify-between px-margin-mobile md:px-margin-desktop h-16 w-full">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined cursor-pointer text-primary-fixed" data-icon="menu">menu</span>
+<span class="font-headline-sm text-headline-sm font-black text-primary-fixed tracking-widest">INDUSTRIAL PRO</span>
+</div>
+<div class="flex items-center gap-6">
+<nav class="hidden md:flex gap-8">
+<a class="text-primary-fixed border-b-2 border-primary-fixed font-label-lg text-label-lg uppercase tracking-widest py-1" href="#">Requests</a>
+<a class="text-white/60 hover:text-white transition-colors font-label-lg text-label-lg uppercase tracking-widest py-1" href="#">Bidding</a>
+<a class="text-white/60 hover:text-white transition-colors font-label-lg text-label-lg uppercase tracking-widest py-1" href="#">Vendors</a>
+</nav>
+<span class="material-symbols-outlined cursor-pointer" data-icon="account_balance_wallet">account_balance_wallet</span>
+</div>
+</header>
+<!-- Side Navigation (JSON Integration) -->
+<aside class="hidden md:flex flex-col p-stack-md bg-on-background h-full w-72 fixed left-0 top-0 border-r border-white/10 z-40 pt-20">
+<div class="flex items-center gap-4 mb-10 px-2">
+<div class="w-12 h-12 bg-primary-container rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-fixed text-2xl" data-icon="person">person</span>
+</div>
+<div>
+<h3 class="font-label-lg text-white font-bold">Alex Foreman</h3>
+<p class="text-white/60 text-xs uppercase tracking-tighter">Master Electrician</p>
+</div>
+</div>
+<nav class="space-y-2">
+<a class="bg-white/5 text-primary-fixed border-r-4 border-primary-fixed flex items-center gap-4 p-4 transition-all font-label-lg text-label-lg" href="#">
+<span class="material-symbols-outlined" data-icon="engineering">engineering</span>
+                Requests
+            </a>
+<a class="text-white/70 hover:bg-white/10 hover:text-white flex items-center gap-4 p-4 transition-all font-label-lg text-label-lg" href="#">
+<span class="material-symbols-outlined" data-icon="gavel">gavel</span>
+                Bidding
+            </a>
+<a class="text-white/70 hover:bg-white/10 hover:text-white flex items-center gap-4 p-4 transition-all font-label-lg text-label-lg" href="#">
+<span class="material-symbols-outlined" data-icon="storefront">storefront</span>
+                Vendors
+            </a>
+<a class="text-white/70 hover:bg-white/10 hover:text-white flex items-center gap-4 p-4 transition-all font-label-lg text-label-lg" href="#">
+<span class="material-symbols-outlined" data-icon="verified">verified</span>
+                Favorites
+            </a>
+<a class="text-white/70 hover:bg-white/10 hover:text-white flex items-center gap-4 p-4 transition-all font-label-lg text-label-lg" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+                Wallet
+            </a>
+</nav>
+<div class="mt-auto p-4 obsidian-card rounded-lg">
+<p class="text-white/40 text-xs mb-2">CURRENT PLAN</p>
+<p class="text-primary-fixed font-bold">Enterprise Pro</p>
+<button class="mt-4 w-full bg-white text-black py-2 font-label-lg sticker-shadow active:translate-x-1 active:translate-y-1 active:shadow-none transition-all">UPGRADE</button>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="md:ml-72 pt-24 pb-20 px-margin-mobile md:px-margin-desktop min-h-screen">
+<!-- Summary Dashboard (Bento Style) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-stack-md mb-stack-lg">
+<!-- Total Requests -->
+<div class="obsidian-card p-stack-md relative overflow-hidden group">
+<div class="absolute -right-4 -bottom-4 opacity-10 group-hover:scale-110 transition-transform duration-500">
+<span class="material-symbols-outlined text-9xl text-white" data-icon="receipt_long">receipt_long</span>
+</div>
+<p class="text-white/60 font-label-lg uppercase tracking-widest mb-2">Total Requests</p>
+<div class="flex items-end gap-3">
+<span class="text-display-lg font-display-lg text-white">42</span>
+<span class="text-primary-container font-label-lg mb-4">+12% vs last month</span>
+</div>
+</div>
+<!-- Active -->
+<div class="obsidian-card p-stack-md relative overflow-hidden group">
+<div class="absolute -right-4 -bottom-4 opacity-10 group-hover:scale-110 transition-transform duration-500">
+<span class="material-symbols-outlined text-9xl text-white" data-icon="bolt">bolt</span>
+</div>
+<p class="text-white/60 font-label-lg uppercase tracking-widest mb-2">Active Jobs</p>
+<div class="flex items-end gap-3">
+<span class="text-display-lg font-display-lg text-primary-container">08</span>
+<span class="text-white/40 font-label-lg mb-4">4 pending bid</span>
+</div>
+</div>
+<!-- Completed -->
+<div class="obsidian-card p-stack-md relative overflow-hidden group border-primary-container/30">
+<div class="absolute -right-4 -bottom-4 opacity-10 group-hover:scale-110 transition-transform duration-500">
+<span class="material-symbols-outlined text-9xl text-white" data-icon="check_circle">check_circle</span>
+</div>
+<p class="text-white/60 font-label-lg uppercase tracking-widest mb-2">Completed</p>
+<div class="flex items-end gap-3">
+<span class="text-display-lg font-display-lg text-white">34</span>
+<span class="text-primary-container font-label-lg mb-4">Payouts ready</span>
+</div>
+</div>
+</div>
+<!-- Requests Content Area -->
+<div class="obsidian-card p-0 overflow-hidden shadow-2xl">
+<!-- Table Header / Controls -->
+<div class="p-6 border-b border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
+<div>
+<h2 class="text-white font-headline-md font-black tracking-tight">SERVICE REQUESTS</h2>
+<p class="text-white/40 text-sm">Managing ongoing industrial procurement and maintenance logs.</p>
+</div>
+<div class="flex gap-3">
+<div class="relative">
+<input class="bg-[#121212] border border-white/20 text-white pl-10 pr-4 py-2 focus:border-primary-container focus:ring-0 transition-colors w-64" placeholder="Search ID..." type="text"/>
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-white/40" data-icon="search">search</span>
+</div>
+<button class="bg-white text-black px-6 py-2 font-label-lg sticker-shadow flex items-center gap-2 active:translate-x-1 active:translate-y-1 active:shadow-none transition-all">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
+                        NEW REQUEST
+                    </button>
+</div>
+</div>
+<!-- Main Table Wrapper -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead class="bg-white/5 border-b border-white/10">
+<tr>
+<th class="p-4 font-label-lg text-white/40 uppercase text-xs">ID</th>
+<th class="p-4 font-label-lg text-white/40 uppercase text-xs">Service Type</th>
+<th class="p-4 font-label-lg text-white/40 uppercase text-xs">Assigned Pro</th>
+<th class="p-4 font-label-lg text-white/40 uppercase text-xs">Status</th>
+<th class="p-4 font-label-lg text-white/40 uppercase text-xs">Date Requested</th>
+<th class="p-4 font-label-lg text-white/40 uppercase text-xs">Amount</th>
+<th class="p-4 font-label-lg text-white/40 uppercase text-xs">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-white/5">
+<!-- Row 1 -->
+<tr class="hover:bg-white/5 transition-colors group">
+<td class="p-4 font-mono text-primary-fixed">#REQ-8902</td>
+<td class="p-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-container" data-icon="electrical_services">electrical_services</span>
+<span class="text-white font-bold">HVAC Maintenance</span>
+</div>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs text-white">JM</div>
+<span class="text-white/80">John Miller</span>
+</div>
+</td>
+<td class="p-4">
+<span class="bg-primary-container text-black px-3 py-1 text-[10px] font-black uppercase">In Progress</span>
+</td>
+<td class="p-4 text-white/60">Oct 12, 2023</td>
+<td class="p-4 text-white font-bold">$1,240.00</td>
+<td class="p-4">
+<button class="text-white/40 hover:text-primary-container transition-colors"><span class="material-symbols-outlined" data-icon="more_vert">more_vert</span></button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-white/5 transition-colors group">
+<td class="p-4 font-mono text-primary-fixed">#REQ-8891</td>
+<td class="p-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-container" data-icon="plumbing">plumbing</span>
+<span class="text-white font-bold">Pipe Retrofit</span>
+</div>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs text-white">AS</div>
+<span class="text-white/80">Alpha Systems</span>
+</div>
+</td>
+<td class="p-4">
+<span class="border border-white/20 text-white/40 px-3 py-1 text-[10px] font-black uppercase">Pending Bid</span>
+</td>
+<td class="p-4 text-white/60">Oct 10, 2023</td>
+<td class="p-4 text-white font-bold">--</td>
+<td class="p-4">
+<button class="text-white/40 hover:text-primary-container transition-colors"><span class="material-symbols-outlined" data-icon="more_vert">more_vert</span></button>
+</td>
+</tr>
+<!-- Row 3 (Referencing visual from Image 9 context) -->
+<tr class="hover:bg-white/5 transition-colors group">
+<td class="p-4 font-mono text-primary-fixed">#REQ-8750</td>
+<td class="p-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-container" data-icon="factory">factory</span>
+<span class="text-white font-bold">Assembly Calibration</span>
+</div>
+</td>
+<td class="p-4 text-white/40 italic text-sm">Awaiting Match...</td>
+<td class="p-4">
+<span class="bg-red-600 text-white px-3 py-1 text-[10px] font-black uppercase">Urgent</span>
+</td>
+<td class="p-4 text-white/60">Oct 09, 2023</td>
+<td class="p-4 text-white font-bold">$2,800.00</td>
+<td class="p-4">
+<button class="text-white/40 hover:text-primary-container transition-colors"><span class="material-symbols-outlined" data-icon="more_vert">more_vert</span></button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-white/5 transition-colors group">
+<td class="p-4 font-mono text-primary-fixed">#REQ-8542</td>
+<td class="p-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-container" data-icon="shield">shield</span>
+<span class="text-white font-bold">Security Audit</span>
+</div>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs text-white">SK</div>
+<span class="text-white/80">Sentinel Key</span>
+</div>
+</td>
+<td class="p-4">
+<span class="bg-white text-black px-3 py-1 text-[10px] font-black uppercase">Completed</span>
+</td>
+<td class="p-4 text-white/60">Oct 05, 2023</td>
+<td class="p-4 text-white font-bold">$850.00</td>
+<td class="p-4">
+<button class="text-white/40 hover:text-primary-container transition-colors"><span class="material-symbols-outlined" data-icon="more_vert">more_vert</span></button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="p-4 border-t border-white/10 flex justify-between items-center text-white/40 font-label-md">
+<span>Showing 1-10 of 42 requests</span>
+<div class="flex gap-2">
+<button class="w-8 h-8 flex items-center justify-center border border-white/10 hover:bg-white/10 transition-colors"><span class="material-symbols-outlined text-sm" data-icon="chevron_left">chevron_left</span></button>
+<button class="w-8 h-8 flex items-center justify-center bg-primary-container text-black font-bold">1</button>
+<button class="w-8 h-8 flex items-center justify-center border border-white/10 hover:bg-white/10 transition-colors">2</button>
+<button class="w-8 h-8 flex items-center justify-center border border-white/10 hover:bg-white/10 transition-colors">3</button>
+<button class="w-8 h-8 flex items-center justify-center border border-white/10 hover:bg-white/10 transition-colors"><span class="material-symbols-outlined text-sm" data-icon="chevron_right">chevron_right</span></button>
+</div>
+</div>
+</div>
+<!-- Featured Resource Section -->
+<div class="mt-stack-lg grid grid-cols-1 md:grid-cols-2 gap-stack-md">
+<div class="obsidian-card p-6 flex flex-col md:flex-row gap-6 items-center">
+<img alt="Request Overview Capture" class="w-32 h-32 object-cover border border-white/20" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDpU5Y0M9p9_zRVfjO_xKClpgEasQbh9RZInDo24sakIJKhDTkKIQqCtQhijtRDDqnRtKXzyTOWMfc3Wx0_d0lqJPfoHIRZvekvt7jmCAJ2lklWObmsC6X-pOJJGuZVpBTOLzngRItBBnI93g0LAin44TD-fJMcX720_Uf7t8hFnjaf3cR9ES30T44u0RDLBbgO8M6Y_Q9oL9oLo7baPIqdJ1jE8EOmisNES6UjXeB4XXy9tLfH72mnQJ1RTBBa_o6l04fvQR84Qw8"/>
+<div>
+<h4 class="text-white font-bold text-headline-sm mb-2">Request History Export</h4>
+<p class="text-white/60 text-sm mb-4">Generate a full CSV or PDF report of your service expenditures for Q4 accounting audits.</p>
+<button class="border border-white/40 text-white px-4 py-2 text-xs font-bold hover:bg-white hover:text-black transition-all">DOWNLOAD LOGS</button>
+</div>
+</div>
+<div class="obsidian-card p-6 flex flex-col md:flex-row gap-6 items-center border-dashed">
+<div class="w-32 h-32 bg-white/5 flex items-center justify-center">
+<span class="material-symbols-outlined text-white/20 text-5xl" data-icon="analytics">analytics</span>
+</div>
+<div>
+<h4 class="text-white font-bold text-headline-sm mb-2">Predictive Maintenance</h4>
+<p class="text-white/60 text-sm mb-4">Our AI suggests your next HVAC filter replacement is due in 12 days. Schedule now to save 15%.</p>
+<button class="bg-primary-container text-black px-4 py-2 text-xs font-bold sticker-shadow active:translate-x-1 active:translate-y-1 active:shadow-none transition-all">PRE-BOOK NOW</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation (Mobile Only JSON Integration) -->
+<footer class="md:hidden flex justify-around items-center h-20 pb-safe px-4 bg-black/80 backdrop-blur-md text-primary-fixed fixed bottom-0 w-full z-50 border-t border-white/10">
+<a class="flex flex-col items-center justify-center text-primary-fixed font-bold" href="#">
+<span class="material-symbols-outlined" data-icon="engineering">engineering</span>
+<span class="text-label-md font-label-md">Requests</span>
+</a>
+<a class="flex flex-col items-center justify-center text-white/50 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="gavel">gavel</span>
+<span class="text-label-md font-label-md">Market</span>
+</a>
+<a class="flex flex-col items-center justify-center text-white/50 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="storefront">storefront</span>
+<span class="text-label-md font-label-md">Vendors</span>
+</a>
+<a class="flex flex-col items-center justify-center text-white/50 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="star">star</span>
+<span class="text-label-md font-label-md">Favs</span>
+</a>
+<a class="flex flex-col items-center justify-center text-white/50 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="wallet">wallet</span>
+<span class="text-label-md font-label-md">Wallet</span>
+</a>
+</footer>
+<script>
+        // Simple Micro-interactions
+        document.querySelectorAll('tr').forEach(row => {
+            row.addEventListener('click', () => {
+                row.classList.toggle('bg-white/10');
+            });
+        });
+
+        // Search Input Animation
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('scale-105');
+            searchInput.parentElement.classList.add('duration-300');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('scale-105');
+        });
+    </script>
+</body></html>

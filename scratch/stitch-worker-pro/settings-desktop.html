@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>OSTA PRO | Professional Settings</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;family=Outfit:wght@600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-obsidian {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .obsidian-card {
+            background: #000000;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .obsidian-card:hover {
+            border-color: #F5BD18;
+        }
+        .sticker-shadow {
+            box-shadow: 4px 4px 0px #000000;
+        }
+        .sticker-shadow-yellow {
+            box-shadow: 4px 4px 0px #F5BD18;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #000000;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #F5BD18;
+        }
+        /* Toggle Styling */
+        .toggle-checkbox:checked {
+            right: 0;
+            background-color: #F5BD18;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #333333;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error-container": "#93000a",
+                        "surface-dim": "#dadada",
+                        "surface-container-highest": "#e2e2e2",
+                        "surface-container-lowest": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-primary-fixed-variant": "#5a4300",
+                        "on-secondary": "#ffffff",
+                        "primary-fixed": "#ffdf9a",
+                        "on-surface": "#1a1c1c",
+                        "outline": "#817660",
+                        "tertiary-container": "#c7c5c4",
+                        "secondary-fixed": "#e2e2e2",
+                        "on-primary-fixed": "#251a00",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-container": "#646464",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-container": "#525151",
+                        "on-secondary-fixed": "#1b1b1b",
+                        "on-background": "#1a1c1c",
+                        "tertiary": "#5f5e5e",
+                        "surface-variant": "#e2e2e2",
+                        "on-surface-variant": "#4f4633",
+                        "on-tertiary-fixed": "#1c1b1b",
+                        "secondary-container": "#e2e2e2",
+                        "primary": "#775a00",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed": "#e5e2e1",
+                        "surface-bright": "#f9f9f9",
+                        "on-secondary-fixed-variant": "#474747",
+                        "on-primary-container": "#684e00",
+                        "on-primary": "#ffffff",
+                        "surface-container": "#eeeeee",
+                        "inverse-surface": "#2f3131",
+                        "inverse-on-surface": "#f0f1f1",
+                        "surface-container-low": "#f3f3f4",
+                        "primary-container": "#f5bd18",
+                        "inverse-primary": "#f6be1a",
+                        "secondary": "#5e5e5e",
+                        "background": "#f9f9f9",
+                        "surface": "#f9f9f9",
+                        "secondary-fixed-dim": "#c6c6c6",
+                        "primary-fixed-dim": "#f6be1a",
+                        "tertiary-fixed-dim": "#c8c6c5",
+                        "surface-container-high": "#e8e8e8",
+                        "surface-tint": "#775a00",
+                        "outline-variant": "#d3c5ac",
+                        "on-tertiary-fixed-variant": "#474646"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "stack-lg": "48px",
+                        "margin-desktop": "48px",
+                        "stack-sm": "12px",
+                        "margin-mobile": "16px",
+                        "base": "8px",
+                        "gutter": "24px",
+                        "stack-md": "24px",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Outfit"],
+                        "label-lg": ["Outfit"],
+                        "headline-sm": ["Outfit"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-md": ["Outfit"],
+                        "headline-lg": ["Outfit"]
+                    },
+                    "fontSize": {
+                        "label-md": ["12px", {"lineHeight": "1", "fontWeight": "600"}],
+                        "label-lg": ["14px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "headline-sm": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "headline-lg": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-primary-container min-h-screen font-body-md text-on-background selection:bg-primary selection:text-white">
+<!-- Top Navigation (Shared Component Integration) -->
+<nav class="bg-black/80 backdrop-blur-md text-primary border-b border-white/10 docked full-width top-0 z-50 fixed w-full">
+<div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop w-full h-16">
+<div class="flex items-center gap-stack-md">
+<span class="material-symbols-outlined cursor-pointer">menu</span>
+<span class="text-headline-md font-headline-md font-extrabold text-primary uppercase tracking-tighter">OSTA</span>
+</div>
+<div class="hidden md:flex gap-gutter items-center">
+<a class="text-label-lg font-label-lg text-primary border-b-2 border-primary py-2" href="#">Home</a>
+<a class="text-label-lg font-label-lg text-on-surface-variant hover:text-primary transition-colors duration-200 py-2" href="#">Requests</a>
+<a class="text-label-lg font-label-lg text-on-surface-variant hover:text-primary transition-colors duration-200 py-2" href="#">Stores</a>
+<a class="text-label-lg font-label-lg text-on-surface-variant hover:text-primary transition-colors duration-200 py-2" href="#">Market</a>
+</div>
+<div class="flex items-center gap-stack-sm">
+<div class="w-10 h-10 rounded-full overflow-hidden border border-primary/30">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a skilled industrial worker in a modern workshop. The lighting is dramatic and moody, emphasizing expertise. The background features high-end metallic tools and a minimalist obsidian and gold color palette consistent with the OSTA PRO brand identity." src="https://www.gstatic.com/labs-code/stitch/stitch-placeholder-300x300.svg"/>
+</div>
+</div>
+</div>
+</nav>
+<!-- Side Navigation (Shared Component Integration) -->
+<aside class="fixed left-0 top-16 h-[calc(100vh-64px)] w-64 hidden md:flex flex-col bg-black border-r border-white/10 py-stack-md z-40">
+<div class="px-6 mb-stack-lg">
+<h2 class="text-headline-sm font-headline-sm text-primary font-black">PRO Dashboard</h2>
+<p class="text-label-md font-label-md text-secondary uppercase tracking-widest mt-1">OSTA Premium Account</p>
+</div>
+<nav class="flex flex-col gap-base">
+<a class="flex items-center gap-stack-sm text-secondary px-6 py-3 hover:bg-white/5 hover:text-primary-fixed-dim transition-all" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="text-label-lg font-label-lg">Home</span>
+</a>
+<a class="flex items-center gap-stack-sm text-secondary px-6 py-3 hover:bg-white/5 hover:text-primary-fixed-dim transition-all" href="#">
+<span class="material-symbols-outlined">assignment</span>
+<span class="text-label-lg font-label-lg">My Requests</span>
+</a>
+<a class="flex items-center gap-stack-sm text-primary bg-surface-container-highest/10 border-l-4 border-primary px-6 py-3 translate-x-1" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-label-lg font-label-lg">Settings</span>
+</a>
+<a class="flex items-center gap-stack-sm text-secondary px-6 py-3 hover:bg-white/5 hover:text-primary-fixed-dim transition-all" href="#">
+<span class="material-symbols-outlined">store</span>
+<span class="text-label-lg font-label-lg">Stores</span>
+</a>
+<a class="flex items-center gap-stack-sm text-secondary px-6 py-3 hover:bg-white/5 hover:text-primary-fixed-dim transition-all" href="#">
+<span class="material-symbols-outlined">build</span>
+<span class="text-label-lg font-label-lg">Materials Market</span>
+</a>
+<a class="flex items-center gap-stack-sm text-secondary px-6 py-3 hover:bg-white/5 hover:text-primary-fixed-dim transition-all" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="text-label-lg font-label-lg">Wallet</span>
+</a>
+</nav>
+<div class="mt-auto px-6">
+<div class="obsidian-card p-4 rounded-lg bg-surface-container-highest/5">
+<p class="text-label-md font-label-md text-primary mb-2">System Status</p>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+<span class="text-white text-xs">All services operational</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="md:ml-64 pt-24 pb-12 px-margin-mobile md:px-margin-desktop min-h-screen">
+<div class="max-w-container-max mx-auto">
+<!-- Header Section -->
+<header class="mb-stack-lg flex flex-col md:flex-row md:items-end justify-between gap-stack-md">
+<div>
+<h1 class="text-display-lg font-display-lg text-black uppercase">Professional Settings</h1>
+<p class="text-body-lg font-body-lg text-black/70 max-w-2xl">Configure your availability, service zones, and payout preferences to optimize your workflow.</p>
+</div>
+<div class="flex gap-stack-sm">
+<button class="bg-black text-white font-label-lg text-label-lg px-8 py-3 rounded-none sticker-shadow hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all uppercase">
+                        Save Changes
+                    </button>
+</div>
+</header>
+<!-- Grid Layout -->
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Availability & Preferences (Left Column) -->
+<div class="col-span-12 md:col-span-4 flex flex-col gap-gutter">
+<!-- Status Card -->
+<section class="obsidian-card p-stack-md text-white">
+<div class="flex items-center justify-between mb-stack-md">
+<h3 class="text-headline-sm font-headline-sm text-primary uppercase">Current Status</h3>
+<div class="relative inline-block w-12 h-6 transition duration-200 ease-in">
+<input checked="" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 border-black appearance-none cursor-pointer z-10" id="main-status" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-600 cursor-pointer" for="main-status"></label>
+</div>
+</div>
+<p class="text-body-md text-gray-400 mb-stack-sm">When active, you are visible to clients and can receive new job requests.</p>
+<div class="bg-white/5 p-4 flex items-center gap-4">
+<span class="material-symbols-outlined text-primary">sensors</span>
+<span class="text-label-lg font-label-lg text-primary uppercase">Broadcasting Live</span>
+</div>
+</section>
+<!-- Work Preferences -->
+<section class="obsidian-card p-stack-md text-white">
+<h3 class="text-headline-sm font-headline-sm text-primary uppercase mb-stack-md">Work Preferences</h3>
+<div class="space-y-6">
+<div class="flex items-center justify-between">
+<div>
+<p class="font-bold text-white">Available for jobs</p>
+<p class="text-xs text-gray-400">Receive general scheduling</p>
+</div>
+<input checked="" class="accent-primary w-5 h-5" type="checkbox"/>
+</div>
+<div class="flex items-center justify-between">
+<div>
+<p class="font-bold text-white">Accept emergency</p>
+<p class="text-xs text-gray-400">1-hour response required (+25% fee)</p>
+</div>
+<input class="accent-primary w-5 h-5" type="checkbox"/>
+</div>
+<div class="flex items-center justify-between">
+<div>
+<p class="font-bold text-white">Accept same-day</p>
+<p class="text-xs text-gray-400">Flexibility for rapid bookings</p>
+</div>
+<input checked="" class="accent-primary w-5 h-5" type="checkbox"/>
+</div>
+</div>
+</section>
+</div>
+<!-- Personal Profile & Payout (Center/Right) -->
+<div class="col-span-12 md:col-span-8 flex flex-col gap-gutter">
+<!-- Profile Details -->
+<section class="obsidian-card p-stack-md text-white">
+<h3 class="text-headline-sm font-headline-sm text-primary uppercase mb-stack-md">Personal Profile</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-stack-md">
+<div class="space-y-2">
+<label class="text-label-md font-label-md text-gray-400 uppercase">Full Name</label>
+<input class="w-full bg-[#121212] border-white/20 text-white p-3 focus:border-primary focus:ring-0 outline-none transition-colors" type="text" value="Viktor Chen"/>
+</div>
+<div class="space-y-2">
+<label class="text-label-md font-label-md text-gray-400 uppercase">Professional Title</label>
+<input class="w-full bg-[#121212] border-white/20 text-white p-3 focus:border-primary focus:ring-0 outline-none transition-colors" type="text" value="Master Electrician"/>
+</div>
+<div class="space-y-2">
+<label class="text-label-md font-label-md text-gray-400 uppercase">Email Address</label>
+<input class="w-full bg-[#121212] border-white/20 text-white p-3 focus:border-primary focus:ring-0 outline-none transition-colors" type="email" value="v.chen@pro.osta.com"/>
+</div>
+<div class="space-y-2">
+<label class="text-label-md font-label-md text-gray-400 uppercase">Phone Number</label>
+<input class="w-full bg-[#121212] border-white/20 text-white p-3 focus:border-primary focus:ring-0 outline-none transition-colors" type="tel" value="+1 (555) 098-4432"/>
+</div>
+</div>
+</section>
+<!-- Payout Preferences -->
+<section class="obsidian-card p-stack-md text-white">
+<div class="flex items-center justify-between mb-stack-md">
+<h3 class="text-headline-sm font-headline-sm text-primary uppercase">Payout Preferences</h3>
+<button class="text-primary text-label-lg font-label-lg hover:underline">Manage Accounts</button>
+</div>
+<div class="flex flex-col md:flex-row gap-stack-md">
+<div class="flex-1 bg-white/5 border border-white/10 p-6 relative group cursor-pointer hover:border-primary/50 transition-all">
+<div class="flex items-start justify-between mb-8">
+<span class="material-symbols-outlined text-3xl">account_balance</span>
+<span class="bg-primary text-black px-2 py-1 text-[10px] font-bold uppercase">Primary</span>
+</div>
+<p class="text-label-md text-gray-400 mb-1">Industrial Savings ****8821</p>
+<p class="text-headline-sm font-headline-sm">Chase Commercial</p>
+</div>
+<div class="flex-1 bg-white/5 border border-white/10 p-6 opacity-50 hover:opacity-100 transition-all cursor-pointer">
+<div class="flex items-start justify-between mb-8">
+<span class="material-symbols-outlined text-3xl">account_balance_wallet</span>
+</div>
+<p class="text-label-md text-gray-400 mb-1">Instant Payouts</p>
+<p class="text-headline-sm font-headline-sm">OSTA Wallet</p>
+</div>
+</div>
+<div class="mt-stack-md flex items-center gap-2 text-sm text-gray-400">
+<span class="material-symbols-outlined text-sm">info</span>
+<span>Payouts are processed every Friday at 12:00 PM EST.</span>
+</div>
+</section>
+</div>
+<!-- Service Areas (Full Width) -->
+<div class="col-span-12">
+<section class="obsidian-card overflow-hidden">
+<div class="p-stack-md text-white border-b border-white/10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+<div>
+<h3 class="text-headline-sm font-headline-sm text-primary uppercase">Service Areas</h3>
+<p class="text-body-md text-gray-400">Manage your operational boundaries and travel limits.</p>
+</div>
+<div class="flex gap-stack-sm w-full md:w-auto">
+<div class="relative flex-1 md:w-64">
+<input class="w-full bg-[#121212] border-white/20 text-white p-2 pl-10 focus:border-primary focus:ring-0" placeholder="Add Zip Code..." type="text"/>
+<span class="material-symbols-outlined absolute left-2 top-2 text-gray-500">location_on</span>
+</div>
+<button class="bg-white text-black font-label-lg text-label-lg px-6 py-2 uppercase hover:bg-primary transition-colors">Add</button>
+</div>
+</div>
+<div class="flex flex-col md:flex-row h-96">
+<!-- List -->
+<div class="w-full md:w-1/3 bg-[#0a0a0a] border-r border-white/10 overflow-y-auto custom-scrollbar">
+<div class="p-4 border-b border-white/5 flex items-center justify-between hover:bg-white/5 group">
+<div>
+<p class="text-white font-bold">Downtown District</p>
+<p class="text-xs text-gray-500">Zip: 10001, 10002, 10003</p>
+</div>
+<button class="text-gray-600 group-hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+<div class="p-4 border-b border-white/5 flex items-center justify-between hover:bg-white/5 group">
+<div>
+<p class="text-white font-bold">Industrial Harbor</p>
+<p class="text-xs text-gray-500">Zip: 11231, 11232</p>
+</div>
+<button class="text-gray-600 group-hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+<div class="p-4 border-b border-white/5 flex items-center justify-between hover:bg-white/5 group">
+<div>
+<p class="text-white font-bold">Outer Metro West</p>
+<p class="text-xs text-gray-500">Zip: 10019, 10020</p>
+</div>
+<button class="text-gray-600 group-hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</div>
+<!-- Map -->
+<div class="flex-1 relative">
+<div class="absolute inset-0 bg-gray-900" data-alt="A high-contrast stylized map showing an industrial district of a major metropolitan city at night. The map uses a dark obsidian and charcoal color palette with glowing golden-yellow lines highlighting primary service routes and service zones. The style is professional, clean, and technologically advanced, suitable for a logistics dashboard." data-location="New York City" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDGpiQEhZqEB7oZ4JrWU1seZvVf0dI0SV0XILQJ9UTDQ4K5Fy01VPaaLcApqhK2zMZ1YOtPnV013x_I6VZqrI3dwnBwyOjwAemugOlW7lTxuCK1-kLOM_nT98cZnpV3LNOAYU6MljIRoZqTDIfpkKlwe5eVNhbP87i3wCgnFcbGmioox3k4dfBaLwAfzTUy107u92FHzqhsETX6jiGyC5eZd04AJs2d2Xw8hI0nofA2oMT7likVDXpD6DbvAipgqCQBuimP7lBvFqE')">
+<!-- Map Overlay Simulation -->
+<div class="absolute inset-0 bg-black/40 pointer-events-none"></div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+<div class="w-32 h-32 rounded-full border-4 border-primary/40 bg-primary/10 animate-pulse"></div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-primary sticker-shadow-yellow rounded-full"></div>
+</div>
+<!-- Floating Map Controls -->
+<div class="absolute right-4 bottom-4 flex flex-col gap-2">
+<button class="w-10 h-10 bg-black border border-white/20 text-white flex items-center justify-center hover:bg-primary hover:text-black transition-all">
+<span class="material-symbols-outlined">add</span>
+</button>
+<button class="w-10 h-10 bg-black border border-white/20 text-white flex items-center justify-center hover:bg-primary hover:text-black transition-all">
+<span class="material-symbols-outlined">remove</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+<!-- Danger Zone -->
+<div class="mt-stack-lg pt-stack-md border-t border-black/10">
+<div class="obsidian-card p-stack-md border-red-500/30">
+<div class="flex flex-col md:flex-row items-center justify-between gap-stack-md">
+<div>
+<h4 class="text-headline-sm font-headline-sm text-red-500 uppercase">Deactivate PRO Account</h4>
+<p class="text-body-md text-gray-400">Permanently remove your professional listing and history. This action cannot be undone.</p>
+</div>
+<button class="border-2 border-red-500 text-red-500 font-label-lg text-label-lg px-8 py-3 uppercase hover:bg-red-500 hover:text-white transition-all">
+                            Deactivate Account
+                        </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation (Mobile Only) -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center h-16 md:hidden bg-black/80 backdrop-blur-md border-t border-white/10 z-50">
+<button class="flex flex-col items-center justify-center text-secondary">
+<span class="material-symbols-outlined">home</span>
+<span class="text-label-md font-label-md">Home</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary">
+<span class="material-symbols-outlined">assignment_late</span>
+<span class="text-label-md font-label-md">Requests</span>
+</button>
+<button class="flex flex-col items-center justify-center text-primary font-bold scale-110">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-label-md font-label-md">Settings</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary">
+<span class="material-symbols-outlined">storefront</span>
+<span class="text-label-md font-label-md">Stores</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+<span class="text-label-md font-label-md">Wallet</span>
+</button>
+</nav>
+<script>
+        // Simple micro-interactions
+        document.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"]').forEach(input => {
+            input.addEventListener('focus', () => {
+                input.parentElement.classList.add('scale-[1.01]');
+            });
+            input.addEventListener('blur', () => {
+                input.parentElement.classList.remove('scale-[1.01]');
+            });
+        });
+
+        // Toggle state simulation
+        const mainToggle = document.getElementById('main-status');
+        mainToggle.addEventListener('change', (e) => {
+            const statusText = e.target.parentElement.nextElementSibling;
+            if (e.target.checked) {
+                statusText.classList.add('text-primary');
+                statusText.innerHTML = '<span class="material-symbols-outlined text-primary">sensors</span><span class="text-label-lg font-label-lg text-primary uppercase">Broadcasting Live</span>';
+            } else {
+                statusText.classList.remove('text-primary');
+                statusText.innerHTML = '<span class="material-symbols-outlined text-gray-500">sensors_off</span><span class="text-label-lg font-label-lg text-gray-500 uppercase">Offline</span>';
+            }
+        });
+    </script>
+</body></html>

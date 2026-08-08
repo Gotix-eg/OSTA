@@ -1,0 +1,35 @@
+{
+  "origins": [],
+  "cookies": [
+    {
+      "secure": false,
+      "sameSite": "Lax",
+      "httpOnly": true,
+      "value": "CLIENT",
+      "expires": 1786455948,
+      "path": "/",
+      "name": "osta_user_role",
+      "domain": "localhost"
+    },
+    {
+      "secure": false,
+      "sameSite": "Lax",
+      "httpOnly": true,
+      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbXI5d3J0cGkwMDAwd2pmc2Nza3YwZ2VmIiwic2Vzc2lvbklkIjoiY21yaHVwNzNnMDAwMXdqbmdybTdhYzJ1NSIsInR5cGUiOiJyZWZyZXNoIiwiaWF0IjoxNzgzODY0MjIyLCJleHAiOjE3ODY0NTYyMjJ9.zF3CNA32le24qsIAwXt1_06KnuWTPSJmM0kiNcUsnyw",
+      "expires": 1786455948,
+      "path": "/",
+      "name": "osta_refresh_token",
+      "domain": "localhost"
+    },
+    {
+      "secure": false,
+      "sameSite": "Lax",
+      "httpOnly": true,
+      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbXI5d3J0cGkwMDAwd2pmc2Nza3YwZ2VmIiwicm9sZSI6IkNMSUVOVCIsInNlc3Npb25JZCI6ImNtcmh1cDczZzAwMDF3am5ncm03YWMydTUiLCJpYXQiOjE3ODM4NjQyMjIsImV4cCI6MTc4NjQ1NjIyMn0.-JYjQmin8bHLLtWZrLvQ4QvMX8CVRzr-gkGv8xl8zXo",
+      "expires": 1786455948,
+      "path": "/",
+      "name": "osta_access_token",
+      "domain": "localhost"
+    }
+  ]
+}

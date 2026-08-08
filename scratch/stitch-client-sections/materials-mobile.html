@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>OSTA | Materials Market</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&amp;family=Inter:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface": "#f9f9f9",
+                    "on-error-container": "#93000a",
+                    "on-background": "#1a1c1c",
+                    "secondary-fixed-dim": "#c6c6c6",
+                    "surface-dim": "#dadada",
+                    "surface-container": "#eeeeee",
+                    "inverse-surface": "#2f3131",
+                    "on-tertiary-container": "#525151",
+                    "on-surface-variant": "#4f4633",
+                    "primary": "#775a00",
+                    "on-tertiary-fixed": "#1c1b1b",
+                    "on-error": "#ffffff",
+                    "inverse-on-surface": "#f0f1f1",
+                    "tertiary-fixed": "#e5e2e1",
+                    "on-secondary-fixed": "#1b1b1b",
+                    "on-primary": "#ffffff",
+                    "secondary": "#5e5e5e",
+                    "secondary-container": "#e2e2e2",
+                    "tertiary-fixed-dim": "#c8c6c5",
+                    "tertiary": "#5f5e5e",
+                    "primary-fixed-dim": "#f6be1a",
+                    "primary-fixed": "#ffdf9a",
+                    "tertiary-container": "#c7c5c4",
+                    "outline": "#817660",
+                    "on-surface": "#1a1c1c",
+                    "on-primary-fixed-variant": "#5a4300",
+                    "surface-container-highest": "#e2e2e2",
+                    "outline-variant": "#d3c5ac",
+                    "on-secondary-container": "#646464",
+                    "on-tertiary": "#ffffff",
+                    "surface-container-high": "#e8e8e8",
+                    "error": "#ba1a1a",
+                    "on-tertiary-fixed-variant": "#474646",
+                    "on-primary-fixed": "#251a00",
+                    "background": "#f9f9f9",
+                    "surface-bright": "#f9f9f9",
+                    "surface-tint": "#775a00",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-low": "#f3f3f4",
+                    "on-secondary-fixed-variant": "#474747",
+                    "surface-variant": "#e2e2e2",
+                    "on-secondary": "#ffffff",
+                    "inverse-primary": "#f6be1a",
+                    "secondary-fixed": "#e2e2e2",
+                    "error-container": "#ffdad6",
+                    "on-primary-container": "#684e00",
+                    "primary-container": "#f5bd18"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "margin-desktop": "48px",
+                    "gutter": "24px",
+                    "container-max": "1280px",
+                    "base": "8px",
+                    "stack-md": "24px",
+                    "stack-sm": "12px",
+                    "stack-lg": "48px",
+                    "margin-mobile": "16px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Inter"],
+                    "label-lg": ["Outfit"],
+                    "display-lg": ["Outfit"],
+                    "headline-sm": ["Outfit"],
+                    "label-md": ["Outfit"],
+                    "headline-md": ["Outfit"],
+                    "headline-lg": ["Outfit"],
+                    "headline-lg-mobile": ["Outfit"],
+                    "body-md": ["Inter"]
+            },
+            "fontSize": {
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "label-lg": ["14px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "display-lg": ["72px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "headline-sm": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "headline-lg": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "label-md": ["12px", {"lineHeight": "1", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #f5bd18; /* The Yellow Void */
+            color: #1a1c1c;
+            -webkit-font-smoothing: antialiased;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            vertical-align: middle;
+        }
+        .obsidian-card {
+            background-color: #000000;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .sticker-shadow {
+            box-shadow: 4px 4px 0px #000000;
+        }
+        .sticker-shadow-white {
+            box-shadow: 4px 4px 0px #ffffff;
+        }
+        .glass-nav {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        /* Active nav simulation for mobile */
+        .nav-active {
+            color: #f5bd18 !important;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body class="font-body-md min-h-screen pb-24">
+<!-- Top AppBar (from JSON) -->
+<header class="fixed top-0 w-full z-50 bg-black/80 backdrop-blur-md border-b border-white/10 flex items-center justify-between px-margin-mobile md:px-margin-desktop h-16 w-full">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary-fixed cursor-pointer" data-icon="menu">menu</span>
+<span class="font-headline-sm text-headline-sm font-black text-primary-fixed uppercase tracking-widest">INDUSTRIAL PRO</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-fixed" data-icon="account_balance_wallet">account_balance_wallet</span>
+</div>
+</header>
+<main class="pt-20 px-margin-mobile flex flex-col gap-stack-md">
+<!-- Hero Branding Section -->
+<section class="relative w-full h-48 overflow-hidden sticker-shadow border-2 border-black">
+<div class="absolute inset-0 z-0">
+<img alt="Materials Market Overview" class="w-full h-full object-cover grayscale brightness-50 contrast-125" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2ckQdHJIrl_ACO5IkgbjzYl6eycQXPE8QrbKGIPxy17iAwLc0QcYlXMZuSOAHg-dKDCSaq5kb1AzF0qNuLEJVa6KRWNo90SnwX3zM_2TFYR1bYN1XwfWbKvbuVkG89TywkiDu0wPezkoeRMv-4qQpgHOG-_7z50cUK-z3Bs9LqCgsv7_uh6eQX2zQiuQHyixnLlm-ldUpJeHnFrKR3olEJ1wRc3BMqIxs7bqciOTkksUa_YXMrw08t1djWigVIhFepx_prJpVQY0"/>
+</div>
+<div class="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-60"></div>
+<div class="relative z-10 h-full flex flex-col justify-end p-4">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-white uppercase leading-none mb-1">Materials Market</h1>
+<p class="font-label-lg text-primary-fixed tracking-widest uppercase">Active Bidding Hub</p>
+</div>
+</section>
+<!-- Primary CTA: Request Materials -->
+<button class="w-full bg-white text-black font-label-lg py-5 px-6 sticker-shadow flex items-center justify-between group active:translate-x-1 active:translate-y-1 active:shadow-none transition-all">
+<span class="text-lg">NEW MATERIAL REQUEST</span>
+<span class="material-symbols-outlined" data-icon="add_circle">add_circle</span>
+</button>
+<!-- Filter Chips -->
+<div class="flex gap-2 overflow-x-auto no-scrollbar py-2">
+<div class="bg-black text-primary-fixed px-4 py-2 font-label-md border border-primary-fixed whitespace-nowrap">ALL REQUESTS</div>
+<div class="bg-black/10 text-black px-4 py-2 font-label-md border border-black/20 whitespace-nowrap">ELECTRICAL</div>
+<div class="bg-black/10 text-black px-4 py-2 font-label-md border border-black/20 whitespace-nowrap">PLUMBING</div>
+<div class="bg-black/10 text-black px-4 py-2 font-label-md border border-black/20 whitespace-nowrap">STRUCTURAL</div>
+<div class="bg-black/10 text-black px-4 py-2 font-label-md border border-black/20 whitespace-nowrap">FINISHING</div>
+</div>
+<!-- Request Cards List -->
+<div class="flex flex-col gap-stack-md">
+<!-- Active Request Card 1 -->
+<div class="obsidian-card p-5 flex flex-col gap-4 group transition-all duration-300">
+<div class="flex justify-between items-start">
+<div>
+<div class="bg-primary-container text-on-primary-container px-2 py-0.5 text-[10px] font-bold uppercase inline-block mb-2">URGENT • 2H LEFT</div>
+<h3 class="font-headline-sm text-white text-xl">Electrical Sub-Panel Kit</h3>
+<p class="text-white/60 font-label-md">ID: #REQ-8821 • North Ridge Site</p>
+</div>
+<div class="bg-white/10 p-2 rounded-full">
+<span class="material-symbols-outlined text-primary-fixed" data-icon="bolt">bolt</span>
+</div>
+</div>
+<div class="border-t border-white/10 pt-4">
+<ul class="flex flex-col gap-2">
+<li class="flex justify-between items-center text-white/80 font-body-md">
+<span class="flex items-center gap-2"><span class="material-symbols-outlined text-primary-fixed text-sm" data-icon="check_small">check_small</span> 12x Square D 20A Breakers</span>
+<span class="text-xs text-white/40 italic">In Stock</span>
+</li>
+<li class="flex justify-between items-center text-white/80 font-body-md">
+<span class="flex items-center gap-2"><span class="material-symbols-outlined text-primary-fixed text-sm" data-icon="check_small">check_small</span> 200ft 12/2 ROMEX Wire</span>
+<span class="text-xs text-white/40 italic">Bulk</span>
+</li>
+<li class="flex justify-between items-center text-white/80 font-body-md">
+<span class="flex items-center gap-2"><span class="material-symbols-outlined text-primary-fixed text-sm" data-icon="check_small">check_small</span> 1x 100A Main Lug Panel</span>
+<span class="text-xs text-white/40 italic">Urgent</span>
+</li>
+</ul>
+</div>
+<div class="flex items-center gap-3 bg-white/5 p-3 mt-2">
+<div class="flex -space-x-3 overflow-hidden">
+<div class="inline-block h-8 w-8 rounded-full ring-2 ring-black bg-neutral-800 flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-sm" data-icon="person">person</span>
+</div>
+<div class="inline-block h-8 w-8 rounded-full ring-2 ring-black bg-neutral-700 flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-sm" data-icon="person">person</span>
+</div>
+<div class="inline-block h-8 w-8 rounded-full ring-2 ring-black bg-primary-fixed flex items-center justify-center">
+<span class="text-[10px] font-black text-black">+4</span>
+</div>
+</div>
+<div class="flex flex-col">
+<span class="text-white font-label-lg">6 VENDORS BIDDING</span>
+<span class="text-primary-fixed text-[10px] font-bold uppercase">Lowest: $1,240.00</span>
+</div>
+<button class="ml-auto bg-primary-fixed text-black px-4 py-2 font-label-md uppercase active:scale-95 transition-transform">VIEW BIDS</button>
+</div>
+</div>
+<!-- Active Request Card 2 -->
+<div class="obsidian-card p-5 flex flex-col gap-4">
+<div class="flex justify-between items-start">
+<div>
+<div class="bg-white/20 text-white px-2 py-0.5 text-[10px] font-bold uppercase inline-block mb-2">OPEN • 24H LEFT</div>
+<h3 class="font-headline-sm text-white text-xl">Lumber &amp; Framing Pack</h3>
+<p class="text-white/60 font-label-md">ID: #REQ-9012 • East Harbor Yard</p>
+</div>
+<div class="bg-white/10 p-2 rounded-full">
+<span class="material-symbols-outlined text-primary-fixed" data-icon="foundation">foundation</span>
+</div>
+</div>
+<div class="border-t border-white/10 pt-4">
+<p class="text-white/50 text-sm mb-3">Material request for 400sqft decking project. Premium Cedar preferred.</p>
+<div class="flex flex-wrap gap-2">
+<span class="text-[10px] border border-white/20 text-white/70 px-2 py-1 uppercase">2x4x8 Studs (50)</span>
+<span class="text-[10px] border border-white/20 text-white/70 px-2 py-1 uppercase">CDX Plywood (12)</span>
+<span class="text-[10px] border border-white/20 text-white/70 px-2 py-1 uppercase">Framing Nails (2pk)</span>
+</div>
+</div>
+<div class="flex items-center gap-3 bg-white/5 p-3 mt-2">
+<div class="flex flex-col">
+<span class="text-white font-label-lg uppercase">Awaiting First Bid</span>
+<span class="text-white/40 text-[10px]">3 VENDORS VIEWED</span>
+</div>
+<button class="ml-auto border-2 border-white text-white px-4 py-2 font-label-md uppercase hover:bg-white hover:text-black transition-colors">EDIT</button>
+</div>
+</div>
+<!-- Active Request Card 3 (Bento Style Micro) -->
+<div class="grid grid-cols-2 gap-4">
+<div class="obsidian-card p-4 flex flex-col gap-3">
+<span class="material-symbols-outlined text-primary-fixed" data-icon="payments">payments</span>
+<h4 class="text-white font-label-lg uppercase">Market Spend</h4>
+<div class="text-2xl font-bold text-white">$14.2k</div>
+<div class="text-[10px] text-green-500 font-bold">↓ 12% vs Last Month</div>
+</div>
+<div class="obsidian-card p-4 flex flex-col gap-3">
+<span class="material-symbols-outlined text-primary-fixed" data-icon="gavel">gavel</span>
+<h4 class="text-white font-label-lg uppercase">Active Bids</h4>
+<div class="text-2xl font-bold text-white">24</div>
+<div class="text-[10px] text-white/40">Across 4 Projects</div>
+</div>
+</div>
+</div>
+<!-- Featured Vendors Section -->
+<section class="mt-4">
+<h2 class="font-label-lg text-black uppercase mb-4 tracking-tighter text-lg flex justify-between items-center">
+                PREMIUM VENDORS
+                <span class="text-xs text-black/60 font-normal">SEE ALL</span>
+</h2>
+<div class="flex gap-4 overflow-x-auto no-scrollbar pb-4">
+<!-- Vendor Card 1 -->
+<div class="min-w-[140px] bg-black p-4 border border-white/10 flex flex-col items-center gap-2">
+<div class="w-12 h-12 bg-primary-fixed-dim rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-black" data-icon="storefront">storefront</span>
+</div>
+<span class="text-white font-label-md text-center">Elite Lumber</span>
+<span class="text-primary-fixed text-[10px] font-bold">4.9 ★</span>
+</div>
+<!-- Vendor Card 2 -->
+<div class="min-w-[140px] bg-black p-4 border border-white/10 flex flex-col items-center gap-2">
+<div class="w-12 h-12 bg-neutral-800 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-white" data-icon="factory">factory</span>
+</div>
+<span class="text-white font-label-md text-center">Iron &amp; Alloy</span>
+<span class="text-primary-fixed text-[10px] font-bold">4.7 ★</span>
+</div>
+<!-- Vendor Card 3 -->
+<div class="min-w-[140px] bg-black p-4 border border-white/10 flex flex-col items-center gap-2">
+<div class="w-12 h-12 bg-neutral-800 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-white" data-icon="bolt">bolt</span>
+</div>
+<span class="text-white font-label-md text-center">Volt Supply</span>
+<span class="text-primary-fixed text-[10px] font-bold">5.0 ★</span>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Bar (from JSON) -->
+<nav class="fixed bottom-0 w-full z-50 bg-black/80 backdrop-blur-md border-t border-white/10 md:hidden flex justify-around items-center h-20 pb-safe px-4">
+<!-- Requests -->
+<a class="flex flex-col items-center justify-center text-white/50 hover:text-white transition-colors active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined text-2xl" data-icon="engineering">engineering</span>
+<span class="font-label-md text-label-md">Requests</span>
+</a>
+<!-- Market (Active) -->
+<a class="flex flex-col items-center justify-center text-primary-fixed font-bold active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined text-2xl" data-icon="gavel" style="font-variation-settings: 'FILL' 1;">gavel</span>
+<span class="font-label-md text-label-md">Market</span>
+</a>
+<!-- Vendors -->
+<a class="flex flex-col items-center justify-center text-white/50 hover:text-white transition-colors active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined text-2xl" data-icon="storefront">storefront</span>
+<span class="font-label-md text-label-md">Vendors</span>
+</a>
+<!-- Favs -->
+<a class="flex flex-col items-center justify-center text-white/50 hover:text-white transition-colors active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined text-2xl" data-icon="star">star</span>
+<span class="font-label-md text-label-md">Favs</span>
+</a>
+<!-- Wallet -->
+<a class="flex flex-col items-center justify-center text-white/50 hover:text-white transition-colors active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined text-2xl" data-icon="wallet">wallet</span>
+<span class="font-label-md text-label-md">Wallet</span>
+</a>
+</nav>
+<!-- Micro-interactions Script -->
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Ripple or active states are mostly handled by Tailwind active: classes
+            // Adding a small reveal animation for cards
+            const cards = document.querySelectorAll('.obsidian-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.5s ease-out';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+</body></html>

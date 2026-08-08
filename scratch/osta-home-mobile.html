@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>OSTA - Industrial Strength Trades</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&amp;family=Outfit:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-obsidian {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .obsidian-card {
+            background: #000000;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .sticker-shadow {
+            box-shadow: 4px 4px 0px #000000;
+        }
+        .active-sticker-shadow {
+            box-shadow: 2px 2px 0px #000000;
+            transform: translate(2px, 2px);
+        }
+        ::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#775a00",
+                        "on-error": "#ffffff",
+                        "surface-container": "#eeeeee",
+                        "primary-fixed": "#ffdf9a",
+                        "on-secondary-fixed": "#1b1b1b",
+                        "surface-dim": "#dadada",
+                        "tertiary-fixed-dim": "#c8c6c5",
+                        "outline": "#817660",
+                        "secondary-fixed-dim": "#c6c6c6",
+                        "tertiary": "#5f5e5e",
+                        "tertiary-container": "#c7c5c4",
+                        "on-surface-variant": "#4f4633",
+                        "inverse-surface": "#2f3131",
+                        "secondary-fixed": "#e2e2e2",
+                        "inverse-on-surface": "#f0f1f1",
+                        "on-tertiary-fixed-variant": "#474646",
+                        "on-primary-fixed-variant": "#5a4300",
+                        "on-primary-fixed": "#251a00",
+                        "surface-container-high": "#e8e8e8",
+                        "surface-container-lowest": "#ffffff",
+                        "outline-variant": "#d3c5ac",
+                        "surface-container-low": "#f3f3f4",
+                        "on-secondary-fixed-variant": "#474747",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed": "#e5e2e1",
+                        "secondary-container": "#e2e2e2",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-container": "#525151",
+                        "on-background": "#1a1c1c",
+                        "background": "#f9f9f9",
+                        "inverse-primary": "#f6be1a",
+                        "secondary": "#5e5e5e",
+                        "on-primary": "#ffffff",
+                        "surface-variant": "#e2e2e2",
+                        "on-surface": "#1a1c1c",
+                        "surface": "#f9f9f9",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed": "#1c1b1b",
+                        "on-secondary-container": "#646464",
+                        "primary-container": "#f5bd18",
+                        "surface-container-highest": "#e2e2e2",
+                        "on-primary-container": "#684e00",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "surface-bright": "#f9f9f9",
+                        "primary-fixed-dim": "#f6be1a",
+                        "surface-tint": "#775a00"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "container-max": "1280px",
+                        "gutter": "24px",
+                        "stack-md": "24px",
+                        "stack-lg": "48px",
+                        "margin-mobile": "16px",
+                        "stack-sm": "12px",
+                        "margin-desktop": "48px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Outfit"],
+                        "body-lg": ["Inter"],
+                        "headline-sm": ["Outfit"],
+                        "label-md": ["Outfit"],
+                        "label-lg": ["Outfit"],
+                        "display-lg": ["Outfit"],
+                        "headline-lg-mobile": ["Outfit"],
+                        "headline-md": ["Outfit"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-lg": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-sm": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "label-md": ["12px", {"lineHeight": "1", "fontWeight": "600"}],
+                        "label-lg": ["14px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "display-lg": ["72px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                        "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-primary-container font-body-md text-on-background min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="bg-black/80 backdrop-blur-md fixed top-0 w-full z-50 border-b border-white/10 flex justify-between items-center px-margin-mobile h-16">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary" data-icon="menu">menu</span>
+<span class="font-headline-lg-mobile text-headline-lg-mobile font-extrabold text-primary tracking-tighter">OSTA</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="font-headline-sm text-headline-sm text-primary active:scale-95 duration-100">AR</button>
+</div>
+</header>
+<main class="pt-16">
+<!-- Hero Section -->
+<section class="relative h-[353px] w-full overflow-hidden">
+<div class="absolute inset-0 bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida/AP1WRLvPWTNBI6QHPZstRjBzsdmedQT3X72YzMV1wUJYyabe37kyEjwlG62SdS-6HdpkuM68erjzOO8Sl7fYRrtTuj0nWSH4lhJorjhrnVTdVYMD9-UZp9f1ntjGzPjtYklrkLXZqN97d3BNLFNrgre7enhuKJjgKK19GNUbRzrVFd40xuD6EpwF9PTBqaBIb1VOZkPk65UJV5fMoheg-Id-EfwkvLOAbtD46U9Gdj8YCHlgtwvNCsYoMwmyHNc");'>
+<div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
+</div>
+<div class="relative h-full flex flex-col justify-end p-margin-mobile pb-6"><div class="space-y-1">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-white font-extrabold uppercase leading-none">
+                        Industrial <span class="text-primary-container">Reliability.</span>
+</h1>
+<p class="font-label-lg text-white/80 leading-tight">
+                        Expert hands for your home.
+                    </p>
+</div>
+<div class="mt-4">
+<button class="bg-white text-black font-label-lg px-8 py-3 sticker-shadow active:translate-x-1 active:translate-y-1 active:shadow-none transition-all uppercase">
+                        Book Now
+                    </button>
+</div></div>
+</section>
+<!-- Category Grid (The Yellow Void pattern) -->
+<section class="p-margin-mobile mt-stack-lg relative z-10">
+<div class="grid grid-cols-2 gap-4">
+<!-- Electricity -->
+<div class="obsidian-card p-6 flex flex-col items-center justify-center gap-3 text-center active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-primary-container text-4xl" data-icon="bolt">bolt</span>
+<span class="text-white font-label-lg uppercase">Electricity</span>
+</div>
+<!-- Plumbing -->
+<div class="obsidian-card p-6 flex flex-col items-center justify-center gap-3 text-center active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-primary-container text-4xl" data-icon="plumbing">plumbing</span>
+<span class="text-white font-label-lg uppercase">Plumbing</span>
+</div>
+<!-- HVAC -->
+<div class="obsidian-card p-6 flex flex-col items-center justify-center gap-3 text-center active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-primary-container text-4xl" data-icon="ac_unit">ac_unit</span>
+<span class="text-white font-label-lg uppercase">Air Conditioning</span>
+</div>
+<!-- Carpentry -->
+<div class="obsidian-card p-6 flex flex-col items-center justify-center gap-3 text-center active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-primary-container text-4xl" data-icon="handyman">handyman</span>
+<span class="text-white font-label-lg uppercase">Carpentry</span>
+</div>
+</div>
+</section>
+<!-- Featured Ads Section -->
+<section class="mt-stack-lg px-margin-mobile">
+<h2 class="font-headline-sm text-headline-sm text-black mb-stack-sm flex items-center gap-2">
+<span class="w-8 h-1 bg-black"></span> SPECIAL OFFERS
+            </h2>
+<div class="flex overflow-x-auto gap-4 snap-x pb-4">
+<div class="min-w-[280px] snap-center obsidian-card overflow-hidden relative">
+<div class="h-40 bg-zinc-900 flex items-center justify-center">
+<div class="text-center p-4">
+<h3 class="text-primary-container font-headline-sm mb-1">20% OFF</h3>
+<p class="text-white/60 font-label-md">First plumbing service</p>
+</div>
+</div>
+<div class="p-4 bg-black">
+<span class="bg-primary-container text-black font-label-md px-2 py-1 uppercase">Promo: OSTA20</span>
+</div>
+</div>
+<div class="min-w-[280px] snap-center obsidian-card overflow-hidden relative">
+<div class="h-40 bg-zinc-800 flex items-center justify-center">
+<div class="text-center p-4">
+<h3 class="text-primary-container font-headline-sm mb-1">FREE QUOTE</h3>
+<p class="text-white/60 font-label-md">Industrial installation projects</p>
+</div>
+</div>
+<div class="p-4 bg-black">
+<span class="bg-white text-black font-label-md px-2 py-1 uppercase">Limited Time</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Featured Pros Slider -->
+<section class="mt-stack-lg mb-stack-lg">
+<div class="px-margin-mobile mb-stack-sm flex justify-between items-end">
+<h2 class="font-headline-sm text-headline-sm text-black">FEATURED PROS</h2>
+<a class="text-black font-label-lg underline decoration-2" href="#">VIEW ALL</a>
+</div>
+<div class="flex overflow-x-auto gap-4 snap-x px-margin-mobile pb-6">
+<!-- Pro Card 1 -->
+<div class="min-w-[240px] snap-center obsidian-card p-4 space-y-4">
+<div class="flex items-center gap-3">
+<div class="w-16 h-16 bg-zinc-800 border border-white/20">
+<img class="w-full h-full object-cover" data-alt="Close up professional portrait of a confident middle-aged Egyptian craftsman in high-quality work gear, cinematic lighting with a soft amber glow, obsidian black background with gold accents, industrial professional aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrP1yd3kdYkr-I3_KLKwkJpD7Zq1RpCOy8ez11g6uHVhJxb8sz6xIUUOSu7w3VVMb8-2DERi8UltiGnRjgDSnXhDkvtuOGpS3GQAaI81sjL92vUBGl3DhVoYey_NVsxLiRnDoEWmvSpyISj5mIJBsvPK03o2GnKCkR09DMfIqYBui9-r2qLmPcjJU6aegj6Pst8IDlz0hZXYyaj71Nj6O9Sc78C3qIw-BWfNzWb_tob7HYDfbjxpJ4YqQf9l-qfx5mbkhWNqkCspY"/>
+</div>
+<div>
+<p class="text-white font-bold font-label-lg">Ahmed Hassan</p>
+<p class="text-primary-container font-label-md">Master Electrician</p>
+</div>
+</div>
+<div class="flex justify-between items-center text-white/60 font-label-md">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-primary-container text-sm" style='font-variation-settings: "FILL" 1;'>star</span> 4.9 (124)</span>
+<span class="">5.0 km away</span>
+</div>
+<button class="w-full bg-primary-container text-black font-label-lg py-2 sticker-shadow active:translate-x-1 active:translate-y-1 active:shadow-none uppercase">Profile</button>
+</div>
+<!-- Pro Card 2 -->
+<div class="min-w-[240px] snap-center obsidian-card p-4 space-y-4">
+<div class="flex items-center gap-3">
+<div class="w-16 h-16 bg-zinc-800 border border-white/20">
+<img class="w-full h-full object-cover" data-alt="A focused professional tradesperson examining complex pipework in a modern industrial setting. The lighting is moody and technical, emphasizing precision and expertise. Deep shadows and sharp metallic highlights, high-end premium trade services brand vibe." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUjS8cqQCINIOM84jIMf2dYmBT0ln1b8teCxZV19vnToAaTPbpuwJcvOdIoY4CVoKIiP3wxhHAWIUx1LH3Fn2E5A7C_CRnb4Z-V1EnnCgZj1rtmJmzhkKS-Cei1wxR6LKdtJ5-B01h1LI_R_UiWI7slUhfpK0xSOUbS4Pk4Pe6yHWxPC8p6z6Blicrzxq9mF29GthmdUjKgmWQPcHcqGLawfLjxgAHGwF6OW7sGJ8QtC23cWBNawb9fMXzgXuUFjpTY6GYovxVDIg"/>
+</div>
+<div>
+<p class="text-white font-bold font-label-lg">Samir Khalil</p>
+<p class="text-primary-container font-label-md">Senior Plumber</p>
+</div>
+</div>
+<div class="flex justify-between items-center text-white/60 font-label-md">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-primary-container text-sm" style='font-variation-settings: "FILL" 1;'>star</span> 4.8 (98)</span>
+<span class="">2.3 km away</span>
+</div>
+<button class="w-full bg-primary-container text-black font-label-lg py-2 sticker-shadow active:translate-x-1 active:translate-y-1 active:shadow-none uppercase">Profile</button>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="bg-black w-full pb-24 border-t border-white/10 flex flex-col items-center gap-stack-sm p-margin-mobile text-center">
+<span class="font-headline-sm text-headline-sm text-primary">OSTA</span>
+<div class="flex gap-4">
+<a class="text-white/40 font-label-md hover:text-white transition-colors" href="#">Terms</a>
+<a class="text-white/40 font-label-md hover:text-white transition-colors" href="#">Privacy</a>
+<a class="text-white/40 font-label-md hover:text-white transition-colors" href="#">Contact</a>
+</div>
+<p class="text-white/40 font-label-md mt-2">© 2024 OSTA. INDUSTRIAL STRENGTH TRADES.</p>
+</footer>
+</main>
+<!-- BottomNavBar -->
+<nav class="bg-black/80 backdrop-blur-md fixed bottom-0 w-full z-50 border-t border-white/10 flex justify-around items-center px-2 py-3">
+<a class="flex flex-col items-center justify-center text-primary font-bold active:translate-y-[-2px] transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="home" style='font-variation-settings: "FILL" 1;'>home</span>
+<span class="font-label-md text-label-md">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-white/60 hover:text-white active:translate-y-[-2px] transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="engineering">engineering</span>
+<span class="font-label-md text-label-md">Workers</span>
+</a>
+<a class="flex flex-col items-center justify-center text-white/60 hover:text-white active:translate-y-[-2px] transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="store">store</span>
+<span class="font-label-md text-label-md">Vendors</span>
+</a>
+<a class="flex flex-col items-center justify-center text-white/60 hover:text-white active:translate-y-[-2px] transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-md text-label-md">Profile</span>
+</a>
+</nav>
+<script>
+        // Micro-interactions
+        document.querySelectorAll('button, a').forEach(el => {
+            el.addEventListener('mousedown', () => {
+                if(el.classList.contains('sticker-shadow')) {
+                    el.classList.add('active-sticker-shadow');
+                }
+            });
+            el.addEventListener('mouseup', () => {
+                el.classList.remove('active-sticker-shadow');
+            });
+            el.addEventListener('mouseleave', () => {
+                el.classList.remove('active-sticker-shadow');
+            });
+        });
+    </script>
+</body></html>

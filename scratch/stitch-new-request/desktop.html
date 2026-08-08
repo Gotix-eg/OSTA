@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>OSTA - طلب جديد</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&amp;family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-surface-variant": "#4f4633",
+                        "on-primary-fixed": "#251a00",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed-dim": "#c8c6c5",
+                        "on-background": "#1a1c1c",
+                        "error": "#ba1a1a",
+                        "on-tertiary-container": "#525151",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed": "#1b1b1b",
+                        "on-tertiary-fixed": "#1c1b1b",
+                        "surface": "#f9f9f9",
+                        "on-secondary-container": "#646464",
+                        "surface-container": "#eeeeee",
+                        "secondary-fixed": "#e2e2e2",
+                        "surface-container-high": "#e8e8e8",
+                        "on-primary-fixed-variant": "#5a4300",
+                        "surface-bright": "#f9f9f9",
+                        "inverse-primary": "#f6be1a",
+                        "tertiary-fixed": "#e5e2e1",
+                        "tertiary-container": "#c7c5c4",
+                        "primary": "#775a00",
+                        "surface-container-highest": "#e2e2e2",
+                        "on-primary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "surface-dim": "#dadada",
+                        "outline-variant": "#d3c5ac",
+                        "on-error-container": "#93000a",
+                        "inverse-on-surface": "#f0f1f1",
+                        "primary-fixed-dim": "#f6be1a",
+                        "primary-fixed": "#ffdf9a",
+                        "primary-container": "#f5bd18",
+                        "surface-tint": "#775a00",
+                        "secondary-container": "#e2e2e2",
+                        "outline": "#817660",
+                        "on-tertiary-fixed-variant": "#474646",
+                        "on-surface": "#1a1c1c",
+                        "secondary-fixed-dim": "#c6c6c6",
+                        "secondary": "#5e5e5e",
+                        "on-primary-container": "#684e00",
+                        "inverse-surface": "#2f3131",
+                        "surface-container-low": "#f3f3f4",
+                        "surface-variant": "#e2e2e2",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed-variant": "#474747",
+                        "on-secondary": "#ffffff",
+                        "tertiary": "#5f5e5e",
+                        "background": "#f9f9f9"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "margin-desktop": "48px",
+                        "stack-md": "24px",
+                        "base": "8px",
+                        "stack-sm": "12px",
+                        "stack-lg": "48px",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "headline-sm": ["Outfit"],
+                        "label-md": ["Outfit"],
+                        "headline-lg": ["Outfit"],
+                        "body-lg": ["Inter"],
+                        "headline-md": ["Outfit"],
+                        "body-md": ["Inter"],
+                        "label-lg": ["Outfit"],
+                        "headline-lg-mobile": ["Outfit"],
+                        "display-lg": ["Outfit"]
+                    },
+                    "fontSize": {
+                        "headline-sm": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "label-md": ["12px", {"lineHeight": "1", "fontWeight": "600"}],
+                        "headline-lg": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "label-lg": ["14px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "display-lg": ["72px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f5bd18; }
+        .glass-obsidian { background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .obsidian-card { background: #000000; border: 1px solid rgba(255, 255, 255, 0.1); }
+        .sticker-shadow { box-shadow: 4px 4px 0px #000000; }
+        .active-step { background-color: #f5bd18; color: #000000; font-weight: 700; border: none; }
+        .inactive-step { background-color: #1a1c1c; color: #ffffff; opacity: 0.5; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
+        .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #775a00; }
+    </style>
+</head>
+<body class="min-h-screen text-on-surface">
+<!-- Top AppBar -->
+<header class="bg-black/80 backdrop-blur-md text-primary docked full-width top-0 z-50 border-b border-white/10 flex justify-between items-center px-margin-mobile md:px-margin-desktop w-full h-16 sticky">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined cursor-pointer hover:text-primary transition-colors duration-200">menu</span>
+<h1 class="text-headline-md font-headline-md font-extrabold text-primary uppercase tracking-tighter">OSTA</h1>
+</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-label-lg font-label-lg text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">الرئيسية</a>
+<a class="text-label-lg font-label-lg text-primary border-b-2 border-primary" href="#">طلباتي</a>
+<a class="text-label-lg font-label-lg text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">المتاجر</a>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<input class="bg-[#121212] border border-white/20 text-white px-4 py-1.5 text-sm w-64 focus:border-primary-container outline-none transition-all" placeholder="ابحث في الخدمات..." type="text"/>
+<span class="material-symbols-outlined absolute left-2 top-1.5 text-secondary">search</span>
+</div>
+<div class="w-10 h-10 bg-surface-container rounded-full flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a service technician wearing a clean black branded polo shirt with the OSTA logo, smiling confidently against a minimalist blurred industrial background, high contrast studio lighting." src="https://www.gstatic.com/labs-code/stitch/stitch-placeholder-300x300.svg"/>
+</div>
+</div>
+</header>
+<main class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-stack-lg flex flex-col md:flex-row gap-gutter">
+<!-- Navigation Drawer (Desktop Sidebar) -->
+<aside class="fixed right-0 top-0 h-full w-64 hidden lg:block bg-black border-l border-white/10 z-40 py-stack-md pt-20">
+<nav class="flex flex-col gap-base h-full">
+<div class="px-6 mb-8">
+<h2 class="text-primary font-black text-headline-md">OSTA</h2>
+<p class="text-secondary text-sm">Professional Dashboard</p>
+</div>
+<a class="flex items-center gap-4 text-secondary px-4 py-3 hover:bg-white/5 hover:text-primary-fixed-dim transition-all" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="text-label-lg font-label-lg">الرئيسية</span>
+</a>
+<a class="flex items-center gap-4 text-primary bg-surface-container-highest/10 border-r-4 border-primary px-4 py-3 translate-x-[-1px] transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">assignment</span>
+<span class="text-label-lg font-label-lg">طلب جديد</span>
+</a>
+<a class="flex items-center gap-4 text-secondary px-4 py-3 hover:bg-white/5 hover:text-primary-fixed-dim transition-all" href="#">
+<span class="material-symbols-outlined">store</span>
+<span class="text-label-lg font-label-lg">المتاجر</span>
+</a>
+<a class="flex items-center gap-4 text-secondary px-4 py-3 hover:bg-white/5 hover:text-primary-fixed-dim transition-all" href="#">
+<span class="material-symbols-outlined">build</span>
+<span class="text-label-lg font-label-lg">سوق المواد</span>
+</a>
+<a class="flex items-center gap-4 text-secondary px-4 py-3 hover:bg-white/5 hover:text-primary-fixed-dim transition-all" href="#">
+<span class="material-symbols-outlined">favorite</span>
+<span class="text-label-lg font-label-lg">المفضلة</span>
+</a>
+<a class="flex items-center gap-4 text-secondary px-4 py-3 hover:bg-white/5 hover:text-primary-fixed-dim transition-all mt-auto" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="text-label-lg font-label-lg">المحفظة</span>
+</a>
+</nav>
+</aside>
+<!-- Main Content Area -->
+<section class="flex-grow lg:mr-64 flex flex-col md:flex-row gap-gutter">
+<!-- Form Canvas -->
+<div class="flex-grow space-y-stack-md order-2 md:order-1">
+<!-- Hero Section -->
+<div class="obsidian-card p-stack-md relative overflow-hidden">
+<div class="relative z-10">
+<span class="bg-primary-container text-on-primary-container px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest mb-2 inline-block">بياناتك لا تُحفظ على هذا الجهاز</span>
+<h2 class="text-display-lg font-display-lg text-white mb-2 leading-none">طلب جديد</h2>
+<p class="text-secondary body-md">ابنِ الطلب خطوة بخطوة مع معاينة مباشرة توضح لك التقدم الحالي.</p>
+</div>
+</div>
+<!-- Horizontal Step Indicators -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="obsidian-card p-4 flex flex-col items-center justify-center gap-2 border-primary-container/50 bg-primary-container/5">
+<span class="material-symbols-outlined text-primary-container" style="font-variation-settings: 'FILL' 1;">architecture</span>
+<div class="text-center">
+<p class="text-secondary text-[10px] font-bold uppercase">الخطوة 1</p>
+<p class="text-white text-sm font-bold">الخدمة المختارة</p>
+<p class="text-primary text-xs">لم تُحدد بعد</p>
+</div>
+</div>
+<div class="obsidian-card p-4 flex flex-col items-center justify-center gap-2 opacity-60">
+<span class="material-symbols-outlined text-secondary">edit_note</span>
+<div class="text-center">
+<p class="text-secondary text-[10px] font-bold uppercase">الخطوة 2</p>
+<p class="text-white text-sm font-bold">عنوان الطلب</p>
+<p class="text-secondary text-xs">فارغ</p>
+</div>
+</div>
+<div class="obsidian-card p-4 flex flex-col items-center justify-center gap-2 opacity-60">
+<span class="material-symbols-outlined text-secondary">location_on</span>
+<div class="text-center">
+<p class="text-secondary text-[10px] font-bold uppercase">الخطوة 3</p>
+<p class="text-white text-sm font-bold">نوع العنوان</p>
+<p class="text-secondary text-xs">محفوظ</p>
+</div>
+</div>
+<div class="obsidian-card p-4 flex flex-col items-center justify-center gap-2 opacity-60">
+<span class="material-symbols-outlined text-secondary">schedule</span>
+<div class="text-center">
+<p class="text-secondary text-[10px] font-bold uppercase">الخطوة 4</p>
+<p class="text-white text-sm font-bold">التوقيت</p>
+<p class="text-secondary text-xs">اليوم</p>
+</div>
+</div>
+</div>
+<!-- Step Tabs Navigation -->
+<div class="flex flex-wrap gap-2">
+<button class="active-step px-6 py-2 sticker-shadow flex items-center gap-2">
+<span class="bg-black text-primary-container w-5 h-5 flex items-center justify-center text-[10px] rounded-full">1</span>
+                        اختر الخدمة
+                    </button>
+<button class="inactive-step px-6 py-2 flex items-center gap-2">
+<span class="bg-white/20 text-white w-5 h-5 flex items-center justify-center text-[10px] rounded-full">2</span>
+                        صف المشكلة
+                    </button>
+<button class="inactive-step px-6 py-2 flex items-center gap-2">
+<span class="bg-white/20 text-white w-5 h-5 flex items-center justify-center text-[10px] rounded-full">3</span>
+                        عنوان الخدمة
+                    </button>
+<button class="inactive-step px-6 py-2 flex items-center gap-2">
+<span class="bg-white/20 text-white w-5 h-5 flex items-center justify-center text-[10px] rounded-full">4</span>
+                        التوقيت والمراجعة
+                    </button>
+</div>
+<!-- Service Grid Container -->
+<div class="obsidian-card p-stack-md min-h-[600px]">
+<div class="flex justify-between items-end mb-stack-md">
+<div>
+<p class="text-primary-container text-xs font-bold mb-1 uppercase tracking-tighter">بناء الطلب</p>
+<h3 class="text-headline-md font-headline-md text-white">اختر الخدمة</h3>
+</div>
+<div class="bg-[#121212] px-4 py-2 border border-white/10">
+<p class="text-secondary text-[10px] uppercase font-bold">الفئة المختارة</p>
+<p class="text-white text-sm">اختر فئة أولاً لإظهار الخدمات</p>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+<!-- Service Card 1 -->
+<div class="p-4 bg-[#121212] border border-white/10 hover:border-primary-container transition-all cursor-pointer group">
+<div class="flex justify-between items-start mb-2">
+<h4 class="text-headline-sm font-headline-sm text-white group-hover:text-primary-container transition-colors">نجار</h4>
+<span class="material-symbols-outlined text-primary-container">handyman</span>
+</div>
+<p class="text-secondary text-sm line-clamp-2">تفصيل، صيانة، تركيب، وضبط الأبواب والمطابخ والأثاث.</p>
+</div>
+<!-- Service Card 2 -->
+<div class="p-4 bg-[#121212] border border-white/10 hover:border-primary-container transition-all cursor-pointer group">
+<div class="flex justify-between items-start mb-2">
+<h4 class="text-headline-sm font-headline-sm text-white group-hover:text-primary-container transition-colors">سباك</h4>
+<span class="material-symbols-outlined text-primary-container">plumbing</span>
+</div>
+<p class="text-secondary text-sm line-clamp-2">تسريب؟ انسداد؟ تركيب جديد؟ سباكين موثقين على مدار اليوم.</p>
+</div>
+<!-- Service Card 3 -->
+<div class="p-4 bg-[#121212] border border-white/10 hover:border-primary-container transition-all cursor-pointer group">
+<div class="flex justify-between items-start mb-2">
+<h4 class="text-headline-sm font-headline-sm text-white group-hover:text-primary-container transition-colors">كهربائي</h4>
+<span class="material-symbols-outlined text-primary-container">bolt</span>
+</div>
+<p class="text-secondary text-sm line-clamp-2">صيانات منزلية سريعة وتمديدات احترافية للطوارئ.</p>
+</div>
+<!-- Service Card 4 -->
+<div class="p-4 bg-[#121212] border border-white/10 hover:border-primary-container transition-all cursor-pointer group">
+<div class="flex justify-between items-start mb-2">
+<h4 class="text-headline-sm font-headline-sm text-white group-hover:text-primary-container transition-colors">تكييفات</h4>
+<span class="material-symbols-outlined text-primary-container">ac_unit</span>
+</div>
+<p class="text-secondary text-sm line-clamp-2">صيانة وتركيب وغسيل تكييفات وشحن فريون.</p>
+</div>
+<!-- Service Card 5 -->
+<div class="p-4 bg-[#121212] border border-white/10 hover:border-primary-container transition-all cursor-pointer group">
+<div class="flex justify-between items-start mb-2">
+<h4 class="text-headline-sm font-headline-sm text-white group-hover:text-primary-container transition-colors">أجهزة منزلية</h4>
+<span class="material-symbols-outlined text-primary-container">kitchen</span>
+</div>
+<p class="text-secondary text-sm line-clamp-2">إصلاح الثلاجات، الغسالات، والبوتاجازات، والأجهزة الأساسية.</p>
+</div>
+<!-- Service Card 6 -->
+<div class="p-4 bg-[#121212] border border-white/10 hover:border-primary-container transition-all cursor-pointer group">
+<div class="flex justify-between items-start mb-2">
+<h4 class="text-headline-sm font-headline-sm text-white group-hover:text-primary-container transition-colors">دهانات</h4>
+<span class="material-symbols-outlined text-primary-container">format_paint</span>
+</div>
+<p class="text-secondary text-sm line-clamp-2">تشطيبات داخلية وخارجية مع دهانات عالية الجودة.</p>
+</div>
+<!-- Service Card 7 -->
+<div class="p-4 bg-[#121212] border border-white/10 hover:border-primary-container transition-all cursor-pointer group">
+<div class="flex justify-between items-start mb-2">
+<h4 class="text-headline-sm font-headline-sm text-white group-hover:text-primary-container transition-colors">ألوميتال</h4>
+<span class="material-symbols-outlined text-primary-container">window</span>
+</div>
+<p class="text-secondary text-sm line-clamp-2">تفصيل وتركيب وصيانة شبابيك وأبواب ومطابخ ألوميتال.</p>
+</div>
+<!-- Service Card 8 -->
+<div class="p-4 bg-[#121212] border border-white/10 hover:border-primary-container transition-all cursor-pointer group">
+<div class="flex justify-between items-start mb-2">
+<h4 class="text-headline-sm font-headline-sm text-white group-hover:text-primary-container transition-colors">شبكات كمبيوتر</h4>
+<span class="material-symbols-outlined text-primary-container">router</span>
+</div>
+<p class="text-secondary text-sm line-clamp-2">تأسيس وصيانة شبكات الإنترنت والراوتر والسيرفرات.</p>
+</div>
+<!-- Service Card 9 -->
+<div class="p-4 bg-[#121212] border border-white/10 hover:border-primary-container transition-all cursor-pointer group">
+<div class="flex justify-between items-start mb-2">
+<h4 class="text-headline-sm font-headline-sm text-white group-hover:text-primary-container transition-colors">صيانة لابتوب</h4>
+<span class="material-symbols-outlined text-primary-container">laptop_mac</span>
+</div>
+<p class="text-secondary text-sm line-clamp-2">صيانة هاردوير وسوفتوير لأجهزة الكمبيوتر واللابتوب.</p>
+</div>
+</div>
+<div class="mt-stack-lg flex justify-between items-center pt-stack-md border-t border-white/10">
+<button class="px-8 py-3 bg-[#121212] text-white font-bold border border-white/10 hover:bg-white/5 transition-colors">السابق</button>
+<button class="px-12 py-3 bg-white text-black font-bold sticker-shadow hover:bg-gray-200 transition-all active:scale-95">التالي</button>
+</div>
+</div>
+</div>
+<!-- Sidebar Contextual Rail -->
+<div class="w-full md:w-80 space-y-stack-md order-1 md:order-2">
+<!-- Live Draft Summary -->
+<div class="obsidian-card p-6 flex flex-col gap-4">
+<div class="flex items-center gap-3 mb-2">
+<span class="w-2 h-2 bg-primary-container rounded-full animate-pulse"></span>
+<p class="text-primary-container text-[10px] font-bold uppercase tracking-widest">ما سيتم إرساله</p>
+</div>
+<h3 class="text-headline-sm font-headline-sm text-white border-b border-white/10 pb-4">ملخص المسودة</h3>
+<div class="space-y-4">
+<div class="flex flex-col">
+<span class="text-secondary text-[10px] font-bold">الخدمة</span>
+<p class="text-white font-bold">لم تُختر بعد</p>
+</div>
+<div class="flex flex-col">
+<span class="text-secondary text-[10px] font-bold">العنوان</span>
+<p class="text-secondary text-sm">بانتظار العنوان</p>
+</div>
+<div class="flex flex-col">
+<span class="text-secondary text-[10px] font-bold">التوقيت</span>
+<div class="flex gap-2 mt-1">
+<span class="bg-[#121212] text-white px-2 py-0.5 text-xs font-bold border border-white/10">اليوم</span>
+<span class="bg-[#121212] text-secondary px-2 py-0.5 text-xs font-bold border border-white/10">عنوان محفوظ</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Submission Signals / Quality Rail -->
+<div class="obsidian-card p-6 flex flex-col gap-4">
+<p class="text-primary-container text-[10px] font-bold uppercase tracking-widest">مسار الجودة</p>
+<h3 class="text-headline-sm font-headline-sm text-white">مؤشرات الإرسال</h3>
+<div class="space-y-stack-sm">
+<!-- Signal Item -->
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-center">
+<span class="text-white text-xs font-bold">وضوح الوصف</span>
+<span class="text-error text-[10px] font-bold">منخفض</span>
+</div>
+<div class="h-1.5 w-full bg-[#121212] border border-white/5">
+<div class="h-full bg-error" style="width: 20%"></div>
+</div>
+<p class="text-secondary text-[10px]">أضف تفاصيل أكثر لتحسين المطابقة</p>
+</div>
+<!-- Signal Item -->
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-center">
+<span class="text-white text-xs font-bold">جاهزية النموذج</span>
+<span class="text-primary-container text-[10px] font-bold">40%</span>
+</div>
+<div class="h-1.5 w-full bg-[#121212] border border-white/5">
+<div class="h-full bg-primary-container" style="width: 40%"></div>
+</div>
+<p class="text-secondary text-[10px]">ما زالت هناك حقول ناقصة</p>
+</div>
+<div class="bg-primary-container/5 border-l-4 border-primary-container p-3 mt-4">
+<span class="text-primary-container text-[10px] font-bold uppercase mb-1 block">نصيحة تشغيلية</span>
+<p class="text-white text-[11px] leading-relaxed">اختيار الطوارئ مع عنوان واضح يسرع المطابقة بشكل ملحوظ.</p>
+</div>
+</div>
+</div>
+<!-- Ad/Promo Space -->
+<div class="obsidian-card aspect-[4/3] relative group overflow-hidden cursor-pointer">
+<img class="w-full h-full object-cover opacity-50 group-hover:scale-105 transition-transform duration-500" data-alt="Close-up artistic photography of professional industrial tools, a gold-plated wrench resting on a black matte carbon fiber surface, dramatic side lighting creating sharp contrasts, premium craftsmanship aesthetic." src="https://www.gstatic.com/labs-code/stitch/stitch-placeholder-300x300.svg"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent p-6 flex flex-col justify-end">
+<span class="text-primary-container text-[10px] font-bold uppercase">عرض محدود</span>
+<h4 class="text-white font-bold text-lg">باقة الصيانة الشاملة</h4>
+<p class="text-secondary text-xs">احصل على خصم 20% لخدمات التشطيب.</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation (Mobile) -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center h-16 md:hidden bg-black/80 backdrop-blur-md border-t border-white/10 z-50">
+<a class="flex flex-col items-center justify-center text-secondary hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="text-label-md font-label-md">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary font-bold scale-110 transition-all duration-300" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">assignment_late</span>
+<span class="text-label-md font-label-md">Requests</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined">storefront</span>
+<span class="text-label-md font-label-md">Stores</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="text-label-md font-label-md">Market</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+<span class="text-label-md font-label-md">Wallet</span>
+</a>
+</nav>
+<!-- Contextual FAB (Only for specific primary tasks) -->
+<button class="fixed bottom-24 left-6 md:hidden bg-primary-container text-on-primary-container w-14 h-14 rounded-full sticker-shadow flex items-center justify-center z-50 transition-transform active:scale-90">
+<span class="material-symbols-outlined text-3xl">add</span>
+</button>
+<script>
+        // Micro-interactions
+        document.querySelectorAll('.group').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-2px)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body></html>

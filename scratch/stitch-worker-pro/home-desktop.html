@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+
+<html dir="ltr" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-obsidian {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .obsidian-card {
+            background-color: #000000;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .sticker-shadow {
+            box-shadow: 4px 4px 0px #000000;
+        }
+        .active-nav-border {
+            border-right: 2px solid #f5bd18;
+        }
+        body {
+            background-color: #f5bd18; /* The Yellow Void */
+            min-height: 100vh;
+        }
+        .job-queue-empty {
+            background-image: radial-gradient(circle at center, #121212 0%, #000000 100%);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error-container": "#93000a",
+                        "primary": "#775a00",
+                        "on-surface-variant": "#4f4633",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#775a00",
+                        "on-tertiary-container": "#525151",
+                        "surface-container-highest": "#e2e2e2",
+                        "surface-container": "#eeeeee",
+                        "on-error": "#ffffff",
+                        "secondary-fixed": "#e2e2e2",
+                        "on-secondary-fixed": "#1b1b1b",
+                        "surface-container-low": "#f3f3f4",
+                        "on-surface": "#1a1c1c",
+                        "surface-bright": "#f9f9f9",
+                        "secondary": "#5e5e5e",
+                        "surface-container-high": "#e8e8e8",
+                        "tertiary": "#5f5e5e",
+                        "surface-dim": "#dadada",
+                        "primary-fixed": "#ffdf9a",
+                        "inverse-primary": "#f6be1a",
+                        "inverse-surface": "#2f3131",
+                        "secondary-container": "#e2e2e2",
+                        "primary-fixed-dim": "#f6be1a",
+                        "outline": "#817660",
+                        "inverse-on-surface": "#f0f1f1",
+                        "on-tertiary-fixed-variant": "#474646",
+                        "background": "#f9f9f9",
+                        "surface-variant": "#e2e2e2",
+                        "primary-container": "#f5bd18",
+                        "outline-variant": "#d3c5ac",
+                        "on-tertiary-fixed": "#1c1b1b",
+                        "tertiary-container": "#c7c5c4",
+                        "on-secondary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-background": "#1a1c1c",
+                        "tertiary-fixed-dim": "#c8c6c5",
+                        "secondary-fixed-dim": "#c6c6c6",
+                        "on-secondary-fixed-variant": "#474747",
+                        "on-primary-fixed": "#251a00",
+                        "tertiary-fixed": "#e5e2e1",
+                        "on-primary-container": "#684e00",
+                        "on-primary-fixed-variant": "#5a4300",
+                        "on-primary": "#ffffff",
+                        "on-secondary-container": "#646464",
+                        "surface": "#f9f9f9"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "stack-sm": "12px",
+                        "stack-md": "24px",
+                        "gutter": "24px",
+                        "container-max": "1280px",
+                        "base": "8px",
+                        "stack-lg": "48px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "48px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Outfit"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Outfit"],
+                        "label-lg": ["Outfit"],
+                        "headline-lg-mobile": ["Outfit"],
+                        "headline-lg": ["Outfit"],
+                        "body-lg": ["Inter"],
+                        "headline-sm": ["Outfit"],
+                        "display-lg": ["Outfit"]
+                    },
+                    "fontSize": {
+                        "label-md": ["12px", {"lineHeight": "1", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "label-lg": ["14px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "headline-lg": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-sm": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "display-lg": ["72px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="font-body-md text-on-surface">
+<!-- Side Navigation Bar -->
+<aside class="h-full w-64 fixed left-0 top-0 border-r border-white/10 bg-[#000000] flex flex-col h-screen py-8 z-50">
+<div class="px-6 mb-12">
+<h1 class="font-headline-md text-headline-md font-bold text-primary-container">OSTA PRO</h1>
+<p class="text-on-surface-variant text-xs font-label-md uppercase tracking-widest mt-1">Expert Contractor</p>
+</div>
+<nav class="flex-1 space-y-2">
+<a class="flex items-center px-6 py-3 space-x-4 text-primary-container border-r-2 border-primary-container bg-white/5 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-lg text-label-lg uppercase tracking-wider">Dashboard</span>
+</a>
+<a class="flex items-center px-6 py-3 space-x-4 text-on-surface-variant hover:text-white hover:bg-white/5 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="assignment">assignment</span>
+<span class="font-label-lg text-label-lg uppercase tracking-wider">Service Requests</span>
+</a>
+<a class="flex items-center px-6 py-3 space-x-4 text-on-surface-variant hover:text-white hover:bg-white/5 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="font-label-lg text-label-lg uppercase tracking-wider">Earnings</span>
+</a>
+<a class="flex items-center px-6 py-3 space-x-4 text-on-surface-variant hover:text-white hover:bg-white/5 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="star">star</span>
+<span class="font-label-lg text-label-lg uppercase tracking-wider">Ratings</span>
+</a>
+<a class="flex items-center px-6 py-3 space-x-4 text-on-surface-variant hover:text-white hover:bg-white/5 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+<span class="font-label-lg text-label-lg uppercase tracking-wider">Schedule</span>
+</a>
+</nav>
+<div class="px-6 mt-auto space-y-4">
+<div class="p-4 bg-white/5 border border-white/10">
+<p class="text-[10px] text-primary-container font-bold uppercase mb-2">Status</p>
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+<span class="text-white text-sm font-label-lg">Available for Hire</span>
+</div>
+</div>
+<div class="space-y-1">
+<a class="flex items-center py-2 space-x-4 text-on-surface-variant hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="settings">settings</span>
+<span class="font-label-lg text-label-lg uppercase">Settings</span>
+</a>
+<a class="flex items-center py-2 space-x-4 text-on-surface-variant hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="logout">logout</span>
+<span class="font-label-lg text-label-lg uppercase">Logout</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Content Wrapper -->
+<main class="ml-64 min-h-screen">
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] z-40 backdrop-blur-xl bg-[#000000]/80 border-b border-white/10 flex justify-between items-center px-8 h-16">
+<div class="flex items-center bg-[#121212] border border-white/20 px-4 py-1.5 w-96">
+<span class="material-symbols-outlined text-on-surface-variant mr-3" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-white placeholder-on-surface-variant text-sm w-full" placeholder="Search orders or clients..." type="text"/>
+</div>
+<div class="flex items-center space-x-6">
+<button class="bg-white text-black font-label-lg text-label-lg px-6 py-2 sticker-shadow active:translate-x-1 active:translate-y-1 active:shadow-none transition-all uppercase">
+                    New Request
+                </button>
+<div class="flex items-center space-x-4 text-white">
+<button class="relative hover:text-primary-container transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute -top-1 -right-1 w-2 h-2 bg-primary-container rounded-full"></span>
+</button>
+<button class="hover:text-primary-container transition-colors">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+<div class="w-10 h-10 bg-[#121212] border border-white/20 p-0.5">
+<img class="w-full h-full object-cover" data-alt="A close-up professional portrait of a skilled contractor in his 40s. He has a warm, confident expression and is wearing high-quality work attire. The lighting is crisp and detailed, emphasizing his expertise and reliable nature in an industrial yet professional workspace background. High-contrast premium aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4ANx8kDpZaN5zxa16GQ57bzFL4TnpOhgNnMe89esWC-kgp_Q3j2Ggskj2NryGhNWD0lGFYjM-QP41cgmFi5VC4a_bZRHxHoVbH9XgtkWgtESASKHvQ4qFlRN8-HjBtieSTEkFWUyDMMuKL0gZxn_mAvH8DksfBS5x4q3V7XJt_EUEph--9VTWxNzoJIUfodSPwc1xoRHbIqcSPc6ii8mxaRu6YTMcP-tKQCMBbi1YY2NR93wGwFYJsBLp8jHFpa25E-TCfHT2FoQ"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Page Content -->
+<div class="pt-32 px-12 pb-12">
+<!-- Welcome Hero Bento Section -->
+<section class="grid grid-cols-12 gap-gutter mb-stack-lg">
+<div class="col-span-8 relative group">
+<div class="obsidian-card p-12 h-[420px] flex flex-col justify-end overflow-hidden relative">
+<!-- Background Texture Image -->
+<div class="absolute inset-0 opacity-40 group-hover:scale-105 transition-transform duration-700">
+<img alt="OSTA Dashboard View" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAn41w89vO7Yi6yF-Gf-pmKuhQCEfkcqr3S3tev99C2UnYXS889CoEzElidzG6DNKjFHkP6OxLQZfw1Eo3QUXWgR2r5WbZ5MAUyYgJHQKnYTN7IWdZvtxAzctH799i5zxiNtn4R31Ahsnw54K1PRnZzkTHU3xylSUczCJ6mlWQYpO6CMHm8G2Q7KevVYS0i6eki5qa6fIvrqZvwx0IrNmtee4SwOFRVpfdrHnHjMHpGH5MiYSyIH-t9ojamUPTUviEJAHVu0lxremY"/>
+</div>
+<div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
+<div class="relative z-10">
+<h2 class="font-display-lg text-display-lg text-white mb-4">WELCOME BACK, <span class="text-primary-container">OSAMA</span></h2>
+<p class="text-white/70 font-body-lg text-body-lg max-w-xl mb-8">Ready to tackle the next big project? Your expertise is in high demand today. Browse active service requests and start earning.</p>
+<button class="bg-primary-container text-black font-label-lg text-label-lg px-10 py-4 sticker-shadow hover:bg-white transition-all uppercase inline-flex items-center gap-3">
+                                Browse Jobs
+                                <span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<div class="col-span-4 flex flex-col gap-gutter">
+<div class="obsidian-card p-8 flex-1 flex flex-col justify-between">
+<div>
+<span class="bg-primary-container text-black text-[10px] font-black px-2 py-0.5 uppercase">Featured Status</span>
+<h3 class="text-white font-headline-sm text-headline-sm mt-4">Profile Visibility: High</h3>
+<p class="text-white/50 text-sm mt-2">You're appearing in 85% of local searches this week.</p>
+</div>
+<div class="flex items-center gap-2 text-primary-container">
+<span class="material-symbols-outlined" data-icon="trending_up">trending_up</span>
+<span class="font-label-md">+12% from last month</span>
+</div>
+</div>
+<div class="obsidian-card p-8 flex-1 flex flex-col justify-between border-primary-container/30">
+<div>
+<h3 class="text-white font-headline-sm text-headline-sm">Verify Identity</h3>
+<p class="text-white/50 text-sm mt-2">Complete your profile to unlock premium enterprise contracts.</p>
+</div>
+<a class="text-primary-container font-label-lg text-label-lg uppercase flex items-center gap-2 hover:gap-4 transition-all" href="#">
+                            Complete Now
+                            <span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</a>
+</div>
+</div>
+</section>
+<!-- Quick Stats Row -->
+<section class="grid grid-cols-4 gap-gutter mb-stack-lg">
+<!-- Free Trial -->
+<div class="obsidian-card p-8 relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-24 h-24 bg-primary-container/10 blur-3xl rounded-full"></div>
+<div class="flex justify-between items-start mb-6">
+<span class="material-symbols-outlined text-primary-container" data-icon="timer">timer</span>
+<span class="text-white/20 font-black text-4xl">01</span>
+</div>
+<p class="text-on-surface-variant font-label-lg uppercase mb-1">Free Trial</p>
+<div class="flex items-baseline gap-2">
+<span class="text-white font-headline-md text-headline-md">26</span>
+<span class="text-white/40 font-label-md uppercase">Days Left</span>
+</div>
+</div>
+<!-- Incoming Jobs -->
+<div class="obsidian-card p-8 group">
+<div class="flex justify-between items-start mb-6">
+<span class="material-symbols-outlined text-white/50" data-icon="inbox">inbox</span>
+<span class="text-white/20 font-black text-4xl">02</span>
+</div>
+<p class="text-on-surface-variant font-label-lg uppercase mb-1">Incoming Jobs</p>
+<span class="text-white font-headline-md text-headline-md">0</span>
+</div>
+<!-- Active Jobs -->
+<div class="obsidian-card p-8 group">
+<div class="flex justify-between items-start mb-6">
+<span class="material-symbols-outlined text-white/50" data-icon="bolt">bolt</span>
+<span class="text-white/20 font-black text-4xl">03</span>
+</div>
+<p class="text-on-surface-variant font-label-lg uppercase mb-1">Active Jobs</p>
+<span class="text-white font-headline-md text-headline-md">0</span>
+</div>
+<!-- Monthly Earnings -->
+<div class="obsidian-card p-8 group border-primary-container/40">
+<div class="flex justify-between items-start mb-6">
+<span class="material-symbols-outlined text-primary-container" data-icon="account_balance_wallet" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
+<span class="text-white/20 font-black text-4xl">04</span>
+</div>
+<p class="text-on-surface-variant font-label-lg uppercase mb-1">Monthly Earnings</p>
+<div class="flex items-baseline gap-2">
+<span class="text-white font-headline-md text-headline-md">EGP 0</span>
+<span class="text-primary-container font-label-md uppercase">This Month</span>
+</div>
+</div>
+</section>
+<!-- Live Job Queue -->
+<section>
+<div class="flex justify-between items-end mb-8">
+<div>
+<h3 class="text-black font-headline-lg text-headline-lg uppercase leading-none">Live Job Queue</h3>
+<p class="text-black/60 font-label-lg uppercase mt-2">Real-time requests in your current service area</p>
+</div>
+<div class="flex gap-4">
+<button class="px-6 py-2 border-2 border-black text-black font-label-lg uppercase hover:bg-black hover:text-white transition-all">Filter</button>
+<button class="px-6 py-2 bg-black text-white font-label-lg uppercase sticker-shadow">Map View</button>
+</div>
+</div>
+<div class="obsidian-card job-queue-empty min-h-[400px] flex flex-col items-center justify-center text-center p-12">
+<div class="w-24 h-24 rounded-full border border-white/10 flex items-center justify-center mb-8 relative">
+<span class="material-symbols-outlined text-white/20 text-5xl" data-icon="radar">radar</span>
+<div class="absolute inset-0 border-2 border-primary-container/20 rounded-full animate-ping"></div>
+</div>
+<h4 class="text-white font-headline-sm text-headline-sm mb-4">Searching for opportunities...</h4>
+<p class="text-white/40 max-w-md mx-auto font-body-md text-body-md mb-8">
+                        No new jobs in your area right now. Make sure your notifications are on to get alerted as soon as a request matches your profile.
+                    </p>
+<div class="flex gap-4">
+<button class="px-8 py-3 bg-[#121212] text-white border border-white/20 font-label-lg uppercase hover:border-primary-container transition-colors">
+                            Change Area
+                        </button>
+<button class="px-8 py-3 bg-white text-black font-label-lg uppercase sticker-shadow">
+                            Update Skills
+                        </button>
+</div>
+</div>
+</section>
+</div>
+<!-- Footer / Technical Support -->
+<footer class="px-12 py-8 bg-black/10 flex justify-between items-center text-black/60 font-label-md uppercase border-t border-black/5">
+<div>© 2024 OSTA INDUSTRIAL PRO | ALL RIGHTS RESERVED</div>
+<div class="flex gap-8">
+<a class="hover:text-black transition-colors" href="#">Safety Protocols</a>
+<a class="hover:text-black transition-colors" href="#">Payment Terms</a>
+<a class="hover:text-black transition-colors" href="#">Support Center</a>
+</div>
+</footer>
+</main>
+<!-- FAB for quick action (Contextual Suppression on Details/Transactional but here on Dashboard) -->
+<button class="fixed bottom-8 right-8 w-16 h-16 bg-white text-black flex items-center justify-center sticker-shadow hover:-translate-y-1 transition-all z-50 group">
+<span class="material-symbols-outlined text-3xl group-hover:rotate-90 transition-transform" data-icon="add">add</span>
+</button>
+<script>
+        // Simple hover effect for the stats cards
+        document.querySelectorAll('.obsidian-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                if(!card.classList.contains('job-queue-empty')) {
+                    card.style.borderColor = '#f5bd18';
+                }
+            });
+            card.addEventListener('mouseleave', () => {
+                if(!card.classList.contains('job-queue-empty')) {
+                    card.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                }
+            });
+        });
+    </script>
+</body></html>

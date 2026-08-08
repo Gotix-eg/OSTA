@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>OSTA | Worker Earnings</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Outfit:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-error-container": "#93000a",
+                    "primary": "#775a00",
+                    "on-surface-variant": "#4f4633",
+                    "error": "#ba1a1a",
+                    "surface-tint": "#775a00",
+                    "on-tertiary-container": "#525151",
+                    "surface-container-highest": "#e2e2e2",
+                    "surface-container": "#eeeeee",
+                    "on-error": "#ffffff",
+                    "secondary-fixed": "#e2e2e2",
+                    "on-secondary-fixed": "#1b1b1b",
+                    "surface-container-low": "#f3f3f4",
+                    "on-surface": "#1a1c1c",
+                    "surface-bright": "#f9f9f9",
+                    "secondary": "#5e5e5e",
+                    "surface-container-high": "#e8e8e8",
+                    "tertiary": "#5f5e5e",
+                    "surface-dim": "#dadada",
+                    "primary-fixed": "#ffdf9a",
+                    "inverse-primary": "#f6be1a",
+                    "inverse-surface": "#2f3131",
+                    "secondary-container": "#e2e2e2",
+                    "primary-fixed-dim": "#f6be1a",
+                    "outline": "#817660",
+                    "inverse-on-surface": "#f0f1f1",
+                    "on-tertiary-fixed-variant": "#474646",
+                    "background": "#f9f9f9",
+                    "surface-variant": "#e2e2e2",
+                    "primary-container": "#f5bd18",
+                    "outline-variant": "#d3c5ac",
+                    "on-tertiary-fixed": "#1c1b1b",
+                    "tertiary-container": "#c7c5c4",
+                    "on-secondary": "#ffffff",
+                    "error-container": "#ffdad6",
+                    "on-tertiary": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-background": "#1a1c1c",
+                    "tertiary-fixed-dim": "#c8c6c5",
+                    "secondary-fixed-dim": "#c6c6c6",
+                    "on-secondary-fixed-variant": "#474747",
+                    "on-primary-fixed": "#251a00",
+                    "tertiary-fixed": "#e5e2e1",
+                    "on-primary-container": "#684e00",
+                    "on-primary-fixed-variant": "#5a4300",
+                    "on-primary": "#ffffff",
+                    "on-secondary-container": "#646464",
+                    "surface": "#f9f9f9"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "stack-sm": "12px",
+                    "stack-md": "24px",
+                    "gutter": "24px",
+                    "container-max": "1280px",
+                    "base": "8px",
+                    "stack-lg": "48px",
+                    "margin-mobile": "16px",
+                    "margin-desktop": "48px"
+            },
+            "fontFamily": {
+                    "label-md": ["Outfit"],
+                    "body-md": ["Inter"],
+                    "headline-md": ["Outfit"],
+                    "label-lg": ["Outfit"],
+                    "headline-lg-mobile": ["Outfit"],
+                    "headline-lg": ["Outfit"],
+                    "body-lg": ["Inter"],
+                    "headline-sm": ["Outfit"],
+                    "display-lg": ["Outfit"]
+            },
+            "fontSize": {
+                    "label-md": ["12px", {"lineHeight": "1", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "label-lg": ["14px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "headline-lg": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-sm": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "display-lg": ["72px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #f5bd18; /* OSTA Gold Flood Background */
+            overflow-x: hidden;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .obsidian-card {
+            background-color: #000000;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .structural-depth {
+            box-shadow: 4px 4px 0px #000000;
+        }
+        .money-stream-empty {
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(255, 255, 255, 0.03) 10px,
+                rgba(255, 255, 255, 0.03) 20px
+            );
+        }
+    </style>
+</head>
+<body class="font-body-md text-on-background">
+<!-- TopAppBar -->
+<header class="bg-black/80 backdrop-blur-md text-primary fixed top-0 w-full z-50 border-b border-white/10 flex justify-between items-center h-16 px-margin-mobile">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-white/80 active:scale-95 duration-200">menu</span>
+<h1 class="font-display-lg text-headline-sm text-primary font-bold tracking-tighter uppercase">OSTA</h1>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-white/80 active:scale-95 duration-200">notifications</span>
+<div class="w-8 h-8 rounded-full border border-primary/30 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional studio portrait of a high-end service worker wearing a clean dark uniform. The lighting is dramatic and moody with strong golden highlights on the profile, set against a dark obsidian background. The aesthetic is premium, industrial, and sharp, reflecting the OSTA brand identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBegcdmeeZAqezGg0-ryrfp8mRsi_3pB3aXZFBk9F9m-8YtHU4VZeHB8R-s1HiviDWFjBPHtZRCF-iMKzhbqB7HcSfnqMymNB7ptTKeKo2ITc-uZXEgtc6cm1g5oHbDV2gVOWKDXtlc7VNB-MvNbXc84f6wcx8rGYHweZTJBMGsr7A0ONYbjjQGFlky_tPKCcxW5iYNuASkl4GlLoLN_xaBaVYmGq47AZJYnkcy5Ja9YROhnOZ-b3XH4GHsg3R8Ev9v0bkvcmKyOR4"/>
+</div>
+</div>
+</header>
+<main class="pt-24 pb-32 px-margin-mobile max-w-md mx-auto space-y-stack-md">
+<!-- Header Section -->
+<section class="space-y-2">
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-black tracking-tight">Earnings</h2>
+<p class="font-body-md text-black/70 font-medium">Your financial overview and payment history.</p>
+</section>
+<!-- Main Balance Card -->
+<div class="obsidian-card p-6 structural-depth relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-32 h-32 opacity-10 pointer-events-none translate-x-12 -translate-y-12">
+<span class="material-symbols-outlined text-[120px] text-primary">payments</span>
+</div>
+<div class="relative z-10">
+<p class="font-label-lg text-label-lg text-white/60 uppercase">Available Balance</p>
+<div class="flex items-baseline gap-2 mt-2">
+<span class="font-display-lg text-4xl text-primary font-extrabold">$</span>
+<span class="font-display-lg text-6xl text-white font-extrabold tracking-tighter">4,280</span>
+</div>
+<div class="mt-8 grid grid-cols-2 gap-4">
+<button class="bg-white text-black font-label-lg text-label-lg py-4 px-4 active:scale-95 transition-transform structural-depth">
+                        WITHDRAW
+                    </button>
+<button class="border-2 border-white/20 text-white font-label-lg text-label-lg py-4 px-4 active:scale-95 transition-transform">
+                        DETAILS
+                    </button>
+</div>
+</div>
+</div>
+<!-- Stacked Summary Grid -->
+<div class="grid grid-cols-2 gap-4">
+<!-- Weekly Earnings -->
+<div class="obsidian-card p-4 space-y-2">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">calendar_view_week</span>
+<span class="text-xs font-bold text-green-500 font-label-md">+12%</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-white/40 uppercase">This Week</p>
+<p class="font-headline-sm text-headline-sm text-white">$1,120</p>
+</div>
+</div>
+<!-- Monthly Earnings -->
+<div class="obsidian-card p-4 space-y-2">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">monitoring</span>
+<span class="text-xs font-bold text-primary font-label-md">Peak</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-white/40 uppercase">This Month</p>
+<p class="font-headline-sm text-headline-sm text-white">$8,450</p>
+</div>
+</div>
+</div>
+<!-- Featured Reference Image Contextual Card -->
+<div class="obsidian-card p-0 overflow-hidden">
+<div class="h-32 w-full relative">
+<div class="w-full h-full bg-cover bg-center grayscale contrast-125" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCFTxCHtm4jLTvJEL6jcKUiTzf1mxAZGmIyKazH3M3oqpKoPr09wgLcEjeYuMx2HcXdWLg258lwRZD0OtENm443ykhJbQ3_kRKI8aEGgRJSMPrqPer6C0wbmbKZGQour-GQAdkR6-eVMYKwifIfK1mT4REWAR8oCzfvV4DyYlrd_Jlce3lzljM_4gVS4Id32x_TdXXMgneoLkyhyc2WE2pKhG2JYjEzeWcz9ne2f1UZ4ddyhR6SiQhFJGLln_SdcSpqRqSfv3k5pak')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
+<div class="absolute bottom-4 left-4">
+<span class="bg-primary text-black px-2 py-1 text-[10px] font-bold uppercase tracking-widest">Premium Tier</span>
+</div>
+</div>
+<div class="p-4 border-t border-white/10">
+<p class="font-body-md text-white/80 leading-snug">Your profile is currently outperforming 85% of other specialists in your region.</p>
+</div>
+</div>
+<!-- Money Stream Section -->
+<section class="space-y-4">
+<div class="flex justify-between items-end">
+<h3 class="font-headline-sm text-headline-sm text-black tracking-tight">Money Stream</h3>
+<button class="font-label-md text-label-md text-black underline underline-offset-4 font-bold">VIEW ALL</button>
+</div>
+<!-- Empty State -->
+<div class="obsidian-card p-12 flex flex-col items-center justify-center text-center space-y-4 money-stream-empty">
+<div class="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center">
+<span class="material-symbols-outlined text-white/20 text-3xl">history_toggle_off</span>
+</div>
+<div class="space-y-1">
+<p class="font-label-lg text-label-lg text-white">No recent transactions</p>
+<p class="font-body-md text-white/40 text-sm">New earnings will appear here as they are processed.</p>
+</div>
+</div>
+</section>
+<!-- Quick Insight List -->
+<div class="space-y-3">
+<div class="flex items-center gap-4 p-4 bg-black/5 border border-black/10">
+<span class="material-symbols-outlined text-black">verified</span>
+<div>
+<p class="font-label-lg text-label-lg text-black uppercase">Verified Status</p>
+<p class="font-body-md text-black/60 text-sm">Payouts are ready for instant transfer.</p>
+</div>
+</div>
+<div class="flex items-center gap-4 p-4 bg-black/5 border border-black/10">
+<span class="material-symbols-outlined text-black">receipt_long</span>
+<div>
+<p class="font-label-lg text-label-lg text-black uppercase">Tax Documents</p>
+<p class="font-body-md text-black/60 text-sm">2024 Q3 summary is now available.</p>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="bg-black/80 backdrop-blur-md text-primary fixed bottom-0 w-full z-50 border-t border-white/10 flex justify-around items-center h-20 pb-safe px-4">
+<a class="flex flex-col items-center justify-center text-white/40 hover:text-primary/80 transition-transform active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-label-md text-label-md">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-white/40 hover:text-primary/80 transition-transform active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="engineering">engineering</span>
+<span class="font-label-md text-label-md">Requests</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary font-bold transition-transform active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="payments" style="font-variation-settings: 'FILL' 1;">payments</span>
+<span class="font-label-md text-label-md">Earnings</span>
+</a>
+<a class="flex flex-col items-center justify-center text-white/40 hover:text-primary/80 transition-transform active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-md text-label-md">Profile</span>
+</a>
+</nav>
+<script>
+        // Simple Micro-interactions
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('mousedown', () => {
+                button.classList.add('scale-95');
+            });
+            button.addEventListener('mouseup', () => {
+                button.classList.remove('scale-95');
+            });
+            button.addEventListener('mouseleave', () => {
+                button.classList.remove('scale-95');
+            });
+        });
+
+        // Horizontal scroll reveal effect for summary cards
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('opacity-100', 'translate-y-0');
+                    entry.target.classList.remove('opacity-0', 'translate-y-4');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.obsidian-card').forEach(card => {
+            card.classList.add('transition-all', 'duration-500', 'opacity-0', 'translate-y-4');
+            observer.observe(card);
+        });
+    </script>
+</body></html>

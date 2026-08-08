@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>OSTA - Client Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&amp;family=Inter:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed": "#ffdf9a",
+                        "surface-dim": "#dadada",
+                        "on-tertiary-container": "#525151",
+                        "background": "#f9f9f9",
+                        "on-primary-container": "#684e00",
+                        "error": "#ba1a1a",
+                        "primary-container": "#f5bd18",
+                        "on-secondary-fixed": "#1b1b1b",
+                        "secondary-container": "#e2e2e2",
+                        "secondary-fixed-dim": "#c6c6c6",
+                        "error-container": "#ffdad6",
+                        "on-primary": "#ffffff",
+                        "tertiary": "#5f5e5e",
+                        "surface": "#f9f9f9",
+                        "inverse-primary": "#f6be1a",
+                        "secondary": "#5e5e5e",
+                        "on-secondary-fixed-variant": "#474747",
+                        "primary": "#775a00",
+                        "on-error": "#ffffff",
+                        "secondary-fixed": "#e2e2e2",
+                        "surface-container-low": "#f3f3f4",
+                        "surface-container-high": "#e8e8e8",
+                        "on-surface": "#1a1c1c",
+                        "surface-container": "#eeeeee",
+                        "inverse-surface": "#2f3131",
+                        "on-secondary-container": "#646464",
+                        "on-secondary": "#ffffff",
+                        "surface-bright": "#f9f9f9",
+                        "outline-variant": "#d3c5ac",
+                        "on-surface-variant": "#4f4633",
+                        "inverse-on-surface": "#f0f1f1",
+                        "on-primary-fixed-variant": "#5a4300",
+                        "surface-variant": "#e2e2e2",
+                        "on-background": "#1a1c1c",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed-dim": "#c8c6c5",
+                        "on-tertiary-fixed-variant": "#474646",
+                        "on-primary-fixed": "#251a00",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-highest": "#e2e2e2",
+                        "outline": "#817660",
+                        "surface-tint": "#775a00",
+                        "tertiary-container": "#c7c5c4",
+                        "tertiary-fixed": "#e5e2e1",
+                        "primary-fixed-dim": "#f6be1a",
+                        "on-tertiary-fixed": "#1c1b1b",
+                        "on-tertiary": "#ffffff",
+                        "osta-gold": "#F5BD18",
+                        "osta-obsidian": "#000000",
+                        "osta-surface": "#121212"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "stack-md": "24px",
+                        "margin-mobile": "16px",
+                        "stack-lg": "48px",
+                        "stack-sm": "12px",
+                        "gutter": "24px",
+                        "margin-desktop": "48px",
+                        "container-max": "1280px",
+                        "base": "8px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Outfit"],
+                        "body-lg": ["Inter"],
+                        "headline-md": ["Outfit"],
+                        "headline-lg-mobile": ["Outfit"],
+                        "label-lg": ["Outfit"],
+                        "label-md": ["Outfit"],
+                        "headline-sm": ["Outfit"],
+                        "body-md": ["Inter"],
+                        "display-lg": ["Outfit"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "label-lg": ["14px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "label-md": ["12px", {"lineHeight": "1", "fontWeight": "600"}],
+                        "headline-sm": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "display-lg": ["72px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-obsidian {
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+        }
+        .obsidian-card {
+            background-color: #000000;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .sticker-shadow {
+            box-shadow: 4px 4px 0px #000000;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #F5BD18;
+        }
+        body {
+            background-color: #F5BD18; /* The Yellow Void */
+        }
+    </style>
+</head>
+<body class="font-body-md text-osta-obsidian">
+<!-- Top App Bar -->
+<header class="fixed top-0 w-full z-50 glass-obsidian border-b border-white/10 flex justify-between items-center px-margin-mobile h-16">
+<div class="flex items-center gap-4">
+<button class="text-osta-gold active:scale-95 duration-100">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<img alt="OSTA Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzHmXL3SavrnhC23dDfsRkhFKUHMvisZMvnBGyHajrGSrwu3Lj1263zKrVy3FwQYkcDoBZmiZ1RkKePK-Yrev80oLGD-Yk7BCTLnIt1g2jUfDGMGFrKTx9oDsveHSz01lN0I4qb81Iv_ern9wowUQRy9AFGs8fAzJLCNr5NVZ4itVVFb5vVT2iwbK7o46NTlLis-KVBLN65lhmPDZm7HKYAT4AfIuy-WFMJsqzW45cxJtNUBnMS_vLHP9dFAKiYWcvQC5Js-8Ul5k"/>
+</div>
+<div class="flex items-center gap-4">
+<button class="relative text-white active:scale-95 duration-100">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-osta-gold rounded-full"></span>
+</button>
+<div class="w-10 h-10 rounded-full border border-osta-gold overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional close-up portrait of a Middle Eastern man with a neat beard, wearing a high-quality navy polo shirt. He has a friendly and trustworthy expression. The lighting is crisp and studio-quality against a clean, minimalist obsidian background, emphasizing a premium professional aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKxHzyY4agF_qDj0LwCjnCrgt2HxvRRBVvuc3oHv7mMTV9LyK5stkSehrqawky1daERP8vMH5QH3HJj2Tis-afBE1R7SQpyWxMlz-m6YPq6KtI8iNJKmu31csygrG37EetXo6COTjI9zNuEYp8uhOsbOPzwTN89S3suqc9hn8repvIkVVWHoChIeXSOlV8_38_lm_mcafrRRttynwjq_BqD3yo-bdfw5L4LmC-wDdboQgtS9MQyTXVFphACROJNgRe66gMeKPApK8"/>
+</div>
+</div>
+</header>
+<main class="pt-20 pb-28 px-margin-mobile min-h-screen">
+<!-- Welcome Section -->
+<section class="mb-stack-md text-osta-obsidian">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile font-extrabold tracking-tighter">أهلاً، أحمد</h1>
+<p class="font-body-md text-osta-obsidian/80">لوحة تحكم العميل | المنطقة النشطة</p>
+</section>
+<!-- Dashboard Stats Carousel -->
+<section class="flex gap-4 overflow-x-auto pb-4 custom-scrollbar mb-stack-md">
+<div class="obsidian-card min-w-[160px] p-4 flex flex-col gap-2">
+<span class="material-symbols-outlined text-osta-gold" data-icon="pending_actions">pending_actions</span>
+<span class="text-white/60 font-label-md text-label-md">طلبات نشطة</span>
+<span class="text-osta-gold font-headline-sm text-headline-sm">٠٢</span>
+</div>
+<div class="obsidian-card min-w-[160px] p-4 flex flex-col gap-2">
+<span class="material-symbols-outlined text-osta-gold" data-icon="account_balance_wallet">account_balance_wallet</span>
+<span class="text-white/60 font-label-md text-label-md">الرصيد</span>
+<span class="text-white font-headline-sm text-headline-sm">١,٤٥٠ ج.م</span>
+</div>
+<div class="obsidian-card min-w-[160px] p-4 flex flex-col gap-2">
+<span class="material-symbols-outlined text-osta-gold" data-icon="task_alt">task_alt</span>
+<span class="text-white/60 font-label-md text-label-md">مهام منتهية</span>
+<span class="text-osta-gold font-headline-sm text-headline-sm">١٤</span>
+</div>
+</section>
+<!-- Active Tracking Section -->
+<section class="mb-stack-md">
+<div class="obsidian-card p-margin-mobile relative overflow-hidden">
+<!-- Status Badge -->
+<div class="absolute top-0 left-0 bg-osta-gold text-osta-obsidian px-3 py-1 font-label-md text-label-md font-bold">
+                    نشط الآن
+                </div>
+<div class="mt-4 flex items-center justify-between">
+<div>
+<h3 class="text-white font-headline-sm text-headline-sm mb-1">خالد حافظ</h3>
+<p class="text-white/60 font-body-md text-body-md">فني كهرباء - في الطريق إليك</p>
+</div>
+<div class="flex gap-2">
+<button class="w-10 h-10 rounded-lg bg-white text-osta-obsidian flex items-center justify-center sticker-shadow active:translate-y-[2px]">
+<span class="material-symbols-outlined" data-icon="call">call</span>
+</button>
+<button class="w-10 h-10 rounded-lg bg-osta-gold text-osta-obsidian flex items-center justify-center sticker-shadow active:translate-y-[2px]">
+<span class="material-symbols-outlined" data-icon="chat">chat</span>
+</button>
+</div>
+</div>
+<!-- Progress Bar -->
+<div class="mt-6">
+<div class="h-2 w-full bg-white/10 rounded-full overflow-hidden">
+<div class="h-full bg-osta-gold w-3/4 rounded-full"></div>
+</div>
+<div class="flex justify-between mt-2 text-white/40 font-label-md text-label-md">
+<span>المنزل</span>
+<span>٥ دقائق متبقية</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Quick Actions Grid -->
+<section class="mb-stack-md">
+<h2 class="font-headline-sm text-headline-sm mb-4 font-bold border-r-4 border-osta-obsidian pr-2">إجراءات سريعة</h2>
+<div class="grid grid-cols-2 gap-4">
+<button class="obsidian-card p-6 flex flex-col items-center gap-3 active:scale-95 transition-transform">
+<div class="w-12 h-12 rounded-lg bg-osta-gold flex items-center justify-center">
+<span class="material-symbols-outlined text-osta-obsidian" data-icon="add_circle">add_circle</span>
+</div>
+<span class="text-white font-label-lg text-label-lg">طلب خدمة</span>
+</button>
+<button class="obsidian-card p-6 flex flex-col items-center gap-3 active:scale-95 transition-transform">
+<div class="w-12 h-12 rounded-lg bg-white/10 flex items-center justify-center border border-white/20">
+<span class="material-symbols-outlined text-white" data-icon="wallet">wallet</span>
+</div>
+<span class="text-white font-label-lg text-label-lg">المحفظة</span>
+</button>
+<button class="obsidian-card p-6 flex flex-col items-center gap-3 active:scale-95 transition-transform">
+<div class="w-12 h-12 rounded-lg bg-white/10 flex items-center justify-center border border-white/20">
+<span class="material-symbols-outlined text-white" data-icon="favorite">favorite</span>
+</div>
+<span class="text-white font-label-lg text-label-lg">المفضلون</span>
+</button>
+<button class="obsidian-card p-6 flex flex-col items-center gap-3 active:scale-95 transition-transform">
+<div class="w-12 h-12 rounded-lg bg-white/10 flex items-center justify-center border border-white/20">
+<span class="material-symbols-outlined text-white" data-icon="mail">mail</span>
+</div>
+<span class="text-white font-label-lg text-label-lg">الرسائل</span>
+</button>
+</div>
+</section>
+<!-- Featured Pros -->
+<section class="mb-stack-md">
+<div class="flex justify-between items-end mb-4">
+<h2 class="font-headline-sm text-headline-sm font-bold border-r-4 border-osta-obsidian pr-2">الفنيون المفضلون</h2>
+<button class="text-osta-obsidian underline font-label-md text-label-md">مشاهدة الكل</button>
+</div>
+<div class="flex flex-col gap-3">
+<div class="obsidian-card p-4 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-white/10 overflow-hidden border border-osta-gold/30">
+<img class="w-full h-full object-cover" data-alt="A professional-looking plumber in his 40s, wearing clean industrial workwear with a small logo. He is holding a pipe wrench and smiling confidently. High-contrast lighting with a dark, textured workshop background that creates a gritty but professional atmosphere in line with a premium industrial brand." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDgjjk3q77bl8MDIWL_gEYBbSOoXwTeywCmvyl_w4l9MKOcED6p27GI9R3R4Bi08AjY4EM3yAm_VkcT6L_TWiGA4xQAZrFYUZxNFP9l1Raadrjn8JMhng1jts_Xb8avVS7wo82xYW60b7cYa-OpSV-eBnI00hHhtJPfKFqh6HbX75A_i2haMoDEp6rvU9r6HO2nKtZ8r80JCl466V3BElg3RVDILghQ_r061AmcXDu9ZtPxlhiFL5kswgqGEzECcUQW3Oc9beJRVmE"/>
+</div>
+<div>
+<h4 class="text-white font-bold">كريم داود</h4>
+<p class="text-white/40 text-sm">كهربائي منازل</p>
+</div>
+</div>
+<div class="flex items-center gap-1 bg-osta-gold px-2 py-1">
+<span class="text-osta-obsidian font-bold text-xs">٤.٩</span>
+<span class="material-symbols-outlined text-osta-obsidian text-xs" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<div class="obsidian-card p-4 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-white/10 overflow-hidden border border-osta-gold/30">
+<img class="w-full h-full object-cover" data-alt="A skilled HVAC technician inspecting a high-end air conditioning unit. He is focused and professional, wearing a grey utility vest over a black shirt. The setting is a modern industrial utility room with warm, dramatic lighting that highlights his expertise. The aesthetic is sharp, clean, and premium." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBX13aif_LW_k5QyltrcET6BNAdqDS5TwmsK1uXeiskj-sZQoSulzuHgZntcrvq1bzLU1Ug5uRv1R9dbhwpdLUOEwi8PE0G_N6RFM8OhMbJQLF-Yu3NnCcHSozp7jK9bIA-ZaXP0fxZgfqUSbgOiz5kBQ5c-X2KMO69ZsN0FHjRM3dAc2_Tr2ZVExf1L4vI_wpxMX6gFkXBBKKx6p9C2-yTZadCBx68x0at-3QlZ43GFLIEcHQqOSu3-7XgdZ7urAe-sAOxX9vqxyE"/>
+</div>
+<div>
+<h4 class="text-white font-bold">أحمد محمد</h4>
+<p class="text-white/40 text-sm">فني تكييف</p>
+</div>
+</div>
+<div class="flex items-center gap-1 bg-osta-gold px-2 py-1">
+<span class="text-osta-obsidian font-bold text-xs">٤.٨</span>
+<span class="material-symbols-outlined text-osta-obsidian text-xs" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Security Banner -->
+<section class="mb-stack-lg">
+<div class="obsidian-card p-6 border-2 border-osta-gold/50 flex gap-4 items-center">
+<div class="w-14 h-14 bg-osta-gold flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-osta-obsidian text-3xl" data-icon="security">security</span>
+</div>
+<div>
+<h3 class="text-osta-gold font-bold mb-1">دفع محمي ومتابعة واضحة</h3>
+<p class="text-white/60 text-sm">كل طلب مربوط بحالة ومراجعة دعم فني على مدار الساعة.</p>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Nav Bar -->
+<nav class="fixed bottom-0 w-full z-50 glass-obsidian border-t border-white/10 flex justify-around items-center px-2 py-3">
+<a class="flex flex-col items-center justify-center text-osta-gold font-bold active:translate-y-[-2px] transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="home" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-label-md text-label-md">الرئيسية</span>
+</a>
+<a class="flex flex-col items-center justify-center text-white/60 hover:text-white active:translate-y-[-2px] transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="engineering">engineering</span>
+<span class="font-label-md text-label-md">الفنيون</span>
+</a>
+<a class="flex flex-col items-center justify-center text-white/60 hover:text-white active:translate-y-[-2px] transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="store">store</span>
+<span class="font-label-md text-label-md">المتاجر</span>
+</a>
+<a class="flex flex-col items-center justify-center text-white/60 hover:text-white active:translate-y-[-2px] transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-md text-label-md">الملف</span>
+</a>
+</nav>
+<!-- Floating Action Button (Optional Contextual) -->
+<div class="fixed bottom-24 left-6 z-40">
+<button class="w-16 h-16 bg-white text-osta-obsidian rounded-full flex items-center justify-center sticker-shadow active:scale-90 transition-all border-4 border-osta-obsidian">
+<span class="material-symbols-outlined text-3xl" data-icon="support_agent">support_agent</span>
+</button>
+</div>
+<script>
+        // Simple ripple-like effect on button click
+        document.querySelectorAll('button, a').forEach(elem => {
+            elem.addEventListener('mousedown', function(e) {
+                this.classList.add('opacity-70');
+                setTimeout(() => this.classList.remove('opacity-70'), 150);
+            });
+        });
+    </script>
+</body></html>

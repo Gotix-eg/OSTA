@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>OSTA PRO | Reputation Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Outfit:wght@600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .trust-badge-hover:hover {
+            box-shadow: 4px 4px 0px #F5BD18;
+            transform: translate(-2px, -2px);
+        }
+        .glass-obsidian {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+        }
+        .obsidian-card {
+            background: #000000;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .sticker-shadow {
+            box-shadow: 4px 4px 0px #000000;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f9f9f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #775a00;
+        }
+    </style>
+<!-- Injected Tailwind Config -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-error-container": "#93000a",
+                    "surface-dim": "#dadada",
+                    "surface-container-highest": "#e2e2e2",
+                    "surface-container-lowest": "#ffffff",
+                    "error": "#ba1a1a",
+                    "on-primary-fixed-variant": "#5a4300",
+                    "on-secondary": "#ffffff",
+                    "primary-fixed": "#ffdf9a",
+                    "on-surface": "#1a1c1c",
+                    "outline": "#817660",
+                    "tertiary-container": "#c7c5c4",
+                    "secondary-fixed": "#e2e2e2",
+                    "on-primary-fixed": "#251a00",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary-container": "#646464",
+                    "error-container": "#ffdad6",
+                    "on-tertiary-container": "#525151",
+                    "on-secondary-fixed": "#1b1b1b",
+                    "on-background": "#1a1c1c",
+                    "tertiary": "#5f5e5e",
+                    "surface-variant": "#e2e2e2",
+                    "on-surface-variant": "#4f4633",
+                    "on-tertiary-fixed": "#1c1b1b",
+                    "secondary-container": "#e2e2e2",
+                    "primary": "#775a00",
+                    "on-error": "#ffffff",
+                    "tertiary-fixed": "#e5e2e1",
+                    "surface-bright": "#f9f9f9",
+                    "on-secondary-fixed-variant": "#474747",
+                    "on-primary-container": "#684e00",
+                    "on-primary": "#ffffff",
+                    "surface-container": "#eeeeee",
+                    "inverse-surface": "#2f3131",
+                    "inverse-on-surface": "#f0f1f1",
+                    "surface-container-low": "#f3f3f4",
+                    "primary-container": "#f5bd18",
+                    "inverse-primary": "#f6be1a",
+                    "secondary": "#5e5e5e",
+                    "background": "#f9f9f9",
+                    "surface": "#f9f9f9",
+                    "secondary-fixed-dim": "#c6c6c6",
+                    "primary-fixed-dim": "#f6be1a",
+                    "tertiary-fixed-dim": "#c8c6c5",
+                    "surface-container-high": "#e8e8e8",
+                    "surface-tint": "#775a00",
+                    "outline-variant": "#d3c5ac",
+                    "on-tertiary-fixed-variant": "#474646"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "stack-lg": "48px",
+                    "margin-desktop": "48px",
+                    "stack-sm": "12px",
+                    "margin-mobile": "16px",
+                    "base": "8px",
+                    "gutter": "24px",
+                    "stack-md": "24px",
+                    "container-max": "1280px"
+            },
+            "fontFamily": {
+                    "label-md": ["Outfit"],
+                    "label-lg": ["Outfit"],
+                    "headline-lg-mobile": ["Outfit"],
+                    "headline-sm": ["Outfit"],
+                    "display-lg": ["Outfit"],
+                    "body-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-md": ["Outfit"],
+                    "headline-lg": ["Outfit"]
+            },
+            "fontSize": {
+                    "label-md": ["12px", {"lineHeight": "1", "fontWeight": "600"}],
+                    "label-lg": ["14px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "headline-sm": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "display-lg": ["72px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "headline-lg": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+</head>
+<body class="bg-primary-container text-on-surface font-body-md min-h-screen">
+<!-- Top Navigation Anchor (Shared Component Mapping) -->
+<header class="fixed top-0 left-0 w-full z-50 glass-obsidian border-b border-white/10 flex justify-between items-center px-margin-mobile md:px-margin-desktop h-20">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary-fixed-dim text-headline-md leading-none">menu</span>
+<h1 class="text-headline-md font-headline-md font-extrabold text-primary uppercase tracking-tighter">OSTA</h1>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-label-lg font-label-lg text-primary border-b-2 border-primary pb-1" href="#">HOME</a>
+<a class="text-label-lg font-label-lg text-on-surface-variant hover:text-primary transition-colors" href="#">REQUESTS</a>
+<a class="text-label-lg font-label-lg text-on-surface-variant hover:text-primary transition-colors" href="#">STORES</a>
+<a class="text-label-lg font-label-lg text-on-surface-variant hover:text-primary transition-colors" href="#">MARKET</a>
+</nav>
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full border border-primary/30 bg-center bg-cover" data-alt="A professional headshot of a master craftsman in a premium workshop setting. He is wearing high-end work gear with a subtle company logo. The background is slightly blurred showing organized tools and warm industrial lighting, reflecting a professional and authoritative brand image." style="background-image: url('https://www.gstatic.com/labs-code/stitch/stitch-placeholder-300x300.svg')">
+</div>
+</div>
+</header>
+<!-- Sidebar (Shared Component Mapping) -->
+<aside class="fixed left-0 top-0 h-full w-64 hidden md:flex flex-col gap-base py-stack-md bg-black border-r border-white/10 pt-24">
+<div class="px-6 mb-8">
+<h2 class="text-headline-sm font-headline-sm text-primary font-black">Professional Dashboard</h2>
+<p class="text-label-md font-label-md text-secondary">OSTA Premium Account</p>
+</div>
+<nav class="flex flex-col w-full">
+<a class="text-secondary px-6 py-3 flex items-center gap-4 hover:bg-white/5 transition-colors" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="text-label-lg font-label-lg">Home</span>
+</a>
+<a class="text-primary bg-surface-container-highest/10 border-l-4 border-primary px-6 py-3 flex items-center gap-4 transition-transform active:translate-x-1" href="#">
+<span class="material-symbols-outlined">star</span>
+<span class="text-label-lg font-label-lg">Ratings &amp; Trust</span>
+</a>
+<a class="text-secondary px-6 py-3 flex items-center gap-4 hover:bg-white/5 transition-colors" href="#">
+<span class="material-symbols-outlined">assignment</span>
+<span class="text-label-lg font-label-lg">My Requests</span>
+</a>
+<a class="text-secondary px-6 py-3 flex items-center gap-4 hover:bg-white/5 transition-colors" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="text-label-lg font-label-lg">Wallet</span>
+</a>
+</nav>
+</aside>
+<!-- Main Content Canvas -->
+<main class="md:ml-64 pt-24 pb-stack-lg px-margin-mobile md:px-margin-desktop">
+<div class="max-w-container-max mx-auto space-y-stack-lg">
+<!-- Hero Stats Grid -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- Main Rating Card -->
+<div class="md:col-span-8 obsidian-card p-stack-md flex flex-col justify-between min-h-[320px] relative overflow-hidden group">
+<div class="relative z-10">
+<div class="flex items-center gap-2 mb-2">
+<span class="text-primary-container font-bold tracking-widest text-label-lg uppercase">Global Reputation Score</span>
+<span class="h-[1px] flex-grow bg-white/10"></span>
+</div>
+<div class="flex items-baseline gap-4">
+<h3 class="text-display-lg font-display-lg text-white">4.9</h3>
+<span class="text-headline-md font-headline-md text-white/40">/ 5.0</span>
+</div>
+<div class="flex gap-1 mt-2 mb-8">
+<span class="material-symbols-outlined text-primary-container" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary-container" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary-container" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary-container" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary-container" style="font-variation-settings: 'FILL' 1;">star_half</span>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-stack-md relative z-10">
+<div>
+<p class="text-label-md font-label-md text-secondary uppercase mb-1">Total Reviews</p>
+<p class="text-headline-sm font-headline-sm text-white">1,284</p>
+</div>
+<div>
+<p class="text-label-md font-label-md text-secondary uppercase mb-1">Repeat Clients</p>
+<p class="text-headline-sm font-headline-sm text-white">82%</p>
+</div>
+<div>
+<p class="text-label-md font-label-md text-secondary uppercase mb-1">Response Rate</p>
+<p class="text-headline-sm font-headline-sm text-white">99%</p>
+</div>
+</div>
+<div class="absolute right-[-40px] top-[-40px] opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-[240px] text-white" style="font-variation-settings: 'wght' 700;">verified</span>
+</div>
+</div>
+<!-- Trust Marks Section -->
+<div class="md:col-span-4 flex flex-col gap-gutter">
+<h4 class="text-label-lg font-label-lg text-on-surface uppercase tracking-widest border-l-4 border-black pl-3 h-fit">Trust Marks</h4>
+<!-- Badge 1 -->
+<div class="obsidian-card p-4 flex items-center gap-4 trust-badge-hover transition-all cursor-default">
+<div class="w-12 h-12 bg-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-black text-headline-sm">verified_user</span>
+</div>
+<div>
+<p class="text-label-lg font-label-lg text-white">Master Verified</p>
+<p class="text-body-md text-secondary text-xs">Credentials audited by OSTA</p>
+</div>
+</div>
+<!-- Badge 2 -->
+<div class="obsidian-card p-4 flex items-center gap-4 trust-badge-hover transition-all cursor-default">
+<div class="w-12 h-12 bg-white flex items-center justify-center">
+<span class="material-symbols-outlined text-black text-headline-sm">bolt</span>
+</div>
+<div>
+<p class="text-label-lg font-label-lg text-white">Fast Responder</p>
+<p class="text-body-md text-secondary text-xs">Average response: 4 mins</p>
+</div>
+</div>
+<!-- Badge 3 -->
+<div class="obsidian-card p-4 flex items-center gap-4 trust-badge-hover transition-all cursor-default">
+<div class="w-12 h-12 bg-tertiary flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-headline-sm">workspace_premium</span>
+</div>
+<div>
+<p class="text-label-lg font-label-lg text-white">Elite Pro</p>
+<p class="text-body-md text-secondary text-xs">Top 1% service ranking</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Bento Content: Reviews & Analytics -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Recent Reviews Feed -->
+<div class="lg:col-span-8 space-y-stack-md">
+<div class="flex justify-between items-end">
+<h4 class="text-headline-sm font-headline-sm text-black">Client Feedback</h4>
+<button class="bg-black text-white px-6 py-2 text-label-lg font-label-lg sticker-shadow hover:translate-x-1 transition-transform">FILTER BY DATE</button>
+</div>
+<!-- Review Item 1 -->
+<div class="obsidian-card p-stack-md group hover:border-primary-container transition-colors">
+<div class="flex justify-between items-start mb-4">
+<div class="flex gap-4">
+<div class="w-12 h-12 bg-neutral-800 bg-center bg-cover" data-alt="Close up of a luxury kitchen countertop with high-end finishes, reflecting the premium nature of the service performed. Bright architectural lighting and minimalist aesthetic consistent with the OSTA brand." style="background-image: url('https://www.gstatic.com/labs-code/stitch/stitch-placeholder-300x300.svg')">
+</div>
+<div>
+<h5 class="text-white font-bold">Jonathan Vance</h5>
+<p class="text-primary-container text-xs font-bold uppercase">Service: Custom Cabinetry Install</p>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<div class="flex gap-1">
+<span class="material-symbols-outlined text-primary-container text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary-container text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary-container text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary-container text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary-container text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="text-secondary text-xs mt-1">2 days ago</p>
+</div>
+</div>
+<p class="text-body-md text-surface-container-highest leading-relaxed italic">
+                            "The attention to detail was exceptional. OSTA Pro delivered exactly what we discussed. Clean, professional, and the finish is truly high-end. Would recommend to anyone looking for artisan quality work."
+                        </p>
+<div class="mt-4 flex gap-2">
+<span class="bg-white/5 border border-white/10 px-3 py-1 text-[10px] text-white/50 uppercase tracking-widest font-bold">Verified Project</span>
+<span class="bg-white/5 border border-white/10 px-3 py-1 text-[10px] text-white/50 uppercase tracking-widest font-bold">Repeat Client</span>
+</div>
+</div>
+<!-- Review Item 2 -->
+<div class="obsidian-card p-stack-md group hover:border-primary-container transition-colors">
+<div class="flex justify-between items-start mb-4">
+<div class="flex gap-4">
+<div class="w-12 h-12 bg-neutral-800 bg-center bg-cover" data-alt="Interior of a modern high-voltage electrical panel with meticulously organized wiring. The lighting is crisp and cool, highlighting the precision and professionalism of the trade work, fitting the OSTA industrial premium theme." style="background-image: url('https://www.gstatic.com/labs-code/stitch/stitch-placeholder-300x300.svg')">
+</div>
+<div>
+<h5 class="text-white font-bold">Sarah Jenkins</h5>
+<p class="text-primary-container text-xs font-bold uppercase">Service: Smart Home Integration</p>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<div class="flex gap-1">
+<span class="material-symbols-outlined text-primary-container text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary-container text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary-container text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary-container text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary-container text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="text-secondary text-xs mt-1">1 week ago</p>
+</div>
+</div>
+<p class="text-body-md text-surface-container-highest leading-relaxed italic">
+                            "Excellent communication throughout. They identified a few safety issues with our existing wiring and fixed them immediately. The technical knowledge is clearly superior to other contractors we've used."
+                        </p>
+<div class="mt-4 flex gap-2">
+<span class="bg-white/5 border border-white/10 px-3 py-1 text-[10px] text-white/50 uppercase tracking-widest font-bold">Emergency Service</span>
+</div>
+</div>
+</div>
+<!-- Secondary Column: Reputation Insights -->
+<div class="lg:col-span-4 space-y-gutter">
+<div class="bg-black p-stack-md border border-white/10">
+<h4 class="text-label-lg font-label-lg text-primary uppercase mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined">trending_up</span> Reputation Growth
+                        </h4>
+<div class="space-y-6">
+<div>
+<div class="flex justify-between text-xs text-white uppercase mb-2">
+<span>Punctuality</span>
+<span>4.9</span>
+</div>
+<div class="h-1 bg-white/10 w-full overflow-hidden">
+<div class="h-full bg-primary-container" style="width: 98%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-xs text-white uppercase mb-2">
+<span>Communication</span>
+<span>5.0</span>
+</div>
+<div class="h-1 bg-white/10 w-full overflow-hidden">
+<div class="h-full bg-primary-container" style="width: 100%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-xs text-white uppercase mb-2">
+<span>Work Quality</span>
+<span>4.8</span>
+</div>
+<div class="h-1 bg-white/10 w-full overflow-hidden">
+<div class="h-full bg-primary-container" style="width: 96%"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="relative group cursor-pointer overflow-hidden border border-black p-stack-md h-64 bg-white sticker-shadow hover:translate-y-[-4px] transition-transform">
+<div class="relative z-10">
+<p class="text-label-lg font-label-lg text-black font-black uppercase">Share Your Success</p>
+<h5 class="text-headline-sm font-headline-sm text-black leading-tight mt-2">Generate Your Annual Pro Report</h5>
+<p class="text-body-md text-black/60 mt-4">Download a certified PDF of your reviews and trust marks for offline clients.</p>
+<button class="mt-8 flex items-center gap-2 text-label-lg font-bold">
+                                GET STARTED <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+<div class="absolute bottom-[-20px] right-[-20px] opacity-10">
+<span class="material-symbols-outlined text-[120px] text-black">description</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation (Shared Component Mapping - Hidden on Desktop) -->
+<footer class="fixed bottom-0 left-0 w-full z-50 glass-obsidian border-t border-white/10 flex justify-around items-center h-16 md:hidden">
+<div class="flex flex-col items-center justify-center text-secondary">
+<span class="material-symbols-outlined">home</span>
+<span class="text-label-md font-label-md">Home</span>
+</div>
+<div class="flex flex-col items-center justify-center text-secondary">
+<span class="material-symbols-outlined">assignment_late</span>
+<span class="text-label-md font-label-md">Requests</span>
+</div>
+<div class="flex flex-col items-center justify-center text-primary font-bold scale-110">
+<span class="material-symbols-outlined">star</span>
+<span class="text-label-md font-label-md">Ratings</span>
+</div>
+<div class="flex flex-col items-center justify-center text-secondary">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="text-label-md font-label-md">Market</span>
+</div>
+<div class="flex flex-col items-center justify-center text-secondary">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+<span class="text-label-md font-label-md">Wallet</span>
+</div>
+</footer>
+<script>
+        // Micro-interactions for reviews
+        document.querySelectorAll('.obsidian-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                const icon = card.querySelector('.material-symbols-outlined');
+                if (icon) icon.style.transform = 'scale(1.1)';
+            });
+            card.addEventListener('mouseleave', () => {
+                const icon = card.querySelector('.material-symbols-outlined');
+                if (icon) icon.style.transform = 'scale(1)';
+            });
+        });
+
+        // Basic scroll listener for header clarity
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 20) {
+                header.classList.add('shadow-xl');
+            } else {
+                header.classList.remove('shadow-xl');
+            }
+        });
+    </script>
+</body></html>

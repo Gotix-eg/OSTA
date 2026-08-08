@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>OSTA INDUSTRIAL - Client Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .osta-shadow {
+            box-shadow: 4px 4px 0px #000000;
+        }
+        .osta-shadow-hover:hover {
+            box-shadow: 8px 8px 0px #000000;
+            transform: translate(-2px, -2px);
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f5bd18;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #000000;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-container": "#e2e2e2",
+                        "on-secondary-container": "#646464",
+                        "on-primary": "#ffffff",
+                        "inverse-on-surface": "#f0f1f1",
+                        "tertiary": "#5f5e5e",
+                        "surface-tint": "#775a00",
+                        "surface-dim": "#dadada",
+                        "on-tertiary-fixed": "#1c1b1b",
+                        "on-error-container": "#93000a",
+                        "primary-container": "#f5bd18",
+                        "secondary-fixed": "#e2e2e2",
+                        "on-primary-fixed-variant": "#5a4300",
+                        "outline-variant": "#d3c5ac",
+                        "on-surface": "#1a1c1c",
+                        "surface-variant": "#e2e2e2",
+                        "outline": "#817660",
+                        "surface-bright": "#f9f9f9",
+                        "primary": "#775a00",
+                        "on-surface-variant": "#4f4633",
+                        "on-secondary": "#ffffff",
+                        "on-background": "#1a1c1c",
+                        "inverse-primary": "#f6be1a",
+                        "background": "#f9f9f9",
+                        "primary-fixed-dim": "#f6be1a",
+                        "tertiary-fixed": "#e5e2e1",
+                        "on-error": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-high": "#e8e8e8",
+                        "inverse-surface": "#2f3131",
+                        "error": "#ba1a1a",
+                        "secondary-fixed-dim": "#c6c6c6",
+                        "surface-container-low": "#f3f3f4",
+                        "secondary": "#5e5e5e",
+                        "on-secondary-fixed": "#1b1b1b",
+                        "error-container": "#ffdad6",
+                        "on-primary-container": "#684e00",
+                        "on-secondary-fixed-variant": "#474747",
+                        "surface-container": "#eeeeee",
+                        "on-primary-fixed": "#251a00",
+                        "surface": "#f9f9f9",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed-variant": "#474646",
+                        "tertiary-fixed-dim": "#c8c6c5",
+                        "surface-container-highest": "#e2e2e2",
+                        "on-tertiary-container": "#525151",
+                        "tertiary-container": "#c7c5c4",
+                        "primary-fixed": "#ffdf9a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "margin-desktop": "48px",
+                        "container-max": "1280px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "base": "8px",
+                        "stack-md": "24px",
+                        "stack-lg": "48px",
+                        "stack-sm": "12px"
+                    },
+                    "fontFamily": {
+                        "label-lg": ["Outfit"],
+                        "display-lg": ["Outfit"],
+                        "headline-md": ["Outfit"],
+                        "body-lg": ["Inter"],
+                        "headline-sm": ["Outfit"],
+                        "label-md": ["Outfit"],
+                        "headline-lg": ["Outfit"],
+                        "body-md": ["Inter"],
+                        "headline-lg-mobile": ["Outfit"]
+                    },
+                    "fontSize": {
+                        "label-lg": ["14px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "display-lg": ["72px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                        "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-sm": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "label-md": ["12px", {"lineHeight": "1", "fontWeight": "600"}],
+                        "headline-lg": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-primary-container min-h-screen text-on-surface selection:bg-black selection:text-primary-container">
+<!-- Sidebar Navigation Shell -->
+<aside class="h-screen w-64 fixed right-0 top-0 bg-black/90 backdrop-blur-md border-l border-white/10 flex flex-col py-stack-md px-6 z-50">
+<div class="mb-10">
+<img alt="OSTA Logo" class="h-10 w-auto brightness-0 invert" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXzK1nXVP5-kM09ZUMJ0KXAI22g3Wm1K3-IF3UKgif5shB0qwGkIMocJmVDCqVB7fB3wyMAYvF20Hs8AZ49JHERs2GbcBiTruPDekPmx3FRiqMQDK7dLV7rU3joAIAtJVtgBoLdv44XEqts99w3mbOp014VNxZkQ_qO2aw4OoXJQz33s_1Ym0PtOYkO0EJYXTIg16JtNfUWbjuiiOvC2Ar9nXQuvShc10G4wFBpQNYJoxxO0wTSeTAYkVcOqTBtbpNHlTjN9IJM8U"/>
+<p class="font-label-lg text-label-md text-primary-container mt-2 tracking-widest uppercase">Premium Industrial</p>
+</div>
+<nav class="flex-grow space-y-4">
+<a class="flex items-center gap-4 py-3 px-4 transition-all duration-200 text-primary-container border-b-2 border-primary-container font-bold font-label-lg text-label-lg uppercase" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span>لوحة التحكم</span>
+</a>
+<a class="flex items-center gap-4 py-3 px-4 transition-all duration-200 text-white/70 hover:text-white hover:bg-white/5 font-label-lg text-label-lg uppercase" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span>الحجوزات</span>
+</a>
+<a class="flex items-center gap-4 py-3 px-4 transition-all duration-200 text-white/70 hover:text-white hover:bg-white/5 font-label-lg text-label-lg uppercase" href="#">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+<span>المحفظة</span>
+</a>
+<a class="flex items-center gap-4 py-3 px-4 transition-all duration-200 text-white/70 hover:text-white hover:bg-white/5 font-label-lg text-label-lg uppercase relative" href="#">
+<span class="material-symbols-outlined">notifications</span>
+<span>التنبيهات</span>
+<span class="absolute left-4 top-1/2 -translate-y-1/2 w-2 h-2 bg-primary-container rounded-full"></span>
+</a>
+<a class="flex items-center gap-4 py-3 px-4 transition-all duration-200 text-white/70 hover:text-white hover:bg-white/5 font-label-lg text-label-lg uppercase" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>إعدادات الملف</span>
+</a>
+</nav>
+<div class="mt-auto pt-6 border-t border-white/10 space-y-4">
+<button class="w-full bg-white text-black font-label-lg text-label-lg py-4 osta-shadow hover:translate-y-[-2px] active:translate-y-[2px] transition-all uppercase">
+                طلب جديد
+            </button>
+<div class="space-y-2">
+<a class="flex items-center gap-4 py-2 px-4 text-white/50 hover:text-white transition-colors font-label-lg text-label-md" href="#">
+<span class="material-symbols-outlined text-[18px]">help</span>
+<span>مركز المساعدة</span>
+</a>
+<a class="flex items-center gap-4 py-2 px-4 text-error hover:text-red-400 transition-colors font-label-lg text-label-md" href="#">
+<span class="material-symbols-outlined text-[18px]">logout</span>
+<span>تسجيل الخروج</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="mr-64 p-margin-desktop min-h-screen">
+<!-- Top App Bar -->
+<header class="flex items-center justify-between mb-stack-lg">
+<div>
+<h1 class="font-headline-lg text-headline-lg text-black leading-tight">أهلاً بك، أحمد</h1>
+<p class="font-body-lg text-body-lg text-black/70">لديك ٢ خدمة نشطة اليوم وميزانية جاهزة للمشاريع.</p>
+</div>
+<div class="flex items-center gap-gutter">
+<div class="glass-card px-6 py-3 flex items-center gap-4 text-white">
+<div class="text-right">
+<p class="font-label-md text-primary-container uppercase">الرصيد المتاح</p>
+<p class="font-headline-sm text-headline-sm">١,٤٥٠.٠٠ ج.م</p>
+</div>
+<span class="material-symbols-outlined text-primary-container text-[32px]">payments</span>
+</div>
+<div class="w-12 h-12 border-2 border-black p-0.5 overflow-hidden">
+<div class="w-full h-full bg-cover bg-center" data-alt="A professional portrait of a modern Middle Eastern businessman wearing a clean, high-end navy polo shirt, set against a blurred industrial architectural background. High-key lighting, sharp focus on features, premium professional aesthetic." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDuu0eajtniHQM4SbZYL6Q0eUFlLkLsbSBENiKVzbrf2fa9wDGOJRxLYiLNUBAHjKh0Ve3N2xx8O0Wj7vKjtdRtLHSgL0GMQ4p3HnA_Kl3aEDjadjXc7wad8FomOxS3LO-li3MBi_JlcMuizw2YzZBowCXdFGjqrF8GHl3PC4m3N5n4ysZsEZ9c5eOPwqwxIN7NCIzs5XTWSZU2VjcZ3iIYfrSmk-kEU7oENfK2nMJ9ta5sP1ePRWUbp4kSztGHcm8HAoS0w0_DwfQ')"></div>
+</div>
+</div>
+</header>
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Active Tracker Section -->
+<section class="col-span-8 space-y-stack-md">
+<div class="flex items-center justify-between">
+<h2 class="font-headline-sm text-headline-sm text-black flex items-center gap-2">
+<span class="w-3 h-3 bg-red-600 animate-pulse rounded-full"></span>
+                        تتبع الخدمات النشطة
+                    </h2>
+<a class="font-label-lg text-label-lg text-black border-b-2 border-black" href="#">مشاهدة الكل</a>
+</div>
+<div class="glass-card p-0 overflow-hidden text-white">
+<div class="grid grid-cols-5 h-64">
+<div class="col-span-2 relative">
+<div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://lh3.googleusercontent.com/aida/AP1WRLvhuy31obgSmqYWG88ZfxQSM57vVVJZ5tS5Y3uRc2UWz6Gutxl5ID-dvJCiwKoKwiIWbUVJxP1e2EkXclvD1d_4ERNwiGm6MkC7ftMinB9iR_ibOhp7lNZ12iMGRxqtYSRUBUbpxNylUqnsW5xkTgwZIpUzvVsEScR3xPPFc3QKTvh-nEcaeloHgPehnu_vufZArlnI4jlMylvc8i8jqRFBOb2LYUHDMZd-y46BBIN5aRUNA8idJlx0NhI')"></div>
+<div class="absolute inset-0 bg-gradient-to-l from-black via-transparent to-transparent"></div>
+</div>
+<div class="col-span-3 p-8 flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<div>
+<span class="bg-primary-container text-black font-label-md px-2 py-1 uppercase mb-2 inline-block">صيانة كهرباء طوارئ</span>
+<h3 class="font-headline-sm text-headline-sm">المهندس: محمد إبراهيم</h3>
+<p class="text-white/60 font-body-md">رقم الطلب: #OSTA-9921</p>
+</div>
+<div class="text-left">
+<div class="flex items-center gap-1 text-primary-container mb-1">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-bold">٤.٩</span>
+</div>
+<p class="text-white/40 text-label-md uppercase">متخصص معتمد</p>
+</div>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between text-label-lg uppercase">
+<span>المرحلة: في الطريق</span>
+<span>وصول متوقع: ١٢ دقيقة</span>
+</div>
+<div class="w-full h-2 bg-white/10 overflow-hidden">
+<div class="h-full bg-primary-container w-2/3 relative">
+<div class="absolute right-0 top-0 bottom-0 w-8 bg-white/30 animate-[shimmer_2s_infinite]"></div>
+</div>
+</div>
+</div>
+<div class="flex gap-4">
+<button class="flex-1 bg-white text-black font-label-lg py-3 osta-shadow-hover transition-all">تواصل مع الفني</button>
+<button class="flex-1 border border-white/20 hover:bg-white/10 font-label-lg py-3 transition-all">تفاصيل الموقع</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Quick Actions Grid -->
+<section class="col-span-4 space-y-stack-md">
+<h2 class="font-headline-sm text-headline-sm text-black">وصول سريع</h2>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-black text-white p-6 aspect-square flex flex-col justify-between group cursor-pointer border border-white/10 osta-shadow-hover transition-all">
+<span class="material-symbols-outlined text-primary-container text-4xl group-hover:scale-110 transition-transform">construction</span>
+<p class="font-label-lg text-label-lg uppercase">طلب خدمة<br/>صيانة</p>
+</div>
+<div class="bg-white text-black p-6 aspect-square flex flex-col justify-between group cursor-pointer osta-shadow-hover transition-all">
+<span class="material-symbols-outlined text-4xl group-hover:scale-110 transition-transform">shopping_cart</span>
+<p class="font-label-lg text-label-lg uppercase">سوق<br/>المواد الخام</p>
+</div>
+<div class="bg-black text-white p-6 aspect-square flex flex-col justify-between group cursor-pointer border border-white/10 osta-shadow-hover transition-all">
+<span class="material-symbols-outlined text-primary-container text-4xl group-hover:scale-110 transition-transform">mail</span>
+<p class="font-label-lg text-label-lg uppercase">الرسائل<br/>والدعم</p>
+</div>
+<div class="bg-black text-white p-6 aspect-square flex flex-col justify-between group cursor-pointer border border-white/10 osta-shadow-hover transition-all">
+<span class="material-symbols-outlined text-primary-container text-4xl group-hover:scale-110 transition-transform">favorite</span>
+<p class="font-label-lg text-label-lg uppercase">الفنيين<br/>المفضلين</p>
+</div>
+</div>
+</section>
+<!-- Favorite Pros -->
+<section class="col-span-12 mt-stack-lg">
+<div class="flex items-center justify-between mb-6">
+<h2 class="font-headline-sm text-headline-sm text-black">فنيين تعاملت معهم سابقاً</h2>
+<button class="bg-black text-white px-6 py-2 font-label-lg text-label-md osta-shadow">استعراض الكل</button>
+</div>
+<div class="grid grid-cols-4 gap-gutter">
+<!-- Pro Card 1 -->
+<div class="bg-black text-white p-6 border border-white/10">
+<div class="flex gap-4 mb-6">
+<div class="w-16 h-16 bg-zinc-800">
+<div class="w-full h-full bg-cover bg-center" data-alt="Close-up headshot of a smiling Egyptian plumber in his 40s, wearing a branded gray work uniform. Warm workshop background with blurred tools. Professional headshot lighting, industrial tone, high resolution." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD4jHd_0KjYn_gbHIXI4ifn4-vIdhONWTzgE9jk3578fxCLzhuRbgW1QfwLz5jXDpemR_9kxCQY340ZzGKqYhWoAHLVmnfSAME1DMsPC00F0644zFkB8p6Ka9eu3GyGm4BxjXk_RRfXKyhxvr3TXmuGvRnYT_m2nEERSCs0NtaN_t4Ib_CikaWXnA7qimWXcULH85cFFdW-tOZttwqf21Drk90JGQ8EWInAF7mzKR-VguLvMxBGUScz4tanaJ1pcN6VvgyCRXtVCd8')"></div>
+</div>
+<div>
+<h4 class="font-label-lg text-label-lg">أحمد منصور</h4>
+<p class="text-white/40 text-label-md">سباك معتمد</p>
+<div class="flex text-primary-container text-[12px] mt-1">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[14px]">star_half</span>
+</div>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="flex-1 bg-primary-container text-black py-2 font-label-md osta-shadow-hover transition-all">حجز سريع</button>
+<button class="w-10 h-10 border border-white/20 flex items-center justify-center hover:bg-white/10"><span class="material-symbols-outlined">chat</span></button>
+</div>
+</div>
+<!-- Pro Card 2 -->
+<div class="bg-black text-white p-6 border border-white/10">
+<div class="flex gap-4 mb-6">
+<div class="w-16 h-16 bg-zinc-800">
+<div class="w-full h-full bg-cover bg-center" data-alt="A focused female interior painter with clean work clothes, smiling confidently. Background shows a modern, stylishly painted room with soft cinematic lighting. High-end professional photography, clean industrial aesthetic." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBo4xVSK-QgvS-2o-tOuIbywyDp1SLkVTgSkRBd0RjMkouvyt19y8oOdKUP8sD-GyBmx0pwYrAPvxV3DBBw4W79vQJaFaZq3vTHFhhPAzp6IIKrNFSFo__LC86HjdW4sTtmaKkg-DOERTD5AYh8sdrGeUK5xEAKCX6MTUvrCc-5I0au0VZXAMZLNZZeKGExjEbpfkK1P0LqTkU0EgKW6RE4n3whLYIaMsnWSFJNjo8oYfa4G4Lo1qAd1PEHserbm5W9UEbFgg18jrU')"></div>
+</div>
+<div>
+<h4 class="font-label-lg text-label-lg">سارة محمود</h4>
+<p class="text-white/40 text-label-md">فني دهانات</p>
+<div class="flex text-primary-container text-[12px] mt-1">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="flex-1 bg-primary-container text-black py-2 font-label-md osta-shadow-hover transition-all">حجز سريع</button>
+<button class="w-10 h-10 border border-white/20 flex items-center justify-center hover:bg-white/10"><span class="material-symbols-outlined">chat</span></button>
+</div>
+</div>
+<!-- Pro Card 3 -->
+<div class="bg-black text-white p-6 border border-white/10">
+<div class="flex gap-4 mb-6">
+<div class="w-16 h-16 bg-zinc-800">
+<div class="w-full h-full bg-cover bg-center" data-alt="A veteran carpenter with experienced hands, holding a blueprint in a high-end wood workshop. Warm cedar lighting, sawdust in the air catching golden light. Sharp details, professional and reliable vibe." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCAYCaVuj5js34HuJUHyyxwwJgplrloFbCrSp2vif6yMAf38HoQEK_30ApEvc51ruQ-ydvDNjBlkuvCD6pY44fLluuqUDHSqQqpAroiZZauOODPjzJ6HhZZmMZS5gNPgAo4eUFUBOZ0C_nw7i3P0VjGYSTGJMJOhdRU73UHGv2BiIMnvm7E0rq1ydAUQdRxKbh2ac26CETW1dSS7s2wvbJYY69k4ho_jqPvyDmRT_62KzPDPzNFQNbz6uEdfZOtMESje3HV6FgkxCI')"></div>
+</div>
+<div>
+<h4 class="font-label-lg text-label-lg">ياسين علي</h4>
+<p class="text-white/40 text-label-md">نجار أثاث</p>
+<div class="flex text-primary-container text-[12px] mt-1">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[14px]">star</span>
+</div>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="flex-1 bg-primary-container text-black py-2 font-label-md osta-shadow-hover transition-all">حجز سريع</button>
+<button class="w-10 h-10 border border-white/20 flex items-center justify-center hover:bg-white/10"><span class="material-symbols-outlined">chat</span></button>
+</div>
+</div>
+<!-- Market CTA Card -->
+<div class="bg-white border-2 border-dashed border-black/20 p-6 flex flex-col items-center justify-center text-center group cursor-pointer hover:border-black transition-colors">
+<span class="material-symbols-outlined text-4xl text-black/40 group-hover:text-black mb-2 transition-colors">person_add</span>
+<p class="font-label-lg text-label-lg text-black/60 group-hover:text-black">اكتشف المزيد<br/>من المحترفين</p>
+</div>
+</div>
+</section>
+<!-- Trust Banner -->
+<section class="col-span-12 mt-stack-lg">
+<div class="bg-black text-white p-10 flex items-center justify-between border-t-4 border-primary-container overflow-hidden relative">
+<div class="z-10 relative">
+<div class="flex items-center gap-4 mb-4">
+<span class="material-symbols-outlined text-primary-container text-5xl">verified_user</span>
+<h2 class="font-headline-md text-headline-md">مدفوعاتك محمية بقوة الصناعة</h2>
+</div>
+<p class="font-body-lg text-body-lg text-white/70 max-w-2xl">نحن نضمن جودة التنفيذ وأمان التحويلات المالية. لا يتم تحويل المستحقات للفني إلا بعد تأكيدك على جودة العمل المنجز.</p>
+</div>
+<div class="flex gap-8 z-10">
+<div class="text-center">
+<p class="font-display-lg text-headline-lg text-primary-container">١٠٠٪</p>
+<p class="font-label-md text-white/50 uppercase tracking-widest">ضمان الجودة</p>
+</div>
+<div class="text-center">
+<p class="font-display-lg text-headline-lg text-primary-container">٢٤/٧</p>
+<p class="font-label-md text-white/50 uppercase tracking-widest">دعم فني</p>
+</div>
+</div>
+<!-- Aesthetic Background Graphic -->
+<div class="absolute right-0 top-0 bottom-0 w-1/3 bg-primary-container/5 skew-x-[-20deg] translate-x-20"></div>
+</div>
+</section>
+</div>
+<footer class="mt-stack-lg pt-12 border-t border-black/10 pb-stack-md flex justify-between items-center text-black/40 font-label-md">
+<div class="flex gap-8">
+<a class="hover:text-black transition-colors uppercase" href="#">سياسة الخصوصية</a>
+<a class="hover:text-black transition-colors uppercase" href="#">شروط الاستخدام</a>
+<a class="hover:text-black transition-colors uppercase" href="#">اتفاقية الضمان</a>
+</div>
+<p>© ٢٠٢٤ OSTA INDUSTRIAL. جميع الحقوق محفوظة للقوة والريادة.</p>
+</footer>
+</main>
+<script>
+        // Micro-interactions for buttons
+        document.querySelectorAll('button, a').forEach(el => {
+            el.addEventListener('mousedown', () => {
+                el.style.transform = 'scale(0.98)';
+            });
+            el.addEventListener('mouseup', () => {
+                el.style.transform = '';
+            });
+            el.addEventListener('mouseleave', () => {
+                el.style.transform = '';
+            });
+        });
+    </script>
+</body></html>

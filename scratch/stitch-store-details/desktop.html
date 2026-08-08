@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>OSTA Marketplace | Store Details</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "inverse-primary": "#f6be1a",
+                    "surface-dim": "#dadada",
+                    "on-secondary-fixed-variant": "#474747",
+                    "on-error-container": "#93000a",
+                    "on-secondary-container": "#646464",
+                    "on-primary": "#ffffff",
+                    "tertiary-fixed-dim": "#c8c6c5",
+                    "surface": "#f9f9f9",
+                    "on-primary-fixed-variant": "#5a4300",
+                    "on-tertiary": "#ffffff",
+                    "primary-container": "#f5bd18",
+                    "secondary-fixed-dim": "#c6c6c6",
+                    "on-tertiary-fixed-variant": "#474646",
+                    "inverse-on-surface": "#f0f1f1",
+                    "on-secondary": "#ffffff",
+                    "on-error": "#ffffff",
+                    "primary-fixed": "#ffdf9a",
+                    "on-tertiary-fixed": "#1c1b1b",
+                    "surface-variant": "#e2e2e2",
+                    "surface-container": "#eeeeee",
+                    "outline": "#817660",
+                    "primary": "#775a00",
+                    "on-tertiary-container": "#525151",
+                    "secondary-fixed": "#e2e2e2",
+                    "on-background": "#1a1c1c",
+                    "inverse-surface": "#2f3131",
+                    "tertiary-fixed": "#e5e2e1",
+                    "secondary-container": "#e2e2e2",
+                    "outline-variant": "#d3c5ac",
+                    "tertiary-container": "#c7c5c4",
+                    "on-primary-container": "#684e00",
+                    "error-container": "#ffdad6",
+                    "surface-container-highest": "#e2e2e2",
+                    "tertiary": "#5f5e5e",
+                    "surface-container-low": "#f3f3f4",
+                    "on-surface": "#1a1c1c",
+                    "error": "#ba1a1a",
+                    "secondary": "#5e5e5e",
+                    "primary-fixed-dim": "#f6be1a",
+                    "on-surface-variant": "#4f4633",
+                    "background": "#f9f9f9",
+                    "on-secondary-fixed": "#1b1b1b",
+                    "surface-tint": "#775a00",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-high": "#e8e8e8",
+                    "on-primary-fixed": "#251a00",
+                    "surface-bright": "#f9f9f9"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "stack-lg": "48px",
+                    "gutter": "24px",
+                    "stack-md": "24px",
+                    "margin-mobile": "16px",
+                    "margin-desktop": "48px",
+                    "stack-sm": "12px",
+                    "container-max": "1280px",
+                    "base": "8px"
+            },
+            "fontFamily": {
+                    "display-lg": ["Outfit"],
+                    "headline-md": ["Outfit"],
+                    "body-lg": ["Inter"],
+                    "label-lg": ["Outfit"],
+                    "headline-sm": ["Outfit"],
+                    "headline-lg": ["Outfit"],
+                    "body-md": ["Inter"],
+                    "label-md": ["Outfit"]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        body { background-color: #f5bd18; min-height: 100vh; overflow-x: hidden; }
+        .obsidian-card { background-color: #000000; border: 1px solid rgba(255,255,255,0.1); }
+        .osta-shadow { box-shadow: 4px 4px 0px #000000; }
+        .osta-shadow-hover:hover { box-shadow: 6px 6px 0px #000000; transform: translate(-2px, -2px); }
+        .glass-header { background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(20px); }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        [dir="rtl"] .side-nav-border { border-left-width: 1px; border-right-width: 0; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #121212; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #f5bd18; }
+    </style>
+</head>
+<body class="flex font-body-md text-on-surface">
+<!-- SideNavBar (Persistent) -->
+<aside class="hidden lg:flex flex-col w-64 h-screen fixed right-0 top-0 bg-black border-l border-white/10 z-50 py-stack-md px-6 text-white overflow-y-auto">
+<div class="mb-stack-lg">
+<h1 class="font-display-lg text-headline-md font-bold text-primary-container leading-none">OSTA EGYPT</h1>
+<p class="font-label-md text-on-secondary-container mt-1">Industrial Portal</p>
+</div>
+<nav class="flex-1 space-y-4">
+<!-- Market is Active -->
+<a class="flex items-center gap-4 px-4 py-3 text-primary-container bg-white/5 border-r-4 border-primary-container transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">storefront</span>
+<span class="font-label-lg text-label-lg uppercase">Market</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-on-secondary-container hover:bg-white/10 hover:text-white transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-lg text-label-lg uppercase">Dashboard</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-on-secondary-container hover:bg-white/10 hover:text-white transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">engineering</span>
+<span class="font-label-lg text-label-lg uppercase">Vendors</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-on-secondary-container hover:bg-white/10 hover:text-white transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">construction</span>
+<span class="font-label-lg text-label-lg uppercase">Workers</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-on-secondary-container hover:bg-white/10 hover:text-white transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-lg text-label-lg uppercase">Wallet</span>
+</a>
+</nav>
+<button class="mt-stack-lg w-full bg-white text-black py-4 font-label-lg text-label-lg osta-shadow ota-shadow-hover transition-all">
+            Post New Job
+        </button>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 mr-0 lg:mr-64 p-margin-mobile lg:p-margin-desktop min-h-screen">
+<!-- Store Header Section -->
+<section class="obsidian-card p-stack-md lg:p-stack-lg text-white mb-stack-lg relative overflow-hidden">
+<div class="absolute inset-0 opacity-20">
+<img class="w-full h-full object-cover" data-alt="Close-up macro photography of high-end industrial electrical components and gold-plated connectors arranged in a professional, clean grid. The lighting is cinematic with high contrast, using a deep obsidian and vibrant amber color palette to emphasize premium quality and technical precision. Professional architectural and industrial aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGVJV-DoZmpuV-LS06V2IhODkWL7R8TzKZQW-NCauf1CQEgz5gWHWehCtjdoWJ_5yH8J3rAQIEovassqLordYsl_xNeZbOXNRaKDv-F53Tv0oe45I3H8sB6hZFIsAyXnuavL47B-II8r2sWIqXOVGrUP0PlDB013Td04pBhs41JDp9prHg79KmlgT93ZXgBBNycEGxGxQSVBmvCpGWpePlt18bayQNiG-h0wF7UUyLSNk2z0zOjZvYR1COt5xV_UgQKDsjS0aKqUM"/>
+</div>
+<div class="relative z-10 flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
+<div>
+<div class="flex items-center gap-3 mb-2">
+<span class="bg-primary-container text-black px-2 py-1 text-label-md font-bold tracking-tighter">OPEN</span>
+<span class="text-on-secondary-container font-label-lg flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+                            مصر الجديدة
+                        </span>
+</div>
+<h2 class="font-display-lg text-headline-lg mb-2">test</h2>
+<p class="font-headline-sm text-primary-container">أدوات كهربائية وتأسيسية</p>
+</div>
+<div class="flex flex-wrap gap-4">
+<button class="bg-white text-black px-8 py-4 font-label-lg text-label-lg osta-shadow hover:bg-gray-200 transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined">chat</span>
+                        Chat with Store
+                    </button>
+<button class="border-2 border-white text-white px-8 py-4 font-label-lg text-label-lg hover:bg-white/10 transition-colors">
+                        Request from Store
+                    </button>
+</div>
+</div>
+</section>
+<div class="flex flex-col lg:flex-row gap-stack-md lg:gap-stack-lg items-start">
+<!-- Products Grid -->
+<div class="flex-1 w-full">
+<div class="flex items-center justify-between mb-stack-md bg-black/5 p-4 rounded-lg">
+<h3 class="font-headline-md text-black">المنتجات المتاحة</h3>
+<div class="flex gap-2">
+<input class="bg-black/10 border-black/20 focus:border-black focus:ring-0 text-black px-4 py-2 placeholder-black/50 min-w-[250px]" placeholder="ابحث في المنتجات..." type="text"/>
+<button class="bg-black text-white p-2">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+<!-- Product Card 1 -->
+<div class="obsidian-card group overflow-hidden">
+<div class="h-48 overflow-hidden relative">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="A premium, sleek modern electrical light switch with a brushed metal finish, presented against a dark, moody industrial background. The lighting highlights the texture and high-quality construction of the switch. Deep blacks and vibrant yellow accents define the professional marketplace aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAB7w0KwUNEchNAuSOfRjigadcw2zPCFdrHlMCXidMs5KnVkJigKrzl9_A3qA4B_DZunO3Gx4rG7ffDRqubMY0fd1msg0h1GQuV7mP9AESb3tvdQhQDVWhvaAaQtwIzZhCWNJ1XgCBoFSV94-W_0RzIZG0em3G7OeN2UxuUBPmQcEaVCcccucX7x86sJVCp_Ovv17x8kVcwObM-NpenD0nKPPtjyEBV9kWBZ8K5jlMKNDkb3CKKDcd_pzQ-T5eGGiHa1OPwpbEEu9U"/>
+<div class="absolute top-2 right-2 bg-primary-container text-black font-bold text-label-md px-2 py-1">POPULAR</div>
+</div>
+<div class="p-4 text-white">
+<h4 class="font-headline-sm text-white mb-1">مفتاح كهربا</h4>
+<p class="text-on-secondary-container text-label-md mb-4">ماركة فينوس - جودة عالية مقاوم للحرارة</p>
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-primary-container">٤٠٠ ج.م</span>
+<button class="bg-white text-black p-2 osta-shadow hover:scale-105 transition-transform flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add_shopping_cart</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Product Card 2 -->
+<div class="obsidian-card group overflow-hidden">
+<div class="h-48 overflow-hidden relative">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Coils of heavy-duty industrial electrical wiring in bright orange and black, showcasing thick copper cores. The composition is artistic and technical, emphasizing the raw material quality. Dark industrial setting with high-contrast golden lighting reflecting off the metallic surfaces." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2HdpeV9rPTHvuB8omPclGvF8ewJViI_YvjISYoj0gqevnuRpuJsSWCnVPqntVpY4bj51jeAvfcTvBXLllC74DjD0uPNStt1zZfWTObk-KNzfhnEm1r3u1DnWlBiVqoE77uuNKeispwkkVFqHr1ZmD-sG9tDatgM5xp0jQ5qXANgZ7L-kTzo5ktHzmxqBOfjXwufmjz8_sc1B_xKKhFS7BIeDE8imNzNlfHORTolAsggGPNpjvCL70y_LHi6eRTezc3S27KOKHjMU"/>
+</div>
+<div class="p-4 text-white">
+<h4 class="font-headline-sm text-white mb-1">لفافة سلك ٤ ملم</h4>
+<p class="text-on-secondary-container text-label-md mb-4">سلك نحاس نقي - معزول - ١٠٠ متر</p>
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-primary-container">١,٢٠٠ ج.م</span>
+<button class="bg-white text-black p-2 osta-shadow hover:scale-105 transition-transform flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add_shopping_cart</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Product Card 3 -->
+<div class="obsidian-card group overflow-hidden">
+<div class="h-48 overflow-hidden relative">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="High-quality industrial circuit breaker module designed for modern electrical panels. The image features sharp technical details, mechanical switches, and clear labeling. Lighting is bright and focused, using the signature OSTA yellow as a strong ambient glow against dark obsidian textures." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCklmEnMzHQDuTQhFxyoHGwLLhwSXQWRliGwdug-1pATE5esjg3JPf0KfisoCcyEhCXiWD7TGzLSL1GoFTh8AONZ0bEUy8ztmjus7VrkJtnnoz7fR-i5SjaMD8n7zCRYYuhlIh_VvRyN1xPOC1cvBSMf6uvi2y_WpsTf8VeMQIdAdHN1-hoTPgWrsoa6CArZeOwpG6ys6---UbHTiA5BTiJU0787fUSnrEfAsitWETH2W5VMdvPehXXF30Wgt6-zwdymzec6-Rdz3w"/>
+</div>
+<div class="p-4 text-white">
+<h4 class="font-headline-sm text-white mb-1">قاطع تيار ٦٣ أمبير</h4>
+<p class="text-on-secondary-container text-label-md mb-4">شنايدر - حماية ماس كهربائي عالي الأداء</p>
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-primary-container">٨٥٠ ج.م</span>
+<button class="bg-white text-black p-2 osta-shadow hover:scale-105 transition-transform flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add_shopping_cart</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Product Card 4 -->
+<div class="obsidian-card group overflow-hidden">
+<div class="h-48 overflow-hidden relative">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Premium LED industrial light fixture for recessed ceilings, showing a clean white bezel and diffused glass. The lighting environment is a mix of cool white light and warm yellow structural highlights, emphasizing a professional industrial and modern workspace design style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2VNGwQnXluhFd1OkYp9adUh-4I5rnriWTtMOi6GqC7wANnmBgv7de0jugHRD9FubIsYeFSn-kdt6FLZh7_K7etJSd4jtjjo-nNB-CH64JPGWh-U-6pYZ8bWiCa7qHTxunWCFTGoZesaTWYz1N4xA2cjiP9wfyxFSyYkgfaZXHKBZsrNsvHGgS9L7fe88RYrG2qwJGVVOzg3fKLGxLCfD56df_Uu2Sz7h-6f8QQYJ-pdPDEq1zPUId5DCpDMO3cDt_I_5sBlG8f2U"/>
+</div>
+<div class="p-4 text-white">
+<h4 class="font-headline-sm text-white mb-1">كشاف ليد ٩ وات</h4>
+<p class="text-on-secondary-container text-label-md mb-4">إضاءة بيضاء موفرة للطاقة - فينوس</p>
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-primary-container">١٨٠ ج.م</span>
+<button class="bg-white text-black p-2 osta-shadow hover:scale-105 transition-transform flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add_shopping_cart</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Product Card 5 -->
+<div class="obsidian-card group overflow-hidden">
+<div class="h-48 overflow-hidden relative">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Heavy-duty electrical socket unit for industrial applications, featuring rugged plastic casing and multiple outlet points. The product is shot in a high-key industrial style with sharp shadows and highlights on its matte finish, against a dark obsidian background with yellow light leaks." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBriUKHrM9uPGTEBTSqJ18e7nFmzItNSrGe42XGWF5oC435iVb1zguDdtLHM-hJ2Ua6UbeKd8Wz6JOYVrcY4520fT9WbUR5m26t8a26NzMRvuSK-UNzHzXa9NwGDmrvNjMSv9TgVEXzPR_LTwErMjmg8I1BTXdACHQJ9KW7C2erJtpQV__1l3hp902BdI7uKaWgWAA7pcFxa1eVGZnxYYH9KWUFaKko5D2tCdgUoYGFh9VU-93CeBHxVOhdS6H8at19pOGuILtOcPg"/>
+</div>
+<div class="p-4 text-white">
+<h4 class="font-headline-sm text-white mb-1">بريزة كهربا ثنائية</h4>
+<p class="text-on-secondary-container text-label-md mb-4">تصميم عصري - قوة تحمل عالية</p>
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-primary-container">٣٢٠ ج.م</span>
+<button class="bg-white text-black p-2 osta-shadow hover:scale-105 transition-transform flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add_shopping_cart</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Product Card 6 -->
+<div class="obsidian-card group overflow-hidden">
+<div class="h-48 overflow-hidden relative">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Selection of high-quality PVC electrical conduits and pipes used for building foundation, arranged in a clean technical layout. The lighting is focused and professional, highlighting the cylindrical textures and material strength within a premium obsidian and industrial yellow digital interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCXup8XCKzD7PmkVYJVlOhJqajxX_Mc4_l10ApM4WpqesWOgBgEl_2Ltsv9R89VNf3QYulw2QEo-apBd8eoB2QurxZT-zK4ZKNyoXJ9lKiHDWmLUnKH1sufLZgCICyqx82v8AakgRQ4V0yrpxrgQexM-SsdDLcwKddg1ISUpyh3Mh48oeQt6QLyrT9kJkDxDIcshbL090pWwf5crh51zheWL43Y3BioZ4WBEddN8FroZ10QbvUgwX8oXFN1DB3SB_zZv3nivjKTbmg"/>
+</div>
+<div class="p-4 text-white">
+<h4 class="font-headline-sm text-white mb-1">مواسير تأسيس ١٦ مم</h4>
+<p class="text-on-secondary-container text-label-md mb-4">ربطة ١٠ قطع - بي في سي عالي المتانة</p>
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-primary-container">٥٥٠ ج.م</span>
+<button class="bg-white text-black p-2 osta-shadow hover:scale-105 transition-transform flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add_shopping_cart</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Shopping Cart Sidebar -->
+<aside class="w-full lg:w-[380px] sticky top-margin-desktop space-y-6">
+<div class="obsidian-card p-6 text-white flex flex-col h-[calc(100vh-250px)]">
+<div class="flex items-center gap-3 border-b border-white/10 pb-4 mb-4">
+<span class="material-symbols-outlined text-primary-container">shopping_basket</span>
+<h3 class="font-headline-sm">سلة المشتريات</h3>
+</div>
+<div class="flex-1 overflow-y-auto custom-scrollbar space-y-4 pr-1">
+<!-- Cart Item -->
+<div class="flex gap-4 items-center bg-white/5 p-3 group">
+<div class="w-16 h-16 bg-white/10 flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Close-up of an electrical switch module for a digital interface thumbnail. Professional studio lighting with deep black shadows and precise golden highlights." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBcZtlxVd6YdaKXeMW1uy8swHthWsV1J91LmkaYij0Y1ceU8abUI2iYLuDfw_ngr_B2Kmq6yx9D6sNG5WukgVPzwV92XZPUBqSHNe2LT3DsSBfFewv9ZT3BaFor_szVkUGoJwjgJDrmaYphenV_gGza6zftPUGk35zKInqemI2LGjn0u7e2w14uz7eGsO7chyTMHT3FzCDMU8k4i-fy7Fqjm4nIpeaGCIHVagtnvXVkhxmh9W4ZQybty4QkfVwA1_5yNfteqpn0PQs"/>
+</div>
+<div class="flex-1">
+<h5 class="font-label-lg text-white">مفتاح كهربا</h5>
+<p class="text-primary-container font-bold">٤٠٠ ج.م</p>
+<div class="flex items-center gap-2 mt-2">
+<button class="w-6 h-6 bg-white/10 flex items-center justify-center hover:bg-primary-container hover:text-black transition-colors">-</button>
+<span class="text-label-md">١</span>
+<button class="w-6 h-6 bg-white/10 flex items-center justify-center hover:bg-primary-container hover:text-black transition-colors">+</button>
+</div>
+</div>
+<button class="text-on-secondary-container hover:text-error transition-colors">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+<!-- Empty state or more items here -->
+<p class="text-center text-on-secondary-container py-10 font-label-md border-2 border-dashed border-white/5">أضف المزيد من المنتجات</p>
+</div>
+<div class="border-t border-white/10 pt-4 mt-4 space-y-4">
+<div class="flex justify-between font-label-lg text-on-secondary-container">
+<span>المجموع الفرعي</span>
+<span>٤٠٠ ج.م</span>
+</div>
+<div class="flex justify-between font-label-lg text-on-secondary-container">
+<span>مصاريف الشحن</span>
+<span>٥٠ ج.م</span>
+</div>
+<div class="flex justify-between font-headline-sm text-white pt-2">
+<span>الإجمالي</span>
+<span class="text-primary-container">٤٥٠ ج.م</span>
+</div>
+<button class="w-full bg-primary-container text-black py-4 font-label-lg osta-shadow hover:bg-white transition-all">
+                            إتمام الطلب الآن
+                        </button>
+</div>
+</div>
+<!-- Store Info Quick Card -->
+<div class="obsidian-card p-4">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-black">verified</span>
+</div>
+<div>
+<p class="text-white font-bold">بائع موثوق</p>
+<p class="text-on-secondary-container text-label-md">عضو منذ ٢٠٢١ • ٤٥٠ طلب مكتمل</p>
+</div>
+</div>
+</div>
+</aside>
+</div>
+</main>
+<!-- Bottom Nav for Mobile -->
+<nav class="lg:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-margin-mobile py-2 bg-black/80 backdrop-blur-xl border-t border-white/10">
+<a class="flex flex-col items-center justify-center text-on-secondary-container active:scale-110 transition-transform" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-md text-label-md">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary-container active:scale-110 transition-transform" href="#">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="font-label-md text-label-md">Market</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-secondary-container active:scale-110 transition-transform" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-md text-label-md">Vendors</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-secondary-container active:scale-110 transition-transform" href="#">
+<span class="material-symbols-outlined">build</span>
+<span class="font-label-md text-label-md">Pro</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-secondary-container active:scale-110 transition-transform" href="#">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+<span class="font-label-md text-label-md">Wallet</span>
+</a>
+</nav>
+<script>
+        // Simple interactivity for demonstration
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('mousedown', () => {
+                btn.style.transform = 'scale(0.95)';
+            });
+            btn.addEventListener('mouseup', () => {
+                btn.style.transform = 'scale(1)';
+            });
+        });
+
+        // Search highlight effect
+        const searchInput = document.querySelector('input[type="text"]');
+        if(searchInput) {
+            searchInput.addEventListener('focus', () => {
+                searchInput.parentElement.style.backgroundColor = 'rgba(0,0,0,0.15)';
+            });
+            searchInput.addEventListener('blur', () => {
+                searchInput.parentElement.style.backgroundColor = '';
+            });
+        }
+    </script>
+</body></html>

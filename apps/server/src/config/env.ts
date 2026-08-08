@@ -1,7 +1,12 @@
 import { config } from "dotenv";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { z } from "zod";
 
-config({ path: "../../.env" });
+const configDir = dirname(fileURLToPath(import.meta.url));
+
+config({ path: resolve(configDir, "../../.env") });
+config({ path: resolve(configDir, "../../../../.env") });
 
 const envSchema = z
   .object({
