@@ -46,6 +46,7 @@ import { VendorOnboarding } from "./vendor-onboarding";
 import { clearAuthSession, logoutAuthSession, type AuthRole } from "@/lib/auth-session";
 
 import { LocaleSwitcher } from "@/components/shared/locale-switcher";
+import { PublicFooter } from "@/components/public/public-shell";
 import { dashboardCopy } from "@/lib/dashboard-copy";
 import { stripLocalePrefix, type Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
@@ -475,6 +476,8 @@ export function DashboardShell({
               children
             )}
           </div>
+
+          {isAdminDashboard ? <PublicFooter locale={locale} /> : null}
         </div>
 
         {isClientDashboard || isVendorDashboard ? (
