@@ -52,6 +52,7 @@ import { stripLocalePrefix, type Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
 import { NotificationsPopover } from "./notifications-popover";
 import { HeaderChatButton } from "./header-chat-button";
+import { PwaInstallButton } from "@/components/shared/pwa-install-button";
 
 type DashboardRole = "client" | "worker" | "vendor" | "admin";
 
@@ -444,6 +445,9 @@ export function DashboardShell({
                 <NotificationsPopover locale={locale} />
                 <div className={cn(isStitchDashboard ? "hidden sm:block" : "")}>
                   <HeaderChatButton locale={locale} />
+                </div>
+                <div className="hidden sm:block">
+                  <PwaInstallButton locale={locale} className="inline-flex h-11 items-center justify-center gap-1.5 rounded-lg border border-gold/40 bg-gold/10 px-3 text-xs font-bold text-gold hover:bg-gold/20 transition-all" />
                 </div>
                 <div
                   className={cn(

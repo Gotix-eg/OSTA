@@ -9,6 +9,7 @@ import { publicPageCopy } from "@/lib/public-pages-copy";
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
 import { BottomNav } from "@/components/shared/bottom-nav";
+import { PwaInstallButton } from "@/components/shared/pwa-install-button";
 
 export function PublicShell({ locale, pathname, children }: { locale: Locale; pathname: string; children: ReactNode }) {
   const copy = publicPageCopy[locale].nav;
@@ -128,6 +129,9 @@ export function PublicShell({ locale, pathname, children }: { locale: Locale; pa
                   {item.label}
                 </Link>
               ))}
+              <div className="mt-2 pt-2 border-t border-white/10 flex flex-col gap-2">
+                <PwaInstallButton locale={locale} className="w-full justify-center rounded-xl bg-gradient-to-r from-gold to-gold/90 px-4 py-3 text-xs font-black text-black shadow-md" />
+              </div>
             </div>
           </motion.div>
         )}

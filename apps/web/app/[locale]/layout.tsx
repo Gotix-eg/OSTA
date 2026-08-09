@@ -9,6 +9,7 @@ import { SocketProvider } from "@/components/providers/socket-provider";
 import { FloatingChatWidget } from "@/components/shared/floating-chat";
 import { TestModeBanner } from "@/components/shared/test-mode-banner";
 import { ImpersonationBanner } from "@/components/shared/impersonation-banner";
+import { PwaInstallPrompt } from "@/components/shared/pwa-install-prompt";
 
 export function generateStaticParams() {
   return supportedLocales.map((locale) => ({ locale }));
@@ -48,9 +49,11 @@ export default async function LocaleLayout({
         <ImpersonationBanner locale={locale as Locale} />
         <TestModeBanner locale={locale as Locale} />
         {children}
+        <PwaInstallPrompt locale={locale as Locale} />
         <FloatingSupport locale={locale as Locale} />
         <FloatingChatWidget />
       </SocketProvider>
     </div>
   );
 }
+
