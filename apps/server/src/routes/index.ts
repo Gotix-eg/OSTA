@@ -255,27 +255,45 @@ router.get("/public/workers", async (request, response) => {
       return b.totalJobsCompleted - a.totalJobsCompleted;
     });
 
-    const result = sortedWorkers.map((w) => ({
-      id: w.id,
-      name: `${w.user.firstName} ${w.user.lastName}`,
-      avatarUrl: w.user.avatarUrl,
-      professionAr: w.specializations[0]?.service.category.nameAr || "",
-      professionEn: w.specializations[0]?.service.category.nameEn || "",
-      categoryId: w.specializations[0]?.service.category.slug || "",
-      serviceId: w.specializations[0]?.service.id || "",
-      rating: w.rating,
-      ratingCount: w.ratingCount,
-      totalJobs: w.totalJobsCompleted,
-      isOnline: isWorkerAvailableNow({
+    const result = sortedWorkers.map((w) => {
+      const rawProf = (w as any).profession ?? "";
+      let profs: string[] = rawProf ? rawProf.split(",").map((s: string) => s.trim()).filter(Boolean) : [];
+      if (w.specializations && w.specializations.length > 0) {
+        w.specializations.forEach((spec: any) => {
+          const catName = spec.service?.category?.nameAr || spec.service?.category?.nameEn;
+          if (catName && !profs.includes(catName)) {
+            profs.push(catName);
+          }
+        });
+      }
+      if (profs.length === 0) {
+        const fallback = w.specializations[0]?.service?.category?.nameAr || w.specializations[0]?.service?.category?.nameEn || "";
+        if (fallback) profs = [fallback];
+      }
+
+      return {
+        id: w.id,
+        name: `${w.user.firstName} ${w.user.lastName}`,
+        avatarUrl: w.user.avatarUrl,
+        professions: profs,
+        professionAr: profs.join(" • ") || w.specializations[0]?.service?.category?.nameAr || "",
+        professionEn: profs.join(" • ") || w.specializations[0]?.service?.category?.nameEn || "",
+        categoryId: w.specializations[0]?.service?.category?.slug || "",
+        serviceId: w.specializations[0]?.service?.id || "",
+        rating: w.rating,
+        ratingCount: w.ratingCount,
+        totalJobs: w.totalJobsCompleted,
+        isOnline: isWorkerAvailableNow({
+          isAvailable: w.isAvailable,
+          workingHours: w.workingHours,
+          offDates: w.offDates,
+        }),
         isAvailable: w.isAvailable,
-        workingHours: w.workingHours,
-        offDates: w.offDates,
-      }),
-      isAvailable: w.isAvailable,
-      isFeatured: w.subscriptionTier === "featured",
-      isNearby: isFallback,
-      areas: w.workAreas.map((wa: any) => wa.area || wa.city),
-    }));
+        isFeatured: w.subscriptionTier === "featured",
+        isNearby: isFallback,
+        areas: w.workAreas.map((wa: any) => wa.area || wa.city),
+      };
+    });
 
     response.status(200).json(successResponse(result, "Public workers list fetched"));
   } catch (e: any) {
@@ -333,13 +351,29 @@ router.get("/public/workers/:id", async (request, response) => {
       orderBy: { createdAt: "desc" }
     });
 
+    const rawProf = (worker as any).profession ?? "";
+    let profList: string[] = rawProf ? rawProf.split(",").map((s: string) => s.trim()).filter(Boolean) : [];
+    if (specializations.length > 0) {
+      specializations.forEach((spec: any) => {
+        const catName = spec.service?.category?.nameAr || spec.service?.category?.nameEn;
+        if (catName && !profList.includes(catName)) {
+          profList.push(catName);
+        }
+      });
+    }
+    if (profList.length === 0) {
+      const fallback = specializations[0]?.service?.category?.nameAr || specializations[0]?.service?.category?.nameEn || "";
+      if (fallback) profList = [fallback];
+    }
+
     const result = {
       id: worker.id,
       userId: worker.userId,
       name: `${(worker as any).user?.firstName ?? ""} ${(worker as any).user?.lastName ?? ""}`.trim(),
       avatarUrl: (worker as any).user?.avatarUrl ?? null,
-      professionAr: specializations[0]?.service?.category?.nameAr || "",
-      professionEn: specializations[0]?.service?.category?.nameEn || "",
+      professions: profList,
+      professionAr: profList.join(" • ") || specializations[0]?.service?.category?.nameAr || "",
+      professionEn: profList.join(" • ") || specializations[0]?.service?.category?.nameEn || "",
       categoryId: specializations[0]?.service?.category?.slug || "",
       serviceId: specializations[0]?.service?.id || "",
       rating: worker.rating,

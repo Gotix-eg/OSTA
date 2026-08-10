@@ -64,6 +64,7 @@ interface WorkerProfileData {
   userId: string;
   name: string;
   avatarUrl: string | null;
+  professions?: string[];
   professionAr: string;
   professionEn: string;
   categoryId: string;
@@ -415,6 +416,29 @@ export function WorkerProfileDetail({ locale, workerId }: { locale: Locale; work
                   <span className={cn("inline-block h-2 w-2 rounded-full", worker.isOnline ? "bg-green-500" : "bg-white/30")} />
                   <span>{worker.isOnline ? (isArabic ? "متصل الآن" : "Online now") : (isArabic ? "غير متصل" : "Offline")}</span>
                 </p>
+
+                {/* Worker Professions Badge List */}
+                {(() => {
+                  const profs = worker.professions && worker.professions.length > 0
+                    ? worker.professions
+                    : (isArabic ? worker.professionAr : worker.professionEn)
+                    ? (isArabic ? worker.professionAr : worker.professionEn).split(/[,•]/).map((s) => s.trim()).filter(Boolean)
+                    : [];
+                  if (profs.length === 0) return null;
+                  return (
+                    <div className="mt-3 flex flex-wrap items-center gap-2">
+                      {profs.map((prof, idx) => (
+                        <span
+                          key={`${prof}-${idx}`}
+                          className="inline-flex items-center gap-1.5 border border-gold/50 bg-gold/15 px-3 py-1 text-xs font-black uppercase tracking-wide text-gold shadow-sm"
+                        >
+                          <Briefcase className="h-3.5 w-3.5 text-gold shrink-0" />
+                          <span>{prof}</span>
+                        </span>
+                      ))}
+                    </div>
+                  );
+                })()}
               </div>
 
               {/* Rating & Reviews Line */}
