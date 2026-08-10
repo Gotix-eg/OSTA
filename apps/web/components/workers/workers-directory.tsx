@@ -43,6 +43,8 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
   const [currentPage, setCurrentPage] = useState(1);
   const WORKERS_PER_PAGE = 12;
 
+  const [onlyOnline, setOnlyOnline] = useState(false);
+
   const [workers, setWorkers] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -103,7 +105,7 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, selectedSpecialty, selectedGov, selectedCity, sortBy]);
+  }, [searchQuery, selectedSpecialty, selectedGov, selectedCity, sortBy, onlyOnline]);
 
   const handleBookClick = (worker: any) => {
     if (isLoggedIn) {
@@ -119,7 +121,7 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
     }
   };
 
-  const filteredWorkers = useMemo(() => {
+  const searchFilteredWorkers = useMemo(() => {
     let result = workers;
     if (searchQuery) {
       result = result.filter((w) => {
@@ -129,6 +131,15 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
         return nameMatch || specAr.includes(searchQuery.toLowerCase()) || specEn.includes(searchQuery.toLowerCase());
       });
     }
+    return result;
+  }, [workers, searchQuery]);
+
+  const filteredWorkers = useMemo(() => {
+    let result = searchFilteredWorkers;
+
+    if (onlyOnline) {
+      result = result.filter((w) => w.isOnline);
+    }
 
     if (sortBy === "Top Rated") {
       result = [...result].sort((a, b) => (b.rating || 5) - (a.rating || 5));
@@ -136,7 +147,11 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
       result = [...result].sort((a, b) => (b.totalJobs || 0) - (a.totalJobs || 0));
     }
     return result;
-  }, [workers, searchQuery, sortBy]);
+  }, [searchFilteredWorkers, onlyOnline, sortBy]);
+
+  const onlineWorkersCount = useMemo(() => {
+    return searchFilteredWorkers.filter((w) => w.isOnline).length;
+  }, [searchFilteredWorkers]);
 
   const totalPages = Math.max(1, Math.ceil(filteredWorkers.length / WORKERS_PER_PAGE));
   const safeCurrentPage = Math.min(currentPage, totalPages);
@@ -246,14 +261,61 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
 
       {/* Stats Bar */}
       <section className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-3 text-start text-black md:flex-row md:items-center md:justify-between md:px-12 md:py-4">
-        <div className="flex items-center gap-4">
-          <span className="text-sm font-black uppercase md:text-lg">
-            {filteredWorkers.length} {isArabic ? "إجمالي الفنيين" : "Total Workers"}
-          </span>
-          <span className="flex items-center gap-1.5 text-sm font-black uppercase md:text-lg">
-            <span className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></span>
-            {filteredWorkers.filter((w) => w.isOnline).length} {isArabic ? "متاح الآن" : "Online Now"}
-          </span>
+        <div className="flex items-center gap-3 flex-wrap">
+          <button
+            type="button"
+            onClick={() => setOnlyOnline(false)}
+            className={cn(
+              "text-sm font-black uppercase md:text-lg cursor-pointer transition-all px-3 py-1.5 rounded-none border text-start flex items-center gap-1.5",
+              !onlyOnline
+                ? "bg-black/10 border-black/20 text-black"
+                : "bg-transparent border-transparent text-black/70 hover:text-black hover:bg-black/5"
+            )}
+            title={isArabic ? "عرض جميع الفنيين" : "Show all workers"}
+          >
+            <span>{searchFilteredWorkers.length}</span>
+            <span>{isArabic ? "إجمالي الفنيين" : "Total Workers"}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setOnlyOnline((prev) => !prev)}
+            className={cn(
+              "flex items-center gap-2 text-sm font-black uppercase md:text-lg cursor-pointer transition-all px-3 py-1.5 rounded-none border text-start select-none",
+              onlyOnline
+                ? "bg-black text-green-400 border-black shadow-md ring-2 ring-black"
+                : "bg-black/5 border-black/15 text-black hover:bg-black/15 hover:border-black/30"
+            )}
+            title={isArabic ? (onlyOnline ? "عرض الكل" : "فلترة الفنيين المتاحين الآن فقط") : (onlyOnline ? "Show All Workers" : "Filter Available Workers Only")}
+          >
+            <span className="relative flex h-3 w-3 items-center justify-center">
+              <span className={cn(
+                "absolute inline-flex h-full w-full rounded-full opacity-75 animate-ping",
+                onlyOnline ? "bg-green-400" : "bg-green-500"
+              )}></span>
+              <span className={cn(
+                "relative inline-flex h-2.5 w-2.5 rounded-full",
+                onlyOnline ? "bg-green-400" : "bg-green-500"
+              )}></span>
+            </span>
+            <span>{onlineWorkersCount} {isArabic ? "متاح الآن" : "Online Now"}</span>
+            {onlyOnline && (
+              <span className="ms-1 text-[10px] font-black px-1.5 py-0.5 bg-green-500/20 text-green-300 rounded border border-green-500/30">
+                {isArabic ? "مفعل" : "ACTIVE"}
+              </span>
+            )}
+          </button>
+
+          {onlyOnline && (
+            <button
+              type="button"
+              onClick={() => setOnlyOnline(false)}
+              className="text-xs font-bold text-black/70 hover:text-black underline flex items-center gap-1 ms-1 cursor-pointer"
+            >
+              <X className="h-3.5 w-3.5" />
+              {isArabic ? "عرض الكل" : "Show All"}
+            </button>
+          )}
         </div>
         <div className="flex items-center gap-4">
           <span className="text-xs font-bold uppercase text-black/70">{isArabic ? "ترتيب:" : "SORT BY:"}</span>
