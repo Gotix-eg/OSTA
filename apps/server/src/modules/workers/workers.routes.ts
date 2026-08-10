@@ -9,6 +9,7 @@ import { prisma } from "../../lib/prisma.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { catchAsync } from "../../utils/catchAsync.js";
 import { socketService } from "../../lib/socket.js";
+import { getCategorySlugFromProfession } from "../../routes/index.js";
 
 const router = Router();
 
@@ -652,7 +653,14 @@ router.get("/settings", catchAsync(async (request, response) => {
     include: {
       workerProfile: {
         include: {
-          workAreas: true
+          workAreas: true,
+          specializations: {
+            include: {
+              service: {
+                include: { category: true }
+              }
+            }
+          }
         }
       }
     }
@@ -663,6 +671,24 @@ router.get("/settings", catchAsync(async (request, response) => {
   const dbServiceAreas = user.workerProfile?.workAreas?.map(
     (wa) => wa.area || wa.city || wa.governorate
   ) ?? [];
+
+  const rawProfession = user.workerProfile?.profession ?? "";
+  let professionsList: string[] = rawProfession
+    ? rawProfession.split(",").map((s) => s.trim()).filter(Boolean)
+    : [];
+
+  if (user.workerProfile?.specializations && user.workerProfile.specializations.length > 0) {
+    user.workerProfile.specializations.forEach((spec) => {
+      const catName = spec.service?.category?.nameAr || spec.service?.category?.nameEn;
+      if (catName && !professionsList.includes(catName)) {
+        professionsList.push(catName);
+      }
+    });
+  }
+
+  if (professionsList.length === 0) {
+    professionsList = ["كهربائي فني"];
+  }
 
   const settings = {
     ...workerSettings,
@@ -677,7 +703,8 @@ router.get("/settings", catchAsync(async (request, response) => {
       nationalIdFront: user.workerProfile?.nationalIdFront ?? null,
       nationalIdBack: user.workerProfile?.nationalIdBack ?? null,
       selfieWithId: user.workerProfile?.selfieWithId ?? null,
-      verificationStatus: user.workerProfile?.verificationStatus ?? "PENDING"
+      verificationStatus: user.workerProfile?.verificationStatus ?? "PENDING",
+      professions: professionsList
     },
     workPreferences: {
       ...workerSettings.workPreferences,
@@ -698,7 +725,7 @@ router.get("/settings", catchAsync(async (request, response) => {
 
 router.patch("/settings", catchAsync(async (request, response) => {
   const userId = request.auth!.userId;
-  const { notificationsEnabledApp, notificationsEnabledEmail, isAvailable, nationalIdNumber, nationalIdFront, nationalIdBack, selfieWithId, workingHours, offDates, acceptedPaymentMethods, preferredPaymentMethod, serviceAreas } = request.body;
+  const { professions, notificationsEnabledApp, notificationsEnabledEmail, isAvailable, nationalIdNumber, nationalIdFront, nationalIdBack, selfieWithId, workingHours, offDates, acceptedPaymentMethods, preferredPaymentMethod, serviceAreas } = request.body;
 
   if (acceptedPaymentMethods !== undefined) {
     if (!Array.isArray(acceptedPaymentMethods) || acceptedPaymentMethods.some((method: unknown) => !ALLOWED_PAYMENT_METHODS.includes(method as any))) {
@@ -718,6 +745,41 @@ router.patch("/settings", catchAsync(async (request, response) => {
     const effectiveAcceptedMethods: string[] = acceptedPaymentMethods !== undefined ? acceptedPaymentMethods : ((worker as any).acceptedPaymentMethods ?? []);
     if (!effectiveAcceptedMethods.includes(preferredPaymentMethod)) {
       throw new ApiError(400, "Preferred payment method must be one of the accepted methods");
+    }
+  }
+
+  if (professions !== undefined) {
+    const cleanProfessions: string[] = Array.isArray(professions)
+      ? professions.map(String).map((s) => s.trim()).filter(Boolean)
+      : typeof professions === "string"
+      ? professions.split(",").map((s) => s.trim()).filter(Boolean)
+      : [];
+
+    const professionStr = cleanProfessions.join(", ");
+    await prisma.workerProfile.update({
+      where: { id: worker.id },
+      data: { profession: professionStr }
+    });
+
+    if (cleanProfessions.length > 0) {
+      await prisma.workerSpecialization.deleteMany({
+        where: { workerId: worker.id }
+      });
+
+      const categorySlugs = Array.from(new Set(cleanProfessions.map((p) => getCategorySlugFromProfession(p))));
+      for (const catSlug of categorySlugs) {
+        const service = await prisma.service.findFirst({
+          where: { category: { slug: catSlug } }
+        });
+        if (service) {
+          await prisma.workerSpecialization.create({
+            data: {
+              workerId: worker.id,
+              serviceId: service.id
+            }
+          });
+        }
+      }
     }
   }
 

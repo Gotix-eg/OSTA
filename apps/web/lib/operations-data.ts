@@ -242,6 +242,7 @@ export interface WorkerSettingsData {
     nationalIdBack?: string | null;
     selfieWithId?: string | null;
     verificationStatus?: string | null;
+    professions?: string[];
   };
   workPreferences: {
     isAvailable: boolean;
@@ -455,7 +456,8 @@ const workerSettingsFallback: WorkerSettingsData = {
     phone: "",
     email: "",
     emailVerified: false,
-    avatarUrl: null
+    avatarUrl: null,
+    professions: []
   },
   workPreferences: {
     isAvailable: false,

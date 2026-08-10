@@ -112,6 +112,44 @@ function WorkerSaveControl({ state, isArabic, error }: { state: "idle" | "saving
   );
 }
 
+const ALL_WORKER_PROFESSIONS = [
+  "كهربائي فني",
+  "سباك فني",
+  "نجار محترف",
+  "فني تكييف وتبريد",
+  "نقاش ودهانات",
+  "فني ألوميتال",
+  "حداد وكريتال",
+  "فني صيانة أجهزة منزلية",
+  "مبلط سيراميك ورخام",
+  "فني محارة وبناء",
+  "فني جبس بورد وديكور",
+  "مقاول تشطيبات شاملة",
+  "فني شبكات وتكنولوجيا",
+  "فني صيانة كمبيوتر ولابتوب",
+  "فني تركيب كاميرات مراقبة",
+  "فني نقل وتغليف أثاث",
+  "فني تنظيف وتعقيم ومكافحة حشرات",
+  "ميكانيكي سيارات",
+  "ميكانيكي موتوسيكلات واسكوتر",
+  "فني لف وصيانة مواتير ومضخات",
+  "فني تركيب وصيانة مصاعد",
+  "فني زجاج ومرايا وشاور",
+  "فني تركيب ستائر وشيدز",
+  "فني تركيب باركيه وأرضيات",
+  "فني دش وستالايت مركزي",
+  "فني انتركم وأنظمة ذكية",
+  "فني عزل مائي وحراري",
+  "فني محطات طاقة شمسية",
+  "فني تنسيق حدائق وزراعة",
+  "فني تنجيد وتجديد أثاث",
+  "فني غاز طبيعي وسخانات",
+  "فني صيانة حمامات سباحة",
+  "سمكري ودوكو سيارات",
+  "فني مفاتيح وتشفير سيارات",
+  "عامل صيانة منزلية عامة"
+];
+
 export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; initialData: WorkerSettingsData }) {
   const isArabic = locale === "ar";
   const liveData = useLiveApiData("/workers/settings", initialData);
@@ -121,6 +159,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   const [avatarCropSrc, setAvatarCropSrc] = useState<string | null>(null);
+  const [customProfInput, setCustomProfInput] = useState("");
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -142,6 +181,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
               : [isArabic ? "جميع أنحاء الجمهورية" : "All Egypt / Nationwide"];
 
           await patchApiData("/workers/settings", {
+            professions: updatedData.profile?.professions ?? [],
             isAvailable: updatedData.workPreferences?.isAvailable ?? false,
             workingHours: updatedData.workPreferences?.workingHours,
             offDates: updatedData.workPreferences?.offDates ?? [],
@@ -241,6 +281,35 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
     .slice(0, 2)
     .map((part) => part[0]?.toUpperCase())
     .join("") || "O";
+
+  const currentProfessions = Array.isArray(data.profile.professions) && data.profile.professions.length > 0
+    ? data.profile.professions
+    : ["كهربائي فني"];
+
+  function handleAddProfession(prof: string) {
+    const trimmed = prof.trim();
+    if (!trimmed || currentProfessions.includes(trimmed)) return;
+    const nextProfessions = [...currentProfessions, trimmed];
+    updateData((prev) => ({
+      ...prev,
+      profile: {
+        ...prev.profile,
+        professions: nextProfessions
+      }
+    }));
+  }
+
+  function handleRemoveProfession(profToRemove: string) {
+    if (currentProfessions.length <= 1) return;
+    const nextProfessions = currentProfessions.filter((p) => p !== profToRemove);
+    updateData((prev) => ({
+      ...prev,
+      profile: {
+        ...prev.profile,
+        professions: nextProfessions
+      }
+    }));
+  }
 
   return (
     <WorkerProShell locale={locale}>
@@ -428,6 +497,95 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
                 }))}
                 onVerified={() => updateData((prev) => ({ ...prev, profile: { ...prev.profile, emailVerified: true } }))}
               />
+            </div>
+
+            {/* Professions List Section */}
+            <div className="sm:col-span-2 space-y-3 pt-3 border-t border-white/10">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="text-sm font-black text-white/90 flex items-center gap-1.5">
+                  <Sparkles className="h-4 w-4 text-gold shrink-0" />
+                  <span>{isArabic ? "المهن والتخصصات المهنية" : "Professions & Specialties"}</span>
+                </span>
+                <span className="text-[10px] font-black uppercase tracking-wider text-gold/90 bg-gold/10 px-2.5 py-1 border border-gold/30">
+                  {isArabic ? "يمكنك إضافة أكثر من مهنة" : "Multiple professions allowed"}
+                </span>
+              </div>
+
+              {/* Selected Profession Badges */}
+              <div className="flex flex-wrap gap-2 min-h-[50px] p-3 border border-white/10 bg-[#111] items-center">
+                {currentProfessions.map((prof, idx) => (
+                  <span
+                    key={`${prof}-${idx}`}
+                    className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/15 px-3 py-1 text-xs font-bold text-gold shadow-sm"
+                  >
+                    <span>{prof}</span>
+                    {currentProfessions.length > 1 ? (
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveProfession(prof)}
+                        className="text-gold/70 hover:text-red-400 transition"
+                        title={isArabic ? "إزالة المهنة" : "Remove profession"}
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </button>
+                    ) : null}
+                  </span>
+                ))}
+              </div>
+
+              {/* Add Profession Controls */}
+              <div className="flex flex-col sm:flex-row items-center gap-2 pt-1">
+                <select
+                  value=""
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      handleAddProfession(e.target.value);
+                    }
+                  }}
+                  className="h-12 w-full sm:w-1/2 border border-white/10 bg-[#141414] px-4 text-xs font-bold text-white outline-none focus:border-gold cursor-pointer"
+                >
+                  <option value="" disabled>
+                    {isArabic ? "-- اختر مهنة لإضافتها --" : "-- Select a profession to add --"}
+                  </option>
+                  {ALL_WORKER_PROFESSIONS.filter((p) => !currentProfessions.includes(p)).map((p) => (
+                    <option key={p} value={p} className="bg-[#111] text-white py-1">
+                      {p}
+                    </option>
+                  ))}
+                </select>
+
+                <div className="flex h-12 w-full sm:w-1/2 items-center gap-2">
+                  <input
+                    type="text"
+                    placeholder={isArabic ? "أو اكتب مهنة إضافية..." : "Or type custom profession..."}
+                    value={customProfInput}
+                    onChange={(e) => setCustomProfInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        if (customProfInput.trim()) {
+                          handleAddProfession(customProfInput.trim());
+                          setCustomProfInput("");
+                        }
+                      }
+                    }}
+                    className="h-full flex-1 border border-white/10 bg-[#141414] px-4 text-xs text-white outline-none focus:border-gold"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (customProfInput.trim()) {
+                        handleAddProfession(customProfInput.trim());
+                        setCustomProfInput("");
+                      }
+                    }}
+                    className="h-full px-4 border border-gold bg-gold text-black text-xs font-black hover:bg-gold/90 transition shrink-0 inline-flex items-center gap-1"
+                  >
+                    <Plus className="h-4 w-4" />
+                    <span>{isArabic ? "إضافة" : "Add"}</span>
+                  </button>
+                </div>
+              </div>
             </div>
 
             <label className="space-y-2 sm:col-span-2 pt-2 border-t border-white/10">
