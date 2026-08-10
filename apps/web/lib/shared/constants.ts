@@ -344,5 +344,404 @@ export const serviceCategories: ServiceCategory[] = [
         }
       }
     ]
+  },
+  {
+    id: "gypsum",
+    slug: "gypsum",
+    icon: "Layout",
+    workersAvailable: 195,
+    name: { ar: "جبس بورد وديكور", en: "Gypsum Board" },
+    description: {
+      ar: "أعمال الجبس بورد والأسقف المعلقة والديكورات الجبسية الحديثة.",
+      en: "Gypsum board installation, suspended ceilings, and drywall decoration."
+    },
+    services: [
+      {
+        id: "gyp-install",
+        slug: "gyp-install",
+        name: { ar: "تركيب جبس بورد", en: "Gypsum Installation" },
+        description: { ar: "تركيب أسقف معلقة وحوائط جبسية.", en: "Suspended ceiling and drywall installation." }
+      }
+    ]
+  },
+  {
+    id: "moving",
+    slug: "moving",
+    icon: "Truck",
+    workersAvailable: 340,
+    name: { ar: "نقل عفش وتغليف", en: "Furniture Moving" },
+    description: {
+      ar: "خدمات نقل الأثاث وتغليفه وفكه وتركيبه بأيدي فنيين محترفين.",
+      en: "Furniture moving, packaging, disassembly, and assembly."
+    },
+    services: [
+      {
+        id: "move-furniture",
+        slug: "move-furniture",
+        name: { ar: "نقل وتغليف أثاث", en: "Furniture Transport" },
+        description: { ar: "نقل عفش وتغليف لحمايته.", en: "Furniture transport and protective packaging." }
+      }
+    ]
+  },
+  {
+    id: "cleaning",
+    slug: "cleaning",
+    icon: "Sparkles",
+    workersAvailable: 610,
+    name: { ar: "تنظيف وتعقيم منازل", en: "Home Cleaning" },
+    description: {
+      ar: "تنظيف شامل للمنازل والفلل والمكاتب والتعقيم ومكافحة الحشرات.",
+      en: "Comprehensive cleaning, sanitization, and pest control."
+    },
+    services: [
+      {
+        id: "clean-home",
+        slug: "clean-home",
+        name: { ar: "تنظيف شقق ومكاتب", en: "Home & Office Cleaning" },
+        description: { ar: "تنظيف وتطهير شامل.", en: "Deep home and office cleaning." }
+      }
+    ]
+  },
+  {
+    id: "car-mechanic",
+    slug: "car-mechanic",
+    icon: "Settings",
+    workersAvailable: 480,
+    name: { ar: "ميكانيكي سيارات", en: "Car Mechanic" },
+    description: {
+      ar: "صيانة وإصلاح أعطال السيارات والكشف بالكمبيوتر.",
+      en: "Car repairs, diagnostics, brake servicing, and engine maintenance."
+    },
+    services: [
+      {
+        id: "car-repair",
+        slug: "car-repair",
+        name: { ar: "صيانة وإصلاح سيارات", en: "Car Repair" },
+        description: { ar: "كشف أعطال كمبيوتر وصيانة ميكانيكا.", en: "Diagnostics and mechanical repair." }
+      }
+    ]
+  },
+  {
+    id: "bike-mechanic",
+    slug: "bike-mechanic",
+    icon: "Settings",
+    workersAvailable: 290,
+    name: { ar: "ميكانيكي موتوسيكلات", en: "Motorcycle Mechanic" },
+    description: {
+      ar: "صيانة وإصلاح كافة أنواع الموتوسيكلات والاسكوتر.",
+      en: "Maintenance and repair of all motorcycles and scooters."
+    },
+    services: [
+      {
+        id: "bike-repair",
+        slug: "bike-repair",
+        name: { ar: "صيانة موتوسيكلات", en: "Motorcycle Repair" },
+        description: { ar: "إصلاح أعطال الموتوسيكلات وتوفير قطع غيار.", en: "Motorcycle fault fixing and tuning." }
+      }
+    ]
+  },
+  {
+    id: "engine-repair",
+    slug: "engine-repair",
+    icon: "Hammer",
+    workersAvailable: 310,
+    name: { ar: "صيانة مواتير", en: "Engine Repair" },
+    description: {
+      ar: "لف وصيانة مواتير المياه، مواتير المصاعد، والمولدات.",
+      en: "Rewinding and repair of water pump motors and generators."
+    },
+    services: [
+      {
+        id: "motor-rewind",
+        slug: "motor-rewind",
+        name: { ar: "لف وصيانة مواتير", en: "Motor Maintenance" },
+        description: { ar: "لف مواتير مياه ومضخات.", en: "Motor rewinding and pump repair." }
+      }
+    ]
+  },
+  {
+    id: "elevators",
+    slug: "elevators",
+    icon: "Layers",
+    workersAvailable: 140,
+    name: { ar: "فني مصاعد", en: "Elevator Technician" },
+    description: {
+      ar: "تركيب وصيانة مصاعد المباني والعمارات.",
+      en: "Elevator installation and emergency repair."
+    },
+    services: [
+      {
+        id: "elevator-maint",
+        slug: "elevator-maint",
+        name: { ar: "صيانة مصاعد", en: "Elevator Service" },
+        description: { ar: "صيانة دورية وطوارئ للمصاعد.", en: "Periodic maintenance and emergency service." }
+      }
+    ]
+  },
+  {
+    id: "glass",
+    slug: "glass",
+    icon: "Layout",
+    workersAvailable: 210,
+    name: { ar: "فني زجاج ومرايا", en: "Glass & Mirrors" },
+    description: {
+      ar: "تقطيع وتفصيل الزجاج والمرايا وكبائن الشاور.",
+      en: "Custom glass cutting, mirror installation, and shower cabins."
+    },
+    services: [
+      {
+        id: "glass-cut",
+        slug: "glass-cut",
+        name: { ar: "تركيب زجاج ومرايا", en: "Glass Installation" },
+        description: { ar: "تفصيل واجهات وكبائن شاور.", en: "Glass facades and shower cabins." }
+      }
+    ]
+  },
+  {
+    id: "curtains",
+    slug: "curtains",
+    icon: "Layers",
+    workersAvailable: 260,
+    name: { ar: "تركيب ستائر وشيدز", en: "Curtains & Blinds" },
+    description: {
+      ar: "تركيب كافة أنواع الستائر المنزلية والمكتبية.",
+      en: "Installation of home and office curtains and blinds."
+    },
+    services: [
+      {
+        id: "curtain-install",
+        slug: "curtain-install",
+        name: { ar: "تركيب ستائر", en: "Curtain Installation" },
+        description: { ar: "تركيب ستائر وشيدز كهربائية.", en: "Installing curtains and motorized shades." }
+      }
+    ]
+  },
+  {
+    id: "flooring",
+    slug: "flooring",
+    icon: "Grid",
+    workersAvailable: 190,
+    name: { ar: "تركيب باركيه وأرضيات", en: "Parquet & Flooring" },
+    description: {
+      ar: "تركيب وصيانة أرضيات الباركيه وHDF والخشب.",
+      en: "Installation of parquet, HDF, and wooden flooring."
+    },
+    services: [
+      {
+        id: "parquet-install",
+        slug: "parquet-install",
+        name: { ar: "تركيب باركيه", en: "Parquet Installation" },
+        description: { ar: "تركيب وقشط وتلميع الباركيه.", en: "Parquet installation and sanding." }
+      }
+    ]
+  },
+  {
+    id: "satellite",
+    slug: "satellite",
+    icon: "Globe",
+    workersAvailable: 380,
+    name: { ar: "فني دش وستالايت", en: "Satellite & Dish" },
+    description: {
+      ar: "ضبط وبرمجة أطباق الدش والدش المركزي.",
+      en: "Satellite dish alignment and central dish systems."
+    },
+    services: [
+      {
+        id: "dish-align",
+        slug: "dish-align",
+        name: { ar: "ضبط دش ورسيفر", en: "Dish Alignment" },
+        description: { ar: "ضبط وتوصيل الدش والرسيفر.", en: "Dish and receiver configuration." }
+      }
+    ]
+  },
+  {
+    id: "smart-home",
+    slug: "smart-home",
+    icon: "Zap",
+    workersAvailable: 160,
+    name: { ar: "انتركم وأنظمة ذكية", en: "Intercom & Smart Home" },
+    description: {
+      ar: "تركيب أنظمة الانتركم والأقفال الذكية.",
+      en: "Audio/video intercom systems and smart home setup."
+    },
+    services: [
+      {
+        id: "intercom-install",
+        slug: "intercom-install",
+        name: { ar: "تركيب انتركم", en: "Intercom Setup" },
+        description: { ar: "تركيب أنظمة انتركم وأقفال ذكية.", en: "Intercom and smart lock installation." }
+      }
+    ]
+  },
+  {
+    id: "insulation",
+    slug: "insulation",
+    icon: "ShieldCheck",
+    workersAvailable: 230,
+    name: { ar: "عزل مائي وحراري", en: "Waterproofing & Insulation" },
+    description: {
+      ar: "عزل الأسطح والحمامات ضد التسريب والعزل الحراري.",
+      en: "Roof waterproofing and thermal insulation."
+    },
+    services: [
+      {
+        id: "water-proof",
+        slug: "water-proof",
+        name: { ar: "عزل مائي", en: "Waterproofing" },
+        description: { ar: "عزل الأسطح والمباني.", en: "Roof and floor waterproofing." }
+      }
+    ]
+  },
+  {
+    id: "solar",
+    slug: "solar",
+    icon: "Zap",
+    workersAvailable: 110,
+    name: { ar: "طاقة شمسية", en: "Solar Energy" },
+    description: {
+      ar: "تركيب وصيانة ألواح الطاقة الشمسية والسخانات.",
+      en: "Solar panels and solar water heater installation."
+    },
+    services: [
+      {
+        id: "solar-panels",
+        slug: "solar-panels",
+        name: { ar: "تركيب طاقة شمسية", en: "Solar Installation" },
+        description: { ar: "تركيب ألواح ومحولات الطاقة الشمسية.", en: "Solar panel and inverter setup." }
+      }
+    ]
+  },
+  {
+    id: "gardening",
+    slug: "gardening",
+    icon: "Sparkles",
+    workersAvailable: 270,
+    name: { ar: "تنسيق حدائق وزراعة", en: "Gardening & Landscape" },
+    description: {
+      ar: "تنسيق الحدائق وزراعة وتقليم الأشجار وشبكات الري.",
+      en: "Garden design, lawn maintenance, and irrigation systems."
+    },
+    services: [
+      {
+        id: "landscape-design",
+        slug: "landscape-design",
+        name: { ar: "تنسيق حدائق", en: "Landscape Design" },
+        description: { ar: "زراعة وتنسيق حدائق وشبكات ري.", en: "Garden design and irrigation installation." }
+      }
+    ]
+  },
+  {
+    id: "upholstery",
+    slug: "upholstery",
+    icon: "Wrench",
+    workersAvailable: 310,
+    name: { ar: "تنجيد وتجديد أثاث", en: "Furniture Upholstery" },
+    description: {
+      ar: "تنجيد وتجديد الأنتريهات والصالونات والكنب.",
+      en: "Upholstery renewal, sofa, and salon repairs."
+    },
+    services: [
+      {
+        id: "sofa-upholstery",
+        slug: "sofa-upholstery",
+        name: { ar: "تنجيد أنتريهات وكنب", en: "Sofa Upholstery" },
+        description: { ar: "تغيير إسفنج وأقمشة الكنب.", en: "Replacing sofa foam and fabric." }
+      }
+    ]
+  },
+  {
+    id: "gas",
+    slug: "gas",
+    icon: "Wrench",
+    workersAvailable: 340,
+    name: { ar: "غاز طبيعي وسخانات", en: "Gas Piping & Heaters" },
+    description: {
+      ar: "وصولات الغاز وصيانة سخانات الغاز والبوتاجازات.",
+      en: "Gas line extensions, heater repair, and stove connections."
+    },
+    services: [
+      {
+        id: "gas-heater",
+        slug: "gas-heater",
+        name: { ar: "صيانة سخانات غاز", en: "Gas Heater Repair" },
+        description: { ar: "إصلاح وتوصيل سخانات الغاز.", en: "Gas heater setup and maintenance." }
+      }
+    ]
+  },
+  {
+    id: "pools",
+    slug: "pools",
+    icon: "Waves",
+    workersAvailable: 120,
+    name: { ar: "صيانة حمامات سباحة", en: "Swimming Pool Care" },
+    description: {
+      ar: "تنظيف وتعقيم حمامات السباحة وصيانة الفلاتر والمضخات.",
+      en: "Pool cleaning, chemical treatment, and pump filter maintenance."
+    },
+    services: [
+      {
+        id: "pool-cleaning",
+        slug: "pool-cleaning",
+        name: { ar: "صيانة مسبح", en: "Pool Cleaning" },
+        description: { ar: "تنظيف وتعقيم مسبح وصيانة مضخات.", en: "Pool cleaning and filter service." }
+      }
+    ]
+  },
+  {
+    id: "car-body",
+    slug: "car-body",
+    icon: "Settings",
+    workersAvailable: 290,
+    name: { ar: "سمكري ودوكو سيارات", en: "Auto Body & Painting" },
+    description: {
+      ar: "سمكرة وتعديل صدمات السيارات ودهان دوكو وتلميع.",
+      en: "Car body dent repair, spray painting, and polishing."
+    },
+    services: [
+      {
+        id: "dent-repair",
+        slug: "dent-repair",
+        name: { ar: "سمكرة ودلك سيارات", en: "Dent Repair" },
+        description: { ar: "إصلاح صدمات ودهان دوكو.", en: "Auto body repair and spray paint." }
+      }
+    ]
+  },
+  {
+    id: "car-keys",
+    slug: "car-keys",
+    icon: "Wrench",
+    workersAvailable: 210,
+    name: { ar: "مفاتيح وتشفير سيارات", en: "Car Keys & Locksmith" },
+    description: {
+      ar: "نسخ وتشفير مفاتيح السيارات وفتح المغلقة.",
+      en: "Car key duplication, programming, and emergency lockouts."
+    },
+    services: [
+      {
+        id: "key-program",
+        slug: "key-program",
+        name: { ar: "تشفير مفاتيح سيارات", en: "Key Programming" },
+        description: { ar: "نسخ مفاتيح وفتح سيارات.", en: "Key duplication and lockout help." }
+      }
+    ]
+  },
+  {
+    id: "handyman",
+    slug: "handyman",
+    icon: "Hammer",
+    workersAvailable: 530,
+    name: { ar: "عامل صيانة عامة", en: "General Handyman" },
+    description: {
+      ar: "تركيب رفوف وشاشات معالجة الأعطال البسيطة.",
+      en: "TV and shelf mounting, drill work, and minor repairs."
+    },
+    services: [
+      {
+        id: "mount-tv",
+        slug: "mount-tv",
+        name: { ar: "صيانة منزلية عامة", en: "Minor Handyman Fixes" },
+        description: { ar: "تركيب شاشات وأرفف وإصلاحات خفيفة.", en: "TV mounting and minor fixes." }
+      }
+    ]
   }
 ];
