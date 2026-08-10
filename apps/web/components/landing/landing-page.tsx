@@ -683,12 +683,11 @@ export function LandingPage({ locale }: { locale: Locale }) {
                       {worker.rating > 0 ? worker.rating.toFixed(1) : "5.0"} ★
                     </div>
                   </div>
-                  <div className="flex justify-between items-center text-xs text-neutral-500 mb-6 font-semibold">
+                  <div className="flex items-center text-xs text-neutral-500 mb-6 font-semibold">
                     <span className="flex items-center gap-1">
                       <ShieldCheck className="h-4 w-4 text-gold" />
                       {worker.totalJobs || 120} {isArabic ? "عملية ناجحة" : "Jobs"}
                     </span>
-                    <span className="font-bold">{isArabic ? "مصر" : "Egypt"}</span>
                   </div>
                   <button
                     onClick={() => isFallbackWorker ? window.location.assign(`/${locale}/workers`) : handleBookClick(worker)}

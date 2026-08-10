@@ -2,13 +2,13 @@
 
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
-import { 
-  MapPin, 
-  Search, 
-  Star, 
-  ChevronRight, 
-  X, 
-  ShieldCheck, 
+import {
+  MapPin,
+  Search,
+  Star,
+  ChevronRight,
+  X,
+  ShieldCheck,
   Loader2
 } from "lucide-react";
 import type { Locale } from "@/lib/locales";
@@ -35,7 +35,7 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
   const [selectedCity, setSelectedCity] = useState("");
   const [sortBy, setSortBy] = useState("Top Rated");
   const [currentPage, setCurrentPage] = useState(1);
-  const WORKERS_PER_PAGE = 9;
+  const WORKERS_PER_PAGE = 12;
 
   const [workers, setWorkers] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -145,15 +145,12 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
 
   return (
     <div className="min-h-screen bg-gold pb-28 text-[#1a1c1c] font-sans antialiased md:-mx-12 md:-my-12 md:pb-0">
-      <style dangerouslySetInnerHTML={{__html: '.worker-card-dark { background-color: #000000; color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.1); position: relative; display: flex; flex-direction: column; transition: all 0.2s ease-in-out; } .worker-card-light { background-color: #ffffff; color: #000000; border: 1px solid rgba(0, 0, 0, 0.1); position: relative; display: flex; flex-direction: column; transition: all 0.2s ease-in-out; } .worker-card-dark:hover { outline: 3px solid #000000; transform: translateY(-4px); } .worker-card-light:hover { outline: 3px solid #ffffff; transform: translateY(-4px); }' }} />
+      <style dangerouslySetInnerHTML={{__html: '.worker-card-dark { background-color: #000000; color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.1); position: relative; display: flex; flex-direction: column; transition: all 0.2s ease-in-out; } .worker-card-dark:hover { outline: 3px solid #000000; transform: translateY(-4px); }' }} />
 
       {/* Black Hero Header Section */}
-      <section className="relative overflow-hidden border-b-4 border-black bg-black px-4 py-6 text-start md:px-12 md:py-20 md:text-center">
-        <div className="mx-auto max-w-4xl space-y-5 md:space-y-6">
+      <section className="relative overflow-hidden border-b-4 border-black bg-black px-4 py-6 text-start md:px-12 md:py-12 md:text-center">
+        <div className="mx-auto max-w-4xl space-y-4 md:space-y-5">
           <div className="space-y-3">
-            <span className="inline-flex bg-gold px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-black">
-              {isArabic ? "الأسطوات" : "Workers"}
-            </span>
             <h1 className="text-4xl font-black leading-tight text-white md:text-3xl">
               {isArabic ? "ابحث عن فني محترف" : "Find Expert Workers"}
             </h1>
@@ -205,14 +202,15 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
       </section>
 
       {/* Stats Bar */}
-      <section className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-5 text-start text-black md:flex-row md:items-center md:justify-between md:px-12 md:py-8">
-        <div className="flex items-center gap-3">
+      <section className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-3 text-start text-black md:flex-row md:items-center md:justify-between md:px-12 md:py-4">
+        <div className="flex items-center gap-4">
           <span className="text-sm font-black uppercase md:text-lg">
-            {isArabic
-              ? `${filteredWorkers.length} فني متاح في ${selectedCity || "القاهرة"}`
-              : `${filteredWorkers.length} professionals available in ${selectedCity || "New Cairo"}`}
+            {filteredWorkers.length} {isArabic ? "إجمالي الفنيين" : "Total Workers"}
           </span>
-          <span className="w-2.5 h-2.5 rounded-full bg-black animate-pulse"></span>
+          <span className="flex items-center gap-1.5 text-sm font-black uppercase md:text-lg">
+            <span className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></span>
+            {filteredWorkers.filter((w) => w.isOnline).length} {isArabic ? "متاح الآن" : "Online Now"}
+          </span>
         </div>
         <div className="flex items-center gap-4">
           <span className="text-xs font-bold uppercase text-black/70">{isArabic ? "ترتيب:" : "SORT BY:"}</span>
@@ -228,7 +226,7 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
       </section>
 
       {/* Worker Grid */}
-      <section className="mx-auto max-w-7xl px-4 pb-10 md:px-12 md:pb-24">
+      <section className="mx-auto max-w-7xl px-4 pb-10 md:px-12 md:pb-20">
         {isLoading ? (
           <div className="py-20 flex flex-col items-center justify-center">
             <Loader2 className="h-12 w-12 animate-spin text-black mb-4" />
@@ -240,34 +238,26 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
             <p className="text-black/75 text-sm">{isArabic ? "جرب تغيير فلاتر البحث أو التخصص." : "Try changing search queries or specialties filters."}</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
             {paginatedWorkers.map((worker, index) => {
-              const avatarImg = worker.avatarUrl && !worker.avatarUrl.includes("initials") 
-                ? worker.avatarUrl 
+              const avatarImg = worker.avatarUrl && !worker.avatarUrl.includes("initials")
+                ? worker.avatarUrl
                 : defaultAvatars[index % defaultAvatars.length];
-              
-              // Apply alternating colors formula based on the screenshot (index 1 and 5 are white, others are black)
-              const isWhiteCard = (index % 4 === 1);
-              
+
               return (
-                <div 
-                  key={worker.id} 
-                  className={cn(
-                    isWhiteCard ? "worker-card-light" : "worker-card-dark",
-                    "rounded-none flex flex-col justify-between p-0 overflow-hidden"
-                  )}
+                <div
+                  key={worker.id}
+                  className="worker-card-dark rounded-none flex flex-col justify-between p-0 overflow-hidden"
                 >
-                  {/* Full-width Image Header */}
+                  {/* Compact Image Header */}
                   <div className="relative aspect-square w-full overflow-hidden bg-neutral-800">
                     <Link href={"/" + locale + "/workers/" + worker.id} className="block w-full h-full">
                       <img className="w-full h-full object-cover object-center transition-all duration-500" src={avatarImg} alt={worker.name} />
                     </Link>
-                    <div className="absolute top-4 left-4 z-10 pointer-events-none">
+                    <div className="absolute top-2 left-2 z-10 pointer-events-none">
                       <span className={cn(
-                        "text-[10px] font-black px-2 py-1 flex items-center gap-1 rounded-none",
-                        worker.isOnline 
-                          ? "bg-green-500 text-white" 
-                          : (isWhiteCard ? "bg-black text-white" : "bg-white text-black")
+                        "text-[9px] font-black px-1.5 py-0.5 flex items-center gap-1 rounded-none",
+                        worker.isOnline ? "bg-green-500 text-white" : "bg-white text-black"
                       )}>
                         {worker.isOnline && <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span>}
                         {worker.isOnline ? (isArabic ? "متاح" : "ONLINE") : (isArabic ? "غير متاح" : "OFFLINE")}
@@ -276,59 +266,43 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
                   </div>
 
                   {/* Card Content Area */}
-                  <div className="flex flex-grow flex-col justify-between p-5 text-start md:p-6">
+                  <div className="flex flex-grow flex-col justify-between p-3 text-start md:p-3.5">
                     <div>
-                      <div className="flex justify-between items-center mb-2">
+                      <div className="flex justify-between items-start gap-1.5 mb-1">
                         <Link
                           href={"/" + locale + "/workers/" + worker.id}
-                          className="font-black text-lg leading-tight truncate hover:underline hover:text-gold"
+                          className="font-black text-sm leading-tight truncate hover:underline hover:text-gold"
                         >
                           {worker.name}
                         </Link>
-                        <div className="flex items-center text-gold text-sm font-black">
-                          <Star className="h-4 w-4 fill-current mr-1 text-gold" />
-                          <span className={isWhiteCard ? "text-black" : "text-white"}>{worker.rating > 0 ? worker.rating.toFixed(1) : "5.0"}</span>
+                        <div className="flex shrink-0 items-center text-gold text-xs font-black">
+                          <Star className="h-3 w-3 fill-current mr-0.5 text-gold" />
+                          <span className="text-white">{worker.rating > 0 ? worker.rating.toFixed(1) : "5.0"}</span>
                         </div>
                       </div>
-                      <p className={cn(
-                        "text-[10px] font-black px-2 py-0.5 mb-4 inline-block uppercase rounded-none tracking-wider",
-                        isWhiteCard ? "bg-black text-gold" : "bg-gold text-black"
-                      )}>
+                      <p className="text-[9px] font-black px-1.5 py-0.5 mb-2 inline-block uppercase rounded-none tracking-wider truncate max-w-full bg-gold text-black">
                         {isArabic ? worker.professionAr : worker.professionEn}
                       </p>
-                      
-                      <div className={cn(
-                        "space-y-3 mb-6 text-xs font-bold",
-                        isWhiteCard ? "text-neutral-600" : "text-neutral-400"
-                      )}>
-                        <div className="flex justify-between items-center border-b border-black/10 md:border-white/10 pb-2">
-                          <span>{isArabic ? "العمليات الناجحة" : "COMPLETED JOBS"}</span>
-                          <span className={isWhiteCard ? "text-black" : "text-white"}>{worker.totalJobs || "1,240+"}</span>
-                        </div>
-                        <div className="flex justify-between items-center border-b border-black/10 md:border-white/10 pb-2">
-                          <span>{isArabic ? "زمن الاستجابة" : "RESPONSE TIME"}</span>
-                          <span className={isWhiteCard ? "text-black" : "text-white"}>{isArabic ? "15 دقيقة" : "15 Mins"}</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span>{isArabic ? "الموقع" : "PRIMARY LOCATION"}</span>
-                          <span className={cn(
-                            "truncate max-w-[150px]",
-                            isWhiteCard ? "text-black" : "text-white"
-                          )}>{worker.city || "New Cairo, Fifth Settlement"}</span>
-                        </div>
+
+                      <div className="flex items-center gap-1 text-[10px] font-bold mb-2 truncate text-neutral-400">
+                        <MapPin className="h-3 w-3 shrink-0 text-gold" />
+                        <span className="truncate">{worker.areas?.length ? worker.areas.join(" • ") : "New Cairo"}</span>
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-1.5 mb-3">
+                        <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 px-2.5 py-1 text-[10px] font-bold text-neutral-300">
+                          <span className="text-white">{worker.totalJobs || "1,240+"}</span>
+                          <span>{isArabic ? "عملية ناجحة" : "Jobs Done"}</span>
+                          <ShieldCheck className="h-3 w-3 shrink-0 text-gold" />
+                        </span>
                       </div>
                     </div>
-                    
-                    <button 
+
+                    <button
                       onClick={() => handleBookClick(worker)}
-                      className={cn(
-                        "w-full py-4 font-black text-sm uppercase tracking-widest transition-all rounded-none mt-2",
-                        isWhiteCard 
-                          ? "bg-black text-white hover:bg-gold hover:text-black" 
-                          : "bg-white text-black hover:bg-gold hover:text-black"
-                      )}
+                      className="w-full py-2.5 font-black text-[11px] uppercase tracking-wider transition-all rounded-none bg-white text-black hover:bg-gold hover:text-black"
                     >
-                      {isArabic ? "احجز الآن" : "BOOK PRO NOW"}
+                      {isArabic ? "اطلب الفني الآن" : "BOOK NOW"}
                     </button>
                   </div>
                 </div>
