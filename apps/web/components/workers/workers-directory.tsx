@@ -22,6 +22,16 @@ const ALL_SPECIALTIES_OPTION = { id: "all", name: { ar: "الكل", en: "All Spe
 
 export function WorkersDirectory({ locale }: { locale: Locale }) {
   const isArabic = locale === "ar";
+  const liveCategories = useLiveApiData<any[]>("/services/categories", []);
+  const CRAFTS = [
+    ALL_SPECIALTIES_OPTION,
+    ...(Array.isArray(liveCategories) ? liveCategories : [])
+      .filter(Boolean)
+      .map((category: any) => ({
+        id: category.slug,
+        name: { ar: category.nameAr, en: category.nameEn }
+      }))
+  ];
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSpecialty, setSelectedSpecialty] = useState("all");
   const [selectedGov, setSelectedGov] = useState("");
@@ -189,7 +199,7 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
             <span className="text-white/25">|</span>
             <button className="hover:text-white" onClick={() => setSelectedSpecialty("ac")}>{isArabic ? "صيانة تكييف" : "AC Maintenance"}</button>
             <span className="text-white/25">|</span>
-            <button className="hover:text-white" onClick={() => setSelectedSpecialty("electricity")}>{isArabic ? "كهربائي معتمد" : "Licensed Electrician"}</button>
+            <button className="hover:text-white" onClick={() => setSelectedSpecialty("electrical")}>{isArabic ? "كهربائي معتمد" : "Licensed Electrician"}</button>
           </div>
         </div>
       </section>
