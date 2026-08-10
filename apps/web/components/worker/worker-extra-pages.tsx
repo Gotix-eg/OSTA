@@ -534,7 +534,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
               </div>
 
               {/* Add Profession Controls */}
-              <div className="flex flex-col sm:flex-row items-center gap-2 pt-1">
+              <div className="grid gap-2 sm:grid-cols-2 pt-1">
                 <select
                   value=""
                   onChange={(e) => {
@@ -542,7 +542,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
                       handleAddProfession(e.target.value);
                     }
                   }}
-                  className="h-12 w-full sm:w-1/2 border border-white/10 bg-[#141414] px-4 text-xs font-bold text-white outline-none focus:border-gold cursor-pointer"
+                  className="h-12 w-full min-w-0 border border-white/10 bg-[#141414] px-4 text-xs font-bold text-white outline-none focus:border-gold cursor-pointer"
                 >
                   <option value="" disabled>
                     {isArabic ? "-- اختر مهنة لإضافتها --" : "-- Select a profession to add --"}
@@ -554,7 +554,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
                   ))}
                 </select>
 
-                <div className="flex h-12 w-full sm:w-1/2 items-center gap-2">
+                <div className="flex h-12 w-full min-w-0 items-center gap-2">
                   <input
                     type="text"
                     placeholder={isArabic ? "أو اكتب مهنة إضافية..." : "Or type custom profession..."}
@@ -569,7 +569,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
                         }
                       }
                     }}
-                    className="h-full flex-1 border border-white/10 bg-[#141414] px-4 text-xs text-white outline-none focus:border-gold"
+                    className="h-full flex-1 min-w-0 border border-white/10 bg-[#141414] px-4 text-xs text-white outline-none focus:border-gold"
                   />
                   <button
                     type="button"
