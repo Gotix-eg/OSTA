@@ -5,7 +5,7 @@ import {
   Star, ShieldCheck, Shield, Check, X, Search, DollarSign, MapPin, Clock,
 } from "lucide-react";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/lib/locales";
 import { getBrowserAuthState } from "@/lib/auth-client";
@@ -43,6 +43,11 @@ function getServiceName(craft: any, isArabic: boolean) {
   return isArabic ? (nameAr || nameEn || "خدمة") : (nameEn || nameAr || "Service");
 }
 
+function pickRandomWorkers<T>(pool: T[], count: number): T[] {
+  const shuffled = [...pool].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, count);
+}
+
 export function LandingPage({ locale }: { locale: Locale }) {
   const isArabic = locale === "ar";
   const liveCategories = useLiveApiData<any[]>("/services/categories", []);
@@ -65,15 +70,20 @@ export function LandingPage({ locale }: { locale: Locale }) {
     }
   ]);
   const [workers, setWorkers] = useState<any[]>([]);
+  const [featuredWorkers, setFeaturedWorkers] = useState<any[]>([]);
   const [openRequests, setOpenRequests] = useState<any[]>([]);
   
   const [selectedWorkerForBooking, setSelectedWorkerForBooking] = useState<any | null>(null);
   const [showAuthModal, setShowAuthModal] = useState<boolean>(false);
   const [showWorkerAuthModal, setShowWorkerAuthModal] = useState<boolean>(false);
+  const hasFetchedInitialDataRef = useRef(false);
 
   useEffect(() => {
+    if (hasFetchedInitialDataRef.current) return;
+    hasFetchedInitialDataRef.current = true;
+
     const baseUrl = resolveApiBaseUrl();
-    
+
     // Fetch slides from dynamic database API
     fetch(`${baseUrl}/public/slides`)
       .then(r => r.json())
@@ -116,6 +126,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
       .then(payload => {
         if (payload.success && Array.isArray(payload.data)) {
           setWorkers(payload.data);
+          setFeaturedWorkers(pickRandomWorkers(payload.data, 4));
         }
       })
       .catch(() => {});
@@ -130,6 +141,14 @@ export function LandingPage({ locale }: { locale: Locale }) {
       })
       .catch(() => {});
   }, []);
+
+  useEffect(() => {
+    if (workers.length === 0) return;
+    const interval = setInterval(() => {
+      setFeaturedWorkers(pickRandomWorkers(workers, 4));
+    }, 10000);
+    return () => clearInterval(interval);
+  }, [workers]);
 
   const handleBookClick = (worker: any) => {
     getBrowserAuthState().then(({ isLoggedIn }) => {
@@ -635,8 +654,8 @@ export function LandingPage({ locale }: { locale: Locale }) {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            {(workers.length > 0 ? workers.slice(0, 8) : desktopFallbackPros).slice(0, 4).map((worker, index) => {
-              const isFallbackWorker = workers.length === 0;
+            {(featuredWorkers.length > 0 ? featuredWorkers : desktopFallbackPros).map((worker, index) => {
+              const isFallbackWorker = featuredWorkers.length === 0;
               const defaultAvatars = [
                 "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=400&auto=format&fit=crop",
                 "https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=400&auto=format&fit=crop",
