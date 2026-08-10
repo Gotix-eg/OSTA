@@ -445,7 +445,7 @@ export function WorkerProfileDetail({ locale, workerId }: { locale: Locale; work
               <div className="flex flex-wrap items-center gap-3 text-sm">
                 <span className="inline-flex items-center gap-1.5 bg-gold px-3 py-1 font-black text-ink">
                   <Star className="h-4 w-4 fill-current" />
-                  {worker.rating > 0 ? worker.rating.toFixed(2) : (isArabic ? "جديد" : "New")}
+                  {worker.reviews && worker.reviews.length > 0 && worker.rating > 0 ? worker.rating.toFixed(2) : (isArabic ? "جديد (لا يوجد تقييمات بعد)" : "New (No ratings yet)")}
                 </span>
 
                 <button

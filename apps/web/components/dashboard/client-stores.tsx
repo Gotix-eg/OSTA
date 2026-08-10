@@ -109,7 +109,7 @@ function StoreCard({
           </div>
           <div className="flex shrink-0 items-center gap-1 text-sm font-black text-gold">
             <Star className="h-4 w-4 fill-gold text-gold" />
-            {store.rating > 0 ? store.rating.toFixed(1) : "—"}
+            {store.ratingCount && store.ratingCount > 0 ? store.rating.toFixed(1) : "جديد"}
           </div>
         </div>
 

@@ -220,6 +220,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
     professionAr: string;
     professionEn: string;
     rating: number;
+    ratingCount?: number;
     jobs: number;
     distanceAr: string;
     distanceEn: string;
@@ -236,6 +237,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
         professionAr: worker.professionAr || "فني معتمد",
         professionEn: worker.professionEn || "Verified Pro",
         rating: worker.rating || 5,
+        ratingCount: worker.ratingCount,
         jobs: worker.totalJobs || 0,
         distanceAr: "داخل مصر",
         distanceEn: "Egypt",
@@ -387,7 +389,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
                   <div className="flex items-center justify-between text-xs font-bold text-white/60">
                     <span className="flex items-center gap-1">
                       <Star className="h-4 w-4 fill-gold text-gold" />
-                      {Number(worker.rating).toFixed(1)} ({worker.jobs})
+                      {worker.ratingCount && worker.ratingCount > 0 ? `${Number(worker.rating).toFixed(1)} (${worker.ratingCount})` : (isArabic ? "جديد (لا توجد تقييمات)" : "New (No ratings)")}
                     </span>
                     <span>{isArabic ? worker.distanceAr : worker.distanceEn}</span>
                   </div>
@@ -699,7 +701,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
                       </p>
                     </div>
                     <div className="bg-gold text-[#1a1c1c] px-2 py-1 text-xs font-black">
-                      {worker.rating > 0 ? worker.rating.toFixed(1) : "5.0"} ★
+                      {worker.ratingCount && worker.ratingCount > 0 ? `${worker.rating.toFixed(1)} ★` : (isArabic ? "جديد" : "New")}
                     </div>
                   </div>
                   <div className="flex items-center text-xs text-neutral-500 mb-6 font-semibold">

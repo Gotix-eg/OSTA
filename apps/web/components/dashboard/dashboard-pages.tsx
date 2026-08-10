@@ -557,7 +557,7 @@ export function ClientDashboardHome({ locale }: { locale: Locale }) {
                       </p>
                       <div className="mt-2 flex items-center gap-1 text-gold">
                         <Star className="h-4 w-4 fill-current" />
-                        <span className="text-xs font-black">{formatNumber(locale, worker.rating)}</span>
+                        <span className="text-xs font-black">{worker.rating > 0 ? formatNumber(locale, worker.rating) : (isArabic ? "جديد" : "New")}</span>
                       </div>
                     </div>
                   </div>

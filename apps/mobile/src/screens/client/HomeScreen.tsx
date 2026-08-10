@@ -476,7 +476,7 @@ export function HomeScreen() {
                         <View style={styles.workerRating}>
                           <Ionicons name="star" size={14} color="#D7A24D" />
                           <Text style={styles.workerRatingText}>
-                            {worker.rating?.toFixed(1) ?? "5.0"} ({worker.ratingCount ?? 0})
+                            {worker.ratingCount && worker.ratingCount > 0 ? `${worker.rating?.toFixed(1)} (${worker.ratingCount})` : "جديد (لا تقييمات)"}
                           </Text>
                         </View>
                         <View style={styles.workerExp}>
@@ -543,7 +543,7 @@ export function HomeScreen() {
                         <View style={styles.workerRating}>
                           <Ionicons name="star" size={14} color="#D7A24D" />
                           <Text style={styles.workerRatingText}>
-                            {vendor.rating?.toFixed(1) ?? "5.0"} ({vendor.ratingCount ?? 0})
+                            {vendor.ratingCount && vendor.ratingCount > 0 ? `${vendor.rating?.toFixed(1)} (${vendor.ratingCount})` : "جديد (لا تقييمات)"}
                           </Text>
                         </View>
                         <View style={styles.workerExp}>

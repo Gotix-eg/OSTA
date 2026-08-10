@@ -112,7 +112,7 @@ export function VendorsScreen() {
                       <View style={styles.storeRating}>
                         <Ionicons name="star" size={14} color="#D7A24D" />
                         <Text style={styles.ratingText}>
-                          {item.rating?.toFixed(1) ?? "5.0"} ({item.ratingCount ?? 0})
+                          {item.ratingCount && item.ratingCount > 0 ? `${item.rating?.toFixed(1)} (${item.ratingCount})` : "جديد (لا تقييمات)"}
                         </Text>
                       </View>
                     </View>

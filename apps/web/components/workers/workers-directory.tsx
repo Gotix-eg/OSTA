@@ -169,7 +169,7 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
       <style dangerouslySetInnerHTML={{__html: '.worker-card-dark { background-color: #000000; color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.1); position: relative; display: flex; flex-direction: column; transition: all 0.2s ease-in-out; } .worker-card-dark:hover { outline: 3px solid #000000; transform: translateY(-4px); }' }} />
 
       {/* Black Hero Header Section */}
-      <section className="relative overflow-hidden border-b-4 border-black bg-black px-4 py-6 text-start md:px-12 md:py-12 md:text-center">
+      <section className="relative border-b-4 border-black bg-black px-4 py-6 text-start md:px-12 md:py-12 md:text-center">
         <div className="mx-auto max-w-4xl space-y-4 md:space-y-5">
           <div className="space-y-3">
             <h1 className="text-4xl font-black leading-tight text-white md:text-3xl">
@@ -192,7 +192,7 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
                 className="h-12 w-full rounded-none border border-white/20 bg-[#121212] px-4 text-start text-xs font-bold text-white outline-none focus:border-gold focus:ring-0"
               />
               {isSpecialtyOpen && (
-                <div className="absolute z-20 mt-1 max-h-64 w-full overflow-y-auto border border-white/20 bg-[#121212] text-start shadow-xl">
+                <div className="absolute z-50 mt-2 max-h-72 w-full overflow-y-auto border border-gold/40 border-t-2 border-t-gold bg-black text-start shadow-2xl shadow-black/60">
                   {filteredCrafts.length === 0 ? (
                     <div className="px-4 py-3 text-xs font-bold text-white/40">
                       {isArabic ? "لا توجد نتائج" : "No results"}
@@ -204,7 +204,7 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
                         type="button"
                         onClick={() => { setSelectedSpecialty(craft.id); setIsSpecialtyOpen(false); setSpecialtyQuery(""); }}
                         className={cn(
-                          "block w-full px-4 py-2.5 text-start text-xs font-bold hover:bg-white/10",
+                          "block w-full px-4 py-3 text-start text-xs font-bold border-b border-white/5 last:border-b-0 hover:bg-white/10",
                           craft.id === selectedSpecialty ? "bg-gold/10 text-gold" : "text-white"
                         )}
                       >
@@ -320,7 +320,7 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
                         </Link>
                         <div className="flex shrink-0 items-center text-gold text-xs font-black">
                           <Star className="h-3 w-3 fill-current mr-0.5 text-gold" />
-                          <span className="text-white">{worker.rating > 0 ? worker.rating.toFixed(1) : "5.0"}</span>
+                          <span className="text-white">{worker.ratingCount && worker.ratingCount > 0 ? worker.rating.toFixed(1) : (isArabic ? "جديد" : "New")}</span>
                         </div>
                       </div>
                       <p className="text-[9px] font-black px-1.5 py-0.5 mb-2 inline-block uppercase rounded-none tracking-wider truncate max-w-full bg-gold text-black">

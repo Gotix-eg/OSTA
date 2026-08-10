@@ -188,7 +188,7 @@ export function RequestDetailsScreen() {
                 <Text style={styles.workerName}>{data.worker.name}</Text>
                 <View style={styles.workerMeta}>
                   <Ionicons name="star" size={14} color="#D7A24D" />
-                  <Text style={styles.workerRating}>{data.worker.rating?.toFixed(1) ?? "5.0"}</Text>
+                  <Text style={styles.workerRating}>{data.worker.ratingCount && data.worker.ratingCount > 0 ? data.worker.rating?.toFixed(1) : "جديد"}</Text>
                 </View>
               </View>
             </View>
@@ -250,7 +250,7 @@ export function RequestDetailsScreen() {
                       <Text style={styles.workerName}>{worker.name}</Text>
                       <View style={styles.workerMeta}>
                         <Ionicons name="star" size={14} color="#D7A24D" />
-                        <Text style={styles.workerRating}>{worker.rating?.toFixed(1) ?? "5.0"}</Text>
+                        <Text style={styles.workerRating}>{worker.ratingCount && worker.ratingCount > 0 ? worker.rating?.toFixed(1) : "جديد"}</Text>
                         <Text style={styles.workerJobs}>({worker.totalJobs ?? 0} عملية)</Text>
                       </View>
                     </View>

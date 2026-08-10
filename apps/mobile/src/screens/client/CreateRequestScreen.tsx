@@ -276,7 +276,7 @@ export function CreateRequestScreen() {
                     <Text style={styles.workerSpecialty}>{worker.professionAr || "فني صيانة"}</Text>
                     <View style={styles.workerMeta}>
                       <Ionicons name="star" size={14} color="#D7A24D" />
-                      <Text style={styles.workerRating}>{worker.rating?.toFixed(1) ?? "5.0"}</Text>
+                      <Text style={styles.workerRating}>{worker.ratingCount && worker.ratingCount > 0 ? worker.rating?.toFixed(1) : "جديد"}</Text>
                       <Text style={styles.workerJobs}>({worker.totalJobs ?? 0} عملية)</Text>
                     </View>
                   </View>

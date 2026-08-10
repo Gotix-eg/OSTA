@@ -187,10 +187,12 @@ export function VendorsDirectory({ locale }: { locale: Locale }) {
                       <div className="flex flex-col items-end">
                         <div className="flex items-center gap-1 bg-gold text-black px-2 py-0.5 text-xs font-black">
                           <Star className="h-3.5 w-3.5 fill-current" />
-                          <span>{vendor.rating > 0 ? vendor.rating.toFixed(1) : "5.0"}</span>
+                          <span>{vendor.ratingCount && vendor.ratingCount > 0 ? vendor.rating.toFixed(1) : (isArabic ? "جديد" : "New")}</span>
                         </div>
                         <span className="mt-1 text-[10px] font-bold uppercase text-white/40">
-                          {isArabic ? `${vendor.ratingCount || 120} تقييم` : `${vendor.ratingCount || 120} REVIEWS`}
+                          {vendor.ratingCount && vendor.ratingCount > 0 
+                            ? (isArabic ? `${vendor.ratingCount} تقييم` : `${vendor.ratingCount} REVIEWS`)
+                            : (isArabic ? "لا توجد تقييمات بعد" : "NO RATINGS YET")}
                         </span>
                       </div>
                     </div>

@@ -198,7 +198,7 @@ export function VendorProfileScreen() {
               <View style={styles.ratingContainer}>
                 <Ionicons name="star" size={14} color="#D7A24D" />
                 <Text style={styles.metaText}>
-                  {vendor.rating?.toFixed(1) ?? "5.0"} ({vendor.ratingCount ?? 0} تقييم)
+                  {vendor.ratingCount && vendor.ratingCount > 0 ? `${vendor.rating?.toFixed(1)} (${vendor.ratingCount} تقييم)` : "متجر جديد (لا تقييمات)"}
                 </Text>
               </View>
             </View>

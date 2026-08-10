@@ -253,8 +253,8 @@ export function WorkerProfileScreen() {
 
         <AppCard style={styles.statCard}>
           <Ionicons name="star" size={24} color="#D7A24D" />
-          <Text style={styles.statValue}>{worker.rating?.toFixed(1) ?? "5.0"}</Text>
-          <Text style={styles.statLabel}>{worker.ratingCount ?? 0} تقييم</Text>
+          <Text style={styles.statValue}>{worker.ratingCount && worker.ratingCount > 0 ? worker.rating?.toFixed(1) : "جديد"}</Text>
+          <Text style={styles.statLabel}>{worker.ratingCount && worker.ratingCount > 0 ? `${worker.ratingCount} تقييم` : "لا تقييمات بعد"}</Text>
         </AppCard>
       </View>
 
