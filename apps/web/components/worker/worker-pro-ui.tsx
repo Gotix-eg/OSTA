@@ -3,7 +3,7 @@
 import Link from "next/link";
 import type { ComponentType, ReactNode } from "react";
 
-import { ArrowUpRight, Crosshair, Search } from "lucide-react";
+import { ArrowUpRight, Crosshair } from "lucide-react";
 
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
@@ -24,24 +24,7 @@ export function WorkerProShell({ locale, children }: { locale: Locale; children:
 }
 
 export function WorkerProTopStrip({ locale, title, actionHref, actionLabel }: { locale: Locale; title: string; actionHref?: string; actionLabel?: string }) {
-  return (
-    <div className="hidden items-center justify-between border-b border-black/20 bg-black px-5 py-3 text-white lg:flex">
-      <div>
-        <h1 className="text-lg font-black uppercase text-white">{title}</h1>
-      </div>
-      <div className="flex items-center gap-3">
-        <div className="flex h-10 w-72 items-center gap-2 border border-white/10 bg-[#121212] px-3 text-xs text-white/40">
-          <Search className="h-4 w-4" />
-          <span>{locale === "ar" ? "ابحث في العمليات..." : "Search operations..."}</span>
-        </div>
-        {actionHref && actionLabel ? (
-          <Link href={actionHref} className="bg-white px-4 py-3 text-xs font-black uppercase text-black transition-colors hover:bg-gold">
-            {actionLabel}
-          </Link>
-        ) : null}
-      </div>
-    </div>
-  );
+  return null;
 }
 
 export function WorkerProHero({
