@@ -441,7 +441,7 @@ export function WorkerProfileDetail({ locale, workerId }: { locale: Locale; work
                 })()}
               </div>
 
-              {/* Rating & Reviews Line */}
+              {/* Rating, Reviews & Completed Jobs Line */}
               <div className="flex flex-wrap items-center gap-3 text-sm">
                 <span className="inline-flex items-center gap-1.5 bg-gold px-3 py-1 font-black text-ink">
                   <Star className="h-4 w-4 fill-current" />
@@ -455,6 +455,11 @@ export function WorkerProfileDetail({ locale, workerId }: { locale: Locale; work
                   <MessageSquare className="h-4 w-4" />
                   <span>{worker.reviews.length} {isArabic ? "تقييم" : "reviews"}</span>
                 </button>
+
+                <span className="flex items-center gap-1.5 font-bold text-white/80">
+                  <CheckCircle2 className="h-4 w-4 text-gold shrink-0" />
+                  <span>{worker.totalJobs ?? 0} {isArabic ? "عمل مكتمل" : "completed jobs"}</span>
+                </span>
 
                 {worker.rating >= 4.5 && worker.reviews.length >= 5 && (
                   <span className="inline-flex items-center gap-1 border border-gold px-2.5 py-1 text-xs font-black uppercase tracking-wide text-gold">

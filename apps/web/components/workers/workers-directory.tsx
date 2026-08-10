@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import Link from "next/link";
 import {
   MapPin,
@@ -34,6 +34,9 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
   ];
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSpecialty, setSelectedSpecialty] = useState("all");
+  const [specialtyQuery, setSpecialtyQuery] = useState("");
+  const [isSpecialtyOpen, setIsSpecialtyOpen] = useState(false);
+  const specialtyRef = useRef<HTMLDivElement>(null);
   const [selectedGov, setSelectedGov] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
   const [sortBy, setSortBy] = useState("Top Rated");
@@ -55,6 +58,21 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
       setIsClient(role === "CLIENT");
     });
   }, []);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (specialtyRef.current && !specialtyRef.current.contains(e.target as Node)) {
+        setIsSpecialtyOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const selectedCraft = CRAFTS.find((craft) => craft.id === selectedSpecialty) || ALL_SPECIALTIES_OPTION;
+  const filteredCrafts = CRAFTS.filter((craft) =>
+    (isArabic ? craft.name.ar : craft.name.en).toLowerCase().includes(specialtyQuery.trim().toLowerCase())
+  );
 
   const fetchWorkers = async () => {
     setIsLoading(true);
@@ -164,16 +182,38 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
 
           {/* Centered Search Row */}
           <div className="mx-auto flex max-w-3xl flex-col items-center justify-center gap-3 border border-white/10 bg-[#121212]/90 p-3 md:flex-row md:gap-4 md:p-4">
-            <div className="w-full md:w-1/3 relative">
-              <select 
-                value={selectedSpecialty}
-                onChange={(e) => setSelectedSpecialty(e.target.value)}
-                className="h-12 w-full rounded-none border border-white/20 bg-[#121212] px-4 text-xs font-bold text-white outline-none focus:border-gold focus:ring-0"
-              >
-                {CRAFTS.map(craft => (
-                  <option key={craft.id} value={craft.id}>{isArabic ? craft.name.ar : craft.name.en}</option>
-                ))}
-              </select>
+            <div className="w-full md:w-1/3 relative" ref={specialtyRef}>
+              <input
+                type="text"
+                value={isSpecialtyOpen ? specialtyQuery : (isArabic ? selectedCraft.name.ar : selectedCraft.name.en)}
+                onFocus={() => { setIsSpecialtyOpen(true); setSpecialtyQuery(""); }}
+                onChange={(e) => { setSpecialtyQuery(e.target.value); setIsSpecialtyOpen(true); }}
+                placeholder={isArabic ? "ابحث عن تخصص..." : "Search specialty..."}
+                className="h-12 w-full rounded-none border border-white/20 bg-[#121212] px-4 text-start text-xs font-bold text-white outline-none focus:border-gold focus:ring-0"
+              />
+              {isSpecialtyOpen && (
+                <div className="absolute z-20 mt-1 max-h-64 w-full overflow-y-auto border border-white/20 bg-[#121212] text-start shadow-xl">
+                  {filteredCrafts.length === 0 ? (
+                    <div className="px-4 py-3 text-xs font-bold text-white/40">
+                      {isArabic ? "لا توجد نتائج" : "No results"}
+                    </div>
+                  ) : (
+                    filteredCrafts.map((craft) => (
+                      <button
+                        key={craft.id}
+                        type="button"
+                        onClick={() => { setSelectedSpecialty(craft.id); setIsSpecialtyOpen(false); setSpecialtyQuery(""); }}
+                        className={cn(
+                          "block w-full px-4 py-2.5 text-start text-xs font-bold hover:bg-white/10",
+                          craft.id === selectedSpecialty ? "bg-gold/10 text-gold" : "text-white"
+                        )}
+                      >
+                        {isArabic ? craft.name.ar : craft.name.en}
+                      </button>
+                    ))
+                  )}
+                </div>
+              )}
             </div>
             <div className="w-full md:w-1/3">
               <input 
