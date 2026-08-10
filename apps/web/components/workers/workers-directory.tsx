@@ -16,16 +16,9 @@ import { cn } from "@/lib/utils";
 import { resolveApiBaseUrl } from "@/lib/api";
 import { getBrowserAuthState } from "@/lib/auth-client";
 import { egyptianGovernorates, majorCities } from "@/lib/geo-data";
+import { useLiveApiData } from "@/hooks/use-live-api-data";
 
-const CRAFTS = [
-  { id: "all", name: { ar: "الكل", en: "All Specialties" } },
-  { id: "electricity", name: { ar: "الكهرباء", en: "Electricity" } },
-  { id: "plumbing", name: { ar: "السباكة", en: "Plumbing" } },
-  { id: "carpentry", name: { ar: "النجارة", en: "Carpentry" } },
-  { id: "ac", name: { ar: "التكييف", en: "AC Repair" } },
-  { id: "painting", name: { ar: "الدهانات", en: "Painting" } },
-  { id: "appliances", name: { ar: "صيانة أجهزة", en: "Appliance Repair" } }
-];
+const ALL_SPECIALTIES_OPTION = { id: "all", name: { ar: "الكل", en: "All Specialties" } };
 
 export function WorkersDirectory({ locale }: { locale: Locale }) {
   const isArabic = locale === "ar";
