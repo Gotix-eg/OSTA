@@ -396,8 +396,14 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
 
                       <div className="flex flex-wrap items-center gap-1.5 mb-3">
                         <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 px-2.5 py-1 text-[10px] font-bold text-neutral-300">
-                          <span className="text-white">{worker.totalJobs || "1,240+"}</span>
-                          <span>{isArabic ? "عملية ناجحة" : "Jobs Done"}</span>
+                          {typeof worker.totalJobs === "number" && worker.totalJobs > 0 ? (
+                            <>
+                              <span className="text-white">{worker.totalJobs}</span>
+                              <span>{isArabic ? "عملية ناجحة" : "Jobs Done"}</span>
+                            </>
+                          ) : (
+                            <span className="text-gold font-black">{isArabic ? "فني جديد" : "New Worker"}</span>
+                          )}
                           <ShieldCheck className="h-3 w-3 shrink-0 text-gold" />
                         </span>
                       </div>

@@ -707,7 +707,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
                   <div className="flex items-center text-xs text-neutral-500 mb-6 font-semibold">
                     <span className="flex items-center gap-1">
                       <ShieldCheck className="h-4 w-4 text-gold" />
-                      {worker.totalJobs || 120} {isArabic ? "عملية ناجحة" : "Jobs"}
+                      {typeof worker.totalJobs === "number" && worker.totalJobs > 0 ? `${worker.totalJobs} ${isArabic ? "عملية ناجحة" : "Jobs"}` : (isArabic ? "فني جديد" : "New Worker")}
                     </span>
                   </div>
                   <button

@@ -251,7 +251,7 @@ export function RequestDetailsScreen() {
                       <View style={styles.workerMeta}>
                         <Ionicons name="star" size={14} color="#D7A24D" />
                         <Text style={styles.workerRating}>{worker.ratingCount && worker.ratingCount > 0 ? worker.rating?.toFixed(1) : "جديد"}</Text>
-                        <Text style={styles.workerJobs}>({worker.totalJobs ?? 0} عملية)</Text>
+                        <Text style={styles.workerJobs}>({worker.totalJobs && worker.totalJobs > 0 ? `${worker.totalJobs} عملية` : "فني جديد"})</Text>
                       </View>
                     </View>
 

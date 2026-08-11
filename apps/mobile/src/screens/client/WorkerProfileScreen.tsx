@@ -247,8 +247,8 @@ export function WorkerProfileScreen() {
       <View style={styles.statsRow}>
         <AppCard style={styles.statCard}>
           <Ionicons name="briefcase-outline" size={24} color={theme.primary} />
-          <Text style={styles.statValue}>{worker.totalJobs ?? 0}</Text>
-          <Text style={styles.statLabel}>العمليات المنجزة</Text>
+          <Text style={styles.statValue}>{worker.totalJobs && worker.totalJobs > 0 ? worker.totalJobs : "جديد"}</Text>
+          <Text style={styles.statLabel}>{worker.totalJobs && worker.totalJobs > 0 ? "العمليات المنجزة" : "فني جديد"}</Text>
         </AppCard>
 
         <AppCard style={styles.statCard}>

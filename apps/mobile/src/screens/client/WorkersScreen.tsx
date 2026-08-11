@@ -88,7 +88,7 @@ export function WorkersScreen() {
                     <View style={styles.workerMeta}>
                       <View style={styles.workerStats}>
                         <Ionicons name="briefcase-outline" size={14} color={theme.muted} />
-                        <Text style={styles.statsText}>{item.totalJobs ?? 0} عملية ناجحة</Text>
+                        <Text style={styles.statsText}>{item.totalJobs && item.totalJobs > 0 ? `${item.totalJobs} عملية ناجحة` : "فني جديد"}</Text>
                       </View>
                       
                       <View style={styles.workerRating}>

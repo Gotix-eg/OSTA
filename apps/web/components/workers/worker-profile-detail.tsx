@@ -458,7 +458,11 @@ export function WorkerProfileDetail({ locale, workerId }: { locale: Locale; work
 
                 <span className="flex items-center gap-1.5 font-bold text-white/80">
                   <CheckCircle2 className="h-4 w-4 text-gold shrink-0" />
-                  <span>{worker.totalJobs ?? 0} {isArabic ? "عمل مكتمل" : "completed jobs"}</span>
+                  <span>
+                    {worker.totalJobs && worker.totalJobs > 0
+                      ? `${worker.totalJobs} ${isArabic ? "عمل مكتمل" : "completed jobs"}`
+                      : (isArabic ? "فني جديد" : "New worker")}
+                  </span>
                 </span>
 
                 {worker.rating >= 4.5 && worker.reviews.length >= 5 && (
@@ -608,13 +612,22 @@ export function WorkerProfileDetail({ locale, workerId }: { locale: Locale; work
                         </span>
                       </li>
                     )}
-                    {worker.totalJobs > 0 && (
+                    {worker.totalJobs > 0 ? (
                       <li className="flex items-center gap-2.5">
                         <Check className="h-4 w-4 shrink-0 text-gold" />
                         <span>
                           {isArabic
                             ? `${worker.totalJobs} مهمة منفذة عبر المنصة`
                             : `${worker.totalJobs} jobs completed on the platform`}
+                        </span>
+                      </li>
+                    ) : (
+                      <li className="flex items-center gap-2.5 text-white/70">
+                        <Check className="h-4 w-4 shrink-0 text-gold" />
+                        <span>
+                          {isArabic
+                            ? "فني جديد • لم ينفذ أعمالاً عبر المنصة بعد"
+                            : "New worker • No completed jobs on platform yet"}
                         </span>
                       </li>
                     )}

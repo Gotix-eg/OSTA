@@ -480,7 +480,7 @@ export function HomeScreen() {
                           </Text>
                         </View>
                         <View style={styles.workerExp}>
-                          <Text style={styles.workerExpText}>{worker.totalJobs ?? 0} عملية</Text>
+                          <Text style={styles.workerExpText}>{worker.totalJobs && worker.totalJobs > 0 ? `${worker.totalJobs} عملية` : "فني جديد"}</Text>
                         </View>
                       </View>
                     </Pressable>

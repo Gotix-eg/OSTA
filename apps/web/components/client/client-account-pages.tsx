@@ -100,7 +100,7 @@ export function ClientFavoritesPage({ locale, initialData }: { locale: Locale; i
                 <div className="mt-5 grid gap-3 sm:grid-cols-3">
                   {[
                     { label: isArabic ? "التقييم" : "Rating", value: formatNumber(locale, worker.rating) },
-                    { label: isArabic ? "الطلبات" : "Jobs", value: formatNumber(locale, worker.completedJobs) },
+                    { label: isArabic ? "الطلبات" : "Jobs", value: worker.completedJobs > 0 ? formatNumber(locale, worker.completedJobs) : (isArabic ? "جديد" : "New") },
                     { label: isArabic ? "المنطقة" : "Area", value: worker.area }
                   ].map((item) => (
                     <div key={item.label} className="border border-white/5 bg-black p-3">
