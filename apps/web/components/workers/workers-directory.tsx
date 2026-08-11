@@ -9,7 +9,8 @@ import {
   ChevronRight,
   X,
   ShieldCheck,
-  Loader2
+  Loader2,
+  User
 } from "lucide-react";
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
@@ -33,6 +34,8 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
       }))
   ];
   const [searchQuery, setSearchQuery] = useState("");
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
   const [selectedSpecialty, setSelectedSpecialty] = useState("all");
   const [specialtyQuery, setSpecialtyQuery] = useState("");
   const [isSpecialtyOpen, setIsSpecialtyOpen] = useState(false);
@@ -66,6 +69,9 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
       if (specialtyRef.current && !specialtyRef.current.contains(e.target as Node)) {
         setIsSpecialtyOpen(false);
       }
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setIsSearchOpen(false);
+      }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -75,6 +81,60 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
   const filteredCrafts = CRAFTS.filter((craft) =>
     (isArabic ? craft.name.ar : craft.name.en).toLowerCase().includes(specialtyQuery.trim().toLowerCase())
   );
+
+  const searchSuggestions = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (q.length < 1) return { workerNames: [], locations: [] };
+
+    // 1. Worker Names
+    const matchingWorkerNames = Array.from(
+      new Set(
+        workers
+          .map((w) => w.name)
+          .filter((name) => name && name.toLowerCase().includes(q))
+      )
+    ).slice(0, 5);
+
+    // 2. Locations (Governorates, Cities & Worker Areas)
+    const locationSet = new Set<string>();
+
+    egyptianGovernorates.forEach((g) => {
+      if (g.labelAr.toLowerCase().includes(q) || g.labelEn.toLowerCase().includes(q)) {
+        locationSet.add(isArabic ? g.labelAr : g.labelEn);
+      }
+    });
+
+    Object.values(majorCities).flat().forEach((c) => {
+      if (c.labelAr.toLowerCase().includes(q) || c.labelEn.toLowerCase().includes(q)) {
+        locationSet.add(isArabic ? c.labelAr : c.labelEn);
+      }
+    });
+
+    workers.forEach((w) => {
+      if (Array.isArray(w.areas)) {
+        w.areas.forEach((area: string) => {
+          if (area && area.toLowerCase().includes(q)) {
+            locationSet.add(area);
+          }
+        });
+      }
+      if (w.governorate && w.governorate.toLowerCase().includes(q)) {
+        locationSet.add(w.governorate);
+      }
+      if (w.city && w.city.toLowerCase().includes(q)) {
+        locationSet.add(w.city);
+      }
+    });
+
+    const matchingLocations = Array.from(locationSet).slice(0, 5);
+
+    return {
+      workerNames: matchingWorkerNames,
+      locations: matchingLocations,
+    };
+  }, [workers, searchQuery, isArabic]);
+
+  const hasSuggestions = searchSuggestions.workerNames.length > 0 || searchSuggestions.locations.length > 0;
 
   const fetchWorkers = async () => {
     setIsLoading(true);
@@ -123,12 +183,35 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
 
   const searchFilteredWorkers = useMemo(() => {
     let result = workers;
-    if (searchQuery) {
+    if (searchQuery.trim()) {
+      const q = searchQuery.trim().toLowerCase();
       result = result.filter((w) => {
-        const nameMatch = w.name.toLowerCase().includes(searchQuery.toLowerCase());
+        const nameMatch = w.name?.toLowerCase().includes(q);
         const specAr = w.professionAr?.toLowerCase() || "";
         const specEn = w.professionEn?.toLowerCase() || "";
-        return nameMatch || specAr.includes(searchQuery.toLowerCase()) || specEn.includes(searchQuery.toLowerCase());
+        const profsAr = (w.professionsAr || []).join(" ").toLowerCase();
+        const profsEn = (w.professionsEn || []).join(" ").toLowerCase();
+        const areasMatch = Array.isArray(w.areas) && w.areas.some((area: string) => area.toLowerCase().includes(q));
+        const govMatch = w.governorate && w.governorate.toLowerCase().includes(q);
+        const cityMatch = w.city && w.city.toLowerCase().includes(q);
+
+        const matchedGeoValues = [
+          ...egyptianGovernorates.filter(g => g.labelAr.toLowerCase().includes(q) || g.labelEn.toLowerCase().includes(q) || g.value.includes(q)),
+          ...Object.values(majorCities).flat().filter(c => c.labelAr.toLowerCase().includes(q) || c.labelEn.toLowerCase().includes(q) || c.value.includes(q))
+        ];
+
+        const geoMatch = matchedGeoValues.some((geo) => {
+          const val = geo.value.toLowerCase();
+          const ar = geo.labelAr.toLowerCase();
+          const en = geo.labelEn.toLowerCase();
+          return (
+            (w.areas && Array.isArray(w.areas) && w.areas.some((a: string) => a.toLowerCase().includes(val) || a.toLowerCase().includes(ar) || a.toLowerCase().includes(en))) ||
+            (w.governorate && (w.governorate.toLowerCase().includes(val) || w.governorate.toLowerCase().includes(ar) || w.governorate.toLowerCase().includes(en))) ||
+            (w.city && (w.city.toLowerCase().includes(val) || w.city.toLowerCase().includes(ar) || w.city.toLowerCase().includes(en)))
+          );
+        });
+
+        return nameMatch || specAr.includes(q) || specEn.includes(q) || profsAr.includes(q) || profsEn.includes(q) || areasMatch || govMatch || cityMatch || geoMatch;
       });
     }
     return result;
@@ -230,14 +313,75 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
                 </div>
               )}
             </div>
-            <div className="w-full md:w-1/3">
+            <div className="w-full md:w-1/3 relative" ref={searchRef}>
               <input 
                 type="text"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => {
+                  if (searchQuery.trim().length >= 1) setIsSearchOpen(true);
+                }}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setIsSearchOpen(e.target.value.trim().length >= 1);
+                }}
                 placeholder={isArabic ? "الموقع أو اسم الفني" : "Location or worker name"}
                 className="h-12 w-full rounded-none border border-white/20 bg-[#121212] px-4 text-start text-xs font-bold text-white outline-none focus:border-gold focus:ring-0"
               />
+              {isSearchOpen && searchQuery.trim().length >= 1 && (
+                <div className="absolute z-50 mt-2 max-h-80 w-full overflow-y-auto border border-gold/40 border-t-2 border-t-gold bg-black text-start shadow-2xl shadow-black/60">
+                  {!hasSuggestions ? (
+                    <div className="px-4 py-3 text-xs font-bold text-white/40">
+                      {isArabic ? "لا توجد نتائج مطابقة" : "No matching suggestions"}
+                    </div>
+                  ) : (
+                    <>
+                      {searchSuggestions.workerNames.length > 0 && (
+                        <div>
+                          <div className="bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase text-gold">
+                            {isArabic ? "أسماء الفنيين" : "Worker Names"}
+                          </div>
+                          {searchSuggestions.workerNames.map((name) => (
+                            <button
+                              key={name}
+                              type="button"
+                              onClick={() => {
+                                setSearchQuery(name);
+                                setIsSearchOpen(false);
+                              }}
+                              className="flex w-full items-center gap-2 border-b border-white/5 px-4 py-2.5 text-start text-xs font-bold text-white hover:bg-white/10 hover:text-gold transition-colors"
+                            >
+                              <User className="h-3.5 w-3.5 text-gold shrink-0" />
+                              <span className="truncate">{name}</span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+
+                      {searchSuggestions.locations.length > 0 && (
+                        <div>
+                          <div className="bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase text-gold">
+                            {isArabic ? "المواقع والمناطق" : "Locations"}
+                          </div>
+                          {searchSuggestions.locations.map((location) => (
+                            <button
+                              key={location}
+                              type="button"
+                              onClick={() => {
+                                setSearchQuery(location);
+                                setIsSearchOpen(false);
+                              }}
+                              className="flex w-full items-center gap-2 border-b border-white/5 px-4 py-2.5 text-start text-xs font-bold text-white hover:bg-white/10 hover:text-gold transition-colors"
+                            >
+                              <MapPin className="h-3.5 w-3.5 text-gold shrink-0" />
+                              <span className="truncate">{location}</span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+              )}
             </div>
             <button 
               onClick={() => fetchWorkers()}
