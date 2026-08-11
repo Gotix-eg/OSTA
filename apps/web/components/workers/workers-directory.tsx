@@ -15,7 +15,7 @@ import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
 import { resolveApiBaseUrl } from "@/lib/api";
 import { getBrowserAuthState } from "@/lib/auth-client";
-import { egyptianGovernorates, majorCities } from "@/lib/geo-data";
+import { egyptianGovernorates, majorCities, formatWorkerProfession } from "@/lib/geo-data";
 import { useLiveApiData } from "@/hooks/use-live-api-data";
 
 const ALL_SPECIALTIES_OPTION = { id: "all", name: { ar: "الكل", en: "All Specialties" } };
@@ -386,7 +386,7 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
                         </div>
                       </div>
                       <p className="text-[9px] font-black px-1.5 py-0.5 mb-2 inline-block uppercase rounded-none tracking-wider truncate max-w-full bg-gold text-black">
-                        {isArabic ? worker.professionAr : worker.professionEn}
+                        {formatWorkerProfession(worker, isArabic)}
                       </p>
 
                       <div className="flex items-center gap-1 text-[10px] font-bold mb-2 truncate text-neutral-400">

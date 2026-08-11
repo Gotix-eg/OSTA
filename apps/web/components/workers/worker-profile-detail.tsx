@@ -34,7 +34,7 @@ import { cn } from "@/lib/utils";
 import { resolveApiBaseUrl, patchApiData, postApiData } from "@/lib/api";
 import { getBrowserAuthState } from "@/lib/auth-client";
 import { WorkerVideoPlayer } from "@/components/shared/video-player";
-import { workerProfessions } from "@/lib/geo-data";
+import { workerProfessions, formatWorkerProfessionBadges } from "@/lib/geo-data";
 
 interface ReviewItem {
   id: string;
@@ -419,11 +419,7 @@ export function WorkerProfileDetail({ locale, workerId }: { locale: Locale; work
 
                 {/* Worker Professions Badge List */}
                 {(() => {
-                  const profs = worker.professions && worker.professions.length > 0
-                    ? worker.professions
-                    : (isArabic ? worker.professionAr : worker.professionEn)
-                    ? (isArabic ? worker.professionAr : worker.professionEn).split(/[,•]/).map((s) => s.trim()).filter(Boolean)
-                    : [];
+                  const profs = formatWorkerProfessionBadges(worker, isArabic);
                   if (profs.length === 0) return null;
                   return (
                     <div className="mt-3 flex flex-wrap items-center gap-2">

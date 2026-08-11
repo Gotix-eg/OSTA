@@ -64,6 +64,149 @@ export function getCategorySlugFromProfession(profession: string | null | undefi
   return "electrical";
 }
 
+const SERVER_PROFESSION_MAP: Record<string, { ar: string; en: string }> = {
+  plumber: { ar: "سباكة", en: "Plumber" },
+  plumbing: { ar: "سباكة", en: "Plumbing" },
+  electrician: { ar: "كهرباء", en: "Electrician" },
+  electrical: { ar: "كهرباء", en: "Electrical" },
+  electricity: { ar: "كهرباء", en: "Electrical" },
+  carpenter: { ar: "نجارة", en: "Carpenter" },
+  carpentry: { ar: "نجارة", en: "Carpentry" },
+  painter: { ar: "دهانات وديكور", en: "Painter" },
+  painting: { ar: "دهانات وديكور", en: "Painting" },
+  "ac-technician": { ar: "تكييف وتبريد", en: "AC Technician" },
+  actechnician: { ar: "تكييف وتبريد", en: "AC Technician" },
+  ac: { ar: "تكييف وتبريد", en: "AC Maintenance" },
+  "appliance-repair": { ar: "صيانة أجهزة منزلية", en: "Appliance Repair" },
+  appliancerepair: { ar: "صيانة أجهزة منزلية", en: "Appliance Repair" },
+  appliances: { ar: "صيانة أجهزة منزلية", en: "Appliance Repair" },
+  aluminum: { ar: "ألوميتال", en: "Aluminum Worker" },
+  "computer-repair": { ar: "صيانة كمبيوتر", en: "Computer Repair" },
+  computerrepair: { ar: "صيانة كمبيوتر", en: "Computer Repair" },
+  computer: { ar: "صيانة كمبيوتر", en: "Computer Repair" },
+  networks: { ar: "شبكات كمبيوتر", en: "Computer Networks" },
+  cctv: { ar: "تركيب كاميرات", en: "Camera Installation" },
+  cameras: { ar: "تركيب كاميرات", en: "Camera Installation" },
+  cleaning: { ar: "عامل نظافة", en: "Cleaning Worker" },
+  gypsum: { ar: "فني جبس", en: "Gypsum Worker" },
+  ceramic: { ar: "مبلط سيراميك", en: "Ceramic Installer" },
+  tiling: { ar: "مبلط سيراميك", en: "Tiling" },
+  plastering: { ar: "أعمال محارة", en: "Plasterer" },
+  ironwork: { ar: "حدادة", en: "Ironworker" },
+  finishing: { ar: "تشطيبات شاملة", en: "Finishing Specialist" },
+  moving: { ar: "نقل عفش وتغليف", en: "Furniture Mover" },
+  "car-mechanic": { ar: "ميكانيكي سيارات", en: "Car Mechanic" },
+  carmechanic: { ar: "ميكانيكي سيارات", en: "Car Mechanic" },
+  "bike-mechanic": { ar: "ميكانيكي موتوسيكلات", en: "Motorcycle Mechanic" },
+  bikemechanic: { ar: "ميكانيكي موتوسيكلات", en: "Motorcycle Mechanic" },
+  "engine-repair": { ar: "صيانة مواتير", en: "Engine Repair Specialist" },
+  enginerepair: { ar: "صيانة مواتير", en: "Engine Repair Specialist" },
+};
+
+function translateProfessionServerItem(item: string): { ar: string; en: string } {
+  const clean = item.trim();
+  if (!clean) return { ar: "", en: "" };
+
+  const key = clean.toLowerCase().replace(/\s+/g, "-");
+  if (SERVER_PROFESSION_MAP[key]) return SERVER_PROFESSION_MAP[key];
+
+  const keyNoDash = clean.toLowerCase().replace(/[^a-z0-9]/g, "");
+  if (SERVER_PROFESSION_MAP[keyNoDash]) return SERVER_PROFESSION_MAP[keyNoDash];
+
+  const lower = clean.toLowerCase();
+
+  if (lower.includes("سباك") || lower.includes("سبا")) return { ar: "سباكة", en: "Plumber" };
+  if (lower.includes("كهرب")) return { ar: "كهرباء", en: "Electrician" };
+  if (lower.includes("نجار")) return { ar: "نجارة", en: "Carpenter" };
+  if (lower.includes("نقاش") || lower.includes("دهان")) return { ar: "دهانات وديكور", en: "Painter" };
+  if (lower.includes("تكيي")) return { ar: "تكييف وتبريد", en: "AC Technician" };
+  if (lower.includes("جهز") || lower.includes("أجهزة")) return { ar: "صيانة أجهزة منزلية", en: "Appliance Repair" };
+  if (lower.includes("الوم") || lower.includes("ألوميتال")) return { ar: "ألوميتال", en: "Aluminum Worker" };
+  if (lower.includes("كمبيو")) return { ar: "صيانة كمبيوتر", en: "Computer Repair" };
+  if (lower.includes("شبك")) return { ar: "شبكات كمبيوتر", en: "Computer Networks" };
+  if (lower.includes("كامير")) return { ar: "تركيب كاميرات", en: "Camera Installation" };
+  if (lower.includes("نظاف")) return { ar: "عامل نظافة", en: "Cleaning Worker" };
+  if (lower.includes("جبس")) return { ar: "فني جبس", en: "Gypsum Worker" };
+  if (lower.includes("مبلط") || lower.includes("سيراميك")) return { ar: "مبلط سيراميك", en: "Ceramic Installer" };
+  if (lower.includes("محارة")) return { ar: "أعمال محارة", en: "Plasterer" };
+  if (lower.includes("حداد")) return { ar: "حدادة", en: "Ironworker" };
+  if (lower.includes("تشطيب")) return { ar: "تشطيبات شاملة", en: "Finishing Specialist" };
+  if (lower.includes("نقل")) return { ar: "نقل عفش وتغليف", en: "Furniture Mover" };
+  if (lower.includes("سيار")) return { ar: "ميكانيكي سيارات", en: "Car Mechanic" };
+  if (lower.includes("موتوسيك")) return { ar: "ميكانيكي موتوسيكلات", en: "Motorcycle Mechanic" };
+  if (lower.includes("مواتير") || lower.includes("موتور")) return { ar: "صيانة مواتير", en: "Engine Repair Specialist" };
+
+  if (lower.includes("plumb")) return { ar: "سباكة", en: "Plumber" };
+  if (lower.includes("electr")) return { ar: "كهرباء", en: "Electrician" };
+  if (lower.includes("carp")) return { ar: "نجارة", en: "Carpenter" };
+  if (lower.includes("paint")) return { ar: "دهانات وديكور", en: "Painter" };
+  if (lower.includes("ac")) return { ar: "تكييف وتبريد", en: "AC Technician" };
+  if (lower.includes("appliance")) return { ar: "صيانة أجهزة منزلية", en: "Appliance Repair" };
+  if (lower.includes("aluminum")) return { ar: "ألوميتال", en: "Aluminum Worker" };
+  if (lower.includes("comput")) return { ar: "صيانة كمبيوتر", en: "Computer Repair" };
+  if (lower.includes("network")) return { ar: "شبكات كمبيوتر", en: "Computer Networks" };
+  if (lower.includes("camera") || lower.includes("cctv")) return { ar: "تركيب كاميرات", en: "Camera Installation" };
+  if (lower.includes("clean")) return { ar: "عامل نظافة", en: "Cleaning Worker" };
+  if (lower.includes("gypsum")) return { ar: "فني جبس", en: "Gypsum Worker" };
+  if (lower.includes("tile") || lower.includes("ceramic")) return { ar: "مبلط سيراميك", en: "Ceramic Installer" };
+  if (lower.includes("plaster")) return { ar: "أعمال محارة", en: "Plasterer" };
+  if (lower.includes("iron")) return { ar: "حدادة", en: "Ironworker" };
+  if (lower.includes("finish")) return { ar: "تشطيبات شاملة", en: "Finishing Specialist" };
+  if (lower.includes("move") || lower.includes("moving")) return { ar: "نقل عفش وتغليف", en: "Furniture Mover" };
+  if (lower.includes("car") || lower.includes("mechanic")) return { ar: "ميكانيكي سيارات", en: "Car Mechanic" };
+  if (lower.includes("bike")) return { ar: "ميكانيكي موتوسيكلات", en: "Motorcycle Mechanic" };
+  if (lower.includes("engine")) return { ar: "صيانة مواتير", en: "Engine Repair Specialist" };
+
+  const cleanEn = clean.replace(/\s*\([^)]*\)/g, "").trim();
+  return { ar: clean, en: cleanEn || clean };
+}
+
+export function buildWorkerProfessions(
+  rawProfession: string | null | undefined,
+  specializations: any[] = []
+): { ar: string[]; en: string[]; professionAr: string; professionEn: string } {
+  const rawList = rawProfession
+    ? rawProfession.split(",").map((s: string) => s.trim()).filter(Boolean)
+    : [];
+
+  const arList: string[] = [];
+  const enList: string[] = [];
+
+  const addPair = (ar: string, en: string) => {
+    if (ar && !arList.includes(ar)) arList.push(ar);
+    if (en && !enList.includes(en)) enList.push(en);
+  };
+
+  for (const item of rawList) {
+    const pair = translateProfessionServerItem(item);
+    addPair(pair.ar, pair.en);
+  }
+
+  if (specializations && specializations.length > 0) {
+    specializations.forEach((spec: any) => {
+      const catAr = spec.service?.category?.nameAr;
+      const catEn = spec.service?.category?.nameEn;
+      if (catAr || catEn) {
+        const pair = translateProfessionServerItem(catAr || catEn || "");
+        addPair(catAr || pair.ar, catEn || pair.en);
+      }
+    });
+  }
+
+  if (arList.length === 0) {
+    const fallbackAr = specializations?.[0]?.service?.category?.nameAr || "فني محترف";
+    const fallbackEn = specializations?.[0]?.service?.category?.nameEn || "Verified Worker";
+    addPair(fallbackAr, fallbackEn);
+  }
+
+  return {
+    ar: arList,
+    en: enList,
+    professionAr: arList.join(" • "),
+    professionEn: enList.join(" • "),
+  };
+}
+
 router.get("/public/workers", async (request, response) => {
   const { specialty, governorate, city, area } = request.query as {
     specialty?: string;
@@ -256,28 +399,17 @@ router.get("/public/workers", async (request, response) => {
     });
 
     const result = sortedWorkers.map((w) => {
-      const rawProf = (w as any).profession ?? "";
-      let profs: string[] = rawProf ? rawProf.split(",").map((s: string) => s.trim()).filter(Boolean) : [];
-      if (w.specializations && w.specializations.length > 0) {
-        w.specializations.forEach((spec: any) => {
-          const catName = spec.service?.category?.nameAr || spec.service?.category?.nameEn;
-          if (catName && !profs.includes(catName)) {
-            profs.push(catName);
-          }
-        });
-      }
-      if (profs.length === 0) {
-        const fallback = w.specializations[0]?.service?.category?.nameAr || w.specializations[0]?.service?.category?.nameEn || "";
-        if (fallback) profs = [fallback];
-      }
+      const profData = buildWorkerProfessions((w as any).profession, w.specializations || []);
 
       return {
         id: w.id,
         name: `${w.user.firstName} ${w.user.lastName}`,
         avatarUrl: w.user.avatarUrl,
-        professions: profs,
-        professionAr: profs.join(" • ") || w.specializations[0]?.service?.category?.nameAr || "",
-        professionEn: profs.join(" • ") || w.specializations[0]?.service?.category?.nameEn || "",
+        professions: profData.ar,
+        professionsAr: profData.ar,
+        professionsEn: profData.en,
+        professionAr: profData.professionAr,
+        professionEn: profData.professionEn,
         categoryId: w.specializations[0]?.service?.category?.slug || "",
         serviceId: w.specializations[0]?.service?.id || "",
         rating: w.rating,
@@ -351,29 +483,18 @@ router.get("/public/workers/:id", async (request, response) => {
       orderBy: { createdAt: "desc" }
     });
 
-    const rawProf = (worker as any).profession ?? "";
-    let profList: string[] = rawProf ? rawProf.split(",").map((s: string) => s.trim()).filter(Boolean) : [];
-    if (specializations.length > 0) {
-      specializations.forEach((spec: any) => {
-        const catName = spec.service?.category?.nameAr || spec.service?.category?.nameEn;
-        if (catName && !profList.includes(catName)) {
-          profList.push(catName);
-        }
-      });
-    }
-    if (profList.length === 0) {
-      const fallback = specializations[0]?.service?.category?.nameAr || specializations[0]?.service?.category?.nameEn || "";
-      if (fallback) profList = [fallback];
-    }
+    const profData = buildWorkerProfessions((worker as any).profession, specializations || []);
 
     const result = {
       id: worker.id,
       userId: worker.userId,
       name: `${(worker as any).user?.firstName ?? ""} ${(worker as any).user?.lastName ?? ""}`.trim(),
       avatarUrl: (worker as any).user?.avatarUrl ?? null,
-      professions: profList,
-      professionAr: profList.join(" • ") || specializations[0]?.service?.category?.nameAr || "",
-      professionEn: profList.join(" • ") || specializations[0]?.service?.category?.nameEn || "",
+      professions: profData.ar,
+      professionsAr: profData.ar,
+      professionsEn: profData.en,
+      professionAr: profData.professionAr,
+      professionEn: profData.professionEn,
       categoryId: specializations[0]?.service?.category?.slug || "",
       serviceId: specializations[0]?.service?.id || "",
       rating: worker.rating,

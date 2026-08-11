@@ -286,24 +286,127 @@ export const vendorCategories: GeoOption[] = [
   { value: "electrical-service-center", labelEn: "Electrical Service Center", labelAr: "مركز صيانة كهرباء" }
 ];
 export const workerProfessions: GeoOption[] = [
-  { value: "plumber", labelEn: "Plumber (Plumbing)", labelAr: "سباكة" },
-  { value: "electrician", labelEn: "Electrician (Electrical)", labelAr: "كهرباء" },
-  { value: "carpenter", labelEn: "Carpenter (Carpentry)", labelAr: "نجارة" },
-  { value: "painter", labelEn: "Painter (Painting & Decor)", labelAr: "دهانات وديكور" },
-  { value: "ac-technician", labelEn: "AC Technician (AC & Cooling)", labelAr: "تكييف وتبريد" },
+  { value: "plumber", labelEn: "Plumber", labelAr: "سباكة" },
+  { value: "electrician", labelEn: "Electrician", labelAr: "كهرباء" },
+  { value: "carpenter", labelEn: "Carpenter", labelAr: "نجارة" },
+  { value: "painter", labelEn: "Painter", labelAr: "دهانات وديكور" },
+  { value: "ac-technician", labelEn: "AC Technician", labelAr: "تكييف وتبريد" },
   { value: "appliance-repair", labelEn: "Appliance Repair", labelAr: "صيانة أجهزة منزلية" },
-  { value: "aluminum", labelEn: "Aluminum Worker (Aluminum)", labelAr: "ألوميتال" },
+  { value: "aluminum", labelEn: "Aluminum Worker", labelAr: "ألوميتال" },
   { value: "computer-repair", labelEn: "Computer Repair", labelAr: "صيانة كمبيوتر" },
   { value: "networks", labelEn: "Computer Networks", labelAr: "شبكات كمبيوتر" },
-  { value: "cctv", labelEn: "Camera Installation (CCTV)", labelAr: "تركيب كاميرات" },
+  { value: "cctv", labelEn: "Camera Installation", labelAr: "تركيب كاميرات" },
   { value: "cleaning", labelEn: "Cleaning Worker", labelAr: "عامل نظافة" },
   { value: "gypsum", labelEn: "Gypsum Worker", labelAr: "فني جبس" },
   { value: "ceramic", labelEn: "Ceramic Installer", labelAr: "مبلط سيراميك" },
-  { value: "plastering", labelEn: "Plasterer (Plastering)", labelAr: "أعمال محارة" },
-  { value: "ironwork", labelEn: "Ironworker (Ironwork)", labelAr: "حدادة" },
+  { value: "plastering", labelEn: "Plasterer", labelAr: "أعمال محارة" },
+  { value: "ironwork", labelEn: "Ironworker", labelAr: "حدادة" },
   { value: "finishing", labelEn: "Finishing Specialist", labelAr: "تشطيبات شاملة" },
   { value: "moving", labelEn: "Furniture Mover", labelAr: "نقل عفش وتغليف" },
   { value: "car-mechanic", labelEn: "Car Mechanic", labelAr: "ميكانيكي سيارات" },
   { value: "bike-mechanic", labelEn: "Motorcycle Mechanic", labelAr: "ميكانيكي موتوسيكلات" },
   { value: "engine-repair", labelEn: "Engine Repair Specialist", labelAr: "صيانة مواتير" }
 ];
+
+export function formatWorkerProfessionBadges(input: any, isArabic: boolean): string[] {
+  let rawList: string[] = [];
+
+  if (input && typeof input === "object" && !Array.isArray(input)) {
+    if (isArabic && input.professionAr) {
+      rawList = input.professionAr.split(/[,•]/);
+    } else if (!isArabic && input.professionEn) {
+      rawList = input.professionEn.split(/[,•]/);
+    } else if (Array.isArray(input.professions) && input.professions.length > 0) {
+      rawList = input.professions;
+    } else if (typeof input.profession === "string") {
+      rawList = input.profession.split(/[,•]/);
+    }
+  } else if (Array.isArray(input)) {
+    rawList = input;
+  } else if (typeof input === "string") {
+    rawList = input.split(/[,•]/);
+  }
+
+  const result: string[] = [];
+  for (const item of rawList) {
+    const trimmed = item.trim();
+    if (!trimmed) continue;
+    const mapped = translateProfessionItem(trimmed, isArabic);
+    if (mapped && !result.includes(mapped)) {
+      result.push(mapped);
+    }
+  }
+
+  return result;
+}
+
+export function formatWorkerProfession(input: any, isArabic: boolean): string {
+  const badges = formatWorkerProfessionBadges(input, isArabic);
+  if (badges.length === 0) {
+    return isArabic ? "فني محترف" : "Verified Worker";
+  }
+  return badges.join(" • ");
+}
+
+function translateProfessionItem(item: string, isArabic: boolean): string {
+  const match = workerProfessions.find(
+    (p) =>
+      p.value.toLowerCase() === item.toLowerCase() ||
+      p.labelAr === item ||
+      p.labelEn.toLowerCase() === item.toLowerCase()
+  );
+  if (match) {
+    return isArabic ? match.labelAr : match.labelEn;
+  }
+
+  const lower = item.toLowerCase();
+
+  if (isArabic) {
+    if (lower.includes("plumb")) return "سباكة";
+    if (lower.includes("electr")) return "كهرباء";
+    if (lower.includes("carp")) return "نجارة";
+    if (lower.includes("paint")) return "دهانات وديكور";
+    if (lower.includes("ac")) return "تكييف وتبريد";
+    if (lower.includes("appliance")) return "صيانة أجهزة منزلية";
+    if (lower.includes("aluminum")) return "ألوميتال";
+    if (lower.includes("comput")) return "صيانة كمبيوتر";
+    if (lower.includes("network")) return "شبكات كمبيوتر";
+    if (lower.includes("camera") || lower.includes("cctv")) return "تركيب كاميرات";
+    if (lower.includes("clean")) return "عامل نظافة";
+    if (lower.includes("gypsum")) return "فني جبس";
+    if (lower.includes("tile") || lower.includes("ceramic")) return "مبلط سيراميك";
+    if (lower.includes("plaster")) return "أعمال محارة";
+    if (lower.includes("iron")) return "حدادة";
+    if (lower.includes("finish")) return "تشطيبات شاملة";
+    if (lower.includes("move") || lower.includes("moving")) return "نقل عفش وتغليف";
+    if (lower.includes("car") || lower.includes("mechanic")) return "ميكانيكي سيارات";
+    if (lower.includes("bike")) return "ميكانيكي موتوسيكلات";
+    if (lower.includes("engine")) return "صيانة مواتير";
+    return item;
+  } else {
+    if (lower.includes("سباك") || lower.includes("سبا")) return "Plumber";
+    if (lower.includes("كهرب")) return "Electrician";
+    if (lower.includes("نجار")) return "Carpenter";
+    if (lower.includes("نقاش") || lower.includes("دهان")) return "Painter";
+    if (lower.includes("تكيي")) return "AC Technician";
+    if (lower.includes("جهز") || lower.includes("أجهزة")) return "Appliance Repair";
+    if (lower.includes("الوم") || lower.includes("ألوميتال")) return "Aluminum Worker";
+    if (lower.includes("كمبيو")) return "Computer Repair";
+    if (lower.includes("شبك")) return "Computer Networks";
+    if (lower.includes("كامير")) return "Camera Installation";
+    if (lower.includes("نظاف")) return "Cleaning Worker";
+    if (lower.includes("جبس")) return "Gypsum Worker";
+    if (lower.includes("مبلط") || lower.includes("سيراميك")) return "Ceramic Installer";
+    if (lower.includes("محارة")) return "Plasterer";
+    if (lower.includes("حداد")) return "Ironworker";
+    if (lower.includes("تشطيب")) return "Finishing Specialist";
+    if (lower.includes("نقل")) return "Furniture Mover";
+    if (lower.includes("سيار")) return "Car Mechanic";
+    if (lower.includes("موتوسيك")) return "Motorcycle Mechanic";
+    if (lower.includes("مواتير") || lower.includes("موتور")) return "Engine Repair Specialist";
+
+    const cleaned = item.replace(/\s*\([^)]*\)/g, "").trim();
+    return cleaned || item;
+  }
+}
+
