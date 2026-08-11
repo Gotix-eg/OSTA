@@ -700,8 +700,15 @@ export function LandingPage({ locale }: { locale: Locale }) {
                         {isArabic ? worker.professionAr : worker.professionEn}
                       </p>
                     </div>
-                    <div className="bg-gold text-[#1a1c1c] px-2 py-1 text-xs font-black">
-                      {worker.ratingCount && worker.ratingCount > 0 ? `${worker.rating.toFixed(1)} ★` : (isArabic ? "جديد" : "New")}
+                    <div className="bg-gold text-[#1a1c1c] px-2 py-1 text-xs font-black whitespace-nowrap shrink-0 flex items-center gap-1">
+                      {worker.ratingCount && worker.ratingCount > 0 ? (
+                        <>
+                          <span>{worker.rating.toFixed(1)}</span>
+                          <span className="text-[10px]">★</span>
+                        </>
+                      ) : (
+                        isArabic ? "جديد" : "New"
+                      )}
                     </div>
                   </div>
                   <div className="flex items-center text-xs text-neutral-500 mb-6 font-semibold">

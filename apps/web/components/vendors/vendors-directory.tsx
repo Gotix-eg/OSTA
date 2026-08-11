@@ -185,7 +185,7 @@ export function VendorsDirectory({ locale }: { locale: Locale }) {
                         <Warehouse className="text-gold h-10 w-10" />
                       </div>
                       <div className="flex flex-col items-end">
-                        <div className="flex items-center gap-1 bg-gold text-black px-2 py-0.5 text-xs font-black">
+                        <div className="flex items-center gap-1 bg-gold text-black px-2 py-0.5 text-xs font-black whitespace-nowrap">
                           <Star className="h-3.5 w-3.5 fill-current" />
                           <span>{vendor.ratingCount && vendor.ratingCount > 0 ? vendor.rating.toFixed(1) : (isArabic ? "جديد" : "New")}</span>
                         </div>

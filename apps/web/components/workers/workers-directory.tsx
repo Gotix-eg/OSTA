@@ -380,9 +380,9 @@ export function WorkersDirectory({ locale }: { locale: Locale }) {
                         >
                           {worker.name}
                         </Link>
-                        <div className="flex shrink-0 items-center text-gold text-xs font-black">
-                          <Star className="h-3 w-3 fill-current mr-0.5 text-gold" />
-                          <span className="text-white">{worker.ratingCount && worker.ratingCount > 0 ? worker.rating.toFixed(1) : (isArabic ? "جديد" : "New")}</span>
+                        <div className="flex shrink-0 items-center gap-1 text-gold text-xs font-black whitespace-nowrap">
+                          <Star className="h-3 w-3 fill-current text-gold shrink-0" />
+                          <span className="text-white whitespace-nowrap">{worker.ratingCount && worker.ratingCount > 0 ? worker.rating.toFixed(1) : (isArabic ? "جديد" : "New")}</span>
                         </div>
                       </div>
                       <p className="text-[9px] font-black px-1.5 py-0.5 mb-2 inline-block uppercase rounded-none tracking-wider truncate max-w-full bg-gold text-black">
