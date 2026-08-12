@@ -502,7 +502,7 @@ export function ClientSettingsPage({ locale, initialData }: { locale: Locale; in
     addresses: isArabic ? "العناوين المحفوظة" : "Saved Addresses",
     sites: isArabic ? `${formatNumber(locale, data.addresses.length)} مواقع` : `${formatNumber(locale, data.addresses.length)} SITES`,
     smsState: isArabic ? "حالة SMS" : "SMS State",
-    smsValue: smsEnabled ? (isArabic ? "متصل" : "ONLINE") : isArabic ? "غير متصل" : "OFFLINE",
+    smsValue: smsEnabled ? (isArabic ? "متصل" : "ONLINE") : isArabic ? "غير متاح" : "OFFLINE",
     identity: isArabic ? "بيانات الهوية" : "Identity Data",
     fullName: isArabic ? "الاسم الكامل" : "Full Name",
     firstName: isArabic ? "الاسم الأول" : "First Name",
