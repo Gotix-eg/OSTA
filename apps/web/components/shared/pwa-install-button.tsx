@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Download, Smartphone, CheckCircle2, Share, PlusSquare, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Locale } from "@/lib/locales";
+import { cn } from "@/lib/utils";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -69,7 +70,7 @@ export function PwaInstallButton({
 
   if (isStandalone) {
     return (
-      <div className={`inline-flex items-center gap-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-xs font-bold text-emerald-400 ${className}`}>
+      <div className={cn("inline-flex items-center gap-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-xs font-bold text-emerald-400 md:hidden", className)}>
         <CheckCircle2 className="h-4 w-4" />
         <span>{isArabic ? "التطبيق مضاف للشاشة" : "App Installed"}</span>
       </div>
@@ -80,10 +81,11 @@ export function PwaInstallButton({
     <>
       <button
         onClick={handleClick}
-        className={
+        className={cn(
+          "md:hidden",
           className ||
-          `inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-gold-500 to-gold-600 px-4 py-2.5 text-xs font-extrabold text-onyx-950 shadow-md transition-all hover:brightness-110 active:scale-95`
-        }
+            "inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-gold-500 to-gold-600 px-4 py-2.5 text-xs font-extrabold text-onyx-950 shadow-md transition-all hover:brightness-110 active:scale-95"
+        )}
       >
         <Smartphone className="h-4 w-4 animate-bounce" />
         <span>{isArabic ? "إضافة للشاشة الرئيسية 📲" : "Add to Home Screen 📲"}</span>
