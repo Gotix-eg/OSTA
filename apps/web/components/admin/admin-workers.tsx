@@ -11,7 +11,7 @@ import { fetchApiData, postApiData, patchApiData, deleteApiData } from "@/lib/ap
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
 import { workerProfessions } from "@/lib/geo-data";
-import { WorkerVerificationWizard } from "./worker-verification-wizard";
+import { WorkerVerificationWizard, type WorkerForWizard } from "./worker-verification-wizard";
 import { WorkerHistoryLogs } from "./worker-history-logs";
 
 type Worker = {
@@ -44,6 +44,7 @@ type Worker = {
     phone: string;
     email?: string | null;
     avatarUrl?: string | null;
+    lastLoginAt?: string | null;
   };
 };
 
@@ -93,7 +94,7 @@ export function AdminWorkersManagement({ locale }: { locale: Locale }) {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [activeLightboxDoc, setActiveLightboxDoc] = useState<string | null>(null);
   const [selectedWorker, setSelectedWorker] = useState<Worker | null>(null);
-  const [wizardWorker, setWizardWorker] = useState<any | null>(null);
+  const [wizardWorker, setWizardWorker] = useState<WorkerForWizard | null>(null);
 
   // Edit form state
   const [editFirstName, setEditFirstName] = useState("");

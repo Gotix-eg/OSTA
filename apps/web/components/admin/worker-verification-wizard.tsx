@@ -516,7 +516,7 @@ export function WorkerVerificationWizard({
                           </p>
                           {data.notes && (
                             <p className="text-[11px] text-onyx-300 italic bg-onyx-950/60 p-2 rounded-lg border border-white/5">
-                              "{data.notes}"
+                              &ldquo;{data.notes}&rdquo;
                             </p>
                           )}
                         </div>

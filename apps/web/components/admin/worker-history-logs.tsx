@@ -121,7 +121,7 @@ export function WorkerHistoryLogs({
                   <div className="bg-onyx-900 rounded-lg p-3 border border-white/5 space-y-1 ml-4 rtl:mr-4 rtl:ml-0">
                     <p className="text-white font-medium text-xs">{formatAuditActionName(log.action, isArabic)}</p>
                     <p className="text-onyx-400 text-[10px]">
-                      {isArabic ? "بواسطة:" : "By:"} <span className="font-bold text-gold-400">{log.adminName}</span>
+                      {isArabic ? "بواسطة:" : "By:"} <span className="font-bold text-gold-400">{log.newData?.adminName || (isArabic ? "أدمن النظام" : "System Admin")}</span>
                     </p>
                     <p className="text-onyx-500 text-[9px] font-mono mt-1" dir="ltr">{formatDate(log.createdAt)}</p>
                   </div>

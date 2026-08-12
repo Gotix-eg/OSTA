@@ -1,5 +1,6 @@
 import { fetchApiData } from "./api";
 import type { DashboardAreaCode, DashboardRequestStatus, DashboardServiceCode, DashboardVerificationStatus, DashboardWorkerSpecialtyCode } from "./dashboard-data";
+import type { StepVerificationRecord } from "@/components/admin/worker-verification-wizard";
 
 export interface ClientRequestListItem {
   id: string;
@@ -144,6 +145,11 @@ export interface PendingWorkersData {
   workers: Array<{
     id: string;
     name: string;
+    phone?: string | null;
+    email?: string | null;
+    avatarUrl?: string | null;
+    profession?: string | null;
+    bio?: string | null;
     specialty: DashboardWorkerSpecialtyCode;
     area: string;
     experienceYears: number;
@@ -159,6 +165,11 @@ export interface PendingWorkersData {
     nationalIdNumber?: string | null;
     guarantorName?: string | null;
     guarantorPhone?: string | null;
+    stepVerifications?: Record<string, StepVerificationRecord> | null;
+    verifiedAt?: string | null;
+    verifiedBy?: string | null;
+    lastLoginAt?: string | null;
+    createdAt?: string;
   }>;
 }
 

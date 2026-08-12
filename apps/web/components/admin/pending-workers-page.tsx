@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { CheckCircle2, Clock3, Loader2, ShieldCheck, ShieldQuestion, Star, Users, XCircle, Eye, EyeOff, FileText, X, Sparkles } from "lucide-react";
-import { WorkerVerificationWizard } from "./worker-verification-wizard";
+import { WorkerVerificationWizard, type WorkerForWizard } from "./worker-verification-wizard";
 import { WorkerHistoryLogs } from "./worker-history-logs";
 
 import {
@@ -67,7 +67,7 @@ export function PendingWorkersPage({ locale, initialData }: { locale: Locale; in
   const [busyId, setBusyId] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [selectedWorker, setSelectedWorker] = useState<PendingWorkersData["workers"][number] | null>(null);
-  const [wizardWorker, setWizardWorker] = useState<any | null>(null);
+  const [wizardWorker, setWizardWorker] = useState<WorkerForWizard | null>(null);
 
   useEffect(() => {
     setData(liveData);
@@ -166,16 +166,14 @@ export function PendingWorkersPage({ locale, initialData }: { locale: Locale; in
                   </div>
 
                   <div className="flex flex-wrap gap-2.5 xl:w-[22rem] xl:justify-end">
-                    {worker.status !== "VERIFIED" && (
-                      <button
-                        type="button"
-                        onClick={() => setWizardWorker(worker)}
-                        className="inline-flex items-center gap-2 rounded-full border border-gold-500/40 bg-gold-500/10 px-4 py-2.5 text-sm font-black text-gold-400 shadow-lg hover:scale-105 transition-all"
-                      >
-                        <Sparkles className="h-4 w-4 text-gold-400" />
-                        {isArabic ? "التوثيق" : "Verification"}
-                      </button>
-                    )}
+                    <button
+                      type="button"
+                      onClick={() => setWizardWorker(worker)}
+                      className="inline-flex items-center gap-2 rounded-full border border-gold-500/40 bg-gold-500/10 px-4 py-2.5 text-sm font-black text-gold-400 shadow-lg hover:scale-105 transition-all"
+                    >
+                      <Sparkles className="h-4 w-4 text-gold-400" />
+                      {isArabic ? "التوثيق" : "Verification"}
+                    </button>
                     <button
                       type="button"
                       onClick={() => setSelectedWorker(worker)}
@@ -220,7 +218,20 @@ export function PendingWorkersPage({ locale, initialData }: { locale: Locale; in
           onWorkerUpdated={(updated) => {
             setData(prev => ({
               ...prev,
-              workers: prev.workers.map(w => w.id === updated.id ? { ...w, ...updated, status: updated.verificationStatus || w.status } : w)
+              workers: prev.workers.map(w => w.id === updated.id
+                ? {
+                    ...w,
+                    nationalIdNumber: updated.nationalIdNumber ?? w.nationalIdNumber,
+                    nationalIdFront: updated.nationalIdFront ?? w.nationalIdFront,
+                    nationalIdBack: updated.nationalIdBack ?? w.nationalIdBack,
+                    selfieWithId: updated.selfieWithId ?? w.selfieWithId,
+                    criminalRecord: updated.criminalRecord ?? w.criminalRecord,
+                    utilityBillUrl: updated.utilityBillUrl ?? w.utilityBillUrl,
+                    guarantorName: updated.guarantorName ?? w.guarantorName,
+                    guarantorPhone: updated.guarantorPhone ?? w.guarantorPhone,
+                    status: (updated.status as DashboardVerificationStatus) || w.status
+                  }
+                : w)
             }));
             setWizardWorker(prev => prev?.id === updated.id ? { ...prev, ...updated } : prev);
           }}

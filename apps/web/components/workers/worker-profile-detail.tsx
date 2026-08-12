@@ -144,8 +144,12 @@ export function WorkerProfileDetail({ locale, workerId }: { locale: Locale; work
     setIsLoading(true);
     setError(null);
     try {
-      const data = await fetchApiData<WorkerProfileData>(`/public/workers/${workerId}`);
-      setWorker(data);
+      const data = await fetchApiData<WorkerProfileData | null>(`/public/workers/${workerId}`, null);
+      if (data) {
+        setWorker(data);
+      } else {
+        setError(isArabic ? "تعذر تحميل ملف الفني الشخصي" : "Failed to load technician profile.");
+      }
     } catch (err) {
       console.error(err);
       setError(isArabic ? "تعذر تحميل ملف الفني الشخصي" : "Failed to load technician profile.");
