@@ -31,9 +31,12 @@ export function PwaInstallPrompt({ locale = "ar" }: { locale?: Locale }) {
       return;
     }
 
-    // 2. Detect iOS
+    // 2. Detect mobile device & iOS
     const userAgent = window.navigator.userAgent.toLowerCase();
     const iosDevice = /iphone|ipad|ipod/.test(userAgent);
+    const isMobileDevice =
+      /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent) ||
+      window.innerWidth <= 768;
     setIsIOS(iosDevice);
 
     // 3. Listen to Android / Desktop Chrome beforeinstallprompt event
@@ -44,13 +47,13 @@ export function PwaInstallPrompt({ locale = "ar" }: { locale?: Locale }) {
 
     window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
 
-    // 4. Show prompt banner if user hasn't dismissed it in the last 24h
+    // 4. Show prompt banner ONLY on mobile devices if user hasn't dismissed it in the last 24h
     const dismissedAt = localStorage.getItem("osta_pwa_install_dismissed");
     const hoursSinceDismissed = dismissedAt
       ? (Date.now() - parseInt(dismissedAt, 10)) / (1000 * 60 * 60)
       : 999;
 
-    if (hoursSinceDismissed > 24) {
+    if (isMobileDevice && hoursSinceDismissed > 24) {
       const timer = setTimeout(() => setShowBanner(true), 2500);
       return () => {
         clearTimeout(timer);

@@ -42,8 +42,12 @@ export function ToastNotification() {
 
     setPermission(Notification.permission);
 
-    // Show prompt if permission is still default and user hasn't dismissed it recently
-    if (Notification.permission === "default") {
+    // Detect if device is mobile
+    const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
+    const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent) || window.innerWidth <= 768;
+
+    // Show prompt ONLY on mobile devices if permission is still default and user hasn't dismissed it recently
+    if (isMobileDevice && Notification.permission === "default") {
       const dismissedAt = localStorage.getItem("osta_notification_prompt_dismissed");
       const hoursSinceDismissed = dismissedAt
         ? (Date.now() - parseInt(dismissedAt, 10)) / (1000 * 60 * 60)
