@@ -77,7 +77,7 @@ export function ClientFavoritesPage({ locale, initialData }: { locale: Locale; i
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         <ClientStitchMetric label={isArabic ? "إجمالي المفضلين" : "Total favorites"} value={formatNumber(locale, data.summary.totalFavorites)} note={isArabic ? "قائمة محفوظة" : "saved roster"} icon={Heart} />
-        <ClientStitchMetric label={isArabic ? "متصل الآن" : "Online now"} value={formatNumber(locale, data.summary.onlineNow)} note={isArabic ? "جاهز للحجز" : "ready to book"} icon={Sparkles} />
+        <ClientStitchMetric label={isArabic ? "متاح" : "Online now"} value={formatNumber(locale, data.summary.onlineNow)} note={isArabic ? "جاهز للحجز" : "ready to book"} icon={Sparkles} />
         <ClientStitchMetric label={isArabic ? "متوسط التقييم" : "Avg rating"} value={formatNumber(locale, data.summary.avgRating)} note={isArabic ? "مؤشر الثقة" : "trust score"} icon={ShieldCheck} dark />
       </div>
 
@@ -94,7 +94,7 @@ export function ClientFavoritesPage({ locale, initialData }: { locale: Locale; i
                     <p className="mt-2 text-sm font-bold text-gold">{worker.specialty}</p>
                   </div>
                   <ClientStitchBadge tone={worker.availability === "Online now" ? "gold" : "muted"}>
-                    {isArabic ? (worker.availability === "Online now" ? "متصل الآن" : worker.availability === "Available tomorrow" ? "متاح غدًا" : "اليوم 7 مساءً") : worker.availability}
+                    {isArabic ? (worker.availability === "Online now" ? "متاح" : worker.availability === "Available tomorrow" ? "متاح غدًا" : "اليوم 7 مساءً") : worker.availability}
                   </ClientStitchBadge>
                 </div>
                 <div className="mt-5 grid gap-3 sm:grid-cols-3">

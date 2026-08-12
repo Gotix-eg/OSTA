@@ -54,7 +54,7 @@ export const dashboardCopy = {
     shared: {
       notifications: "إشعارات",
       profile: "الملف الشخصي",
-      online: "متصل الآن",
+      online: "متاح",
       revenue: "الإيراد",
       completion: "الإنجاز",
       response: "سرعة الرد",

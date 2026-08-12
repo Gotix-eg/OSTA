@@ -414,7 +414,7 @@ export function WorkerProfileDetail({ locale, workerId }: { locale: Locale; work
                 </div>
                 <p className="mt-2 flex items-center gap-2 text-xs font-bold text-white/60">
                   <span className={cn("inline-block h-2 w-2 rounded-full", worker.isOnline ? "bg-green-500" : "bg-white/30")} />
-                  <span>{worker.isOnline ? (isArabic ? "متصل الآن" : "Online now") : (isArabic ? "غير متاح" : "Offline")}</span>
+                  <span>{worker.isOnline ? (isArabic ? "متاح" : "Online now") : (isArabic ? "غير متاح" : "Offline")}</span>
                 </p>
 
                 {/* Worker Professions Badge List */}
