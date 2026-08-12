@@ -253,6 +253,7 @@ model WorkerProfile {
   verificationNotes     String?
   verifiedAt            DateTime?
   verifiedBy            String?
+  stepVerifications     Json?
   level                 WorkerLevel              @default(NEW)
   yearsOfExperience     Int                      @default(0)
   bio                   String?

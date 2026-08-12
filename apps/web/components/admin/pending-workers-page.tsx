@@ -2,7 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-import { CheckCircle2, Clock3, Loader2, ShieldCheck, ShieldQuestion, Star, Users, XCircle, Eye, EyeOff, FileText, X } from "lucide-react";
+import { CheckCircle2, Clock3, Loader2, ShieldCheck, ShieldQuestion, Star, Users, XCircle, Eye, EyeOff, FileText, X, Sparkles } from "lucide-react";
+import { WorkerVerificationWizard } from "./worker-verification-wizard";
+import { WorkerHistoryLogs } from "./worker-history-logs";
 
 import {
   DashboardBlock,
@@ -65,6 +67,7 @@ export function PendingWorkersPage({ locale, initialData }: { locale: Locale; in
   const [busyId, setBusyId] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [selectedWorker, setSelectedWorker] = useState<PendingWorkersData["workers"][number] | null>(null);
+  const [wizardWorker, setWizardWorker] = useState<any | null>(null);
 
   useEffect(() => {
     setData(liveData);
@@ -162,11 +165,21 @@ export function PendingWorkersPage({ locale, initialData }: { locale: Locale; in
                     </div>
                   </div>
 
-                  <div className="flex flex-wrap gap-3 xl:w-[15rem] xl:justify-end">
+                  <div className="flex flex-wrap gap-2.5 xl:w-[22rem] xl:justify-end">
+                    {worker.status !== "VERIFIED" && (
+                      <button
+                        type="button"
+                        onClick={() => setWizardWorker(worker)}
+                        className="inline-flex items-center gap-2 rounded-full border border-gold-500/40 bg-gold-500/10 px-4 py-2.5 text-sm font-black text-gold-400 shadow-lg hover:scale-105 transition-all"
+                      >
+                        <Sparkles className="h-4 w-4 text-gold-400" />
+                        {isArabic ? "التوثيق" : "Verification"}
+                      </button>
+                    )}
                     <button
                       type="button"
                       onClick={() => setSelectedWorker(worker)}
-                      className="inline-flex items-center gap-2 rounded-full border border-onyx-700 bg-onyx-800/50 px-4 py-2.5 text-sm font-semibold text-gold-500 shadow-soft"
+                      className="inline-flex items-center gap-2 rounded-full border border-onyx-700 bg-onyx-800/50 px-3.5 py-2 text-sm font-semibold text-onyx-300 shadow-soft"
                     >
                       <Eye className="h-4 w-4" />
                       {isArabic ? "عرض المستندات" : "View Docs"}
@@ -175,7 +188,7 @@ export function PendingWorkersPage({ locale, initialData }: { locale: Locale; in
                       type="button"
                       onClick={() => void handleDecision(worker.id, "REJECTED")}
                       disabled={busyId === worker.id}
-                      className="inline-flex items-center gap-2 rounded-full border border-onyx-700 bg-onyx-800/50 px-4 py-2.5 text-sm font-semibold text-onyx-200 shadow-soft disabled:opacity-60"
+                      className="inline-flex items-center gap-2 rounded-full border border-onyx-700 bg-onyx-800/50 px-3.5 py-2 text-sm font-semibold text-onyx-200 shadow-soft disabled:opacity-60"
                     >
                       {busyId === worker.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <XCircle className="h-4 w-4" />}
                       {isArabic ? "رفض" : "Reject"}
@@ -187,7 +200,7 @@ export function PendingWorkersPage({ locale, initialData }: { locale: Locale; in
                       className="inline-flex items-center gap-2 rounded-full bg-dark-950 px-4 py-2.5 text-sm font-semibold text-white shadow-soft disabled:opacity-60"
                     >
                       {busyId === worker.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
-                      {isArabic ? "توثيق" : "Verify"}
+                      {isArabic ? "تفعيل" : "Approve"}
                     </button>
                   </div>
                 </div>
@@ -196,6 +209,23 @@ export function PendingWorkersPage({ locale, initialData }: { locale: Locale; in
           </div>
         )}
       </DashboardBlock>
+
+      {/* Verification Wizard Modal */}
+      {wizardWorker && (
+        <WorkerVerificationWizard
+          locale={locale}
+          worker={wizardWorker}
+          isOpen={Boolean(wizardWorker)}
+          onClose={() => setWizardWorker(null)}
+          onWorkerUpdated={(updated) => {
+            setData(prev => ({
+              ...prev,
+              workers: prev.workers.map(w => w.id === updated.id ? { ...w, ...updated, status: updated.verificationStatus || w.status } : w)
+            }));
+            setWizardWorker(prev => prev?.id === updated.id ? { ...prev, ...updated } : prev);
+          }}
+        />
+      )}
 
       {/* Worker Details & Documents Modal */}
       {selectedWorker && (
@@ -233,17 +263,9 @@ export function PendingWorkersPage({ locale, initialData }: { locale: Locale; in
                     <span className="text-onyx-400">{isArabic ? "الرقم القومي" : "National ID Number"}</span>
                     <span className="text-white font-bold">{selectedWorker.nationalIdNumber || (isArabic ? "غير متوفر" : "N/A")}</span>
                   </div>
-                  <div className="flex justify-between py-2.5 border-b border-white/5">
+                  <div className="flex justify-between py-2.5">
                     <span className="text-onyx-400">{isArabic ? "سنوات الخبرة" : "Years of Experience"}</span>
                     <span className="text-white font-bold">{selectedWorker.experienceYears} {isArabic ? "سنوات" : "years"}</span>
-                  </div>
-                  <div className="flex justify-between py-2.5 border-b border-white/5">
-                    <span className="text-onyx-400">{isArabic ? "اسم الضامن" : "Guarantor Name"}</span>
-                    <span className="text-white font-bold">{selectedWorker.guarantorName || (isArabic ? "غير متوفر" : "N/A")}</span>
-                  </div>
-                  <div className="flex justify-between py-2.5">
-                    <span className="text-onyx-400">{isArabic ? "تليفون الضامن" : "Guarantor Phone"}</span>
-                    <span className="text-white font-bold">{selectedWorker.guarantorPhone || (isArabic ? "غير متوفر" : "N/A")}</span>
                   </div>
                 </div>
               </div>
@@ -341,6 +363,13 @@ export function PendingWorkersPage({ locale, initialData }: { locale: Locale; in
                 ))}
               </div>
             </div>
+
+            <WorkerHistoryLogs 
+              workerId={selectedWorker.id} 
+              createdAt={selectedWorker.createdAt} 
+              lastLoginAt={selectedWorker.lastLoginAt} 
+              locale={locale} 
+            />
           </div>
         </div>
       )}

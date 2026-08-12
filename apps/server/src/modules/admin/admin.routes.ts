@@ -151,14 +151,14 @@ async function getPendingWorkersData() {
       verificationStatus: { in: [...pendingStatuses] }
     },
     include: {
-      user: { select: { firstName: true, lastName: true } },
+      user: { select: { firstName: true, lastName: true, phone: true, avatarUrl: true, email: true, lastLoginAt: true } },
       workAreas: { take: 1 }
     },
     orderBy: { createdAt: "desc" }
   });
 
   const today = new Date().toISOString().split("T")[0] ?? "";
-  const visibleWorkers: PendingWorkerRecord[] = workers.map((worker) => {
+  const visibleWorkers = workers.map((worker) => {
     const documentsReady = [
       worker.nationalIdFront,
       worker.nationalIdBack,
@@ -169,6 +169,11 @@ async function getPendingWorkersData() {
     return {
       id: worker.id,
       name: `${worker.user.firstName} ${worker.user.lastName}`.trim(),
+      phone: worker.user.phone,
+      avatarUrl: worker.user.avatarUrl,
+      email: worker.user.email,
+      profession: worker.profession,
+      bio: worker.bio,
       specialty: mapPendingWorkerSpecialty(worker.profession),
       area: worker.workAreas[0]?.area || worker.workAreas[0]?.city || "غير محدد",
       experienceYears: worker.yearsOfExperience,
@@ -183,7 +188,12 @@ async function getPendingWorkersData() {
       utilityBillUrl: worker.utilityBillUrl,
       nationalIdNumber: worker.nationalIdNumber,
       guarantorName: worker.guarantorName,
-      guarantorPhone: worker.guarantorPhone
+      guarantorPhone: worker.guarantorPhone,
+      stepVerifications: worker.stepVerifications as any,
+      verifiedAt: worker.verifiedAt?.toISOString() || null,
+      verifiedBy: worker.verifiedBy || null,
+      lastLoginAt: worker.user.lastLoginAt?.toISOString() || null,
+      createdAt: worker.createdAt.toISOString()
     };
   });
 
@@ -292,6 +302,169 @@ router.get("/workers/pending", catchAsync(async (_request, response) => {
   );
 }));
 
+const stepNamesMap: Record<string, string> = {
+  phone: "التحقق من رقم الهاتف والمكالمة",
+  avatar: "التحقق من صورة الملف الشخصي والسيلفي",
+  national_id: "التحقق من بطاقة الرقم القومي واسم العامل",
+  documents: "التحقق من الصحيفة الجنائية وإيصال المرافق والضامن",
+  profession: "التحقق من المهنة والخبرة والشهادات",
+  public_profile: "مراجعة الصفحة العامة للفني",
+  final_approval: "التوقيع والاعتماد النهائي لحساب العامل"
+};
+
+const verifyStepSchema = z.object({
+  stepKey: z.enum(["phone", "avatar", "national_id", "documents", "profession", "public_profile", "final_approval"]),
+  status: z.enum(["VERIFIED", "REJECTED", "FLAGGED"]),
+  notes: z.string().optional()
+});
+
+router.post("/workers/:id/verify-step", catchAsync(async (request, response) => {
+  const workerId = request.params.id as string;
+  const { stepKey, status, notes } = verifyStepSchema.parse(request.body ?? {});
+
+  const adminUserId = (request as any).user?.id;
+  const adminUser = adminUserId ? await prisma.user.findUnique({ where: { id: adminUserId } }) : null;
+  const adminName = adminUser ? `${adminUser.firstName} ${adminUser.lastName}` : "أدمن النظام";
+
+  const worker = await prisma.workerProfile.findUnique({
+    where: { id: workerId },
+    include: { user: true }
+  });
+
+  if (!worker) {
+    throw new ApiError(404, "Worker profile not found");
+  }
+
+  const existingSteps = (worker.stepVerifications as Record<string, any>) || {};
+  const now = new Date();
+
+  const stepRecord = {
+    stepKey,
+    stepName: stepNamesMap[stepKey] || stepKey,
+    status,
+    verifiedAt: now.toISOString(),
+    verifiedByAdminId: adminUserId || "admin",
+    verifiedByAdminName: adminName,
+    notes: notes || ""
+  };
+
+  const updatedSteps = {
+    ...existingSteps,
+    [stepKey]: stepRecord
+  };
+
+  if (stepKey === "phone" && status === "VERIFIED") {
+    await prisma.user.update({
+      where: { id: worker.userId },
+      data: { phoneVerified: true }
+    });
+  }
+
+  await prisma.auditLog.create({
+    data: {
+      userId: adminUserId || null,
+      action: `WORKER_STEP_${stepKey.toUpperCase()}_${status}`,
+      entity: "WorkerProfile",
+      entityId: workerId,
+      newData: {
+        workerId,
+        workerName: `${worker.user.firstName} ${worker.user.lastName}`,
+        stepKey,
+        stepName: stepNamesMap[stepKey] || stepKey,
+        status,
+        notes: notes || "",
+        adminId: adminUserId || null,
+        adminName,
+        adminEmail: adminUser?.email || null,
+        timestamp: now.toISOString()
+      }
+    }
+  });
+
+  const mainSteps = ["phone", "avatar", "national_id", "documents", "public_profile"];
+  const allMainVerified = mainSteps.every(s => updatedSteps[s]?.status === "VERIFIED");
+  const isFinalApproval = stepKey === "final_approval" && status === "VERIFIED";
+
+  let nextVerificationStatus = worker.verificationStatus;
+  let trialExpiresAt = worker.trialExpiresAt;
+
+  if (allMainVerified || isFinalApproval) {
+    nextVerificationStatus = "VERIFIED";
+    trialExpiresAt = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+
+    await prisma.auditLog.create({
+      data: {
+        userId: adminUserId || null,
+        action: "WORKER_FULL_VERIFICATION_APPROVED",
+        entity: "WorkerProfile",
+        entityId: workerId,
+        newData: {
+          workerId,
+          workerName: `${worker.user.firstName} ${worker.user.lastName}`,
+          status: "VERIFIED",
+          adminName,
+          adminEmail: adminUser?.email || null,
+          notes: notes || "تم اعتماد وتوثيق كافة بيانات العامل وتوقيع حسابه بنجاح",
+          timestamp: now.toISOString()
+        }
+      }
+    });
+
+    await prisma.notification.create({
+      data: {
+        userId: worker.userId,
+        type: "VERIFICATION_UPDATE",
+        title: "تم توثيق واعتماد حسابك بنجاح! 🎉",
+        body: `تم مراجعة وتوقيع كافة بياناتك بواسطة الأدمن (${adminName}). حسابك الآن جاهز لاستقبال الطلبات.`
+      }
+    }).catch(() => {});
+  } else if (status === "REJECTED" && stepKey === "final_approval") {
+    nextVerificationStatus = "REJECTED";
+  }
+
+  const updatedWorker = await prisma.workerProfile.update({
+    where: { id: workerId },
+    data: {
+      stepVerifications: updatedSteps,
+      verificationStatus: nextVerificationStatus,
+      verifiedAt: nextVerificationStatus === "VERIFIED" ? now : worker.verifiedAt,
+      verifiedBy: nextVerificationStatus === "VERIFIED" ? adminName : worker.verifiedBy,
+      trialExpiresAt
+    },
+    include: {
+      user: { select: { firstName: true, lastName: true, phone: true, avatarUrl: true, email: true } },
+      workAreas: { take: 1 },
+      certificates: true
+    }
+  });
+
+  response.status(200).json(
+    successResponse(
+      {
+        worker: updatedWorker,
+        stepVerifications: updatedSteps,
+        stepRecord
+      },
+      `Step ${stepKey} updated to ${status}`
+    )
+  );
+}));
+
+router.get("/workers/:id/audit-logs", catchAsync(async (request, response) => {
+  const workerId = request.params.id as string;
+  const logs = await prisma.auditLog.findMany({
+    where: {
+      entity: "WorkerProfile",
+      entityId: workerId
+    },
+    orderBy: { createdAt: "desc" }
+  });
+
+  response.status(200).json(
+    successResponse(logs, "Worker audit logs fetched successfully")
+  );
+}));
+
 router.patch("/workers/:id/verify", catchAsync(async (request, response) => {
   const payload = verifyWorkerSchema.parse(request.body ?? {});
   const workerId = request.params.id as string;
@@ -318,6 +491,22 @@ router.patch("/workers/:id/verify", catchAsync(async (request, response) => {
         },
     include: {
       user: { include: { addresses: { take: 1 } } }
+    }
+  });
+
+  await prisma.auditLog.create({
+    data: {
+      userId: adminUserId || null,
+      action: payload.status === "VERIFIED" ? "WORKER_FULL_VERIFICATION_APPROVED" : "WORKER_VERIFICATION_REJECTED",
+      entity: "WorkerProfile",
+      entityId: workerId,
+      newData: {
+        workerId,
+        status: payload.status,
+        adminName,
+        adminEmail: adminUser?.email || null,
+        timestamp: now.toISOString()
+      }
     }
   });
 
@@ -546,7 +735,7 @@ router.post("/vendors/:id/reset-trial", catchAsync(async (request, response) => 
 router.get("/workers", catchAsync(async (_request, response) => {
   const workers = await prisma.workerProfile.findMany({
     include: {
-      user: { select: { firstName: true, lastName: true, phone: true, email: true, avatarUrl: true } }
+      user: { select: { firstName: true, lastName: true, phone: true, email: true, avatarUrl: true, lastLoginAt: true } }
     },
     orderBy: { createdAt: "desc" }
   });
@@ -714,7 +903,8 @@ router.patch("/workers/:id", catchAsync(async (request, response) => {
     firstName, lastName, phone, avatarUrl,
     profession, bio, yearsOfExperience, orderQuota, verificationStatus, rating,
     totalJobsCompleted, walletBalance, isOnline, isAvailable, galleryVideoUrl,
-    education, achievements, galleryImages
+    education, achievements, galleryImages,
+    nationalIdFront, nationalIdBack, selfieWithId, criminalRecord, utilityBillUrl
   } = request.body as {
     firstName?: string;
     lastName?: string;
@@ -734,6 +924,11 @@ router.patch("/workers/:id", catchAsync(async (request, response) => {
     education?: string[];
     achievements?: string[];
     galleryImages?: string[];
+    nationalIdFront?: string;
+    nationalIdBack?: string;
+    selfieWithId?: string;
+    criminalRecord?: string;
+    utilityBillUrl?: string;
   };
 
   const worker = await prisma.workerProfile.findUnique({
@@ -773,6 +968,11 @@ router.patch("/workers/:id", catchAsync(async (request, response) => {
       education: education !== undefined ? education : undefined,
       achievements: achievements !== undefined ? achievements : undefined,
       galleryImages: galleryImages !== undefined ? galleryImages : undefined,
+      nationalIdFront: nationalIdFront !== undefined ? nationalIdFront : undefined,
+      nationalIdBack: nationalIdBack !== undefined ? nationalIdBack : undefined,
+      selfieWithId: selfieWithId !== undefined ? selfieWithId : undefined,
+      criminalRecord: criminalRecord !== undefined ? criminalRecord : undefined,
+      utilityBillUrl: utilityBillUrl !== undefined ? utilityBillUrl : undefined,
     },
     include: {
       user: {

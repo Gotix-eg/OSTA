@@ -31,7 +31,7 @@ import {
 } from "lucide-react";
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
-import { resolveApiBaseUrl, patchApiData, postApiData } from "@/lib/api";
+import { resolveApiBaseUrl, patchApiData, postApiData, fetchApiData } from "@/lib/api";
 import { getBrowserAuthState } from "@/lib/auth-client";
 import { WorkerVideoPlayer } from "@/components/shared/video-player";
 import { workerProfessions, formatWorkerProfessionBadges } from "@/lib/geo-data";
@@ -144,17 +144,8 @@ export function WorkerProfileDetail({ locale, workerId }: { locale: Locale; work
     setIsLoading(true);
     setError(null);
     try {
-      const baseUrl = resolveApiBaseUrl();
-      const res = await fetch(`${baseUrl}/public/workers/${workerId}`);
-      if (!res.ok) {
-        throw new Error("Failed to fetch worker profile");
-      }
-      const data = await res.json();
-      if (data.success) {
-        setWorker(data.data);
-      } else {
-        throw new Error("Invalid API response");
-      }
+      const data = await fetchApiData<WorkerProfileData>(`/public/workers/${workerId}`);
+      setWorker(data);
     } catch (err) {
       console.error(err);
       setError(isArabic ? "تعذر تحميل ملف الفني الشخصي" : "Failed to load technician profile.");

@@ -5,12 +5,14 @@ import { createPortal } from "react-dom";
 import {
   Plus, User, Phone, Mail, Search, Loader2, Wrench, Star,
   ShieldCheck, Trash2, Wallet, Eye, X, Edit, Users,
-  CheckCircle2, XCircle, Clock3, AlertTriangle, ExternalLink, Settings, UserCheck
+  CheckCircle2, XCircle, Clock3, AlertTriangle, ExternalLink, Settings, UserCheck, Sparkles
 } from "lucide-react";
 import { fetchApiData, postApiData, patchApiData, deleteApiData } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
 import { workerProfessions } from "@/lib/geo-data";
+import { WorkerVerificationWizard } from "./worker-verification-wizard";
+import { WorkerHistoryLogs } from "./worker-history-logs";
 
 type Worker = {
   id: string;
@@ -91,6 +93,7 @@ export function AdminWorkersManagement({ locale }: { locale: Locale }) {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [activeLightboxDoc, setActiveLightboxDoc] = useState<string | null>(null);
   const [selectedWorker, setSelectedWorker] = useState<Worker | null>(null);
+  const [wizardWorker, setWizardWorker] = useState<any | null>(null);
 
   // Edit form state
   const [editFirstName, setEditFirstName] = useState("");
@@ -521,6 +524,40 @@ export function AdminWorkersManagement({ locale }: { locale: Locale }) {
                 </div>
 
                 <div className="pt-2.5 border-t border-white/5 flex flex-wrap items-center justify-end gap-1.5">
+                  {/* Wizard Verification Button */}
+                  {worker.verificationStatus !== "VERIFIED" && (
+                    <button
+                      type="button"
+                      onClick={() => setWizardWorker({
+                        id: worker.id,
+                        userId: worker.userId,
+                        name: `${worker.user.firstName} ${worker.user.lastName}`,
+                        phone: worker.user.phone,
+                        email: worker.user.email,
+                        avatarUrl: worker.user.avatarUrl,
+                        profession: worker.profession,
+                        bio: worker.bio,
+                        status: worker.verificationStatus,
+                        nationalIdNumber: worker.nationalIdNumber,
+                        nationalIdFront: worker.nationalIdFront,
+                        nationalIdBack: worker.nationalIdBack,
+                        selfieWithId: worker.selfieWithId,
+                        criminalRecord: worker.criminalRecord,
+                        utilityBillUrl: worker.utilityBillUrl,
+                        guarantorName: worker.guarantorName,
+                        guarantorPhone: worker.guarantorPhone,
+                        experienceYears: worker.yearsOfExperience,
+                        rating: worker.rating,
+                        stepVerifications: (worker as any).stepVerifications
+                      })}
+                      title={isArabic ? "معالج توثيق وتوقيع الحساب" : "Verification Wizard"}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gold-500/20 border border-gold-500/40 text-gold-400 font-black text-xs hover:bg-gold-500 hover:text-onyx-950 transition-all shadow-md cursor-pointer"
+                    >
+                      <Sparkles className="h-3.5 w-3.5" />
+                      <span>{isArabic ? "التوثيق" : "Verification"}</span>
+                    </button>
+                  )}
+
                   {/* Impersonate & Edit as Worker Button */}
                   <button
                     type="button"
@@ -731,17 +768,9 @@ export function AdminWorkersManagement({ locale }: { locale: Locale }) {
                     <span className="text-onyx-400">{isArabic ? "الرقم القومي" : "National ID Number"}</span>
                     <span className="text-white font-mono font-bold">{selectedWorker.nationalIdNumber || (isArabic ? "غير متوفر" : "N/A")}</span>
                   </div>
-                  <div className="flex justify-between py-2.5 border-b border-white/5">
+                  <div className="flex justify-between py-2.5">
                     <span className="text-onyx-400">{isArabic ? "سنوات الخبرة" : "Years of Experience"}</span>
                     <span className="text-white font-bold">{selectedWorker.yearsOfExperience ?? 0} {isArabic ? "سنوات" : "years"}</span>
-                  </div>
-                  <div className="flex justify-between py-2.5 border-b border-white/5">
-                    <span className="text-onyx-400">{isArabic ? "اسم الضامن" : "Guarantor Name"}</span>
-                    <span className="text-white font-bold">{selectedWorker.guarantorName || (isArabic ? "غير متوفر" : "N/A")}</span>
-                  </div>
-                  <div className="flex justify-between py-2.5">
-                    <span className="text-onyx-400">{isArabic ? "تليفون الضامن" : "Guarantor Phone"}</span>
-                    <span className="text-white font-mono font-bold">{selectedWorker.guarantorPhone || (isArabic ? "غير متوفر" : "N/A")}</span>
                   </div>
                 </div>
               </div>
@@ -833,7 +862,14 @@ export function AdminWorkersManagement({ locale }: { locale: Locale }) {
               </div>
             </div>
 
-            <div className="flex justify-end pt-4 border-t border-white/5">
+            <WorkerHistoryLogs 
+              workerId={selectedWorker.id} 
+              createdAt={selectedWorker.createdAt} 
+              lastLoginAt={selectedWorker.user.lastLoginAt} 
+              locale={locale} 
+            />
+
+            <div className="flex justify-end pt-4 border-t border-white/5 mt-6">
               <button
                 type="button"
                 onClick={() => {
@@ -1078,6 +1114,20 @@ export function AdminWorkersManagement({ locale }: { locale: Locale }) {
           </div>
         </div>,
         document.body
+      )}
+
+      {/* Verification Wizard Modal */}
+      {wizardWorker && (
+        <WorkerVerificationWizard
+          locale={locale}
+          worker={wizardWorker}
+          isOpen={Boolean(wizardWorker)}
+          onClose={() => setWizardWorker(null)}
+          onWorkerUpdated={(updated) => {
+            setWorkers(prev => prev.map(w => w.id === updated.id ? { ...w, ...updated } : w));
+            setWizardWorker(prev => prev?.id === updated.id ? { ...prev, ...updated } : prev);
+          }}
+        />
       )}
     </div>
   );

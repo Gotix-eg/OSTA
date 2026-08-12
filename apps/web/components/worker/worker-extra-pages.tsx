@@ -319,8 +319,15 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
         <div className="flex min-w-0 items-center gap-5">
           <div className="relative group shrink-0">
             <div
-              onClick={() => !isUploadingAvatar && avatarInputRef.current?.click()}
-              className="relative flex h-16 w-16 cursor-pointer items-center justify-center overflow-hidden border border-gold bg-[#111] text-gold sm:h-20 sm:w-20 transition hover:border-gold/80"
+              onClick={() => {
+                if (data.profile.verificationStatus !== "VERIFIED" && !isUploadingAvatar) {
+                  avatarInputRef.current?.click();
+                }
+              }}
+              className={cn(
+                "relative flex h-16 w-16 items-center justify-center overflow-hidden border bg-[#111] text-gold sm:h-20 sm:w-20 transition",
+                data.profile.verificationStatus === "VERIFIED" ? "border-white/10" : "cursor-pointer border-gold hover:border-gold/80"
+              )}
             >
               {data.profile.avatarUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -332,22 +339,24 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
                 <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center gap-1 z-10">
                   <Loader2 className="h-5 w-5 animate-spin text-gold" />
                 </div>
-              ) : (
+              ) : data.profile.verificationStatus !== "VERIFIED" ? (
                 <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
                   <Camera className="h-4 w-4 text-gold" />
                   <span className="text-[8px] font-black uppercase text-white">{isArabic ? "تغيير" : "Change"}</span>
                 </div>
-              )}
+              ) : null}
             </div>
-            <button
-              type="button"
-              disabled={isUploadingAvatar}
-              onClick={() => avatarInputRef.current?.click()}
-              className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-gold text-black shadow-lg transition hover:scale-110 active:scale-95 disabled:opacity-50"
-              title={isArabic ? "تغيير الصورة الشخصية" : "Change profile photo"}
-            >
-              {isUploadingAvatar ? <Loader2 className="h-3 w-3 animate-spin" /> : <Camera className="h-3 w-3" />}
-            </button>
+            {data.profile.verificationStatus !== "VERIFIED" && (
+              <button
+                type="button"
+                disabled={isUploadingAvatar}
+                onClick={() => avatarInputRef.current?.click()}
+                className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-gold text-black shadow-lg transition hover:scale-110 active:scale-95 disabled:opacity-50"
+                title={isArabic ? "تغيير الصورة الشخصية" : "Change profile photo"}
+              >
+                {isUploadingAvatar ? <Loader2 className="h-3 w-3 animate-spin" /> : <Camera className="h-3 w-3" />}
+              </button>
+            )}
           </div>
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2.5">
@@ -380,8 +389,15 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
           <div className="mb-6 flex flex-col sm:flex-row items-center gap-5 rounded-none border border-white/10 bg-[#111] p-4">
             <div className="relative group shrink-0">
               <div
-                onClick={() => !isUploadingAvatar && avatarInputRef.current?.click()}
-                className="relative h-20 w-20 cursor-pointer overflow-hidden border border-gold bg-[#121212] transition hover:border-gold/80"
+                onClick={() => {
+                  if (data.profile.verificationStatus !== "VERIFIED" && !isUploadingAvatar) {
+                    avatarInputRef.current?.click();
+                  }
+                }}
+                className={cn(
+                  "relative h-20 w-20 overflow-hidden border bg-[#121212] transition",
+                  data.profile.verificationStatus === "VERIFIED" ? "border-white/10" : "cursor-pointer border-gold hover:border-gold/80"
+                )}
               >
                 {data.profile.avatarUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
@@ -393,42 +409,52 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
                   <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center gap-1 z-10">
                     <Loader2 className="h-5 w-5 animate-spin text-gold" />
                   </div>
-                ) : (
+                ) : data.profile.verificationStatus !== "VERIFIED" ? (
                   <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
                     <Camera className="h-4 w-4 text-gold" />
                     <span className="text-[8px] font-black uppercase text-white">{isArabic ? "تغيير" : "Change"}</span>
                   </div>
-                )}
+                ) : null}
               </div>
-              <button
-                type="button"
-                disabled={isUploadingAvatar}
-                onClick={() => avatarInputRef.current?.click()}
-                className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-gold text-black shadow-lg transition hover:scale-110 active:scale-95 disabled:opacity-50"
-                title={isArabic ? "تغيير الصورة الشخصية" : "Change profile photo"}
-              >
-                {isUploadingAvatar ? <Loader2 className="h-3 w-3 animate-spin" /> : <Camera className="h-3 w-3" />}
-              </button>
+              {data.profile.verificationStatus !== "VERIFIED" && (
+                <button
+                  type="button"
+                  disabled={isUploadingAvatar}
+                  onClick={() => avatarInputRef.current?.click()}
+                  className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-gold text-black shadow-lg transition hover:scale-110 active:scale-95 disabled:opacity-50"
+                  title={isArabic ? "تغيير الصورة الشخصية" : "Change profile photo"}
+                >
+                  {isUploadingAvatar ? <Loader2 className="h-3 w-3 animate-spin" /> : <Camera className="h-3 w-3" />}
+                </button>
+              )}
               <input
                 type="file"
                 accept="image/*"
                 ref={avatarInputRef}
                 onChange={handleAvatarFileSelected}
                 className="hidden"
+                disabled={data.profile.verificationStatus === "VERIFIED"}
               />
             </div>
             <div className="space-y-1 text-center sm:text-start">
               <span className="text-xs font-black uppercase tracking-wider text-gold">{isArabic ? "الصورة الشخصية" : "Profile Picture"}</span>
-              <p className="text-xs font-medium text-white/50">{isArabic ? "اضغط على الصورة أو زر الكاميرا لرفع صورة جديدة" : "Click avatar or camera icon to upload a new profile image"}</p>
-              <button
-                type="button"
-                disabled={isUploadingAvatar}
-                onClick={() => avatarInputRef.current?.click()}
-                className="mt-2 inline-flex items-center gap-2 border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-bold text-white transition hover:bg-gold hover:text-black disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isUploadingAvatar ? <Loader2 className="h-3.5 w-3.5 animate-spin text-gold" /> : <Camera className="h-3.5 w-3.5" />}
-                {isUploadingAvatar ? (isArabic ? "جارٍ الرفع..." : "Uploading...") : isArabic ? "تحميل صورة جديدة" : "Upload new photo"}
-              </button>
+              <p className="text-xs font-medium text-white/50">
+                {data.profile.verificationStatus === "VERIFIED" 
+                  ? (isArabic ? "لا يمكن تغيير الصورة الشخصية بعد توثيق الحساب" : "Profile picture cannot be changed after verification")
+                  : (isArabic ? "اضغط على الصورة أو زر الكاميرا لرفع صورة جديدة" : "Click avatar or camera icon to upload a new profile image")
+                }
+              </p>
+              {data.profile.verificationStatus !== "VERIFIED" && (
+                <button
+                  type="button"
+                  disabled={isUploadingAvatar}
+                  onClick={() => avatarInputRef.current?.click()}
+                  className="mt-2 inline-flex items-center gap-2 border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-bold text-white transition hover:bg-gold hover:text-black disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isUploadingAvatar ? <Loader2 className="h-3.5 w-3.5 animate-spin text-gold" /> : <Camera className="h-3.5 w-3.5" />}
+                  {isUploadingAvatar ? (isArabic ? "جارٍ الرفع..." : "Uploading...") : isArabic ? "تحميل صورة جديدة" : "Upload new photo"}
+                </button>
+              )}
             </div>
           </div>
 
