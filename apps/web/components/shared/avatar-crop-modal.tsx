@@ -50,8 +50,26 @@ async function getCroppedImageBlob(imageSrc: string, cropArea: Area, rotation: n
   const croppedCtx = croppedCanvas.getContext("2d");
   if (!croppedCtx) throw new Error("Canvas not supported");
 
-  croppedCanvas.width = cropArea.width;
-  croppedCanvas.height = cropArea.height;
+  // Scale down if image is too large (max 1200px)
+  const MAX_DIM = 1200;
+  let finalWidth = cropArea.width;
+  let finalHeight = cropArea.height;
+
+  if (finalWidth > MAX_DIM || finalHeight > MAX_DIM) {
+    if (finalWidth > finalHeight) {
+      finalHeight = Math.round((finalHeight * MAX_DIM) / finalWidth);
+      finalWidth = MAX_DIM;
+    } else {
+      finalWidth = Math.round((finalWidth * MAX_DIM) / finalHeight);
+      finalHeight = MAX_DIM;
+    }
+  }
+
+  croppedCanvas.width = finalWidth;
+  croppedCanvas.height = finalHeight;
+  croppedCtx.imageSmoothingEnabled = true;
+  croppedCtx.imageSmoothingQuality = "high";
+
   croppedCtx.drawImage(
     canvas,
     cropArea.x,
@@ -60,16 +78,18 @@ async function getCroppedImageBlob(imageSrc: string, cropArea: Area, rotation: n
     cropArea.height,
     0,
     0,
-    cropArea.width,
-    cropArea.height
+    finalWidth,
+    finalHeight
   );
 
   return new Promise((resolve, reject) => {
-    croppedCanvas.toBlob(
-      (blob) => (blob ? resolve(blob) : reject(new Error("Failed to render cropped image"))),
-      "image/jpeg",
-      0.92
-    );
+    croppedCanvas.toBlob((blob) => {
+      if (!blob) {
+        reject(new Error("Canvas is empty"));
+        return;
+      }
+      resolve(blob);
+    }, "image/jpeg", 0.85);
   });
 }
 

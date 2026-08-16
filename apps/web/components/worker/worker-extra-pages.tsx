@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { AlertCircle, AlertTriangle, CalendarDays, Camera, Check, CheckCircle2, Clock, Loader2, Lock, MapPin, Plus, Save, ShieldCheck, Sparkles, Star, TimerReset, Trash2, UserCircle2, X } from "lucide-react";
+import { AlertCircle, AlertTriangle, CalendarDays, Camera, Check, CheckCircle2, Clock, Loader2, Lock, MapPin, Plus, Save, ShieldCheck, Sparkles, Star, TimerReset, Trash2, UserCircle2, X, Edit } from "lucide-react";
 
 import { ImageCropModal } from "@/components/shared/avatar-crop-modal";
 import {
@@ -1069,47 +1069,17 @@ function WorkerIdDocumentCard({
           ? "border-rose-500/60 shadow-[0_0_12px_rgba(244,63,94,0.15)] bg-rose-950/10" 
           : "border-white/10"
     )}>
-      <div className="flex h-10 items-start justify-between gap-2">
-        <span className="text-xs font-black text-white/70 leading-snug min-w-0 flex-1">{label}</span>
-        {isLocked ? (
-          <span className="inline-flex items-center gap-1 text-[10px] font-black text-emerald-400 bg-emerald-950/40 border border-emerald-500/30 px-2 py-0.5 shrink-0 pt-0.5">
+      <div className="flex items-start justify-between gap-2 pb-1">
+        <span className="text-xs font-black text-white/70 leading-snug">{label}</span>
+        {isLocked && (
+          <span className="inline-flex items-center gap-1 text-[10px] font-black text-emerald-400 bg-emerald-950/40 border border-emerald-500/30 px-2 py-0.5 rounded-sm">
             <CheckCircle2 className="h-3 w-3 text-emerald-400" />
             {isArabic ? "معتمد" : "Verified"}
           </span>
-        ) : (
-          <div className="flex gap-3 shrink-0 pt-0.5">
-            {imageUrl && !isUploading && (
-              <button
-                type="button"
-                disabled={isUploading}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setCropImageSrc(imageUrl);
-                }}
-                className="text-[11px] font-black text-gold underline hover:text-gold/80 transition flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isArabic ? "تعديل" : "Edit"}
-              </button>
-            )}
-            <button
-              type="button"
-              disabled={isUploading}
-              onClick={() => fileInputRef.current?.click()}
-              className="text-[11px] font-black text-gold underline hover:text-gold/80 transition flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isUploading ? <Loader2 className="h-3 w-3 animate-spin text-gold" /> : null}
-              <span className={cn(!imageUrl && !isUploading && "text-rose-400 animate-pulse")}>
-                {isUploading ? (isArabic ? "جارٍ الرفع..." : "Uploading...") : imageUrl ? (isArabic ? "تغيير" : "Change") : (isArabic ? "رفع" : "Upload")}
-              </span>
-            </button>
-          </div>
         )}
       </div>
 
       <div
-        onClick={() => {
-          if (!isLocked && !isUploading) fileInputRef.current?.click();
-        }}
         className={cn(
           "relative h-32 w-full overflow-hidden border transition flex items-center justify-center",
           isLocked || isUploading 
@@ -1121,9 +1091,10 @@ function WorkerIdDocumentCard({
       >
         {imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={imageUrl} alt={label} className={cn("h-full w-full object-cover transition", !isLocked && !isUploading && "group-hover:scale-105")} />
+          <img src={imageUrl} alt={label} className={cn("h-full w-full object-cover transition duration-300", !isLocked && !isUploading && "group-hover:scale-105 group-hover:brightness-50")} />
         ) : (
-          <div className="flex flex-col items-center justify-center h-full text-white/30 space-y-1.5 p-2 text-center">
+          <div className="flex flex-col items-center justify-center h-full w-full text-white/30 space-y-1.5 p-2 text-center"
+               onClick={() => !isLocked && !isUploading && fileInputRef.current?.click()}>
             <Camera className="h-6 w-6 text-rose-500/80 animate-pulse" />
             <span className="text-[10px] font-bold text-rose-400">
               {isLocked ? (isArabic ? "وثيقة رسمية معتمدة" : "Official Verified Document") : (isArabic ? "انقر لرفع الصورة (مطلوب)" : "Click to upload image (Required)")}
@@ -1138,10 +1109,30 @@ function WorkerIdDocumentCard({
               {isArabic ? "جارٍ رفع الصورة..." : "Uploading photo..."}
             </span>
           </div>
-        ) : !isLocked ? (
-          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-1.5 text-white text-xs font-bold z-10">
-            <Camera className="h-4 w-4 text-gold" />
-            <span>{isArabic ? "تحديث الصورة" : "Update photo"}</span>
+        ) : !isLocked && imageUrl ? (
+          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-2 z-10">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setCropImageSrc(imageUrl);
+              }}
+              className="bg-black/60 hover:bg-black/80 border border-white/20 text-white text-[11px] font-bold px-4 py-1.5 rounded flex items-center gap-2 transition w-[100px] justify-center backdrop-blur-md"
+            >
+              <Edit className="h-3.5 w-3.5 text-gold" />
+              {isArabic ? "تعديل" : "Edit"}
+            </button>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                fileInputRef.current?.click();
+              }}
+              className="bg-black/60 hover:bg-black/80 border border-white/20 text-white text-[11px] font-bold px-4 py-1.5 rounded flex items-center gap-2 transition w-[100px] justify-center backdrop-blur-md"
+            >
+              <Camera className="h-3.5 w-3.5 text-white/70" />
+              {isArabic ? "تغيير" : "Change"}
+            </button>
           </div>
         ) : imageUrl ? (
           <div className="absolute top-2 right-2 rounded-full bg-emerald-500 p-1 text-black shadow-lg z-10">
