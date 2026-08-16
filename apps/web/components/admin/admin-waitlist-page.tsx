@@ -21,7 +21,7 @@ export function AdminWaitlistPage({ locale }: { locale: Locale }) {
   useEffect(() => {
     async function loadEntries() {
       try {
-        const res = await fetchApiData<WaitlistEntry[]>("/waitlist", null);
+        const res = await fetchApiData<WaitlistEntry[]>("/waitlist", []);
         if (res) {
           setEntries(res);
         }

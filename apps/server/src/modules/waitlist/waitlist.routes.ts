@@ -29,7 +29,7 @@ waitlistRouter.post("/", async (req, res) => {
     return res.status(201).json(successResponse(entry, "Successfully added to waitlist"));
   } catch (error: any) {
     if (error instanceof z.ZodError) {
-      return res.status(400).json(errorResponse("Invalid input data", error.errors));
+      return res.status(400).json(errorResponse("Invalid input data", error.errors.map((e: any) => e.message).join(", ")));
     }
     console.error("Waitlist Error:", error);
     return res.status(500).json(errorResponse("Internal server error"));
