@@ -196,7 +196,7 @@ export function DashboardShell({
         const user = data?.user || data;
         if (user?.role === "WORKER") {
           const profile = user.profile;
-          if (profile?.verificationStatus === "PENDING" && (!profile?.nationalIdFront || !profile?.nationalIdBack)) {
+          if (profile?.verificationStatus === "PENDING" && (!profile?.nationalIdFront || !profile?.nationalIdBack || !profile?.selfieWithId || !profile?.nationalIdNumber)) {
             setWorkerIncomplete(true);
           }
         }
