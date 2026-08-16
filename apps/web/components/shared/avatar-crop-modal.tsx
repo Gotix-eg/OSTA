@@ -6,39 +6,56 @@ import Cropper from "react-easy-crop";
 import type { Area, Point } from "react-easy-crop";
 import { Check, Loader2, X, ZoomIn } from "lucide-react";
 
-const OUTPUT_SIZE = 512;
+import { RotateCcw } from "lucide-react";
 
-function loadImage(src: string): Promise<HTMLImageElement> {
-  return new Promise((resolve, reject) => {
-    const image = new Image();
-    image.addEventListener("load", () => resolve(image));
-    image.addEventListener("error", (err) => reject(err));
-    image.src = src;
-  });
+function getRadianAngle(degreeValue: number) {
+  return (degreeValue * Math.PI) / 180;
 }
 
-async function getCroppedImageBlob(imageSrc: string, cropArea: Area): Promise<Blob> {
+function rotateSize(width: number, height: number, rotation: number) {
+  const rotRad = getRadianAngle(rotation);
+  return {
+    width: Math.abs(Math.cos(rotRad) * width) + Math.abs(Math.sin(rotRad) * height),
+    height: Math.abs(Math.sin(rotRad) * width) + Math.abs(Math.cos(rotRad) * height),
+  };
+}
+
+async function getCroppedImageBlob(imageSrc: string, cropArea: Area, rotation: number = 0): Promise<Blob> {
   const image = await loadImage(imageSrc);
   const canvas = document.createElement("canvas");
-  canvas.width = OUTPUT_SIZE;
-  canvas.height = OUTPUT_SIZE;
   const ctx = canvas.getContext("2d");
   if (!ctx) throw new Error("Canvas not supported");
 
-  ctx.drawImage(
-    image,
+  const rotRad = getRadianAngle(rotation);
+  const { width: bBoxWidth, height: bBoxHeight } = rotateSize(image.width, image.height, rotation);
+
+  canvas.width = bBoxWidth;
+  canvas.height = bBoxHeight;
+  ctx.translate(bBoxWidth / 2, bBoxHeight / 2);
+  ctx.rotate(rotRad);
+  ctx.translate(-image.width / 2, -image.height / 2);
+  ctx.drawImage(image, 0, 0);
+
+  const croppedCanvas = document.createElement("canvas");
+  const croppedCtx = croppedCanvas.getContext("2d");
+  if (!croppedCtx) throw new Error("Canvas not supported");
+
+  croppedCanvas.width = cropArea.width;
+  croppedCanvas.height = cropArea.height;
+  croppedCtx.drawImage(
+    canvas,
     cropArea.x,
     cropArea.y,
     cropArea.width,
     cropArea.height,
     0,
     0,
-    OUTPUT_SIZE,
-    OUTPUT_SIZE
+    cropArea.width,
+    cropArea.height
   );
 
   return new Promise((resolve, reject) => {
-    canvas.toBlob(
+    croppedCanvas.toBlob(
       (blob) => (blob ? resolve(blob) : reject(new Error("Failed to render cropped image"))),
       "image/jpeg",
       0.92
@@ -46,20 +63,31 @@ async function getCroppedImageBlob(imageSrc: string, cropArea: Area): Promise<Bl
   });
 }
 
-export function AvatarCropModal({
+export function ImageCropModal({
   imageSrc,
   isArabic,
   onCancel,
-  onConfirm
+  onConfirm,
+  aspectRatio = 1,
+  titleAr = "اضبط صورتك الشخصية",
+  titleEn = "Position your photo",
+  subtitleAr = "حرك الصورة واضبط التكبير حتى يظهر وجهك بوضوح داخل الإطار.",
+  subtitleEn = "Drag and zoom until your face is clearly centered in the frame.",
 }: {
   imageSrc: string;
   isArabic: boolean;
   onCancel: () => void;
   onConfirm: (blob: Blob) => void | Promise<void>;
+  aspectRatio?: number;
+  titleAr?: string;
+  titleEn?: string;
+  subtitleAr?: string;
+  subtitleEn?: string;
 }) {
   const [mounted, setMounted] = useState(false);
   const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
+  const [rotation, setRotation] = useState(0);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -75,7 +103,7 @@ export function AvatarCropModal({
     if (!croppedAreaPixels || isSaving) return;
     setIsSaving(true);
     try {
-      const blob = await getCroppedImageBlob(imageSrc, croppedAreaPixels);
+      const blob = await getCroppedImageBlob(imageSrc, croppedAreaPixels, rotation);
       await onConfirm(blob);
     } finally {
       setIsSaving(false);
@@ -89,7 +117,7 @@ export function AvatarCropModal({
       <div className="w-full max-w-md border border-gold/40 bg-[#111] p-6 text-white shadow-2xl">
         <div className="mb-4 flex items-center justify-between">
           <h3 className="text-sm font-black uppercase tracking-wider text-gold">
-            {isArabic ? "اضبط صورتك الشخصية" : "Position your photo"}
+            {isArabic ? titleAr : titleEn}
           </h3>
           <button
             type="button"
@@ -106,32 +134,46 @@ export function AvatarCropModal({
             image={imageSrc}
             crop={crop}
             zoom={zoom}
-            aspect={1}
+            rotation={rotation}
+            aspect={aspectRatio}
             cropShape="rect"
             showGrid={false}
             onCropChange={setCrop}
             onZoomChange={setZoom}
+            onRotationChange={setRotation}
             onCropComplete={handleCropComplete}
           />
         </div>
 
-        <div className="mt-4 flex items-center gap-3">
-          <ZoomIn className="h-4 w-4 shrink-0 text-white/50" />
-          <input
-            type="range"
-            min={1}
-            max={3}
-            step={0.01}
-            value={zoom}
-            onChange={(event) => setZoom(Number(event.target.value))}
-            className="w-full accent-gold"
-          />
+        <div className="mt-4 flex flex-col gap-3">
+          <div className="flex items-center gap-3">
+            <ZoomIn className="h-4 w-4 shrink-0 text-white/50" />
+            <input
+              type="range"
+              min={1}
+              max={3}
+              step={0.01}
+              value={zoom}
+              onChange={(event) => setZoom(Number(event.target.value))}
+              className="w-full accent-gold"
+            />
+          </div>
+          <div className="flex items-center gap-3">
+            <RotateCcw className="h-4 w-4 shrink-0 text-white/50" />
+            <input
+              type="range"
+              min={0}
+              max={360}
+              step={1}
+              value={rotation}
+              onChange={(event) => setRotation(Number(event.target.value))}
+              className="w-full accent-gold"
+            />
+          </div>
         </div>
 
         <p className="mt-3 text-xs text-white/45">
-          {isArabic
-            ? "حرك الصورة واضبط التكبير حتى يظهر وجهك بوضوح داخل الإطار."
-            : "Drag and zoom until your face is clearly centered in the frame."}
+          {isArabic ? subtitleAr : subtitleEn}
         </p>
 
         <div className="mt-6 flex gap-3">

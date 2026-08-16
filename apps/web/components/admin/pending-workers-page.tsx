@@ -2,9 +2,10 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-import { CheckCircle2, Clock3, Loader2, ShieldCheck, ShieldQuestion, Star, Users, XCircle, Eye, EyeOff, FileText, X, Sparkles } from "lucide-react";
+import { CheckCircle2, Clock3, Loader2, ShieldCheck, ShieldQuestion, Star, Users, XCircle, Eye, EyeOff, FileText, X, Sparkles, Edit } from "lucide-react";
 import { WorkerVerificationWizard, type WorkerForWizard } from "./worker-verification-wizard";
 import { WorkerHistoryLogs } from "./worker-history-logs";
+import { ImageCropModal } from "@/components/image-crop-modal";
 
 import {
   DashboardBlock,
@@ -68,6 +69,7 @@ export function PendingWorkersPage({ locale, initialData }: { locale: Locale; in
   const [feedback, setFeedback] = useState<string | null>(null);
   const [selectedWorker, setSelectedWorker] = useState<PendingWorkersData["workers"][number] | null>(null);
   const [wizardWorker, setWizardWorker] = useState<WorkerForWizard | null>(null);
+  const [editingDoc, setEditingDoc] = useState<{ key: string; url: string; label: string } | null>(null);
 
   useEffect(() => {
     setData(liveData);
@@ -93,6 +95,36 @@ export function PendingWorkersPage({ locale, initialData }: { locale: Locale; in
       setFeedback(error instanceof Error ? error.message : isArabic ? "حدثت مشكلة أثناء المعالجة" : "Something went wrong");
     } finally {
       setBusyId(null);
+    }
+  }
+
+  async function handlePhotoEditConfirm(blob: Blob) {
+    if (!editingDoc || !selectedWorker) return;
+    setBusyId(selectedWorker.id);
+    try {
+      const formData = new FormData();
+      formData.append("file", new File([blob], "edited-doc.jpg", { type: "image/jpeg" }));
+      const uploadRes = await fetch("/api/upload", { method: "POST", body: formData });
+      if (!uploadRes.ok) throw new Error("Failed to upload edited photo");
+      const uploadData = await uploadRes.json();
+      const newUrl = uploadData.url;
+
+      const patchRes = await patchApiData(`/admin/workers/${selectedWorker.id}`, {
+        [editingDoc.key]: newUrl
+      });
+      
+      if (patchRes.ok && patchRes.data) {
+        setData(prev => ({
+          ...prev,
+          workers: prev.workers.map(w => w.id === selectedWorker.id ? { ...w, ...patchRes.data } : w)
+        }));
+        setSelectedWorker({ ...selectedWorker, ...patchRes.data });
+      }
+    } catch (err) {
+      alert(isArabic ? "فشل تحديث الصورة" : "Failed to update photo");
+    } finally {
+      setBusyId(null);
+      setEditingDoc(null);
     }
   }
 
@@ -333,15 +365,27 @@ export function PendingWorkersPage({ locale, initialData }: { locale: Locale; in
 
               <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
                 {[
-                  { label: isArabic ? "صورة البطاقة (الأمام)" : "National ID Front", url: selectedWorker.nationalIdFront },
-                  { label: isArabic ? "صورة البطاقة (الخلف)" : "National ID Back", url: selectedWorker.nationalIdBack },
-                  { label: isArabic ? "سيلفي مع البطاقة" : "Selfie with ID", url: selectedWorker.selfieWithId },
-                  { label: isArabic ? "الفيش والتشبيه" : "Criminal Record (Fish)", url: selectedWorker.criminalRecord },
-                  { label: isArabic ? "إيصال المرافق" : "Utility Bill", url: selectedWorker.utilityBillUrl }
+                  { key: "nationalIdFront", label: isArabic ? "صورة البطاقة (الأمام)" : "National ID Front", url: selectedWorker.nationalIdFront },
+                  { key: "nationalIdBack", label: isArabic ? "صورة البطاقة (الخلف)" : "National ID Back", url: selectedWorker.nationalIdBack },
+                  { key: "selfieWithId", label: isArabic ? "سيلفي مع البطاقة" : "Selfie with ID", url: selectedWorker.selfieWithId },
+                  { key: "criminalRecord", label: isArabic ? "الفيش والتشبيه" : "Criminal Record (Fish)", url: selectedWorker.criminalRecord },
+                  { key: "utilityBillUrl", label: isArabic ? "إيصال المرافق" : "Utility Bill", url: selectedWorker.utilityBillUrl }
                 ].map((doc, idx) => (
                   <div key={idx} className="onyx-card p-4 flex flex-col justify-between min-h-[160px] bg-onyx-950/20 border-white/5">
-                    <div>
+                    <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-onyx-400 uppercase">{doc.label}</span>
+                      {doc.url && (
+                        <button
+                          type="button"
+                          onClick={() => setEditingDoc({ key: doc.key, url: doc.url!, label: doc.label })}
+                          className="text-[10px] bg-white/5 border border-white/10 rounded px-2 py-0.5 hover:bg-gold hover:text-black transition flex items-center gap-1"
+                        >
+                          <Edit className="h-3 w-3" />
+                          {isArabic ? "تعديل" : "Edit"}
+                        </button>
+                      )}
+                    </div>
+                    <div>
                       <p className="text-[10px] text-onyx-600 mt-0.5">
                         {doc.url ? (isArabic ? "ملف مرفوع" : "Uploaded") : (isArabic ? "لم يرفع بعد" : "Not uploaded")}
                       </p>
@@ -381,6 +425,19 @@ export function PendingWorkersPage({ locale, initialData }: { locale: Locale; in
               lastLoginAt={selectedWorker.lastLoginAt} 
               locale={locale} 
             />
+
+            {/* Photo Edit Modal */}
+            {editingDoc && (
+              <ImageCropModal
+                imageSrc={editingDoc.url}
+                isArabic={isArabic}
+                onCancel={() => setEditingDoc(null)}
+                onConfirm={handlePhotoEditConfirm}
+                aspectRatio={undefined}
+                titleAr={`تعديل ${editingDoc.label}`}
+                titleEn={`Edit ${editingDoc.label}`}
+              />
+            )}
           </div>
         </div>
       )}

@@ -11,6 +11,7 @@ import { fetchApiData, postApiData, patchApiData, deleteApiData } from "@/lib/ap
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
 import { workerProfessions } from "@/lib/geo-data";
+import { ImageCropModal } from "@/components/shared/avatar-crop-modal";
 import { WorkerVerificationWizard, type WorkerForWizard } from "./worker-verification-wizard";
 import { WorkerHistoryLogs } from "./worker-history-logs";
 
@@ -93,6 +94,7 @@ export function AdminWorkersManagement({ locale }: { locale: Locale }) {
   const [showDecisionPanel, setShowDecisionPanel] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [activeLightboxDoc, setActiveLightboxDoc] = useState<string | null>(null);
+  const [editingDoc, setEditingDoc] = useState<{ key: string; url: string; label: string } | null>(null);
   const [selectedWorker, setSelectedWorker] = useState<Worker | null>(null);
   const [wizardWorker, setWizardWorker] = useState<WorkerForWizard | null>(null);
 
@@ -149,6 +151,33 @@ export function AdminWorkersManagement({ locale }: { locale: Locale }) {
       setWorkers(prev => prev.map(w => w.id === id ? { ...w, orderQuota: w.orderQuota + 10 } : w));
     } finally {
       setActionId(null);
+    }
+  }
+
+  async function handlePhotoEditConfirm(blob: Blob) {
+    if (!editingDoc || !selectedWorker) return;
+    setActionLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", new File([blob], "edited-doc.jpg", { type: "image/jpeg" }));
+      const uploadRes = await fetch("/api/upload", { method: "POST", body: formData });
+      if (!uploadRes.ok) throw new Error("Failed to upload edited photo");
+      const uploadData = await uploadRes.json();
+      const newUrl = uploadData.url;
+
+      const patchRes = await patchApiData(`/admin/workers/${selectedWorker.id}`, {
+        [editingDoc.key]: newUrl
+      });
+      
+      if (patchRes.ok && patchRes.data) {
+        setWorkers(prev => prev.map(w => w.id === selectedWorker.id ? { ...w, ...patchRes.data } : w));
+        setSelectedWorker({ ...selectedWorker, ...patchRes.data });
+      }
+    } catch (err) {
+      alert(isArabic ? "فشل تحديث الصورة" : "Failed to update photo");
+    } finally {
+      setActionLoading(false);
+      setEditingDoc(null);
     }
   }
 
@@ -823,15 +852,25 @@ export function AdminWorkersManagement({ locale }: { locale: Locale }) {
 
               <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
                 {[
-                  { label: isArabic ? "صورة البطاقة (الأمام)" : "National ID Front", url: selectedWorker.nationalIdFront },
-                  { label: isArabic ? "صورة البطاقة (الخلف)" : "National ID Back", url: selectedWorker.nationalIdBack },
-                  { label: isArabic ? "سيلفي مع البطاقة" : "Selfie with ID", url: selectedWorker.selfieWithId },
-                  { label: isArabic ? "الفيش والتشبيه" : "Criminal Record (Fish)", url: selectedWorker.criminalRecord },
-                  { label: isArabic ? "إيصال المرافق" : "Utility Bill", url: selectedWorker.utilityBillUrl }
+                  { key: "nationalIdFront", label: isArabic ? "صورة البطاقة (الأمام)" : "National ID Front", url: selectedWorker.nationalIdFront },
+                  { key: "nationalIdBack", label: isArabic ? "صورة البطاقة (الخلف)" : "National ID Back", url: selectedWorker.nationalIdBack },
+                  { key: "selfieWithId", label: isArabic ? "سيلفي مع البطاقة" : "Selfie with ID", url: selectedWorker.selfieWithId },
+                  { key: "criminalRecord", label: isArabic ? "الفيش والتشبيه" : "Criminal Record (Fish)", url: selectedWorker.criminalRecord },
+                  { key: "utilityBillUrl", label: isArabic ? "إيصال المرافق" : "Utility Bill", url: selectedWorker.utilityBillUrl }
                 ].map((doc, idx) => (
                   <div key={idx} className="bg-onyx-950 border border-white/10 rounded-2xl p-4 flex flex-col justify-between min-h-[220px] space-y-3 hover:border-gold-500/40 transition-all shadow-xl">
-                    <div>
+                    <div className="flex items-center justify-between">
                       <span className="text-xs font-black text-white">{doc.label}</span>
+                      {doc.url && (
+                        <button
+                          type="button"
+                          onClick={() => setEditingDoc({ key: doc.key, url: doc.url!, label: doc.label })}
+                          className="text-[10px] bg-white/5 border border-white/10 rounded px-2 py-0.5 hover:bg-gold hover:text-black transition flex items-center gap-1"
+                        >
+                          <Edit className="h-3 w-3" />
+                          {isArabic ? "تعديل" : "Edit"}
+                        </button>
+                      )}
                     </div>
 
                     {doc.url ? (
@@ -882,10 +921,23 @@ export function AdminWorkersManagement({ locale }: { locale: Locale }) {
                 {isArabic ? "إغلاق" : "Close"}
               </button>
             </div>
-          </div>
-        </div>,
-        document.body
-      )}
+        </div>
+
+        {/* Photo Edit Modal */}
+        {editingDoc && (
+          <ImageCropModal
+            imageSrc={editingDoc.url}
+            isArabic={isArabic}
+            onCancel={() => setEditingDoc(null)}
+            onConfirm={handlePhotoEditConfirm}
+            aspectRatio={undefined}
+            titleAr={`تعديل ${editingDoc.label}`}
+            titleEn={`Edit ${editingDoc.label}`}
+          />
+        )}
+      </div>,
+      document.body
+    )}
 
       {/* Admin Edit Worker Profile & Settings Modal - Rendered at document.body via Portal */}
       {mounted && editModalOpen && selectedWorker && createPortal(

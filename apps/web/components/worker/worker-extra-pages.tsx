@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { AlertCircle, AlertTriangle, CalendarDays, Camera, Check, CheckCircle2, Clock, Loader2, Lock, MapPin, Plus, Save, ShieldCheck, Sparkles, Star, TimerReset, Trash2, UserCircle2, X } from "lucide-react";
 
-import { AvatarCropModal } from "@/components/shared/avatar-crop-modal";
+import { ImageCropModal } from "@/components/shared/avatar-crop-modal";
 import {
   WorkerProAction,
   WorkerProBadge,
@@ -816,7 +816,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
       </div>
 
       {avatarCropSrc ? (
-        <AvatarCropModal
+        <ImageCropModal
           imageSrc={avatarCropSrc}
           isArabic={isArabic}
           onCancel={closeAvatarCrop}
@@ -1028,21 +1028,35 @@ function WorkerIdDocumentCard({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [cropImageSrc, setCropImageSrc] = useState<string | null>(null);
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     if (isLocked || isUploading) return;
     const file = e.target.files?.[0];
     if (!file) return;
 
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === "string") {
+        setCropImageSrc(reader.result);
+      }
+    };
+    reader.readAsDataURL(file);
+
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  }
+
+  async function handleCropConfirm(blob: Blob) {
+    setCropImageSrc(null);
     setIsUploading(true);
     setUploadError(null);
     try {
+      const file = new File([blob], "document.jpg", { type: "image/jpeg" });
       await onUpload(file);
     } catch (err: any) {
       setUploadError(err?.message || (isArabic ? "حدث خطأ أثناء رفع الصورة" : "Failed to upload image"));
     } finally {
       setIsUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = "";
     }
   }
 
@@ -1134,6 +1148,20 @@ function WorkerIdDocumentCard({
           className="hidden"
         />
       ) : null}
+
+      {cropImageSrc && (
+        <ImageCropModal
+          imageSrc={cropImageSrc}
+          isArabic={isArabic}
+          onCancel={() => setCropImageSrc(null)}
+          onConfirm={handleCropConfirm}
+          aspectRatio={undefined} // Freeform crop for ID documents
+          titleAr={`اضبط صورة ${label}`}
+          titleEn={`Position ${label}`}
+          subtitleAr="قم بضبط الصورة، يمكنك عمل تكبير للصورة، وتدوير الصورة حتى تظهر بوضوح في الإطار."
+          subtitleEn="Adjust, zoom, or rotate the image until it is clear in the frame."
+        />
+      )}
     </div>
   );
 }
