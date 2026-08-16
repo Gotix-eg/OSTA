@@ -155,7 +155,8 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
             serviceAreas: safeAreas,
             nationalIdFront: updatedData.profile?.nationalIdFront,
             nationalIdBack: updatedData.profile?.nationalIdBack,
-            selfieWithId: updatedData.profile?.selfieWithId
+            selfieWithId: updatedData.profile?.selfieWithId,
+            nationalIdNumber: updatedData.profile?.nationalIdNumber
           });
 
           await patchApiData("/auth/profile", {
