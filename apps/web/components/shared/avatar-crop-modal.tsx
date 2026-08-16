@@ -20,6 +20,16 @@ function rotateSize(width: number, height: number, rotation: number) {
   };
 }
 
+function loadImage(url: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.addEventListener("load", () => resolve(image));
+    image.addEventListener("error", (error) => reject(error));
+    image.setAttribute("crossOrigin", "anonymous");
+    image.src = url;
+  });
+}
+
 async function getCroppedImageBlob(imageSrc: string, cropArea: Area, rotation: number = 0): Promise<Blob> {
   const image = await loadImage(imageSrc);
   const canvas = document.createElement("canvas");

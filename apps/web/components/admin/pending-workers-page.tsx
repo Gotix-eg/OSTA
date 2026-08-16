@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { CheckCircle2, Clock3, Loader2, ShieldCheck, ShieldQuestion, Star, Users, XCircle, Eye, EyeOff, FileText, X, Sparkles, Edit } from "lucide-react";
 import { WorkerVerificationWizard, type WorkerForWizard } from "./worker-verification-wizard";
 import { WorkerHistoryLogs } from "./worker-history-logs";
-import { ImageCropModal } from "@/components/image-crop-modal";
+import { ImageCropModal } from "@/components/shared/avatar-crop-modal";
 
 import {
   DashboardBlock,
@@ -113,12 +113,12 @@ export function PendingWorkersPage({ locale, initialData }: { locale: Locale; in
         [editingDoc.key]: newUrl
       });
       
-      if (patchRes.ok && patchRes.data) {
+      if (patchRes) {
         setData(prev => ({
           ...prev,
-          workers: prev.workers.map(w => w.id === selectedWorker.id ? { ...w, ...patchRes.data } : w)
+          workers: prev.workers.map(w => w.id === selectedWorker.id ? { ...w, ...(patchRes as any) } : w)
         }));
-        setSelectedWorker({ ...selectedWorker, ...patchRes.data });
+        setSelectedWorker({ ...selectedWorker, ...(patchRes as any) });
       }
     } catch (err) {
       alert(isArabic ? "فشل تحديث الصورة" : "Failed to update photo");

@@ -169,9 +169,9 @@ export function AdminWorkersManagement({ locale }: { locale: Locale }) {
         [editingDoc.key]: newUrl
       });
       
-      if (patchRes.ok && patchRes.data) {
-        setWorkers(prev => prev.map(w => w.id === selectedWorker.id ? { ...w, ...patchRes.data } : w));
-        setSelectedWorker({ ...selectedWorker, ...patchRes.data });
+      if (patchRes) {
+        setWorkers(prev => prev.map(w => w.id === selectedWorker.id ? { ...w, ...(patchRes as any) } : w));
+        setSelectedWorker({ ...selectedWorker, ...(patchRes as any) });
       }
     } catch (err) {
       alert(isArabic ? "فشل تحديث الصورة" : "Failed to update photo");
