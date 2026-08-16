@@ -1077,17 +1077,32 @@ function WorkerIdDocumentCard({
             {isArabic ? "معتمد" : "Verified"}
           </span>
         ) : (
-          <button
-            type="button"
-            disabled={isUploading}
-            onClick={() => fileInputRef.current?.click()}
-            className="text-[11px] font-black text-gold underline hover:text-gold/80 transition shrink-0 pt-0.5 flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isUploading ? <Loader2 className="h-3 w-3 animate-spin text-gold" /> : null}
-            <span className={cn(!imageUrl && !isUploading && "text-rose-400 animate-pulse")}>
-              {isUploading ? (isArabic ? "جارٍ الرفع..." : "Uploading...") : imageUrl ? (isArabic ? "تغيير" : "Change") : (isArabic ? "رفع" : "Upload")}
-            </span>
-          </button>
+          <div className="flex gap-3 shrink-0 pt-0.5">
+            {imageUrl && !isUploading && (
+              <button
+                type="button"
+                disabled={isUploading}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCropImageSrc(imageUrl);
+                }}
+                className="text-[11px] font-black text-gold underline hover:text-gold/80 transition flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isArabic ? "تعديل" : "Edit"}
+              </button>
+            )}
+            <button
+              type="button"
+              disabled={isUploading}
+              onClick={() => fileInputRef.current?.click()}
+              className="text-[11px] font-black text-gold underline hover:text-gold/80 transition flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isUploading ? <Loader2 className="h-3 w-3 animate-spin text-gold" /> : null}
+              <span className={cn(!imageUrl && !isUploading && "text-rose-400 animate-pulse")}>
+                {isUploading ? (isArabic ? "جارٍ الرفع..." : "Uploading...") : imageUrl ? (isArabic ? "تغيير" : "Change") : (isArabic ? "رفع" : "Upload")}
+              </span>
+            </button>
+          </div>
         )}
       </div>
 
