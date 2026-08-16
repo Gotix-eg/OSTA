@@ -865,7 +865,7 @@ export function AdminWorkersManagement({ locale }: { locale: Locale }) {
                         <button
                           type="button"
                           onClick={() => setEditingDoc({ key: doc.key, url: doc.url!, label: doc.label })}
-                          className="text-[10px] bg-white/5 border border-white/10 rounded px-2 py-0.5 hover:bg-gold hover:text-black transition flex items-center gap-1"
+                          className="text-[10px] bg-gold-500/10 text-gold-500 border border-gold-500/20 rounded px-2 py-0.5 hover:bg-gold-500 hover:text-black transition flex items-center gap-1"
                         >
                           <Edit className="h-3 w-3" />
                           {isArabic ? "تعديل" : "Edit"}
