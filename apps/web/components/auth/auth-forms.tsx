@@ -412,7 +412,7 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [activeTab, setActiveTab] = useState<"CLIENT" | "WORKER" | "VENDOR">("CLIENT");
+  const [activeTab, setActiveTab] = useState<"CLIENT" | "WORKER" | "VENDOR">("WORKER");
 
   // Inline validation error states
   const [phoneError, setPhoneError] = useState<string | null>(null);
@@ -548,6 +548,16 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
       )}
 
       <div className="grid gap-6">
+        {activeTab === "CLIENT" || activeTab === "VENDOR" ? (
+          <div className="py-12 text-center space-y-4 border border-white/10 bg-black/20 p-6 animate-fadeIn">
+            <p className="text-gold font-bold text-base leading-relaxed">
+              {isArabic 
+                ? `تسجيل دخول وحسابات ${activeTab === "CLIENT" ? "العملاء" : "الموردين"} غير متاحة الآن، وستكون متاحة قريباً.` 
+                : `${activeTab === "CLIENT" ? "Client" : "Vendor"} registration or login is not available now, and it will be soon.`}
+            </p>
+          </div>
+        ) : (
+          <>
         {/* Phone Input */}
         <div className="space-y-2 text-start">
           <label htmlFor="login-phone" className="mb-2 flex justify-between text-xs font-black uppercase tracking-widest text-white">
@@ -721,6 +731,8 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
             )}
           </div>
         )}
+        </>
+        )}
       </div>
     </form>
   );
@@ -889,6 +901,23 @@ export function ClientRegisterForm({ locale, initial }: { locale: Locale; initia
     } finally {
       setOtpSubmitting(false);
     }
+  }
+
+  if (true) {
+    return (
+      <div className="space-y-8 animate-fadeIn">
+        <div className="py-12 text-center space-y-4 border border-white/10 bg-[#121212] p-8">
+          <h3 className="text-2xl font-black text-gold mb-2">
+            {isArabic ? "قريباً" : "Coming Soon"}
+          </h3>
+          <p className="text-white/70 font-semibold text-base leading-relaxed">
+            {isArabic 
+              ? "تسجيل حسابات العملاء غير متاح الآن، وسيكون متاحاً قريباً." 
+              : "Client registration is not available now, and it will be soon."}
+          </p>
+        </div>
+      </div>
+    );
   }
 
   if (!ready) return <FormSkeleton locale={locale} />;
@@ -1311,6 +1340,23 @@ export function VendorRegisterForm({ locale, initial }: { locale: Locale; initia
     } finally {
       setIsSubmitting(false);
     }
+  }
+
+  if (true) {
+    return (
+      <div className="space-y-8 animate-fadeIn">
+        <div className="py-12 text-center space-y-4 border border-white/10 bg-[#121212] p-8">
+          <h3 className="text-2xl font-black text-gold mb-2">
+            {isArabic ? "قريباً" : "Coming Soon"}
+          </h3>
+          <p className="text-white/70 font-semibold text-base leading-relaxed">
+            {isArabic 
+              ? "تسجيل حسابات الموردين غير متاح الآن، وسيكون متاحاً قريباً." 
+              : "Vendor registration is not available now, and it will be soon."}
+          </p>
+        </div>
+      </div>
+    );
   }
 
   if (!ready) return <FormSkeleton locale={locale} />;

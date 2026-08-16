@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { User, Wrench, Store, ArrowRight, ArrowLeft } from "lucide-react";
+import { ArrowRight, ArrowLeft } from "lucide-react";
 
 import { AuthShell } from "@/components/auth/auth-shell";
+import { RegisterChoices } from "@/components/auth/register-choices";
 import { isLocale, type Locale } from "@/lib/locales";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -49,7 +50,6 @@ export default async function RegisterChoicePage({
         ? "اطلب فنيين موثقين، تتبع طلباتك، واحصل على ضمان للخدمات."
         : "Book verified technicians, trace active requests, and get guaranteed work quality.",
       href: `/${locale}/register/client${querySuffix}`,
-      Icon: User
     },
     {
       key: "worker",
@@ -58,7 +58,6 @@ export default async function RegisterChoicePage({
         ? "استقبل طلبات يومية، كبّر صنعتك، وتحكم بساعات عملك ودخلك."
         : "Accept daily service jobs, grow your career, set flexible hours, and earn steady income.",
       href: `/${locale}/register/worker${querySuffix}`,
-      Icon: Wrench
     },
     {
       key: "vendor",
@@ -67,7 +66,6 @@ export default async function RegisterChoicePage({
         ? "أضف متجرك، وبع الخامات والأدوات للحرفيين والعملاء في منطقتك."
         : "Add your store, and sell materials and tools to technicians and clients near you.",
       href: `/${locale}/register/vendor${querySuffix}`,
-      Icon: Store
     }
   ].filter((option) => !ownedRoles.has(option.key));
 
@@ -90,35 +88,7 @@ export default async function RegisterChoicePage({
       }
     >
       <div className="space-y-4 animate-fadeIn">
-        <div className="grid gap-4">
-          {options.map(({ key, title, description, href, Icon }) => (
-            <Link
-              key={key}
-              href={href as `/${string}`}
-              className="group relative flex items-start gap-4 border border-white/10 bg-[#121212] p-5 text-start transition-all hover:border-gold hover:translate-x-1 hover:translate-y-1 hover:shadow-[4px_4px_0px_#f5bd18] active:border-gold active:translate-x-1 active:translate-y-1 active:shadow-none duration-200"
-              style={{
-                boxShadow: "4px 4px 0px #000000"
-              }}
-            >
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center border border-white/20 bg-black/40 text-gold transition-colors group-hover:bg-gold group-hover:text-black">
-                <Icon className="h-6 w-6" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="text-base font-black uppercase text-white group-hover:text-gold transition-colors flex items-center gap-2">
-                  {title}
-                  {isArabic ? (
-                    <ArrowLeft className="h-4 w-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
-                  ) : (
-                    <ArrowRight className="h-4 w-4 opacity-0 translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
-                  )}
-                </h3>
-                <p className="mt-1 text-xs text-white/50 leading-relaxed font-semibold">
-                  {description}
-                </p>
-              </div>
-            </Link>
-          ))}
-        </div>
+        <RegisterChoices options={options} isArabic={isArabic} />
 
         <div className="pt-6 text-center text-sm font-semibold text-white/60 border-t border-white/5">
           {isArabic ? (
