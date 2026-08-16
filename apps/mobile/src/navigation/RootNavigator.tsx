@@ -117,6 +117,8 @@ function ClientTabs() {
   );
 }
 
+import { WorkerOnboardingScreen } from "../screens/worker/WorkerOnboardingScreen";
+
 function WorkerTabs() {
   const tabOptions = useTabOptions();
 
@@ -174,7 +176,11 @@ function PushNotificationsSetupInner() {
 
 function AppNavigator() {
   const { theme } = useTheme();
-  const { role } = useAuth();
+  const { role, user } = useAuth();
+
+  const isWorkerOnboardingIncomplete = 
+    role === "WORKER" && 
+    (!user?.avatarUrl || !user?.profile?.nationalIdFront);
 
   return (
     <>
@@ -184,7 +190,11 @@ function AppNavigator() {
         contentStyle: { backgroundColor: theme.background }
       }}>
       {role === "WORKER" ? (
-        <RootStack.Screen name="WorkerTabs" component={WorkerTabs} />
+        isWorkerOnboardingIncomplete ? (
+          <RootStack.Screen name="WorkerOnboarding" component={WorkerOnboardingScreen} />
+        ) : (
+          <RootStack.Screen name="WorkerTabs" component={WorkerTabs} />
+        )
       ) : role === "VENDOR" ? (
         <RootStack.Screen name="VendorTabs" component={VendorTabs} />
       ) : (

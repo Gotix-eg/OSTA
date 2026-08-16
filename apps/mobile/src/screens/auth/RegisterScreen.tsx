@@ -171,21 +171,8 @@ export function RegisterScreen({ navigation }: Props) {
 
     // Role-specific validation
     if (role === "WORKER") {
-      if (!avatarUri) {
-        showAlert("صورة شخصية مطلوبة", "يجب رفع صورة شخصية واضحة لوجهك لإكمال تسجيل الفني.");
-        setIsSubmitting(false);
-        return;
-      }
-      if (!nationalIdNumber.trim() || nationalIdNumber.trim().length !== 14) {
-        showAlert("الرقم القومي غير صالح", "يجب إدخال الرقم القومي المكون من 14 رقماً.");
-        setIsSubmitting(false);
-        return;
-      }
-      if (!nidFrontUri || !nidBackUri) {
-        showAlert("مستندات مطلوبة", "يجب إرفاق صورة وجه البطاقة وظهر البطاقة القومية للتوثيق.");
-        setIsSubmitting(false);
-        return;
-      }
+      // Documents are now optional during registration.
+      // They will be asked to upload them during the onboarding step on first login.
     } else if (role === "VENDOR") {
       if (!shopName.trim()) {
         showAlert("اسم المتجر مطلوب", "يرجى إدخال اسم المحل أو المتجر الخاص بك.");
@@ -297,7 +284,7 @@ export function RegisterScreen({ navigation }: Props) {
         {/* Face Image Picker Section */}
         <View style={styles.avatarSection}>
           <Text style={styles.avatarLabel}>
-            صورة الوجه الشخصية {role === "WORKER" ? <Text style={styles.required}>*(إجباري)</Text> : <Text style={styles.optional}>(اختياري)</Text>}
+            صورة الوجه الشخصية <Text style={styles.optional}>(اختياري)</Text>
           </Text>
           <Pressable style={styles.avatarPicker} onPress={() => pickDocument("avatar")}>
             {avatarUri ? (
@@ -423,7 +410,7 @@ export function RegisterScreen({ navigation }: Props) {
             
             <View style={styles.rowDocs}>
               <View style={styles.docCol}>
-                <Text style={styles.docLabel}>وجه البطاقة القومية *(إجباري)</Text>
+                <Text style={styles.docLabel}>وجه البطاقة القومية (اختياري)</Text>
                 <Pressable style={styles.docPicker} onPress={() => pickDocument("nidFront")}>
                   {nidFrontUri ? (
                     <Image source={nidFrontUri} style={styles.docImage as any} />
@@ -437,7 +424,7 @@ export function RegisterScreen({ navigation }: Props) {
               </View>
 
               <View style={styles.docCol}>
-                <Text style={styles.docLabel}>ظهر البطاقة القومية *(إجباري)</Text>
+                <Text style={styles.docLabel}>ظهر البطاقة القومية (اختياري)</Text>
                 <Pressable style={styles.docPicker} onPress={() => pickDocument("nidBack")}>
                   {nidBackUri ? (
                     <Image source={nidBackUri} style={styles.docImage as any} />

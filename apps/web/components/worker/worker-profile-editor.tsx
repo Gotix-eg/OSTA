@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { AlertCircle, Check, ExternalLink, Eye, GripVertical, Loader2, Plus, Save, Trash2, Video, X } from "lucide-react";
+import { AlertCircle, Check, Clock, ExternalLink, Eye, GripVertical, Loader2, Plus, Save, Trash2, Video, X } from "lucide-react";
 
 import { WorkerProAction, WorkerProPanel, WorkerProShell, WorkerProTopStrip } from "@/components/worker/worker-pro-ui";
 import { WorkerProfileDetail } from "@/components/workers/worker-profile-detail";
@@ -86,6 +86,9 @@ export function WorkerProfileEditor({ locale }: { locale: Locale }) {
 
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
+  const [isProfileIncomplete, setIsProfileIncomplete] = useState(false);
+  const [isPendingVerification, setIsPendingVerification] = useState(false);
+
   useEffect(() => {
     async function load() {
       setIsLoading(true);
@@ -99,6 +102,15 @@ export function WorkerProfileEditor({ locale }: { locale: Locale }) {
         }
         const d = payload.data;
         if (d.id) setWorkerId(d.id);
+        
+        if (d.verificationStatus === "PENDING") {
+          if (!d.nationalIdFront || !d.nationalIdBack || !d.selfieWithId || !d.nationalIdNumber) {
+            setIsProfileIncomplete(true);
+          } else {
+            setIsPendingVerification(true);
+          }
+        }
+
         setData({
           bio: d.bio ?? "",
           yearsOfExperience: d.yearsOfExperience ?? 0,
@@ -544,6 +556,23 @@ export function WorkerProfileEditor({ locale }: { locale: Locale }) {
   return (
     <WorkerProShell locale={locale}>
       <WorkerProTopStrip locale={locale} title={isArabic ? "صفحتي الشخصية" : "Public Profile"} />
+
+      {isProfileIncomplete && (
+        <div className="flex items-center gap-3 bg-red-500/10 border-b border-red-500/30 p-4 text-red-400">
+          <AlertCircle className="h-5 w-5 shrink-0" />
+          <p className="text-sm font-bold">
+            {isArabic ? "ملفك غير مكتمل، يرجى التوجه إلى الإعدادات لرفع المستندات المطلوبة (صورة البطاقة)." : "Your profile is incomplete, please go to Settings to upload the required documents (ID photos)."}
+          </p>
+        </div>
+      )}
+      {!isProfileIncomplete && isPendingVerification && (
+        <div className="flex items-center gap-3 bg-amber-500/10 border-b border-amber-500/30 p-4 text-amber-500">
+          <Clock className="h-5 w-5 shrink-0" />
+          <p className="text-sm font-bold">
+            {isArabic ? "ملفك مكتمل وجاري المراجعة. يرجى انتظار مكالمة من الإدارة لتأكيد حسابك." : "Your profile is complete and under review. Please wait for a call from admin to verify your account."}
+          </p>
+        </div>
+      )}
 
       <section className="flex flex-col gap-4 border border-white/10 bg-black p-6 text-white sm:flex-row sm:items-center sm:justify-between lg:p-8">
         <div>

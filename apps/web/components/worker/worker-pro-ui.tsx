@@ -3,7 +3,7 @@
 import Link from "next/link";
 import type { ComponentType, ReactNode } from "react";
 
-import { ArrowUpRight, Crosshair } from "lucide-react";
+import { ArrowUpRight, Crosshair, AlertTriangle } from "lucide-react";
 
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
@@ -83,12 +83,13 @@ export function WorkerProMetric({ label, value, note, icon: Icon, dark, index }:
   );
 }
 
-export function WorkerProPanel({ title, action, children, dark = true }: { eyebrow?: string; title: string; action?: ReactNode; children: ReactNode; dark?: boolean }) {
+export function WorkerProPanel({ title, action, children, dark = true, alert = false }: { eyebrow?: string; title: string; action?: ReactNode; children: ReactNode; dark?: boolean; alert?: boolean }) {
   return (
     <section className={cn("border p-5 lg:p-6", dark ? "border-white/10 bg-black text-white" : "border-black/15 bg-[#f7c21c] text-black")}>
       <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
-        <div>
+        <div className="flex items-center gap-3">
           <h2 className={cn("text-2xl font-black uppercase", dark ? "text-white" : "text-black")}>{title}</h2>
+          {alert && <AlertTriangle className="h-8 w-8 text-amber-500 animate-pulse" />}
         </div>
         {action}
       </div>

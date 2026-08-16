@@ -1078,16 +1078,7 @@ export function WorkerRegisterForm({ locale, initial }: { locale: Locale; initia
       setIsSubmitting(false);
       return;
     }
-    if (!state.nationalIdNumber || state.nationalIdNumber.length !== 14) {
-      setError(isArabic ? "الرقم القومي يجب أن يكون 14 رقم" : "National ID must be 14 digits");
-      setIsSubmitting(false);
-      return;
-    }
-    if (!state.nationalIdFront || !state.nationalIdBack) {
-      setError(isArabic ? "برجاء رفع صور البطاقة" : "Please upload ID photos");
-      setIsSubmitting(false);
-      return;
-    }
+    // Documents and National ID are now collected during onboarding after login
     if (state.password.length < 8) {
       setError(isArabic ? "كلمة المرور يجب أن تكون 8 أحرف على الأقل" : "Password must be at least 8 characters");
       setIsSubmitting(false);
@@ -1110,7 +1101,15 @@ export function WorkerRegisterForm({ locale, initial }: { locale: Locale; initia
         phone: cleanPhone
       });
       setSubmitted(true);
-      applyAuthSuccess(locale, payload, true);
+      saveAuthSession(
+        {
+          accessToken: payload.accessToken,
+          refreshToken: payload.refreshToken,
+          role: payload.user.role,
+          firstName: payload.user.firstName
+        },
+        true
+      );
     } catch (err) {
       setError(getLocalizedError(err instanceof Error ? err.message : "", locale));
     } finally {
@@ -1123,10 +1122,18 @@ export function WorkerRegisterForm({ locale, initial }: { locale: Locale; initia
   return (
     <div className="space-y-3 animate-fadeIn">
       {submitted ? (
-        <div className="space-y-3 border border-success/30 bg-success/5 p-6 text-center">
+        <div className="space-y-4 border border-success/30 bg-success/5 p-6 text-center">
           <ShieldCheck className="h-12 w-12 text-success mx-auto" />
-          <h3 className="text-lg font-black text-white">{isArabic ? "تم إرسال الطلب!" : "Application Sent!"}</h3>
-          <p className="text-xs text-white/50">{isArabic ? "جاري مراجعة بياناتك من قبل الإدارة..." : "Your data is being reviewed by the admin..."}</p>
+          <h3 className="text-lg font-black text-white">{isArabic ? "تم إنشاء حسابك بنجاح!" : "Account created successfully!"}</h3>
+          <p className="text-sm font-medium text-white">
+            {isArabic ? "يرجى التوجه إلى الإعدادات لرفع صور البطاقة المطلوبة، ثم انتظار مكالمة التوثيق من الإدارة لتفعيل حسابك." : "Please go to Settings to upload your ID, then wait for a verification call from the administration to activate your account."}
+          </p>
+          <a
+            href={`/${locale}/worker/settings`}
+            className="flex w-full py-3 items-center justify-center bg-gold text-sm font-black uppercase text-black shadow-[3px_3px_0_#000] transition-transform active:translate-x-0.5 active:translate-y-0.5 active:shadow-none mt-4"
+          >
+            {isArabic ? "الذهاب إلى الإعدادات" : "Go to Settings"}
+          </a>
         </div>
       ) : (
         <form onSubmit={(e) => { e.preventDefault(); void handleRegister(); }} autoComplete="off" className="space-y-2">
@@ -1160,7 +1167,7 @@ export function WorkerRegisterForm({ locale, initial }: { locale: Locale; initia
             />
           </div>
 
-          <div className="grid gap-2 grid-cols-2">
+          <div className="grid gap-2 grid-cols-1">
             <SelectField
               compact
               label={isArabic ? "المهنة / التخصص" : "Profession / Specialization"}
@@ -1169,15 +1176,6 @@ export function WorkerRegisterForm({ locale, initial }: { locale: Locale; initia
               onChange={(prof) => setState({ ...state, profession: prof })}
               placeholder={isArabic ? "اختر المهنة" : "Select profession"}
               variant="auth"
-            />
-            <InputField 
-              compact
-              label={isArabic ? "الرقم القومي (14 رقم)" : "National ID (14 digits)"} 
-              value={state.nationalIdNumber} 
-              onChange={(n) => setState({ ...state, nationalIdNumber: n })} 
-              placeholder="2xxxxxxxxxxxxx" 
-              name="worker-national-id"
-              autoComplete="off"
             />
           </div>
 
@@ -1204,10 +1202,7 @@ export function WorkerRegisterForm({ locale, initial }: { locale: Locale; initia
             />
           </div>
 
-          <div className="grid gap-2 grid-cols-2 pt-0.5">
-            <ImageUpload compact isArabic={isArabic} purpose="registration-document" variant="auth" label={isArabic ? "صورة البطاقة (أمام)" : "ID Front"} value={state.nationalIdFront} onChange={(url) => setState({ ...state, nationalIdFront: url })} />
-            <ImageUpload compact isArabic={isArabic} purpose="registration-document" variant="auth" label={isArabic ? "صورة البطاقة (خلف)" : "ID Back"} value={state.nationalIdBack} onChange={(url) => setState({ ...state, nationalIdBack: url })} />
-          </div>
+
 
           <label className="group flex cursor-pointer items-center gap-1.5 pt-0.5">
             <div className="relative flex h-3.5 w-3.5 shrink-0 items-center justify-center">

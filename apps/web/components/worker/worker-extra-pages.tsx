@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { AlertCircle, CalendarDays, Camera, Check, CheckCircle2, Clock, Loader2, Lock, MapPin, Plus, Save, ShieldCheck, Sparkles, Star, TimerReset, Trash2, UserCircle2, X } from "lucide-react";
+import { AlertCircle, AlertTriangle, CalendarDays, Camera, Check, CheckCircle2, Clock, Loader2, Lock, MapPin, Plus, Save, ShieldCheck, Sparkles, Star, TimerReset, Trash2, UserCircle2, X } from "lucide-react";
 
 import { AvatarCropModal } from "@/components/shared/avatar-crop-modal";
 import {
@@ -18,6 +18,7 @@ import {
 import { useLiveApiData } from "@/hooks/use-live-api-data";
 import { patchApiData, postApiData } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
+import { workerProfessions } from "@/lib/geo-data";
 import type { WorkerRatingsData, WorkerSettingsData } from "@/lib/operations-data";
 import { cn, formatPhoneNumber, getLocalizedError } from "@/lib/utils";
 
@@ -112,43 +113,7 @@ function WorkerSaveControl({ state, isArabic, error }: { state: "idle" | "saving
   );
 }
 
-const ALL_WORKER_PROFESSIONS = [
-  "كهربائي فني",
-  "سباك فني",
-  "نجار محترف",
-  "فني تكييف وتبريد",
-  "نقاش ودهانات",
-  "فني ألوميتال",
-  "حداد وكريتال",
-  "فني صيانة أجهزة منزلية",
-  "مبلط سيراميك ورخام",
-  "فني محارة وبناء",
-  "فني جبس بورد وديكور",
-  "مقاول تشطيبات شاملة",
-  "فني شبكات وتكنولوجيا",
-  "فني صيانة كمبيوتر ولابتوب",
-  "فني تركيب كاميرات مراقبة",
-  "فني نقل وتغليف أثاث",
-  "فني تنظيف وتعقيم ومكافحة حشرات",
-  "ميكانيكي سيارات",
-  "ميكانيكي موتوسيكلات واسكوتر",
-  "فني لف وصيانة مواتير ومضخات",
-  "فني تركيب وصيانة مصاعد",
-  "فني زجاج ومرايا وشاور",
-  "فني تركيب ستائر وشيدز",
-  "فني تركيب باركيه وأرضيات",
-  "فني دش وستالايت مركزي",
-  "فني انتركم وأنظمة ذكية",
-  "فني عزل مائي وحراري",
-  "فني محطات طاقة شمسية",
-  "فني تنسيق حدائق وزراعة",
-  "فني تنجيد وتجديد أثاث",
-  "فني غاز طبيعي وسخانات",
-  "فني صيانة حمامات سباحة",
-  "سمكري ودوكو سيارات",
-  "فني مفاتيح وتشفير سيارات",
-  "عامل صيانة منزلية عامة"
-];
+
 
 export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; initialData: WorkerSettingsData }) {
   const isArabic = locale === "ar";
@@ -284,7 +249,7 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
 
   const currentProfessions = Array.isArray(data.profile.professions) && data.profile.professions.length > 0
     ? data.profile.professions
-    : ["كهربائي فني"];
+    : [];
 
   function handleAddProfession(prof: string) {
     const trimmed = prof.trim();
@@ -314,6 +279,24 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
   return (
     <WorkerProShell locale={locale}>
       <WorkerProTopStrip locale={locale} title={isArabic ? "الإعدادات" : "Settings"} />
+
+      {data.profile.verificationStatus === "PENDING" && (
+        (!data.profile.nationalIdFront || !data.profile.nationalIdBack || !data.profile.selfieWithId || !data.profile.nationalIdNumber) ? (
+          <div className="flex items-center gap-3 bg-red-500/10 border-b border-red-500/30 p-4 text-red-400">
+            <AlertCircle className="h-5 w-5 shrink-0" />
+            <p className="text-sm font-bold">
+              {isArabic ? "ملفك غير مكتمل، يرجى التوجه إلى قسم (المستندات الرسمية) بالأسفل لرفع المستندات المطلوبة (صورة البطاقة)." : "Your profile is incomplete, please go to the 'Official Documents' section below to upload the required documents (ID photos)."}
+            </p>
+          </div>
+        ) : (
+          <div className="flex items-center gap-3 bg-amber-500/10 border-b border-amber-500/30 p-4 text-amber-500">
+            <Clock className="h-5 w-5 shrink-0" />
+            <p className="text-sm font-bold">
+              {isArabic ? "ملفك مكتمل وجاري المراجعة. يرجى انتظار مكالمة من الإدارة لتأكيد حسابك." : "Your profile is complete and under review. Please wait for a call from admin to verify your account."}
+            </p>
+          </div>
+        )
+      )}
 
       <section className="flex flex-col gap-6 border border-white/10 bg-black p-6 text-white sm:flex-row sm:items-center sm:justify-between lg:p-8">
         <div className="flex min-w-0 items-center gap-5">
@@ -385,7 +368,10 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
       </section>
 
       <div className="grid gap-6 xl:grid-cols-[1fr_1fr]">
-        <WorkerProPanel title={isArabic ? "البيانات الشخصية" : "Personal info"}>
+        <WorkerProPanel 
+          title={isArabic ? "البيانات الشخصية" : "Personal info"} 
+          alert={!data.profile.avatarUrl || !data.profile.nationalIdFront || !data.profile.nationalIdBack || !data.profile.selfieWithId || !data.profile.nationalIdNumber || currentProfessions.length === 0}
+        >
           <div className="mb-6 flex flex-col sm:flex-row items-center gap-5 rounded-none border border-white/10 bg-[#111] p-4">
             <div className="relative group shrink-0">
               <div
@@ -438,6 +424,16 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
             </div>
             <div className="space-y-1 text-center sm:text-start">
               <span className="text-xs font-black uppercase tracking-wider text-gold">{isArabic ? "الصورة الشخصية" : "Profile Picture"}</span>
+              {data.profile.verificationStatus !== "VERIFIED" && (
+                <div className="flex items-start gap-2 text-amber-500 bg-amber-500/10 border border-amber-500/20 p-2 mt-1 mb-2">
+                  <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
+                  <p className="text-[11px] font-bold leading-tight text-white">
+                    {isArabic 
+                      ? "هام: يجب أن تكون الصورة الشخصية حقيقية وواضحة لك، وإلا سيتم رفض توثيق حسابك." 
+                      : "Important: Your profile picture must be a real, clear photo of yourself, otherwise your verification will be rejected."}
+                  </p>
+                </div>
+              )}
               <p className="text-xs font-medium text-white/50">
                 {data.profile.verificationStatus === "VERIFIED" 
                   ? (isArabic ? "لا يمكن تغيير الصورة الشخصية بعد توثيق الحساب" : "Profile picture cannot be changed after verification")
@@ -528,9 +524,12 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
             {/* Professions List Section */}
             <div className="sm:col-span-2 space-y-3 pt-3 border-t border-white/10">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <span className="text-sm font-black text-white/90 flex items-center gap-1.5">
+                <span className="text-sm font-black text-white/90 flex items-center gap-2">
                   <Sparkles className="h-4 w-4 text-gold shrink-0" />
                   <span>{isArabic ? "المهن والتخصصات المهنية" : "Professions & Specialties"}</span>
+                  {currentProfessions.length === 0 && (
+                    <AlertTriangle className="h-5 w-5 text-amber-500 animate-pulse" />
+                  )}
                 </span>
                 <span className="text-[10px] font-black uppercase tracking-wider text-gold/90 bg-gold/10 px-2.5 py-1 border border-gold/30">
                   {isArabic ? "يمكنك إضافة أكثر من مهنة" : "Multiple professions allowed"}
@@ -539,24 +538,31 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
 
               {/* Selected Profession Badges */}
               <div className="flex flex-wrap gap-2 min-h-[50px] p-3 border border-white/10 bg-[#111] items-center">
-                {currentProfessions.map((prof, idx) => (
-                  <span
-                    key={`${prof}-${idx}`}
-                    className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/15 px-3 py-1 text-xs font-bold text-gold shadow-sm"
-                  >
-                    <span>{prof}</span>
-                    {currentProfessions.length > 1 ? (
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveProfession(prof)}
-                        className="text-gold/70 hover:text-red-400 transition"
-                        title={isArabic ? "إزالة المهنة" : "Remove profession"}
-                      >
-                        <X className="h-3.5 w-3.5" />
-                      </button>
-                    ) : null}
-                  </span>
-                ))}
+                {currentProfessions.map((profSlug, idx) => {
+                  const professionObj = workerProfessions.find(p => p.value === profSlug);
+                  const displayLabel = professionObj 
+                    ? (isArabic ? professionObj.labelAr : professionObj.labelEn) 
+                    : profSlug;
+                  
+                  return (
+                    <span
+                      key={`${profSlug}-${idx}`}
+                      className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/15 px-3 py-1 text-xs font-bold text-gold shadow-sm"
+                    >
+                      <span>{displayLabel}</span>
+                      {currentProfessions.length > 1 ? (
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveProfession(profSlug)}
+                          className="text-gold/70 hover:text-red-400 transition"
+                          title={isArabic ? "إزالة المهنة" : "Remove profession"}
+                        >
+                          <X className="h-3.5 w-3.5" />
+                        </button>
+                      ) : null}
+                    </span>
+                  );
+                })}
               </div>
 
               {/* Add Profession Controls */}
@@ -573,10 +579,12 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
                   <option value="" disabled>
                     {isArabic ? "-- اختر مهنة لإضافتها --" : "-- Select a profession to add --"}
                   </option>
-                  {ALL_WORKER_PROFESSIONS.filter((p) => !currentProfessions.includes(p)).map((p) => (
-                    <option key={p} value={p} className="bg-[#111] text-white py-1">
-                      {p}
-                    </option>
+                  {workerProfessions
+                    .filter((p) => !currentProfessions.includes(p.value))
+                    .map((p) => (
+                      <option key={p.value} value={p.value} className="bg-[#111] text-white py-1">
+                        {isArabic ? p.labelAr : p.labelEn}
+                      </option>
                   ))}
                 </select>
 
@@ -616,19 +624,35 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
 
             <label className="space-y-2 sm:col-span-2 pt-2 border-t border-white/10">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-black text-white/45">{isArabic ? "رقم بطاقة الرقم القومي" : "National ID Number"}</span>
-                <span className="inline-flex items-center gap-1 text-[10px] font-black text-white/30 uppercase tracking-wider">
-                  <Lock className="h-3 w-3" />
-                  {isArabic ? "ثابت" : "Locked"}
+                <span className={cn("text-sm font-black", !data.profile.nationalIdNumber && data.profile.verificationStatus !== "VERIFIED" ? "text-rose-400" : "text-white/45")}>
+                  {isArabic ? "رقم بطاقة الرقم القومي" : "National ID Number"}
+                </span>
+                <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider">
+                  {data.profile.verificationStatus === "VERIFIED" ? (
+                    <>
+                      <Lock className="h-3 w-3 text-emerald-500" />
+                      <span className="text-emerald-500">{isArabic ? "معتمد ومغلق" : "Verified & Locked"}</span>
+                    </>
+                  ) : (
+                    <span className="text-white/30">{isArabic ? "قابل للتعديل (مطلوب)" : "Editable (Required)"}</span>
+                  )}
                 </span>
               </div>
               <input
                 value={data.profile.nationalIdNumber ?? ""}
-                readOnly
-                disabled
+                onChange={(e) => updateData((prev) => ({ ...prev, profile: { ...prev.profile, nationalIdNumber: e.target.value } }))}
+                readOnly={data.profile.verificationStatus === "VERIFIED"}
+                disabled={data.profile.verificationStatus === "VERIFIED"}
                 dir="ltr"
                 placeholder="2900101100001"
-                className="h-12 w-full border border-white/10 bg-[#141414] px-4 font-mono text-white/50 outline-none cursor-not-allowed select-none text-start font-bold"
+                className={cn(
+                  "h-12 w-full px-4 font-mono outline-none text-start font-bold transition",
+                  data.profile.verificationStatus === "VERIFIED"
+                    ? "border border-white/10 bg-[#141414] text-white/50 cursor-not-allowed select-none"
+                    : !data.profile.nationalIdNumber
+                      ? "border border-rose-500/60 bg-rose-950/10 shadow-[0_0_12px_rgba(244,63,94,0.15)] text-white focus:border-rose-400 placeholder:text-rose-500/40"
+                      : "border border-white/10 bg-[#141414] text-white focus:border-gold"
+                )}
               />
             </label>
 
@@ -699,7 +723,10 @@ export function WorkerSettingsPage({ locale, initialData }: { locale: Locale; in
           </div>
         </WorkerProPanel>
 
-        <WorkerProPanel title={isArabic ? "نظام شغلي" : "Work preferences & payout"}>
+        <WorkerProPanel 
+          title={isArabic ? "نظام شغلي" : "Work preferences & payout"}
+          alert={!data.workPreferences?.serviceAreas || data.workPreferences.serviceAreas.length === 0}
+        >
           <div className="grid gap-4">
             <div className="grid gap-2 sm:grid-cols-3">
               {[
@@ -1020,7 +1047,14 @@ function WorkerIdDocumentCard({
   }
 
   return (
-    <div className={cn("border bg-[#111] p-3 space-y-2 relative flex flex-col justify-between", isLocked ? "border-emerald-500/30 bg-emerald-950/5" : "border-white/10")}>
+    <div className={cn(
+      "border bg-[#111] p-3 space-y-2 relative flex flex-col justify-between transition-colors", 
+      isLocked 
+        ? "border-emerald-500/30 bg-emerald-950/5" 
+        : !imageUrl 
+          ? "border-rose-500/60 shadow-[0_0_12px_rgba(244,63,94,0.15)] bg-rose-950/10" 
+          : "border-white/10"
+    )}>
       <div className="flex h-10 items-start justify-between gap-2">
         <span className="text-xs font-black text-white/70 leading-snug min-w-0 flex-1">{label}</span>
         {isLocked ? (
@@ -1036,7 +1070,9 @@ function WorkerIdDocumentCard({
             className="text-[11px] font-black text-gold underline hover:text-gold/80 transition shrink-0 pt-0.5 flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isUploading ? <Loader2 className="h-3 w-3 animate-spin text-gold" /> : null}
-            {isUploading ? (isArabic ? "جارٍ الرفع..." : "Uploading...") : imageUrl ? (isArabic ? "تغيير" : "Change") : (isArabic ? "رفع" : "Upload")}
+            <span className={cn(!imageUrl && !isUploading && "text-rose-400 animate-pulse")}>
+              {isUploading ? (isArabic ? "جارٍ الرفع..." : "Uploading...") : imageUrl ? (isArabic ? "تغيير" : "Change") : (isArabic ? "رفع" : "Upload")}
+            </span>
           </button>
         )}
       </div>
@@ -1046,8 +1082,12 @@ function WorkerIdDocumentCard({
           if (!isLocked && !isUploading) fileInputRef.current?.click();
         }}
         className={cn(
-          "relative h-32 w-full overflow-hidden border bg-[#181818] transition flex items-center justify-center",
-          isLocked || isUploading ? "cursor-default border-emerald-500/20" : "cursor-pointer border-white/10 hover:border-gold group"
+          "relative h-32 w-full overflow-hidden border transition flex items-center justify-center",
+          isLocked || isUploading 
+            ? "cursor-default border-emerald-500/20 bg-[#181818]" 
+            : !imageUrl
+              ? "cursor-pointer border-rose-500/40 border-dashed bg-rose-950/20 hover:border-rose-400 group hover:bg-rose-950/40"
+              : "cursor-pointer border-white/10 bg-[#181818] hover:border-gold group"
         )}
       >
         {imageUrl ? (
@@ -1055,8 +1095,10 @@ function WorkerIdDocumentCard({
           <img src={imageUrl} alt={label} className={cn("h-full w-full object-cover transition", !isLocked && !isUploading && "group-hover:scale-105")} />
         ) : (
           <div className="flex flex-col items-center justify-center h-full text-white/30 space-y-1.5 p-2 text-center">
-            <Camera className="h-6 w-6 text-gold/60" />
-            <span className="text-[10px] font-bold">{isLocked ? (isArabic ? "وثيقة رسمية معتمدة" : "Official Verified Document") : (isArabic ? "انقر لرفع الصورة" : "Click to upload image")}</span>
+            <Camera className="h-6 w-6 text-rose-500/80 animate-pulse" />
+            <span className="text-[10px] font-bold text-rose-400">
+              {isLocked ? (isArabic ? "وثيقة رسمية معتمدة" : "Official Verified Document") : (isArabic ? "انقر لرفع الصورة (مطلوب)" : "Click to upload image (Required)")}
+            </span>
           </div>
         )}
 

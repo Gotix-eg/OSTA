@@ -114,6 +114,7 @@ export function DashboardShell({
 }) {
   const isArabic = locale === "ar";
   const [isComplete, setIsComplete] = useState<boolean | null>(null);
+  const [workerIncomplete, setWorkerIncomplete] = useState<boolean>(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
   const copy = dashboardCopy[locale][role];
@@ -179,21 +180,30 @@ export function DashboardShell({
 
   useEffect(() => {
     async function checkCompleteness() {
-      if (role !== "vendor") {
-        setIsComplete(true);
-        return;
-      }
-
-      const data = await fetchApiData<any>("/auth/me", null);
-      const user = data?.user || data;
-      if (user?.role === "VENDOR") {
-        const profile = user.profile;
-        if (!profile?.category || !profile?.latitude) {
-          setIsComplete(false);
-          return;
+      if (role === "vendor") {
+        const data = await fetchApiData<any>("/auth/me", null);
+        const user = data?.user || data;
+        if (user?.role === "VENDOR") {
+          const profile = user.profile;
+          if (!profile?.category || !profile?.latitude) {
+            setIsComplete(false);
+            return;
+          }
         }
+        setIsComplete(true);
+      } else if (role === "worker") {
+        const data = await fetchApiData<any>("/auth/me", null);
+        const user = data?.user || data;
+        if (user?.role === "WORKER") {
+          const profile = user.profile;
+          if (profile?.verificationStatus === "PENDING" && (!profile?.nationalIdFront || !profile?.nationalIdBack)) {
+            setWorkerIncomplete(true);
+          }
+        }
+        setIsComplete(true);
+      } else {
+        setIsComplete(true);
       }
-      setIsComplete(true);
     }
     checkCompleteness();
   }, [role]);
@@ -246,7 +256,7 @@ export function DashboardShell({
 
       <div className="relative flex min-h-screen">
         <aside className={cn("hidden shrink-0 lg:block", isStitchDashboard ? "fixed right-0 top-0 z-40 h-screen w-64 p-0" : "w-[19.5rem] px-4 py-4")}>
-          <SidebarContent locale={locale} role={role} roleLabel={copy.role} theme={theme} navItems={navItems} activeNavPath={activeNavPath} />
+          <SidebarContent locale={locale} role={role} roleLabel={copy.role} theme={theme} navItems={navItems} activeNavPath={activeNavPath} workerIncomplete={workerIncomplete} />
         </aside>
 
         {mobileOpen ? (
@@ -339,6 +349,9 @@ export function DashboardShell({
                         <span className="flex min-w-0 items-center gap-4">
                           <Icon className="h-5 w-5 shrink-0 text-gold" />
                           <span className={cn("truncate text-sm font-black", active ? "text-gold" : "text-white")}>{item.label}</span>
+                          {workerIncomplete && (itemPath === "/worker/profile" || itemPath === "/worker/settings") && (
+                            <span className="flex h-2 w-2 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)] animate-pulse" />
+                          )}
                         </span>
                         <ArrowUpRight className="h-4 w-4 shrink-0 text-white/25" />
                       </Link>
@@ -495,9 +508,14 @@ export function DashboardShell({
                 <Link
                   key={item.href}
                   href={item.href as `/${string}`}
-                  className={cn("flex flex-col items-center justify-center gap-1 text-[11px] font-black", active ? "text-gold" : "text-white/60")}
+                  className={cn("flex flex-col items-center justify-center gap-1 text-[11px] font-black relative", active ? "text-gold" : "text-white/60")}
                 >
-                  <Icon className="h-5 w-5" />
+                  <div className="relative">
+                    <Icon className="h-5 w-5" />
+                    {workerIncomplete && (itemPath === "/worker/profile" || itemPath === "/worker/settings") && (
+                      <span className="absolute -top-1 -right-1 flex h-2 w-2 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)] animate-pulse" />
+                    )}
+                  </div>
                   <span className="max-w-full truncate">{item.label}</span>
                 </Link>
               );
@@ -689,7 +707,8 @@ function SidebarContent({
   roleLabel,
   theme,
   navItems,
-  activeNavPath
+  activeNavPath,
+  workerIncomplete
 }: {
   locale: Locale;
   role: DashboardRole;
@@ -697,6 +716,7 @@ function SidebarContent({
   theme: { tag: string; accent: string; orb: string; ring: string };
   navItems: NavItem[];
   activeNavPath: string | null;
+  workerIncomplete?: boolean;
 }) {
   const isClientDashboard = role === "client";
   const isWorkerDashboard = role === "worker";
@@ -773,6 +793,9 @@ function SidebarContent({
                   <Icon className="h-4 w-4" />
                 </span>
                 {item.label}
+                {workerIncomplete && (itemPath === "/worker/profile" || itemPath === "/worker/settings") && (
+                  <span className="flex h-2 w-2 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)] animate-pulse" />
+                )}
               </span>
               <ArrowUpRight className={cn("h-4 w-4 transition-all duration-500", active ? "opacity-100" : "opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0")} />
             </Link>

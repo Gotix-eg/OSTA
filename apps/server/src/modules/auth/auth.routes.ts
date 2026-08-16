@@ -266,18 +266,26 @@ router.get("/me", catchAsync(async (request, response) => {
 }));
 
 router.patch("/profile", authenticate, catchAsync(async (request, response) => {
-  const { firstName, lastName, email, avatarUrl, profession, bio, areas, shopName, shopDescription, category, address } = request.body;
+  const { firstName, lastName, email, avatarUrl, profession, bio, areas, shopName, shopDescription, category, address, nationalIdNumber, nationalIdFront, nationalIdBack } = request.body;
   const userId = request.auth!.userId;
 
   const existingUser = await prisma.user.findUnique({ where: { id: userId } });
   const isNewEmail = email !== undefined && email?.trim().toLowerCase() !== existingUser?.email?.trim().toLowerCase();
 
-  if (profession !== undefined || bio !== undefined) {
+  if (profession !== undefined || bio !== undefined || nationalIdNumber !== undefined || nationalIdFront !== undefined || nationalIdBack !== undefined) {
+    const currentWorker = await prisma.workerProfile.findUnique({ where: { userId } });
+    const isPending = currentWorker?.verificationStatus === "PENDING";
+    const allDocsProvided = (nationalIdNumber || currentWorker?.nationalIdNumber) && (nationalIdFront || currentWorker?.nationalIdFront) && (nationalIdBack || currentWorker?.nationalIdBack) && (avatarUrl || existingUser?.avatarUrl);
+
     await prisma.workerProfile.updateMany({
       where: { userId },
       data: {
         ...(profession !== undefined ? { profession } : {}),
-        ...(bio !== undefined ? { bio } : {})
+        ...(bio !== undefined ? { bio } : {}),
+        ...(nationalIdNumber !== undefined ? { nationalIdNumber } : {}),
+        ...(nationalIdFront !== undefined ? { nationalIdFront } : {}),
+        ...(nationalIdBack !== undefined ? { nationalIdBack } : {}),
+        ...(isPending && allDocsProvided ? { verificationStatus: "DOCUMENTS_SUBMITTED" } : {})
       }
     });
   }

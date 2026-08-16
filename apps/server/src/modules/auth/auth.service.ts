@@ -77,7 +77,7 @@ function toPublicUser(user: {
   preferredLanguage: string;
   status: string;
   clientProfile?: { totalRequests: number; walletBalance: number; isVip: boolean } | null;
-  workerProfile?: { yearsOfExperience: number; rating: number; isAvailable: boolean } | null;
+  workerProfile?: any | null; // Using any or specific type to allow verification details to pass through
   vendorProfile?: { shopName: string; category: string | null; latitude: number | null; longitude: number | null } | null;
 }) {
   const hasClient = Boolean(user.clientProfile);
@@ -219,7 +219,7 @@ export const authService = {
             input.role === "WORKER"
               ? {
                   create: {
-                    nationalIdNumber: input.nationalIdNumber,
+                    nationalIdNumber: input.nationalIdNumber || undefined,
                     nationalIdFront: input.nationalIdFront,
                     nationalIdBack: input.nationalIdBack,
                     profession: input.profession,
@@ -337,7 +337,7 @@ export const authService = {
           input.role === "WORKER"
             ? {
                 create: {
-                  nationalIdNumber: input.nationalIdNumber,
+                  nationalIdNumber: input.nationalIdNumber || undefined,
                   nationalIdFront: input.nationalIdFront,
                   nationalIdBack: input.nationalIdBack,
                   profession: input.profession,

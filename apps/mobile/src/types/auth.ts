@@ -9,7 +9,7 @@ export type PublicUser = {
   lastName: string;
   preferredLanguage?: string;
   status?: string;
-  profile?: Record<string, unknown> | null;
+  profile?: any | null;
   avatarUrl?: string;
 };
 
