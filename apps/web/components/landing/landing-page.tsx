@@ -76,7 +76,9 @@ export function LandingPage({ locale }: { locale: Locale }) {
   const [selectedWorkerForBooking, setSelectedWorkerForBooking] = useState<any | null>(null);
   const [showAuthModal, setShowAuthModal] = useState<boolean>(false);
   const [showWorkerAuthModal, setShowWorkerAuthModal] = useState<boolean>(false);
+  const [displayCategories, setDisplayCategories] = useState<any[]>([]);
   const hasFetchedInitialDataRef = useRef(false);
+  const hasInitializedCategoriesRef = useRef(false);
 
   useEffect(() => {
     if (hasFetchedInitialDataRef.current) return;
@@ -150,6 +152,20 @@ export function LandingPage({ locale }: { locale: Locale }) {
     return () => clearInterval(interval);
   }, [workers]);
 
+  useEffect(() => {
+    if (safeCategories.length === 0) return;
+    
+    if (!hasInitializedCategoriesRef.current) {
+      setDisplayCategories(pickRandomWorkers(safeCategories, 5));
+      hasInitializedCategoriesRef.current = true;
+    }
+
+    const interval = setInterval(() => {
+      setDisplayCategories(pickRandomWorkers(safeCategories, 5));
+    }, 10000);
+    return () => clearInterval(interval);
+  }, [safeCategories]);
+
   const handleBookClick = (worker: any) => {
     getBrowserAuthState().then(({ isLoggedIn }) => {
       if (!isLoggedIn) {
@@ -171,7 +187,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
   };
 
   const activeHeroSlide = slides[0] || defaultSlide;
-  const mobileCategories = (safeCategories.length > 0 ? safeCategories.slice(0, 4) : [
+  const mobileCategories = (displayCategories.length > 0 ? displayCategories.slice(0, 4) : safeCategories.length > 0 ? safeCategories.slice(0, 4) : [
     { id: "electricity", slug: "electricity", nameAr: "كهرباء", nameEn: "Electricity" },
     { id: "plumbing", slug: "plumbing", nameAr: "سباكة", nameEn: "Plumbing" },
     { id: "ac", slug: "ac", nameAr: "تكييف", nameEn: "Air Conditioning" },
@@ -228,8 +244,8 @@ export function LandingPage({ locale }: { locale: Locale }) {
   };
 
   const fallbackProImage = mobileFallbackPros[0]?.image ?? "";
-  const mobilePros: MobilePro[] = workers.length > 0
-    ? workers.slice(0, 4).map((worker, index) => ({
+  const mobilePros: MobilePro[] = featuredWorkers.length > 0
+    ? featuredWorkers.slice(0, 4).map((worker, index) => ({
         id: worker.id,
         raw: worker,
         nameAr: worker.name,
@@ -494,7 +510,7 @@ export function LandingPage({ locale }: { locale: Locale }) {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-            {safeCategories.slice(0, 5).map((craft) => {
+            {(displayCategories.length > 0 ? displayCategories : safeCategories.slice(0, 5)).slice(0, 5).map((craft) => {
               const imgUrl = getServiceImage(craft);
               const slug = getServiceSlug(craft);
               return (
