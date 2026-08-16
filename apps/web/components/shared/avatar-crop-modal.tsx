@@ -1,96 +1,36 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import Cropper from "react-easy-crop";
-import type { Area, Point } from "react-easy-crop";
-import { Check, Loader2, X, ZoomIn } from "lucide-react";
+import ReactCrop, { type Crop, type PixelCrop, centerCrop, makeAspectCrop } from 'react-image-crop';
+import 'react-image-crop/dist/ReactCrop.css';
+import { Check, Loader2, X } from "lucide-react";
 
-import { RotateCcw } from "lucide-react";
-
-function getRadianAngle(degreeValue: number) {
-  return (degreeValue * Math.PI) / 180;
+function centerAspectCrop(mediaWidth: number, mediaHeight: number, aspect: number) {
+  return centerCrop(
+    makeAspectCrop(
+      {
+        unit: '%',
+        width: 90,
+      },
+      aspect,
+      mediaWidth,
+      mediaHeight,
+    ),
+    mediaWidth,
+    mediaHeight,
+  )
 }
 
-function rotateSize(width: number, height: number, rotation: number) {
-  const rotRad = getRadianAngle(rotation);
+function getDefaultCrop(mediaWidth: number, mediaHeight: number): Crop {
+  // If no aspect ratio, just give a 90% crop centered
   return {
-    width: Math.abs(Math.cos(rotRad) * width) + Math.abs(Math.sin(rotRad) * height),
-    height: Math.abs(Math.sin(rotRad) * width) + Math.abs(Math.cos(rotRad) * height),
-  };
-}
-
-function loadImage(url: string): Promise<HTMLImageElement> {
-  return new Promise((resolve, reject) => {
-    const image = new Image();
-    image.addEventListener("load", () => resolve(image));
-    image.addEventListener("error", (error) => reject(error));
-    image.setAttribute("crossOrigin", "anonymous");
-    image.src = url;
-  });
-}
-
-async function getCroppedImageBlob(imageSrc: string, cropArea: Area, rotation: number = 0): Promise<Blob> {
-  const image = await loadImage(imageSrc);
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
-  if (!ctx) throw new Error("Canvas not supported");
-
-  const rotRad = getRadianAngle(rotation);
-  const { width: bBoxWidth, height: bBoxHeight } = rotateSize(image.width, image.height, rotation);
-
-  canvas.width = bBoxWidth;
-  canvas.height = bBoxHeight;
-  ctx.translate(bBoxWidth / 2, bBoxHeight / 2);
-  ctx.rotate(rotRad);
-  ctx.translate(-image.width / 2, -image.height / 2);
-  ctx.drawImage(image, 0, 0);
-
-  const croppedCanvas = document.createElement("canvas");
-  const croppedCtx = croppedCanvas.getContext("2d");
-  if (!croppedCtx) throw new Error("Canvas not supported");
-
-  // Scale down if image is too large (max 1200px)
-  const MAX_DIM = 1200;
-  let finalWidth = cropArea.width;
-  let finalHeight = cropArea.height;
-
-  if (finalWidth > MAX_DIM || finalHeight > MAX_DIM) {
-    if (finalWidth > finalHeight) {
-      finalHeight = Math.round((finalHeight * MAX_DIM) / finalWidth);
-      finalWidth = MAX_DIM;
-    } else {
-      finalWidth = Math.round((finalWidth * MAX_DIM) / finalHeight);
-      finalHeight = MAX_DIM;
-    }
+    unit: '%',
+    x: 5,
+    y: 5,
+    width: 90,
+    height: 90,
   }
-
-  croppedCanvas.width = finalWidth;
-  croppedCanvas.height = finalHeight;
-  croppedCtx.imageSmoothingEnabled = true;
-  croppedCtx.imageSmoothingQuality = "high";
-
-  croppedCtx.drawImage(
-    canvas,
-    cropArea.x,
-    cropArea.y,
-    cropArea.width,
-    cropArea.height,
-    0,
-    0,
-    finalWidth,
-    finalHeight
-  );
-
-  return new Promise((resolve, reject) => {
-    croppedCanvas.toBlob((blob) => {
-      if (!blob) {
-        reject(new Error("Canvas is empty"));
-        return;
-      }
-      resolve(blob);
-    }, "image/jpeg", 0.85);
-  });
 }
 
 export function ImageCropModal({
@@ -99,10 +39,10 @@ export function ImageCropModal({
   onCancel,
   onConfirm,
   aspectRatio = 1,
-  titleAr = "اضبط صورتك الشخصية",
+  titleAr = "اضبط صورتك",
   titleEn = "Position your photo",
-  subtitleAr = "حرك الصورة واضبط التكبير حتى يظهر وجهك بوضوح داخل الإطار.",
-  subtitleEn = "Drag and zoom until your face is clearly centered in the frame.",
+  subtitleAr = "اسحب زوايا الإطار لقص الصورة بالشكل الذي تريده.",
+  subtitleEn = "Drag the corners to crop the image.",
 }: {
   imageSrc: string;
   isArabic: boolean;
@@ -115,27 +55,120 @@ export function ImageCropModal({
   subtitleEn?: string;
 }) {
   const [mounted, setMounted] = useState(false);
-  const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
+  const [crop, setCrop] = useState<Crop>();
+  const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
   const [currentAspect, setCurrentAspect] = useState<number | undefined>(aspectRatio);
-  const [zoom, setZoom] = useState(1);
-  const [rotation, setRotation] = useState(0);
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  const handleCropComplete = useCallback((_croppedArea: Area, areaPixels: Area) => {
-    setCroppedAreaPixels(areaPixels);
-  }, []);
+  function onImageLoad(e: React.SyntheticEvent<HTMLImageElement>) {
+    if (currentAspect) {
+      const { width, height } = e.currentTarget;
+      setCrop(centerAspectCrop(width, height, currentAspect));
+    } else {
+      setCrop(getDefaultCrop(e.currentTarget.width, e.currentTarget.height));
+    }
+  }
+
+  // Handle aspect ratio change
+  useEffect(() => {
+    if (imgRef.current && currentAspect) {
+      setCrop(centerAspectCrop(imgRef.current.width, imgRef.current.height, currentAspect));
+    } else if (imgRef.current) {
+      setCrop(getDefaultCrop(imgRef.current.width, imgRef.current.height));
+    }
+  }, [currentAspect]);
 
   async function handleConfirm() {
-    if (!croppedAreaPixels || isSaving) return;
+    if (!completedCrop || !imgRef.current || isSaving) return;
     setIsSaving(true);
     try {
-      const blob = await getCroppedImageBlob(imageSrc, croppedAreaPixels, rotation);
+      const image = imgRef.current;
+      const canvas = document.createElement('canvas');
+      const scaleX = image.naturalWidth / image.width;
+      const scaleY = image.naturalHeight / image.height;
+
+      // Ensure we have a valid crop width and height
+      const pixelRatio = window.devicePixelRatio;
+      canvas.width = Math.floor(completedCrop.width * scaleX * pixelRatio);
+      canvas.height = Math.floor(completedCrop.height * scaleY * pixelRatio);
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) throw new Error('No 2d context');
+
+      ctx.scale(pixelRatio, pixelRatio);
+      ctx.imageSmoothingQuality = 'high';
+
+      const cropX = completedCrop.x * scaleX;
+      const cropY = completedCrop.y * scaleY;
+      const cropWidth = completedCrop.width * scaleX;
+      const cropHeight = completedCrop.height * scaleY;
+
+      ctx.drawImage(
+        image,
+        cropX,
+        cropY,
+        cropWidth,
+        cropHeight,
+        0,
+        0,
+        cropWidth,
+        cropHeight
+      );
+
+      // Scale down if image is too large (max 1200px)
+      const MAX_DIM = 1200;
+      let finalWidth = cropWidth;
+      let finalHeight = cropHeight;
+
+      if (finalWidth > MAX_DIM || finalHeight > MAX_DIM) {
+        if (finalWidth > finalHeight) {
+          finalHeight = Math.round((finalHeight * MAX_DIM) / finalWidth);
+          finalWidth = MAX_DIM;
+        } else {
+          finalWidth = Math.round((finalWidth * MAX_DIM) / finalHeight);
+          finalHeight = MAX_DIM;
+        }
+      }
+
+      const resizedCanvas = document.createElement('canvas');
+      resizedCanvas.width = finalWidth;
+      resizedCanvas.height = finalHeight;
+      const resizedCtx = resizedCanvas.getContext('2d');
+      if (!resizedCtx) throw new Error('No 2d context');
+      
+      resizedCtx.imageSmoothingEnabled = true;
+      resizedCtx.imageSmoothingQuality = "high";
+      
+      resizedCtx.drawImage(
+        canvas,
+        0,
+        0,
+        canvas.width / pixelRatio,
+        canvas.height / pixelRatio,
+        0,
+        0,
+        finalWidth,
+        finalHeight
+      );
+
+      const blob = await new Promise<Blob>((resolve, reject) => {
+        resizedCanvas.toBlob((b) => {
+          if (!b) {
+            reject(new Error('Canvas is empty'));
+            return;
+          }
+          resolve(b);
+        }, 'image/jpeg', 0.85);
+      });
+
       await onConfirm(blob);
+    } catch (e) {
+      console.error(e);
     } finally {
       setIsSaving(false);
     }
@@ -145,8 +178,8 @@ export function ImageCropModal({
 
   return createPortal(
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
-      <div className="w-full max-w-md border border-gold/40 bg-[#111] p-6 text-white shadow-2xl">
-        <div className="mb-4 flex items-center justify-between">
+      <div className="w-full max-w-[95vw] md:max-w-2xl border border-gold/40 bg-[#111] p-6 text-white shadow-2xl flex flex-col max-h-[95vh]">
+        <div className="mb-4 flex items-center justify-between shrink-0">
           <h3 className="text-sm font-black uppercase tracking-wider text-gold">
             {isArabic ? titleAr : titleEn}
           </h3>
@@ -160,7 +193,10 @@ export function ImageCropModal({
           </button>
         </div>
 
-        <div className="mb-4 flex gap-2 justify-center">
+        <div className="mb-4 flex flex-wrap gap-2 justify-center shrink-0">
+          <button type="button" onClick={() => setCurrentAspect(undefined)} className={`px-3 py-1 text-xs font-bold border ${!currentAspect ? 'border-gold text-gold bg-gold/10' : 'border-white/20 text-white/60 hover:text-white'}`}>
+            {isArabic ? "حر" : "Free"}
+          </button>
           <button type="button" onClick={() => setCurrentAspect(1)} className={`px-3 py-1 text-xs font-bold border ${currentAspect === 1 ? 'border-gold text-gold bg-gold/10' : 'border-white/20 text-white/60 hover:text-white'}`}>
             {isArabic ? "مربع 1:1" : "Square"}
           </button>
@@ -171,54 +207,31 @@ export function ImageCropModal({
             {isArabic ? "عمودي 3:4" : "Portrait"}
           </button>
         </div>
-        <div className="relative h-72 w-full overflow-hidden border border-white/10 bg-black">
-          <Cropper
-            image={imageSrc}
+
+        <div className="relative w-full flex-1 min-h-0 overflow-auto border border-white/10 bg-black flex items-center justify-center">
+          <ReactCrop
             crop={crop}
-            zoom={zoom}
-            rotation={rotation}
+            onChange={(_, percentCrop) => setCrop(percentCrop)}
+            onComplete={(c) => setCompletedCrop(c)}
             aspect={currentAspect}
-            cropShape="rect"
-            showGrid={false}
-            onCropChange={setCrop}
-            onZoomChange={setZoom}
-            onRotationChange={setRotation}
-            onCropComplete={handleCropComplete}
-          />
+            className="max-w-full max-h-full"
+          >
+            <img 
+              ref={imgRef}
+              alt="Crop me" 
+              src={imageSrc} 
+              onLoad={onImageLoad}
+              className="max-w-full max-h-full object-contain"
+              style={{ maxHeight: '60vh' }}
+            />
+          </ReactCrop>
         </div>
 
-        <div className="mt-4 flex flex-col gap-3">
-          <div className="flex items-center gap-3">
-            <ZoomIn className="h-4 w-4 shrink-0 text-white/50" />
-            <input
-              type="range"
-              min={1}
-              max={3}
-              step={0.01}
-              value={zoom}
-              onChange={(event) => setZoom(Number(event.target.value))}
-              className="w-full accent-gold"
-            />
-          </div>
-          <div className="flex items-center gap-3">
-            <RotateCcw className="h-4 w-4 shrink-0 text-white/50" />
-            <input
-              type="range"
-              min={0}
-              max={360}
-              step={1}
-              value={rotation}
-              onChange={(event) => setRotation(Number(event.target.value))}
-              className="w-full accent-gold"
-            />
-          </div>
-        </div>
-
-        <p className="mt-3 text-xs text-white/45">
+        <p className="mt-4 text-xs text-white/45 shrink-0 text-center">
           {isArabic ? subtitleAr : subtitleEn}
         </p>
 
-        <div className="mt-6 flex gap-3">
+        <div className="mt-4 flex gap-3 shrink-0">
           <button
             type="button"
             onClick={onCancel}
@@ -230,7 +243,7 @@ export function ImageCropModal({
           <button
             type="button"
             onClick={() => void handleConfirm()}
-            disabled={isSaving || !croppedAreaPixels}
+            disabled={isSaving || !completedCrop?.width || !completedCrop?.height}
             className="flex-1 inline-flex items-center justify-center gap-2 bg-gold py-2.5 text-sm font-black text-black transition hover:bg-gold/90 disabled:opacity-50"
           >
             {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
