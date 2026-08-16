@@ -141,7 +141,7 @@ export function ImageUpload({
           isArabic={isArabic}
           onCancel={() => setCropSrc(null)}
           onConfirm={handleCropConfirm}
-          aspectRatio={undefined}
+          aspectRatio={label.includes("سيلفي مع الهوية") ? 3/4 : label.includes("الهوية الوطنية") ? 1.58 : label.includes("سيلفي") ? 1 : undefined}
         />
       )}
     </div>

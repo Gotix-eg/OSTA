@@ -116,6 +116,7 @@ export function ImageCropModal({
 }) {
   const [mounted, setMounted] = useState(false);
   const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
+  const [currentAspect, setCurrentAspect] = useState<number | undefined>(aspectRatio);
   const [zoom, setZoom] = useState(1);
   const [rotation, setRotation] = useState(0);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
@@ -159,13 +160,24 @@ export function ImageCropModal({
           </button>
         </div>
 
+        <div className="mb-4 flex gap-2 justify-center">
+          <button type="button" onClick={() => setCurrentAspect(1)} className={`px-3 py-1 text-xs font-bold border ${currentAspect === 1 ? 'border-gold text-gold bg-gold/10' : 'border-white/20 text-white/60 hover:text-white'}`}>
+            {isArabic ? "مربع 1:1" : "Square"}
+          </button>
+          <button type="button" onClick={() => setCurrentAspect(4/3)} className={`px-3 py-1 text-xs font-bold border ${currentAspect === 4/3 ? 'border-gold text-gold bg-gold/10' : 'border-white/20 text-white/60 hover:text-white'}`}>
+            {isArabic ? "أفقي 4:3" : "Landscape"}
+          </button>
+          <button type="button" onClick={() => setCurrentAspect(3/4)} className={`px-3 py-1 text-xs font-bold border ${currentAspect === 3/4 ? 'border-gold text-gold bg-gold/10' : 'border-white/20 text-white/60 hover:text-white'}`}>
+            {isArabic ? "عمودي 3:4" : "Portrait"}
+          </button>
+        </div>
         <div className="relative h-72 w-full overflow-hidden border border-white/10 bg-black">
           <Cropper
             image={imageSrc}
             crop={crop}
             zoom={zoom}
             rotation={rotation}
-            aspect={aspectRatio}
+            aspect={currentAspect}
             cropShape="rect"
             showGrid={false}
             onCropChange={setCrop}
