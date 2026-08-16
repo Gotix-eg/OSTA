@@ -16,6 +16,7 @@ import { AdBanner } from "@/components/shared/ad-banner";
 import type { ClientDashboardData } from "@/lib/dashboard-data";
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
+import { ImageCropModal } from "@/components/shared/avatar-crop-modal";
 import { MediaSelectorModal } from "@/components/admin/media-selector-modal";
 import {
   WorkerProEmpty,
@@ -1140,14 +1141,20 @@ export function AdminAdsPage({ locale }: { locale: Locale }) {
     saveCampaigns(updated);
   };
 
+  const [campaignCropSrc, setCampaignCropSrc] = useState<string | null>(null);
+
   const handleCampaignImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    setCampaignCropSrc(URL.createObjectURL(file));
+  };
 
+  const handleCampaignCropConfirm = async (blob: Blob) => {
+    setCampaignCropSrc(null);
     setIsUploadingCampaign(true);
     try {
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("file", new File([blob], "campaign.jpg", { type: "image/jpeg" }));
       formData.append("purpose", "general");
 
       const res = await fetch("/api/upload", {
@@ -1256,14 +1263,20 @@ export function AdminAdsPage({ locale }: { locale: Locale }) {
     saveSlides(updated);
   };
 
+  const [desktopSliderCropSrc, setDesktopSliderCropSrc] = useState<string | null>(null);
+
   const handleLocalImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    setDesktopSliderCropSrc(URL.createObjectURL(file));
+  };
 
+  const handleDesktopSliderCropConfirm = async (blob: Blob) => {
+    setDesktopSliderCropSrc(null);
     setIsUploadingDesktopSlider(true);
     try {
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("file", new File([blob], "slide.jpg", { type: "image/jpeg" }));
       formData.append("purpose", "general");
 
       const res = await fetch("/api/upload", {
@@ -1445,6 +1458,26 @@ export function AdminAdsPage({ locale }: { locale: Locale }) {
                       </div>
                     </div>
                   </div>
+
+                  {campaignCropSrc && (
+                    <ImageCropModal
+                      imageSrc={campaignCropSrc}
+                      isArabic={isArabic}
+                      onCancel={() => setCampaignCropSrc(null)}
+                      onConfirm={handleCampaignCropConfirm}
+                      aspectRatio={undefined}
+                    />
+                  )}
+
+                  {desktopSliderCropSrc && (
+                    <ImageCropModal
+                      imageSrc={desktopSliderCropSrc}
+                      isArabic={isArabic}
+                      onCancel={() => setDesktopSliderCropSrc(null)}
+                      onConfirm={handleDesktopSliderCropConfirm}
+                      aspectRatio={undefined}
+                    />
+                  )}
 
                   <hr className="border-white/5" />
 
@@ -2165,14 +2198,20 @@ function MobileSlidesEditor({
   const [isMediaOpen, setIsMediaOpen] = useState(false);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
 
+  const [mobileSlideCropSrc, setMobileSlideCropSrc] = useState<string | null>(null);
+
   const handleDirectImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    setMobileSlideCropSrc(URL.createObjectURL(file));
+  };
 
+  const handleMobileSlideCropConfirm = async (blob: Blob) => {
+    setMobileSlideCropSrc(null);
     setIsUploadingImage(true);
     try {
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("file", new File([blob], "mobile-slide.jpg", { type: "image/jpeg" }));
       formData.append("purpose", "general");
 
       const res = await fetch("/api/upload", {

@@ -29,6 +29,7 @@ import {
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
 import ExcelJS from "exceljs";
+import { ImageCropModal } from "@/components/shared/avatar-crop-modal";
 
 type VendorProduct = {
   id: string;
@@ -120,6 +121,8 @@ function ImageUploader({
   const [processing, setProcessing] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
 
+  const [cropSrc, setCropSrc] = useState<string | null>(null);
+
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -128,14 +131,17 @@ function ImageUploader({
       setUploadError(isArabic ? "يرجى اختيار صورة فقط" : "Please select an image file");
       return;
     }
-    if (file.size > 15 * 1024 * 1024) {
-      setUploadError(isArabic ? "الصورة يجب أن تكون أقل من 15MB" : "Image must be less than 15MB");
-      return;
-    }
 
+    setCropSrc(URL.createObjectURL(file));
+    if (inputRef.current) inputRef.current.value = "";
+  }
+
+  async function handleCropConfirm(blob: Blob) {
+    setCropSrc(null);
     setUploadError(null);
     setProcessing(true);
     try {
+      const file = new File([blob], "cropped.jpg", { type: "image/jpeg" });
       const base64 = await compressImage(file);
       onChange(base64);
     } catch {
@@ -201,6 +207,16 @@ function ImageUploader({
 
       {uploadError && (
         <p className="text-xs text-error">{uploadError}</p>
+      )}
+
+      {cropSrc && (
+        <ImageCropModal
+          imageSrc={cropSrc}
+          isArabic={isArabic}
+          onCancel={() => setCropSrc(null)}
+          onConfirm={handleCropConfirm}
+          aspectRatio={undefined}
+        />
       )}
     </div>
   );

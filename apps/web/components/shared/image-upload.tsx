@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import { Upload, Check } from "lucide-react";
+import { ImageCropModal } from "@/components/shared/avatar-crop-modal";
 
 export function ImageUpload({
   label,
@@ -22,18 +23,28 @@ export function ImageUpload({
 }) {
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [cropSrc, setCropSrc] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const isAuth = variant === "auth";
 
-  async function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
+  function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) return;
+    
+    const url = URL.createObjectURL(file);
+    setCropSrc(url);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  }
 
+  async function handleCropConfirm(blob: Blob) {
+    setCropSrc(null);
     setIsUploading(true);
     setError(null);
 
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("file", new File([blob], "upload.jpg", { type: "image/jpeg" }));
     if (purpose) {
       formData.append("purpose", purpose);
     }
@@ -55,9 +66,6 @@ export function ImageUpload({
       setError(err instanceof Error ? err.message : "Upload failed");
     } finally {
       setIsUploading(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
     }
   }
 
@@ -127,6 +135,15 @@ export function ImageUpload({
         />
       </div>
       {error ? <p className="text-xs text-error">{error}</p> : null}
+      {cropSrc && (
+        <ImageCropModal
+          imageSrc={cropSrc}
+          isArabic={isArabic}
+          onCancel={() => setCropSrc(null)}
+          onConfirm={handleCropConfirm}
+          aspectRatio={undefined}
+        />
+      )}
     </div>
   );
 }

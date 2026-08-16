@@ -39,6 +39,7 @@ import type { Locale } from "@/lib/locales";
 import type { ClientFavoritesData, ClientSettingsData, ClientWalletData } from "@/lib/operations-data";
 import { cn } from "@/lib/utils";
 import { EmailVerificationField } from "@/components/worker/worker-extra-pages";
+import { ImageCropModal } from "@/components/shared/avatar-crop-modal";
 
 function formatNumber(locale: Locale, value: number) {
   return new Intl.NumberFormat(locale === "ar" ? "ar-EG" : "en-US", { maximumFractionDigits: 0 }).format(value);
@@ -268,11 +269,13 @@ function SettingsRoleSwitcher({
   locale,
   fullName,
   avatarUrl,
+  onAvatarChange,
   labels
 }: {
   locale: Locale;
   fullName: string;
   avatarUrl?: string | null;
+  onAvatarChange: (file: File) => void;
   labels: {
     modeTitle: string;
     modeNote: string;
@@ -291,38 +294,7 @@ function SettingsRoleSwitcher({
   const [pendingRole, setPendingRole] = useState<"WORKER" | "VENDOR" | null>(null);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [currentAvatar, setCurrentAvatar] = useState(avatarUrl);
-  const [isUploading, setIsUploading] = useState(false);
   const isArabic = locale === "ar";
-
-  useEffect(() => {
-    setCurrentAvatar(avatarUrl);
-  }, [avatarUrl]);
-
-  async function handleAvatarUpload(event: React.ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    setIsUploading(true);
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        body: formData
-      });
-      if (!res.ok) throw new Error("Upload failed");
-      const resData = await res.json();
-      setCurrentAvatar(resData.url);
-      await postApiData("/client/settings", {
-        profile: { avatarUrl: resData.url }
-      });
-    } catch (err) {
-      console.error("Avatar upload failed", err);
-    } finally {
-      setIsUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = "";
-    }
-  }
 
   const initials = fullName
     .split(" ")
@@ -382,15 +354,15 @@ function SettingsRoleSwitcher({
               onClick={() => fileInputRef.current?.click()}
               className="relative h-16 w-16 cursor-pointer overflow-hidden border border-gold bg-[#121212] transition hover:border-gold/80"
             >
-              {currentAvatar ? (
+              {avatarUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={currentAvatar} alt={fullName} className="h-full w-full object-cover transition duration-300 group-hover:scale-105" />
+                <img src={avatarUrl} alt={fullName} className="h-full w-full object-cover transition duration-300 group-hover:scale-105" />
               ) : (
                 <div className="flex h-full w-full items-center justify-center bg-gold text-xl font-black text-black">{initials}</div>
               )}
               <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
                 <Camera className="h-4 w-4 text-gold" />
-                <span className="text-[8px] font-black uppercase text-white">{isUploading ? "..." : isArabic ? "تغيير" : "Change"}</span>
+                <span className="text-[8px] font-black uppercase text-white">{isArabic ? "تغيير" : "Change"}</span>
               </div>
             </div>
             <button
@@ -405,7 +377,7 @@ function SettingsRoleSwitcher({
               type="file"
               accept="image/*"
               ref={fileInputRef}
-              onChange={(e) => void handleAvatarUpload(e)}
+              onChange={(e) => { const file = e.target.files?.[0]; if (file) { onAvatarChange(file); } if (fileInputRef.current) fileInputRef.current.value = ""; }}
               className="hidden"
             />
           </div>
@@ -467,6 +439,26 @@ export function ClientSettingsPage({ locale, initialData }: { locale: Locale; in
   const liveData = useLiveApiData("/clients/settings", initialData);
   const [data, setData] = useState(initialData);
   const [saved, setSaved] = useState(false);
+  const [cropSrc, setCropSrc] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+
+  async function handleCropConfirm(blob: Blob) {
+    setCropSrc(null);
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", new File([blob], "avatar.jpg", { type: "image/jpeg" }));
+      const res = await fetch("/api/upload", { method: "POST", body: formData });
+      if (!res.ok) throw new Error("Upload failed");
+      const { url } = await res.json();
+      await patchApiData("/auth/profile", { avatarUrl: url });
+      setData((prev) => ({ ...prev, profile: { ...prev.profile, avatarUrl: url } }));
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsUploading(false);
+    }
+  }
 
   useEffect(() => {
     setData(liveData);
@@ -560,7 +552,7 @@ export function ClientSettingsPage({ locale, initialData }: { locale: Locale; in
           <SettingsMetric label={labels.smsState} value={labels.smsValue} icon={smsEnabled ? MessageSquare : Mail} muted={!smsEnabled} />
         </div>
 
-        <SettingsRoleSwitcher locale={locale} fullName={fullName} avatarUrl={data.profile.avatarUrl} labels={labels} />
+        <SettingsRoleSwitcher locale={locale} fullName={fullName} avatarUrl={data.profile.avatarUrl} labels={labels} onAvatarChange={(file) => setCropSrc(URL.createObjectURL(file))} />
 
         {saved ? <div className="border border-black bg-white px-4 py-3 text-sm font-black text-black shadow-[4px_4px_0_#000]">{labels.saved}</div> : null}
 
@@ -710,6 +702,15 @@ export function ClientSettingsPage({ locale, initialData }: { locale: Locale; in
           {labels.logout}
         </button>
       </div>
+      {cropSrc && (
+        <ImageCropModal
+          imageSrc={cropSrc}
+          isArabic={isArabic}
+          onCancel={() => setCropSrc(null)}
+          onConfirm={handleCropConfirm}
+          aspectRatio={1}
+        />
+      )}
     </div>
   );
 }
