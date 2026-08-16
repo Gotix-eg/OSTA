@@ -31,6 +31,7 @@ import { cn, getLocalizedError } from "@/lib/utils";
 import { SelectField } from "@/components/shared/select-field";
 import { ImageUpload } from "@/components/shared/image-upload";
 import { egyptianGovernorates, majorCities, vendorCategories, workerProfessions } from "@/lib/geo-data";
+import { WaitlistModal } from "./waitlist-modal";
 
 const MapPicker = dynamic(() => import("@/components/shared/map-picker").then((m) => m.MapPicker), { ssr: false });
 
@@ -413,6 +414,7 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState<"CLIENT" | "WORKER" | "VENDOR">("WORKER");
+  const [isWaitlistModalOpen, setIsWaitlistModalOpen] = useState(false);
 
   // Inline validation error states
   const [phoneError, setPhoneError] = useState<string | null>(null);
@@ -549,12 +551,25 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
 
       <div className="grid gap-6">
         {activeTab === "CLIENT" || activeTab === "VENDOR" ? (
-          <div className="py-12 text-center space-y-4 border border-white/10 bg-black/20 p-6 animate-fadeIn">
+          <div className="py-12 text-center space-y-6 border border-white/10 bg-black/20 p-6 animate-fadeIn">
             <p className="text-gold font-bold text-base leading-relaxed">
               {isArabic 
                 ? `تسجيل دخول وحسابات ${activeTab === "CLIENT" ? "العملاء" : "الموردين"} غير متاحة الآن، وستكون متاحة قريباً.` 
                 : `${activeTab === "CLIENT" ? "Client" : "Vendor"} registration or login is not available now, and it will be soon.`}
             </p>
+            <button
+              type="button"
+              onClick={() => setIsWaitlistModalOpen(true)}
+              className="px-6 py-3 bg-white/5 border border-white/20 text-white font-bold text-sm uppercase tracking-wider hover:bg-white/10 hover:border-gold hover:text-gold transition-colors"
+            >
+              {isArabic ? "أخبرني عندما تكون متاحة" : "Inform me when available"}
+            </button>
+            <WaitlistModal
+              isOpen={isWaitlistModalOpen}
+              onClose={() => setIsWaitlistModalOpen(false)}
+              locale={locale}
+              role={activeTab}
+            />
           </div>
         ) : (
           <>

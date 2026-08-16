@@ -22,6 +22,7 @@ import { settingsRouter } from "../modules/settings/settings.routes.js";
 import { notificationsRouter } from "../modules/notifications/notifications.routes.js";
 import { chatRouter } from "../modules/chat/chat.routes.js";
 import { reviewsRouter } from "../modules/reviews/reviews.routes.js";
+import { waitlistRouter } from "../modules/waitlist/waitlist.routes.js";
 
 export function getCategorySlugFromProfession(profession: string | null | undefined): string {
   if (!profession) return "electrical";
@@ -885,5 +886,6 @@ router.use("/settings", settingsRouter);
 router.use("/notifications", notificationsRouter);
 router.use("/chat", chatRouter);
 router.use("/reviews", reviewsRouter);
+router.use("/waitlist", waitlistRouter);
 
 export const apiRouter = router;

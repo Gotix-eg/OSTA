@@ -1057,3 +1057,14 @@ model AdCampaign {
   @@index([placement])
   @@index([ownerId])
 }
+
+model WaitlistEntry {
+  id        String   @id @default(cuid())
+  role      UserRole
+  email     String?
+  phone     String
+  createdAt DateTime @default(now())
+
+  @@index([role])
+  @@index([createdAt])
+}
