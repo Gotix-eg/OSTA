@@ -24,6 +24,8 @@ function getCategorySlugFromProfession(profession) {
   if (p === "car-mechanic" || p === "سيارات" || p.includes("سيار") || p.includes("car")) return "car_mechanic";
   if (p === "bike-mechanic" || p === "موتوسيكلات" || p.includes("موتوسيك") || p.includes("bike")) return "bike_mechanic";
   if (p === "engine-repair" || p === "مواتير" || p.includes("موتور") || p.includes("engine")) return "engine_repair";
+  if (p === "tailoring" || p === "tailor" || p === "ترزي" || p.includes("ترزي") || p.includes("خياط") || p.includes("tailor")) return "tailoring";
+  if (p === "upholstery" || p === "upholsterer" || p === "منجد" || p.includes("منجد") || p.includes("تنجيد") || p.includes("upholster")) return "upholstery";
   return "electricity";
 }
 

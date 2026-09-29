@@ -33,7 +33,9 @@ function getIconName(slug: string): keyof typeof Ionicons.glyphMap {
     computer: "desktop-outline",
     "computer-repair": "desktop-outline",
     cctv: "videocam-outline",
-    cameras: "videocam-outline"
+    cameras: "videocam-outline",
+    tailoring: "scissors-outline",
+    upholstery: "easel-outline"
   };
   return mapping[slug] || "settings-outline";
 }
@@ -64,7 +66,9 @@ function getServiceImageUrl(slug: string): string {
     cleaning: `${baseUrl}/cleaning.png`,
     "car-mechanic": `${baseUrl}/car-mechanic.png`,
     "bike-mechanic": `${baseUrl}/bike-mechanic.png`,
-    "engine-repair": `${baseUrl}/engine-repair.png`
+    "engine-repair": `${baseUrl}/engine-repair.png`,
+    tailoring: `${baseUrl}/tailoring.png`,
+    upholstery: `${baseUrl}/upholstery.png`
   };
   return mapping[slug] || `${baseUrl}/electrical.png`;
 }

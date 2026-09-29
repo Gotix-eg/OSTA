@@ -156,6 +156,18 @@ const categoryOptions: Record<string, { ar: string; en: string }[]> = {
     { ar: "تعديل جدران وهدم وبناء داخلي", en: "Modifying walls, internal demolition/building" },
     { ar: "تركيب ديكورات وأسقف معلقة (جبس بورد)", en: "Installing decor & suspended ceilings (gypsum board)" },
   ],
+  tailoring: [
+    { ar: "تفصيل بدلة أو فستان أو ملابس حسب المقاس", en: "Custom suit, dress, or garment tailoring" },
+    { ar: "تعديل مقاسات وتضييق/توسيع ملابس", en: "Size adjustments (resizing/fitting)" },
+    { ar: "تقصير بنطلونات وفساين وحواشي", en: "Hemming trousers, skirts, and dresses" },
+    { ar: "تغيير سوست وإصلاح قطع في الملابس", en: "Zipper replacement and garment repair" },
+  ],
+  upholstery: [
+    { ar: "تجديد وتنجيد أنتريه أو صالون بالكامل", en: "Full sofa or salon re-upholstery" },
+    { ar: "تغيير كسوة القماش وتجديد الألوان", en: "Fabric upholstery replacement" },
+    { ar: "تزويد وتغيير حشو الإسفنج والسوست", en: "Foam and spring replacement/padding" },
+    { ar: "تنجيد كراسي وتصليح خداديات وسراير", en: "Chair upholstery & cushion repair" },
+  ],
 };
 
 const whenOptions = [

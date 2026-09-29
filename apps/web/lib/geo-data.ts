@@ -305,7 +305,9 @@ export const workerProfessions: GeoOption[] = [
   { value: "moving", labelEn: "Furniture Mover", labelAr: "نقل عفش وتغليف" },
   { value: "car-mechanic", labelEn: "Car Mechanic", labelAr: "ميكانيكي سيارات" },
   { value: "bike-mechanic", labelEn: "Motorcycle Mechanic", labelAr: "ميكانيكي موتوسيكلات" },
-  { value: "engine-repair", labelEn: "Engine Repair Specialist", labelAr: "صيانة مواتير" }
+  { value: "engine-repair", labelEn: "Engine Repair Specialist", labelAr: "صيانة مواتير" },
+  { value: "tailoring", labelEn: "Tailor", labelAr: "ترزي وتفصيل" },
+  { value: "upholstery", labelEn: "Upholsterer", labelAr: "منجد وتنجيد أثاث" }
 ];
 
 export function formatWorkerProfessionBadges(input: any, isArabic: boolean): string[] {
@@ -382,6 +384,8 @@ function translateProfessionItem(item: string, isArabic: boolean): string {
     if (lower.includes("car") || lower.includes("mechanic")) return "ميكانيكي سيارات";
     if (lower.includes("bike")) return "ميكانيكي موتوسيكلات";
     if (lower.includes("engine")) return "صيانة مواتير";
+    if (lower.includes("tailor") || lower.includes("sew")) return "ترزي وتفصيل";
+    if (lower.includes("upholster")) return "منجد وتنجيد أثاث";
     return item;
   } else {
     if (lower.includes("سباك") || lower.includes("سبا")) return "Plumber";
@@ -404,6 +408,8 @@ function translateProfessionItem(item: string, isArabic: boolean): string {
     if (lower.includes("سيار")) return "Car Mechanic";
     if (lower.includes("موتوسيك")) return "Motorcycle Mechanic";
     if (lower.includes("مواتير") || lower.includes("موتور")) return "Engine Repair Specialist";
+    if (lower.includes("ترزي") || lower.includes("خياط") || lower.includes("تفصيل")) return "Tailor";
+    if (lower.includes("منجد") || lower.includes("تنجيد")) return "Upholsterer";
 
     const cleaned = item.replace(/\s*\([^)]*\)/g, "").trim();
     return cleaned || item;

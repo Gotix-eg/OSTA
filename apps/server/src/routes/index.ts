@@ -56,7 +56,8 @@ export function getCategorySlugFromProfession(profession: string | null | undefi
   if (p.includes("عزل") || p.includes("insulation") || p.includes("proof")) return "insulation";
   if (p.includes("شمسية") || p.includes("solar")) return "solar";
   if (p.includes("حدائق") || p.includes("زراعة") || p.includes("garden") || p.includes("landscape")) return "gardening";
-  if (p.includes("تنجيد") || p.includes("upholstery") || p.includes("أنتريه")) return "upholstery";
+  if (p.includes("ترزي") || p.includes("خياط") || p.includes("تفصيل") || p.includes("tailor")) return "tailoring";
+  if (p.includes("تنجيد") || p.includes("منجد") || p.includes("upholstery") || p.includes("أنتريه")) return "upholstery";
   if (p.includes("غاز") || p.includes("gas")) return "gas";
   if (p.includes("سباحة") || p.includes("مسبح") || p.includes("pool")) return "pools";
   if (p.includes("سمكري") || p.includes("دوكو") || p.includes("car-body")) return "car-body";
@@ -102,6 +103,10 @@ const SERVER_PROFESSION_MAP: Record<string, { ar: string; en: string }> = {
   bikemechanic: { ar: "ميكانيكي موتوسيكلات", en: "Motorcycle Mechanic" },
   "engine-repair": { ar: "صيانة مواتير", en: "Engine Repair Specialist" },
   enginerepair: { ar: "صيانة مواتير", en: "Engine Repair Specialist" },
+  tailor: { ar: "ترزي وتفصيل", en: "Tailor" },
+  tailoring: { ar: "ترزي وتفصيل", en: "Tailoring" },
+  upholsterer: { ar: "منجد وتنجيد أثاث", en: "Upholsterer" },
+  upholstery: { ar: "منجد وتنجيد أثاث", en: "Upholstery" },
 };
 
 function translateProfessionServerItem(item: string): { ar: string; en: string } {
@@ -136,6 +141,8 @@ function translateProfessionServerItem(item: string): { ar: string; en: string }
   if (lower.includes("سيار")) return { ar: "ميكانيكي سيارات", en: "Car Mechanic" };
   if (lower.includes("موتوسيك")) return { ar: "ميكانيكي موتوسيكلات", en: "Motorcycle Mechanic" };
   if (lower.includes("مواتير") || lower.includes("موتور")) return { ar: "صيانة مواتير", en: "Engine Repair Specialist" };
+  if (lower.includes("ترزي") || lower.includes("خياط") || lower.includes("تفصيل")) return { ar: "ترزي وتفصيل", en: "Tailor" };
+  if (lower.includes("تنجيد") || lower.includes("منجد")) return { ar: "منجد وتنجيد أثاث", en: "Upholsterer" };
 
   if (lower.includes("plumb")) return { ar: "سباكة", en: "Plumber" };
   if (lower.includes("electr")) return { ar: "كهرباء", en: "Electrician" };

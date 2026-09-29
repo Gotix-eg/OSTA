@@ -743,5 +743,67 @@ export const serviceCategories: ServiceCategory[] = [
         description: { ar: "تركيب شاشات وأرفف وإصلاحات خفيفة.", en: "TV mounting and minor fixes." }
       }
     ]
+  },
+  {
+    id: "tailoring",
+    slug: "tailoring",
+    icon: "Scissors",
+    workersAvailable: 190,
+    name: { ar: "ترزي وتفصيل", en: "Tailor" },
+    description: {
+      ar: "تفصيل وخياطة الملابس، وتعديل المقاسات وإصلاح الأقمشة.",
+      en: "Custom garment tailoring, clothing repairs, alterations, and custom fitting."
+    },
+    services: [
+      {
+        id: "tailoring-custom",
+        slug: "tailoring-custom",
+        name: { ar: "تفصيل وتعديل ملابس", en: "Custom Tailoring & Fitting" },
+        description: {
+          ar: "تفصيل بدلات وفساتين وملابس حسب المقاس مع تعديل المقاسات.",
+          en: "Custom suits, dresses, and clothing alterations."
+        }
+      },
+      {
+        id: "tailoring-repair",
+        slug: "tailoring-repair",
+        name: { ar: "تصليح وترميم ملابس", en: "Clothing Repair & Stitching" },
+        description: {
+          ar: "تقصير بنطلونات، تغيير سوسة، وتثبيت وتصليح الملابس.",
+          en: "Hemming, zipper replacement, and clothing repairs."
+        }
+      }
+    ]
+  },
+  {
+    id: "upholstery",
+    slug: "upholstery",
+    icon: "Armchair",
+    workersAvailable: 240,
+    name: { ar: "منجد وتنجيد أثاث", en: "Upholsterer" },
+    description: {
+      ar: "تنجيد وتجديد الأنتريهات والصالونات، تغيير الإسفنج والقماش وتصليح الأثاث.",
+      en: "Sofa and armchair upholstery, cushion re-padding, and fabric replacement."
+    },
+    services: [
+      {
+        id: "upholstery-sofa",
+        slug: "upholstery-sofa",
+        name: { ar: "تنجيد أنتريهات وصالونات", en: "Sofa & Couch Upholstery" },
+        description: {
+          ar: "تجديد وتنجيد كامل للأنتريهات والصالونات وركنيات المعيشة.",
+          en: "Complete re-upholstery for sofas, couches, and living sets."
+        }
+      },
+      {
+        id: "upholstery-cushion",
+        slug: "upholstery-cushion",
+        name: { ar: "تغيير إسفنج وأقمشة", en: "Cushion & Fabric Replacement" },
+        description: {
+          ar: "تعديل حشو الإسفنج وتغيير أقمشة الكنب والكراسي والخداديات.",
+          en: "Replacing foam padding, seat cushions, and furniture upholstery fabric."
+        }
+      }
+    ]
   }
 ];

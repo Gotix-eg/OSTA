@@ -23,7 +23,9 @@ const serviceImages: Record<string, string> = {
   ac: "https://lh3.googleusercontent.com/aida-public/AB6AXuDvFMjd2ZtJaYv7nDjvS_gkgZJEtZkt8t4IYRggrKpGcqULySwW2zaa4zDemr22X5cwx5Ati0gtxbsBb13axmYy3f-w90ZmO_Xs6hCMCVFgE611SrRZntRCMIEEDnWjOPCsqjNmJ0qqiMRSoqq5P2jlji1As7oy_6cDAI8_uar3TPG2CM9CY53v5SGZ5W3xllmTsQGlFaJbSbSwNUcbb1V0uAeEH5EkGFEcj00JS7Wec0qjq-3PbN0hqM1esfxHX5Qqqc1yWyqiNes",
   "ac-maintenance": "https://lh3.googleusercontent.com/aida-public/AB6AXuDvFMjd2ZtJaYv7nDjvS_gkgZJEtZkt8t4IYRggrKpGcqULySwW2zaa4zDemr22X5cwx5Ati0gtxbsBb13axmYy3f-w90ZmO_Xs6hCMCVFgE611SrRZntRCMIEEDnWjOPCsqjNmJ0qqiMRSoqq5P2jlji1As7oy_6cDAI8_uar3TPG2CM9CY53v5SGZ5W3xllmTsQGlFaJbSbSwNUcbb1V0uAeEH5EkGFEcj00JS7Wec0qjq-3PbN0hqM1esfxHX5Qqqc1yWyqiNes",
   painting: "https://lh3.googleusercontent.com/aida-public/AB6AXuDcJb2n56wQexHYRH4gH4fvGF2wPV_cVeslINqGn09LSGdNZasRBxwkhdMVw9f3s8EITjKLXgef4kHXxehQUtPeCDHi-8CqwiAqQ5acm2Rh22fB8XY7nu0ZqGtjIx0_69MqWdQ-LahX0HHm_6vAu7ycdMueBz2u8-OPZvghmu6iLH4oOoYlaC9CYNhl8fPGXKZnPeCp9azh00foyZCrqcAQUa6FHIXAkkXiNaHLY0b3RYIkMfNpaXHH0BRk-4GHYbSxs51-OUyQZjY",
-  appliances: "https://lh3.googleusercontent.com/aida-public/AB6AXuBUaJL8m48Bpe_ujODneuoPvDhfmC9U-Zof1pGoXVy11MeUd0XRYsVEFmXl_CHdnj6n8RbrD1wOlgE1kA7IG3s5mprEpYrgocNSvPhqy5uhDaQhZEqaJuck7qJZ1jR6r1bFPs6IU44hEor3AkW1KdTuFfAsh8CsbDieBqYLx2wNXuaLZl37PYkCkUCIWDG8qwLx8czzHu1d-qQv4WUtm0SOr3HbUStlA5shYeNw653FVGST0q9y0pT1gInSJ0yNH2xUyr1BM4IQxo4"
+  appliances: "https://lh3.googleusercontent.com/aida-public/AB6AXuBUaJL8m48Bpe_ujODneuoPvDhfmC9U-Zof1pGoXVy11MeUd0XRYsVEFmXl_CHdnj6n8RbrD1wOlgE1kA7IG3s5mprEpYrgocNSvPhqy5uhDaQhZEqaJuck7qJZ1jR6r1bFPs6IU44hEor3AkW1KdTuFfAsh8CsbDieBqYLx2wNXuaLZl37PYkCkUCIWDG8qwLx8czzHu1d-qQv4WUtm0SOr3HbUStlA5shYeNw653FVGST0q9y0pT1gInSJ0yNH2xUyr1BM4IQxo4",
+  tailoring: "/images/services/tailoring.png",
+  upholstery: "/images/services/upholstery.png"
 };
 
 const serviceDescriptions: Record<string, { ar: string; en: string }> = {
@@ -34,7 +36,9 @@ const serviceDescriptions: Record<string, { ar: string; en: string }> = {
   ac: { ar: "صيانة وتركيب أجهزة التكييف والتهوية لبيئة حرارية مثالية متوازنة.", en: "Climate control solutions, maintenance, and ventilation optimization." },
   "ac-maintenance": { ar: "صيانة وتركيب أجهزة التكييف والتهوية لبيئة حرارية مثالية متوازنة.", en: "Climate control solutions, maintenance, and ventilation optimization." },
   painting: { ar: "تشطيبات دهانات وتأثيرات ديكورية ممتازة بمواد عالية الجودة والمقاومة.", en: "Premium interior and exterior finishing with high-durability coatings." },
-  appliances: { ar: "إصلاح وصيانة الأجهزة المنزلية والمطابخ الذكية بمعدات فنية موثوقة.", en: "Repair and installation of modern smart appliances and industrial kitchens." }
+  appliances: { ar: "إصلاح وصيانة الأجهزة المنزلية والمطابخ الذكية بمعدات فنية موثوقة.", en: "Repair and installation of modern smart appliances and industrial kitchens." },
+  tailoring: { ar: "تفصيل وتقصير وخياطة الملابس، وتعديل المقاسات وإصلاح الأقمشة.", en: "Custom garment tailoring, clothing repairs, alterations, and custom fitting." },
+  upholstery: { ar: "تنجيد وتجديد الأنتريهات والصالونات، تغيير الإسفنج والقماش وتصليح الأثاث.", en: "Sofa and armchair upholstery, cushion re-padding, and fabric replacement." }
 };
 
 export function ServicesListing({ locale }: { locale: Locale }) {

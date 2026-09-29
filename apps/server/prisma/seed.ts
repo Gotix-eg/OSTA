@@ -24,7 +24,8 @@ const CORE_CATEGORIES = [
   { nameAr: "تنظيف وتعقيم منازل", nameEn: "Home Cleaning", slug: "cleaning", icon: "sparkles", imageUrl: "/images/services/cleaning.png" },
   { nameAr: "ميكانيكي سيارات", nameEn: "Car Mechanic", slug: "car-mechanic", icon: "settings", imageUrl: "/images/services/car-mechanic.png" },
   { nameAr: "ميكانيكي موتوسيكلات", nameEn: "Motorcycle Mechanic", slug: "bike-mechanic", icon: "settings", imageUrl: "/images/services/bike-mechanic.png" },
-  { nameAr: "صيانة مواتير", nameEn: "Engine Repair", slug: "engine-repair", icon: "hammer", imageUrl: "/images/services/engine-repair.png" },
+  { nameAr: "ترزي وتفصيل", nameEn: "Tailoring & Sewing", slug: "tailoring", icon: "scissors", imageUrl: "/images/services/tailoring.png" },
+  { nameAr: "تنجيد أثاث", nameEn: "Upholstery", slug: "upholstery", icon: "armchair", imageUrl: "/images/services/upholstery.png" },
 ];
 
 async function main() {

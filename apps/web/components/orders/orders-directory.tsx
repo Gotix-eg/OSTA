@@ -36,6 +36,8 @@ const CRAFTS = [
   { id: "plastering", name: { ar: "أعمال محارة", en: "Plastering" } },
   { id: "ironwork", name: { ar: "حدادة", en: "Ironwork" } },
   { id: "finishing", name: { ar: "تشطيبات شاملة", en: "Finishing" } },
+  { id: "tailoring", name: { ar: "ترزي وتفصيل", en: "Tailoring" } },
+  { id: "upholstery", name: { ar: "منجد وتنجيد أثاث", en: "Upholstery" } },
 ];
 
 const POPULAR_NEIGHBORHOODS: Record<string, { value: string; labelAr: string; labelEn: string }[]> = {

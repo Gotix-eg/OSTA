@@ -523,6 +523,36 @@ export const serviceCategories = [
       { id: "mount-tv", slug: "mount-tv", name: { ar: "تركيب شاشات وأرفف", en: "TV & Shelf Mounting" } },
       { id: "minor-repairs", slug: "minor-repairs", name: { ar: "إصلاحات منزلية خفيفة", en: "Minor Household Repairs" } }
     ]
+  },
+  {
+    id: "tailoring",
+    slug: "tailoring",
+    icon: "Scissors",
+    workersAvailable: 190,
+    name: { ar: "ترزي وتفصيل", en: "Tailor" },
+    description: {
+      ar: "تفصيل وخياطة الملابس، وتعديل المقاسات وإصلاح الأقمشة.",
+      en: "Custom garment tailoring, clothing repairs, alterations, and custom fitting."
+    },
+    services: [
+      { id: "tailoring-custom", slug: "tailoring-custom", name: { ar: "تفصيل وتعديل ملابس", en: "Custom Tailoring & Fitting" } },
+      { id: "tailoring-repair", slug: "tailoring-repair", name: { ar: "تصليح وترميم ملابس", en: "Clothing Repair & Stitching" } }
+    ]
+  },
+  {
+    id: "upholstery",
+    slug: "upholstery",
+    icon: "Armchair",
+    workersAvailable: 240,
+    name: { ar: "منجد وتنجيد أثاث", en: "Upholsterer" },
+    description: {
+      ar: "تنجيد وتجديد الأنتريهات والصالونات، تغيير الإسفنج والقماش وتصليح الأثاث.",
+      en: "Sofa and armchair upholstery, cushion re-padding, and fabric replacement."
+    },
+    services: [
+      { id: "upholstery-sofa", slug: "upholstery-sofa", name: { ar: "تنجيد أنتريهات وصالونات", en: "Sofa & Couch Upholstery" } },
+      { id: "upholstery-cushion", slug: "upholstery-cushion", name: { ar: "تغيير إسفنج وأقمشة", en: "Cushion & Fabric Replacement" } }
+    ]
   }
 ] as const;
 
