@@ -16,51 +16,51 @@ interface ServiceCategory {
 }
 
 const serviceImages: Record<string, string> = {
-  electrical: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=1000&auto=format&fit=crop",
-  electricity: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=1000&auto=format&fit=crop",
-  plumbing: "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?q=80&w=1000&auto=format&fit=crop",
-  carpentry: "https://images.unsplash.com/photo-1601058268499-e52658b8bb88?q=80&w=1000&auto=format&fit=crop",
-  ac: "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?q=80&w=1000&auto=format&fit=crop",
-  "ac-maintenance": "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?q=80&w=1000&auto=format&fit=crop",
-  "ac-technician": "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?q=80&w=1000&auto=format&fit=crop",
-  painting: "https://images.unsplash.com/photo-1562259949-e8e7689d7828?q=80&w=1000&auto=format&fit=crop",
-  appliances: "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?q=80&w=1000&auto=format&fit=crop",
-  "appliance-repair": "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?q=80&w=1000&auto=format&fit=crop",
-  aluminum: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=1000&auto=format&fit=crop",
-  networks: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?q=80&w=1000&auto=format&fit=crop",
-  "computer-networks": "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?q=80&w=1000&auto=format&fit=crop",
-  computer: "https://images.unsplash.com/photo-1588508065123-287b28e013da?q=80&w=1000&auto=format&fit=crop",
-  "computer-repair": "https://images.unsplash.com/photo-1588508065123-287b28e013da?q=80&w=1000&auto=format&fit=crop",
-  cctv: "https://images.unsplash.com/photo-1557597774-9d273605dfa9?q=80&w=1000&auto=format&fit=crop",
-  cameras: "https://images.unsplash.com/photo-1557597774-9d273605dfa9?q=80&w=1000&auto=format&fit=crop",
-  "camera-installation": "https://images.unsplash.com/photo-1557597774-9d273605dfa9?q=80&w=1000&auto=format&fit=crop",
-  tiling: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=1000&auto=format&fit=crop",
-  ceramic: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=1000&auto=format&fit=crop",
-  plastering: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=1000&auto=format&fit=crop",
-  ironwork: "https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122?q=80&w=1000&auto=format&fit=crop",
-  finishing: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1000&auto=format&fit=crop",
-  gypsum: "https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=1000&auto=format&fit=crop",
-  moving: "https://images.unsplash.com/photo-1600518464441-9154a4dea21b?q=80&w=1000&auto=format&fit=crop",
-  cleaning: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?q=80&w=1000&auto=format&fit=crop",
-  "car-mechanic": "https://images.unsplash.com/photo-1486006920555-c77dce18193b?q=80&w=1000&auto=format&fit=crop",
-  "bike-mechanic": "https://images.unsplash.com/photo-1558981806-ec527fa84c39?q=80&w=1000&auto=format&fit=crop",
-  "engine-repair": "https://images.unsplash.com/photo-1517524008697-84bbe3c3fd98?q=80&w=1000&auto=format&fit=crop",
-  elevators: "https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?q=80&w=1000&auto=format&fit=crop",
-  "car-body": "https://images.unsplash.com/photo-1617814076367-b759c7d7e738?q=80&w=1000&auto=format&fit=crop",
-  "car-keys": "https://images.unsplash.com/photo-1582139329536-e7284fece509?q=80&w=1000&auto=format&fit=crop",
-  gas: "https://images.unsplash.com/photo-1542013936693-884638332954?q=80&w=1000&auto=format&fit=crop",
-  pools: "https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?q=80&w=1000&auto=format&fit=crop",
-  handyman: "https://images.unsplash.com/photo-1508873696983-2df515122519?q=80&w=1000&auto=format&fit=crop",
+  electrical: "/images/services/electrical.png",
+  electricity: "/images/services/electrical.png",
+  plumbing: "/images/services/plumbing.png",
+  carpentry: "/images/services/carpentry.png",
+  ac: "/images/services/ac.png",
+  "ac-maintenance": "/images/services/ac.png",
+  "ac-technician": "/images/services/ac.png",
+  painting: "/images/services/painting.png",
+  appliances: "/images/services/appliances.png",
+  "appliance-repair": "/images/services/appliances.png",
+  aluminum: "/images/services/aluminum.png",
+  networks: "/images/services/networks.png",
+  "computer-networks": "/images/services/networks.png",
+  computer: "/images/services/computer.png",
+  "computer-repair": "/images/services/computer.png",
+  cctv: "/images/services/cctv.png",
+  cameras: "/images/services/cctv.png",
+  "camera-installation": "/images/services/cctv.png",
+  tiling: "/images/services/tiling.png",
+  ceramic: "/images/services/tiling.png",
+  plastering: "/images/services/plastering.png",
+  ironwork: "/images/services/ironwork.png",
+  finishing: "/images/services/finishing.png",
+  gypsum: "/images/services/gypsum.png",
+  moving: "/images/services/moving.png",
+  cleaning: "/images/services/cleaning.png",
+  "car-mechanic": "/images/services/car-mechanic.png",
+  "bike-mechanic": "/images/services/bike-mechanic.png",
+  "engine-repair": "/images/services/engine-repair.png",
+  elevators: "/images/services/engine-repair.png",
+  "car-body": "/images/services/car-mechanic.png",
+  "car-keys": "/images/services/car-mechanic.png",
+  gas: "/images/services/plumbing.png",
+  pools: "/images/services/plumbing.png",
+  handyman: "/images/services/carpentry.png",
   tailoring: "/images/services/tailoring.png",
   upholstery: "/images/services/upholstery.png",
-  glass: "https://images.unsplash.com/photo-1509644851169-2acc08aa25b5?q=80&w=1000&auto=format&fit=crop",
-  curtains: "https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=1000&auto=format&fit=crop",
-  flooring: "https://images.unsplash.com/photo-1516455590571-18256e5bb9ff?q=80&w=1000&auto=format&fit=crop",
-  satellite: "https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?q=80&w=1000&auto=format&fit=crop",
-  "smart-home": "https://images.unsplash.com/photo-1558002038-1055907df827?q=80&w=1000&auto=format&fit=crop",
-  insulation: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=1000&auto=format&fit=crop",
-  solar: "https://images.unsplash.com/photo-1509391365360-2e959784a276?q=80&w=1000&auto=format&fit=crop",
-  gardening: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?q=80&w=1000&auto=format&fit=crop"
+  glass: "/images/services/aluminum.png",
+  curtains: "/images/services/tailoring.png",
+  flooring: "/images/services/tiling.png",
+  satellite: "/images/services/cctv.png",
+  "smart-home": "/images/services/networks.png",
+  insulation: "/images/services/plastering.png",
+  solar: "/images/services/electrical.png",
+  gardening: "/images/services/cleaning.png"
 };
 
 const serviceDescriptions: Record<string, { ar: string; en: string }> = {
@@ -157,7 +157,9 @@ export function ServicesListing({ locale }: { locale: Locale }) {
       {/* Services Bento/Grid */}
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
         {filteredCategories.map((cat) => {
-          const imgUrl = cat.imageUrl || serviceImages[cat.slug] || serviceImages[cat.icon] || "https://images.unsplash.com/photo-1581092160562-40aa08e78837?q=80&w=800&auto=format&fit=crop";
+          const rawImg = cat.imageUrl;
+          const mappedImg = serviceImages[cat.slug] || serviceImages[cat.icon];
+          const imgUrl = (rawImg && rawImg.startsWith("/images/")) ? rawImg : mappedImg || "/images/services/electrical.png";
           const desc = serviceDescriptions[cat.slug] || serviceDescriptions[cat.icon] || { ar: "صيانة منزلية عالية الجودة وأعمال تشطيبات معتمدة.", en: "High-quality home maintenance and verified craftsmanship." };
           return (
             <div key={cat.id} className="group flex min-h-[320px] flex-col justify-between overflow-hidden rounded-none border border-white/10 bg-black text-white md:min-h-[460px] md:p-6">
@@ -166,6 +168,9 @@ export function ServicesListing({ locale }: { locale: Locale }) {
                   <img 
                     src={imgUrl} 
                     alt="" 
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = "/images/services/electrical.png";
+                    }}
                     className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent md:hidden" />
