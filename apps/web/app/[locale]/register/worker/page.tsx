@@ -34,8 +34,8 @@ export default async function RegisterWorkerPage({
       title={authCopy[locale].registerWorkerTitle}
       description={
         locale === "ar"
-          ? "رحلة مهنية من 5 خطوات تشمل المعلومات المهنية، مناطق العمل، والمستندات المطلوبة للتوثيق."
-          : "A 5-step professional onboarding flow including work details, service areas, and verification documents."
+          ? "سجّل بياناتك الأساسية كفني أو صنايعي معتمد للبدء في استقبال طلبات العملاء فوراً."
+          : "Register your basic info as a verified technician and start receiving client requests."
       }
     >
       <WorkerRegisterForm locale={locale} initial={{ phone, firstName, lastName }} />

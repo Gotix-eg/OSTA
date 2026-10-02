@@ -22,8 +22,18 @@ function getErrorString(payload: any, status: number): string {
   if (!payload) {
     return `Request failed with ${status}`;
   }
-  if (typeof payload.error === "string") {
+  // Prioritize human-friendly message from the server if present
+  if (typeof payload.message === "string" && payload.message.trim().length > 0) {
+    return payload.message;
+  }
+  if (typeof payload.error === "string" && payload.error.trim().length > 0) {
     return payload.error;
+  }
+  if (payload.message && typeof payload.message === "object") {
+    if (typeof payload.message.message === "string") {
+      return payload.message.message;
+    }
+    return JSON.stringify(payload.message);
   }
   if (payload.error && typeof payload.error === "object") {
     if (typeof payload.error.message === "string") {
@@ -33,15 +43,6 @@ function getErrorString(payload: any, status: number): string {
       return payload.error.code;
     }
     return JSON.stringify(payload.error);
-  }
-  if (typeof payload.message === "string") {
-    return payload.message;
-  }
-  if (payload.message && typeof payload.message === "object") {
-    if (typeof payload.message.message === "string") {
-      return payload.message.message;
-    }
-    return JSON.stringify(payload.message);
   }
   return `Request failed with ${status}`;
 }

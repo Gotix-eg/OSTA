@@ -16,16 +16,36 @@ const ERROR_TRANSLATIONS: Record<string, Record<Locale, string>> = {
     en: "Incorrect phone number or password. Please try again.",
   },
   PHONE_EXISTS: {
-    ar: "رقم الهاتف هذا مسجل بالفعل. يرجى استخدام رقم آخر أو تسجيل الدخول.",
-    en: "This phone number is already registered. Please use another number or sign in.",
+    ar: "رقم الهاتف هذا مسجل بالفعل. يرجى تسجيل الدخول أو استعادة كلمة المرور.",
+    en: "This phone number is already registered. Please sign in or reset your password.",
+  },
+  PROFILE_EXISTS: {
+    ar: "هذا الرقم مسجل بالفعل كفني على المنصة. يمكنك تسجيل الدخول إلى حسابك أو استعادة كلمة المرور إذا نسيتها.",
+    en: "An account for this role already exists with this phone number. Please sign in or reset your password.",
   },
   EMAIL_EXISTS: {
     ar: "البريد الإلكتروني هذا مسجل بالفعل.",
     en: "This email is already registered.",
   },
+  EMAIL_ALREADY_EXISTS: {
+    ar: "البريد الإلكتروني هذا مسجل بالفعل لحساب آخر.",
+    en: "This email is already registered to another account.",
+  },
+  USER_EXISTS: {
+    ar: "هذا الحساب مسجل بالفعل. يمكنك تسجيل الدخول مباشرة.",
+    en: "This account already exists. Please log in.",
+  },
   NATIONAL_ID_EXISTS: {
-    ar: "الرقم القومي هذا مسجل بالفعل.",
+    ar: "الرقم القومي هذا مسجل بالفعل لحساب آخر.",
     en: "This National ID is already registered.",
+  },
+  UNIQUE_CONSTRAINT_FAILED: {
+    ar: "هذه البيانات (رقم الهاتف أو البريد الإلكتروني) مسجلة بالفعل لدينا.",
+    en: "These credentials are already registered.",
+  },
+  RATE_LIMITED: {
+    ar: "تم تجاوز الحد المسموح من المحاولات. يرجى الانتظار بضع دقائق ثم المحاولة مجدداً.",
+    en: "Too many attempts. Please wait a few minutes and try again.",
   },
   USER_NOT_FOUND: {
     ar: "المستخدم غير موجود. يرجى التحقق من المدخلات.",
@@ -72,9 +92,16 @@ export function getLocalizedError(errorMsgOrCode: string, locale: Locale): strin
     }
   }
 
-  // If already in Arabic, return it
+  // If already in Arabic, return it directly
   if (locale === "ar" && /[\u0600-\u06FF]/.test(code)) {
     return code;
+  }
+
+  // If code is an unmapped technical error code (e.g. UPPER_SNAKE_CASE), provide a clean human message
+  if (/^[A-Z0-9_]{3,}$/.test(code)) {
+    return locale === "ar"
+      ? "عذراً، حدث خطأ أثناء إتمام العملية. يرجى المحاولة مرة أخرى أو التواصل مع الدعم."
+      : "An unexpected error occurred. Please try again or contact support.";
   }
 
   return locale === "ar" ? `حدث خطأ: ${code}` : code;

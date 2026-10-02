@@ -413,8 +413,27 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const isSubmittingRef = useRef(false);
   const [activeTab, setActiveTab] = useState<"CLIENT" | "WORKER" | "VENDOR">("WORKER");
   const [isWaitlistModalOpen, setIsWaitlistModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const sp = new URLSearchParams(window.location.search);
+      const qPhone = sp.get("phone");
+      const qRole = sp.get("role");
+      if (qPhone) {
+        setPhone(formatEgyptianPhone(qPhone));
+      }
+      if (qRole === "worker") {
+        setActiveTab("WORKER");
+      } else if (qRole === "client") {
+        setActiveTab("CLIENT");
+      } else if (qRole === "vendor") {
+        setActiveTab("VENDOR");
+      }
+    }
+  }, []);
 
   // Inline validation error states
   const [phoneError, setPhoneError] = useState<string | null>(null);
@@ -442,6 +461,8 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
     };
 
   async function handleLogin() {
+    if (isSubmitting || isSubmittingRef.current) return;
+
     let isValid = true;
 
     const cleanLoginPhone = phone.replace(/\s+/g, "");
@@ -464,6 +485,7 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
 
     if (!isValid) return;
 
+    isSubmittingRef.current = true;
     setIsSubmitting(true);
     setError(null);
 
@@ -511,6 +533,7 @@ export function LoginForm({ locale, isAdmin = false }: { locale: Locale; isAdmin
       const errorMsg = loginError instanceof Error ? loginError.message : (loginError?.message || String(loginError));
       setError(getLocalizedError(errorMsg, locale));
     } finally {
+      isSubmittingRef.current = false;
       setIsSubmitting(false);
     }
   }
@@ -1089,8 +1112,11 @@ export function WorkerRegisterForm({ locale, initial }: { locale: Locale; initia
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const isSubmittingRef = useRef(false);
 
   async function handleRegister() {
+    if (isSubmitting || isSubmittingRef.current) return;
+    isSubmittingRef.current = true;
     setIsSubmitting(true);
     setError(null);
 
@@ -1157,6 +1183,7 @@ export function WorkerRegisterForm({ locale, initial }: { locale: Locale; initia
     } catch (err) {
       setError(getLocalizedError(err instanceof Error ? err.message : "", locale));
     } finally {
+      isSubmittingRef.current = false;
       setIsSubmitting(false);
     }
   }
@@ -1260,16 +1287,53 @@ export function WorkerRegisterForm({ locale, initial }: { locale: Locale; initia
           </label>
 
           <button
-            type="button"
-            onClick={handleRegister}
+            type="submit"
             disabled={isSubmitting}
-            className="flex w-full py-2.5 items-center justify-center gap-2 bg-gold text-xs font-black uppercase text-black shadow-[3px_3px_0_#000] transition-transform active:translate-x-0.5 active:translate-y-0.5 active:shadow-none disabled:opacity-50 mt-1"
+            className="flex w-full py-2.5 items-center justify-center gap-2 bg-gold text-xs font-black uppercase text-black shadow-[3px_3px_0_#000] transition-transform active:translate-x-0.5 active:translate-y-0.5 active:shadow-none disabled:opacity-50 mt-1 cursor-pointer"
           >
-            {isSubmitting ? (isArabic ? "جاري إرسال الطلب..." : "Submitting Application...") : (isArabic ? "إرسال طلب الانضمام" : "Submit Application")}
-            {!isSubmitting && <ArrowUpRight className="h-4 w-4" />}
+            {isSubmitting ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin text-black" />
+                <span>{isArabic ? "جاري إرسال الطلب..." : "Submitting Application..."}</span>
+              </>
+            ) : (
+              <>
+                <span>{isArabic ? "إرسال طلب الانضمام" : "Submit Application"}</span>
+                <ArrowUpRight className="h-4 w-4" />
+              </>
+            )}
           </button>
 
-          {error && <div className="animate-shake border border-red-500/20 bg-red-500/5 p-2 text-center text-[11px] font-bold text-red-500">{error}</div>}
+          {error && (
+            <div className="space-y-2 mt-2">
+              <div className="animate-shake border border-red-500/20 bg-red-500/5 p-2.5 text-center text-[11px] font-bold text-red-500">
+                {error}
+              </div>
+              {(error.includes("مسجل بالفعل") || error.includes("حساب") || error.includes("PROFILE_EXISTS")) && (
+                <div className="border border-gold/30 bg-gold/10 p-2.5 text-center space-y-2 animate-fadeIn">
+                  <p className="text-[11px] font-semibold text-white/90">
+                    {isArabic
+                      ? "هل قمت بالتسجيل مسبقاً؟ يمكنك تسجيل الدخول إلى حسابك مباشرة:"
+                      : "Already have an account? Sign in directly:"}
+                  </p>
+                  <div className="flex items-center justify-center gap-2">
+                    <Link
+                      href={`/${locale}/login?role=worker&phone=${encodeURIComponent(state.phone.replace(/\s+/g, ""))}`}
+                      className="inline-flex items-center gap-1 bg-gold px-3 py-1.5 text-xs font-black text-black hover:bg-gold/90 transition shadow-sm"
+                    >
+                      {isArabic ? "تسجيل الدخول الآن" : "Sign In Now"}
+                    </Link>
+                    <Link
+                      href={`/${locale}/forgot-password`}
+                      className="text-xs font-bold text-gold underline underline-offset-2 hover:text-white transition"
+                    >
+                      {isArabic ? "نسيت كلمة المرور؟" : "Forgot Password?"}
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </form>
       )}
     </div>

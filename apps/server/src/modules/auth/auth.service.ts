@@ -181,7 +181,30 @@ export const authService = {
         (input.role === "VENDOR" && existingUser.vendorProfile);
 
       if (alreadyHasProfile) {
-        throw new ApiError(409, "لديك حساب من هذا النوع بالفعل على هذا الرقم", "PROFILE_EXISTS");
+        // If the password matches, the user already owns this account and is either
+        // retrying after a double-click or returning to log in via the ad form.
+        // Log them in seamlessly instead of failing with an error!
+        const isPasswordCorrect = await verifyPassword(input.password, existingUser.passwordHash);
+        if (isPasswordCorrect) {
+          const tokens = await createSession(existingUser.id, input.role as UserRole);
+          return {
+            ...tokens,
+            user: {
+              id: existingUser.id,
+              role: input.role,
+              firstName: existingUser.firstName,
+              lastName: existingUser.lastName,
+              phone: existingUser.phone,
+              email: existingUser.email,
+              avatarUrl: existingUser.avatarUrl,
+              hasWorkerProfile: Boolean(existingUser.workerProfile),
+              hasVendorProfile: Boolean(existingUser.vendorProfile),
+              hasClientProfile: Boolean(existingUser.clientProfile),
+            }
+          };
+        }
+
+        throw new ApiError(409, "رقم الهاتف مسجل بالفعل كفني على المنصة. يمكنك تسجيل الدخول إلى حسابك أو استعادة كلمة المرور إذا نسيتها.", "PROFILE_EXISTS");
       }
 
       // Same phone, no profile of this type yet: link the new profile to the
