@@ -26,7 +26,10 @@ import {
   Sparkles,
   Lock,
   MessageSquare,
-  Crop
+  Crop,
+  UploadCloud,
+  Trash2,
+  Save
 } from "lucide-react";
 import { formatAuditActionName } from "./worker-history-logs";
 import { AdminImageEditModal } from "./admin-image-edit-modal";
@@ -176,6 +179,11 @@ export function WorkerVerificationWizard({
   onWorkerUpdated
 }: WorkerVerificationWizardProps) {
   const isArabic = locale === "ar";
+  const [currentWorker, setCurrentWorker] = useState<WorkerForWizard>(worker);
+  const [nationalIdInput, setNationalIdInput] = useState<string>(worker.nationalIdNumber || "");
+  const [savingNationalId, setSavingNationalId] = useState(false);
+  const [uploadingField, setUploadingField] = useState<string | null>(null);
+
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [stepNotes, setStepNotes] = useState<Record<string, string>>({});
   const [stepVerifications, setStepVerifications] = useState<Record<string, StepVerificationRecord>>(
@@ -191,22 +199,24 @@ export function WorkerVerificationWizard({
   const [editingImage, setEditingImage] = useState<{ url: string; field: string; aspect?: number } | null>(null);
 
   useEffect(() => {
+    setCurrentWorker(worker);
+    setNationalIdInput(worker.nationalIdNumber || "");
     if (worker.stepVerifications) {
       setStepVerifications(worker.stepVerifications);
     }
   }, [worker]);
 
   useEffect(() => {
-    if (isOpen && worker.id) {
+    if (isOpen && currentWorker.id) {
       fetchAuditLogs();
     }
-  }, [isOpen, worker.id]);
+  }, [isOpen, currentWorker.id]);
 
   const fetchAuditLogs = async () => {
     setLoadingLogs(true);
     try {
       const res = await fetchApiData<AuditLogEntry[]>(
-        `/admin/workers/${worker.id}/audit-logs`,
+        `/admin/workers/${currentWorker.id}/audit-logs`,
         []
       );
       const list = Array.isArray(res) ? res : (res as any).data || [];
@@ -241,7 +251,7 @@ export function WorkerVerificationWizard({
           status: "VERIFIED" | "REJECTED" | "FLAGGED";
           notes?: string;
         }
-      >(`/admin/workers/${worker.id}/verify-step`, {
+      >(`/admin/workers/${currentWorker.id}/verify-step`, {
         stepKey,
         status,
         notes: noteText
@@ -249,8 +259,12 @@ export function WorkerVerificationWizard({
 
       if (response && response.stepVerifications) {
         setStepVerifications(response.stepVerifications);
-        if (response.worker && onWorkerUpdated) {
-          onWorkerUpdated(response.worker);
+        if (response.worker) {
+          setCurrentWorker(response.worker);
+          setNationalIdInput(response.worker.nationalIdNumber || "");
+          if (onWorkerUpdated) {
+            onWorkerUpdated(response.worker);
+          }
         }
       } else {
         setStepVerifications(prev => ({
@@ -316,7 +330,7 @@ export function WorkerVerificationWizard({
 
       const newUrl = data.data.url;
 
-      const patchRes = await patchApiData(`/admin/workers/${worker.id}`, {
+      const patchRes = await patchApiData(`/admin/workers/${currentWorker.id}`, {
         [field]: newUrl
       });
       
@@ -324,8 +338,10 @@ export function WorkerVerificationWizard({
 
       setFeedback({ type: "success", text: isArabic ? "تم حفظ الصورة والتعديلات بنجاح!" : "Photo saved successfully!" });
       
+      const updated = { ...currentWorker, [field]: newUrl };
+      setCurrentWorker(updated);
       if (onWorkerUpdated) {
-        onWorkerUpdated({ ...worker, [field]: newUrl });
+        onWorkerUpdated(updated);
       }
     } catch (err) {
       console.error("Failed to edit photo", err);
@@ -334,6 +350,219 @@ export function WorkerVerificationWizard({
       setEditingImage(null);
       setLoadingStep(null);
     }
+  };
+
+  const handleDirectUpload = async (field: string, file: File) => {
+    setUploadingField(field);
+    setFeedback(null);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch("/api/upload", { method: "POST", body: formData });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error || "Upload failed");
+
+      const newUrl = data.data.url;
+
+      const patchRes = await patchApiData(`/admin/workers/${currentWorker.id}`, {
+        [field]: newUrl
+      });
+      if (!patchRes) throw new Error("Failed to update worker document");
+
+      const updated = { ...currentWorker, [field]: newUrl };
+      setCurrentWorker(updated);
+      if (onWorkerUpdated) onWorkerUpdated(updated);
+
+      setFeedback({
+        type: "success",
+        text: isArabic ? "تم رفع وحفظ المستند بنجاح!" : "Document uploaded & saved successfully!"
+      });
+    } catch (err: any) {
+      console.error("Direct upload failed", err);
+      setFeedback({
+        type: "error",
+        text: err?.message || (isArabic ? "فشل رفع الملف" : "Upload failed")
+      });
+    } finally {
+      setUploadingField(null);
+    }
+  };
+
+  const handleDeleteDoc = async (field: string) => {
+    if (!confirm(isArabic ? "هل أنت متأكد من رغبتك في حذف هذا المستند؟" : "Are you sure you want to delete this document?")) return;
+    setUploadingField(field);
+    setFeedback(null);
+    try {
+      await patchApiData(`/admin/workers/${currentWorker.id}`, { [field]: null });
+      const updated = { ...currentWorker, [field]: null };
+      setCurrentWorker(updated);
+      if (onWorkerUpdated) onWorkerUpdated(updated);
+      setFeedback({
+        type: "success",
+        text: isArabic ? "تم حذف المستند بنجاح." : "Document deleted successfully."
+      });
+    } catch (err: any) {
+      console.error("Delete doc failed", err);
+      setFeedback({
+        type: "error",
+        text: err?.message || (isArabic ? "فشل حذف المستند" : "Failed to delete document")
+      });
+    } finally {
+      setUploadingField(null);
+    }
+  };
+
+  const handleSaveNationalId = async () => {
+    const trimmed = nationalIdInput.trim();
+    if (trimmed && trimmed.length !== 14) {
+      setFeedback({
+        type: "error",
+        text: isArabic ? "يجب أن يتكون الرقم القومي من 14 رقماً" : "National ID must be 14 digits"
+      });
+      return;
+    }
+    setSavingNationalId(true);
+    setFeedback(null);
+    try {
+      await patchApiData(`/admin/workers/${currentWorker.id}`, {
+        nationalIdNumber: trimmed || null
+      });
+      const updated = { ...currentWorker, nationalIdNumber: trimmed || null };
+      setCurrentWorker(updated);
+      if (onWorkerUpdated) onWorkerUpdated(updated);
+      setFeedback({
+        type: "success",
+        text: isArabic ? "تم حفظ الرقم القومي بنجاح!" : "National ID saved successfully!"
+      });
+    } catch (err: any) {
+      setFeedback({
+        type: "error",
+        text: err?.message || (isArabic ? "فشل حفظ الرقم القومي" : "Failed to save National ID")
+      });
+    } finally {
+      setSavingNationalId(false);
+    }
+  };
+
+  const renderDocBox = (
+    fieldKey: string,
+    title: string,
+    url: string | null | undefined,
+    aspect?: number
+  ) => {
+    const isUploading = uploadingField === fieldKey;
+    return (
+      <div className="bg-onyx-950 border border-white/10 rounded-2xl p-3 flex flex-col justify-between min-h-[220px] space-y-2.5 hover:border-gold-500/30 transition-all shadow-md">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1.5 min-w-0">
+            <span className="text-xs font-bold text-white truncate">{title}</span>
+            {url ? (
+              <span className="h-2 w-2 rounded-full bg-emerald-500 shrink-0" title={isArabic ? "تم الرفع" : "Uploaded"} />
+            ) : (
+              <span className="h-2 w-2 rounded-full bg-amber-500 animate-pulse shrink-0" title={isArabic ? "مطلوب" : "Missing"} />
+            )}
+          </div>
+          {url && (
+            <div className="flex items-center gap-1 shrink-0">
+              <button
+                type="button"
+                onClick={() => setEditingImage({ url, field: fieldKey, aspect })}
+                className="text-[10px] bg-gold-500/10 text-gold-400 border border-gold-500/20 rounded px-1.5 py-0.5 hover:bg-gold-500 hover:text-black transition flex items-center gap-1"
+              >
+                <Crop className="h-3 w-3" />
+                {isArabic ? "قص" : "Crop"}
+              </button>
+              <button
+                type="button"
+                disabled={isUploading}
+                onClick={() => handleDeleteDoc(fieldKey)}
+                className="text-[10px] bg-red-500/10 text-red-400 border border-red-500/20 rounded px-1.5 py-0.5 hover:bg-red-500 hover:text-white transition"
+                title={isArabic ? "حذف" : "Delete"}
+              >
+                <Trash2 className="h-3 w-3" />
+              </button>
+            </div>
+          )}
+        </div>
+
+        {url ? (
+          <div className="space-y-2">
+            <div
+              onClick={() => setLightboxUrl(url)}
+              className="relative group rounded-xl overflow-hidden border border-white/10 bg-black cursor-pointer aspect-video sm:aspect-[4/3] flex items-center justify-center"
+            >
+              <img src={url} alt={title} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1 text-white text-[11px] font-bold">
+                <Eye className="h-3.5 w-3.5" />
+                <span>{isArabic ? "عرض بالحجم الكامل" : "View"}</span>
+              </div>
+            </div>
+
+            <label className="w-full flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-xl bg-onyx-900 border border-white/10 hover:border-gold-500/40 text-[11px] font-bold text-onyx-300 hover:text-white transition cursor-pointer">
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                disabled={isUploading}
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handleDirectUpload(fieldKey, file);
+                  e.target.value = "";
+                }}
+              />
+              {isUploading ? (
+                <>
+                  <Loader2 className="h-3.5 w-3.5 animate-spin text-gold-500" />
+                  <span className="text-gold-500">{isArabic ? "جاري الرفع..." : "Uploading..."}</span>
+                </>
+              ) : (
+                <>
+                  <UploadCloud className="h-3.5 w-3.5 text-gold-500" />
+                  <span>{isArabic ? "استبدال بصورة أخرى" : "Replace Image"}</span>
+                </>
+              )}
+            </label>
+          </div>
+        ) : (
+          <div className="flex-1 flex flex-col justify-center items-center py-4 border-2 border-dashed border-white/10 hover:border-gold-500/40 rounded-xl bg-onyx-900/40 text-center transition-all">
+            <label className="w-full h-full flex flex-col items-center justify-center p-3 cursor-pointer group">
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                disabled={isUploading}
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handleDirectUpload(fieldKey, file);
+                  e.target.value = "";
+                }}
+              />
+              {isUploading ? (
+                <div className="space-y-1.5 flex flex-col items-center">
+                  <Loader2 className="h-7 w-7 animate-spin text-gold-500" />
+                  <span className="text-xs font-bold text-gold-500">{isArabic ? "جاري الرفع..." : "Uploading..."}</span>
+                </div>
+              ) : (
+                <div className="space-y-2 flex flex-col items-center">
+                  <div className="h-9 w-9 rounded-full bg-gold-500/10 flex items-center justify-center group-hover:bg-gold-500 transition-colors">
+                    <UploadCloud className="h-4.5 w-4.5 text-gold-500 group-hover:text-black transition-colors" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-white group-hover:text-gold-400 transition-colors">
+                      {isArabic ? `رفع ${title}` : `Upload ${title}`}
+                    </p>
+                    <p className="text-[10px] text-onyx-400 mt-0.5">
+                      {isArabic ? "اضغط لاختيار صورة من جهازك" : "Click to browse file"}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </label>
+          </div>
+        )}
+      </div>
+    );
   };
 
   const getStepBadge = (key: VerificationStepKey) => {
@@ -370,11 +599,11 @@ export function WorkerVerificationWizard({
           <div className="flex items-center gap-2.5 min-w-0">
             <div className="relative shrink-0">
               <img
-                src={worker.avatarUrl || worker.selfieWithId || `https://ui-avatars.com/api/?name=${encodeURIComponent(worker.name)}&background=1f1f23&color=eab308&bold=true`}
-                alt={worker.name}
+                src={currentWorker.avatarUrl || currentWorker.selfieWithId || `https://ui-avatars.com/api/?name=${encodeURIComponent(currentWorker.name)}&background=1f1f23&color=eab308&bold=true`}
+                alt={currentWorker.name}
                 className="h-9 w-9 rounded-xl object-cover border-2 border-gold-500/40 shadow-md"
               />
-              {worker.status === "VERIFIED" && (
+              {currentWorker.status === "VERIFIED" && (
                 <div className="absolute -bottom-1 -end-1 bg-emerald-500 text-onyx-950 p-0.5 rounded-full ring-2 ring-onyx-950">
                   <CheckCircle2 className="h-3 w-3" />
                 </div>
@@ -382,17 +611,17 @@ export function WorkerVerificationWizard({
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-1.5">
-                <h2 className="text-sm font-black text-white truncate">{worker.name}</h2>
+                <h2 className="text-sm font-black text-white truncate">{currentWorker.name}</h2>
                 <span className={cn(
                   "hidden sm:inline-block px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider shrink-0",
-                  worker.status === "VERIFIED" ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30" : "bg-amber-500/20 text-amber-400 border border-amber-500/30"
+                  currentWorker.status === "VERIFIED" ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30" : "bg-amber-500/20 text-amber-400 border border-amber-500/30"
                 )}>
-                  {worker.status === "VERIFIED" ? (isArabic ? "موثق بالكامل" : "Fully Verified") : (isArabic ? "قيد التوثيق" : "In Verification")}
+                  {currentWorker.status === "VERIFIED" ? (isArabic ? "موثق بالكامل" : "Fully Verified") : (isArabic ? "قيد التوثيق" : "In Verification")}
                 </span>
               </div>
               <p className="text-[11px] text-onyx-400 flex items-center gap-1.5 truncate">
-                <span>{worker.profession || worker.specialty}</span>
-                {worker.phone && <span className="dir-ltr text-onyx-300">• {worker.phone}</span>}
+                <span>{currentWorker.profession || currentWorker.specialty}</span>
+                {currentWorker.phone && <span className="dir-ltr text-onyx-300">• {currentWorker.phone}</span>}
               </p>
             </div>
           </div>
@@ -572,13 +801,13 @@ export function WorkerVerificationWizard({
                   <div className="bg-onyx-950 p-4 rounded-xl border border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="min-w-0">
                       <span className="text-[11px] text-onyx-400 block">{isArabic ? "رقم الهاتف المسجل:" : "Registered Phone Number:"}</span>
-                      <span className="text-xl font-black text-gold-400 dir-ltr block truncate">{worker.phone || (isArabic ? "غير متوفر" : "N/A")}</span>
-                      <span className="text-[11px] text-onyx-400 block">{isArabic ? `اسم العامل: ${worker.name}` : `Worker Name: ${worker.name}`}</span>
+                      <span className="text-xl font-black text-gold-400 dir-ltr block truncate">{currentWorker.phone || (isArabic ? "غير متوفر" : "N/A")}</span>
+                      <span className="text-[11px] text-onyx-400 block">{isArabic ? `اسم العامل: ${currentWorker.name}` : `Worker Name: ${currentWorker.name}`}</span>
                     </div>
 
-                    {worker.phone && (
+                    {currentWorker.phone && (
                       <a
-                        href={`tel:${worker.phone}`}
+                        href={`tel:${currentWorker.phone}`}
                         className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gold-500 text-onyx-950 font-black text-xs shadow-lg shadow-gold-500/20 hover:scale-105 transition-all shrink-0"
                       >
                         <PhoneCall className="h-4 w-4" />
@@ -590,189 +819,60 @@ export function WorkerVerificationWizard({
               )}
 
               {currentStep.key === "national_id" && (
-                <div className="onyx-card p-4 border-white/10">
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="space-y-1.5 text-center">
-                      <span className="text-[11px] font-bold text-onyx-300 block">{isArabic ? "وجه البطاقة" : "ID Front"}</span>
-                      {worker.nationalIdFront ? (
-                        <div className="relative group rounded-xl overflow-hidden border border-white/10 bg-black">
-                          <img src={worker.nationalIdFront} alt="ID Front" className="h-32 w-full object-cover" />
-                          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all flex flex-col items-center justify-center gap-1.5">
-                            <button
-                              onClick={() => setLightboxUrl(worker.nationalIdFront!)}
-                              className="flex items-center justify-center text-white text-[11px] font-bold gap-1 hover:text-gold-400"
-                            >
-                              <Eye className="h-4 w-4" />
-                              {isArabic ? "معاينة" : "Preview"}
-                            </button>
-                            <button
-                              onClick={() => setEditingImage({ url: worker.nationalIdFront!, field: "nationalIdFront", aspect: undefined })}
-                              className="flex items-center justify-center text-white text-[11px] font-bold gap-1 hover:text-gold-400"
-                            >
-                              <Crop className="h-4 w-4" />
-                              {isArabic ? "تعديل" : "Edit"}
-                            </button>
-                          </div>
-                        </div>
-                      ) : null}
+                <div className="space-y-4">
+                  {/* National ID 14 digits input */}
+                  <div className="onyx-card p-3.5 border-white/10 bg-onyx-900/60 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs font-bold text-onyx-300 flex items-center gap-1.5">
+                        <ShieldCheck className="h-4 w-4 text-gold-500" />
+                        <span>{isArabic ? "الرقم القومي (14 رقم)" : "14-Digit National ID Number"}</span>
+                      </label>
+                      {currentWorker.nationalIdNumber && (
+                        <span className="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                          {isArabic ? "مسجل بالنظام" : "Saved"}
+                        </span>
+                      )}
                     </div>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        maxLength={14}
+                        value={nationalIdInput}
+                        onChange={(e) => setNationalIdInput(e.target.value.replace(/\D/g, ""))}
+                        placeholder="29801011234567"
+                        className="flex-1 bg-onyx-950 border border-white/10 rounded-xl px-3 py-2 text-xs font-mono tracking-wider text-gold-400 placeholder:text-onyx-600 focus:outline-none focus:border-gold-500 text-center"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleSaveNationalId}
+                        disabled={savingNationalId}
+                        className="px-3 py-2 rounded-xl bg-gold-500 hover:bg-gold-400 text-onyx-950 font-black text-xs transition flex items-center gap-1 shrink-0 disabled:opacity-50"
+                      >
+                        {savingNationalId ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
+                        <span>{isArabic ? "حفظ الرقم" : "Save ID"}</span>
+                      </button>
+                    </div>
+                  </div>
 
-                    <div className="space-y-1.5 text-center">
-                      <span className="text-[11px] font-bold text-onyx-300 block">{isArabic ? "ظهر البطاقة" : "ID Back"}</span>
-                      {worker.nationalIdBack ? (
-                        <div className="relative group rounded-xl overflow-hidden border border-white/10 bg-black">
-                          <img src={worker.nationalIdBack} alt="ID Back" className="h-32 w-full object-cover" />
-                          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all flex flex-col items-center justify-center gap-1.5">
-                            <button
-                              onClick={() => setLightboxUrl(worker.nationalIdBack!)}
-                              className="flex items-center justify-center text-white text-[11px] font-bold gap-1 hover:text-gold-400"
-                            >
-                              <Eye className="h-4 w-4" />
-                              {isArabic ? "معاينة" : "Preview"}
-                            </button>
-                            <button
-                              onClick={() => setEditingImage({ url: worker.nationalIdBack!, field: "nationalIdBack", aspect: undefined })}
-                              className="flex items-center justify-center text-white text-[11px] font-bold gap-1 hover:text-gold-400"
-                            >
-                              <Crop className="h-4 w-4" />
-                              {isArabic ? "تعديل" : "Edit"}
-                            </button>
-                          </div>
-                        </div>
-                      ) : null}
-                    </div>
+                  {/* ID Scans */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {renderDocBox("nationalIdFront", isArabic ? "وجه بطاقة الرقم القومي" : "National ID Front", currentWorker.nationalIdFront)}
+                    {renderDocBox("nationalIdBack", isArabic ? "ظهر بطاقة الرقم القومي" : "National ID Back", currentWorker.nationalIdBack)}
                   </div>
                 </div>
               )}
 
               {currentStep.key === "avatar" && (
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="onyx-card p-4 space-y-2 text-center border-white/5">
-                    <span className="text-[11px] font-bold text-gold-400 block">{isArabic ? "صورة الملف الشخصي" : "Profile Avatar"}</span>
-                    {worker.avatarUrl ? (
-                      <div className="relative group inline-block mx-auto">
-                        <img
-                          src={worker.avatarUrl}
-                          alt="Avatar"
-                          className="h-28 w-28 rounded-2xl object-cover border-2 border-gold-500/30 mx-auto shadow-xl"
-                        />
-                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all rounded-2xl flex flex-col items-center justify-center gap-2">
-                          <button
-                            onClick={() => setLightboxUrl(worker.avatarUrl!)}
-                            className="flex items-center justify-center text-white font-bold text-[11px] gap-1 hover:text-gold-400"
-                          >
-                            <Eye className="h-4 w-4" />
-                            {isArabic ? "تكبير" : "Zoom"}
-                          </button>
-                          <button
-                            onClick={() => setEditingImage({ url: worker.avatarUrl!, field: "avatarUrl", aspect: 1 })}
-                            className="flex items-center justify-center text-white font-bold text-[11px] gap-1 hover:text-gold-400"
-                          >
-                            <Crop className="h-4 w-4" />
-                            {isArabic ? "تعديل" : "Edit"}
-                          </button>
-                        </div>
-                      </div>
-                    ) : null}
-                  </div>
-
-                  <div className="onyx-card p-4 space-y-2 text-center border-white/5">
-                    <span className="text-[11px] font-bold text-gold-400 block">{isArabic ? "سيلفي مع البطاقة" : "Selfie with ID"}</span>
-                    {worker.selfieWithId ? (
-                      <div className="relative group inline-block mx-auto">
-                        <img
-                          src={worker.selfieWithId}
-                          alt="Selfie with ID"
-                          className="h-28 w-28 rounded-2xl object-cover border-2 border-gold-500/30 mx-auto shadow-xl"
-                        />
-                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all rounded-2xl flex flex-col items-center justify-center gap-2">
-                          <button
-                            onClick={() => setLightboxUrl(worker.selfieWithId!)}
-                            className="flex items-center justify-center text-white font-bold text-[11px] gap-1 hover:text-gold-400"
-                          >
-                            <Eye className="h-4 w-4" />
-                            {isArabic ? "تكبير" : "Zoom"}
-                          </button>
-                          <button
-                            onClick={() => setEditingImage({ url: worker.selfieWithId!, field: "selfieWithId", aspect: undefined })}
-                            className="flex items-center justify-center text-white font-bold text-[11px] gap-1 hover:text-gold-400"
-                          >
-                            <Crop className="h-4 w-4" />
-                            {isArabic ? "تعديل" : "Edit"}
-                          </button>
-                        </div>
-                      </div>
-                    ) : null}
-                  </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {renderDocBox("avatarUrl", isArabic ? "صورة الملف الشخصي للفني" : "Profile Avatar", currentWorker.avatarUrl, 1)}
+                  {renderDocBox("selfieWithId", isArabic ? "سيلفي الفني حاملاً البطاقة" : "Selfie with ID Card", currentWorker.selfieWithId)}
                 </div>
               )}
 
-              {/* Step 4: Background & Address Docs */}
               {currentStep.key === "documents" && (
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="onyx-card p-3.5 border-white/10 space-y-2">
-                    <h4 className="text-[11px] font-bold text-gold-400 flex items-center gap-1.5">
-                      <FileText className="h-3.5 w-3.5" />
-                      {isArabic ? "الفيش الجنائي" : "Criminal Record"}
-                    </h4>
-                    {worker.criminalRecord ? (
-                      <div className="relative group rounded-xl overflow-hidden border border-white/10 bg-black">
-                        <img src={worker.criminalRecord} alt="Criminal record" className="h-28 w-full object-cover" />
-                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all flex flex-col items-center justify-center gap-1.5">
-                          <button
-                            onClick={() => setLightboxUrl(worker.criminalRecord!)}
-                            className="flex items-center justify-center text-white text-[11px] font-bold gap-1 hover:text-gold-400"
-                          >
-                            <Eye className="h-4 w-4" />
-                            {isArabic ? "عرض" : "View"}
-                          </button>
-                          <button
-                            onClick={() => setEditingImage({ url: worker.criminalRecord!, field: "criminalRecord", aspect: undefined })}
-                            className="flex items-center justify-center text-white text-[11px] font-bold gap-1 hover:text-gold-400"
-                          >
-                            <Crop className="h-4 w-4" />
-                            {isArabic ? "تعديل" : "Edit"}
-                          </button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="h-28 rounded-xl bg-onyx-900 border border-white/10 flex items-center justify-center text-onyx-500 text-[11px] text-center px-2">
-                        {isArabic ? "لم يتم إرفاق الفيش الجنائي" : "No criminal record attached"}
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="onyx-card p-3.5 border-white/10 space-y-2">
-                    <h4 className="text-[11px] font-bold text-gold-400 flex items-center gap-1.5">
-                      <FileText className="h-3.5 w-3.5" />
-                      {isArabic ? "إيصال المرافق" : "Utility Bill"}
-                    </h4>
-                    {worker.utilityBillUrl ? (
-                      <div className="relative group rounded-xl overflow-hidden border border-white/10 bg-black">
-                        <img src={worker.utilityBillUrl} alt="Utility Bill" className="h-28 w-full object-cover" />
-                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all flex flex-col items-center justify-center gap-1.5">
-                          <button
-                            onClick={() => setLightboxUrl(worker.utilityBillUrl!)}
-                            className="flex items-center justify-center text-white text-[11px] font-bold gap-1 hover:text-gold-400"
-                          >
-                            <Eye className="h-4 w-4" />
-                            {isArabic ? "عرض" : "View"}
-                          </button>
-                          <button
-                            onClick={() => setEditingImage({ url: worker.utilityBillUrl!, field: "utilityBillUrl", aspect: undefined })}
-                            className="flex items-center justify-center text-white text-[11px] font-bold gap-1 hover:text-gold-400"
-                          >
-                            <Crop className="h-4 w-4" />
-                            {isArabic ? "تعديل" : "Edit"}
-                          </button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="h-28 rounded-xl bg-onyx-900 border border-white/10 flex items-center justify-center text-onyx-500 text-[11px] text-center px-2">
-                        {isArabic ? "لم يتم إرفاق إيصال مرافق" : "No utility bill attached"}
-                      </div>
-                    )}
-                  </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {renderDocBox("criminalRecord", isArabic ? "صحيفة الحالة الجنائية (الفيش)" : "Criminal Record", currentWorker.criminalRecord)}
+                  {renderDocBox("utilityBillUrl", isArabic ? "إيصال المرافق (غاز/كهرباء/مياه)" : "Utility Bill", currentWorker.utilityBillUrl)}
                 </div>
               )}
 
@@ -794,7 +894,7 @@ export function WorkerVerificationWizard({
 
                   <div className="pt-1 flex justify-center">
                     <a
-                      href={`/${locale}/workers/${worker.id}`}
+                      href={`/${locale}/workers/${currentWorker.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-lg shadow-blue-500/20 transition-all hover:-translate-y-0.5"

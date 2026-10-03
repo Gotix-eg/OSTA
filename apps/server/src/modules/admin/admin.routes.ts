@@ -1252,6 +1252,7 @@ router.patch("/workers/:id", catchAsync(async (request, response) => {
     profession, bio, yearsOfExperience, orderQuota, verificationStatus, rating,
     totalJobsCompleted, walletBalance, isOnline, isAvailable, galleryVideoUrl,
     education, achievements, galleryImages,
+    nationalIdNumber,
     nationalIdFront, nationalIdBack, selfieWithId, criminalRecord, utilityBillUrl
   } = request.body as {
     firstName?: string;
@@ -1272,11 +1273,12 @@ router.patch("/workers/:id", catchAsync(async (request, response) => {
     education?: string[];
     achievements?: string[];
     galleryImages?: string[];
-    nationalIdFront?: string;
-    nationalIdBack?: string;
-    selfieWithId?: string;
-    criminalRecord?: string;
-    utilityBillUrl?: string;
+    nationalIdNumber?: string | null;
+    nationalIdFront?: string | null;
+    nationalIdBack?: string | null;
+    selfieWithId?: string | null;
+    criminalRecord?: string | null;
+    utilityBillUrl?: string | null;
   };
 
   const worker = await prisma.workerProfile.findUnique({
@@ -1316,6 +1318,7 @@ router.patch("/workers/:id", catchAsync(async (request, response) => {
       education: education !== undefined ? education : undefined,
       achievements: achievements !== undefined ? achievements : undefined,
       galleryImages: galleryImages !== undefined ? galleryImages : undefined,
+      nationalIdNumber: nationalIdNumber !== undefined ? (nationalIdNumber ? nationalIdNumber.trim() : null) : undefined,
       nationalIdFront: nationalIdFront !== undefined ? nationalIdFront : undefined,
       nationalIdBack: nationalIdBack !== undefined ? nationalIdBack : undefined,
       selfieWithId: selfieWithId !== undefined ? selfieWithId : undefined,

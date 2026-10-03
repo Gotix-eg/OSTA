@@ -6,7 +6,7 @@ import {
   Plus, User, Phone, Mail, Search, Loader2, Wrench, Star,
   ShieldCheck, Trash2, Wallet, Eye, X, Edit, Users,
   CheckCircle2, XCircle, Clock3, AlertTriangle, ExternalLink, Settings, UserCheck, Sparkles,
-  Key, Copy, Check, MessageCircle, Send, RefreshCw
+  Key, Copy, Check, MessageCircle, Send, RefreshCw, UploadCloud, Crop
 } from "lucide-react";
 import { fetchApiData, postApiData, patchApiData, deleteApiData } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
@@ -98,6 +98,12 @@ export function AdminWorkersManagement({ locale }: { locale: Locale }) {
   const [editingDoc, setEditingDoc] = useState<{ key: string; url: string; label: string } | null>(null);
   const [selectedWorker, setSelectedWorker] = useState<Worker | null>(null);
   const [wizardWorker, setWizardWorker] = useState<WorkerForWizard | null>(null);
+
+  // Verification & Document Upload States
+  const [uploadingDocKey, setUploadingDocKey] = useState<string | null>(null);
+  const [isEditingNationalId, setIsEditingNationalId] = useState(false);
+  const [nationalIdInput, setNationalIdInput] = useState("");
+  const [savingNationalId, setSavingNationalId] = useState(false);
 
   // Edit form state
   const [editFirstName, setEditFirstName] = useState("");
@@ -211,6 +217,101 @@ export function AdminWorkersManagement({ locale }: { locale: Locale }) {
     } finally {
       setActionLoading(false);
       setEditingDoc(null);
+    }
+  }
+
+  // Direct Document Upload by Admin
+  async function handleDirectDocUpload(docKey: string, file: File) {
+    if (!selectedWorker) return;
+    setUploadingDocKey(docKey);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("purpose", "registration-document");
+
+      const uploadRes = await fetch("/api/upload", {
+        method: "POST",
+        body: formData
+      });
+
+      if (!uploadRes.ok) {
+        const errData = await uploadRes.json().catch(() => ({}));
+        throw new Error(errData.error || errData.message || (isArabic ? "فشل رفع الملف" : "Failed to upload file"));
+      }
+
+      const uploadData = await uploadRes.json();
+      const newUrl = uploadData.url;
+
+      const patchPayload = docKey === "avatarUrl" ? { avatarUrl: newUrl } : { [docKey]: newUrl };
+      const patchRes = await patchApiData(`/admin/workers/${selectedWorker.id}`, patchPayload);
+
+      if (patchRes) {
+        const patchData = patchRes as any;
+        const updatedWorkerObj = {
+          ...selectedWorker,
+          ...patchData,
+          ...(docKey === "avatarUrl" ? { user: { ...selectedWorker.user, avatarUrl: newUrl } } : {})
+        };
+        setSelectedWorker(updatedWorkerObj);
+        setWorkers(prev => prev.map(w => w.id === selectedWorker.id ? { ...w, ...updatedWorkerObj } : w));
+      }
+    } catch (err: any) {
+      alert(err?.message || (isArabic ? "فشل رفع المستند" : "Failed to upload document"));
+    } finally {
+      setUploadingDocKey(null);
+    }
+  }
+
+  // Delete Document by Admin
+  async function handleDeleteDoc(docKey: string) {
+    if (!selectedWorker) return;
+    if (!confirm(isArabic ? "هل أنت متأكد من رغبتك في حذف هذا المستند؟" : "Are you sure you want to delete this document?")) {
+      return;
+    }
+    setUploadingDocKey(docKey);
+    try {
+      const patchPayload = docKey === "avatarUrl" ? { avatarUrl: null } : { [docKey]: null };
+      const patchRes = await patchApiData(`/admin/workers/${selectedWorker.id}`, patchPayload);
+      if (patchRes) {
+        const patchData = patchRes as any;
+        const updatedWorkerObj = {
+          ...selectedWorker,
+          ...patchData,
+          [docKey]: null,
+          ...(docKey === "avatarUrl" ? { user: { ...selectedWorker.user, avatarUrl: null } } : {})
+        };
+        setSelectedWorker(updatedWorkerObj);
+        setWorkers(prev => prev.map(w => w.id === selectedWorker.id ? { ...w, ...updatedWorkerObj } : w));
+      }
+    } catch (err: any) {
+      alert(err?.message || (isArabic ? "فشل حذف المستند" : "Failed to delete document"));
+    } finally {
+      setUploadingDocKey(null);
+    }
+  }
+
+  // Save National ID Number
+  async function handleSaveNationalId() {
+    if (!selectedWorker) return;
+    setSavingNationalId(true);
+    try {
+      const trimmed = nationalIdInput.trim();
+      const patchRes = await patchApiData(`/admin/workers/${selectedWorker.id}`, {
+        nationalIdNumber: trimmed || null
+      });
+      if (patchRes) {
+        const updatedWorkerObj = {
+          ...selectedWorker,
+          nationalIdNumber: trimmed || null
+        };
+        setSelectedWorker(updatedWorkerObj);
+        setWorkers(prev => prev.map(w => w.id === selectedWorker.id ? { ...w, ...updatedWorkerObj } : w));
+        setIsEditingNationalId(false);
+      }
+    } catch (err: any) {
+      alert(err?.message || (isArabic ? "فشل حفظ الرقم القومي" : "Failed to save National ID"));
+    } finally {
+      setSavingNationalId(false);
     }
   }
 
@@ -743,21 +844,33 @@ https://osta.gotix.me/ar/login
                     <span className="hidden lg:inline">{isArabic ? "دخول كصنايعي" : "Edit as Worker"}</span>
                   </button>
 
-                  {/* Review & Approve Documents / Add Quota Button */}
-                  {worker.verificationStatus !== "VERIFIED" ? (
-                    <button
-                      onClick={() => {
-                        setSelectedWorker(worker);
-                        setShowDecisionPanel(true);
-                        setDetailsModalOpen(true);
-                      }}
-                      title={isArabic ? "فحص وتوثيق المستندات" : "Review & Approve Documents"}
-                      className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-amber-500 text-onyx-950 font-black text-xs hover:bg-amber-400 transition-all shadow-md cursor-pointer"
-                    >
-                      <ShieldCheck className="h-3.5 w-3.5" />
-                      <span className="hidden lg:inline">{isArabic ? "فحص وتوثيق" : "Review Docs"}</span>
-                    </button>
-                  ) : (
+                  {/* Review & Upload Documents Button - ALWAYS available for ALL workers */}
+                  <button
+                    onClick={() => {
+                      setSelectedWorker(worker);
+                      setShowDecisionPanel(worker.verificationStatus !== "VERIFIED");
+                      setDetailsModalOpen(true);
+                      setNationalIdInput(worker.nationalIdNumber || "");
+                      setIsEditingNationalId(false);
+                    }}
+                    title={isArabic ? "فحص ورفع مستندات التوثيق" : "Review & Upload Documents"}
+                    className={cn(
+                      "inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg font-black text-xs transition-all shadow-md cursor-pointer",
+                      worker.verificationStatus !== "VERIFIED"
+                        ? "bg-amber-500 text-onyx-950 hover:bg-amber-400"
+                        : "bg-onyx-900 border border-gold-500/40 text-gold-400 hover:bg-gold-500 hover:text-onyx-950"
+                    )}
+                  >
+                    <ShieldCheck className="h-3.5 w-3.5" />
+                    <span className="hidden lg:inline">
+                      {worker.verificationStatus !== "VERIFIED"
+                        ? (isArabic ? "فحص وتوثيق" : "Review Docs")
+                        : (isArabic ? "مستندات التوثيق" : "Docs & Verify")}
+                    </span>
+                  </button>
+
+                  {/* Add Quota Button for Verified Workers */}
+                  {worker.verificationStatus === "VERIFIED" && (
                     <button
                       onClick={() => handleAddQuota(worker.id)}
                       disabled={actionId === worker.id}
@@ -766,21 +879,6 @@ https://osta.gotix.me/ar/login
                     >
                       {actionId === worker.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Plus className="h-3.5 w-3.5" />}
                       <span className="hidden lg:inline">{isArabic ? "إضافة رصيد" : "Add Quota"}</span>
-                    </button>
-                  )}
-
-                  {/* Documents Button - Only rendered for already VERIFIED workers */}
-                  {worker.verificationStatus === "VERIFIED" && (
-                    <button
-                      onClick={() => {
-                        setSelectedWorker(worker);
-                        setShowDecisionPanel(false);
-                        setDetailsModalOpen(true);
-                      }}
-                      className="h-8 w-8 rounded-lg bg-onyx-900 border border-onyx-700 flex items-center justify-center text-gold-500 hover:text-onyx-950 hover:bg-gold-500 transition-all shrink-0"
-                      title={isArabic ? "عرض المستندات والملف" : "View Docs & Profile"}
-                    >
-                      <Eye className="h-3.5 w-3.5" />
                     </button>
                   )}
 
@@ -899,12 +997,33 @@ https://osta.gotix.me/ar/login
             </button>
 
             <div className="flex items-center gap-5">
-              <div className="h-20 w-20 rounded-2xl overflow-hidden bg-onyx-950 border border-gold-500/30 shrink-0">
+              <div className="h-20 w-20 rounded-2xl overflow-hidden bg-onyx-950 border border-gold-500/30 shrink-0 relative group">
                 <img
                   src={getWorkerPhoto(selectedWorker)}
                   alt={`${selectedWorker.user.firstName} ${selectedWorker.user.lastName}`}
                   className="h-full w-full object-cover"
                 />
+                <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-1 cursor-pointer text-white text-[10px] font-bold">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    disabled={uploadingDocKey === "avatarUrl"}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleDirectDocUpload("avatarUrl", file);
+                      e.target.value = "";
+                    }}
+                  />
+                  {uploadingDocKey === "avatarUrl" ? (
+                    <Loader2 className="h-4 w-4 animate-spin text-gold-500" />
+                  ) : (
+                    <>
+                      <UploadCloud className="h-4 w-4 text-gold-500" />
+                      <span>{isArabic ? "تغيير" : "Change"}</span>
+                    </>
+                  )}
+                </label>
               </div>
               <div>
                 <div className="flex items-center gap-3">
@@ -945,9 +1064,54 @@ https://osta.gotix.me/ar/login
                 </h3>
 
                 <div className="space-y-4 text-sm">
-                  <div className="flex justify-between py-2.5 border-b border-white/5">
-                    <span className="text-onyx-400">{isArabic ? "الرقم القومي" : "National ID Number"}</span>
-                    <span className="text-white font-mono font-bold">{selectedWorker.nationalIdNumber || (isArabic ? "غير متوفر" : "N/A")}</span>
+                  <div className="flex flex-col gap-2 py-2.5 border-b border-white/5">
+                    <div className="flex justify-between items-center">
+                      <span className="text-onyx-400 text-xs font-bold">{isArabic ? "الرقم القومي (14 رقم)" : "National ID Number"}</span>
+                      {!isEditingNationalId ? (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setNationalIdInput(selectedWorker.nationalIdNumber || "");
+                            setIsEditingNationalId(true);
+                          }}
+                          className="text-xs text-gold-500 hover:underline font-bold flex items-center gap-1"
+                        >
+                          <Edit className="h-3 w-3" />
+                          {selectedWorker.nationalIdNumber ? (isArabic ? "تعديل الرقم" : "Edit ID") : (isArabic ? "إدخال الرقم القومي" : "Add ID")}
+                        </button>
+                      ) : null}
+                    </div>
+                    {isEditingNationalId ? (
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="text"
+                          maxLength={14}
+                          value={nationalIdInput}
+                          onChange={(e) => setNationalIdInput(e.target.value.replace(/\D/g, ""))}
+                          placeholder="29501010123456"
+                          className="flex-1 bg-onyx-950 border border-gold-500/50 rounded-xl px-3 py-1.5 text-white font-mono text-sm outline-none"
+                        />
+                        <button
+                          type="button"
+                          disabled={savingNationalId}
+                          onClick={handleSaveNationalId}
+                          className="px-3 py-1.5 bg-gold-500 hover:bg-gold-400 text-black font-black text-xs rounded-xl transition"
+                        >
+                          {savingNationalId ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : (isArabic ? "حفظ" : "Save")}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setIsEditingNationalId(false)}
+                          className="px-2 py-1.5 bg-white/10 hover:bg-white/20 text-white text-xs rounded-xl transition"
+                        >
+                          {isArabic ? "إلغاء" : "Cancel"}
+                        </button>
+                      </div>
+                    ) : (
+                      <span className="text-white font-mono font-bold text-base">
+                        {selectedWorker.nationalIdNumber || (isArabic ? "لم يُسجّل بعد" : "Not registered yet")}
+                      </span>
+                    )}
                   </div>
                   <div className="flex justify-between py-2.5">
                     <span className="text-onyx-400">{isArabic ? "سنوات الخبرة" : "Years of Experience"}</span>
@@ -1003,27 +1167,47 @@ https://osta.gotix.me/ar/login
 
               <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
                 {[
-                  { key: "nationalIdFront", label: isArabic ? "صورة البطاقة (الأمام)" : "National ID Front", url: selectedWorker.nationalIdFront },
-                  { key: "nationalIdBack", label: isArabic ? "صورة البطاقة (الخلف)" : "National ID Back", url: selectedWorker.nationalIdBack },
-                  { key: "selfieWithId", label: isArabic ? "سيلفي مع البطاقة" : "Selfie with ID", url: selectedWorker.selfieWithId },
-                  { key: "criminalRecord", label: isArabic ? "الفيش والتشبيه" : "Criminal Record (Fish)", url: selectedWorker.criminalRecord },
-                  { key: "utilityBillUrl", label: isArabic ? "إيصال المرافق" : "Utility Bill", url: selectedWorker.utilityBillUrl }
+                  { key: "nationalIdFront", label: isArabic ? "صورة البطاقة (الأمام)" : "National ID Front", url: selectedWorker.nationalIdFront, hint: isArabic ? "الوجه الأمامي للبطاقة" : "Front scan of National ID" },
+                  { key: "nationalIdBack", label: isArabic ? "صورة البطاقة (الخلف)" : "National ID Back", url: selectedWorker.nationalIdBack, hint: isArabic ? "الوجه الخلفي للبطاقة" : "Back scan of National ID" },
+                  { key: "selfieWithId", label: isArabic ? "سيلفي مع البطاقة" : "Selfie with ID", url: selectedWorker.selfieWithId, hint: isArabic ? "صورة الفني ممسكاً ببطاقته" : "Selfie holding the ID card" },
+                  { key: "criminalRecord", label: isArabic ? "الفيش والتشبيه (الحالة الجنائية)" : "Criminal Record (Fish)", url: selectedWorker.criminalRecord, hint: isArabic ? "صحيفة الحالة الجنائية سارية" : "Official Police Record" },
+                  { key: "utilityBillUrl", label: isArabic ? "إيصال المرافق (إثبات السكن)" : "Utility Bill", url: selectedWorker.utilityBillUrl, hint: isArabic ? "وصل كهرباء أو غاز أو مياه" : "Electricity, gas or water bill" }
                 ].map((doc, idx) => (
-                  <div key={idx} className="bg-onyx-950 border border-white/10 rounded-2xl p-4 flex flex-col justify-between min-h-[220px] space-y-3 hover:border-gold-500/40 transition-all shadow-xl">
+                  <div key={idx} className="bg-onyx-950 border border-white/10 rounded-2xl p-4 flex flex-col justify-between min-h-[260px] space-y-3 hover:border-gold-500/40 transition-all shadow-xl relative overflow-hidden">
+                    {/* Card Header */}
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-black text-white">{doc.label}</span>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-xs font-black text-white">{doc.label}</span>
+                        {doc.url ? (
+                          <span className="h-2 w-2 rounded-full bg-emerald-500" title={isArabic ? "تم الرفع" : "Uploaded"} />
+                        ) : (
+                          <span className="h-2 w-2 rounded-full bg-amber-500 animate-pulse" title={isArabic ? "مطلوب الرفع" : "Missing"} />
+                        )}
+                      </div>
                       {doc.url && (
-                        <button
-                          type="button"
-                          onClick={() => setEditingDoc({ key: doc.key, url: doc.url!, label: doc.label })}
-                          className="text-[10px] bg-gold-500/10 text-gold-500 border border-gold-500/20 rounded px-2 py-0.5 hover:bg-gold-500 hover:text-black transition flex items-center gap-1"
-                        >
-                          <Edit className="h-3 w-3" />
-                          {isArabic ? "تعديل" : "Edit"}
-                        </button>
+                        <div className="flex items-center gap-1">
+                          <button
+                            type="button"
+                            onClick={() => setEditingDoc({ key: doc.key, url: doc.url!, label: doc.label })}
+                            className="text-[10px] bg-gold-500/10 text-gold-500 border border-gold-500/20 rounded px-1.5 py-0.5 hover:bg-gold-500 hover:text-black transition flex items-center gap-1"
+                          >
+                            <Crop className="h-3 w-3" />
+                            {isArabic ? "قص" : "Crop"}
+                          </button>
+                          <button
+                            type="button"
+                            disabled={uploadingDocKey === doc.key}
+                            onClick={() => handleDeleteDoc(doc.key)}
+                            className="text-[10px] bg-red-500/10 text-red-400 border border-red-500/20 rounded px-1.5 py-0.5 hover:bg-red-500 hover:text-white transition"
+                            title={isArabic ? "حذف المستند" : "Delete Document"}
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </button>
+                        </div>
                       )}
                     </div>
 
+                    {/* Card Body */}
                     {doc.url ? (
                       <div className="space-y-2.5">
                         {/* Snapshot Image Preview (Clickable for Lightbox Fullsize View) */}
@@ -1042,10 +1226,68 @@ https://osta.gotix.me/ar/login
                             <span>{isArabic ? "عرض بالحجم الكامل" : "View Full Size"}</span>
                           </div>
                         </div>
+
+                        {/* Replace Document Button */}
+                        <label className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-onyx-900 border border-white/10 hover:border-gold-500/50 hover:bg-white/5 text-xs font-bold text-onyx-300 hover:text-white transition cursor-pointer">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            disabled={uploadingDocKey === doc.key}
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) handleDirectDocUpload(doc.key, file);
+                              e.target.value = "";
+                            }}
+                          />
+                          {uploadingDocKey === doc.key ? (
+                            <>
+                              <Loader2 className="h-3.5 w-3.5 animate-spin text-gold-500" />
+                              <span className="text-gold-500">{isArabic ? "جاري الاستبدال..." : "Replacing..."}</span>
+                            </>
+                          ) : (
+                            <>
+                              <UploadCloud className="h-3.5 w-3.5 text-gold-500" />
+                              <span>{isArabic ? "استبدال المستند بصورة أخرى" : "Replace Image"}</span>
+                            </>
+                          )}
+                        </label>
                       </div>
                     ) : (
-                      <div className="py-8 text-center text-xs text-onyx-500 border border-dashed border-white/10 rounded-xl bg-onyx-900/40">
-                        {isArabic ? "لم يتم رفع هذا المستند بعد" : "No document uploaded"}
+                      <div className="flex-1 flex flex-col justify-center items-center py-6 border-2 border-dashed border-white/10 hover:border-gold-500/50 rounded-xl bg-onyx-900/40 text-center transition-all">
+                        <label className="w-full h-full flex flex-col items-center justify-center p-3 cursor-pointer">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            disabled={uploadingDocKey === doc.key}
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) handleDirectDocUpload(doc.key, file);
+                              e.target.value = "";
+                            }}
+                          />
+                          {uploadingDocKey === doc.key ? (
+                            <div className="space-y-2 flex flex-col items-center">
+                              <Loader2 className="h-8 w-8 animate-spin text-gold-500" />
+                              <span className="text-xs font-bold text-gold-500">{isArabic ? "جاري رفع المستند..." : "Uploading..."}</span>
+                            </div>
+                          ) : (
+                            <div className="space-y-2 flex flex-col items-center group">
+                              <div className="h-10 w-10 rounded-full bg-gold-500/10 flex items-center justify-center group-hover:bg-gold-500 transition-colors">
+                                <UploadCloud className="h-5 w-5 text-gold-500 group-hover:text-black transition-colors" />
+                              </div>
+                              <div>
+                                <p className="text-xs font-black text-white group-hover:text-gold-500 transition-colors">
+                                  {isArabic ? "رفع المستند من جهازك" : "Upload Document"}
+                                </p>
+                                <p className="text-[10px] text-onyx-400 mt-0.5">
+                                  {doc.hint}
+                                </p>
+                              </div>
+                            </div>
+                          )}
+                        </label>
                       </div>
                     )}
                   </div>
