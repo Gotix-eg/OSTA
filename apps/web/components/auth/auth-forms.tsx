@@ -18,7 +18,8 @@ import {
   ArrowUpRight,
   Loader2,
   Phone,
-  Lock
+  Lock,
+  MessageCircle
 } from "lucide-react";
 
 import dynamic from "next/dynamic";
@@ -1334,6 +1335,32 @@ export function WorkerRegisterForm({ locale, initial }: { locale: Locale; initia
               )}
             </div>
           )}
+
+          {/* WhatsApp Customer Service Registration Bridge */}
+          <div className="mt-4 pt-3 border-t border-white/10 text-center space-y-2">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[11px] font-bold">
+              <MessageCircle className="h-3.5 w-3.5" />
+              <span>{isArabic ? "مش عارف تسجل أو محتاج مساعدة؟" : "Having trouble registering?"}</span>
+            </div>
+            <p className="text-[10px] text-white/60 leading-relaxed">
+              {isArabic
+                ? "تواصل مع خدمة العملاء وسنقوم بتسجيل حسابك وتفعيله نيابةً عنك فوراً عبر واتساب!"
+                : "Chat with customer support and we'll register and activate your account via WhatsApp!"}
+            </p>
+            <a
+              href={`https://wa.me/201009410112?text=${encodeURIComponent(
+                isArabic
+                  ? `السلام عليكم، أنا صنايعي ومحتاج مساعدة خدمة العملاء في تسجيل حساب فني على منصة أوسطى${state.phone && state.phone !== "+20" ? ` (رقم هاتفي: ${state.phone})` : ""}`
+                  : "Hello, I am a craftsman needing assistance registering on OSTA platform."
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-3 bg-[#25D366] hover:bg-[#20ba5a] text-black font-black text-xs transition-transform active:scale-[0.98] shadow-md cursor-pointer"
+            >
+              <MessageCircle className="h-4 w-4" />
+              <span>{isArabic ? "سجل حسابك الآن عبر واتساب خدمة العملاء 💬" : "Register via WhatsApp Support 💬"}</span>
+            </a>
+          </div>
         </form>
       )}
     </div>
@@ -1707,6 +1734,34 @@ export function ForgotPasswordForm({ locale }: { locale: Locale }) {
         </div>
 
         {error && <div className="onyx-card p-4 border-red-500/20 bg-red-500/5 text-red-500 text-center font-bold text-sm animate-shake">{error}</div>}
+
+        {/* WhatsApp Craftsman Password Recovery Assistant */}
+        {step === 0 && (
+          <div className="pt-6 border-t border-onyx-800 text-center space-y-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
+              <MessageCircle className="h-4 w-4" />
+              <span>{isArabic ? "صنايعي وناسي الإيميل أو مش فاكره؟" : "Craftsman & forgot your email?"}</span>
+            </div>
+            <p className="text-xs text-onyx-400 max-w-md mx-auto">
+              {isArabic
+                ? "تقدر تسترجع حسابك وتستلم كلمة مرور جديدة فوراً عن طريق التحدث مع خدمة العملاء برقم هاتفك عبر واتساب!"
+                : "You can recover your account and receive a new password instantly by contacting customer service with your phone number on WhatsApp!"}
+            </p>
+            <a
+              href={`https://wa.me/201009410112?text=${encodeURIComponent(
+                isArabic
+                  ? "السلام عليكم، أنا صنايعي ونسيت كلمة المرور الخاصة بحسابي في أوسطى ومش فاكر الإيميل، برجاء مساعدتي في استعادة الحساب برقم الموبايل."
+                  : "Hello, I am a craftsman on OSTA, I forgot my password and email, please help me recover my account."
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 w-full py-3 px-6 rounded-2xl bg-[#25D366] hover:bg-[#20ba5a] text-black font-black text-sm transition-transform active:scale-[0.98] shadow-lg shadow-[#25D366]/20 cursor-pointer"
+            >
+              <MessageCircle className="h-5 w-5" />
+              <span>{isArabic ? "استرجاع الحساب عبر واتساب خدمة العملاء 💬" : "Recover Account via WhatsApp 💬"}</span>
+            </a>
+          </div>
+        )}
       </div>
     </div>
   );

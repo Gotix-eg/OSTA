@@ -5,12 +5,13 @@ import { createPortal } from "react-dom";
 import {
   Plus, User, Phone, Mail, Search, Loader2, Wrench, Star,
   ShieldCheck, Trash2, Wallet, Eye, X, Edit, Users,
-  CheckCircle2, XCircle, Clock3, AlertTriangle, ExternalLink, Settings, UserCheck, Sparkles
+  CheckCircle2, XCircle, Clock3, AlertTriangle, ExternalLink, Settings, UserCheck, Sparkles,
+  Key, Copy, Check, MessageCircle, Send, RefreshCw
 } from "lucide-react";
 import { fetchApiData, postApiData, patchApiData, deleteApiData } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
-import { workerProfessions } from "@/lib/geo-data";
+import { workerProfessions, egyptianGovernorates, majorCities } from "@/lib/geo-data";
 import { ImageCropModal } from "@/components/shared/avatar-crop-modal";
 import { WorkerVerificationWizard, type WorkerForWizard } from "./worker-verification-wizard";
 import { WorkerHistoryLogs } from "./worker-history-logs";
@@ -107,8 +108,40 @@ export function AdminWorkersManagement({ locale }: { locale: Locale }) {
   const [editYearsOfExperience, setEditYearsOfExperience] = useState<number | "">(0);
   const [editQuota, setEditQuota] = useState<number | "">(0);
   const [editStatus, setEditStatus] = useState<string>("PENDING");
-
   const [actionLoading, setActionLoading] = useState(false);
+
+  // Manual Worker Creation State (CS / Admin)
+  const [addWorkerModalOpen, setAddWorkerModalOpen] = useState(false);
+  const [addingWorker, setAddingWorker] = useState(false);
+  const [newWorkerData, setNewWorkerData] = useState({
+    firstName: "",
+    lastName: "",
+    phone: "",
+    password: "",
+    profession: "plumber",
+    governorate: "cairo",
+    city: "new-cairo",
+    nationalIdNumber: "",
+    yearsOfExperience: 3,
+    orderQuota: 20,
+    verificationStatus: "VERIFIED" as "VERIFIED" | "PENDING"
+  });
+
+  // Password Reset State (CS / Admin)
+  const [resetPasswordModalOpen, setResetPasswordModalOpen] = useState(false);
+  const [resettingPassword, setResettingPassword] = useState(false);
+  const [newPasswordInput, setNewPasswordInput] = useState("");
+
+  // WhatsApp Credentials Sharing Modal State
+  const [shareCredentialsModalOpen, setShareCredentialsModalOpen] = useState(false);
+  const [shareCredentialsData, setShareCredentialsData] = useState<{
+    name: string;
+    phone: string;
+    password: string;
+    isReset?: boolean;
+    quota?: number;
+  } | null>(null);
+  const [copiedStatus, setCopiedStatus] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -196,6 +229,84 @@ export function AdminWorkersManagement({ locale }: { locale: Locale }) {
     }
   }
 
+  async function handleCreateWorker(e: React.FormEvent) {
+    e.preventDefault();
+    if (!newWorkerData.firstName || !newWorkerData.lastName || !newWorkerData.phone || !newWorkerData.password) {
+      alert(isArabic ? "برجاء ملء جميع الحقول الإلزامية (الاسم، الهاتف، كلمة المرور)" : "Please fill all required fields");
+      return;
+    }
+    setAddingWorker(true);
+    try {
+      const res = await postApiData<Worker, typeof newWorkerData>("/admin/workers", newWorkerData);
+      const createdWorker = (res as any)?.data || res;
+      setWorkers(prev => [createdWorker, ...prev]);
+      setAddWorkerModalOpen(false);
+      setShareCredentialsData({
+        name: `${newWorkerData.firstName} ${newWorkerData.lastName}`,
+        phone: newWorkerData.phone,
+        password: newWorkerData.password,
+        quota: newWorkerData.orderQuota,
+        isReset: false
+      });
+      setShareCredentialsModalOpen(true);
+    } catch (err: any) {
+      alert(err?.message || (isArabic ? "فشل إنشاء حساب الفني" : "Failed to create worker"));
+    } finally {
+      setAddingWorker(false);
+    }
+  }
+
+  async function handleResetWorkerPassword(e: React.FormEvent) {
+    e.preventDefault();
+    if (!selectedWorker || !newPasswordInput) return;
+    setResettingPassword(true);
+    try {
+      await postApiData(`/admin/workers/${selectedWorker.id}/reset-password`, {
+        newPassword: newPasswordInput
+      });
+      setResetPasswordModalOpen(false);
+      setShareCredentialsData({
+        name: `${selectedWorker.user.firstName} ${selectedWorker.user.lastName}`,
+        phone: selectedWorker.user.phone,
+        password: newPasswordInput,
+        isReset: true
+      });
+      setShareCredentialsModalOpen(true);
+    } catch (err: any) {
+      alert(err?.message || (isArabic ? "فشل تعيين كلمة المرور" : "Failed to reset password"));
+    } finally {
+      setResettingPassword(false);
+    }
+  }
+
+  function getWorkerWhatsAppMessage(data: { name: string; phone: string; password: string; isReset?: boolean; quota?: number }) {
+    if (data.isReset) {
+      return `أهلاً بك يا فنان ${data.name} 🛠️
+تمت إعادة تعيين كلمة المرور لحسابك في منصة أوسطى بواسطة الدعم الفني:
+
+🔑 كلمة المرور الجديدة: ${data.password}
+📲 رقم الهاتف: ${data.phone}
+
+رابط تسجيل الدخول لحسابك:
+https://osta.gotix.me/ar/login
+
+بالتوفيق دائماً! فريق منصة أوسطى 🌟`;
+    }
+
+    return `أهلاً بك يا فنان ${data.name} في منصة أوسطى 🛠️
+تم تسجيل وتفعيل حسابك بنجاح من خلال فريق خدمة العملاء!
+
+📲 بيانات تسجيل الدخول:
+رقم الهاتف: ${data.phone}
+كلمة المرور: ${data.password}
+
+رابط الدخول لحسابك:
+https://osta.gotix.me/ar/login
+
+🎁 تم تزويدك بـ ${data.quota || 20} طلب مجاني في حسابك لتبدأ العمل واستقبال الطلبات فوراً.
+بالتوفيق والرزق الواسع إن شاء الله! 🌟`;
+  }
+
   // Summary Metrics calculations
   const metrics = useMemo(() => {
     const total = workers.length;
@@ -263,15 +374,41 @@ export function AdminWorkersManagement({ locale }: { locale: Locale }) {
           </p>
         </div>
 
-        <div className="relative w-full md:w-96">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-onyx-500" />
-          <input
-            type="text"
-            placeholder={isArabic ? "بحث بالاسم، الرقم القومي أو الهاتف..." : "Search by name, ID or phone..."}
-            className="w-full bg-onyx-900/50 border border-onyx-700 rounded-2xl pl-12 pr-6 py-4 text-white focus:border-gold-500/50 focus:ring-4 focus:ring-gold-500/5 transition-all outline-none"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
+          <button
+            type="button"
+            onClick={() => {
+              setNewWorkerData({
+                firstName: "",
+                lastName: "",
+                phone: "",
+                password: Math.floor(100000 + Math.random() * 900000).toString(),
+                profession: "plumber",
+                governorate: "cairo",
+                city: "new-cairo",
+                nationalIdNumber: "",
+                yearsOfExperience: 3,
+                orderQuota: 20,
+                verificationStatus: "VERIFIED"
+              });
+              setAddWorkerModalOpen(true);
+            }}
+            className="btn-gold flex items-center justify-center gap-2 px-6 py-4 rounded-2xl font-black text-sm shadow-lg shadow-gold-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer shrink-0"
+          >
+            <Plus className="h-5 w-5" />
+            <span>{isArabic ? "إضافة فني جديد" : "Add New Worker"}</span>
+          </button>
+
+          <div className="relative w-full sm:w-80 md:w-96">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-onyx-500" />
+            <input
+              type="text"
+              placeholder={isArabic ? "بحث بالاسم، الرقم القومي أو الهاتف..." : "Search by name, ID or phone..."}
+              className="w-full bg-onyx-900/50 border border-onyx-700 rounded-2xl pl-12 pr-6 py-4 text-white focus:border-gold-500/50 focus:ring-4 focus:ring-gold-500/5 transition-all outline-none"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
         </div>
       </div>
 
@@ -666,6 +803,20 @@ export function AdminWorkersManagement({ locale }: { locale: Locale }) {
                     title={isArabic ? "تعديل سريع" : "Quick Edit"}
                   >
                     <Settings className="h-3.5 w-3.5" />
+                  </button>
+
+                  {/* Reset Password & Share via WhatsApp Button */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedWorker(worker);
+                      setNewPasswordInput(Math.floor(100000 + Math.random() * 900000).toString());
+                      setResetPasswordModalOpen(true);
+                    }}
+                    className="h-8 w-8 rounded-lg bg-onyx-900 border border-onyx-700 flex items-center justify-center text-onyx-300 hover:text-emerald-400 hover:border-emerald-500/40 transition-all shrink-0 cursor-pointer"
+                    title={isArabic ? "إعادة تعيين كلمة المرور وإرسالها عبر واتساب" : "Reset Password & Share via WhatsApp"}
+                  >
+                    <Key className="h-3.5 w-3.5" />
                   </button>
 
                   {/* Delete Account Button */}
@@ -1181,6 +1332,390 @@ export function AdminWorkersManagement({ locale }: { locale: Locale }) {
             setWizardWorker(prev => prev?.id === updated.id ? { ...prev, ...updated } : prev);
           }}
         />
+      )}
+
+      {/* Manual Worker Creation Modal (CS / Admin) */}
+      {addWorkerModalOpen && typeof document !== "undefined" && createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn overflow-y-auto">
+          <div className="onyx-card max-w-2xl w-full p-8 border-gold-500/30 bg-[#121214] shadow-2xl space-y-6 my-8 animate-scaleUp">
+            <div className="flex items-center justify-between border-b border-white/10 pb-4">
+              <div>
+                <h3 className="text-xl font-black text-white flex items-center gap-2">
+                  <UserCheck className="h-6 w-6 text-gold-500" />
+                  <span>{isArabic ? "إضافة فني جديد (خدمة العملاء)" : "Manual Worker Registration"}</span>
+                </h3>
+                <p className="text-xs text-onyx-400 mt-1">
+                  {isArabic
+                    ? "تسجيل بيانات فني كاملة وتفعيل حسابه فوراً مع تجهيز رسالة الترحيب للواتساب"
+                    : "Register full technician profile, verify immediately and generate WhatsApp credentials"}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setAddWorkerModalOpen(false)}
+                className="h-8 w-8 rounded-lg bg-onyx-800 text-onyx-400 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateWorker} className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-onyx-300 mb-1">
+                    {isArabic ? "الاسم الأول *" : "First Name *"}
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={newWorkerData.firstName}
+                    onChange={(e) => setNewWorkerData({ ...newWorkerData, firstName: e.target.value })}
+                    placeholder={isArabic ? "محمد" : "First name"}
+                    className="w-full bg-onyx-900 border border-onyx-700 rounded-xl px-4 py-2.5 text-white text-sm focus:border-gold-500 outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-onyx-300 mb-1">
+                    {isArabic ? "اسم العائلة *" : "Last Name *"}
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={newWorkerData.lastName}
+                    onChange={(e) => setNewWorkerData({ ...newWorkerData, lastName: e.target.value })}
+                    placeholder={isArabic ? "أحمد" : "Last name"}
+                    className="w-full bg-onyx-900 border border-onyx-700 rounded-xl px-4 py-2.5 text-white text-sm focus:border-gold-500 outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-onyx-300 mb-1">
+                    {isArabic ? "رقم الهاتف (موبايل) *" : "Phone Number *"}
+                  </label>
+                  <input
+                    type="tel"
+                    required
+                    dir="ltr"
+                    value={newWorkerData.phone}
+                    onChange={(e) => setNewWorkerData({ ...newWorkerData, phone: e.target.value })}
+                    placeholder="01012345678"
+                    className="w-full bg-onyx-900 border border-onyx-700 rounded-xl px-4 py-2.5 text-white text-sm font-mono focus:border-gold-500 outline-none"
+                  />
+                  <span className="text-[10px] text-onyx-500 mt-0.5 block">
+                    {isArabic ? "يمكنك إدخال الرقم المصري بصيغة 010 أو +20" : "Format: 010... or +2010..."}
+                  </span>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-onyx-300 mb-1">
+                    {isArabic ? "المهنة / التخصص *" : "Profession *"}
+                  </label>
+                  <select
+                    value={newWorkerData.profession}
+                    onChange={(e) => setNewWorkerData({ ...newWorkerData, profession: e.target.value })}
+                    className="w-full bg-onyx-900 border border-onyx-700 rounded-xl px-4 py-2.5 text-white text-sm focus:border-gold-500 outline-none"
+                  >
+                    {workerProfessions.map(p => (
+                      <option key={p.value} value={p.value}>
+                        {isArabic ? p.labelAr : p.labelEn}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-onyx-300 mb-1">
+                  {isArabic ? "كلمة المرور الأولية *" : "Initial Password *"}
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    required
+                    value={newWorkerData.password}
+                    onChange={(e) => setNewWorkerData({ ...newWorkerData, password: e.target.value })}
+                    placeholder={isArabic ? "كلمة مرور الحساب" : "Account password"}
+                    className="flex-1 bg-onyx-900 border border-onyx-700 rounded-xl px-4 py-2.5 text-white text-sm font-mono focus:border-gold-500 outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setNewWorkerData({ ...newWorkerData, password: Math.floor(100000 + Math.random() * 900000).toString() })}
+                    className="px-3 py-2.5 rounded-xl bg-onyx-800 hover:bg-onyx-700 text-gold-400 font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer shrink-0"
+                  >
+                    <RefreshCw className="h-3.5 w-3.5" />
+                    <span>{isArabic ? "توليد كلمة سر" : "Generate"}</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-onyx-300 mb-1">
+                    {isArabic ? "المحافظة" : "Governorate"}
+                  </label>
+                  <select
+                    value={newWorkerData.governorate}
+                    onChange={(e) => {
+                      const gov = e.target.value;
+                      const defaultCity = majorCities[gov]?.[0]?.value || "new-cairo";
+                      setNewWorkerData({ ...newWorkerData, governorate: gov, city: defaultCity });
+                    }}
+                    className="w-full bg-onyx-900 border border-onyx-700 rounded-xl px-4 py-2.5 text-white text-sm focus:border-gold-500 outline-none"
+                  >
+                    {egyptianGovernorates.map(g => (
+                      <option key={g.value} value={g.value}>
+                        {isArabic ? g.labelAr : g.labelEn}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-onyx-300 mb-1">
+                    {isArabic ? "المدينة / الحي" : "City / District"}
+                  </label>
+                  <select
+                    value={newWorkerData.city}
+                    onChange={(e) => setNewWorkerData({ ...newWorkerData, city: e.target.value })}
+                    className="w-full bg-onyx-900 border border-onyx-700 rounded-xl px-4 py-2.5 text-white text-sm focus:border-gold-500 outline-none"
+                  >
+                    {(majorCities[newWorkerData.governorate] || majorCities["cairo"] || []).map(c => (
+                      <option key={c.value} value={c.value}>
+                        {isArabic ? c.labelAr : c.labelEn}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-onyx-300 mb-1">
+                    {isArabic ? "الرقم القومي (اختياري)" : "National ID"}
+                  </label>
+                  <input
+                    type="text"
+                    value={newWorkerData.nationalIdNumber}
+                    onChange={(e) => setNewWorkerData({ ...newWorkerData, nationalIdNumber: e.target.value })}
+                    placeholder="14 رقم قومي"
+                    className="w-full bg-onyx-900 border border-onyx-700 rounded-xl px-4 py-2.5 text-white text-sm font-mono focus:border-gold-500 outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-onyx-300 mb-1">
+                    {isArabic ? "سنوات الخبرة" : "Experience (Yrs)"}
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="50"
+                    value={newWorkerData.yearsOfExperience}
+                    onChange={(e) => setNewWorkerData({ ...newWorkerData, yearsOfExperience: parseInt(e.target.value) || 0 })}
+                    className="w-full bg-onyx-900 border border-onyx-700 rounded-xl px-4 py-2.5 text-white text-sm focus:border-gold-500 outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-onyx-300 mb-1">
+                    {isArabic ? "رصيد الطلبات المبدئي" : "Initial Quota"}
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={newWorkerData.orderQuota}
+                    onChange={(e) => setNewWorkerData({ ...newWorkerData, orderQuota: parseInt(e.target.value) || 0 })}
+                    className="w-full bg-onyx-900 border border-onyx-700 rounded-xl px-4 py-2.5 text-white text-sm focus:border-gold-500 outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="p-4 rounded-xl bg-gold-500/10 border border-gold-500/20 flex items-center justify-between">
+                <div>
+                  <span className="text-sm font-bold text-white block">
+                    {isArabic ? "تفعيل وتوثيق الحساب فوراً للعمل" : "Auto-Verify & Activate Immediately"}
+                  </span>
+                  <span className="text-xs text-onyx-400 block mt-0.5">
+                    {isArabic ? "يمنح الفني فترة تجريبية 30 يوماً ويظهر فوراً في نتائج البحث" : "Grants 30d trial & instant visibility"}
+                  </span>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={newWorkerData.verificationStatus === "VERIFIED"}
+                  onChange={(e) => setNewWorkerData({
+                    ...newWorkerData,
+                    verificationStatus: e.target.checked ? "VERIFIED" : "PENDING"
+                  })}
+                  className="h-5 w-5 accent-gold-500 rounded cursor-pointer"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-white/10">
+                <button
+                  type="button"
+                  onClick={() => setAddWorkerModalOpen(false)}
+                  className="px-5 py-2.5 rounded-xl bg-onyx-800 text-onyx-300 hover:text-white text-sm font-bold transition-colors cursor-pointer"
+                >
+                  {isArabic ? "إلغاء" : "Cancel"}
+                </button>
+                <button
+                  type="submit"
+                  disabled={addingWorker}
+                  className="btn-gold px-6 py-2.5 rounded-xl text-sm font-black flex items-center gap-2 shadow-lg shadow-gold-500/20 cursor-pointer disabled:opacity-50"
+                >
+                  {addingWorker ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+                  <span>{isArabic ? "إنشاء الحساب وتجهيز رسالة الواتساب 🚀" : "Create Worker & Open WhatsApp"}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* Manual Password Reset Modal (CS / Admin) */}
+      {resetPasswordModalOpen && selectedWorker && typeof document !== "undefined" && createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
+          <div className="onyx-card max-w-md w-full p-6 border-emerald-500/30 bg-[#121214] shadow-2xl space-y-5 animate-scaleUp">
+            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+              <div>
+                <h3 className="text-lg font-black text-white flex items-center gap-2">
+                  <Key className="h-5 w-5 text-emerald-400" />
+                  <span>{isArabic ? "إعادة تعيين كلمة المرور" : "Reset Password"}</span>
+                </h3>
+                <p className="text-xs text-onyx-400 mt-0.5">
+                  {selectedWorker.user.firstName} {selectedWorker.user.lastName} ({selectedWorker.user.phone})
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setResetPasswordModalOpen(false)}
+                className="h-8 w-8 rounded-lg bg-onyx-800 text-onyx-400 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleResetWorkerPassword} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-onyx-300 mb-1">
+                  {isArabic ? "كلمة المرور الجديدة للفني *" : "New Worker Password *"}
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    required
+                    value={newPasswordInput}
+                    onChange={(e) => setNewPasswordInput(e.target.value)}
+                    placeholder="123456"
+                    className="flex-1 bg-onyx-900 border border-onyx-700 rounded-xl px-4 py-2.5 text-white text-sm font-mono focus:border-emerald-500 outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setNewPasswordInput(Math.floor(100000 + Math.random() * 900000).toString())}
+                    className="px-3 py-2.5 rounded-xl bg-onyx-800 hover:bg-onyx-700 text-emerald-400 font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer shrink-0"
+                  >
+                    <RefreshCw className="h-3.5 w-3.5" />
+                    <span>{isArabic ? "توليد" : "Gen"}</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-white/10">
+                <button
+                  type="button"
+                  onClick={() => setResetPasswordModalOpen(false)}
+                  className="px-4 py-2 rounded-xl bg-onyx-800 text-onyx-300 hover:text-white text-xs font-bold transition-colors cursor-pointer"
+                >
+                  {isArabic ? "إلغاء" : "Cancel"}
+                </button>
+                <button
+                  type="submit"
+                  disabled={resettingPassword}
+                  className="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-onyx-950 font-black text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/20 cursor-pointer disabled:opacity-50"
+                >
+                  {resettingPassword ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Key className="h-3.5 w-3.5" />}
+                  <span>{isArabic ? "تحديث وتجهيز رسالة الواتساب 🔑" : "Update & Prepare WhatsApp"}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* WhatsApp Ready-to-Send Credentials Modal */}
+      {shareCredentialsModalOpen && shareCredentialsData && typeof document !== "undefined" && createPortal(
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fadeIn">
+          <div className="onyx-card max-w-lg w-full p-6 border-emerald-500/40 bg-[#121214] shadow-2xl space-y-5 animate-scaleUp">
+            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="h-10 w-10 rounded-2xl bg-[#25D366]/20 border border-[#25D366]/40 flex items-center justify-center text-[#25D366]">
+                  <MessageCircle className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-black text-white">
+                    {shareCredentialsData.isReset
+                      ? (isArabic ? "تم إعادة تعيين كلمة المرور بنجاح!" : "Password Reset Successfully!")
+                      : (isArabic ? "تم إنشاء وتفعيل حساب الفني بنجاح!" : "Worker Account Created Successfully!")}
+                  </h3>
+                  <p className="text-xs text-onyx-400">
+                    {isArabic ? "جاهز للإرسال للفني بنقرة واحدة عبر واتساب" : "Ready to send to worker via WhatsApp"}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShareCredentialsModalOpen(false)}
+                className="h-8 w-8 rounded-lg bg-onyx-800 text-onyx-400 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex items-center justify-between text-xs text-onyx-400">
+                <span>{isArabic ? "نص الرسالة المجهز للفني:" : "Prepared WhatsApp Message:"}</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard.writeText(getWorkerWhatsAppMessage(shareCredentialsData));
+                    setCopiedStatus(true);
+                    setTimeout(() => setCopiedStatus(false), 2500);
+                  }}
+                  className="flex items-center gap-1 text-gold-400 hover:text-gold-300 font-bold transition-colors cursor-pointer"
+                >
+                  {copiedStatus ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
+                  <span>{copiedStatus ? (isArabic ? "تم النسخ بنجاح! ✅" : "Copied! ✅") : (isArabic ? "نسخ النص" : "Copy Text")}</span>
+                </button>
+              </div>
+
+              <div className="p-4 rounded-xl bg-onyx-950 border border-onyx-800 text-xs font-mono text-emerald-300/90 whitespace-pre-wrap leading-relaxed max-h-56 overflow-y-auto selection:bg-emerald-500 selection:text-black">
+                {getWorkerWhatsAppMessage(shareCredentialsData)}
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3 pt-2">
+              <a
+                href={`https://wa.me/${shareCredentialsData.phone.replace(/\D/g, "")}?text=${encodeURIComponent(getWorkerWhatsAppMessage(shareCredentialsData))}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 py-3 px-4 rounded-xl bg-[#25D366] hover:bg-[#20ba5a] text-black font-black text-xs flex items-center justify-center gap-2 shadow-lg shadow-[#25D366]/20 transition-transform active:scale-[0.98] cursor-pointer"
+              >
+                <MessageCircle className="h-4 w-4" />
+                <span>{isArabic ? "إرسال للفني عبر واتساب مباشرة 💬" : "Send via WhatsApp Directly 💬"}</span>
+              </a>
+
+              <button
+                type="button"
+                onClick={() => setShareCredentialsModalOpen(false)}
+                className="py-3 px-5 rounded-xl bg-onyx-800 hover:bg-onyx-700 text-onyx-300 hover:text-white font-bold text-xs transition-colors cursor-pointer"
+              >
+                {isArabic ? "تم الانتهاء" : "Done"}
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
       )}
     </div>
   );

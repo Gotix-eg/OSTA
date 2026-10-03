@@ -11,9 +11,10 @@ import { prisma } from "../../lib/prisma.js";
 import { catchAsync } from "../../utils/catchAsync.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { normalizeHeroSlidesForStorage, normalizeCampaignsForStorage } from "./hero-slides.storage.js";
-import { getAvatarLibrary, saveAvatarLibrary } from "../../lib/avatar-library.js";
+import { getAvatarLibrary, saveAvatarLibrary, getRandomWorkerAvatar } from "../../lib/avatar-library.js";
 import { signAccessToken, signRefreshToken } from "../../utils/tokens.js";
 import { setAuthCookies } from "../../utils/auth-cookies.js";
+import { hashPassword } from "../../utils/password.js";
 
 const router = Router();
 
@@ -729,6 +730,163 @@ router.post("/vendors/:id/reset-trial", catchAsync(async (request, response) => 
   response.json(successResponse(updated, "Trial reset successfully"));
 }));
 
+// POST /api/admin/vendors — Manually create a vendor profile by support / admin
+router.post("/vendors", catchAsync(async (request, response) => {
+  const schema = z.object({
+    shopName: z.string().min(2, "اسم المتجر مطلوب"),
+    category: z.string().min(2, "تصنيف المتجر مطلوب"),
+    firstName: z.string().min(2, "الاسم الأول للمسؤول مطلوب"),
+    lastName: z.string().min(2, "اسم العائلة للمسؤول مطلوب"),
+    phone: z.string().min(10, "رقم الهاتف غير صحيح"),
+    password: z.string().min(6, "كلمة المرور يجب أن تكون 6 أحرف على الأقل"),
+    governorate: z.string().optional(),
+    city: z.string().optional(),
+    address: z.string().optional(),
+    orderQuota: z.number().optional().default(20),
+    verificationStatus: z.enum(["PENDING", "VERIFIED"]).optional().default("VERIFIED")
+  });
+
+  const payload = schema.parse(request.body);
+
+  let cleanPhone = payload.phone.replace(/\D/g, "");
+  if (cleanPhone.startsWith("20")) {
+    cleanPhone = "+" + cleanPhone;
+  } else if (cleanPhone.startsWith("0")) {
+    cleanPhone = "+20" + cleanPhone.substring(1);
+  } else if (!cleanPhone.startsWith("+")) {
+    cleanPhone = "+20" + cleanPhone;
+  }
+
+  const existingUser = await prisma.user.findFirst({
+    where: { phone: cleanPhone },
+    include: { vendorProfile: true }
+  });
+
+  if (existingUser?.vendorProfile) {
+    throw new ApiError(409, "رقم الهاتف هذا مسجل بالفعل كمتجر على المنصة.", "PROFILE_EXISTS");
+  }
+
+  const passwordHash = await hashPassword(payload.password);
+  const now = new Date();
+  const trialExpiresAt = payload.verificationStatus === "VERIFIED"
+    ? new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000)
+    : null;
+
+  let vendorProfile;
+
+  if (existingUser) {
+    await prisma.user.update({
+      where: { id: existingUser.id },
+      data: {
+        passwordHash,
+        role: "VENDOR",
+        firstName: payload.firstName || existingUser.firstName,
+        lastName: payload.lastName || existingUser.lastName
+      }
+    });
+
+    vendorProfile = await prisma.vendorProfile.create({
+      data: {
+        userId: existingUser.id,
+        shopName: payload.shopName,
+        category: payload.category,
+        governorate: payload.governorate || "cairo",
+        city: payload.city || "new-cairo",
+        address: payload.address || "",
+        orderQuota: payload.orderQuota || 20,
+        verificationStatus: payload.verificationStatus,
+        trialExpiresAt,
+        isOpen: true,
+        rating: 5,
+        ratingCount: 1,
+        totalOrders: 0,
+        totalEarnings: 0,
+        walletBalance: 0
+      },
+      include: {
+        user: { select: { firstName: true, lastName: true, phone: true } }
+      }
+    });
+  } else {
+    const user = await prisma.user.create({
+      data: {
+        firstName: payload.firstName,
+        lastName: payload.lastName,
+        phone: cleanPhone,
+        passwordHash,
+        role: "VENDOR",
+        status: "ACTIVE"
+      }
+    });
+
+    if (payload.governorate || payload.city) {
+      await prisma.address.create({
+        data: {
+          userId: user.id,
+          governorate: payload.governorate || "cairo",
+          city: payload.city || "new-cairo",
+          area: payload.city || payload.governorate || "new-cairo",
+          street: payload.address || "",
+          isDefault: true
+        }
+      }).catch(() => {});
+    }
+
+    vendorProfile = await prisma.vendorProfile.create({
+      data: {
+        userId: user.id,
+        shopName: payload.shopName,
+        category: payload.category,
+        governorate: payload.governorate || "cairo",
+        city: payload.city || "new-cairo",
+        address: payload.address || "",
+        orderQuota: payload.orderQuota || 20,
+        verificationStatus: payload.verificationStatus,
+        trialExpiresAt,
+        isOpen: true,
+        rating: 5,
+        ratingCount: 1,
+        totalOrders: 0,
+        totalEarnings: 0,
+        walletBalance: 0
+      },
+      include: {
+        user: { select: { firstName: true, lastName: true, phone: true } }
+      }
+    });
+  }
+
+  response.status(201).json(successResponse(vendorProfile, "Vendor profile created successfully"));
+}));
+
+// POST /api/admin/vendors/:id/reset-password — Reset vendor password manually by support
+router.post("/vendors/:id/reset-password", catchAsync(async (request, response) => {
+  const id = request.params.id as string;
+  const { newPassword } = z.object({
+    newPassword: z.string().min(6, "كلمة المرور يجب أن تكون 6 أحرف على الأقل")
+  }).parse(request.body);
+
+  const vendor = await prisma.vendorProfile.findUnique({
+    where: { id },
+    include: { user: true }
+  });
+  if (!vendor) {
+    throw new ApiError(404, "Vendor profile not found");
+  }
+
+  const passwordHash = await hashPassword(newPassword);
+  await prisma.user.update({
+    where: { id: vendor.userId },
+    data: { passwordHash }
+  });
+
+  response.json(successResponse({
+    vendorId: vendor.id,
+    phone: vendor.user.phone,
+    shopName: vendor.shopName
+  }, "تم تعيين وتحديث كلمة المرور بنجاح"));
+}));
+
 // --- REAL DATA WORKER MANAGEMENT ---
 
 // GET /api/admin/workers — List all workers with subscription status
@@ -741,6 +899,196 @@ router.get("/workers", catchAsync(async (_request, response) => {
   });
   
   response.json(successResponse(workers, "Workers fetched successfully"));
+}));
+
+// POST /api/admin/workers — Manually create a worker profile by support / admin
+router.post("/workers", catchAsync(async (request, response) => {
+  const schema = z.object({
+    firstName: z.string().min(2, "الاسم الأول مطلوب"),
+    lastName: z.string().min(2, "اسم العائلة مطلوب"),
+    phone: z.string().min(10, "رقم الهاتف غير صحيح"),
+    password: z.string().min(6, "كلمة المرور يجب أن تكون 6 أحرف على الأقل"),
+    profession: z.string().min(2, "المهنة / التخصص مطلوبة"),
+    governorate: z.string().optional(),
+    city: z.string().optional(),
+    address: z.string().optional(),
+    nationalIdNumber: z.string().optional(),
+    yearsOfExperience: z.number().optional().default(0),
+    orderQuota: z.number().optional().default(20),
+    verificationStatus: z.enum(["PENDING", "UNDER_REVIEW", "DOCUMENTS_SUBMITTED", "VERIFIED"]).optional().default("VERIFIED"),
+    bio: z.string().optional()
+  });
+
+  const payload = schema.parse(request.body);
+
+  // Clean phone number to Egyptian standard +20...
+  let cleanPhone = payload.phone.replace(/\D/g, "");
+  if (cleanPhone.startsWith("20")) {
+    cleanPhone = "+" + cleanPhone;
+  } else if (cleanPhone.startsWith("0")) {
+    cleanPhone = "+20" + cleanPhone.substring(1);
+  } else if (!cleanPhone.startsWith("+")) {
+    cleanPhone = "+20" + cleanPhone;
+  }
+
+  const existingUser = await prisma.user.findFirst({
+    where: { phone: cleanPhone },
+    include: { workerProfile: true }
+  });
+
+  if (existingUser?.workerProfile) {
+    throw new ApiError(409, "رقم الهاتف هذا مسجل بالفعل كفني على المنصة.", "PROFILE_EXISTS");
+  }
+
+  const passwordHash = await hashPassword(payload.password);
+  const avatarFallback = await getRandomWorkerAvatar(payload.profession);
+  const now = new Date();
+  const trialExpiresAt = payload.verificationStatus === "VERIFIED"
+    ? new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000)
+    : null;
+
+  let workerProfile;
+
+  if (existingUser) {
+    await prisma.user.update({
+      where: { id: existingUser.id },
+      data: {
+        passwordHash,
+        role: "WORKER",
+        firstName: payload.firstName || existingUser.firstName,
+        lastName: payload.lastName || existingUser.lastName,
+        avatarUrl: existingUser.avatarUrl || avatarFallback || undefined
+      }
+    });
+
+    workerProfile = await prisma.workerProfile.create({
+      data: {
+        userId: existingUser.id,
+        profession: payload.profession,
+        yearsOfExperience: payload.yearsOfExperience || 0,
+        orderQuota: payload.orderQuota || 20,
+        verificationStatus: payload.verificationStatus,
+        verifiedAt: payload.verificationStatus === "VERIFIED" ? now : null,
+        verifiedBy: "خدمة العملاء والإدارة",
+        trialExpiresAt,
+        nationalIdNumber: payload.nationalIdNumber || undefined,
+        bio: payload.bio || undefined,
+        rating: 5,
+        ratingCount: 1,
+        totalJobsCompleted: 0,
+        walletBalance: 0,
+        isAvailable: true,
+        subscriptionTier: "free"
+      },
+      include: {
+        user: { select: { firstName: true, lastName: true, phone: true, email: true, avatarUrl: true, lastLoginAt: true } }
+      }
+    });
+  } else {
+    const user = await prisma.user.create({
+      data: {
+        firstName: payload.firstName,
+        lastName: payload.lastName,
+        phone: cleanPhone,
+        passwordHash,
+        role: "WORKER",
+        status: "ACTIVE",
+        avatarUrl: avatarFallback || undefined
+      }
+    });
+
+    if (payload.governorate || payload.city) {
+      await prisma.address.create({
+        data: {
+          userId: user.id,
+          governorate: payload.governorate || "cairo",
+          city: payload.city || "new-cairo",
+          area: payload.city || payload.governorate || "new-cairo",
+          street: payload.address || "",
+          isDefault: true
+        }
+      }).catch(() => {});
+    }
+
+    workerProfile = await prisma.workerProfile.create({
+      data: {
+        userId: user.id,
+        profession: payload.profession,
+        yearsOfExperience: payload.yearsOfExperience || 0,
+        orderQuota: payload.orderQuota || 20,
+        verificationStatus: payload.verificationStatus,
+        verifiedAt: payload.verificationStatus === "VERIFIED" ? now : null,
+        verifiedBy: "خدمة العملاء والإدارة",
+        trialExpiresAt,
+        nationalIdNumber: payload.nationalIdNumber || undefined,
+        bio: payload.bio || undefined,
+        rating: 5,
+        ratingCount: 1,
+        totalJobsCompleted: 0,
+        walletBalance: 0,
+        isAvailable: true,
+        subscriptionTier: "free"
+      },
+      include: {
+        user: { select: { firstName: true, lastName: true, phone: true, email: true, avatarUrl: true, lastLoginAt: true } }
+      }
+    });
+  }
+
+  // Seed specialization & area if verified
+  if (payload.verificationStatus === "VERIFIED") {
+    try {
+      const catSlug = getCategorySlugFromProfession(payload.profession);
+      const service = await prisma.service.findFirst({
+        where: { category: { slug: catSlug } }
+      });
+      if (service) {
+        await prisma.workerSpecialization.create({
+          data: { workerId: workerProfile.id, serviceId: service.id }
+        }).catch(() => {});
+      }
+      await prisma.workerArea.create({
+        data: {
+          workerId: workerProfile.id,
+          governorate: payload.governorate || "cairo",
+          city: payload.city || "new-cairo",
+          area: payload.city || "new-cairo"
+        }
+      }).catch(() => {});
+    } catch (e) {
+      console.error("Error setting worker initial specialization/area:", e);
+    }
+  }
+
+  response.status(201).json(successResponse(workerProfile, "Worker profile created successfully"));
+}));
+
+// POST /api/admin/workers/:id/reset-password — Reset worker password manually by support
+router.post("/workers/:id/reset-password", catchAsync(async (request, response) => {
+  const id = request.params.id as string;
+  const { newPassword } = z.object({
+    newPassword: z.string().min(6, "كلمة المرور يجب أن تكون 6 أحرف على الأقل")
+  }).parse(request.body);
+
+  const worker = await prisma.workerProfile.findUnique({
+    where: { id },
+    include: { user: true }
+  });
+  if (!worker) {
+    throw new ApiError(404, "Worker profile not found");
+  }
+
+  const passwordHash = await hashPassword(newPassword);
+  await prisma.user.update({
+    where: { id: worker.userId },
+    data: { passwordHash }
+  });
+
+  response.json(successResponse({
+    workerId: worker.id,
+    phone: worker.user.phone,
+    name: `${worker.user.firstName} ${worker.user.lastName}`
+  }, "تم تعيين وتحديث كلمة المرور بنجاح"));
 }));
 
 // POST /api/admin/workers/:id/impersonate — Impersonate worker and switch session to /worker/profile
