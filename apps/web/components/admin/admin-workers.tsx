@@ -6,7 +6,7 @@ import {
   Plus, User, Phone, Mail, Search, Loader2, Wrench, Star,
   ShieldCheck, Trash2, Wallet, Eye, X, Edit, Users,
   CheckCircle2, XCircle, Clock3, AlertTriangle, ExternalLink, Settings, UserCheck, Sparkles,
-  Key, Copy, Check, MessageCircle, Send, RefreshCw, UploadCloud, Crop
+  Key, Copy, Check, MessageCircle, Send, RefreshCw, UploadCloud, Crop, Camera
 } from "lucide-react";
 import { fetchApiData, postApiData, patchApiData, deleteApiData } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
@@ -73,8 +73,6 @@ function formatApprovalDateTime(dateStr?: string | null, isArabic: boolean = tru
 
 function getWorkerPhoto(worker: Worker): string {
   if (worker.user.avatarUrl) return worker.user.avatarUrl;
-  if (worker.selfieWithId) return worker.selfieWithId;
-  if (worker.nationalIdFront) return worker.nationalIdFront;
 
   const initials = encodeURIComponent(`${worker.user.firstName || ""} ${worker.user.lastName || ""}`.trim() || "Worker");
   return `https://ui-avatars.com/api/?name=${initials}&background=1f1f23&color=eab308&bold=true&size=128`;
@@ -148,6 +146,80 @@ export function AdminWorkersManagement({ locale }: { locale: Locale }) {
     quota?: number;
   } | null>(null);
   const [copiedStatus, setCopiedStatus] = useState(false);
+
+  // Worker Avatar Modal State
+  const [avatarModalWorker, setAvatarModalWorker] = useState<Worker | null>(null);
+  const [avatarLibrary, setAvatarLibrary] = useState<string[]>([]);
+  const [loadingAvatars, setLoadingAvatars] = useState(false);
+  const [savingAvatar, setSavingAvatar] = useState(false);
+  const [selectedAvatarUrl, setSelectedAvatarUrl] = useState<string>("");
+  const [avatarTab, setAvatarTab] = useState<"library" | "upload">("library");
+
+  const handleOpenAvatarModal = async (worker: Worker) => {
+    setAvatarModalWorker(worker);
+    setSelectedAvatarUrl(worker.user.avatarUrl || "");
+    setAvatarTab("library");
+    if (avatarLibrary.length === 0) {
+      setLoadingAvatars(true);
+      try {
+        const res = await fetchApiData<{ data: string[] }>("/admin/avatars", { data: [] });
+        const list = Array.isArray(res) ? res : (res as any)?.data || [];
+        setAvatarLibrary(list);
+      } catch (e) {
+        console.error("Failed to load avatars", e);
+      } finally {
+        setLoadingAvatars(false);
+      }
+    }
+  };
+
+  const handleSaveAvatar = async (url: string | null) => {
+    if (!avatarModalWorker) return;
+    setSavingAvatar(true);
+    try {
+      const patchRes = await patchApiData(`/admin/workers/${avatarModalWorker.id}`, {
+        avatarUrl: url
+      });
+      if (patchRes) {
+        const updatedWorker = {
+          ...avatarModalWorker,
+          user: {
+            ...avatarModalWorker.user,
+            avatarUrl: url
+          }
+        };
+        setWorkers(prev => prev.map(w => w.id === avatarModalWorker.id ? { ...w, ...updatedWorker } : w));
+        if (selectedWorker && selectedWorker.id === avatarModalWorker.id) {
+          setSelectedWorker({ ...selectedWorker, ...updatedWorker });
+        }
+        setAvatarModalWorker(null);
+      }
+    } catch (err: any) {
+      alert(err?.message || (isArabic ? "فشل حفظ الصورة الشخصية" : "Failed to update profile photo"));
+    } finally {
+      setSavingAvatar(false);
+    }
+  };
+
+  const handleDirectAvatarUpload = async (file: File) => {
+    if (!avatarModalWorker) return;
+    setSavingAvatar(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("folder", `workers/${avatarModalWorker.id}`);
+      const uploadRes = await fetch("/api/upload", { method: "POST", body: formData });
+      if (!uploadRes.ok) throw new Error("Upload failed");
+      const data = await uploadRes.json();
+      const uploadedUrl = data.url || data.data?.url;
+      if (!uploadedUrl) throw new Error("No URL returned");
+
+      await handleSaveAvatar(uploadedUrl);
+    } catch (err: any) {
+      alert(err?.message || (isArabic ? "فشل رفع الصورة الشخصية" : "Failed to upload avatar"));
+      setSavingAvatar(false);
+    }
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -682,24 +754,32 @@ https://osta.gotix.me/ar/login
               )}>
                 <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-4">
                   <div className="flex items-center gap-3 min-w-0 flex-1">
-                    <div className="relative shrink-0">
-                      <div className="h-12 w-12 rounded-xl bg-onyx-900 border border-onyx-700 overflow-hidden group-hover:border-gold-500/50 transition-all duration-500 flex items-center justify-center">
+                    <div className="relative shrink-0 group/avatar">
+                      <button
+                        type="button"
+                        onClick={() => handleOpenAvatarModal(worker)}
+                        title={isArabic ? "تغيير أو اختيار الصورة الشخصية" : "Change profile photo"}
+                        className="h-12 w-12 rounded-xl bg-onyx-900 border border-onyx-700 overflow-hidden group-hover/avatar:border-gold-500 transition-all duration-300 flex items-center justify-center relative cursor-pointer group-hover:border-gold-500/50"
+                      >
                         <img
                           src={workerPhotoUrl}
                           alt={`${worker.user.firstName} ${worker.user.lastName}`}
                           className="h-full w-full object-cover"
                         />
-                      </div>
+                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/avatar:opacity-100 transition-opacity flex items-center justify-center text-gold-400">
+                          <Camera className="h-4 w-4" />
+                        </div>
+                      </button>
                       {worker.verificationStatus === "VERIFIED" ? (
-                        <div className="absolute -top-1 -right-1 h-4.5 w-4.5 rounded-full bg-emerald-500 flex items-center justify-center border-2 border-onyx-950" title="Verified">
+                        <div className="absolute -top-1 -right-1 h-4.5 w-4.5 rounded-full bg-emerald-500 flex items-center justify-center border-2 border-onyx-950 pointer-events-none" title="Verified">
                           <ShieldCheck className="h-2.5 w-2.5 text-onyx-950" />
                         </div>
                       ) : worker.verificationStatus === "REJECTED" ? (
-                        <div className="absolute -top-1 -right-1 h-4.5 w-4.5 rounded-full bg-red-500 flex items-center justify-center border-2 border-onyx-950" title="Rejected">
+                        <div className="absolute -top-1 -right-1 h-4.5 w-4.5 rounded-full bg-red-500 flex items-center justify-center border-2 border-onyx-950 pointer-events-none" title="Rejected">
                           <XCircle className="h-2.5 w-2.5 text-white" />
                         </div>
                       ) : (
-                        <div className="absolute -top-1 -right-1 h-4.5 w-4.5 rounded-full bg-amber-500 flex items-center justify-center border-2 border-onyx-950" title="Pending Verification">
+                        <div className="absolute -top-1 -right-1 h-4.5 w-4.5 rounded-full bg-amber-500 flex items-center justify-center border-2 border-onyx-950 pointer-events-none" title="Pending Verification">
                           <Clock3 className="h-2.5 w-2.5 text-onyx-950" />
                         </div>
                       )}
@@ -842,6 +922,17 @@ https://osta.gotix.me/ar/login
                   >
                     <UserCheck className="h-3.5 w-3.5" />
                     <span className="hidden lg:inline">{isArabic ? "دخول كصنايعي" : "Edit as Worker"}</span>
+                  </button>
+
+                  {/* Edit Avatar Button */}
+                  <button
+                    type="button"
+                    onClick={() => handleOpenAvatarModal(worker)}
+                    title={isArabic ? "تعديل واختيار الصورة الشخصية للفني" : "Change Avatar"}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-onyx-900 border border-gold-500/30 text-gold-400 font-bold text-xs hover:bg-gold-500 hover:text-onyx-950 transition-all shadow-md cursor-pointer"
+                  >
+                    <Camera className="h-3.5 w-3.5" />
+                    <span className="hidden xl:inline">{isArabic ? "الصورة الشخصية" : "Avatar"}</span>
                   </button>
 
                   {/* Review & Upload Documents Button - ALWAYS available for ALL workers */}
@@ -1955,6 +2046,228 @@ https://osta.gotix.me/ar/login
                 {isArabic ? "تم الانتهاء" : "Done"}
               </button>
             </div>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* Worker Avatar Management Modal */}
+      {mounted && avatarModalWorker && createPortal(
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fadeIn">
+          <div className="bg-onyx-900 border border-gold-500/30 rounded-[2rem] w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl p-6 sm:p-8 space-y-6 text-start relative animate-scaleUp">
+            <button
+              onClick={() => setAvatarModalWorker(null)}
+              className="absolute top-6 end-6 text-onyx-400 hover:text-white transition-colors cursor-pointer"
+            >
+              <X className="h-6 w-6" />
+            </button>
+
+            <div className="flex items-start gap-4">
+              <div className="h-16 w-16 rounded-2xl bg-onyx-950 border-2 border-gold-500/40 overflow-hidden shrink-0 shadow-lg relative flex items-center justify-center">
+                <img
+                  src={selectedAvatarUrl || getWorkerPhoto(avatarModalWorker)}
+                  alt={avatarModalWorker.user.firstName}
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-gold-500/10 text-gold-400 border border-gold-500/20">
+                    {isArabic ? "إدارة الصورة الشخصية للفني" : "Worker Profile Photo"}
+                  </span>
+                  {avatarModalWorker.user.avatarUrl ? (
+                    <span className="text-[10px] text-emerald-400 font-bold">
+                      {isArabic ? "• صورة مخصصة" : "• Custom"}
+                    </span>
+                  ) : (
+                    <span className="text-[10px] text-amber-400 font-bold">
+                      {isArabic ? "• افتراضية (أحرف)" : "• Default Initial"}
+                    </span>
+                  )}
+                </div>
+                <h3 className="text-xl font-black text-white mt-1">
+                  {avatarModalWorker.user.firstName} {avatarModalWorker.user.lastName}
+                </h3>
+                <p className="text-xs text-onyx-400 mt-0.5">
+                  {isArabic
+                    ? "اختر صورة شخصية رسمية للفني من مكتبة الوجوه المعتمدة أو ارفع صورة جديدة. لن تظهر صورة بطاقة الرقم القومي إطلاقاً كصورة شخصية."
+                    : "Select an approved avatar from the library or upload a new photo. National ID scans will never be shown as an avatar."}
+                </p>
+              </div>
+            </div>
+
+            {/* Quick Actions / Reset */}
+            <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl bg-onyx-950/70 border border-onyx-800">
+              <span className="text-xs text-onyx-300 font-medium">
+                {isArabic ? "الحالة الحالية للصورة:" : "Current Avatar Status:"}{" "}
+                <strong className="text-gold-400">
+                  {avatarModalWorker.user.avatarUrl ? (isArabic ? "صورة مخصصة نشطة" : "Active Custom Photo") : (isArabic ? "صورة الأحرف التلقائية" : "Auto Initials Avatar")}
+                </strong>
+              </span>
+
+              {avatarModalWorker.user.avatarUrl && (
+                <button
+                  type="button"
+                  onClick={() => handleSaveAvatar(null)}
+                  disabled={savingAvatar}
+                  className="px-3 py-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                  <span>{isArabic ? "حذف والعودة للأحرف الافتراضية" : "Reset to Initials"}</span>
+                </button>
+              )}
+            </div>
+
+            {/* Tabs */}
+            <div className="flex border-b border-onyx-800 gap-2">
+              <button
+                type="button"
+                onClick={() => setAvatarTab("library")}
+                className={cn(
+                  "pb-3 px-4 font-bold text-xs transition-colors border-b-2 flex items-center gap-2 cursor-pointer",
+                  avatarTab === "library"
+                    ? "border-gold-500 text-gold-400"
+                    : "border-transparent text-onyx-400 hover:text-white"
+                )}
+              >
+                <Sparkles className="h-4 w-4" />
+                <span>{isArabic ? `مكتبة الصور المعتمدة (${avatarLibrary.length})` : `Approved Library (${avatarLibrary.length})`}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setAvatarTab("upload")}
+                className={cn(
+                  "pb-3 px-4 font-bold text-xs transition-colors border-b-2 flex items-center gap-2 cursor-pointer",
+                  avatarTab === "upload"
+                    ? "border-gold-500 text-gold-400"
+                    : "border-transparent text-onyx-400 hover:text-white"
+                )}
+              >
+                <UploadCloud className="h-4 w-4" />
+                <span>{isArabic ? "رفع صورة شخصية جديدة من جهازك" : "Upload New Photo"}</span>
+              </button>
+            </div>
+
+            {/* Tab 1: Library Grid */}
+            {avatarTab === "library" && (
+              <div className="space-y-4">
+                {loadingAvatars ? (
+                  <div className="p-12 text-center text-onyx-400 flex flex-col items-center justify-center gap-3">
+                    <Loader2 className="h-6 w-6 animate-spin text-gold-500" />
+                    <span className="text-xs">{isArabic ? "جاري تحميل مكتبة الصور..." : "Loading avatar library..."}</span>
+                  </div>
+                ) : avatarLibrary.length === 0 ? (
+                  <div className="p-8 text-center text-onyx-400 bg-onyx-950/50 rounded-xl border border-dashed border-onyx-800 text-xs">
+                    {isArabic ? "لم يتم إضافة أي صور معتمدة بعد في مكتبة الصور الشخصية." : "No avatars in the library yet."}
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-4 sm:grid-cols-6 gap-3 max-h-60 overflow-y-auto p-2">
+                    {avatarLibrary.map((url, idx) => {
+                      const isSelected = selectedAvatarUrl === url;
+                      return (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => setSelectedAvatarUrl(url)}
+                          className={cn(
+                            "relative aspect-square rounded-xl overflow-hidden border-2 transition-all p-0.5 group cursor-pointer",
+                            isSelected
+                              ? "border-gold-500 shadow-lg shadow-gold-500/20 scale-105"
+                              : "border-onyx-800 hover:border-gold-500/50 hover:scale-102"
+                          )}
+                        >
+                          <img
+                            src={url}
+                            alt={`Avatar ${idx + 1}`}
+                            className="w-full h-full object-cover rounded-lg"
+                          />
+                          {isSelected && (
+                            <div className="absolute inset-0 bg-gold-500/20 flex items-center justify-center">
+                              <div className="h-6 w-6 rounded-full bg-gold-500 text-onyx-950 flex items-center justify-center font-bold">
+                                <Check className="h-4 w-4" />
+                              </div>
+                            </div>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+
+                <div className="flex items-center justify-between pt-2">
+                  <span className="text-xs text-onyx-400">
+                    {selectedAvatarUrl && selectedAvatarUrl !== avatarModalWorker.user.avatarUrl
+                      ? (isArabic ? "اضغط حفظ لتطبيق الصورة المختارة على الفني" : "Click save to apply selected avatar")
+                      : ""}
+                  </span>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setAvatarModalWorker(null)}
+                      className="px-4 py-2 rounded-xl bg-onyx-800 hover:bg-onyx-700 text-onyx-300 text-xs font-bold transition-colors cursor-pointer"
+                    >
+                      {isArabic ? "إلغاء" : "Cancel"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleSaveAvatar(selectedAvatarUrl)}
+                      disabled={savingAvatar || !selectedAvatarUrl || selectedAvatarUrl === avatarModalWorker.user.avatarUrl}
+                      className="px-5 py-2 rounded-xl bg-gold-500 hover:bg-gold-400 disabled:opacity-50 text-onyx-950 text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer shadow-lg"
+                    >
+                      {savingAvatar ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
+                      <span>{isArabic ? "حفظ الصورة المختارة للفني" : "Save Selected Avatar"}</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Tab 2: Upload */}
+            {avatarTab === "upload" && (
+              <div className="space-y-4">
+                <label className="border-2 border-dashed border-onyx-700 hover:border-gold-500/60 transition-colors rounded-2xl p-8 flex flex-col items-center justify-center gap-3 cursor-pointer bg-onyx-950/40">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    disabled={savingAvatar}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleDirectAvatarUpload(file);
+                      e.target.value = "";
+                    }}
+                  />
+                  {savingAvatar ? (
+                    <div className="flex flex-col items-center gap-2">
+                      <Loader2 className="h-8 w-8 text-gold-500 animate-spin" />
+                      <span className="text-xs text-gold-400 font-bold">
+                        {isArabic ? "جاري رفع وحفظ الصورة الشخصية..." : "Uploading and saving photo..."}
+                      </span>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="h-12 w-12 rounded-xl bg-gold-500/10 text-gold-400 flex items-center justify-center">
+                        <UploadCloud className="h-6 w-6" />
+                      </div>
+                      <div className="text-center">
+                        <p className="text-sm font-bold text-white">
+                          {isArabic ? "اضغط لاختيار صورة من جهازك أو اسحبها هنا" : "Click to select a photo from your device"}
+                        </p>
+                        <p className="text-xs text-onyx-400 mt-1">
+                          PNG, JPG, WebP {isArabic ? "(يفضل صورة مربعة واضحة للوجه)" : "(Square headshot recommended)"}
+                        </p>
+                      </div>
+                    </>
+                  )}
+                </label>
+
+                <p className="text-[11px] text-onyx-400 leading-relaxed">
+                  💡 {isArabic
+                    ? "عند رفع صورة جديدة، سيتم حفظها تلقائياً داخل فولدر الفني في المعرض تحت تصنيف (الصورة الشخصية للفني) وتعيينها على بروفايله فوراً."
+                    : "When a new photo is uploaded, it will be automatically stored in the worker's folder under Avatars and set to their profile."}
+                </p>
+              </div>
+            )}
           </div>
         </div>,
         document.body

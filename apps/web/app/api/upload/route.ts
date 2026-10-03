@@ -174,18 +174,31 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "File size must be less than 5MB" }, { status: 400 });
   }
 
+  const customFolder = formData.get("folder") as string | null;
+  const sanitizedFolder = customFolder
+    ? customFolder.replace(/[^a-zA-Z0-9_\-\/]/g, "").replace(/\/{2,}/g, "/").replace(/^\/|\/$/g, "")
+    : "";
+
   try {
-    const folder = isRegistrationDocumentUpload
-      ? "registration-documents"
-      : isAvatarLibraryUpload
-        ? "avatar-library"
-        : "uploads";
+    const folder = sanitizedFolder || (
+      isRegistrationDocumentUpload
+        ? "registration-documents"
+        : isAvatarLibraryUpload
+          ? "avatar-library"
+          : purpose === "avatar"
+            ? "avatars"
+            : "uploads"
+    );
     const blob = await put(`${folder}/${Date.now()}-${safeFilename(file.name)}`, file, {
       access: "public",
       contentType: file.type,
       addRandomSuffix: true,
     });
-    return NextResponse.json({ url: blob.url });
+    return NextResponse.json({
+      success: true,
+      url: blob.url,
+      data: { url: blob.url }
+    });
   } catch (error) {
     console.error("Upload error:", error);
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });

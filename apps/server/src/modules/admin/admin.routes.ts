@@ -1884,5 +1884,397 @@ router.put("/avatars", authenticate, requireRoles(UserRole.ADMIN), catchAsync(as
   res.json(successResponse(saved, "Avatar library saved"));
 }));
 
+// ──────────────────────────────────────────────────────────────────────────────
+// Admin Media Folders & Organized Storage API
+// Groups all documents, avatars, and attachments by Entity (Workers, Clients, Vendors)
+// ──────────────────────────────────────────────────────────────────────────────
+
+// GET /api/admin/media/folders — Get structured media organized by entity folders
+router.get("/media/folders", authenticate, requireRoles(UserRole.ADMIN), catchAsync(async (_req, res) => {
+  // 1. Technicians / Workers with documents & photos
+  const workers = await prisma.workerProfile.findMany({
+    include: {
+      user: {
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          phone: true,
+          email: true,
+          avatarUrl: true
+        }
+      },
+      certificates: {
+        select: { id: true, title: true, imageUrl: true, createdAt: true }
+      }
+    },
+    orderBy: { createdAt: "desc" }
+  });
+
+  const workerFolders = workers.map(w => {
+    const files: Array<{
+      id: string;
+      url: string;
+      titleAr: string;
+      titleEn: string;
+      category: string;
+      field?: string;
+      uploadedAt?: string | Date | null;
+    }> = [];
+
+    if (w.user.avatarUrl) {
+      files.push({
+        id: `${w.id}-avatar`,
+        url: w.user.avatarUrl,
+        titleAr: "الصورة الشخصية للفني",
+        titleEn: "Worker Avatar",
+        category: "avatar",
+        field: "avatarUrl",
+        uploadedAt: w.updatedAt
+      });
+    }
+
+    if (w.nationalIdFront) {
+      files.push({
+        id: `${w.id}-id-front`,
+        url: w.nationalIdFront,
+        titleAr: "وجه بطاقة الرقم القومي",
+        titleEn: "National ID Front",
+        category: "national_id",
+        field: "nationalIdFront",
+        uploadedAt: w.updatedAt
+      });
+    }
+
+    if (w.nationalIdBack) {
+      files.push({
+        id: `${w.id}-id-back`,
+        url: w.nationalIdBack,
+        titleAr: "ظهر بطاقة الرقم القومي",
+        titleEn: "National ID Back",
+        category: "national_id",
+        field: "nationalIdBack",
+        uploadedAt: w.updatedAt
+      });
+    }
+
+    if (w.selfieWithId) {
+      files.push({
+        id: `${w.id}-selfie`,
+        url: w.selfieWithId,
+        titleAr: "سيلفي الفني مع البطاقة",
+        titleEn: "Selfie with ID",
+        category: "selfie",
+        field: "selfieWithId",
+        uploadedAt: w.updatedAt
+      });
+    }
+
+    if (w.criminalRecord) {
+      files.push({
+        id: `${w.id}-criminal`,
+        url: w.criminalRecord,
+        titleAr: "صحيفة الحالة الجنائية (الفيش)",
+        titleEn: "Criminal Record",
+        category: "criminal_record",
+        field: "criminalRecord",
+        uploadedAt: w.updatedAt
+      });
+    }
+
+    if (w.utilityBillUrl) {
+      files.push({
+        id: `${w.id}-utility`,
+        url: w.utilityBillUrl,
+        titleAr: "إيصال المرافق (غاز/كهرباء/مياه)",
+        titleEn: "Utility Bill",
+        category: "utility_bill",
+        field: "utilityBillUrl",
+        uploadedAt: w.updatedAt
+      });
+    }
+
+    if (Array.isArray(w.galleryImages)) {
+      w.galleryImages.forEach((img, idx) => {
+        if (img) {
+          files.push({
+            id: `${w.id}-gallery-${idx}`,
+            url: img,
+            titleAr: `معرض الأعمال #${idx + 1}`,
+            titleEn: `Portfolio #${idx + 1}`,
+            category: "portfolio",
+            uploadedAt: w.updatedAt
+          });
+        }
+      });
+    }
+
+    w.certificates.forEach((cert, idx) => {
+      if (cert.imageUrl) {
+        files.push({
+          id: cert.id,
+          url: cert.imageUrl,
+          titleAr: cert.title || `شهادة اعتماد #${idx + 1}`,
+          titleEn: cert.title || `Certificate #${idx + 1}`,
+          category: "certificate",
+          uploadedAt: cert.createdAt
+        });
+      }
+    });
+
+    return {
+      id: w.id,
+      userId: w.userId,
+      type: "worker" as const,
+      name: `${w.user.firstName} ${w.user.lastName}`,
+      phone: w.user.phone,
+      email: w.user.email,
+      profession: w.profession,
+      status: w.verificationStatus,
+      avatarUrl: w.user.avatarUrl,
+      filesCount: files.length,
+      files
+    };
+  }).filter(folder => folder.files.length > 0);
+
+  // 2. Clients with files & request attachments
+  const clients = await prisma.clientProfile.findMany({
+    include: {
+      user: {
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          phone: true,
+          email: true,
+          avatarUrl: true
+        }
+      },
+      requests: {
+        select: {
+          id: true,
+          title: true,
+          images: true,
+          beforeImages: true,
+          afterImages: true,
+          createdAt: true
+        },
+        take: 30
+      }
+    },
+    orderBy: { createdAt: "desc" }
+  });
+
+  const clientFolders = clients.map(c => {
+    const files: Array<{
+      id: string;
+      url: string;
+      titleAr: string;
+      titleEn: string;
+      category: string;
+      field?: string;
+      uploadedAt?: string | Date | null;
+    }> = [];
+
+    if (c.user.avatarUrl) {
+      files.push({
+        id: `${c.id}-avatar`,
+        url: c.user.avatarUrl,
+        titleAr: "الصورة الشخصية للعميل",
+        titleEn: "Client Avatar",
+        category: "avatar",
+        field: "avatarUrl",
+        uploadedAt: c.updatedAt
+      });
+    }
+
+    c.requests.forEach(r => {
+      const allReqImages = [...(r.images || []), ...(r.beforeImages || []), ...(r.afterImages || [])];
+      allReqImages.forEach((img, idx) => {
+        if (img) {
+          files.push({
+            id: `${r.id}-${idx}`,
+            url: img,
+            titleAr: `مرفق طلب: ${r.title || "طلب صيانة"}`,
+            titleEn: `Request Attachment: ${r.title || "Service Request"}`,
+            category: "request_attachment",
+            uploadedAt: r.createdAt
+          });
+        }
+      });
+    });
+
+    return {
+      id: c.id,
+      userId: c.userId,
+      type: "client" as const,
+      name: `${c.user.firstName} ${c.user.lastName}`,
+      phone: c.user.phone,
+      email: c.user.email,
+      avatarUrl: c.user.avatarUrl,
+      filesCount: files.length,
+      files
+    };
+  }).filter(folder => folder.files.length > 0);
+
+  // 3. Vendors & Stores with documents & products
+  const vendors = await prisma.vendorProfile.findMany({
+    include: {
+      user: {
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          phone: true,
+          email: true
+        }
+      },
+      products: {
+        select: {
+          id: true,
+          nameAr: true,
+          imageUrl: true,
+          createdAt: true
+        },
+        take: 30
+      }
+    },
+    orderBy: { createdAt: "desc" }
+  });
+
+  const vendorFolders = vendors.map(v => {
+    const files: Array<{
+      id: string;
+      url: string;
+      titleAr: string;
+      titleEn: string;
+      category: string;
+      field?: string;
+      uploadedAt?: string | Date | null;
+    }> = [];
+
+    if (v.shopImageUrl) {
+      files.push({
+        id: `${v.id}-shop-image`,
+        url: v.shopImageUrl,
+        titleAr: "شعار / صورة المتجر",
+        titleEn: "Shop Logo / Image",
+        category: "shop_logo",
+        field: "shopImageUrl",
+        uploadedAt: v.updatedAt
+      });
+    }
+
+    if (v.commercialRegisterUrl) {
+      files.push({
+        id: `${v.id}-commercial-register`,
+        url: v.commercialRegisterUrl,
+        titleAr: "السجل التجاري للمتجر",
+        titleEn: "Commercial Register",
+        category: "commercial_register",
+        field: "commercialRegisterUrl",
+        uploadedAt: v.updatedAt
+      });
+    }
+
+    if (v.taxCardUrl) {
+      files.push({
+        id: `${v.id}-tax-card`,
+        url: v.taxCardUrl,
+        titleAr: "البطاقة الضريبية للمتجر",
+        titleEn: "Tax Card",
+        category: "tax_card",
+        field: "taxCardUrl",
+        uploadedAt: v.updatedAt
+      });
+    }
+
+    v.products.forEach(p => {
+      if (p.imageUrl) {
+        files.push({
+          id: p.id,
+          url: p.imageUrl,
+          titleAr: `صورة منتج: ${p.nameAr || "منتج"}`,
+          titleEn: `Product Image: ${p.nameAr || "Product"}`,
+          category: "product",
+          uploadedAt: p.createdAt
+        });
+      }
+    });
+
+    return {
+      id: v.id,
+      userId: v.userId,
+      type: "vendor" as const,
+      name: v.shopName || `${v.user.firstName} ${v.user.lastName}`,
+      phone: v.user.phone,
+      email: v.user.email,
+      category: v.category,
+      filesCount: files.length,
+      files
+    };
+  }).filter(folder => folder.files.length > 0);
+
+  // 4. Avatar library templates
+  const avatars = await getAvatarLibrary();
+
+  res.json(successResponse({
+    workers: workerFolders,
+    clients: clientFolders,
+    vendors: vendorFolders,
+    avatars
+  }, "Media folders fetched successfully"));
+}));
+
+// DELETE /api/admin/media/entity-file — Delete or clear a specific document on an entity
+router.delete("/media/entity-file", authenticate, requireRoles(UserRole.ADMIN), catchAsync(async (req, res) => {
+  const { entityType, entityId, field, fileUrl } = req.body as {
+    entityType: "worker" | "client" | "vendor";
+    entityId: string;
+    field?: string;
+    fileUrl?: string;
+  };
+
+  if (!entityId || !entityType) {
+    throw new ApiError(400, "entityId and entityType are required");
+  }
+
+  if (entityType === "worker") {
+    const worker = await prisma.workerProfile.findUnique({ where: { id: entityId } });
+    if (!worker) throw new ApiError(404, "Worker not found");
+
+    if (field === "avatarUrl") {
+      await prisma.user.update({ where: { id: worker.userId }, data: { avatarUrl: null } });
+    } else if (field && ["nationalIdFront", "nationalIdBack", "selfieWithId", "criminalRecord", "utilityBillUrl"].includes(field)) {
+      await prisma.workerProfile.update({
+        where: { id: entityId },
+        data: { [field]: null }
+      });
+    } else if (fileUrl && Array.isArray(worker.galleryImages)) {
+      await prisma.workerProfile.update({
+        where: { id: entityId },
+        data: { galleryImages: worker.galleryImages.filter(img => img !== fileUrl) }
+      });
+    }
+  } else if (entityType === "client") {
+    const client = await prisma.clientProfile.findUnique({ where: { id: entityId } });
+    if (!client) throw new ApiError(404, "Client not found");
+    if (field === "avatarUrl") {
+      await prisma.user.update({ where: { id: client.userId }, data: { avatarUrl: null } });
+    }
+  } else if (entityType === "vendor") {
+    const vendor = await prisma.vendorProfile.findUnique({ where: { id: entityId } });
+    if (!vendor) throw new ApiError(404, "Vendor not found");
+    if (field && ["shopImageUrl", "commercialRegisterUrl", "taxCardUrl"].includes(field)) {
+      await prisma.vendorProfile.update({
+        where: { id: entityId },
+        data: { [field]: null }
+      });
+    }
+  }
+
+  res.json(successResponse(null, "Document cleared successfully"));
+}));
+
 export const adminRouter = router;
 

@@ -61,13 +61,44 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Authentication required" }, { status: 401 });
   }
 
+  let blobs: any[] = [];
   try {
-    const { blobs } = await list();
-    return NextResponse.json({ success: true, data: blobs });
-  } catch (error) {
-    console.error("List media error:", error);
-    return NextResponse.json({ error: "Failed to list media" }, { status: 500 });
+    const listRes = await list();
+    blobs = listRes.blobs || [];
+  } catch (err) {
+    console.warn("Vercel Blob list notice:", err);
   }
+
+  let folders = {
+    workers: [],
+    clients: [],
+    vendors: [],
+    avatars: []
+  };
+
+  try {
+    const serverUrl = process.env.NEXT_PUBLIC_OSTA_API_URL || "http://localhost:5000/api";
+    const res = await fetch(`${serverUrl}/admin/media/folders`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+      cache: "no-store"
+    });
+    if (res.ok) {
+      const json = await res.json();
+      if (json.data) {
+        folders = json.data;
+      }
+    }
+  } catch (err) {
+    console.error("Failed to fetch entity media folders from server:", err);
+  }
+
+  return NextResponse.json({
+    success: true,
+    data: blobs,
+    folders
+  });
 }
 
 export async function DELETE(request: NextRequest) {
@@ -81,15 +112,40 @@ export async function DELETE(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const url = searchParams.get("url");
 
-  if (!url) {
-    return NextResponse.json({ error: "No URL provided" }, { status: 400 });
+  let body: any = {};
+  try {
+    body = await request.json();
+  } catch {
+    // query params might be used
   }
 
-  try {
-    await del(url);
-    return NextResponse.json({ success: true, message: "Media deleted successfully" });
-  } catch (error) {
-    console.error("Delete media error:", error);
-    return NextResponse.json({ error: "Failed to delete media" }, { status: 500 });
+  const entityType = body.entityType || searchParams.get("entityType");
+  const entityId = body.entityId || searchParams.get("entityId");
+  const field = body.field || searchParams.get("field");
+
+  if (entityType && entityId) {
+    try {
+      const serverUrl = process.env.NEXT_PUBLIC_OSTA_API_URL || "http://localhost:5000/api";
+      await fetch(`${serverUrl}/admin/media/entity-file`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ entityType, entityId, field, fileUrl: url })
+      });
+    } catch (e) {
+      console.error("Failed to clear entity document on server:", e);
+    }
   }
+
+  if (url) {
+    try {
+      await del(url);
+    } catch (error) {
+      console.warn("Delete blob notice:", error);
+    }
+  }
+
+  return NextResponse.json({ success: true, message: "Media deleted successfully" });
 }
