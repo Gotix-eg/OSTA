@@ -519,7 +519,7 @@ const adminFinanceFallback: AdminFinanceData = {
 const adminSettingsFallback: AdminSettingsData = {
   platform: {
     supportEmail: "support@osta.eg",
-    emergencyHotline: "+20 100 000 0000",
+    emergencyHotline: "+20 103 331 9673",
     defaultLanguage: "ar"
   },
   operations: {

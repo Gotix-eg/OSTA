@@ -178,7 +178,7 @@ export function PublicFooter({ locale }: { locale: Locale }) {
               <Facebook className="h-4 w-4" />
             </a>
             <a
-              href="https://wa.me/201009410112"
+              href="https://wa.me/201033319673"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="WhatsApp"

@@ -43,8 +43,8 @@ async function main() {
 
   const supportInfo = {
     email: "support@osta.eg",
-    phone: "+201009410112",
-    whatsapp: "https://wa.me/201009410112",
+    phone: "+201033319673",
+    whatsapp: "https://wa.me/201033319673",
     facebook: "https://www.facebook.com/2ostafy/",
     instagram: "https://instagram.com/osta.egypt",
     address: "القاهرة، مصر",

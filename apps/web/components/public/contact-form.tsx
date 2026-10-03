@@ -66,7 +66,7 @@ export function ContactForm({ locale }: { locale: Locale }) {
   const c = copy[locale] ?? copy.en;
 
   const contactItems = [
-    { label: c.phone, value: "+20 100 941 0112", href: "https://wa.me/201009410112", Icon: Phone },
+    { label: c.phone, value: "+20 103 331 9673", href: "https://wa.me/201033319673", Icon: Phone },
     { label: c.email, value: "info@ostafy.com", href: "mailto:info@ostafy.com", Icon: Mail },
     { label: c.address, value: c.location, href: null, Icon: MapPin },
   ];

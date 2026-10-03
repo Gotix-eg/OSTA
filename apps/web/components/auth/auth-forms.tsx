@@ -1348,7 +1348,7 @@ export function WorkerRegisterForm({ locale, initial }: { locale: Locale; initia
                 : "Chat with customer support and we'll register and activate your account via WhatsApp!"}
             </p>
             <a
-              href={`https://wa.me/201009410112?text=${encodeURIComponent(
+              href={`https://wa.me/201033319673?text=${encodeURIComponent(
                 isArabic
                   ? `السلام عليكم، أنا صنايعي ومحتاج مساعدة خدمة العملاء في تسجيل حساب فني على منصة أوسطى${state.phone && state.phone !== "+20" ? ` (رقم هاتفي: ${state.phone})` : ""}`
                   : "Hello, I am a craftsman needing assistance registering on OSTA platform."
@@ -1748,7 +1748,7 @@ export function ForgotPasswordForm({ locale }: { locale: Locale }) {
                 : "You can recover your account and receive a new password instantly by contacting customer service with your phone number on WhatsApp!"}
             </p>
             <a
-              href={`https://wa.me/201009410112?text=${encodeURIComponent(
+              href={`https://wa.me/201033319673?text=${encodeURIComponent(
                 isArabic
                   ? "السلام عليكم، أنا صنايعي ونسيت كلمة المرور الخاصة بحسابي في أوسطى ومش فاكر الإيميل، برجاء مساعدتي في استعادة الحساب برقم الموبايل."
                   : "Hello, I am a craftsman on OSTA, I forgot my password and email, please help me recover my account."

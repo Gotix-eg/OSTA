@@ -11,7 +11,7 @@ export function FloatingSupport({ locale }: { locale: Locale }) {
   const [isOpen, setIsOpen] = useState(false);
 
   // WhatsApp Support Number and custom greeting message
-  const whatsappNumber = "201009410112";
+  const whatsappNumber = "201033319673";
   const welcomeText = isArabic 
     ? encodeURIComponent("مرحباً دعم أُسطفاي، أرغب في الاستفسار عن خدمات المنصة.")
     : encodeURIComponent("Hello Ostafy Support, I'd like to inquire about the platform services.");

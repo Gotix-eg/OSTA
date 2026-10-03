@@ -80,7 +80,7 @@ export const publicPageCopy = {
         sections: [
           {
             title: "الدعم",
-            body: "support@osta.eg — ‎+20 100 000 0000 — القاهرة، مصر."
+            body: "support@osta.eg — ‎+20 103 331 9673 — القاهرة، مصر."
           },
           {
             title: "للعمال",
@@ -321,7 +321,7 @@ export const publicPageCopy = {
         sections: [
           {
             title: "Support",
-            body: "support@osta.eg - +20 100 000 0000 - Cairo, Egypt."
+            body: "support@osta.eg - +20 103 331 9673 - Cairo, Egypt."
           },
           {
             title: "For workers",

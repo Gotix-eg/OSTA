@@ -90,7 +90,7 @@ export const landingCopy = {
     footerItems: {
       quick: ["الخدمات", "كيف يعمل", "عن Ostafy", "اتصل بنا"],
       workers: ["سجل الآن", "الأسئلة الشائعة", "التدريب", "الدعم"],
-      contact: ["support@osta.eg", "+20 100 000 0000", "القاهرة، مصر"]
+      contact: ["support@osta.eg", "+20 103 331 9673", "القاهرة، مصر"]
     },
     footerBottom: "جميع الحقوق محفوظة لـ Ostafy"
   },
@@ -183,7 +183,7 @@ export const landingCopy = {
     footerItems: {
       quick: ["Services", "How It Works", "About Ostafy", "Contact"],
       workers: ["Register", "FAQ", "Training", "Support"],
-      contact: ["support@osta.eg", "+20 100 000 0000", "Cairo, Egypt"]
+      contact: ["support@osta.eg", "+20 103 331 9673", "Cairo, Egypt"]
     },
     footerBottom: "All rights reserved by Ostafy"
   }
