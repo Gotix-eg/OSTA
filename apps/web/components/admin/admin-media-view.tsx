@@ -28,7 +28,8 @@ import {
   Phone,
   Mail,
   Loader2,
-  ArrowRight
+  ArrowRight,
+  CheckCircle2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { patchApiData } from "@/lib/api";
@@ -46,7 +47,7 @@ interface MediaFile {
 interface EntityFolder {
   id: string;
   userId: string;
-  type: "worker" | "client" | "vendor";
+  type: "worker" | "client" | "vendor" | "system";
   name: string;
   phone: string;
   email?: string | null;
@@ -83,14 +84,23 @@ function formatFileSize(bytes: number) {
 export function AdminMediaView({ locale }: { locale: string }) {
   const isArabic = locale === "ar";
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"all" | "workers" | "clients" | "vendors" | "avatars" | "general">("all");
+  const [activeTab, setActiveTab] = useState<"all" | "workers" | "clients" | "vendors" | "system" | "avatars" | "general">("all");
   
   // Folders data
   const [workersFolders, setWorkersFolders] = useState<EntityFolder[]>([]);
   const [clientsFolders, setClientsFolders] = useState<EntityFolder[]>([]);
   const [vendorsFolders, setVendorsFolders] = useState<EntityFolder[]>([]);
+  const [systemFolders, setSystemFolders] = useState<EntityFolder[]>([]);
   const [avatarTemplates, setAvatarTemplates] = useState<AvatarTemplate[]>([]);
   const [rawBlobs, setRawBlobs] = useState<RawBlobItem[]>([]);
+
+  // Cleanup state
+  const [cleaningOrphans, setCleaningOrphans] = useState(false);
+  const [cleanupResult, setCleanupResult] = useState<{
+    deletedCount: number;
+    freedMB: string;
+    remainingCount: number;
+  } | null>(null);
 
   // Navigation
   const [selectedFolder, setSelectedFolder] = useState<EntityFolder | null>(null);
@@ -122,6 +132,7 @@ export function AdminMediaView({ locale }: { locale: string }) {
           setWorkersFolders(result.folders.workers || []);
           setClientsFolders(result.folders.clients || []);
           setVendorsFolders(result.folders.vendors || []);
+          setSystemFolders(result.folders.system || []);
           setAvatarTemplates(result.folders.avatars || []);
         }
       }
@@ -129,6 +140,34 @@ export function AdminMediaView({ locale }: { locale: string }) {
       console.error("Failed to load media folders:", error);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleCleanupOrphans() {
+    if (!confirm(isArabic 
+      ? "هل أنت متأكد من فحص التخزين السحابي وحذف كافة الملفات المهملة واليتيمة غير المرتبطة بأي حساب أو منتج؟" 
+      : "Are you sure you want to scan and purge all orphaned and unlinked media files?")) {
+      return;
+    }
+    setCleaningOrphans(true);
+    try {
+      const res = await fetch("/api/admin/media?action=cleanup-orphans", { method: "POST" });
+      const data = await res.json();
+      if (data.success && data.data) {
+        setCleanupResult({
+          deletedCount: data.data.deletedCount,
+          freedMB: data.data.freedMB,
+          remainingCount: data.data.remainingCount
+        });
+        await fetchMedia();
+      } else {
+        alert(isArabic ? "فشلت عملية التنظيف" : "Cleanup failed");
+      }
+    } catch (e) {
+      console.error("Cleanup error:", e);
+      alert(isArabic ? "خطأ أثناء تنظيف الملفات" : "Error purging orphaned files");
+    } finally {
+      setCleaningOrphans(false);
     }
   }
 
@@ -268,6 +307,7 @@ export function AdminMediaView({ locale }: { locale: string }) {
   const filteredWorkers = filterFolders(workersFolders);
   const filteredClients = filterFolders(clientsFolders);
   const filteredVendors = filterFolders(vendorsFolders);
+  const filteredSystem = filterFolders(systemFolders);
 
   const filteredRawBlobs = rawBlobs.filter(b =>
     !searchQuery.trim() || b.pathname.toLowerCase().includes(searchQuery.toLowerCase().trim())
@@ -276,7 +316,8 @@ export function AdminMediaView({ locale }: { locale: string }) {
   const totalEntityFiles =
     workersFolders.reduce((acc, f) => acc + f.filesCount, 0) +
     clientsFolders.reduce((acc, f) => acc + f.filesCount, 0) +
-    vendorsFolders.reduce((acc, f) => acc + f.filesCount, 0);
+    vendorsFolders.reduce((acc, f) => acc + f.filesCount, 0) +
+    systemFolders.reduce((acc, f) => acc + f.filesCount, 0);
 
   return (
     <div className="mx-auto max-w-7xl space-y-8 animate-fadeIn pb-16">
@@ -299,6 +340,18 @@ export function AdminMediaView({ locale }: { locale: string }) {
         </div>
 
         <div className="flex items-center gap-2.5">
+          {/* Purge / Cleanup Orphaned Files */}
+          <button
+            type="button"
+            onClick={handleCleanupOrphans}
+            disabled={cleaningOrphans || loading}
+            className="px-4 py-3 bg-red-500/10 border border-red-500/30 hover:bg-red-500/20 text-red-400 hover:text-red-300 rounded-2xl text-xs font-bold transition-all shadow-md flex items-center gap-2 cursor-pointer disabled:opacity-50"
+            title={isArabic ? "فحص وحذف الملفات المهملة واليتيمة" : "Purge Orphaned Junk Files"}
+          >
+            {cleaningOrphans ? <Loader2 className="h-4 w-4 animate-spin text-red-400" /> : <Trash2 className="h-4 w-4" />}
+            <span className="hidden sm:inline">{isArabic ? "حذف الملفات المهملة" : "Purge Junk Files"}</span>
+          </button>
+
           <button
             onClick={fetchMedia}
             disabled={loading}
@@ -328,6 +381,23 @@ export function AdminMediaView({ locale }: { locale: string }) {
         </div>
       </div>
 
+      {/* Cleanup Result Alert Banner */}
+      {cleanupResult && (
+        <div className="bg-emerald-500/10 border border-emerald-500/30 p-4 rounded-2xl flex items-center justify-between gap-3 text-emerald-400 text-xs font-bold animate-fadeIn">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="h-4 w-4 shrink-0" />
+            <span>
+              {isArabic
+                ? `اكتمل الفحص والتنظيف بنجاح! تم مسح ${cleanupResult.deletedCount} ملفات مهملة وغير مرتبطة بالكامل، وتوفير ${cleanupResult.freedMB} ميجابايت من المساحة. إجمالي الملفات النشطة والمصنفة المتبقية: ${cleanupResult.remainingCount} ملف.`
+                : `Purge complete! Deleted ${cleanupResult.deletedCount} orphaned files, freed ${cleanupResult.freedMB} MB. Remaining active files: ${cleanupResult.remainingCount}.`}
+            </span>
+          </div>
+          <button onClick={() => setCleanupResult(null)} className="text-onyx-400 hover:text-white p-1">
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      )}
+
       {/* Breadcrumb Navigation if inside folder */}
       {selectedFolder && (
         <div className="bg-onyx-900/80 border border-gold-500/30 p-3 rounded-2xl flex items-center justify-between gap-3 animate-fadeIn">
@@ -345,7 +415,9 @@ export function AdminMediaView({ locale }: { locale: string }) {
                 ? (isArabic ? "الفنيين والصنايعية" : "Workers")
                 : selectedFolder.type === "client"
                   ? (isArabic ? "العملاء" : "Clients")
-                  : (isArabic ? "المتاجر والموردين" : "Vendors")}
+                  : selectedFolder.type === "vendor"
+                    ? (isArabic ? "المتاجر والموردين" : "Vendors")
+                    : (isArabic ? "أصول النظام" : "System")}
             </span>
             <span className="text-onyx-600">/</span>
             <span className="text-white font-black truncate">{selectedFolder.name}</span>
@@ -369,7 +441,8 @@ export function AdminMediaView({ locale }: { locale: string }) {
             { key: "workers", labelAr: "فولدرات الفنيين والصنايعية", labelEn: "Workers Folders", count: workersFolders.length, icon: Wrench },
             { key: "clients", labelAr: "فولدرات العملاء", labelEn: "Clients Folders", count: clientsFolders.length, icon: Users },
             { key: "vendors", labelAr: "فولدرات المتاجر والموردين", labelEn: "Vendors Folders", count: vendorsFolders.length, icon: ShoppingBag },
-            { key: "avatars", labelAr: "مكتبة الصور الشخصية", labelEn: "Avatar Templates", count: avatarTemplates.length, icon: Sparkles },
+            { key: "system", labelAr: "سلايدر النظام والحملات", labelEn: "System & Marketing", count: systemFolders.reduce((acc, f) => acc + f.filesCount, 0), icon: Sparkles },
+            { key: "avatars", labelAr: "مكتبة الصور الشخصية", labelEn: "Avatar Templates", count: avatarTemplates.length, icon: Camera },
             { key: "general", labelAr: "ملفات عامة بدون تصنيف", labelEn: "General Uploads", count: rawBlobs.length, icon: ImageIcon }
           ].map(tab => {
             const Icon = tab.icon;
@@ -567,7 +640,7 @@ export function AdminMediaView({ locale }: { locale: string }) {
           {activeTab === "all" && (
             <div className="space-y-8">
               {/* Category summary cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div
                   onClick={() => setActiveTab("workers")}
                   className="bg-onyx-900/60 border border-white/10 hover:border-gold-500/50 p-5 rounded-3xl transition-all cursor-pointer group shadow-xl hover:-translate-y-0.5"
@@ -621,6 +694,24 @@ export function AdminMediaView({ locale }: { locale: string }) {
                   </h3>
                   <p className="text-xs text-onyx-400 mt-1">
                     {isArabic ? "السجلات التجارية، البطاقات الضريبية، وشعارات المتاجر." : "Commercial registers, tax cards & logos."}
+                  </p>
+                </div>
+
+                <div
+                  onClick={() => setActiveTab("system")}
+                  className="bg-onyx-900/60 border border-white/10 hover:border-amber-500/50 p-5 rounded-3xl transition-all cursor-pointer group shadow-xl hover:-translate-y-0.5"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="h-12 w-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 group-hover:bg-amber-500 group-hover:text-black transition-colors">
+                      <Sparkles className="h-6 w-6" />
+                    </div>
+                    <span className="text-2xl font-black text-white">{systemFolders.reduce((acc, f) => acc + f.filesCount, 0)}</span>
+                  </div>
+                  <h3 className="text-base font-black text-white group-hover:text-amber-400 transition-colors">
+                    {isArabic ? "سلايدر وحملات النظام" : "System & Marketing"}
+                  </h3>
+                  <p className="text-xs text-onyx-400 mt-1">
+                    {isArabic ? "سلايدر الصفحة الرئيسية وبانرات الإعلانات الممولة." : "Hero sliders and sponsored campaign banners."}
                   </p>
                 </div>
               </div>
@@ -847,6 +938,62 @@ export function AdminMediaView({ locale }: { locale: string }) {
                         </span>
                         <span className="text-onyx-400 group-hover:text-white transition-colors flex items-center gap-1 font-bold">
                           <span>{isArabic ? "فتح المجلد" : "Open"}</span>
+                          {isArabic ? <ChevronLeft className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* TAB: SYSTEM MARKETING ASSETS */}
+          {activeTab === "system" && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-black text-white flex items-center gap-2">
+                    <Sparkles className="h-4 w-4 text-gold-500" />
+                    <span>{isArabic ? "أصول وسلايدر النظام والحملات الإعلانية" : "System & Marketing Assets"}</span>
+                  </h2>
+                  <p className="text-xs text-onyx-400 mt-0.5">
+                    {isArabic ? "صور سلايدر الصفحة الرئيسية، وبانرات الإعلانات الممولة المعتمدة." : "Homepage sliders and sponsored campaign banners."}
+                  </p>
+                </div>
+                <span className="text-xs text-onyx-400 font-bold">
+                  {isArabic ? `إجمالي الأصول: ${systemFolders.reduce((acc, f) => acc + f.filesCount, 0)}` : `Total: ${systemFolders.reduce((acc, f) => acc + f.filesCount, 0)}`}
+                </span>
+              </div>
+
+              {systemFolders.length === 0 ? (
+                <div className="onyx-card py-16 text-center text-onyx-500">
+                  <Sparkles className="h-10 w-10 mx-auto text-onyx-700 mb-2 stroke-[1.2]" />
+                  <p className="text-sm font-bold text-white">{isArabic ? "لا توجد أصول نظام حالياً" : "No system assets found"}</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                  {systemFolders.map(folder => (
+                    <div
+                      key={folder.id}
+                      onClick={() => setSelectedFolder(folder)}
+                      className="bg-onyx-900/60 border border-white/10 hover:border-gold-500/50 p-5 rounded-3xl transition-all cursor-pointer group shadow-xl hover:-translate-y-0.5"
+                    >
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="h-12 w-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 group-hover:bg-amber-500 group-hover:text-black transition-colors">
+                          <Sparkles className="h-6 w-6" />
+                        </div>
+                        <span className="text-2xl font-black text-white">{folder.filesCount}</span>
+                      </div>
+                      <h3 className="text-base font-black text-white group-hover:text-amber-400 transition-colors">
+                        {folder.name}
+                      </h3>
+                      <div className="mt-3 pt-2.5 border-t border-white/5 flex items-center justify-between text-[10px]">
+                        <span className="text-gold-400 font-bold bg-gold-500/10 px-2 py-0.5 rounded-md border border-gold-500/20">
+                          {isArabic ? `${folder.filesCount} ملفات` : `${folder.filesCount} files`}
+                        </span>
+                        <span className="text-onyx-400 group-hover:text-white transition-colors flex items-center gap-1 font-bold">
+                          <span>{isArabic ? "فتح واستعراض" : "Open Folder"}</span>
                           {isArabic ? <ChevronLeft className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
                         </span>
                       </div>

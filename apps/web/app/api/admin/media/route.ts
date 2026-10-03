@@ -73,6 +73,7 @@ export async function GET(request: NextRequest) {
     workers: [],
     clients: [],
     vendors: [],
+    system: [],
     avatars: []
   };
 
@@ -99,6 +100,36 @@ export async function GET(request: NextRequest) {
     data: blobs,
     folders
   });
+}
+
+export async function POST(request: NextRequest) {
+  const token = request.cookies.get("osta_access_token")?.value;
+  const isAdmin = token && (await verifyAdminJwt(token));
+
+  if (!isAdmin) {
+    return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+  }
+
+  const { searchParams } = new URL(request.url);
+  const action = searchParams.get("action");
+
+  if (action === "cleanup-orphans") {
+    try {
+      const serverUrl = process.env.NEXT_PUBLIC_OSTA_API_URL || "http://localhost:5000/api";
+      const res = await fetch(`${serverUrl}/admin/media/cleanup-orphans`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      const data = await res.json();
+      return NextResponse.json(data);
+    } catch (e: any) {
+      return NextResponse.json({ error: e.message || "Failed to cleanup orphans" }, { status: 500 });
+    }
+  }
+
+  return NextResponse.json({ error: "Invalid action" }, { status: 400 });
 }
 
 export async function DELETE(request: NextRequest) {

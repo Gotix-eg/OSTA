@@ -2215,13 +2215,62 @@ router.get("/media/folders", authenticate, requireRoles(UserRole.ADMIN), catchAs
     };
   }).filter(folder => folder.files.length > 0);
 
-  // 4. Avatar library templates
+  // 4. System, Hero Slides & Marketing Assets
+  const systemSettings = await prisma.systemSetting.findMany({
+    where: {
+      key: { in: [SLIDES_KEY, MOBILE_SLIDES_KEY, CAMPAIGNS_KEY] }
+    }
+  });
+
+  const systemFiles: Array<{
+    id: string;
+    url: string;
+    titleAr: string;
+    titleEn: string;
+    category: string;
+    uploadedAt?: string | Date | null;
+  }> = [];
+
+  for (const s of systemSettings) {
+    try {
+      const parsed = JSON.parse(s.value);
+      if (Array.isArray(parsed)) {
+        parsed.forEach((item, idx) => {
+          const imgUrl = item?.imageUrl || (typeof item === "string" ? item : null);
+          if (imgUrl) {
+            systemFiles.push({
+              id: `${s.key}-${item.id || idx}`,
+              url: imgUrl,
+              titleAr: item.titleAr || item.title || (s.key === CAMPAIGNS_KEY ? `إعلان ممول #${idx + 1}` : `سلايدر الرئيسية #${idx + 1}`),
+              titleEn: item.titleEn || item.title || (s.key === CAMPAIGNS_KEY ? `Campaign #${idx + 1}` : `Hero Slide #${idx + 1}`),
+              category: s.key === CAMPAIGNS_KEY ? "campaign" : "hero_slide",
+              uploadedAt: item.createdAt || null
+            });
+          }
+        });
+      }
+    } catch {}
+  }
+
+  const systemFolders = systemFiles.length > 0 ? [{
+    id: "system-marketing",
+    userId: "system",
+    type: "system" as const,
+    name: "سلايدر الموقع والحملات الإعلانية",
+    phone: "System Asset",
+    category: "system",
+    filesCount: systemFiles.length,
+    files: systemFiles
+  }] : [];
+
+  // 5. Avatar library templates
   const avatars = await getAvatarLibrary();
 
   res.json(successResponse({
     workers: workerFolders,
     clients: clientFolders,
     vendors: vendorFolders,
+    system: systemFolders,
     avatars
   }, "Media folders fetched successfully"));
 }));
@@ -2274,6 +2323,104 @@ router.delete("/media/entity-file", authenticate, requireRoles(UserRole.ADMIN), 
   }
 
   res.json(successResponse(null, "Document cleared successfully"));
+}));
+
+// POST /api/admin/media/cleanup-orphans — Scan storage and delete unlinked/orphaned files
+router.post("/media/cleanup-orphans", authenticate, requireRoles(UserRole.ADMIN), catchAsync(async (_req, res) => {
+  const token = process.env.BLOB_READ_WRITE_TOKEN;
+  if (!token) {
+    throw new ApiError(500, "BLOB_READ_WRITE_TOKEN is not configured");
+  }
+
+  const { list, del } = await import("@vercel/blob");
+  const listRes = await list({ token });
+  const allBlobs = listRes.blobs || [];
+
+  const activeUrls = new Set<string>();
+
+  // 1. Users
+  const users = await prisma.user.findMany({ select: { avatarUrl: true } });
+  users.forEach(u => { if (u.avatarUrl) activeUrls.add(u.avatarUrl); });
+
+  // 2. Workers
+  const workers = await prisma.workerProfile.findMany({ include: { certificates: true } });
+  workers.forEach(w => {
+    if (w.nationalIdFront) activeUrls.add(w.nationalIdFront);
+    if (w.nationalIdBack) activeUrls.add(w.nationalIdBack);
+    if (w.selfieWithId) activeUrls.add(w.selfieWithId);
+    if (w.criminalRecord) activeUrls.add(w.criminalRecord);
+    if (w.utilityBillUrl) activeUrls.add(w.utilityBillUrl);
+    if (Array.isArray(w.galleryImages)) {
+      w.galleryImages.forEach(img => { if (img) activeUrls.add(img); });
+    }
+    w.certificates.forEach(c => { if (c.imageUrl) activeUrls.add(c.imageUrl); });
+  });
+
+  // 3. Requests
+  const requests = await prisma.serviceRequest.findMany({ select: { images: true, beforeImages: true, afterImages: true } });
+  requests.forEach(r => {
+    [...(r.images || []), ...(r.beforeImages || []), ...(r.afterImages || [])].forEach(img => {
+      if (img) activeUrls.add(img);
+    });
+  });
+
+  // 4. Vendors
+  const vendors = await prisma.vendorProfile.findMany({ include: { products: true } });
+  vendors.forEach(v => {
+    if (v.shopImageUrl) activeUrls.add(v.shopImageUrl);
+    if (v.commercialRegisterUrl) activeUrls.add(v.commercialRegisterUrl);
+    if (v.taxCardUrl) activeUrls.add(v.taxCardUrl);
+    v.products.forEach(p => { if (p.imageUrl) activeUrls.add(p.imageUrl); });
+  });
+
+  // 5. System settings
+  const settings = await prisma.systemSetting.findMany();
+  settings.forEach(s => {
+    try {
+      const parsed = JSON.parse(s.value);
+      if (Array.isArray(parsed)) {
+        parsed.forEach(item => {
+          if (typeof item === "string" && item.startsWith("http")) activeUrls.add(item);
+          if (item?.url) activeUrls.add(item.url);
+          if (item?.imageUrl) activeUrls.add(item.imageUrl);
+          if (item?.avatarUrl) activeUrls.add(item.avatarUrl);
+        });
+      }
+    } catch {
+      if (s.value.startsWith("http")) activeUrls.add(s.value);
+    }
+  });
+
+  // 6. Services & Categories
+  const services = await prisma.service.findMany({ select: { imageUrl: true } });
+  services.forEach(s => { if (s.imageUrl) activeUrls.add(s.imageUrl); });
+  const categories = await prisma.serviceCategory.findMany({ select: { imageUrl: true } });
+  categories.forEach(c => { if (c.imageUrl) activeUrls.add(c.imageUrl); });
+
+  const orphanedBlobs = allBlobs.filter(b => !activeUrls.has(b.url));
+  let deletedCount = 0;
+  let freedBytes = 0;
+
+  for (let i = 0; i < orphanedBlobs.length; i += 10) {
+    const batch = orphanedBlobs.slice(i, i + 10);
+    const urlsToDelete = batch.map(b => b.url);
+    try {
+      await del(urlsToDelete, { token });
+      deletedCount += batch.length;
+      freedBytes += batch.reduce((acc, b) => acc + (b.size || 0), 0);
+    } catch (e) {
+      console.error("Cleanup batch error:", e);
+    }
+  }
+
+  res.json(successResponse({
+    totalBlobs: allBlobs.length,
+    activeCount: activeUrls.size,
+    deletedCount,
+    freedBytes,
+    freedMB: (freedBytes / (1024 * 1024)).toFixed(2),
+    remainingCount: allBlobs.length - deletedCount
+  }, "Media storage scanned and orphaned files purged successfully"));
 }));
 
 export const adminRouter = router;
