@@ -1603,165 +1603,131 @@ export function VendorRegisterForm({ locale, initial }: { locale: Locale; initia
 }
 
 export function ForgotPasswordForm({ locale }: { locale: Locale }) {
-  const copy = authCopy[locale];
   const isArabic = locale === "ar";
-  const [step, setStep] = useState(0);
-  const [email, setEmail] = useState("");
-  const [code, setCode] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [done, setDone] = useState(false);
+  const [phone, setPhone] = useState("+20");
+  const [phoneError, setPhoneError] = useState<string | null>(null);
 
-  async function handleSendCode() {
-    if (!email) {
-      setError(isArabic ? "برجاء إدخال البريد الإلكتروني" : "Please enter your email");
-      return;
-    }
-    setIsSubmitting(true);
-    setError(null);
-    try {
-      await postApiData("/auth/forgot-password", { email });
-      setStep(1);
-    } catch (err) {
-      setError(getLocalizedError(err instanceof Error ? err.message : "", locale));
-    } finally {
-      setIsSubmitting(false);
-    }
-  }
+  // Egypt phone validation: requires valid format +20(10|11|12|15)xxxxxxxx
+  const cleanPhone = phone.replace(/\s+/g, "");
+  const isPhoneValid = isValidEgyptianPhone(cleanPhone);
+  const localPhone = cleanPhone.startsWith("+20") ? "0" + cleanPhone.substring(3) : cleanPhone;
 
-  async function handleResetPassword() {
-    if (code.length < 6) {
-      setError(isArabic ? "برجاء إدخال رمز التحقق كاملاً" : "Please enter the full verification code");
-      return;
-    }
-    if (password.length < 8) {
-      setError(isArabic ? "كلمة المرور يجب أن تكون 8 أحرف على الأقل" : "Password must be at least 8 characters");
-      return;
-    }
-    if (password !== confirmPassword) {
-      setError(isArabic ? "كلمة المرور غير متطابقة" : "Passwords do not match");
-      return;
-    }
-    setIsSubmitting(true);
-    setError(null);
-    try {
-      await postApiData("/auth/reset-password", { email, code, password });
-      setDone(true);
-    } catch (err) {
-      setError(getLocalizedError(err instanceof Error ? err.message : "", locale));
-    } finally {
-      setIsSubmitting(false);
-    }
-  }
+  // Prepared WhatsApp Message including the user's registered phone number
+  const whatsappNumber = "201033319673";
+  const recoveryMessage = isArabic
+    ? `السلام عليكم ورحمة الله وبركاته،\nأرغب في استعادة حسابي وتعيين كلمة مرور جديدة على منصة أُسطى.\n\n📱 رقم الهاتف المسجل للحساب:\n${cleanPhone} (${localPhone})\n\nبرجاء التحقق والمساعدة في استعادة الحساب وتعيين كلمة المرور. شكراً لكم.`
+    : `Hello Ostafy Support,\nI would like to recover my account and reset my password on OSTA platform.\n\n📱 Registered Phone Number:\n${cleanPhone} (${localPhone})\n\nPlease assist me in resetting my password. Thank you.`;
 
-  if (done) return (
-    <div className="onyx-card p-10 text-center border-success/30 bg-success/5 space-y-4">
-      <ShieldCheck className="h-16 w-16 text-success mx-auto" />
-      <h3 className="text-2xl font-black text-white">{copy.passwordUpdated}</h3>
-      <p className="text-onyx-400">{copy.loginNow}</p>
-    </div>
-  );
+  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(recoveryMessage)}`;
+
+  const handleWhatsAppClick = (e: React.MouseEvent) => {
+    if (!isPhoneValid) {
+      e.preventDefault();
+      setPhoneError(
+        isArabic
+          ? "برجاء إدخال رقم هاتف مصري صحيح مسجل بالحساب أولاً للمتابعة (مثال: 01012345678)"
+          : "Please enter a valid Egyptian registered phone number first (e.g. 01012345678)"
+      );
+    }
+  };
 
   return (
-    <div className="space-y-8 animate-fadeIn">
-      <StepIndicator current={step} total={2} />
-
-      <div className="space-y-6">
-        {step === 0 && (
-          <InputField
-            label={isArabic ? "البريد الإلكتروني" : "Email address"}
-            value={email}
-            onChange={setEmail}
-            type="email"
-            placeholder="example@mail.com"
-          />
-        )}
-
-        {step === 1 && (
-          <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="space-y-3">
-              <span className="text-sm font-bold text-onyx-300 tracking-wide">
-                {isArabic ? "رمز التحقق (6 أرقام)" : "Verification Code (6 digits)"}
-              </span>
-              <OtpBoxes value={code} onChange={setCode} />
-            </div>
-
-            <div className="grid gap-6 sm:grid-cols-2 pt-2">
-              <InputField
-                label={isArabic ? "كلمة المرور الجديدة" : "New password"}
-                value={password}
-                onChange={setPassword}
-                type="password"
-                placeholder="••••••••"
-                helperText={isArabic ? "يجب أن تحتوي على 8 أحرف أو أرقام على الأقل" : "Must be at least 8 characters/numbers"}
-              />
-              <InputField
-                label={isArabic ? "تأكيد كلمة المرور" : "Confirm password"}
-                value={confirmPassword}
-                onChange={setConfirmPassword}
-                type="password"
-                placeholder="••••••••"
-                helperText={isArabic ? "أعد كتابة كلمة المرور المدخلة للتأكيد" : "Retype the password to confirm"}
-              />
-            </div>
-          </div>
-        )}
-
-        <div className="flex items-center justify-between gap-4 pt-4">
-          <button
-            type="button"
-            onClick={() => setStep(0)}
-            disabled={step === 0 || isSubmitting}
-            className="btn-onyx h-12 flex items-center gap-2"
-          >
-            {isArabic ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-            {copy.back}
-          </button>
-
-          <button
-            type="button"
-            onClick={step === 0 ? handleSendCode : handleResetPassword}
-            disabled={isSubmitting}
-            className="btn-gold h-12 px-8 flex items-center gap-2 group"
-          >
-            {isSubmitting ? copy.processing : step === 0 ? copy.sendCode : copy.update}
-            <div className={cn("transition-transform duration-300", isArabic ? "group-hover:-translate-x-1" : "group-hover:translate-x-1")}>
-              {isArabic ? <ArrowLeft className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
-            </div>
-          </button>
+    <div className="space-y-6 animate-fadeIn">
+      {/* Information Header Card */}
+      <div className="border border-white/10 bg-[#121212] p-5 space-y-3 text-start">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-none bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-black">
+          <MessageCircle className="h-4 w-4" />
+          <span>{isArabic ? "استرجاع الحساب عبر واتساب خدمة العملاء" : "Account Recovery via WhatsApp Support"}</span>
         </div>
+        <p className="text-xs text-white/70 leading-relaxed font-medium">
+          {isArabic
+            ? "حرصاً على أمان وسرعة الإجراءات، يتم استعادة الحساب وتعيين كلمة مرور جديدة فوراً عن طريق التحدث مع خدمة العملاء برقم هاتفك المسجل."
+            : "For maximum security and speed, account recovery and password resets are handled directly by customer support via WhatsApp using your registered phone number."}
+        </p>
+      </div>
 
-        {error && <div className="onyx-card p-4 border-red-500/20 bg-red-500/5 text-red-500 text-center font-bold text-sm animate-shake">{error}</div>}
+      {/* Phone Number Input */}
+      <div className="space-y-2 text-start">
+        <label htmlFor="recovery-phone" className="mb-2 flex justify-between text-xs font-black uppercase tracking-widest text-white">
+          <span>{isArabic ? "رقم الهاتف المسجل به الحساب *" : "Registered Phone Number *"}</span>
+          <Phone size={14} className="text-gold" />
+        </label>
+        <div className="relative">
+          <span className="absolute right-4 top-1/2 -translate-y-1/2 select-none" dir="ltr">
+            <EgyptPhoneBadge locale={locale} />
+          </span>
+          <input
+            id="recovery-phone"
+            type="text"
+            value={phone}
+            onChange={(e) => {
+              const formatted = formatEgyptianPhone(e.target.value);
+              setPhone(formatted);
+              if (phoneError) setPhoneError(null);
+            }}
+            placeholder="+201012345678"
+            autoComplete="tel"
+            dir="ltr"
+            className={cn(
+              "h-12 w-full rounded-none bg-[#121212] px-3 pl-3 pr-24 text-sm font-semibold text-white transition-colors placeholder:text-white/20 focus:border-gold focus:outline-none focus:ring-0",
+              phoneError ? "border-2 border-red-500" : "border border-white/20"
+            )}
+          />
+        </div>
+        {phoneError ? (
+          <p className="text-xs text-red-500 mt-1 select-none font-bold animate-fadeIn">{phoneError}</p>
+        ) : (
+          <p className="text-[11px] text-white/50">
+            {isArabic
+              ? "أدخل رقم الهاتف المسجل به لتضمينه تلقائياً في رسالة الدعم وتفعيل زر الواتساب"
+              : "Enter your registered phone to automatically include it in the support message and enable WhatsApp"}
+          </p>
+        )}
+      </div>
 
-        {/* WhatsApp Craftsman Password Recovery Assistant */}
-        {step === 0 && (
-          <div className="pt-6 border-t border-onyx-800 text-center space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
-              <MessageCircle className="h-4 w-4" />
-              <span>{isArabic ? "صنايعي وناسي الإيميل أو مش فاكره؟" : "Craftsman & forgot your email?"}</span>
-            </div>
-            <p className="text-xs text-onyx-400 max-w-md mx-auto">
-              {isArabic
-                ? "تقدر تسترجع حسابك وتستلم كلمة مرور جديدة فوراً عن طريق التحدث مع خدمة العملاء برقم هاتفك عبر واتساب!"
-                : "You can recover your account and receive a new password instantly by contacting customer service with your phone number on WhatsApp!"}
+      {/* WhatsApp Action Button */}
+      <div className="pt-2 space-y-3">
+        {isPhoneValid ? (
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={handleWhatsAppClick}
+            className="flex items-center justify-center gap-3 w-full py-3.5 px-6 bg-[#25D366] hover:bg-[#20ba5a] text-black font-black text-sm uppercase tracking-wider transition-all duration-200 active:scale-[0.98] shadow-lg shadow-[#25D366]/20 cursor-pointer"
+          >
+            <MessageCircle className="h-5 w-5" />
+            <span>{isArabic ? "استرجاع الحساب عبر واتساب خدمة العملاء 💬" : "Recover Account via WhatsApp 💬"}</span>
+          </a>
+        ) : (
+          <button
+            type="button"
+            onClick={handleWhatsAppClick}
+            className="flex items-center justify-center gap-3 w-full py-3.5 px-6 bg-[#25D366]/25 text-white/40 font-black text-sm uppercase tracking-wider cursor-not-allowed border border-white/10"
+          >
+            <MessageCircle className="h-5 w-5 opacity-40" />
+            <span>{isArabic ? "أدخل رقم هاتفك المسجل أولاً للمتابعة 💬" : "Enter your registered phone to proceed 💬"}</span>
+          </button>
+        )}
+
+        {isPhoneValid && (
+          <div className="p-3 bg-white/5 border border-white/10 text-start text-xs text-white/60 space-y-1 animate-fadeIn">
+            <span className="font-bold text-white/80 block">{isArabic ? "معاينة نص الرسالة المجهزة للواتساب:" : "Preview of prepared WhatsApp message:"}</span>
+            <p className="text-[11px] text-emerald-400 font-mono whitespace-pre-line leading-relaxed">
+              {recoveryMessage}
             </p>
-            <a
-              href={`https://wa.me/201033319673?text=${encodeURIComponent(
-                isArabic
-                  ? "السلام عليكم، أنا صنايعي ونسيت كلمة المرور الخاصة بحسابي في أوسطى ومش فاكر الإيميل، برجاء مساعدتي في استعادة الحساب برقم الموبايل."
-                  : "Hello, I am a craftsman on OSTA, I forgot my password and email, please help me recover my account."
-              )}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 w-full py-3 px-6 rounded-2xl bg-[#25D366] hover:bg-[#20ba5a] text-black font-black text-sm transition-transform active:scale-[0.98] shadow-lg shadow-[#25D366]/20 cursor-pointer"
-            >
-              <MessageCircle className="h-5 w-5" />
-              <span>{isArabic ? "استرجاع الحساب عبر واتساب خدمة العملاء 💬" : "Recover Account via WhatsApp 💬"}</span>
-            </a>
           </div>
         )}
+      </div>
+
+      {/* Back to Login Link */}
+      <div className="pt-4 border-t border-white/10 text-center">
+        <Link
+          href={`/${locale}/login`}
+          className="inline-flex items-center gap-2 text-xs font-bold text-white/60 hover:text-gold transition-colors"
+        >
+          {isArabic ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+          <span>{isArabic ? "العودة إلى تسجيل الدخول" : "Back to Login"}</span>
+        </Link>
       </div>
     </div>
   );

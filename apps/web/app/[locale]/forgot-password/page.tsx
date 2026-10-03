@@ -27,8 +27,8 @@ export default async function ForgotPasswordPage({ params }: { params: Promise<{
       title={authCopy[locale].forgotPasswordTitle}
       description={
         locale === "ar"
-          ? "استرجاع كلمة المرور من خلال الهاتف ورمز تحقق قصير ثم اختيار كلمة مرور جديدة."
-          : "Recover access through your phone number, a short OTP step, and a new password setup."
+          ? "استرجاع كلمة المرور من خلال التواصل المباشر مع خدمة العملاء عبر واتساب برقم هاتفك المسجل."
+          : "Recover access by contacting customer support on WhatsApp using your registered phone number."
       }
     >
       <ForgotPasswordForm locale={locale} />
